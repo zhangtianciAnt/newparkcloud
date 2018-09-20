@@ -6,7 +6,7 @@
     <groupId>com.nt.newparkcloud</groupId>
     <artifactId>dao</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>dao</name>
     <description>Dao project for NewParkCloud</description>
@@ -17,20 +17,17 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>10</java.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
 
-
+    <modules>
+        <module>dao_demo</module>
+        <module>dao_housingmanagement</module>
+    </modules>
 </project>
