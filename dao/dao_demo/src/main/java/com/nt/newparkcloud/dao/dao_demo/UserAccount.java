@@ -96,7 +96,7 @@ public class UserAccount extends BaseModel{
     /**
      * 个人信息
      */
-    private class UserInfo extends BaseModel{
+    public class UserInfo extends BaseModel{
         /**
          * 姓名
          */
@@ -234,7 +234,7 @@ public class UserAccount extends BaseModel{
     /**
      * 企业信息
      */
-    private class CompanyInfo extends BaseModel{
+    public class CompanyInfo extends BaseModel{
         /**
          * 企业名称
          */
