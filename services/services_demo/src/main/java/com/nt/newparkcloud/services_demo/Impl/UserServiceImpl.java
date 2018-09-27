@@ -1,9 +1,6 @@
 package com.nt.newparkcloud.services_demo.Impl;
 
-import com.nt.newparkcloud.dao.dao_demo.Org;
-import com.nt.newparkcloud.dao.dao_demo.OrgTree;
-import com.nt.newparkcloud.dao.dao_demo.User;
-import com.nt.newparkcloud.dao.dao_demo.UserAccount;
+import com.nt.newparkcloud.dao.dao_demo.*;
 import com.nt.newparkcloud.services_demo.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -32,6 +29,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(UserAccount userAccount) throws Exception {
         mongoTemplate.save(userAccount);
+    }
+
+    @Override
+    public void save(Tenant tenant) throws Exception {
+        mongoTemplate.save(tenant);
+    }
+
+    @Override
+    public void save(CustomerInfo customerInfo) throws Exception {
+        mongoTemplate.save(customerInfo);
     }
 
     @Override
