@@ -3,20 +3,15 @@ package com.nt.newparkcloud.controller;
 
 import com.nt.newparkcloud.dao.dao_demo.Org;
 import com.nt.newparkcloud.dao.dao_demo.OrgTree;
-import com.nt.newparkcloud.dao.dao_demo.User;
 import com.nt.newparkcloud.dao.dao_demo.UserAccount;
 import com.nt.newparkcloud.services_demo.UserService;
 import com.nt.newparkcloud.utils.ApiResult;
+import com.nt.newparkcloud.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/demo")
@@ -47,6 +42,7 @@ public class demoController {
     public ApiResult get() throws Exception {
 //        User user = new User();
 //        user.setUserName("小明");
+        System.out.println(MessageUtil.getMessage("1"));
         return ApiResult.success();
     }
 }

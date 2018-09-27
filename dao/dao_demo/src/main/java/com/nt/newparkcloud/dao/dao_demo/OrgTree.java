@@ -71,7 +71,7 @@ public class OrgTree extends BaseModel{
     /**
      * 公司账户信息
      */
-    private List<BankInfo> bankinfo;
+    private List<Org.BankInfo> bankinfo;
     /**
      * 子公司信息
      */
@@ -181,11 +181,11 @@ public class OrgTree extends BaseModel{
         this.invoiceinfo = invoiceinfo;
     }
 
-    public List<BankInfo> getBankinfo() {
+    public List<Org.BankInfo> getBankinfo() {
         return bankinfo;
     }
 
-    public void setBankinfo(List<BankInfo> bankinfo) {
+    public void setBankinfo(List<Org.BankInfo> bankinfo) {
         this.bankinfo = bankinfo;
     }
 
