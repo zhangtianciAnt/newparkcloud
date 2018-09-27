@@ -6,27 +6,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
-public class MongoBaseServiceImpl implements MongoBaseService {
+public class MongoBaseServiceImpl<T> implements MongoBaseService<T> {
     @Autowired
     private MongoTemplate mongoTemplate;
 
     private static Logger log = LoggerFactory.getLogger(MongoBaseServiceImpl.class);
 
     @Override
-    public <T>T selectAllWithAuth(T record, HttpServletRequest request) throws LogicalException {
+    public List<T> selectAllWithAuth(T record, HttpServletRequest request) throws LogicalException {
 
         if (record == null) {
-            throw new LogicalException("");
+            throw new LogicalException("参数对象不能为空");
         }
-
+        Query query = new Query();
+        //取得所有字段
         Field[] fields = record.getClass().getDeclaredFields();
-        // TODO : selectAllWithAuth
-        return null;
+        for (int i = 0; i < fields.length; i++) {
+            if ("serialVersionUID".equals(fields[i].getName())) {
+                continue;
+            }
+            Object value = getFieldValueByName(fields[i].getName(), record);
+            if (value != null) {
+                Criteria criteria = Criteria.where(fields[i].getName()).is(value);
+                query.addCriteria(criteria);
+            }
+        }
+        return (List<T>) mongoTemplate.find(query, record.getClass());
     }
 
     /**

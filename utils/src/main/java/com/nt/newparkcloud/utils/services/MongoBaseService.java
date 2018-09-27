@@ -3,8 +3,9 @@ package com.nt.newparkcloud.utils.services;
 import com.nt.newparkcloud.utils.LogicalException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
-public interface MongoBaseService {
+public interface MongoBaseService<T> {
 
-    <T>T selectAllWithAuth(T record, HttpServletRequest request) throws LogicalException;
+    List<T> selectAllWithAuth(T record, HttpServletRequest request) throws LogicalException;
 }
