@@ -5,7 +5,7 @@
 
     <groupId>com.nt</groupId>
     <artifactId>newparkcloud</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <modules>
         <module>controller</module>
         <module>dao</module>
@@ -14,7 +14,6 @@
     </modules>
     <packaging>pom</packaging>
 
-    <description>Base project for NewParkCloud</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

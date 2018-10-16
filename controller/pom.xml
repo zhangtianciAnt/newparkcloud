@@ -3,19 +3,32 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.nt.newparkcloud</groupId>
     <artifactId>controller</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <name>controller</name>
-    <description>Controller project for NewParkCloud</description>
 
     <parent>
         <artifactId>newparkcloud</artifactId>
         <groupId>com.nt</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>dao_Org</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_Org</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -26,17 +39,5 @@
         </plugins>
     </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.nt.newparkcloud</groupId>
-            <artifactId>services_demo</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nt.newparkcloud</groupId>
-            <artifactId>utils</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
 </project>

@@ -3,27 +3,28 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.nt.newparkcloud</groupId>
-    <artifactId>dao</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
 
-    <name>dao</name>
-    <description>Dao project for NewParkCloud</description>
+    <artifactId>dao</artifactId>
+
+    <modules>
+        <module>dao_Org</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <parent>
         <artifactId>newparkcloud</artifactId>
         <groupId>com.nt</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.nt.newparkcloud</groupId>
+            <groupId>com.nt</groupId>
             <artifactId>utils</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
@@ -33,9 +34,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <modules>
-        <module>dao_demo</module>
-        <module>dao_housingmanagement</module>
-    </modules>
 </project>

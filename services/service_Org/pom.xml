@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>services</artifactId>
-    <modules>
-        <module>service_Org</module>
-    </modules>
-    <packaging>pom</packaging>
-
     <parent>
-        <artifactId>newparkcloud</artifactId>
+        <artifactId>services</artifactId>
         <groupId>com.nt</groupId>
         <version>1.0.0</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>service_Org</artifactId>
+
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.nt</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>dao_Org</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
