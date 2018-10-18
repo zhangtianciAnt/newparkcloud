@@ -1,6 +1,7 @@
 package com.nt.controller.Config;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
 import com.nt.controller.Start;
 
 import com.nt.utils.ApiResult;
@@ -47,7 +48,7 @@ public class GlobalAop {
         // 处理完请求，返回内容
         if(((ApiResult)ret).getData() != null){
 
-            log.info("返回值 : " + ((ApiResult)ret).getData().toString());
+            log.info("返回值 : " + JSONUtil.parse(((ApiResult) ret).getData()).toStringPretty());
         }else{
             log.info("返回值 : 无");
         }

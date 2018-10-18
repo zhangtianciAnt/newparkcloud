@@ -1,5 +1,7 @@
 package com.nt.utils;
 
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +37,12 @@ public abstract class BaseModel implements Serializable{
 	 * 租户id
 	 */
 	private String tenantid;
+
+	@Transient
+	private List<String> owners;
+
+	@Transient
+	private List<String> ids;
 
 	public String getStatus() {
 		return status;
@@ -92,4 +100,19 @@ public abstract class BaseModel implements Serializable{
 		this.tenantid = tenantid;
 	}
 
+    public List<String> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(List<String> owners) {
+        this.owners = owners;
+    }
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
 }

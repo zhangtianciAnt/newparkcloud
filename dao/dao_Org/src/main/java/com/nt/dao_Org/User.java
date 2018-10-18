@@ -1,9 +1,9 @@
 package com.nt.dao_Org;
 
-import java.io.Serializable;
-
 import com.nt.utils.BaseModel;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.lang.reflect.InvocationTargetException;
 
 @Document(collection = "user")
 public class User extends BaseModel {
@@ -45,13 +45,4 @@ public class User extends BaseModel {
         this.uppassWord = uppassWord;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", userName='" + userName + '\'' +
-                ", passWord='" + passWord + '\'' +
-                ", uppassWord='" + uppassWord + '\'' +
-                '}';
-    }
 }

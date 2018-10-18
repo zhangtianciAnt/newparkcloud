@@ -2,7 +2,7 @@ package com.nt.utils.impl;
 
 import cn.hutool.crypto.SecureUtil;
 import com.nt.utils.TokenModel;
-import com.nt.utils.TokenService;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,5 +30,12 @@ public class TokenServiceImpl implements TokenService {
         Query query = new Query(Criteria.where("token").is(token));
         TokenModel rst = mongoTemplate.findOne(query, TokenModel.class);
         return rst != null;
+    }
+
+    @Override
+    public TokenModel getToken(String token) {
+        Query query = new Query(Criteria.where("token").is(token));
+        TokenModel rst = mongoTemplate.findOne(query, TokenModel.class);
+        return rst;
     }
 }
