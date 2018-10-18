@@ -12,39 +12,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.nt.utils.MongoObject.CustmizeUpdate;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void save(Org org) throws Exception {
-        mongoTemplate.save(org);
+    public void save(User user) throws Exception {
+        mongoTemplate.save(user);
     }
 
     @Override
-    public void save(OrgTree orgTree) throws Exception {
-        mongoTemplate.save(orgTree);
+    public List<User> get(User user) throws Exception {
+        Query query = new Query(Criteria.where("_id").is("4a678267-4753-4616-8589-ea7cc53713bf"));
+        List<User> users = mongoTemplate.find(query, User.class);
+        return users;
     }
 
     @Override
-    public void save(UserAccount userAccount) throws Exception {
-        mongoTemplate.save(userAccount);
-    }
+    public void up(User user) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is("4a678267-4753-4616-8589-ea7cc53713bf"));
+        Update update = CustmizeUpdate(user,true);
+        mongoTemplate.updateMulti(query, update, "user");
 
-    @Override
-    public void save(Tenant tenant) throws Exception {
-        mongoTemplate.save(tenant);
-    }
-
-    @Override
-    public void save(CustomerInfo customerInfo) throws Exception {
-        mongoTemplate.save(customerInfo);
-    }
-
-    @Override
-    public Org get(Org org) throws Exception {
-
-        return new Org();
     }
 }

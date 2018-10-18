@@ -3,16 +3,12 @@ package com.nt.service_Org;
 
 import com.nt.dao_Org.*;
 
+import java.util.List;
+
 public interface UserService {
-    void save(Org org) throws Exception;
+    void save(User user) throws Exception;
 
-    void save(OrgTree orgTree) throws Exception;
+    List<User> get(User user) throws Exception;
 
-    void save(UserAccount userAccount) throws Exception;
-
-    void save(Tenant tenant) throws Exception;
-
-    void save(CustomerInfo customerInfo) throws Exception;
-
-    Org get(Org Org) throws Exception;
+    void up(User user) throws Exception;
 }

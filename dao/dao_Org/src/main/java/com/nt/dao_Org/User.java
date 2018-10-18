@@ -1,10 +1,12 @@
 package com.nt.dao_Org;
 
 import java.io.Serializable;
+
+import com.nt.utils.BaseModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "user")
-public class User implements Serializable {
+public class User extends BaseModel {
     private static final long serialVersionUID = 1L;
     private String id;
     private String userName;

@@ -36,10 +36,6 @@ public abstract class BaseModel implements Serializable{
 	 */
 	private String tenantid;
 
-	private List<String> ownerList;
-
-	private List<String> idList;
-
 	public String getStatus() {
 		return status;
 	}
@@ -96,19 +92,4 @@ public abstract class BaseModel implements Serializable{
 		this.tenantid = tenantid;
 	}
 
-	public List<String> getOwnerList() {
-		return ownerList;
-	}
-
-	public void setOwnerList(List<String> ownerList) {
-		this.ownerList = ownerList;
-	}
-
-	public List<String> getIdList() {
-		return idList;
-	}
-
-	public void setIdList(List<String> idList) {
-		this.idList = idList;
-	}
 }
