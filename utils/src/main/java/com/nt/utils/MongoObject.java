@@ -14,7 +14,7 @@ public class MongoObject {
     public final static <T> Update CustmizeUpdate(T obj, Boolean UpWithoutNull) throws IllegalAccessException {
         Update update = new Update();
 
-        Field[] field = obj.getClass().getFields();
+        Field[] field = getAllField(obj);
 
         for (int j = 2; j < field.length; j++) {
             field[j].setAccessible(true);
