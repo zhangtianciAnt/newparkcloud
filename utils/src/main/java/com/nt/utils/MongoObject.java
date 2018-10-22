@@ -38,13 +38,13 @@ public class MongoObject {
             String name = field[j].getName();
 
             //判断拥有Teantid时，将TenantId设置为检索条件
-            if (name.equals(StaticStr.TENANTID) && field[j].get(obj) != null) {
-                query.addCriteria(Criteria.where(StaticStr.TENANTID).is(field[j].get(obj)));
+            if (name.equals(AuthConstants.TENANTID) && field[j].get(obj) != null) {
+                query.addCriteria(Criteria.where(AuthConstants.TENANTID).is(field[j].get(obj)));
             }
 
             //判断拥有owner时，将owner设置为检索条件
-            if (name.equals(StaticStr.OWNERS) && field[j].get(obj) != null) {
-                query.addCriteria(Criteria.where(StaticStr.OWNER).in(field[j].get(obj)));
+            if (name.equals(AuthConstants.OWNERS) && field[j].get(obj) != null) {
+                query.addCriteria(Criteria.where(AuthConstants.OWNER).in(field[j].get(obj)));
             }
         }
         return query;

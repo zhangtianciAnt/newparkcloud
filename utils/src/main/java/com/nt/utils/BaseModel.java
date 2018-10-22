@@ -2,6 +2,7 @@ package com.nt.utils;
 
 import org.springframework.data.annotation.Transient;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -114,5 +115,18 @@ public abstract class BaseModel implements Serializable{
 
     public void setIds(List<String> ids) {
         this.ids = ids;
+    }
+
+    public void preInsert(TokenModel tokenModel){
+	    this.createby = tokenModel.getUserId();
+	    this.createon = new Date();
+	    this.owner = tokenModel.getUserId();
+	    this.tenantid = tokenModel.getTenantId();
+        this.status = AuthConstants.DEL_FLAG_NORMAL;
+    }
+
+    public void preUpdate(TokenModel tokenModel){
+	    this.modifyby = tokenModel.getUserId();
+        this.modifyon = new Date();
     }
 }

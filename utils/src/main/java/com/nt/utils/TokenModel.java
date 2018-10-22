@@ -24,7 +24,10 @@ public class TokenModel implements Serializable {
 		
 	// 随机生成的uuid
 	private String token;
-		
+
+    // 租户Id
+    private String tenantId;
+
 	// 负责人列表
 	private List<String> ownerList;
 		
@@ -32,6 +35,7 @@ public class TokenModel implements Serializable {
 	private List<String> idList;
 
     private Date date;
+
 
     public String getUserId() {
         return userId;
@@ -69,6 +73,10 @@ public class TokenModel implements Serializable {
         return idList;
     }
 
+    public void setIdList(List<String> idList) {
+        this.idList = idList;
+    }
+
     public Date getDate() {
         return date;
     }
@@ -77,7 +85,22 @@ public class TokenModel implements Serializable {
         this.date = date;
     }
 
-    public void setIdList(List<String> idList) {
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public TokenModel(String userId, String token,
+                      String tenantId, String userType,
+                      List<String> ownerList,List<String> idList) {
+        this.userId = userId;
+        this.token = token;
+        this.tenantId = tenantId;
+        this.userType = userType;
+        this.ownerList = ownerList;
         this.idList = idList;
     }
 }
