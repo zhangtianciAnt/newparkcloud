@@ -57,7 +57,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
     private void errorResponse(HttpServletResponse response, ApiResult apiResult) throws IOException {
         response.setContentType("application/json; charset=utf-8");
         PrintWriter out = response.getWriter();
-        out.println(JSONUtil.parse(apiResult).toStringPretty());
+        out.println(JSONUtil.parse(apiResult).toString());
         out.flush();
         out.close();
     }
