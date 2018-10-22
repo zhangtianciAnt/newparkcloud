@@ -2,15 +2,10 @@ package com.nt.controller.Controller;
 
 
 
-import com.nt.dao_Org.Org;
-import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.User;
-import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.UserService;
 import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
