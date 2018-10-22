@@ -1,24 +1,65 @@
 package com.nt.controller.Config;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.nt.utils.ApiCode;
+import com.nt.utils.ApiResult;
+import com.nt.utils.AuthConstants;
+import com.nt.utils.TokenModel;
+import com.nt.utils.services.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
-    private int startTime;
-    private int endTime;
-    //依赖注入,请看配置文件
-    public void setStartTime(int startTime) {
-        this.startTime = startTime;
-    }
 
-    public void setEndTime(int endTime) {
-        this.endTime = endTime;
-    }
+    @Autowired
+    private TokenService tokenService;
+
+
     //在控制器执行前调用
+    @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws Exception {
-        return true;  //通过拦截器，继续执行请求
+        String token = request.getHeader(AuthConstants.AUTH_TOKEN);
+        try {
+            if (StrUtil.isNotBlank(token)) {
+                // 验证token
+                TokenModel tokenModel = tokenService.getToken(request);
+                if (!(tokenModel != null && StrUtil.isNotBlank(tokenModel.getToken()))) {
+                    // 验证token失败，则返回直接返回用户未登录错误
+                    errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
+                    return false;
+
+                }
+            } else {
+                // 验证token失败，则返回直接返回用户未登录错误
+                errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
+                return false;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
+
+    /**
+     * 错误输出
+     *
+     * @param response
+     * @param apiResult
+     */
+    private void errorResponse(HttpServletResponse response, ApiResult apiResult) throws IOException {
+        response.setContentType("application/json; charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.println(JSONUtil.parse(apiResult).toStringPretty());
+        out.flush();
+        out.close();
+    }
+
 }

@@ -10,6 +10,6 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         //这里可以添加多个拦截器
         registry.addInterceptor(new LoginTimeInterceptor()).addPathPatterns("/**");
-        super.addInterceptors(registry);
+//        .addPathPatterns("api/path/**").excludePathPatterns("api/path/login")
     }
 }
