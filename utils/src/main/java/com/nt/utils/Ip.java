@@ -36,7 +36,7 @@ public class Ip {
             
     }  
 	
-	public static String getJsonContent(String urlStr)  
+	public static String getJsonContent(String urlStr)
     {  
         try  
         {// 获取HttpURLConnection连接对象  
@@ -68,11 +68,11 @@ public class Ip {
       
     private static String ConvertStream2Json(InputStream inputStream)  
     {  
-        String jsonStr = "";  
+        String jsonStr = "";
         // ByteArrayOutputStream相当于内存输出流  
         ByteArrayOutputStream out = new ByteArrayOutputStream();  
         byte[] buffer = new byte[1024];  
-        int len = 0;  
+        int len = 0;
         // 将输入流转移到内存输出流中  
         try  
         {  
@@ -84,8 +84,7 @@ public class Ip {
             jsonStr = new String(out.toByteArray());  
         }  
         catch (IOException e)  
-        {  
-            // TODO Auto-generated catch block  
+        {
             e.printStackTrace();  
         }  
         return jsonStr;  
