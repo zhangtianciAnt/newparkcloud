@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 
 @Document(collection = "user")
 public class User extends BaseModel {
-    private static final long serialVersionUID = 1L;
     private String id;
     private String userName;
     private String passWord;

@@ -3,6 +3,7 @@ package com.nt.utils;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -59,13 +60,15 @@ public class MongoObject {
             String name = field[j].getName();
 
             //判断拥有Teantid时，将TenantId设置为检索条件
-            if (name.equals(AuthConstants.TENANTID) && field[j].get(obj) != null) {
+            if (name.equals(AuthConstants.TENANTID) && !StringUtils.isEmpty(field[j].get(obj).toString())) {
                 query.addCriteria(Criteria.where(AuthConstants.TENANTID).is(field[j].get(obj)));
             }
 
             //判断拥有owner时，将owner设置为检索条件
             if (name.equals(AuthConstants.OWNERS) && field[j].get(obj) != null) {
-                query.addCriteria(Criteria.where(AuthConstants.OWNER).in(field[j].get(obj)));
+                if (((List) field[j].get(obj)).size() > 0) {
+                    query.addCriteria(Criteria.where(AuthConstants.OWNER).in(field[j].get(obj)));
+                }
             }
         }
         return query;

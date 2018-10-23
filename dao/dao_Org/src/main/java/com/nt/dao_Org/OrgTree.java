@@ -13,7 +13,6 @@ import java.util.Date;
 节点类型	TYPE
 */
 public class OrgTree extends BaseModel {
-    private static final long serialVersionUID = 1L;
 
     private String orgid;
     private String nodeid;
@@ -77,7 +76,6 @@ public class OrgTree extends BaseModel {
     部门名	DEPARTMENTNAME
     */
     public class Orgs extends BaseModel {
-        private static final long serialVersionUID = 1L;
 
         private String nodeid;
         private String title;
@@ -225,7 +223,6 @@ public class OrgTree extends BaseModel {
         账号	BANKNUMBER
         */
         public class Invoiceinfo extends BaseModel {
-            private static final long serialVersionUID = 1L;
 
             private String companyname;
             private String dutynumber;
@@ -300,7 +297,6 @@ public class OrgTree extends BaseModel {
         公司ID	COMPANYID
         */
         public class Bankinfo extends BaseModel {
-            private static final long serialVersionUID = 1L;
 
             private String bankaccid;
             private String bankname;
