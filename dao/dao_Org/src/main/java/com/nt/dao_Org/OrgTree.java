@@ -4,6 +4,7 @@ import com.nt.utils.BaseModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Document(collection = "orgtree")
 /*
@@ -18,7 +19,7 @@ public class OrgTree extends BaseModel {
     private String nodeid;
     private String title;
     private String type; //1：公司；2：部门
-    private Orgs orgs;
+    private List<Orgs> orgs;
 
     public String getOrgid() {
         return orgid;
@@ -52,11 +53,11 @@ public class OrgTree extends BaseModel {
         this.type = type;
     }
 
-    public Orgs getOrgs() {
+    public List<Orgs> getOrgs() {
         return orgs;
     }
 
-    public void setOrgs(Orgs orgs) {
+    public void setOrgs(List<Orgs> orgs) {
         this.orgs = orgs;
     }
 
@@ -91,7 +92,7 @@ public class OrgTree extends BaseModel {
         private String unifedsocialcreditcode;
         private Date establish;
         private Invoiceinfo invoiceinfo;
-        private Bankinfo bankinfo;
+        private List<Bankinfo> bankinfo;
 
         public String getNodeid() {
             return nodeid;
@@ -205,11 +206,11 @@ public class OrgTree extends BaseModel {
             this.invoiceinfo = invoiceinfo;
         }
 
-        public Bankinfo getBankinfo() {
+        public List<Bankinfo> getBankinfo() {
             return bankinfo;
         }
 
-        public void setBankinfo(Bankinfo bankinfo) {
+        public void setBankinfo(List<Bankinfo> bankinfo) {
             this.bankinfo = bankinfo;
         }
 
