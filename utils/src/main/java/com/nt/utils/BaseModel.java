@@ -1,5 +1,6 @@
 package com.nt.utils;
 
+import lombok.*;
 import org.springframework.data.annotation.Transient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+@Data
 public abstract class BaseModel implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -44,78 +46,6 @@ public abstract class BaseModel implements Serializable{
 
 	@Transient
 	private List<String> ids;
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Date getCreateon() {
-		return createon;
-	}
-
-	public void setCreateon(Date createon) {
-		this.createon = createon;
-	}
-
-	public String getCreateby() {
-		return createby;
-	}
-
-	public void setCreateby(String createby) {
-		this.createby = createby;
-	}
-
-	public Date getModifyon() {
-		return modifyon;
-	}
-
-	public void setModifyon(Date modifyon) {
-		this.modifyon = modifyon;
-	}
-
-	public String getModifyby() {
-		return modifyby;
-	}
-
-	public void setModifyby(String modifyby) {
-		this.modifyby = modifyby;
-	}
-
-	public String getOwner() {
-		return owner;
-	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-	public String getTenantid() {
-		return tenantid;
-	}
-
-	public void setTenantid(String tenantid) {
-		this.tenantid = tenantid;
-	}
-
-    public List<String> getOwners() {
-        return owners;
-    }
-
-    public void setOwners(List<String> owners) {
-        this.owners = owners;
-    }
-
-    public List<String> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<String> ids) {
-        this.ids = ids;
-    }
 
     public void preInsert(TokenModel tokenModel){
 	    this.createby = tokenModel.getUserId();

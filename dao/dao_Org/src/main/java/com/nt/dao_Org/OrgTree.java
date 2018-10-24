@@ -3,6 +3,7 @@ package com.nt.dao_Org;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.BaseModel;
 import com.nt.utils.TokenModel;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.List;
 节点名称	TITLE
 节点类型	TYPE
 */
+@Data
 public class OrgTree extends BaseModel {
 
     private String orgid;
@@ -24,54 +26,7 @@ public class OrgTree extends BaseModel {
     private List<Orgs> orgs;
     private List<OrgTree> orgtrees;
 
-    public String getOrgid() {
-        return orgid;
-    }
-
-    public void setOrgid(String orgid) {
-        this.orgid = orgid;
-    }
-
-    public String getNodeid() {
-        return nodeid;
-    }
-
-    public void setNodeid(String nodeid) {
-        this.nodeid = nodeid;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public List<Orgs> getOrgs() {
-        return orgs;
-    }
-
-    public void setOrgs(List<Orgs> orgs) {
-        this.orgs = orgs;
-    }
-
-    public List<OrgTree> getOrgTrees() {
-        return orgtrees;
-    }
-
-    public void setOrgTrees(List<OrgTree> orgtrees) {
-        this.orgtrees = orgtrees;
-    }
-
+    @Override
     public void preInsert(TokenModel tokenModel){
         for (Orgs tmp: this.orgs) {
             tmp.setCreateby(tokenModel.getUserId());
@@ -92,8 +47,10 @@ public class OrgTree extends BaseModel {
         }
     }
 
+    @Override
     public void preUpdate(TokenModel tokenModel){
         for (Orgs tmp: this.orgs) {
+            tmp.setModifyby(tokenModel.getUserId());
             tmp.setModifyby(tokenModel.getUserId());
             tmp.setModifyon(new Date());
         }
@@ -116,6 +73,7 @@ public class OrgTree extends BaseModel {
         部门ID	DEPARTMENTID
         部门名	DEPARTMENTNAME
         */
+    @Data
     public static class Orgs extends BaseModel {
 
         private String nodeid;
@@ -134,126 +92,6 @@ public class OrgTree extends BaseModel {
         private Invoiceinfo invoiceinfo;
         private List<Bankinfo> bankinfo;
 
-        public String getNodeid() {
-            return nodeid;
-        }
-
-        public void setNodeid(String nodeid) {
-            this.nodeid = nodeid;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getDepartmentid() {
-            return departmentid;
-        }
-
-        public void setDepartmentid(String departmentid) {
-            this.departmentid = departmentid;
-        }
-
-        public String getDepartmentname() {
-            return departmentname;
-        }
-
-        public void setDepartmentname(String departmentname) {
-            this.departmentname = departmentname;
-        }
-
-        public String getCompanyid() {
-            return companyid;
-        }
-
-        public void setCompanyid(String companyid) {
-            this.companyid = companyid;
-        }
-
-        public String getCompanyshortname() {
-            return companyshortname;
-        }
-
-        public void setCompanyshortname(String companyshortname) {
-            this.companyshortname = companyshortname;
-        }
-
-        public String getCompanyen() {
-            return companyen;
-        }
-
-        public void setCompanyen(String companyen) {
-            this.companyen = companyen;
-        }
-
-        public String getCompanyname() {
-            return companyname;
-        }
-
-        public void setCompanyname(String companyname) {
-            this.companyname = companyname;
-        }
-
-        public String getCompanyaddress() {
-            return companyaddress;
-        }
-
-        public void setCompanyaddress(String companyaddress) {
-            this.companyaddress = companyaddress;
-        }
-
-        public String getCompanycorporation() {
-            return companycorporation;
-        }
-
-        public void setCompanycorporation(String companycorporation) {
-            this.companycorporation = companycorporation;
-        }
-
-        public String getUnifedsocialcreditcode() {
-            return unifedsocialcreditcode;
-        }
-
-        public void setUnifedsocialcreditcode(String unifedsocialcreditcode) {
-            this.unifedsocialcreditcode = unifedsocialcreditcode;
-        }
-
-        public Date getEstablish() {
-            return establish;
-        }
-
-        public void setEstablish(Date establish) {
-            this.establish = establish;
-        }
-
-        public Invoiceinfo getInvoiceinfo() {
-            return invoiceinfo;
-        }
-
-        public void setInvoiceinfo(Invoiceinfo invoiceinfo) {
-            this.invoiceinfo = invoiceinfo;
-        }
-
-        public List<Bankinfo> getBankinfo() {
-            return bankinfo;
-        }
-
-        public void setBankinfo(List<Bankinfo> bankinfo) {
-            this.bankinfo = bankinfo;
-        }
-
         /*
         公司名称	COMPANYNAME
         纳税人识别号	DUTYNUMBER
@@ -263,6 +101,7 @@ public class OrgTree extends BaseModel {
         开户行	BANKBRANCH
         账号	BANKNUMBER
         */
+        @Data
         public static class Invoiceinfo extends BaseModel {
 
             private String companyname;
@@ -272,62 +111,6 @@ public class OrgTree extends BaseModel {
             private String bankname;
             private String bankbranch;
             private String banknumber;
-
-            public String getCompanyname() {
-                return companyname;
-            }
-
-            public void setCompanyname(String companyname) {
-                this.companyname = companyname;
-            }
-
-            public String getDutynumber() {
-                return dutynumber;
-            }
-
-            public void setDutynumber(String dutynumber) {
-                this.dutynumber = dutynumber;
-            }
-
-            public String getCompanyaddress() {
-                return companyaddress;
-            }
-
-            public void setCompanyaddress(String companyaddress) {
-                this.companyaddress = companyaddress;
-            }
-
-            public String getPhone() {
-                return phone;
-            }
-
-            public void setPhone(String phone) {
-                this.phone = phone;
-            }
-
-            public String getBankname() {
-                return bankname;
-            }
-
-            public void setBankname(String bankname) {
-                this.bankname = bankname;
-            }
-
-            public String getBankbranch() {
-                return bankbranch;
-            }
-
-            public void setBankbranch(String bankbranch) {
-                this.bankbranch = bankbranch;
-            }
-
-            public String getBanknumber() {
-                return banknumber;
-            }
-
-            public void setBanknumber(String banknumber) {
-                this.banknumber = banknumber;
-            }
         }
 
         /*
@@ -337,6 +120,7 @@ public class OrgTree extends BaseModel {
         银行账号	BANKNUMBER
         公司ID	COMPANYID
         */
+        @Data
         public static class Bankinfo extends BaseModel {
 
             private String bankaccid;
@@ -344,46 +128,6 @@ public class OrgTree extends BaseModel {
             private String bankbranch;
             private String banknumber;
             private String companyid;
-
-            public String getBankaccid() {
-                return bankaccid;
-            }
-
-            public void setBankaccid(String bankaccid) {
-                this.bankaccid = bankaccid;
-            }
-
-            public String getBankname() {
-                return bankname;
-            }
-
-            public void setBankname(String bankname) {
-                this.bankname = bankname;
-            }
-
-            public String getBankbranch() {
-                return bankbranch;
-            }
-
-            public void setBankbranch(String bankbranch) {
-                this.bankbranch = bankbranch;
-            }
-
-            public String getBanknumber() {
-                return banknumber;
-            }
-
-            public void setBanknumber(String banknumber) {
-                this.banknumber = banknumber;
-            }
-
-            public String getCompanyid() {
-                return companyid;
-            }
-
-            public void setCompanyid(String companyid) {
-                this.companyid = companyid;
-            }
         }
     }
 }

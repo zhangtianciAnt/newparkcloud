@@ -50,7 +50,7 @@ public class OrgTreeController {
      */
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody OrgTree orgTree, HttpServletRequest request) throws Exception {
-        if (orgTree == null || StringUtils.isEmpty(orgTree.getOrgid()) || orgTree.getOrgTrees() == null) {
+        if (orgTree == null || StringUtils.isEmpty(orgTree) || orgTree.getOrgtrees() == null) {
             log.warn(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
