@@ -19,6 +19,10 @@ import java.util.List;
 @Data
 public class OrgTree extends BaseModel {
 
+    /**
+     * 数据主键ID
+     */
+    private String _id;
     private String orgid;
     private String nodeid;
     private String title;
