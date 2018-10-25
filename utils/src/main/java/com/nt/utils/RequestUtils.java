@@ -2,13 +2,14 @@ package com.nt.utils;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.nt.dao_Utils.BaseModel;
+import com.nt.dao_Utils.TokenModel;
 import com.nt.utils.impl.TokenServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 

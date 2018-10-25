@@ -3,14 +3,12 @@ package com.nt.service_Org.Impl;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.TokenModel;
-import com.nt.utils.impl.TokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 

@@ -1,11 +1,9 @@
 package com.nt.utils.impl;
 
 import cn.hutool.crypto.SecureUtil;
+import com.nt.dao_Utils.TokenModel;
 import com.nt.utils.AuthConstants;
-import com.nt.utils.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class TokenServiceImpl implements TokenService {

@@ -1,44 +1,50 @@
 package com.nt.service_Org.Impl;
 
-
-import com.nt.dao_Org.*;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static com.nt.utils.MongoObject.CustmizeQuery;
-import static com.nt.utils.MongoObject.CustmizeUpdate;
-
+/**
+ * @ProjectName: newparkcloud
+ * @Package: com.nt.service_Org.Impl
+ * @ClassName: UserServiceImpl
+ * @Description: java类作用描述
+ * @Author: SKAIXX
+ * @CreateDate: 2018/10/25
+ * @UpdateUser: SKAIXX
+ * @UpdateDate: 2018/10/25
+ * @UpdateRemark: 更新说明
+ * @Version: 1.0
+ */
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
+    /**
+     * @方法名：register
+     * @描述：用户注册
+     * @创建日期：2018/10/25
+     * @作者：SKAIXX
+     * @参数：[userAccount, customerInfo]
+     * @返回值：void
+     */
     @Override
-    public void save(User user) throws Exception {
-        mongoTemplate.save(user);
+    public void register(UserAccount userAccount, CustomerInfo customerInfo) throws Exception {
+        // region 注册验证
+
+        // endregion
     }
 
+    /**
+     * @方法名：saveCustomerInfo
+     * @描述：添加客户信息（公司/个人（个人用户包括注册用户及个人客户））
+     * @创建日期：2018/10/25
+     * @作者：SKAIXX
+     * @参数：[customerInfo]
+     * @返回值：void
+     */
     @Override
-    public List<User> get(User user) throws Exception {
-        Query query = CustmizeQuery(user);
-        query.addCriteria(Criteria.where("_id").is("4a678267-4753-4616-8589-ea7cc53713bf"));
-        List<User> users = mongoTemplate.find(query, User.class);
-        return users;
-    }
-
-    @Override
-    public void up(User user) throws Exception {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is("4a678267-4753-4616-8589-ea7cc53713bf"));
-        Update update = CustmizeUpdate(user,true);
-        mongoTemplate.updateMulti(query, update, "user");
+    public void saveCustomerInfo(CustomerInfo customerInfo) throws Exception {
 
     }
 }
