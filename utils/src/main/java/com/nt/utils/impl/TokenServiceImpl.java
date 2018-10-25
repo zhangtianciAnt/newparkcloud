@@ -24,8 +24,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public TokenModel setToken(TokenModel tokenModel) {
-        tokenModel.setToken(SecureUtil.md5(tokenModel.getToken()));
-        tokenModel.setDate(new Date());
+        tokenModel.setToken(SecureUtil.md5(tokenModel.getUserId()));
+        tokenModel.setExpireDate(new Date());
         mongoTemplate.save(tokenModel);
         return tokenModel;
     }
@@ -44,5 +44,12 @@ public class TokenServiceImpl implements TokenService {
         Query query = new Query(Criteria.where("token").is(token));
         TokenModel rst = mongoTemplate.findOne(query, TokenModel.class);
         return rst;
+    }
+
+    @Override
+    public void clearToken(HttpServletRequest request) {
+        String token = request.getHeader(AuthConstants.AUTH_TOKEN);
+        Query query = new Query(Criteria.where("token").is(token));
+        mongoTemplate.remove(query,TokenModel.class);
     }
 }
