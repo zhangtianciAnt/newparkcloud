@@ -9,60 +9,53 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @ProjectName: newparkcloud
+ * @Package: com.nt.dao_Org
+ * @ClassName: OrgTree
+ * @Description: 组织机构
+ * @Author: wenchao
+ * @CreateDate: 2018/10/25
+ * @UpdateUser: wenchao
+ * @UpdateDate: 2018/10/25
+ * @UpdateRemark: 更新说明
+ * @Version: 1.0
+ */
 @Document(collection = "orgtree")
-/*
-组织ID	ORGID
-节点ID	NODEID
-节点名称	TITLE
-节点类型	TYPE
-*/
 @Data
 public class OrgTree extends BaseModel {
-
+    // region properties
     /**
      * 数据主键ID
      */
     private String _id;
+    /**
+    组织ID	ORGID
+    */
     private String orgid;
+    /**
+    节点ID	NODEID
+    */
     private String nodeid;
+    /**
+    节点名称	TITLE
+    */
     private String title;
+    /**
+    节点类型	TYPE
+    */
     private String type; //1：公司；2：部门
+    /**
+    组织单元	ORGS
+    */
     private List<Orgs> orgs;
+    /**
+    下级组织机构	ORGTREES
+    */
     private List<OrgTree> orgtrees;
 
-    @Override
-    public void preInsert(TokenModel tokenModel){
-        for (Orgs tmp: this.orgs) {
-            tmp.setCreateby(tokenModel.getUserId());
-            tmp.setCreateon(new Date());
-            tmp.setOwner(tokenModel.getUserId());
-            tmp.setTenantid(tokenModel.getTenantId());
-            tmp.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-        }
-        this.setCreateby(tokenModel.getUserId());
-        this.setCreateon(new Date());
-        this.setOwner(tokenModel.getUserId());
-        this.setTenantid(tokenModel.getTenantId());
-        this.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-        if (orgtrees != null && orgtrees.size() > 0) {
-            for (OrgTree tmp : this.orgtrees) {
-                preInsert(tokenModel);
-            }
-        }
-    }
-
-    @Override
-    public void preUpdate(TokenModel tokenModel){
-        for (Orgs tmp: this.orgs) {
-            tmp.setModifyby(tokenModel.getUserId());
-            tmp.setModifyby(tokenModel.getUserId());
-            tmp.setModifyon(new Date());
-        }
-        this.setModifyby(tokenModel.getUserId());
-        this.setModifyon(new Date());
-    }
-
-    /*
+    // region 组织单元
+    /**
         节点ID	NODEID
         节点名称	TITLE
         节点类型	TYPE
@@ -96,6 +89,7 @@ public class OrgTree extends BaseModel {
         private Invoiceinfo invoiceinfo;
         private List<Bankinfo> bankinfo;
 
+        // region 公司开票信息
         /*
         公司名称	COMPANYNAME
         纳税人识别号	DUTYNUMBER
@@ -116,7 +110,9 @@ public class OrgTree extends BaseModel {
             private String bankbranch;
             private String banknumber;
         }
+        // endregion
 
+        // region 公司账户信息
         /*
         银行账户ID	BANKACCID
         银行名称	BANKNAME
@@ -133,7 +129,60 @@ public class OrgTree extends BaseModel {
             private String banknumber;
             private String companyid;
         }
+        // endregion
     }
+    // endregion
+    // endregion
+
+    // region method
+    /**
+     * @方法名：preInsert
+     * @描述：数据插入前，基础字段数据更新
+     * @创建日期：2018/10/25
+     * @作者：SKAIXX
+     * @参数：[tokenModel]
+     * @返回值：void
+     */
+    @Override
+    public void preInsert(TokenModel tokenModel){
+        for (Orgs tmp: this.orgs) {
+            tmp.setCreateby(tokenModel.getUserId());
+            tmp.setCreateon(new Date());
+            tmp.setOwner(tokenModel.getUserId());
+            tmp.setTenantid(tokenModel.getTenantId());
+            tmp.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        }
+        this.setCreateby(tokenModel.getUserId());
+        this.setCreateon(new Date());
+        this.setOwner(tokenModel.getUserId());
+        this.setTenantid(tokenModel.getTenantId());
+        this.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        if (orgtrees != null && orgtrees.size() > 0) {
+            for (OrgTree tmp : this.orgtrees) {
+                preInsert(tokenModel);
+            }
+        }
+    }
+
+    /**
+     * @方法名：preUpdate
+     * @描述：数据更新前，基础字段数据更新
+     * @创建日期：2018/10/25
+     * @作者：SKAIXX
+     * @参数：[tokenModel]
+     * @返回值：void
+     */
+    @Override
+    public void preUpdate(TokenModel tokenModel){
+        for (Orgs tmp: this.orgs) {
+            tmp.setModifyby(tokenModel.getUserId());
+            tmp.setModifyby(tokenModel.getUserId());
+            tmp.setModifyon(new Date());
+        }
+        this.setModifyby(tokenModel.getUserId());
+        this.setModifyon(new Date());
+    }
+    // endregion
 }
 
 
