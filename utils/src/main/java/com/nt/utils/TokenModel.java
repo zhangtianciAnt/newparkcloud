@@ -38,5 +38,5 @@ public class TokenModel implements Serializable {
 	// ID列表
 	private List<String> idList;
 
-    private Date date;
+    private Date expireDate;
 }

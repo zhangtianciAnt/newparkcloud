@@ -24,8 +24,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public TokenModel setToken(TokenModel tokenModel) {
-        tokenModel.setToken(SecureUtil.md5(tokenModel.getToken()));
-        tokenModel.setDate(new Date());
+        tokenModel.setToken(SecureUtil.md5(tokenModel.getUserId()));
+        tokenModel.setExpireDate(new Date());
         mongoTemplate.save(tokenModel);
         return tokenModel;
     }
