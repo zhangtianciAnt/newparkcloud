@@ -33,4 +33,6 @@ public class AuthConstants {
     public static final  String TENANTID ="tenantid";
     public static final  String OWNER ="owner";
     public static final  String OWNERS ="owners";
+
+	public static final String APPLYTENANTID = "APPLYTENANTID";
 }
