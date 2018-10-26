@@ -1,8 +1,8 @@
 package com.nt.dao_Org;
 
 import com.nt.utils.AuthConstants;
-import com.nt.utils.BaseModel;
-import com.nt.utils.TokenModel;
+import com.nt.utils.dao.BaseModel;
+import com.nt.utils.dao.TokenModel;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 

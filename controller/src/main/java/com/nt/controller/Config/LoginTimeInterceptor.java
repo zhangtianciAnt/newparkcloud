@@ -5,7 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.nt.utils.ApiCode;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
-import com.nt.utils.TokenModel;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
