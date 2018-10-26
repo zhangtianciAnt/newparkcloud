@@ -2,7 +2,6 @@ package com.nt.service_Org.Impl;
 
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
-import com.nt.utils.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;

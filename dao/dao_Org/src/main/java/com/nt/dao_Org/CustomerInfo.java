@@ -1,8 +1,8 @@
 package com.nt.dao_Org;
 
 import com.nt.utils.AuthConstants;
-import com.nt.utils.BaseModel;
-import com.nt.utils.TokenModel;
+import com.nt.utils.dao.BaseModel;
+import com.nt.utils.dao.TokenModel;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -37,10 +37,6 @@ public class CustomerInfo extends BaseModel {
      * 用户ID
      */
     private String userid;
-    /**
-     * 租户ID
-     */
-    private String tenantid;
     /**
      * 客户类型 0:企业;1:个人
      */

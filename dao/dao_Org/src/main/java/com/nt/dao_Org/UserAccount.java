@@ -1,6 +1,7 @@
 package com.nt.dao_Org;
 
-import com.nt.utils.BaseModel;
+
+import com.nt.utils.dao.BaseModel;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "useraccount")
 @Data
 public class UserAccount extends BaseModel {
-    // region properties
+
     /**
      * 数据主键ID
      */
@@ -45,5 +46,5 @@ public class UserAccount extends BaseModel {
      * 账户类型 0:内部;1:外部
      */
     private String usertype;
-    // endregion
+
 }

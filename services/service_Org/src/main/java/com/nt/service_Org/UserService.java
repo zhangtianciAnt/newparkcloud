@@ -3,6 +3,7 @@ package com.nt.service_Org;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
+import com.nt.utils.dao.TokenModel;
 
 /**
  * @ProjectName: newparkcloud
@@ -19,7 +20,10 @@ import com.nt.dao_Org.UserAccount;
 public interface UserService {
 
     // 用户注册
-    void register(UserAccount userAccount, CustomerInfo customerInfo) throws Exception;
+    void register(UserAccount userAccount) throws Exception;
+
+    // 用户注册
+    TokenModel login(UserAccount userAccount) throws Exception;
 
     // 添加客户信息（公司/个人（个人用户包括注册用户及个人客户））
     void saveCustomerInfo(CustomerInfo customerInfo) throws Exception;

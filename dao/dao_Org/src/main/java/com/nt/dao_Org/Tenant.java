@@ -1,6 +1,7 @@
 package com.nt.dao_Org;
 
-import com.nt.utils.BaseModel;
+
+import com.nt.utils.dao.BaseModel;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 

@@ -47,6 +47,11 @@ public abstract class BaseModel implements Serializable{
 	@Transient
 	private List<String> ids;
 
+	public void preInsert(){
+		this.createon = new Date();
+		this.status = AuthConstants.DEL_FLAG_NORMAL;
+	}
+
     public void preInsert(TokenModel tokenModel){
 	    this.createby = tokenModel.getUserId();
 	    this.createon = new Date();
