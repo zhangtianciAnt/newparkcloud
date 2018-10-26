@@ -1,7 +1,7 @@
-package com.nt.dao_Utils;
+package com.nt.utils.dao;
 
 import com.nt.utils.AuthConstants;
-import lombok.*;
+import lombok.Data;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;

@@ -2,8 +2,8 @@ package com.nt.utils;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.nt.dao_Utils.BaseModel;
-import com.nt.dao_Utils.TokenModel;
+import com.nt.utils.dao.BaseModel;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.impl.TokenServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestUtils {
-	private static Logger log = LoggerFactory.getLogger(RequestUtils.class); 
+	private static Logger log = LoggerFactory.getLogger(RequestUtils.class);
 	 private static final String OFFSET    = "offset";
 	 private static final String LIMITE    = "limit";
 	/**
@@ -45,7 +45,7 @@ public class RequestUtils {
 			return tokenModel.getUserType();
 		}
 	}
-	
+
 	/**
 	 * 获取当前用户租户ID
 	 *
@@ -62,7 +62,7 @@ public class RequestUtils {
 			return tokenModel.getTenantId();
 		}
 	}
-	
+
 	/**
 	 * 获取负责人列表
 	 *

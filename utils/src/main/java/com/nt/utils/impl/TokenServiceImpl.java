@@ -1,8 +1,8 @@
 package com.nt.utils.impl;
 
 import cn.hutool.crypto.SecureUtil;
-import com.nt.dao_Utils.TokenModel;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

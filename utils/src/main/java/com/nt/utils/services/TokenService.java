@@ -1,7 +1,8 @@
 package com.nt.utils.services;
 
 
-import com.nt.dao_Utils.TokenModel;
+
+import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
 

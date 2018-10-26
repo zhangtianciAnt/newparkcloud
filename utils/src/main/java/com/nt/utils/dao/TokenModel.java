@@ -1,4 +1,4 @@
-package com.nt.dao_Utils;
+package com.nt.utils.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
