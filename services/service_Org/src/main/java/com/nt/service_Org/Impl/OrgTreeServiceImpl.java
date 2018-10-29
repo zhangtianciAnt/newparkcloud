@@ -41,20 +41,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
      * @返回值：void
      */
     @Override
-    public void save(OrgTree orgTree, HttpServletRequest request) throws Exception {
-        // TODO:登陆功能实现后，需要重新确认
-        // 判断DB中是否存在此条数据
-//        Query query = CustmizeQuery(orgTree);
-//        orgTree = mongoTemplate.findOne(query, orgTree.getClass());
-//        // 获取token信息
-//        TokenServiceImpl tokenService = new TokenServiceImpl();
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        // 更新
-//        if (orgTree != null) {
-//            orgTree.preUpdate(tokenModel);
-//        } else {    // 插入
-//            orgTree.preInsert(tokenModel);
-//        }
+    public void save(OrgTree orgTree) throws Exception {
         // 执行更新操作
         mongoTemplate.save(orgTree);
     }

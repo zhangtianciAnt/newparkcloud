@@ -23,5 +23,5 @@ public interface OrgTreeService {
     OrgTree get(OrgTree orgTree) throws Exception;
 
     // 更新或插入组织机构属性结构
-    void save(OrgTree orgTree, HttpServletRequest request) throws Exception;
+    void save(OrgTree orgTree) throws Exception;
 }
