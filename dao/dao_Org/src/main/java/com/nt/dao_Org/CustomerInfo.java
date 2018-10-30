@@ -57,6 +57,10 @@ public class CustomerInfo extends BaseModel {
     public static class UserInfo {
 
         /**
+         * 数据主键ID
+         */
+        private String _id;
+        /**
          * 姓名
          */
         private String customername;
@@ -114,6 +118,11 @@ public class CustomerInfo extends BaseModel {
     // region 企业信息
     @Data
     public static class CompanyInfo {
+
+        /**
+         * 数据主键ID
+         */
+        private String _id;
         /**
          * 企业名称
          */
@@ -158,6 +167,11 @@ public class CustomerInfo extends BaseModel {
         // region 租户信息
         @Data
         public static class TenantInfo {
+
+            /**
+             * 数据主键ID
+             */
+            private String _id;
             /**
              * 企业LOGO
              */
@@ -192,6 +206,11 @@ public class CustomerInfo extends BaseModel {
         // region 联系人信息
         @Data
         public static class ContactInfo extends BaseModel {
+
+            /**
+             * 数据主键ID
+             */
+            private String _id;
             /**
              * 姓名
              */
@@ -222,6 +241,11 @@ public class CustomerInfo extends BaseModel {
         // region 开票信息
         @Data
         public static class InvoiceInfo {
+
+            /**
+             * 数据主键ID
+             */
+            private String _id;
             /**
              * 开户行
              */
@@ -248,6 +272,11 @@ public class CustomerInfo extends BaseModel {
         // region 工商信息
         @Data
         public static class IndustryInfo {
+
+            /**
+             * 数据主键ID
+             */
+            private String _id;
             /**
              * 统一社会信息代码
              */

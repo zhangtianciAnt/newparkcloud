@@ -29,8 +29,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         try {
             if (StrUtil.isNotBlank(token)) {
                 // 验证token
-                TokenModel tokenModel = tokenService.getToken(request);
-                if (!(tokenModel != null && StrUtil.isNotBlank(tokenModel.getToken()))) {
+                if (!tokenService.validToken(request)) {
                     // 验证token失败，则返回直接返回用户未登录错误
                     errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
                     return false;
@@ -45,6 +44,9 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         } catch (Exception e) {
             return false;
         }
+
+        TokenModel tokenModel = tokenService.getToken(request);
+        tokenService.setToken(tokenModel);
         return true;
     }
 

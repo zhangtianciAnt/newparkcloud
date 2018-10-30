@@ -73,7 +73,7 @@ public class OrgTree extends BaseModel {
     @Data
     public static class Orgs extends BaseModel {
 
-        private String nodeid;
+        private String _id;
         private String title;
         private String type;
         private String departmentid;
@@ -101,7 +101,7 @@ public class OrgTree extends BaseModel {
         */
         @Data
         public static class Invoiceinfo extends BaseModel {
-
+            private String _id;
             private String companyname;
             private String dutynumber;
             private String companyaddress;
@@ -123,7 +123,7 @@ public class OrgTree extends BaseModel {
         @Data
         public static class Bankinfo extends BaseModel {
 
-            private String bankaccid;
+            private String _id;
             private String bankname;
             private String bankbranch;
             private String banknumber;

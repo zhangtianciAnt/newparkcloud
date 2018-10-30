@@ -20,6 +20,9 @@ import java.util.List;
 @Document(collection = "login")
 public class TokenModel implements Serializable {
 
+	//主键
+	private String _id;
+
 	// 用户编号
 	private String userId;
 
