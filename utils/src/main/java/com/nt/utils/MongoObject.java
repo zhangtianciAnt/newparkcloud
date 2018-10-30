@@ -59,9 +59,9 @@ public class MongoObject {
             field[j].setAccessible(true);
             String name = field[j].getName();
 
-            //判断拥有Teantid时，将TenantId设置为检索条件
-            if (name.equals(AuthConstants.TENANTID) && !StringUtils.isEmpty(field[j].get(obj).toString())) {
-                query.addCriteria(Criteria.where(AuthConstants.TENANTID).is(field[j].get(obj)));
+            //判断是否有值，自动拼接条件
+            if(field[j].get(obj) != null && !"serialVersionUID".equals(name)){
+                query.addCriteria(Criteria.where(name).is(field[j].get(obj)));
             }
 
             //判断拥有owner时，将owner设置为检索条件

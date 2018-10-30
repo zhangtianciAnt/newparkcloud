@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         TokenModel tokenModel = new TokenModel();
         //根据条件检索数据
         Query query = new Query();
-        query.addCriteria(Criteria.where("userid").is(userAccount.getUserid()));
+        query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
         List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
 
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.LOGIN_ERR_01));
         }else{
             //存在用户时，获取用户信息，生成token
-            tokenModel.setUserId(userAccountlist.get(0).getUserid());
+            tokenModel.setUserId(userAccountlist.get(0).get_id());
             tokenModel.setUserType(userAccountlist.get(0).getUsertype());
             tokenModel.setTenantId(userAccountlist.get(0).getTenantid());
             tokenService.setToken(tokenModel);

@@ -52,14 +52,24 @@ public class UserController {
         return ApiResult.success();
     }
 
+    //获取用户账户
+    @RequestMapping(value = "/getCurrentUserAccount",method={RequestMethod.POST})
+    public ApiResult getCurrentUserAccount(@RequestBody UserAccount userAccount) throws Exception {
+        if (userAccount == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+        }
+
+        var list = userService.getUserAccount(userAccount);
+        return ApiResult.success(list.size());
+    }
+
     //登陆
     @RequestMapping(value = "/login",method={RequestMethod.POST})
     public ApiResult login(@RequestBody UserAccount userAccount) throws Exception {
         if (userAccount == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
-        userService.login(userAccount);
-        return ApiResult.success();
+        return ApiResult.success(userService.login(userAccount));
     }
 
     //获取当前用户信息

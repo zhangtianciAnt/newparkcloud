@@ -38,8 +38,8 @@ public class OrgTreeController {
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         OrgTree orgTree = new OrgTree();
-        orgTree.setTenantid(RequestUtils.CurrentTenantId(request));
-        orgTree = RequestUtils.CurrentPageOwnerList(request, orgTree);
+//        orgTree.setTenantid(RequestUtils.CurrentTenantId(request));
+//        orgTree = RequestUtils.CurrentPageOwnerList(request, orgTree);
         return ApiResult.success(orgTreeService.get(orgTree));
     }
 
