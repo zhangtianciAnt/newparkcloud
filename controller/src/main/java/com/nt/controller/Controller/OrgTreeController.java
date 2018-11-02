@@ -38,6 +38,10 @@ public class OrgTreeController {
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         OrgTree orgTree = new OrgTree();
+        TokenModel tokenModel = tokenService.getToken(request);
+        orgTree.setTenantid(tokenModel.getTenantId());
+        orgTree.setOwners(tokenModel.getOwnerList());
+        orgTree.setIds(tokenModel.getIdList());
 //        orgTree.setTenantid(RequestUtils.CurrentTenantId(request));
 //        orgTree = RequestUtils.CurrentPageOwnerList(request, orgTree);
         return ApiResult.success(orgTreeService.get(orgTree));
@@ -53,11 +57,13 @@ public class OrgTreeController {
      */
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody OrgTree orgTree, HttpServletRequest request) throws Exception {
-        if (orgTree == null || StringUtils.isEmpty(orgTree) || orgTree.getOrgtrees() == null) {
+        if (orgTree == null || StringUtils.isEmpty(orgTree)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        orgTree.preInsert(tokenModel);
+        if(orgTree.getCreateby() == null || orgTree.getCreateon() == null){
+            orgTree.preInsert(tokenModel);
+        }
         orgTree.preUpdate(tokenModel);
         orgTreeService.save(orgTree);
         return ApiResult.success();
