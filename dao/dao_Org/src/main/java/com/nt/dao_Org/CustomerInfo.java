@@ -3,7 +3,9 @@ package com.nt.dao_Org;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -23,6 +25,8 @@ import java.util.List;
  */
 @Document(collection = "customerinfo")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerInfo extends BaseModel {
     // region properties
     /**

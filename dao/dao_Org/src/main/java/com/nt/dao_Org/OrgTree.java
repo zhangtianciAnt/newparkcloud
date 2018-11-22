@@ -2,7 +2,9 @@ package com.nt.dao_Org;
 
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.StringUtils;
 
@@ -24,6 +26,8 @@ import java.util.UUID;
  */
 @Document(collection = "orgtree")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrgTree extends BaseModel {
     // region properties
     /**

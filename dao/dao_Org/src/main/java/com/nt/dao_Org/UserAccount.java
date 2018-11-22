@@ -2,7 +2,9 @@ package com.nt.dao_Org;
 
 
 import com.nt.utils.dao.BaseModel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -19,6 +21,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document(collection = "useraccount")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserAccount extends BaseModel {
 
     /**
