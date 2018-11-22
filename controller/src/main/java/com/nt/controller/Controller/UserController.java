@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,9 +79,12 @@ public class UserController {
 
         var log = new Log();
         log.setType(AuthConstants.LOG_TYPE_LOGIN);
-        log.setLogs(new Log.Logs());
-        log.getLogs().setIp(HttpUtil.getClientIP(request));
-        log.getLogs().setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+        var logs = new Log.Logs();
+        logs.setIp(HttpUtil.getClientIP(request));
+        logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+        log.setLogs(new ArrayList<Log.Logs>());
+        log.getLogs().add(logs);
+        log.preInsert(tokenModel);
         logService.save(log);
 
         return ApiResult.success(tokenModel);

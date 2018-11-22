@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "log")
 @Data
 @AllArgsConstructor
@@ -24,7 +26,7 @@ public class Log extends BaseModel {
     /**
      * 日志数据
      */
-    private Logs logs;
+    private List<Logs> logs;
 
     /**
      * @方法名：preInsert
@@ -37,8 +39,10 @@ public class Log extends BaseModel {
     @Override
     public void preInsert(TokenModel tokenModel) {
         super.preInsert(tokenModel);
-        if (logs != null) {
-            logs.preInsert(tokenModel);
+        if (logs != null && logs.size() > 0) {
+            for (Logs tmp : this.logs) {
+                tmp.preInsert(tokenModel);
+            }
         }
     }
 
@@ -55,8 +59,10 @@ public class Log extends BaseModel {
     @Override
     public void preUpdate(TokenModel tokenModel) {
         super.preUpdate(tokenModel);
-        if (logs != null) {
-            logs.preUpdate(tokenModel);
+        if (logs != null && logs.size() > 0) {
+            for (Logs tmp : this.logs) {
+                tmp.preUpdate(tokenModel);
+            }
         }
     }
 
