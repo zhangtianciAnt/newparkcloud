@@ -42,6 +42,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
             }
 
         } catch (Exception e) {
+            errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
             return false;
         }
 
