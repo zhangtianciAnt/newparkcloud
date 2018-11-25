@@ -42,4 +42,15 @@ public class AuthConstants {
     public static final String LOG_EQUIPMENT_PC = "PC";
     public static final String LOG_EQUIPMENT_APP = "APP";
     public static final String LOG_EQUIPMENT_API = "API";
+
+    public static final String TODONOTICE_TYPE_TODO = "1";
+    public static final String TODONOTICE_TYPE_NOTICE = "2";
+
+    public static final String TODO_STATUS_TODO = "0";
+    public static final String TODO_STATUS_DOING = "2";
+    public static final String TODO_STATUS_DONE = "1";
+    public static final String TODO_STATUS_BACK = "9";
+
+    public static final String NOTICE_STATUS_TOREAD = "0";
+    public static final String NOTICE_STATUS_READED = "1";
 }
