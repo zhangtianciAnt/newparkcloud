@@ -1,5 +1,6 @@
 package com.nt.utils.dao;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.utils.AuthConstants;
 import lombok.Data;
 import org.springframework.data.annotation.Transient;
@@ -56,7 +57,9 @@ public abstract class BaseModel implements Serializable{
     public void preInsert(TokenModel tokenModel){
 	    this.createby = tokenModel.getUserId();
 	    this.createon = new Date();
-	    this.owner = tokenModel.getUserId();
+	    if(StrUtil.isEmpty(this.owner)){
+			this.owner = tokenModel.getUserId();
+		}
 	    this.tenantid = tokenModel.getTenantId();
         this.status = AuthConstants.DEL_FLAG_NORMAL;
     }

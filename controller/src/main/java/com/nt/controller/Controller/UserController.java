@@ -1,8 +1,11 @@
 package com.nt.controller.Controller;
 
+import cn.hutool.http.HttpUtil;
 import com.nt.controller.Start;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
+import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +45,8 @@ public class UserController {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private LogService logService;
     //注册
     @RequestMapping(value = "/register",method={RequestMethod.POST})
     public ApiResult addUser(@RequestBody UserAccount userAccount) throws Exception {
@@ -65,18 +71,30 @@ public class UserController {
 
     //登陆
     @RequestMapping(value = "/login",method={RequestMethod.POST})
-    public ApiResult login(@RequestBody UserAccount userAccount) throws Exception {
+    public ApiResult login(@RequestBody UserAccount userAccount,HttpServletRequest request) throws Exception {
         if (userAccount == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
-        return ApiResult.success(userService.login(userAccount));
+        TokenModel tokenModel = userService.login(userAccount);
+
+        var log = new Log();
+        log.setType(AuthConstants.LOG_TYPE_LOGIN);
+        var logs = new Log.Logs();
+        logs.setIp(HttpUtil.getClientIP(request));
+        logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+        log.setLogs(new ArrayList<Log.Logs>());
+        log.getLogs().add(logs);
+        log.preInsert(tokenModel);
+        logService.save(log);
+
+        return ApiResult.success(tokenModel);
     }
 
     //获取当前用户信息
     @RequestMapping(value = "/getCurrentUserInfo",method={RequestMethod.POST})
     public ApiResult getCurrentUserInfo(HttpServletRequest request) throws Exception {
         String userId = RequestUtils.CurrentUserId(request);
-        val customerInfo = new CustomerInfo();
+        var customerInfo = new CustomerInfo();
         customerInfo.setUserid(userId);
         return ApiResult.success(userService.getCustomerInfo(customerInfo));
     }
@@ -104,7 +122,7 @@ public class UserController {
     //当前用户申请成为正式租户
     @RequestMapping(value = "/applyCurrentUserTenantId",method={RequestMethod.POST})
     public ApiResult applyTenantId(HttpServletRequest request) throws Exception {
-        val userAccount = new UserAccount();
+        var userAccount = new UserAccount();
         userAccount.setUserid(RequestUtils.CurrentUserId(request));
         val userAccountlist = userService.getUserAccount(userAccount);
         if(userAccountlist.size() <= 0){
