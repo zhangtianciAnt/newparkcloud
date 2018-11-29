@@ -2,9 +2,6 @@ package com.nt.service_Org;
 
 import com.nt.dao_Org.OrgTree;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.service_Org
