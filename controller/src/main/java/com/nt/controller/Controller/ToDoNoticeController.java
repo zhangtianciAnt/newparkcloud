@@ -1,8 +1,6 @@
 package com.nt.controller.Controller;
 
-import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
