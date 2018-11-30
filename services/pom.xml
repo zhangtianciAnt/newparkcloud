@@ -6,6 +6,7 @@
     <artifactId>services</artifactId>
     <modules>
         <module>service_Org</module>
+        <module>service_Rent</module>
     </modules>
     <packaging>pom</packaging>
 
