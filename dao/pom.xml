@@ -8,7 +8,6 @@
 
     <modules>
         <module>dao_Org</module>
-        <module>dao_Rent</module>
     </modules>
     <packaging>pom</packaging>
 
