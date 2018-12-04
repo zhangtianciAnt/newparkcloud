@@ -49,23 +49,6 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     @Override
     public void updateNoticesStatus(ToDoNotice toDoNotice) throws Exception {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("notices.title").is(toDoNotice.getNotices().get(0).getTitle()));
-        query.addCriteria(Criteria.where("notices.owner").is(toDoNotice.getNotices().get(0).getOwner()));
-        List<Notices> rst = mongoTemplate.find(query,Notices.class);
-        if(rst.size() > 0){
-//            if(rst.get(0).getStatus().equals(AuthConstants.TODONOTICE_TYPE_TODO)){
-//                rst.get(0).getToDoInfos().addAll(toDoNotice.getToDoInfos());
-//
-//            }else{
-            rst.get(0).setTitle("2222");
-            mongoTemplate.save(rst.get(0));
-
-
-
-
-
-
-        }
+            mongoTemplate.save(toDoNotice);
     }
 }

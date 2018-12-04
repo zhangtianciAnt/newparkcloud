@@ -64,8 +64,8 @@ public class ToDoNoticeController {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        toDoNotice.preInsert(tokenModel);
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        toDoNotice.preInsert(tokenModel);
         toDoNoticeService.updateNoticesStatus(toDoNotice);
         return ApiResult.success();
     }
