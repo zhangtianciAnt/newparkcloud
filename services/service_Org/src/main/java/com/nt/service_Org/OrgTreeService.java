@@ -2,6 +2,8 @@ package com.nt.service_Org;
 
 import com.nt.dao_Org.OrgTree;
 
+import java.util.List;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.service_Org
@@ -21,4 +23,7 @@ public interface OrgTreeService {
 
     // 更新或插入组织机构属性结构
     void save(OrgTree orgTree) throws Exception;
+
+    // 获取当前组织机构树形结构
+    List<OrgTree> getById(OrgTree orgTree) throws Exception;
 }

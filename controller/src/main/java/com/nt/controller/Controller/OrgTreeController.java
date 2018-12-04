@@ -65,4 +65,22 @@ public class OrgTreeController {
         orgTreeService.save(orgTree);
         return ApiResult.success();
     }
+
+    /**
+     * @方法名：getById
+     * @描述：获取当前组织机构树形结构
+     * @创建日期：2018/12/03
+     * @作者：ZHANGYING
+     * @参数：[id, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getById", method = {RequestMethod.GET})
+    public ApiResult getById(String id, HttpServletRequest request) throws Exception {
+        OrgTree orgTree = new OrgTree();
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        orgTree.setTenantid(tokenModel.getTenantId());
+//        orgTree.setOwners(tokenModel.getOwnerList());
+        orgTree.set_id(id);
+        return ApiResult.success(orgTreeService.getById(orgTree));
+    }
 }
