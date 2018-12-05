@@ -44,6 +44,6 @@ public class Role extends BaseModel {
     /**
      * 应用权限集合
      */
-    private List<String> apps;
+    private List<AppPermission> apps;
     // endregion
 }

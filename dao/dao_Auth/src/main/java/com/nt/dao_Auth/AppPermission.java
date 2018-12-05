@@ -63,7 +63,7 @@ public class AppPermission extends BaseModel {
         /**
          * 菜单ID
          */
-        private String menuid;
+        private String _id;
 
         /**
          * 菜单名称
@@ -88,17 +88,21 @@ public class AppPermission extends BaseModel {
         /**
          * 表示顺序
          */
-        private String menuorder;
+        private String menuorderno;
 
         /**
          * 功能权限
          */
-        private List<actions> actionslist;
+        private List<actions> actions;
 
         // region 功能权限
         @Data
         private static class actions extends BaseModel {
             // region properties
+            /**
+             * 主键
+             */
+            private String _id;
             /**
              * 功能类型
              */
@@ -112,7 +116,12 @@ public class AppPermission extends BaseModel {
             /**
              * 数据权限
              */
-            private List<permissions> permissionslist;
+            private int auth;
+
+            /**
+             * 数据权限
+             */
+            private List<permissions> permissions;
 
             // region 数据权限
             @Data
