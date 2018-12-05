@@ -6,12 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_Org

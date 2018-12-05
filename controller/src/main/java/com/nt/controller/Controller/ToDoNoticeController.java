@@ -1,8 +1,8 @@
 package com.nt.controller.Controller;
 
-import com.nt.dao_Org.OrgTree;
+
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.service_Org.OrgTreeService;
+import com.nt.dao_Org.ToDoNotice.Notices;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
@@ -45,6 +45,28 @@ public class ToDoNoticeController {
         }
         toDoNotice.preInsert(tokenModel);
         toDoNoticeService.save(toDoNotice);
+        return ApiResult.success();
+    }
+
+    //获取消息
+    @RequestMapping(value = "/getmessage", method = {RequestMethod.GET})
+    public ApiResult get(HttpServletRequest request) throws Exception {
+        ToDoNotice message = new ToDoNotice();
+        TokenModel tokenModel = tokenService.getToken(request);
+        message.setTenantid(tokenModel.getTenantId());
+        message.setOwners(tokenModel.getOwnerList());
+        message.setIds(tokenModel.getIdList());
+        return ApiResult.success(toDoNoticeService.get(message));
+    }
+    //更新已阅
+    @RequestMapping(value = "/updatenoticesstatus", method = {RequestMethod.POST})
+    public ApiResult updatenoticesstatus(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
+        if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+        }
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        toDoNotice.preInsert(tokenModel);
+        toDoNoticeService.updateNoticesStatus(toDoNotice);
         return ApiResult.success();
     }
 }

@@ -3,17 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
-    <artifactId>dao</artifactId>
-
-    <modules>
-        <module>dao_Org</module>
-        <module>dao_Auth</module>
-    </modules>
-    <packaging>pom</packaging>
+    <artifactId>service_Auth</artifactId>
+    <packaging>jar</packaging>
 
     <parent>
-        <artifactId>newparkcloud</artifactId>
+        <artifactId>services</artifactId>
         <groupId>com.nt</groupId>
         <version>1.0.0</version>
     </parent>
@@ -21,11 +15,10 @@
     <dependencies>
         <dependency>
             <groupId>com.nt</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>dao_Auth</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
