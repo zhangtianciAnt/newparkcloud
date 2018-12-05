@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_Org
@@ -50,5 +52,13 @@ public class UserAccount extends BaseModel {
      * 账户类型 0:内部;1:外部
      */
     private String usertype;
+    /**
+     * 系统角色
+     */
+    private List<String> roles;
+    /**
+     * 账号状态
+     */
+    private String status;
 
 }
