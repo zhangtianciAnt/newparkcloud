@@ -58,7 +58,7 @@ public class AppPermission extends BaseModel {
 
     // region 菜单权限
     @Data
-    private static class menu extends BaseModel {
+    public static class menu extends BaseModel {
         // region properties
         /**
          * 菜单ID
@@ -68,7 +68,7 @@ public class AppPermission extends BaseModel {
         /**
          * 菜单名称
          */
-        private String menuname;
+        private String name;
 
         /**
          * 菜单路径
@@ -95,9 +95,14 @@ public class AppPermission extends BaseModel {
          */
         private List<actions> actions;
 
+        /**
+         * 子菜单
+         */
+        private List<menu> children;
+
         // region 功能权限
         @Data
-        private static class actions extends BaseModel {
+        public static class actions extends BaseModel {
             // region properties
             /**
              * 主键
@@ -111,7 +116,7 @@ public class AppPermission extends BaseModel {
             /**
              * 功能名称
              */
-            private String actionname;
+            private String name;
 
             /**
              * 数据权限
@@ -125,7 +130,7 @@ public class AppPermission extends BaseModel {
 
             // region 数据权限
             @Data
-            private static class permissions extends BaseModel {
+            public static class permissions extends BaseModel {
                 // region properties
                 /**
                  * 权限类型
