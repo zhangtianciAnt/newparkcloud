@@ -3,7 +3,9 @@ package com.nt.service_Org;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.UserVo;
 import com.nt.utils.dao.TokenModel;
+import org.apache.catalina.User;
 
 import java.util.List;
 
@@ -42,4 +44,18 @@ public interface UserService {
     // 更新客户信息（公司/个人（个人用户包括注册用户及个人客户））
     void upCustomerInfo(CustomerInfo customerInfo) throws Exception;
 
+    // 添加用户及用户信息
+    String addAccountCustomer(UserVo userVo) throws Exception;
+
+    // 根据orgid获取用户及用户信息列表
+    List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception;
+
+    // 根据用户id获取用户信息
+    UserVo getAccountCustomerById(String userid) throws Exception;
+
+    // 验证手机号是否重复
+    void mobileCheck(String mobilenumber) throws Exception;
+
+    // 更新用户状态
+    void updUserStatus(String userid, String status) throws Exception;
 }

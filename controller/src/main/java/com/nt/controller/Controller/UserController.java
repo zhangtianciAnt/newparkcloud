@@ -2,6 +2,7 @@ package com.nt.controller.Controller;
 
 import cn.hutool.http.HttpUtil;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.UserVo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.LogService;
@@ -131,6 +132,93 @@ public class UserController {
             userAccountlist.get(0).preUpdate(tokenModel);
             userService.upUserAccount(userAccountlist.get(0));
         }
+        return ApiResult.success();
+    }
+
+    /**
+     * @方法名：addAccountCustomer
+     * @描述：添加用户账号及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userVo, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/addAccountCustomer",method={RequestMethod.POST})
+    public ApiResult addAccountCustomer(@RequestBody UserVo userVo,HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        if(userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
+            userVo.getUserAccount().preUpdate(tokenModel);
+        } else {
+            userVo.getUserAccount().preInsert(tokenModel);
+        }
+
+        if(userVo.getCustomerInfo().getCreateon() != null && userVo.getCustomerInfo().getCreateby() != null) {
+            userVo.getCustomerInfo().preUpdate(tokenModel);
+        } else {
+            userVo.getCustomerInfo().preInsert(tokenModel);
+        }
+        return ApiResult.success(userService.addAccountCustomer(userVo));
+    }
+
+    /**
+     * @方法名：getAccountCustomer
+     * @描述：根据orgid获取用户账号及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[orgid, orgtype, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getAccountCustomer",method={RequestMethod.GET})
+    public ApiResult getAccountCustomer(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype));
+    }
+
+    /**
+     * @方法名：getAccountCustomerById
+     * @描述：根据用户id获取用户账号及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userid, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getAccountCustomerById",method={RequestMethod.GET})
+    public ApiResult getAccountCustomerById(String userid,HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomerById(userid));
+    }
+
+    /**
+     * @方法名：mobileCheck
+     * @描述：验证手机号是否重复
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[mobileCheck]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/mobileCheck",method={RequestMethod.GET})
+    public ApiResult mobileCheck(String mobilenumber,HttpServletRequest request) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            userService.mobileCheck(mobilenumber);
+            return ApiResult.success();
+        }catch(LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        }
+    }
+
+    /**
+     * @方法名：updUserStatus
+     * @描述：更新用户状态
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userid, status, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/updUserStatus",method={RequestMethod.GET})
+    public ApiResult updUserStatus(String userid, String status, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        userService.updUserStatus(userid, status);
         return ApiResult.success();
     }
 }

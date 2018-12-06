@@ -2,6 +2,7 @@ package com.nt.service_Org.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.UserVo;
 import com.nt.service_Org.UserService;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -9,13 +10,16 @@ import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -150,4 +154,124 @@ public class UserServiceImpl implements UserService {
         mongoTemplate.save(customerInfo);
     }
 
-}
+    /**
+     * @方法名：addAccountCustomer
+     * @描述：添加用户及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userVo]
+     * @返回值：_id
+     */
+    @Override
+    public String addAccountCustomer(UserVo userVo) throws Exception {
+        UserAccount userAccount = new UserAccount();
+        BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
+        mongoTemplate.save(userAccount);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+        query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+        List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
+        if(userAccountlist.size() > 0) {
+            String _id = userAccountlist.get(0).get_id();
+            CustomerInfo customerInfo = new CustomerInfo();
+            BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
+            CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+            BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
+            customerInfo.setUserid(_id);
+            customerInfo.setUserinfo(userInfo);
+            mongoTemplate.save(customerInfo);
+            return _id;
+        }else {
+            return "";
+        }
+    }
+
+    /**
+     * @方法名：getAccountCustomer
+     * @描述：根据orgid获取用户及用户信息列表
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[orgid, orgtype]
+     * @返回值：List<CustomerInfo>
+     */
+    @Override
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception{
+        Query query = new Query();
+        if("1".equals(orgtype)) {
+            query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+            List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+            return customerInfos;
+        }else {
+            query.addCriteria(Criteria.where("userinfo.departmentid").is(orgid));
+            List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+            return customerInfos;
+        }
+    }
+
+    /**
+     * @方法名：getAccountCustomerById
+     * @描述：根据用户id获取用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userid]
+     * @返回值：CustomerInfo
+     */
+    @Override
+    public UserVo getAccountCustomerById(String userid) throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(userid));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        Query queryAccount = new Query();
+        queryAccount.addCriteria(Criteria.where("_id").is(userid));
+        UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
+        UserVo userVo = new UserVo();
+        userVo.setCustomerInfo(customerInfo);
+        userVo.setUserAccount(userAccount);
+        return userVo;
+    }
+
+    /**
+     * @方法名：mobileCheck
+     * @描述：验证手机号是否重复
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[mobilenumber]
+     * @返回值：void
+     */
+    @Override
+    public void mobileCheck(String mobilenumber) throws Exception{
+        try{
+            Query query = new Query();
+            query.addCriteria(Criteria.where("account").is(mobilenumber));
+            List<UserAccount> userAccounts = mongoTemplate.find(query, UserAccount.class);
+            if (userAccounts.size() > 0) {
+                throw new LogicalException("手机号已经被注册");
+            }
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+
+    /**
+     * @方法名：updUserStatus
+     * @描述：更新用户状态
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userid, status]
+     * @返回值：void
+     */
+    @Override
+    public void updUserStatus(String userid, String status) throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(userid));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        customerInfo.setStatus(status);
+        mongoTemplate.save(customerInfo);
+        Query queryAccount = new Query();
+        queryAccount.addCriteria(Criteria.where("_id").is(userid));
+        UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
+        userAccount.setStatus(status);
+        mongoTemplate.save(userAccount);
+    }
+
+ }
