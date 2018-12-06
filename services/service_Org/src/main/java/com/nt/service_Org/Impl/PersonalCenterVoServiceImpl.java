@@ -4,23 +4,17 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.PersonalCenterVo;
 import com.nt.service_Org.PersonalCenterVoService;
-import com.nt.utils.dao.TokenModel;
-import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class PersonalCenterVoServiceImpl implements PersonalCenterVoService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-    @Autowired
-    private TokenService TokenService;
 
     /**
      * @方法名：get
@@ -38,10 +32,11 @@ public class PersonalCenterVoServiceImpl implements PersonalCenterVoService {
         query.addCriteria(Criteria.where("_id").is(userid));
         UserAccount account = mongoTemplate.findOne(query,UserAccount.class);
         sut.setUserAccount(account);
-        query.addCriteria(Criteria.where("userid").is(userid));
-        query.addCriteria(Criteria.where("type").is('1'));//个人类型
-        UserAccount newaccount = mongoTemplate.findOne(query,UserAccount.class);
-        sut.setUserAccount(newaccount);
+        Query newquery = new Query();
+        newquery.addCriteria(Criteria.where("userid").is(userid));
+        newquery.addCriteria(Criteria.where("type").is('1'));//个人类型
+        CustomerInfo newaccount = mongoTemplate.findOne(newquery,CustomerInfo.class);
+        sut.setCustomerInfo(newaccount);
         return sut;
     }
 

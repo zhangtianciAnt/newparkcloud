@@ -56,9 +56,5 @@ public class UserAccount extends BaseModel {
      * 系统角色
      */
     private List<String> roles;
-    /**
-     * 账号状态
-     */
-    private String status;
 
 }
