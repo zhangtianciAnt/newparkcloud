@@ -38,6 +38,8 @@ public class InformationController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         information.preInsert(tokenModel);
+        information.setReleaseperson(tokenModel.getUserId());
+        information.setReleasetime(new Date());
         informationService.save(information);
         return ApiResult.success();
     }
