@@ -1,7 +1,6 @@
 package com.nt.controller.Controller;
 
 import cn.hutool.http.HttpUtil;
-import com.nt.controller.Start;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
@@ -11,8 +10,6 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @ProjectName: newparkcloud

@@ -1,13 +1,10 @@
 package com.nt.controller.Controller;
 
-import com.nt.controller.Start;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,5 +64,23 @@ public class OrgTreeController {
         orgTree.preUpdate(tokenModel);
         orgTreeService.save(orgTree);
         return ApiResult.success();
+    }
+
+    /**
+     * @方法名：getById
+     * @描述：获取当前组织机构树形结构
+     * @创建日期：2018/12/03
+     * @作者：ZHANGYING
+     * @参数：[id, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getById", method = {RequestMethod.GET})
+    public ApiResult getById(String id, HttpServletRequest request) throws Exception {
+        OrgTree orgTree = new OrgTree();
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        orgTree.setTenantid(tokenModel.getTenantId());
+//        orgTree.setOwners(tokenModel.getOwnerList());
+        orgTree.set_id(id);
+        return ApiResult.success(orgTreeService.getById(orgTree));
     }
 }
