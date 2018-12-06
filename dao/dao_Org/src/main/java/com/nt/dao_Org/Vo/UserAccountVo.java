@@ -26,14 +26,14 @@ public class UserAccountVo  extends BaseModel {
     /**
      * 原密码 CHANGEPASSWORD
      */
-    private String Password;
+    private String password;
     /**
      * 新密码 NEWPSW
      */
-    private String newPsw;
+    private String newpsw;
     /**
      * 用户ID USERID
      */
-    private String Userid;
+    private String userid;
 }
 

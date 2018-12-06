@@ -1,7 +1,4 @@
 package com.nt.service_Org;
-
-import com.nt.dao_Org.CustomerInfo;
-
 import com.nt.dao_Org.Vo.UserAccountVo;
 
 /**
