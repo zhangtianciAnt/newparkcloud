@@ -1,7 +1,7 @@
 package com.nt.controller.Controller;
 
-import Vo.PersonalCenter;
-import com.nt.service_Org.PersonalCenterService;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.service_Org.PersonalCenterVoService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -19,26 +19,32 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/PersonalCenter")
 
-public class PersonalCenterController {
+public class PersonalCenterVoController {
     @Autowired
-    private PersonalCenterService personalCenterService;
+    private PersonalCenterVoService personalCenterService;
 
     @Autowired
     private TokenService tokenService;
 
+    //获取基本信息
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult get(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(personalCenterService.get(tokenModel.getUserId()));
+    }
 
        //更新基本信息
        @RequestMapping(value = "/save", method = {RequestMethod.POST})
-       public ApiResult save(@RequestBody PersonalCenter personalCenter, HttpServletRequest request) throws Exception {
-           if (personalCenter == null || StringUtils.isEmpty(personalCenter)) {
+       public ApiResult save(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
+           if (customerInfo == null || StringUtils.isEmpty(customerInfo)) {
                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
            }
            TokenModel tokenModel = tokenService.getToken(request);
-           if(personalCenter.getCreateby() == null || personalCenter.getCreateon() == null){
-               personalCenter.preInsert(tokenModel);
+           if(customerInfo.getCreateby() == null || customerInfo.getCreateon() == null){
+               customerInfo.preInsert(tokenModel);
            }
-           personalCenter.preUpdate(tokenModel);
-           personalCenterService.save(personalCenter);
+           customerInfo.preUpdate(tokenModel);
+           personalCenterService.save(customerInfo);
            return ApiResult.success();
        }
 

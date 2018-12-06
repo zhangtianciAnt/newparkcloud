@@ -1,7 +1,7 @@
 package com.nt.service_Org;
 
-import Vo.PersonalCenter;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Vo.PersonalCenterVo;
 
 /**
  * @ProjectName: newparkcloud
@@ -12,12 +12,12 @@ import com.nt.dao_Org.CustomerInfo;
  * @CreateDate: 2018/12/05
  * @Version: 1.0
  */
-public interface PersonalCenterService {
+public interface PersonalCenterVoService {
 
     // 获取基本信息
-    CustomerInfo get(CustomerInfo customerInfo) throws Exception;
+    PersonalCenterVo get(String userid) throws Exception;
 
     // 更新或保存基本信息
-    void save(PersonalCenter personalCenter) throws Exception;
+    void save(CustomerInfo customerInfo) throws Exception;
 
 }
