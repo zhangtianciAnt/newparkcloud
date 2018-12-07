@@ -1,11 +1,14 @@
 package com.nt.dao_Org;
 
 
+import com.nt.dao_Auth.Role;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.mongodb.core.mapping.Document;
+
 
 import java.util.List;
 
@@ -55,6 +58,6 @@ public class UserAccount extends BaseModel {
     /**
      * 系统角色
      */
-    private List<String> roles;
+    private List<Role> roles;
 
 }

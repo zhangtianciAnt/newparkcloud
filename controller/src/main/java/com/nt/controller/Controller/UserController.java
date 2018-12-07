@@ -193,14 +193,14 @@ public class UserController {
      * @描述：验证手机号是否重复
      * @创建日期：2018/12/06
      * @作者：ZHANGYING
-     * @参数：[mobileCheck]
+     * @参数：[id, mobileCheck]
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/mobileCheck",method={RequestMethod.GET})
-    public ApiResult mobileCheck(String mobilenumber,HttpServletRequest request) throws Exception {
+    public ApiResult mobileCheck(String id, String mobilenumber,HttpServletRequest request) throws Exception {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            userService.mobileCheck(mobilenumber);
+            userService.mobileCheck(id, mobilenumber);
             return ApiResult.success();
         }catch(LogicalException e) {
             return ApiResult.fail(e.getMessage());
@@ -219,6 +219,21 @@ public class UserController {
     public ApiResult updUserStatus(String userid, String status, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         userService.updUserStatus(userid, status);
+        return ApiResult.success();
+    }
+
+    /**
+     * @方法名：setRoleToUser
+     * @描述：给用户赋角色
+     * @创建日期：2018/12/07
+     * @作者：ZHANGYING
+     * @参数：[userAccount, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/setRoleToUser",method={RequestMethod.POST})
+    public ApiResult setRoleToUser(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        userService.setRoleToUser(userAccount);
         return ApiResult.success();
     }
 }

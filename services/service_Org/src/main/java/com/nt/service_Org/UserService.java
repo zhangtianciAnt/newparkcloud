@@ -54,8 +54,11 @@ public interface UserService {
     UserVo getAccountCustomerById(String userid) throws Exception;
 
     // 验证手机号是否重复
-    void mobileCheck(String mobilenumber) throws Exception;
+    void mobileCheck(String id, String mobilenumber) throws Exception;
 
     // 更新用户状态
     void updUserStatus(String userid, String status) throws Exception;
+
+    // 给用户赋角色
+    void setRoleToUser(UserAccount userAccount) throws Exception;
 }

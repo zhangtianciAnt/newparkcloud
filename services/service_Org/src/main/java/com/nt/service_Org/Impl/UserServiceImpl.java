@@ -239,10 +239,11 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public void mobileCheck(String mobilenumber) throws Exception{
+    public void mobileCheck(String id, String mobilenumber) throws Exception{
         try{
             Query query = new Query();
             query.addCriteria(Criteria.where("account").is(mobilenumber));
+            query.addCriteria(Criteria.where("_id").ne(id));
             List<UserAccount> userAccounts = mongoTemplate.find(query, UserAccount.class);
             if (userAccounts.size() > 0) {
                 throw new LogicalException("手机号已经被注册");
@@ -274,4 +275,22 @@ public class UserServiceImpl implements UserService {
         mongoTemplate.save(userAccount);
     }
 
+    /**
+     * @方法名：setRoleToUser
+     * @描述：给用户赋角色
+     * @创建日期：2018/12/07
+     * @作者：ZHANGYING
+     * @参数：[userAccount]
+     * @返回值：void
+     */
+    @Override
+    public void setRoleToUser(UserAccount userAccount) throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(userAccount.get_id()));
+        UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
+        if(userAccountInfo != null) {
+            userAccountInfo.setRoles(userAccount.getRoles());
+            mongoTemplate.save(userAccountInfo);
+        }
+    }
  }
