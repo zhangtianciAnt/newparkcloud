@@ -49,7 +49,6 @@ public class Information extends BaseModel {
     @Data
     public static class Activityinfo extends BaseModel {
         private String _id;
-        private String type;   //类型。1.定制活动；2.公开课
         private Date starttime;   //开始时间
         private Date endtime;   //结束时间
         private String address;   //地址
@@ -107,7 +106,6 @@ public class Information extends BaseModel {
     public static class Businessdocking extends BaseModel {
         private String _id;
         private String industry;   //行业
-        private String type;     //类型。1.供应；2.求购
         private String transactionplace;   //交易地点
         private String companyname;   //公司名称
         private String contacts;  //联系人
