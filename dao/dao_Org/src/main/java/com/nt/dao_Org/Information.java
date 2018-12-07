@@ -41,9 +41,9 @@ public class Information extends BaseModel {
     private String releasestatus; //发布状态。1.已发布；2.已撤销
     private String releaseperson;   //发布人
     private Date releasetime;   //发布时间
-    private List<Activityinfo> activityinfo;   //园区活动
-    private List<Fieldmeetinfo> fieldmeetinfo;   //场地会议租赁
-    private List<Businessdocking> businessdocking;     //业务对接
+    private Activityinfo activityinfo;   //园区活动
+    private Fieldmeetinfo fieldmeetinfo;   //场地会议租赁
+    private Businessdocking businessdocking;     //业务对接
 
 
     @Data
@@ -122,27 +122,27 @@ public class Information extends BaseModel {
      * @参数：[tokenModel]
      * @返回值：void
      */
-    @Override
-    public void preInsert(TokenModel tokenModel){
-        super.preInsert(tokenModel);
-        if (activityinfo != null && activityinfo.size() > 0) {
-            for (Activityinfo tmp : this.activityinfo) {
-                tmp.preInsert(tokenModel);
-            }
-        }
-
-        if (fieldmeetinfo != null && fieldmeetinfo.size() > 0) {
-            for (Fieldmeetinfo tmp : this.fieldmeetinfo) {
-                tmp.preInsert(tokenModel);
-            }
-        }
-
-        if (businessdocking != null && businessdocking.size() > 0) {
-            for (Businessdocking tmp : this.businessdocking) {
-                tmp.preInsert(tokenModel);
-            }
-        }
-    }
+//    @Override
+//    public void preInsert(TokenModel tokenModel){
+//        super.preInsert(tokenModel);
+//        if (activityinfo != null && activityinfo.size() > 0) {
+//            for (Activityinfo tmp : this.activityinfo) {
+//                tmp.preInsert(tokenModel);
+//            }
+//        }
+//
+//        if (fieldmeetinfo != null && fieldmeetinfo.size() > 0) {
+//            for (Fieldmeetinfo tmp : this.fieldmeetinfo) {
+//                tmp.preInsert(tokenModel);
+//            }
+//        }
+//
+//        if (businessdocking != null && businessdocking.size() > 0) {
+//            for (Businessdocking tmp : this.businessdocking) {
+//                tmp.preInsert(tokenModel);
+//            }
+//        }
+//    }
 
     /**
      * @方法名：preUpdate
@@ -152,26 +152,26 @@ public class Information extends BaseModel {
      * @参数：[tokenModel]
      * @返回值：void
      */
-    @Override
-    public void preUpdate(TokenModel tokenModel){
-        super.preUpdate(tokenModel);
-        if (activityinfo != null && activityinfo.size() > 0) {
-            for (Activityinfo tmp : this.activityinfo) {
-                tmp.preUpdate(tokenModel);
-            }
-        }
-
-        if (fieldmeetinfo != null && fieldmeetinfo.size() > 0) {
-            for (Fieldmeetinfo tmp : this.fieldmeetinfo) {
-                tmp.preUpdate(tokenModel);
-            }
-        }
-
-        if (businessdocking != null && businessdocking.size() > 0) {
-            for (Businessdocking tmp : this.businessdocking) {
-                tmp.preUpdate(tokenModel);
-            }
-        }
-    }
+//    @Override
+//    public void preUpdate(TokenModel tokenModel){
+//        super.preUpdate(tokenModel);
+//        if (activityinfo != null && activityinfo.size() > 0) {
+//            for (Activityinfo tmp : this.activityinfo) {
+//                tmp.preUpdate(tokenModel);
+//            }
+//        }
+//
+//        if (fieldmeetinfo != null && fieldmeetinfo.size() > 0) {
+//            for (Fieldmeetinfo tmp : this.fieldmeetinfo) {
+//                tmp.preUpdate(tokenModel);
+//            }
+//        }
+//
+//        if (businessdocking != null && businessdocking.size() > 0) {
+//            for (Businessdocking tmp : this.businessdocking) {
+//                tmp.preUpdate(tokenModel);
+//            }
+//        }
+//    }
     // endregion
 }
