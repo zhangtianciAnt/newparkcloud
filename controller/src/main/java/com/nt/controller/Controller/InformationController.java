@@ -36,11 +36,22 @@ public class InformationController {
         if (information == null || StringUtils.isEmpty(information)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        information.preInsert(tokenModel);
-        information.setReleaseperson(tokenModel.getUserId());
-        information.setReleasetime(new Date());
-        informationService.save(information);
+        if(information.getStatus().equals("1"))
+        {
+            TokenModel tokenModel = tokenService.getToken(request);
+            information.preUpdate(tokenModel);
+            information.setReleaseperson(tokenModel.getUserId());
+            information.setReleasetime(new Date());
+            informationService.save(information);
+        }
+        if(information.getStatus().equals("0"))
+        {
+            TokenModel tokenModel = tokenService.getToken(request);
+            information.preInsert(tokenModel);
+            information.setReleaseperson(tokenModel.getUserId());
+            information.setReleasetime(new Date());
+            informationService.save(information);
+        }
         return ApiResult.success();
     }
 
