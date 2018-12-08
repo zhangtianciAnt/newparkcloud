@@ -12,6 +12,13 @@
     <artifactId>dao_Org</artifactId>
 
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>dao_Auth</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 
 </project>
