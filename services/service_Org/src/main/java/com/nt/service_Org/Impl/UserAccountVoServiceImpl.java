@@ -30,12 +30,10 @@ public class UserAccountVoServiceImpl implements UserAccountVoService {
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
         //如果获取到的密码和用户名相同则保存，不然提交异常
         if (userAccountlist != null && userAccountlist.size()>0 ) {
-            UserAccount account = new UserAccount();
-            account.set_id(userAccountVo.getUserid());
-            account.setPassword(userAccountVo.getNewpsw());
-            mongoTemplate.save(account);
+            userAccountlist.get(0).set_id(userAccountVo.getUserid());
+            userAccountlist.get(0).setPassword(userAccountVo.getNewpsw());
+            mongoTemplate.save(userAccountlist.get(0));
         }else{
-            throw new LogicalException("验证未通过！");
-        }
+            throw new LogicalException("验证未通过！"); }
     }
 }
