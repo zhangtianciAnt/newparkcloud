@@ -54,6 +54,8 @@ public class PersonalCenterVoController {
             customerInfo.preInsert(tokenModel);
         }
         customerInfo.preUpdate(tokenModel);
+        customerInfo.setUserid(tokenModel.getUserId());
+        customerInfo.setType("1");
         personalCenterService.save(customerInfo);
         return ApiResult.success();
     }
