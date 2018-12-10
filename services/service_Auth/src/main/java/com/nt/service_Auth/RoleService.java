@@ -2,6 +2,7 @@ package com.nt.service_Auth;
 
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -29,13 +30,7 @@ public interface RoleService {
     Role getRoleInfo(String roleid) throws Exception;
 
     //获取所有应用和菜单信息
-    List<AppPermission.menu> selectAllApplications() throws Exception;
-
-    //获取角色和菜单关系信息
-    void getMenuAuthToRole() throws Exception;
-
-    //获取角色和按钮关系信息
-    void getActionAuthToRole() throws Exception;
+    List<AppPermission> selectAllApplications() throws Exception;
 
     //创建/更新角色信息
     void saveRole(Role role) throws Exception;
@@ -43,5 +38,7 @@ public interface RoleService {
     //创建/更新应用和菜单信息
     void saveMenus(AppPermission appPermission) throws Exception;
 
+    //获取角色成员信息
+    List<MembersVo> getMembers(String roleid) throws Exception;
 
 }

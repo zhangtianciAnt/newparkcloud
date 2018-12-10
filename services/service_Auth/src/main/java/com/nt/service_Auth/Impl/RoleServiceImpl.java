@@ -2,6 +2,10 @@ package com.nt.service_Auth.Impl;
 
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.RoleService;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.services.TokenService;
@@ -9,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,31 +46,19 @@ public class RoleServiceImpl implements RoleService {
 
     //获取所有应用和菜单信息
     @Override
-    public List<AppPermission.menu> selectAllApplications() throws Exception {
-        List<AppPermission.menu> result = new ArrayList<AppPermission.menu>();
+    public List<AppPermission> selectAllApplications() throws Exception {
+        //List<AppPermission.menu> result = new ArrayList<AppPermission.menu>();
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         List<AppPermission> appList = mongoTemplate.find(query,AppPermission.class);
-        for (int i = 0; i < appList.size(); i++) {
-            List<AppPermission.menu> menuList = appList.get(i).getMenus();
-            if (menuList != null && menuList.size() > 0){
-                result.addAll(menuList);
-            }
-        }
-        return result;
-    }
-
-    //获取角色和菜单关系信息
-    @Override
-    public void getMenuAuthToRole() throws Exception {
-
-    }
-
-    //获取角色和按钮关系信息
-    @Override
-    public void getActionAuthToRole() throws Exception {
-
+//        for (int i = 0; i < appList.size(); i++) {
+//            List<AppPermission.menu> menuList = appList.get(i).getMenus();
+//            if (menuList != null && menuList.size() > 0){
+//                result.addAll(menuList);
+//            }
+//        }
+        return appList;
     }
 
     //创建/更新角色信息
@@ -77,7 +68,39 @@ public class RoleServiceImpl implements RoleService {
     }
 
     //创建/更新应用和菜单信息
+    @Override
     public void saveMenus(AppPermission appPermission) throws Exception {
         mongoTemplate.save(appPermission);
+    }
+
+    //获取角色成员信息
+    public List<MembersVo> getMembers(String roleid) throws Exception {
+        List<MembersVo> result = new ArrayList<MembersVo>();
+        //根据条件检索数据
+        Query query = new Query();
+        query.addCriteria(Criteria.where("roles._id").is(roleid));
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+        List<UserAccount> accounts = mongoTemplate.find(query, UserAccount.class);
+        if (accounts != null && accounts.size() > 0) {
+            for (int i = 0; i < accounts.size(); i++) {
+                Query newQuery = new Query();
+                newQuery.addCriteria(Criteria.where("userid").is(accounts.get(i).get_id()));
+                newQuery.addCriteria(Criteria.where("type").is("1"));
+                newQuery.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+                CustomerInfo customerInfo = mongoTemplate.findOne(newQuery, CustomerInfo.class);
+                if (customerInfo != null) {
+                    CustomerInfo.UserInfo userInfo = customerInfo.getUserinfo();
+                    if (userInfo != null) {
+                        MembersVo membersVo = new MembersVo();
+                        membersVo.set_id(customerInfo.get_id());
+                        membersVo.setCustomername(userInfo.getCustomername());
+                        membersVo.setMobilenumber(userInfo.getMobilenumber());
+                        membersVo.setDepartments(userInfo.getDepartmentid());
+                        result.add(membersVo);
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

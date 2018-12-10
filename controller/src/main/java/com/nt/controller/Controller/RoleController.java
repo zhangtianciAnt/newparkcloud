@@ -65,6 +65,14 @@ public class RoleController {
         return ApiResult.success(roleService.getRoleList(role));
     }
 
+    /**
+     * @方法名：getRoleInfo
+     * @描述：获取角色详细信息
+     * @创建日期：2018/12/10
+     * @作者：WENCHAO
+     * @参数：[roleid, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
     @RequestMapping(value = "/getRoleInfo",method={RequestMethod.GET})
     public ApiResult getRoleInfo(String roleid, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(roleid)) {
@@ -155,5 +163,21 @@ public class RoleController {
     @RequestMapping(value = "/selectAllApplications",method={RequestMethod.GET})
     public ApiResult selectAllApplications() throws Exception {
         return ApiResult.success(roleService.selectAllApplications());
+    }
+
+    /**
+     * @方法名：getMembers
+     * @描述：获取角色成员
+     * @创建日期：2018/12/10
+     * @作者：WENCHAO
+     * @参数：[roleid, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getMembers",method={RequestMethod.GET})
+    public ApiResult getMembers(String roleid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(roleid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+        }
+        return ApiResult.success(roleService.getMembers(roleid));
     }
 }
