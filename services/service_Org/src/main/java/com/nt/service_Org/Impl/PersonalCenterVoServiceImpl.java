@@ -1,5 +1,4 @@
 package com.nt.service_Org.Impl;
-
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.PersonalCenterVo;
@@ -9,13 +8,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
 @Service
 public class PersonalCenterVoServiceImpl implements PersonalCenterVoService {
-
     @Autowired
     private MongoTemplate mongoTemplate;
-
     /**
      * @方法名：get
      * @描述：获取基本信息数据
@@ -39,7 +35,6 @@ public class PersonalCenterVoServiceImpl implements PersonalCenterVoService {
         sut.setCustomerInfo(newaccount);
         return sut;
     }
-
     /**
      * @方法名：save
      * @描述：更新或保存基本信息
@@ -51,6 +46,5 @@ public class PersonalCenterVoServiceImpl implements PersonalCenterVoService {
     @Override
     public void save(CustomerInfo personalCenter) throws Exception {
         mongoTemplate.save(personalCenter);
-
     }
 }
