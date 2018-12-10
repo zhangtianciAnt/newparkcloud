@@ -1,25 +1,21 @@
-package com.nt.dao_Org;
+package com.nt.dao_Org.Vo;
 
-import com.nt.utils.AuthConstants;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.UserAccount;
 import com.nt.utils.dao.BaseModel;
-import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_Org
- * @ClassName: CustomerInfo
- * @Description: 客户信息
- * @Author: SKAIXX
- * @CreateDate: 2018/10/25
- * @UpdateUser: SKAIXX
- * @UpdateDate: 2018/10/25
+ * @ClassName: CustomerInfo UserAccount
+ * @Description: 用户管理VO
+ * @Author: ZHANGYING
+ * @CreateDate: 2018/12/06
+ * @UpdateUser: ZHANGYING
+ * @UpdateDate: 2018/12/06
  * @UpdateRemark: 更新说明
  * @Version: 1.0
  */

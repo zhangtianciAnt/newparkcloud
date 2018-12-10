@@ -1,11 +1,9 @@
 package com.nt.service_Org;
 
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
-import com.nt.dao_Org.UserVo;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.dao.TokenModel;
-import org.apache.catalina.User;
 
 import java.util.List;
 

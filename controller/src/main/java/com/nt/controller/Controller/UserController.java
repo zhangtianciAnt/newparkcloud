@@ -2,7 +2,7 @@ package com.nt.controller.Controller;
 
 import cn.hutool.http.HttpUtil;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.UserVo;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.LogService;

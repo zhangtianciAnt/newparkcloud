@@ -2,9 +2,8 @@ package com.nt.service_Org.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
-import com.nt.dao_Org.UserVo;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
-import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -12,14 +11,12 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
