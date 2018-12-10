@@ -30,7 +30,6 @@ public class UserAccountVoServiceImpl implements UserAccountVoService {
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
         //如果获取到的密码和用户名相同则保存，不然提交异常
         if (userAccountlist != null && userAccountlist.size()>0 ) {
-            userAccountlist.get(0).set_id(userAccountVo.getUserid());
             userAccountlist.get(0).setPassword(userAccountVo.getNewpsw());
             mongoTemplate.save(userAccountlist.get(0));
         }else{
