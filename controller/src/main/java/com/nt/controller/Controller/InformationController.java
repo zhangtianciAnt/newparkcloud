@@ -42,7 +42,7 @@ public class InformationController {
             information.preInsert(tokenModel);
             information.setReleaseperson(tokenModel.getUserId());
             information.setReleasetime(new Date());
-            informationService.save(information);
+            informationService.save(information,tokenModel);
         }
         else
         {
@@ -52,7 +52,7 @@ public class InformationController {
                 information.preUpdate(tokenModel);
                 information.setReleaseperson(tokenModel.getUserId());
                 information.setReleasetime(new Date());
-                informationService.save(information);
+                informationService.save(information,tokenModel);
             }
             if(information.getStatus().equals("0"))
             {
@@ -60,7 +60,7 @@ public class InformationController {
                 information.preInsert(tokenModel);
                 information.setReleaseperson(tokenModel.getUserId());
                 information.setReleasetime(new Date());
-                informationService.save(information);
+                informationService.save(information,tokenModel);
             }
         }
         return ApiResult.success();
