@@ -180,4 +180,19 @@ public class RoleController {
         }
         return ApiResult.success(roleService.getMembers(roleid));
     }
+
+    /**
+     * @方法名：getCurrentUserApps
+     * @描述：获取当前登陆人权限内app的信息
+     * @创建日期：2018/12/11
+     * @作者：WENCHAO
+     * @参数：[request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getAppData",method={RequestMethod.GET})
+    public ApiResult getCurrentUserApps(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        String userid = tokenModel.getUserId();
+        return ApiResult.success(roleService.getCurrentUserApps(userid));
+    }
 }

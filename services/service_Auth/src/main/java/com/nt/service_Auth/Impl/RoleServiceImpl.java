@@ -2,6 +2,7 @@ package com.nt.service_Auth.Impl;
 
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
@@ -74,6 +75,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     //获取角色成员信息
+    @Override
     public List<MembersVo> getMembers(String roleid) throws Exception {
         List<MembersVo> result = new ArrayList<MembersVo>();
         //根据条件检索数据
@@ -102,5 +104,59 @@ public class RoleServiceImpl implements RoleService {
             }
         }
         return result;
+    }
+
+    //获取当前登陆人的所有角色信息
+    @Override
+    public AuthVo getCurrentUserApps(String useraccountid) throws Exception {
+//        AuthVo result = new AuthVo();
+        List<String> appId = new ArrayList<String>();
+        List<String> menuId = new ArrayList<String>();
+        List<String> roleid = new ArrayList<String>();
+        //根据条件检索数据
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(useraccountid));
+        UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+        if (account != null) {
+            List<Role> roles = account.getRoles();
+            if (roles != null) {
+                for (int i = 0; i < roles.size(); i++) {
+                    roleid.add(roles.get(i).get_id());
+                }
+            }
+            if (roleid.size() > 0) {
+                Query newquery = new Query();
+                newquery.addCriteria(Criteria.where("_id").in(roleid));
+                newquery.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+                List<Role> roleList = mongoTemplate.find(newquery, Role.class);
+                if (roleList != null) {
+                    for (int i = 0; i < roleList.size(); i++) {
+                        List<AppPermission> apps = roleList.get(i).getApps();
+                        if (apps != null) {
+                            for (int j = 0; j < apps.size(); j++) {
+                                if (!appId.contains(apps.get(j).get_id())) {
+                                    appId.add(apps.get(j).get_id());
+                                }
+                                if (apps.get(j).getMenus() != null) {
+                                    for (int k = 0; k < apps.get(j).getMenus().size(); k++) {
+                                        if (!menuId.contains(apps.get(j).getMenus().get(k).get_id())) {
+                                            menuId.add(apps.get(j).getMenus().get(k).get_id());
+                                        }
+                                        if (apps.get(j).getMenus().get(k).getChildren() != null) {
+                                            for (int l = 0; l < apps.get(j).getMenus().get(k).getChildren().size(); l++) {
+                                                if (!menuId.contains(apps.get(j).getMenus().get(k).getChildren().get(l).get_id())) {
+                                                    menuId.add(apps.get(j).getMenus().get(k).getChildren().get(l).get_id());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return new AuthVo(appId, menuId);
     }
 }

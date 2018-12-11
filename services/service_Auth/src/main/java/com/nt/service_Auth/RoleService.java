@@ -2,6 +2,7 @@ package com.nt.service_Auth;
 
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +41,8 @@ public interface RoleService {
 
     //获取角色成员信息
     List<MembersVo> getMembers(String roleid) throws Exception;
+
+    //获取当前登陆人权限内app的信息
+    AuthVo getCurrentUserApps(String useraccountid) throws Exception;
 
 }
