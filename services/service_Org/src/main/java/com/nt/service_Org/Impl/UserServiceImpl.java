@@ -103,10 +103,11 @@ public class UserServiceImpl implements UserService {
         if(userAccountlist.size() <= 0){
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.LOGIN_ERR_01));
         }else{
-            TokenModel val = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
-            if(val != null){
-                tokenService.setToken(val);
+            tokenModel = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
+            if(tokenModel != null){
+                tokenService.setToken(tokenModel);
             }else{
+                tokenModel = new TokenModel();
                 //存在用户时，获取用户信息，生成token
                 tokenModel.setUserId(userAccountlist.get(0).get_id());
                 tokenModel.setUserType(userAccountlist.get(0).getUsertype());
