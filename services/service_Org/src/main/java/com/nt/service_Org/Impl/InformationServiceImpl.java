@@ -123,4 +123,37 @@ public class InformationServiceImpl implements InformationService {
         //query.with(new Sort(Sort.Direction.DESC,   "releasetime"));
         return mongoTemplate.find(query, CustomerInfo.class);
     }
+
+    /**
+     * @方法名：getInfoByType
+     * @描述：根据type获取发布信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[type, request]
+     * @返回值：informationList
+     */
+    @Override
+    public List<Information> getInfoByType(String type) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("type").is(type));
+        query.addCriteria(Criteria.where("releasestatus").is("1"));
+        List<Information> informationList = mongoTemplate.find(query, Information.class);
+        return informationList;
+    }
+
+    /**
+     * @方法名：getInfoById
+     * @描述：根据id获取发布信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[id, request]
+     * @返回值：information
+     */
+    @Override
+    public Information getInfoById(String id) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+        Information information = mongoTemplate.findOne(query, Information.class);
+        return information;
+    }
 }

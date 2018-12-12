@@ -21,4 +21,10 @@ public interface InformationService {
 
     //获取
     List<CustomerInfo> getcustomerinfo() throws Exception;
+
+    //根据type获取发布信息
+    List<Information> getInfoByType(String type) throws Exception;
+
+    //根据id获取发布信息
+    Information getInfoById(String id) throws Exception;
 }

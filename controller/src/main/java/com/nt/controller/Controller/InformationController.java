@@ -94,9 +94,31 @@ public class InformationController {
         return ApiResult.success(informationService.getcustomerinfo());
     }
 
+    /**
+     * @方法名：getInfoByType
+     * @描述：根据type获取发布信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[type, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getInfoByType", method = {RequestMethod.GET})
+    public ApiResult getInfoByType(String type, HttpServletRequest request) throws Exception {
+        Information information = new Information();
+        return ApiResult.success(informationService.getInfoByType(type));
+    }
 
-
-
-
-
+    /**
+     * @方法名：getInfoById
+     * @描述：根据id获取发布信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[id, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getInfoById", method = {RequestMethod.GET})
+    public ApiResult getInfoById(String id, HttpServletRequest request) throws Exception {
+        Information information = new Information();
+        return ApiResult.success(informationService.getInfoById(id));
+    }
 }
