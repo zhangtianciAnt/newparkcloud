@@ -77,6 +77,23 @@ public class InformationController {
         return ApiResult.success(informationService.get(information));
     }
 
+    //导出excel
+    @RequestMapping(value = "/importexcel", method = {RequestMethod.GET})
+    public ApiResult importexcel(String id,HttpServletRequest request) throws Exception {
+        Information information = new Information();
+        TokenModel tokenModel = tokenService.getToken(request);
+        information.setTenantid(tokenModel.getTenantId());
+        information.setOwners(tokenModel.getOwnerList());
+        information.setIds(tokenModel.getIdList());
+        informationService.importexcel(id,request);
+        return ApiResult.success();
+    }
+    //查询所有CUSTOMERINFO信息
+    @RequestMapping(value = "/getcustomerinfo", method = {RequestMethod.GET})
+    public ApiResult getcustomerinfo(HttpServletRequest request) throws Exception {
+        return ApiResult.success(informationService.getcustomerinfo());
+    }
+
 
 
 

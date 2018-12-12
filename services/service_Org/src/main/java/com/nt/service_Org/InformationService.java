@@ -1,6 +1,7 @@
 package com.nt.service_Org;
 
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Information;
 import com.nt.utils.dao.TokenModel;
 
@@ -15,4 +16,9 @@ public interface InformationService {
 
     //获取
     List<Information> get(Information information) throws Exception;
+    //导出excel
+    void importexcel(String id, HttpServletRequest request) throws Exception;
+
+    //获取
+    List<CustomerInfo> getcustomerinfo() throws Exception;
 }
