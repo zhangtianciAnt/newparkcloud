@@ -45,6 +45,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public TokenModel getToken(String token) {
+        Query query = new Query(Criteria.where("token").is(token));
+        TokenModel rst = mongoTemplate.findOne(query, TokenModel.class);
+        return rst;
+    }
+
+    @Override
     public void clearToken(HttpServletRequest request) {
         String token = request.getHeader(AuthConstants.AUTH_TOKEN);
         Query query = new Query(Criteria.where("token").is(token));

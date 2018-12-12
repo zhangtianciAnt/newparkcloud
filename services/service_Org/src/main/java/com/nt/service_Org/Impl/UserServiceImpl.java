@@ -1,5 +1,6 @@
 package com.nt.service_Org.Impl;
 
+import cn.hutool.crypto.SecureUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
@@ -102,11 +103,16 @@ public class UserServiceImpl implements UserService {
         if(userAccountlist.size() <= 0){
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.LOGIN_ERR_01));
         }else{
-            //存在用户时，获取用户信息，生成token
-            tokenModel.setUserId(userAccountlist.get(0).get_id());
-            tokenModel.setUserType(userAccountlist.get(0).getUsertype());
-            tokenModel.setTenantId(userAccountlist.get(0).getTenantid());
-            tokenService.setToken(tokenModel);
+            TokenModel val = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
+            if(val != null){
+                tokenService.setToken(val);
+            }else{
+                //存在用户时，获取用户信息，生成token
+                tokenModel.setUserId(userAccountlist.get(0).get_id());
+                tokenModel.setUserType(userAccountlist.get(0).getUsertype());
+                tokenModel.setTenantId(userAccountlist.get(0).getTenantid());
+                tokenService.setToken(tokenModel);
+            }
         }
         return tokenModel;
     }

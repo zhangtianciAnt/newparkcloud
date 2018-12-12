@@ -19,6 +19,8 @@ public interface TokenService {
 
     TokenModel getToken(HttpServletRequest request);
 
+    TokenModel getToken(String token);
+
     void clearToken(HttpServletRequest request);
 
 }
