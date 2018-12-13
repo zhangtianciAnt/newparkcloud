@@ -30,6 +30,14 @@ public class ToDoNoticeController {
     @Autowired
     private TokenService tokenService;
 
+    /**
+     * @方法名：save
+     * @描述：保存消息
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[toDoNotice, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
@@ -48,7 +56,14 @@ public class ToDoNoticeController {
         return ApiResult.success();
     }
 
-    //获取消息
+    /**
+     * @方法名：getmessage
+     * @描述：获取消息列表
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[ request]
+     * @返回值：toDoNotice
+     */
     @RequestMapping(value = "/getmessage", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         ToDoNotice message = new ToDoNotice();
@@ -58,7 +73,14 @@ public class ToDoNoticeController {
         message.setIds(tokenModel.getIdList());
         return ApiResult.success(toDoNoticeService.get(message));
     }
-    //更新已阅
+    /**
+     * @方法名：updatenoticesstatus
+     * @描述：更新已阅
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[toDoNotice, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
     @RequestMapping(value = "/updatenoticesstatus", method = {RequestMethod.POST})
     public ApiResult updatenoticesstatus(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
