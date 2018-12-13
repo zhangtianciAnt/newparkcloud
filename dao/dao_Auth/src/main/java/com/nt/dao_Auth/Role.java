@@ -45,5 +45,15 @@ public class Role extends BaseModel {
      * 应用权限集合
      */
     private List<AppPermission> apps;
+
+    /**
+     * 菜单权限集合
+     */
+    private List<AppPermission.menu> menus;
+
+    /**
+     * 功能权限集合
+     */
+    private List<AppPermission.menu.actions> actions;
     // endregion
 }

@@ -67,7 +67,7 @@ public class MongoObject {
             //判断拥有owner时，将owner设置为检索条件
             if (name.equals(AuthConstants.OWNERS) && field[j].get(obj) != null) {
                 if (((List) field[j].get(obj)).size() > 0) {
-                    query.addCriteria(Criteria.where(AuthConstants.OWNER).in(field[j].get(obj)));
+                    query.addCriteria(Criteria.where(AuthConstants.OWNER).in((List)field[j].get(obj)));
                 }
             }
         }

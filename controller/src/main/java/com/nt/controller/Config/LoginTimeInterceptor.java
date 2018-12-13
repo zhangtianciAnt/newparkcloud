@@ -54,8 +54,8 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         TokenModel tokenModel = tokenService.getToken(request);
         //获取ownerlist
         if (!StrUtil.isEmpty(url)) {
-            //List<String> ownerList = getOwnerList(url, tokenModel);
-            //tokenModel.setOwnerList(ownerList);
+            List<String> ownerList = getOwnerList(url, tokenModel);
+            tokenModel.setOwnerList(ownerList);
         }
         tokenService.setToken(tokenModel);
         return true;
