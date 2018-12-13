@@ -33,6 +33,14 @@ public class InformationServiceImpl implements InformationService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    /**
+     * @方法名：save
+     * @描述：信息发布保存
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[information, request]
+     * @返回值：
+     */
     @Override
     public void save(Information information,TokenModel tokenModel) throws Exception {
         if(information.getActivityinfo()!=null&&information.getActivityinfo().getSignupinfo()!=null)
@@ -62,10 +70,17 @@ public class InformationServiceImpl implements InformationService {
             {
                 mongoTemplate.save(information);
             }
-
         }
     }
 
+    /**
+     * @方法名：get
+     * @描述：获取信息发布列表
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[information, request]
+     * @返回值：Information
+     */
     @Override
     public List<Information> get(Information information) throws Exception {
         //共同带权限查询
@@ -74,6 +89,14 @@ public class InformationServiceImpl implements InformationService {
         return mongoTemplate.find(query, Information.class);
     }
 
+    /**
+     * @方法名：importexcel
+     * @描述：导出excel到本地固定位置
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[id,request]
+     * @返回值：
+     */
     //导出excel
     @Override
     public void importexcel (String id,HttpServletRequest request) throws Exception {
@@ -117,7 +140,14 @@ public class InformationServiceImpl implements InformationService {
         }
     }
 
-    //获取客户信息
+    /**
+     * @方法名：getcustomerinfo
+     * @描述：查询customerinfo
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[request]
+     * @返回值：CustomerInfo
+     */
     @Override
     public List<CustomerInfo> getcustomerinfo() throws Exception {
         Query query = new Query();

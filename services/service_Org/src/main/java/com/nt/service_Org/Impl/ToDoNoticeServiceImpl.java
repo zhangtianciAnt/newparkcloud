@@ -22,6 +22,14 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    /**
+     * @方法名：save
+     * @描述：消息保存
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[toDoNotice]
+     * @返回值：
+     */
     @Override
     public void save(ToDoNotice toDoNotice) throws Exception {
         Query query = new Query();
@@ -41,12 +49,28 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
         }
     }
 
+    /**
+     * @方法名：get
+     * @描述：获取消息列表
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[toDoNotice]
+     * @返回值：toDoNotice
+     */
     @Override
     public List<ToDoNotice> get(ToDoNotice toDoNotice) throws Exception {
         Query query = CustmizeQuery(toDoNotice);
         return mongoTemplate.find(query, ToDoNotice.class);
     }
 
+    /**
+     * @方法名：updateNoticesStatus
+     * @描述：更新已阅
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[toDoNotice]
+     * @返回值：
+     */
     @Override
     public void updateNoticesStatus(ToDoNotice toDoNotice) throws Exception {
             mongoTemplate.save(toDoNotice);
