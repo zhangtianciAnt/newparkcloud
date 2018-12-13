@@ -31,6 +31,14 @@ public class InformationController {
     private TokenService tokenService;
 
 
+    /**
+     * @方法名：saveinformation
+     * @描述：信息发布保存
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[information, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
     @RequestMapping(value = "/saveinformation", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody Information information, HttpServletRequest request) throws Exception {
         if (information == null || StringUtils.isEmpty(information)) {
@@ -66,7 +74,14 @@ public class InformationController {
         return ApiResult.success();
     }
 
-    //获取消息
+    /**
+     * @方法名：getinformation
+     * @描述：获取信息发布列表
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[request]
+     * @返回值：com.nt.utils.ApiResult
+     */
     @RequestMapping(value = "/getinformation", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         Information information = new Information();
@@ -77,7 +92,14 @@ public class InformationController {
         return ApiResult.success(informationService.get(information));
     }
 
-    //导出excel
+    /**
+     * @方法名：importexcel
+     * @描述：导出excel到本地固定位置
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[id,request]
+     * @返回值：
+     */
     @RequestMapping(value = "/importexcel", method = {RequestMethod.GET})
     public ApiResult importexcel(String id,HttpServletRequest request) throws Exception {
         Information information = new Information();
@@ -88,7 +110,14 @@ public class InformationController {
         informationService.importexcel(id,request);
         return ApiResult.success();
     }
-    //查询所有CUSTOMERINFO信息
+    /**
+     * @方法名：getcustomerinfo
+     * @描述：查询customerinfo
+     * @创建日期：2018/12/13
+     * @作者：SUNXU
+     * @参数：[request]
+     * @返回值：com.nt.utils.ApiResult
+     */
     @RequestMapping(value = "/getcustomerinfo", method = {RequestMethod.GET})
     public ApiResult getcustomerinfo(HttpServletRequest request) throws Exception {
         return ApiResult.success(informationService.getcustomerinfo());
