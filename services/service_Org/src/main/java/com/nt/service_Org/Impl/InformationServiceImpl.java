@@ -68,7 +68,8 @@ public class InformationServiceImpl implements InformationService {
 
     @Override
     public List<Information> get(Information information) throws Exception {
-        Query query = new Query();
+        //共同带权限查询
+        Query query = CustmizeQuery(information);
         query.with(new Sort(Sort.Direction.DESC,   "releasetime"));
         return mongoTemplate.find(query, Information.class);
     }
