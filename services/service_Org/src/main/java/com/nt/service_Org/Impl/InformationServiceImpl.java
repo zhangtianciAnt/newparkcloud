@@ -168,6 +168,7 @@ public class InformationServiceImpl implements InformationService {
         Query query = new Query();
         query.addCriteria(Criteria.where("type").is(type));
         query.addCriteria(Criteria.where("releasestatus").is("1"));
+        query.with(new Sort(Sort.Direction.DESC,   "releasetime"));
         List<Information> informationList = mongoTemplate.find(query, Information.class);
         return informationList;
     }
