@@ -24,4 +24,10 @@ public interface AuthService {
     //获取ownerlist
     List<String> getOwnerList(String url, String useraccountid) throws Exception;
 
+    //获取按钮权限（新建，编辑，删除）
+    List<Boolean> getActionsAuth(String url, String useraccountid, String ownerid) throws Exception;
+
+    //获取新建按钮权限
+    Boolean getNewActionAuth(String url, String useraccountid) throws Exception;
+
 }
