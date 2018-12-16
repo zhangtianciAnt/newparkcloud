@@ -56,6 +56,10 @@ public class UserAccount extends BaseModel {
      */
     private String usertype;
     /**
+     * 是否资质通过 0:没通过;1:通过
+     */
+    private String isPassing;
+    /**
      * 系统角色
      */
     private List<Role> roles;

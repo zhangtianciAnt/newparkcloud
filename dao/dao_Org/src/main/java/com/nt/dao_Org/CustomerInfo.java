@@ -117,6 +117,10 @@ public class CustomerInfo extends BaseModel {
          * 头像
          */
         private String profilephoto;
+        /**
+         * 公司名称
+         */
+        private String companyname;
     }
     // endregion
 

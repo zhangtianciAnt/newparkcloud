@@ -236,4 +236,20 @@ public class UserController {
         userService.setRoleToUser(userAccount);
         return ApiResult.success();
     }
+
+    /**
+     * @方法名：getUserInfo
+     * @描述：微信端查询用户信息
+     * @创建日期：2018/12/14
+     * @作者：ZHANGYING
+     * @参数：[customerInfo, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getUserInfo",method={RequestMethod.POST})
+    public ApiResult getUserInfo(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        customerInfo.setUserid(tokenModel.getUserId());
+        userService.getUserInfo(customerInfo);
+        return ApiResult.success();
+    }
 }

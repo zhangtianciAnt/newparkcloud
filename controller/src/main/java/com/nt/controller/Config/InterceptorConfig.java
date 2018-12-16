@@ -13,7 +13,9 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(loginTimeInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns("/user/register")
                 .excludePathPatterns("/user/getCurrentUserAccount")
-                .excludePathPatterns("/user/login");
+                .excludePathPatterns("/user/login")
+                .excludePathPatterns("/information/getInfoByType")
+                .excludePathPatterns("/information/getInfoById");
     }
 
     @Bean

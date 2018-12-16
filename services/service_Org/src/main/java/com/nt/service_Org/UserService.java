@@ -3,6 +3,7 @@ package com.nt.service_Org;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -59,4 +60,16 @@ public interface UserService {
 
     // 给用户赋角色
     void setRoleToUser(UserAccount userAccount) throws Exception;
+
+    // 微信端用获取用户信息
+    void getUserInfo(CustomerInfo customerInfo) throws Exception;
+
+    /**
+     * 微信userId登录
+     * @param weChatUserId 微信userId
+     * @return
+     * @throws Exception
+     */
+    TokenModel wxLogin(String weChatUserId) throws Exception;
+
 }

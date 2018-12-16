@@ -5,6 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -297,4 +298,72 @@ public class UserServiceImpl implements UserService {
             mongoTemplate.save(userAccountInfo);
         }
     }
- }
+
+    /**
+     * @方法名：getUserInfo
+     * @描述：微信端用获取用户信息
+     * @创建日期：2018/12/14
+     * @作者：ZHANGYING
+     * @参数：[customerInfo]
+     * @返回值：void
+     */
+    @Override
+    public void getUserInfo(CustomerInfo customerInfo) throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
+        UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
+        if(userAccountInfo != null) {
+            //更新账号信息
+            userAccountInfo.setAccount(customerInfo.getUserinfo().getMobilenumber());
+            userAccountInfo.setIsPassing("1");//资质通过 0：没通过；1：通过
+            mongoTemplate.save(userAccountInfo);
+            //更新用户信息
+            Query queryCusomer = new Query();
+            queryCusomer.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
+            CustomerInfo upCustomer = mongoTemplate.findOne(queryCusomer, CustomerInfo.class);
+            upCustomer.getUserinfo().setCompanyname(customerInfo.getUserinfo().getCompanyname());//公司名称
+            upCustomer.getUserinfo().setCustomername(customerInfo.getUserinfo().getCustomername());//真实姓名
+            upCustomer.getUserinfo().setMobilenumber(customerInfo.getUserinfo().getMobilenumber());//联系方式
+            mongoTemplate.save(upCustomer);
+        }else {
+            //插入账号信息
+            userAccountInfo.setUserid(customerInfo.getUserid());
+            userAccountInfo.setOpenid(customerInfo.getUserid());
+            userAccountInfo.setAccount(customerInfo.getUserinfo().getMobilenumber());
+            userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
+            userAccountInfo.setIsPassing("1");
+        }
+    }
+
+    /**
+     * @方法名：wxLogin
+     * @描述：微信端登录
+     * @创建日期：2018/12/14
+     * @作者：ZHANGYING
+     * @参数：[weChatUserId]
+     * @返回值：TokenModel
+     */
+    @Override
+    public TokenModel wxLogin(String weChatUserId) throws Exception {
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("openid").is(weChatUserId));
+            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+            UserAccount useraccount = mongoTemplate.findOne(query, UserAccount.class);
+
+            if (useraccount != null) {
+                TokenModel tokenModel = new TokenModel();
+                //存在用户时，获取用户信息，生成token
+                tokenModel.setUserId(useraccount.get_id());
+                tokenModel.setUserType(useraccount.getUsertype());
+                tokenModel.setTenantId(useraccount.getTenantid());
+                tokenService.setToken(tokenModel);
+                return tokenModel;
+            } else {
+                throw new LogicalException("微信用户不在系统中，请先前往个人中心完善个人信息");
+            }
+        } catch (LogicalException e) {
+            throw e;
+        }
+    }
+}
