@@ -15,7 +15,11 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/user/getCurrentUserAccount")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/information/getInfoByType")
-                .excludePathPatterns("/information/getInfoById");
+                .excludePathPatterns("/information/getInfoById")
+                .excludePathPatterns("/weChat/getUser")
+                .excludePathPatterns("/user/updUserInfo")
+                .excludePathPatterns("/user/getWxById")
+                .excludePathPatterns("/information/addActivity");
     }
 
     @Bean

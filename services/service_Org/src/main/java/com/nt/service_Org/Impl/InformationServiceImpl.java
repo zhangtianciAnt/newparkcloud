@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Information;
+import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.InformationService;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,5 +174,38 @@ public class InformationServiceImpl implements InformationService {
         query.addCriteria(Criteria.where("_id").is(id));
         Information information = mongoTemplate.findOne(query, Information.class);
         return information;
+    }
+
+    /**
+     * @方法名：addActivity
+     * @描述：报名成功添加用户信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[id, request]
+     * @返回值：information
+     */
+    @Override
+    public void addActivity(Information information, String openid) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("openid").is(openid));
+        UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
+        if(userAccount != null) {
+            Query queryCus = new Query();
+            queryCus.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(queryCus, CustomerInfo.class);
+            if(customerInfo != null) {
+                if(customerInfo.getUserinfo() != null) {
+                    List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
+                    Information.Signupinfo s = new Information.Signupinfo();
+                    s.set_id(openid);
+                    s.setCompanyname(customerInfo.getUserinfo().getCompanyname());
+                    s.setPhonenumber(customerInfo.getUserinfo().getMobilenumber());
+                    s.setName(customerInfo.getUserinfo().getCustomername());
+                    signupinfos.add(s);
+                    information.getActivityinfo().getSignupinfo().addAll(signupinfos);
+                    mongoTemplate.save(information);
+                }
+            }
+        }
     }
 }

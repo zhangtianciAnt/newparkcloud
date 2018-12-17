@@ -238,18 +238,32 @@ public class UserController {
     }
 
     /**
-     * @方法名：getUserInfo
-     * @描述：微信端查询用户信息
+     * @方法名：updUserInfo
+     * @描述：更新微信端用户信息
      * @创建日期：2018/12/14
      * @作者：ZHANGYING
      * @参数：[customerInfo, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getUserInfo",method={RequestMethod.POST})
-    public ApiResult getUserInfo(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        customerInfo.setUserid(tokenModel.getUserId());
-        userService.getUserInfo(customerInfo);
+    @RequestMapping(value = "/updUserInfo",method={RequestMethod.POST})
+    public ApiResult updUserInfo(@RequestBody CustomerInfo customerInfo) throws Exception {
+        if(customerInfo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+        }
+        userService.updUserInfo(customerInfo);
         return ApiResult.success();
+    }
+
+    /**
+     * @方法名：getWxById
+     * @描述：微信端根据用户id获取用户账号及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userid, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getWxById",method={RequestMethod.GET})
+    public ApiResult getWxById(String userid,HttpServletRequest request) throws Exception {
+        return ApiResult.success(userService.getWxById(userid));
     }
 }

@@ -308,7 +308,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public void getUserInfo(CustomerInfo customerInfo) throws Exception{
+    public void updUserInfo(CustomerInfo customerInfo) throws Exception{
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
         UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
@@ -319,7 +319,7 @@ public class UserServiceImpl implements UserService {
             mongoTemplate.save(userAccountInfo);
             //更新用户信息
             Query queryCusomer = new Query();
-            queryCusomer.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
+            queryCusomer.addCriteria(Criteria.where("userid").is(userAccountInfo.get_id()));
             CustomerInfo upCustomer = mongoTemplate.findOne(queryCusomer, CustomerInfo.class);
             upCustomer.getUserinfo().setCompanyname(customerInfo.getUserinfo().getCompanyname());//公司名称
             upCustomer.getUserinfo().setCustomername(customerInfo.getUserinfo().getCustomername());//真实姓名
@@ -327,11 +327,29 @@ public class UserServiceImpl implements UserService {
             mongoTemplate.save(upCustomer);
         }else {
             //插入账号信息
-            userAccountInfo.setUserid(customerInfo.getUserid());
-            userAccountInfo.setOpenid(customerInfo.getUserid());
-            userAccountInfo.setAccount(customerInfo.getUserinfo().getMobilenumber());
-            userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
-            userAccountInfo.setIsPassing("1");
+            UserAccount userAccount = new UserAccount();
+            userAccount.setUserid(customerInfo.getUserid());
+            userAccount.setOpenid(customerInfo.getUserid());
+            userAccount.setAccount(customerInfo.getUserinfo().getMobilenumber());
+            userAccount.setPassword(customerInfo.getUserinfo().getMobilenumber());
+            userAccount.setUsertype("1");//账户类型 0:内部;1:外部
+            userAccount.setIsPassing("1");//是否资质通过 0:没通过;1:通过
+            mongoTemplate.save(userAccount);
+            Query queryAcc = new Query();
+            queryAcc.addCriteria(Criteria.where("account").is(customerInfo.getUserinfo().getMobilenumber()));
+            queryAcc.addCriteria(Criteria.where("password").is(customerInfo.getUserinfo().getMobilenumber()));
+            List<UserAccount> userAcclist = mongoTemplate.find(queryAcc,UserAccount.class);
+            if(userAcclist.size() > 0) {
+                CustomerInfo cusInfo = new CustomerInfo();
+                cusInfo.setType(customerInfo.getType());
+                cusInfo.setUserid(userAcclist.get(0).get_id());
+                CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+                userInfo.setMobilenumber(customerInfo.getUserinfo().getMobilenumber());
+                userInfo.setCustomername(customerInfo.getUserinfo().getCustomername());
+                userInfo.setCompanyname(customerInfo.getUserinfo().getCompanyname());
+                cusInfo.setUserinfo(userInfo);
+                mongoTemplate.save(cusInfo);
+            }
         }
     }
 
@@ -365,5 +383,30 @@ public class UserServiceImpl implements UserService {
         } catch (LogicalException e) {
             throw e;
         }
+    }
+
+    /**
+     * @方法名：getWxById
+     * @描述：微信端根据用户id获取用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[userid]
+     * @返回值：userVo
+     */
+    @Override
+    public UserVo getWxById(String userid) throws Exception{
+        Query queryAccount = new Query();
+        queryAccount.addCriteria(Criteria.where("openid").is(userid));
+        UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
+        CustomerInfo customerInfo = new CustomerInfo();
+        if(userAccount != null) {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
+            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        }
+        UserVo userVo = new UserVo();
+        userVo.setCustomerInfo(customerInfo);
+        userVo.setUserAccount(userAccount);
+        return userVo;
     }
 }

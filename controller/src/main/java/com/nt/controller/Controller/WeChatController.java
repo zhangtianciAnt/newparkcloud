@@ -49,4 +49,6 @@ public class WeChatController {
             return ApiResult.fail(e.getMessage());
         }
     }
+
+
 }

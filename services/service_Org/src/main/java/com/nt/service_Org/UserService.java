@@ -62,7 +62,7 @@ public interface UserService {
     void setRoleToUser(UserAccount userAccount) throws Exception;
 
     // 微信端用获取用户信息
-    void getUserInfo(CustomerInfo customerInfo) throws Exception;
+    void updUserInfo(CustomerInfo customerInfo) throws Exception;
 
     /**
      * 微信userId登录
@@ -71,5 +71,8 @@ public interface UserService {
      * @throws Exception
      */
     TokenModel wxLogin(String weChatUserId) throws Exception;
+
+    // 微信端根据用户id获取信息
+    UserVo getWxById(String userid) throws Exception;
 
 }
