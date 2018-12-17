@@ -49,12 +49,27 @@ public class WorkOrder extends BaseModel {
     private String auditstatus;   //审核状态   1.通过；2.驳回
     private List<Replymsg> replymsg; //回复消息
 
+    private String remark;  //问题描述
+    private List<Photo>photo;
+    private List<WorkOrderLog> workorderlog; //工单日志
+
+
 
     @Override
     public void preInsert(TokenModel tokenModel){
         super.preInsert(tokenModel);
         if (replymsg != null && replymsg.size() > 0) {
             for (Replymsg tmp : this.replymsg) {
+                tmp.preInsert(tokenModel);
+            }
+        }
+        if (photo != null && photo.size() > 0) {
+            for (Photo tmp : this.photo) {
+                tmp.preInsert(tokenModel);
+            }
+        }
+        if (workorderlog != null && workorderlog.size() > 0) {
+            for (WorkOrderLog tmp : this.workorderlog) {
                 tmp.preInsert(tokenModel);
             }
         }
@@ -68,6 +83,18 @@ public class WorkOrder extends BaseModel {
                 tmp.preUpdate(tokenModel);
             }
         }
+
+        if (photo != null && photo.size() > 0) {
+            for (Photo tmp : this.photo) {
+                tmp.preUpdate(tokenModel);
+            }
+        }
+
+        if (workorderlog != null && workorderlog.size() > 0) {
+            for (WorkOrderLog tmp : this.workorderlog) {
+                tmp.preUpdate(tokenModel);
+            }
+        }
     }
 
 
@@ -78,6 +105,18 @@ public class WorkOrder extends BaseModel {
         private String msgtype;   //消息类型   1.客户方；2.处理方
         private String photo;          //头像
         private String sendperson;   //发送者  处理方记录工号或固定值；客户方表示姓名
+    }
+
+    @Data
+    public static class Photo extends BaseModel {
+        private String imagespath; //图片
+    }
+
+    @Data
+    public static class WorkOrderLog extends BaseModel {
+        private String username; //姓名
+        private String workorderstatus; //工单状态  1.新建；2.派单；3.接单；4.开工；5.完成；6.结束
+        private String actiondescribe;  //动作描述  1.新建工单
     }
 
 }
