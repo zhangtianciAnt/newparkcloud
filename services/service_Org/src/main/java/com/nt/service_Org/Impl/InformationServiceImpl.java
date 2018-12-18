@@ -70,6 +70,13 @@ public class InformationServiceImpl implements InformationService {
         //共同带权限查询
         Query query = CustmizeQuery(information);
         query.with(new Sort(Sort.Direction.DESC,   "releasetime"));
+        query.skip(0);
+        query.limit(10);
+        if(information .getCurrentPage() != null && information.getPageSize() !=null){
+
+            query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            query.limit(information.getPageSize());
+        }
         //优化查询速度
 //        query.fields().exclude("content");
 //        query.fields().exclude("imagespath");

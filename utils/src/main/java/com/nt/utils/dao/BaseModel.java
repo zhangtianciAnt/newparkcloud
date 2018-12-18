@@ -49,6 +49,13 @@ public abstract class BaseModel implements Serializable{
 	@Transient
 	private List<String> ids;
 
+	@Transient
+	private Integer currentPage;
+
+	@Transient
+	private Integer pageSize;
+
+
 	public void preInsert(){
 		this.createon = new Date();
 		this.status = AuthConstants.DEL_FLAG_NORMAL;
