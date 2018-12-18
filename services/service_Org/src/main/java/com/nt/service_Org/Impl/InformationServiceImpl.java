@@ -78,7 +78,7 @@ public class InformationServiceImpl implements InformationService {
             query.limit(information.getPageSize());
         }
         //优化查询速度
-        if(information.getHttpOrignType() != null && information.getHttpOrignType().equals(AuthConstants.LOG_EQUIPMENT_PC)){
+        if(information.getHttpOriginType() != null && information.getHttpOriginType().equals(AuthConstants.LOG_EQUIPMENT_PC)){
 
             query.fields().exclude("content");
             query.fields().exclude("imagespath");
