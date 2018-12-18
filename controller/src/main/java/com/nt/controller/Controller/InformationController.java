@@ -150,4 +150,18 @@ public class InformationController {
         Information information = new Information();
         return ApiResult.success(informationService.getInfoById(id));
     }
+
+    /**
+     * @方法名：addActivity
+     * @描述：报名成功添加用户信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[information, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/addActivity", method = {RequestMethod.POST})
+    public ApiResult addActivity(@RequestBody Information information,String openid, HttpServletRequest request) throws Exception {
+        informationService.addActivity(information, openid);
+        return ApiResult.success();
+    }
 }

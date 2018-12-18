@@ -27,4 +27,7 @@ public interface InformationService {
 
     //根据id获取发布信息
     Information getInfoById(String id) throws Exception;
+
+    //报名成功添加用户信息
+    void addActivity(Information information, String openid) throws Exception;
 }

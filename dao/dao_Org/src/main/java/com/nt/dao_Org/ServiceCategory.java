@@ -33,14 +33,16 @@ public class ServiceCategory extends BaseModel {
      * 数据主键ID
      */
     private String _id;
-    private String ROOTNAME;  //根节点名称   固定：维修内容分类
-    private List<CategoryS>categorys; //类目项
+    private String servicename;  //根节点名称   固定：维修内容分类
+    private String type;
+    private List<ServiceCategory>categorys; //类目项
+
 
     @Override
     public void preInsert(TokenModel tokenModel){
         super.preInsert(tokenModel);
         if (categorys != null && categorys.size() > 0) {
-            for (CategoryS tmp : this.categorys) {
+            for (ServiceCategory tmp : this.categorys) {
                 tmp.preInsert(tokenModel);
             }
         }
@@ -50,16 +52,11 @@ public class ServiceCategory extends BaseModel {
     public void preUpdate(TokenModel tokenModel){
         super.preUpdate(tokenModel);
         if (categorys != null && categorys.size() > 0) {
-            for (CategoryS tmp : this.categorys) {
+            for (ServiceCategory tmp : this.categorys) {
                 tmp.preUpdate(tokenModel);
             }
         }
     }
 
-    @Data
-    public static class CategoryS extends BaseModel {
-        private String _id;
-        private String servicename;   //服务名称
-        private String type;          //类型  1.报修
-    }
+
 }
