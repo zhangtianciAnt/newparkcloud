@@ -133,7 +133,7 @@ public class InformationController {
      */
     @RequestMapping(value = "/getInfoByType", method = {RequestMethod.POST})
     public ApiResult getInfoByType(@RequestBody Information information, HttpServletRequest request) throws Exception {
-        if(StringUtils.isEmpty(information.getType()) || information .getCurrentPage() == null || information.getPageSize() == null){
+        if(StringUtils.isEmpty(information.getType())){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
         return ApiResult.success(informationService.getInfoByType(information));
