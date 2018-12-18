@@ -7,6 +7,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Information;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.InformationService;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -71,16 +72,17 @@ public class InformationServiceImpl implements InformationService {
         //共同带权限查询
         Query query = CustmizeQuery(information);
         query.with(new Sort(Sort.Direction.DESC,   "releasetime"));
-        query.skip(0);
-        query.limit(10);
         if(information .getCurrentPage() != null && information.getPageSize() !=null){
 
             query.skip((information .getCurrentPage() - 1) * information.getPageSize());
             query.limit(information.getPageSize());
         }
         //优化查询速度
-//        query.fields().exclude("content");
-//        query.fields().exclude("imagespath");
+        if(information.getType().equals(AuthConstants.LOG_EQUIPMENT_PC)){
+
+            query.fields().exclude("content");
+            query.fields().exclude("imagespath");
+        }
         return mongoTemplate.find(query, Information.class);
 
     }
