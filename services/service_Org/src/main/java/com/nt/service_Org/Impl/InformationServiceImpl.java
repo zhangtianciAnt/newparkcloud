@@ -194,24 +194,29 @@ public class InformationServiceImpl implements InformationService {
      * @返回值：information
      */
     @Override
-    public void addActivity(Information information, String openid) throws Exception {
+    public void addActivity(Information information, String id) throws Exception {
         Query query = new Query();
-        query.addCriteria(Criteria.where("openid").is(openid));
+        query.addCriteria(Criteria.where("_id").is(id));
         UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
         if(userAccount != null) {
             Query queryCus = new Query();
-            queryCus.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
+            queryCus.addCriteria(Criteria.where("userid").is(id));
             CustomerInfo customerInfo = mongoTemplate.findOne(queryCus, CustomerInfo.class);
             if(customerInfo != null) {
                 if(customerInfo.getUserinfo() != null) {
                     List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
                     Information.Signupinfo s = new Information.Signupinfo();
-                    s.set_id(openid);
+                    s.set_id(id);
                     s.setCompanyname(customerInfo.getUserinfo().getCompanyname());
                     s.setPhonenumber(customerInfo.getUserinfo().getMobilenumber());
                     s.setName(customerInfo.getUserinfo().getCustomername());
                     signupinfos.add(s);
-                    information.getActivityinfo().getSignupinfo().addAll(signupinfos);
+                    if(information.getActivityinfo().getSignupinfo() != null) {
+                        information.getActivityinfo().getSignupinfo().addAll(signupinfos);
+                    }else {
+                        information.getActivityinfo().setSignupinfo(signupinfos);
+                    }
+
                     mongoTemplate.save(information);
                 }
             }

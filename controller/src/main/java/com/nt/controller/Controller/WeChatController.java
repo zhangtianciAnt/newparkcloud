@@ -50,5 +50,23 @@ public class WeChatController {
         }
     }
 
+    @RequestMapping(value="/getWeChatUserInfo", method={RequestMethod.GET})
+    public ApiResult getWeChatUserInfo(String code) throws Exception{
+
+        try {
+            String corpid = "wxa7fe36d9731ebd03";
+            String appSecret = "46420ae2ea2590bcf0004fd4d2e332b5";
+
+            WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
+            if (weixinOauth != null && !StringUtils.isEmpty(weixinOauth.getOpenid())) {
+                String openid = weixinOauth.getOpenid();
+                return ApiResult.success(userService.getWxById(openid));
+            } else {
+                return ApiResult.fail("获取微信openid失败");
+            }
+        } catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }
+    }
 
 }

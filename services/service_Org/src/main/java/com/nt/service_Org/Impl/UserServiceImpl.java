@@ -308,49 +308,69 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public void updUserInfo(CustomerInfo customerInfo) throws Exception{
+    public UserVo updUserInfo(CustomerInfo customerInfo) throws Exception{
+        UserVo userVo = new UserVo();
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
         UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
         if(userAccountInfo != null) {
             //更新账号信息
             userAccountInfo.setAccount(customerInfo.getUserinfo().getMobilenumber());
+            userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
             userAccountInfo.setIsPassing("1");//资质通过 0：没通过；1：通过
             mongoTemplate.save(userAccountInfo);
             //更新用户信息
             Query queryCusomer = new Query();
             queryCusomer.addCriteria(Criteria.where("userid").is(userAccountInfo.get_id()));
             CustomerInfo upCustomer = mongoTemplate.findOne(queryCusomer, CustomerInfo.class);
-            upCustomer.getUserinfo().setCompanyname(customerInfo.getUserinfo().getCompanyname());//公司名称
-            upCustomer.getUserinfo().setCustomername(customerInfo.getUserinfo().getCustomername());//真实姓名
-            upCustomer.getUserinfo().setMobilenumber(customerInfo.getUserinfo().getMobilenumber());//联系方式
-            mongoTemplate.save(upCustomer);
-        }else {
-            //插入账号信息
-            UserAccount userAccount = new UserAccount();
-            userAccount.setUserid(customerInfo.getUserid());
-            userAccount.setOpenid(customerInfo.getUserid());
-            userAccount.setAccount(customerInfo.getUserinfo().getMobilenumber());
-            userAccount.setPassword(customerInfo.getUserinfo().getMobilenumber());
-            userAccount.setUsertype("1");//账户类型 0:内部;1:外部
-            userAccount.setIsPassing("1");//是否资质通过 0:没通过;1:通过
-            mongoTemplate.save(userAccount);
-            Query queryAcc = new Query();
-            queryAcc.addCriteria(Criteria.where("account").is(customerInfo.getUserinfo().getMobilenumber()));
-            queryAcc.addCriteria(Criteria.where("password").is(customerInfo.getUserinfo().getMobilenumber()));
-            List<UserAccount> userAcclist = mongoTemplate.find(queryAcc,UserAccount.class);
-            if(userAcclist.size() > 0) {
+            if(upCustomer != null) {
+                upCustomer.getUserinfo().setCompanyname(customerInfo.getUserinfo().getCompanyname());//公司名称
+                upCustomer.getUserinfo().setCustomername(customerInfo.getUserinfo().getCustomername());//真实姓名
+                upCustomer.getUserinfo().setMobilenumber(customerInfo.getUserinfo().getMobilenumber());//联系方式
+                mongoTemplate.save(upCustomer);
+                userVo.setCustomerInfo(upCustomer);
+            }else {
                 CustomerInfo cusInfo = new CustomerInfo();
                 cusInfo.setType(customerInfo.getType());
-                cusInfo.setUserid(userAcclist.get(0).get_id());
+                cusInfo.setUserid(userAccountInfo.get_id());
                 CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
                 userInfo.setMobilenumber(customerInfo.getUserinfo().getMobilenumber());
                 userInfo.setCustomername(customerInfo.getUserinfo().getCustomername());
                 userInfo.setCompanyname(customerInfo.getUserinfo().getCompanyname());
                 cusInfo.setUserinfo(userInfo);
                 mongoTemplate.save(cusInfo);
+                userVo.setCustomerInfo(cusInfo);
             }
         }
+
+        userVo.setUserAccount(userAccountInfo);
+        return userVo;
+//        else {
+//            //插入账号信息
+//            UserAccount userAccount = new UserAccount();
+//            userAccount.setUserid(customerInfo.getUserid());
+//            userAccount.setOpenid(customerInfo.getUserid());
+//            userAccount.setAccount(customerInfo.getUserinfo().getMobilenumber());
+//            userAccount.setPassword(customerInfo.getUserinfo().getMobilenumber());
+//            userAccount.setUsertype("1");//账户类型 0:内部;1:外部
+//            userAccount.setIsPassing("1");//是否资质通过 0:没通过;1:通过
+//            mongoTemplate.save(userAccount);
+//            Query queryAcc = new Query();
+//            queryAcc.addCriteria(Criteria.where("account").is(customerInfo.getUserinfo().getMobilenumber()));
+//            queryAcc.addCriteria(Criteria.where("password").is(customerInfo.getUserinfo().getMobilenumber()));
+//            List<UserAccount> userAcclist = mongoTemplate.find(queryAcc,UserAccount.class);
+//            if(userAcclist.size() > 0) {
+//                CustomerInfo cusInfo = new CustomerInfo();
+//                cusInfo.setType(customerInfo.getType());
+//                cusInfo.setUserid(userAcclist.get(0).get_id());
+//                CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+//                userInfo.setMobilenumber(customerInfo.getUserinfo().getMobilenumber());
+//                userInfo.setCustomername(customerInfo.getUserinfo().getCustomername());
+//                userInfo.setCompanyname(customerInfo.getUserinfo().getCompanyname());
+//                cusInfo.setUserinfo(userInfo);
+//                mongoTemplate.save(cusInfo);
+//            }
+//        }
     }
 
     /**
@@ -366,7 +386,7 @@ public class UserServiceImpl implements UserService {
         try {
             Query query = new Query();
             query.addCriteria(Criteria.where("openid").is(weChatUserId));
-            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+//            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
             UserAccount useraccount = mongoTemplate.findOne(query, UserAccount.class);
 
             if (useraccount != null) {
@@ -395,6 +415,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserVo getWxById(String userid) throws Exception{
+        UserVo userVo = new UserVo();
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("openid").is(userid));
         UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
@@ -403,10 +424,19 @@ public class UserServiceImpl implements UserService {
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            userVo.setCustomerInfo(customerInfo);
+            userVo.setUserAccount(userAccount);
+        }else {
+            UserAccount userAcc = new UserAccount();
+            // 插入账号
+            userAcc.setUserid(userid);
+            userAcc.setUsertype("1");
+            userAcc.setOpenid(userid);
+            userAcc.setIsPassing("0");
+            mongoTemplate.save(userAcc);
+            userVo.setCustomerInfo(customerInfo);
+            userVo.setUserAccount(userAcc);
         }
-        UserVo userVo = new UserVo();
-        userVo.setCustomerInfo(customerInfo);
-        userVo.setUserAccount(userAccount);
         return userVo;
     }
 }

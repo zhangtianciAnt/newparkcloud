@@ -62,7 +62,7 @@ public interface UserService {
     void setRoleToUser(UserAccount userAccount) throws Exception;
 
     // 微信端用获取用户信息
-    void updUserInfo(CustomerInfo customerInfo) throws Exception;
+    UserVo updUserInfo(CustomerInfo customerInfo) throws Exception;
 
     /**
      * 微信userId登录

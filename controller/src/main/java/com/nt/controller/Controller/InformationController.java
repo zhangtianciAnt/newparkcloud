@@ -160,8 +160,8 @@ public class InformationController {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/addActivity", method = {RequestMethod.POST})
-    public ApiResult addActivity(@RequestBody Information information,String openid, HttpServletRequest request) throws Exception {
-        informationService.addActivity(information, openid);
+    public ApiResult addActivity(@RequestBody Information information,String id, HttpServletRequest request) throws Exception {
+        informationService.addActivity(information, id);
         return ApiResult.success();
     }
 }

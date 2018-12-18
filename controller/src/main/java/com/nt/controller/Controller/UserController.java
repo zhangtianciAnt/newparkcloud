@@ -250,8 +250,8 @@ public class UserController {
         if(customerInfo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
-        userService.updUserInfo(customerInfo);
-        return ApiResult.success();
+
+        return ApiResult.success(userService.updUserInfo(customerInfo));
     }
 
     /**
