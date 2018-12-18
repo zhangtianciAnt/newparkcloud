@@ -56,7 +56,7 @@ public abstract class BaseModel implements Serializable{
 	private Integer pageSize;
 
 	@Transient
-	private String type;
+	private String httpOrignType;
 
 	public void preInsert(){
 		this.createon = new Date();
