@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +46,8 @@ public class WorkOrder extends BaseModel {
     private String doperson;   //处理人
     private Date dotime;   //处理时间
     private Date requiredtime;   //预约时间
-    private String servicecategory;   //服务类目
+    private ArrayList<String> servicecategory;   //服务类目
+    private String servicecategoryname; //服务类目名称
     private String workorderstatus;   //工单状态  1.新建；2.派单；3.接单；4.开工；5.完成；6.结束
     private String auditstatus;   //审核状态   1.通过；2.驳回
     private List<Replymsg> replymsg; //回复消息
@@ -52,7 +55,6 @@ public class WorkOrder extends BaseModel {
     private String remark;  //问题描述
     private List<Photo>photo;
     private List<WorkOrderLog> workorderlog; //工单日志
-
 
 
     @Override
