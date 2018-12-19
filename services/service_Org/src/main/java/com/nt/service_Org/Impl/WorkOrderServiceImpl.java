@@ -1,9 +1,11 @@
 package com.nt.service_Org.Impl;
+
 import com.nt.dao_Org.WorkOrder;
 import com.nt.service_Org.WorkOrderService;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,23 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     public List<WorkOrder> get(WorkOrder workorder) throws Exception {
         //共同带权限查询
         Query query = CustmizeQuery(workorder);
+        query.fields().exclude("photo");
         return mongoTemplate.find(query, WorkOrder.class);
+    }
+
+    /**
+     * @方法名：getInfoById
+     * @描述：根据id获取工单信息
+     * @创建日期：2018/12/19
+     * @作者：SUNXU
+     * @参数：[id, request]
+     * @返回值：workorder
+     */
+    @Override
+    public WorkOrder getInfoById(String id) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+        WorkOrder workorder = mongoTemplate.findOne(query, WorkOrder.class);
+        return workorder;
     }
 }
