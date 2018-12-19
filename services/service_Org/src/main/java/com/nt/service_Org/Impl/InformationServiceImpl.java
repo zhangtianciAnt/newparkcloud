@@ -43,16 +43,23 @@ public class InformationServiceImpl implements InformationService {
             mongoTemplate.save(information);
         } else {
             if (information.getType().equals("8") || information.getType().equals("9") || information.getType().equals("10")) {
-                Query query = new Query();
-                query.addCriteria(Criteria.where("type").is(information.getType()));
-                query.addCriteria(Criteria.where("releasestatus").is("1"));
-                List<Information> rst = mongoTemplate.find(query, Information.class);
-                if (rst.size() > 0) {
-                    rst.get(0).setReleasestatus("2");
-                    mongoTemplate.save(rst.get(0));
+                if(information.getReleasestatus().equals("2"))
+                {
                     mongoTemplate.save(information);
-                } else {
-                    mongoTemplate.save(information);
+                }
+                else
+                {
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("type").is(information.getType()));
+                    query.addCriteria(Criteria.where("releasestatus").is("1"));
+                    List<Information> rst = mongoTemplate.find(query, Information.class);
+                    if (rst.size() > 0) {
+                        rst.get(0).setReleasestatus("2");
+                        mongoTemplate.save(rst.get(0));
+                        mongoTemplate.save(information);
+                    } else {
+                        mongoTemplate.save(information);
+                    }
                 }
             } else {
                 mongoTemplate.save(information);
