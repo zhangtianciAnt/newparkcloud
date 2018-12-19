@@ -72,4 +72,18 @@ public class ServiceCategoryController {
         servicecategory.setIds(tokenModel.getIdList());
         return ApiResult.success(servicecategoryService.get(servicecategory));
     }
+
+    /**
+     * @方法名：getwxservicecategory
+     * @描述：获取服务类目
+     * @创建日期：2018/12/19
+     * @作者：SUNXU
+     * @参数：[request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getwxservicecategory", method = {RequestMethod.GET})
+    public ApiResult getwxservicecategory(HttpServletRequest request) throws Exception {
+        ServiceCategory servicecategory = new ServiceCategory();
+        return ApiResult.success(servicecategoryService.get(servicecategory));
+    }
 }
