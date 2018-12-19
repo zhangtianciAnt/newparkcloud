@@ -60,7 +60,7 @@ public class MongoObject {
             String name = field[j].getName();
 
             //判断是否有值，自动拼接条件
-            if(field[j].get(obj) != null && !"serialVersionUID".equals(name) && !name.equals(AuthConstants.OWNERS)){
+            if(field[j].get(obj) != null && !"serialVersionUID".equals(name) && !name.equals(AuthConstants.OWNERS) && !name.equals(AuthConstants.HTTPORIGINTYPE)){
                 query.addCriteria(Criteria.where(name).is(field[j].get(obj)));
             }
 
