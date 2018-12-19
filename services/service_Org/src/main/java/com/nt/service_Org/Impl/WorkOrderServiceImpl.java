@@ -4,6 +4,7 @@ import com.nt.dao_Org.WorkOrder;
 import com.nt.service_Org.WorkOrderService;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -44,6 +45,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     public List<WorkOrder> get(WorkOrder workorder) throws Exception {
         //共同带权限查询
         Query query = CustmizeQuery(workorder);
+        query.with(new Sort(Sort.Direction.DESC,   "createon"));
         query.fields().exclude("photo");
         return mongoTemplate.find(query, WorkOrder.class);
     }
