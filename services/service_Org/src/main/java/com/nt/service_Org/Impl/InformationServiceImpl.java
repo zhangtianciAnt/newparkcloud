@@ -8,6 +8,7 @@ import com.nt.dao_Org.Information;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Org.InformationService;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
