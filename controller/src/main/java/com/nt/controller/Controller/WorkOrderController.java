@@ -1,6 +1,7 @@
 package com.nt.controller.Controller;
 
 
+
 import com.nt.dao_Org.WorkOrder;
 import com.nt.service_Org.WorkOrderService;
 import com.nt.utils.ApiResult;
@@ -64,14 +65,28 @@ public class WorkOrderController {
      * @参数：[request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getworkorder", method = {RequestMethod.GET})
-    public ApiResult getworkorder(HttpServletRequest request) throws Exception {
-        WorkOrder workorder = new WorkOrder();
+    @RequestMapping(value = "/getworkorder", method = {RequestMethod.POST})
+    public ApiResult getworkorder(@RequestBody WorkOrder workorder,HttpServletRequest request) throws Exception {
+
         TokenModel tokenModel = tokenService.getToken(request);
         workorder.setTenantid(tokenModel.getTenantId());
         workorder.setOwners(tokenModel.getOwnerList());
         workorder.setIds(tokenModel.getIdList());
         return ApiResult.success(workorderService.get(workorder));
+    }
+
+    /**
+     * @方法名：getInfoById
+     * @描述：根据id获取工单信息
+     * @创建日期：2018/12/19
+     * @作者：SUNXU
+     * @参数：[id, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getInfoById", method = {RequestMethod.GET})
+    public ApiResult getInfoById(String id, HttpServletRequest request) throws Exception {
+        WorkOrder workorder = new WorkOrder();
+        return ApiResult.success(workorderService.getInfoById(id));
     }
 
 
