@@ -7,6 +7,7 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ProjectName: newparkcloud
@@ -73,6 +74,6 @@ public interface UserService {
     TokenModel wxLogin(String weChatUserId) throws Exception;
 
     // 微信端根据用户id获取信息
-    UserVo getWxById(String userid) throws Exception;
+    Map<String, Object> getWxById(String userid) throws Exception;
 
 }

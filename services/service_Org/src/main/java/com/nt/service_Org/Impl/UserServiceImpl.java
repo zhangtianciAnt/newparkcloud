@@ -18,7 +18,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -414,7 +416,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：userVo
      */
     @Override
-    public UserVo getWxById(String userid) throws Exception{
+    public Map<String, Object> getWxById(String userid) throws Exception{
         UserVo userVo = new UserVo();
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("openid").is(userid));
@@ -427,16 +429,25 @@ public class UserServiceImpl implements UserService {
             userVo.setCustomerInfo(customerInfo);
             userVo.setUserAccount(userAccount);
         }else {
-            UserAccount userAcc = new UserAccount();
+            userAccount = new UserAccount();
             // 插入账号
-            userAcc.setUserid(userid);
-            userAcc.setUsertype("1");
-            userAcc.setOpenid(userid);
-            userAcc.setIsPassing("0");
-            mongoTemplate.save(userAcc);
+            userAccount.setUserid(userid);
+            userAccount.setUsertype("1");
+            userAccount.setOpenid(userid);
+            userAccount.setIsPassing("0");
+            mongoTemplate.save(userAccount);
             userVo.setCustomerInfo(customerInfo);
-            userVo.setUserAccount(userAcc);
+            userVo.setUserAccount(userAccount);
         }
-        return userVo;
+        //生成token
+        TokenModel tokenModel = new TokenModel();
+        tokenModel.setUserId(userAccount.get_id());
+        tokenModel.setUserType(userAccount.getUsertype());
+        tokenModel.setTenantId(userAccount.getTenantid());
+        tokenService.setToken(tokenModel);
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("userVo", userVo);
+        result.put("tokenModel", tokenModel);
+        return result;
     }
 }
