@@ -3,6 +3,7 @@ package com.nt.controller.Controller;
 
 
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Information;
 import com.nt.service_Org.InformationService;
 import com.nt.utils.ApiResult;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/information")
@@ -44,30 +46,31 @@ public class InformationController {
         if (information == null || StringUtils.isEmpty(information)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<CustomerInfo> customerList = informationService.getcustomerinfo();
+        for(CustomerInfo cinfo:customerList)
+        {
+            if(cinfo.getUserid()!=null && cinfo.getUserid().equals(tokenModel.getUserId()))
+            {
+                information.setReleaseperson(cinfo.getUserinfo().getCustomername());
+                information.setReleasetime(new Date());
+            }
+        }
         if(information.getStatus()==null)
         {
-            TokenModel tokenModel = tokenService.getToken(request);
             information.preInsert(tokenModel);
-            information.setReleaseperson(tokenModel.getUserId());
-            information.setReleasetime(new Date());
             informationService.save(information,tokenModel);
         }
         else
         {
             if(information.getStatus().equals("1"))
             {
-                TokenModel tokenModel = tokenService.getToken(request);
                 information.preUpdate(tokenModel);
-                information.setReleaseperson(tokenModel.getUserId());
-                information.setReleasetime(new Date());
                 informationService.save(information,tokenModel);
             }
             if(information.getStatus().equals("0"))
             {
-                TokenModel tokenModel = tokenService.getToken(request);
                 information.preInsert(tokenModel);
-                information.setReleaseperson(tokenModel.getUserId());
-                information.setReleasetime(new Date());
                 informationService.save(information,tokenModel);
             }
         }
@@ -82,9 +85,9 @@ public class InformationController {
      * @参数：[request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getinformation", method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request) throws Exception {
-        Information information = new Information();
+    @RequestMapping(value = "/getinformation", method = {RequestMethod.POST})
+    public ApiResult get(@RequestBody Information information,HttpServletRequest request) throws Exception {
+//        Information information = new Information();
         TokenModel tokenModel = tokenService.getToken(request);
         information.setTenantid(tokenModel.getTenantId());
         information.setOwners(tokenModel.getOwnerList());
