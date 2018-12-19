@@ -23,7 +23,7 @@ public interface InformationService {
     List<CustomerInfo> getcustomerinfo() throws Exception;
 
     //根据type获取发布信息
-    List<Information> getInfoByType(String type) throws Exception;
+    List<Information> getInfoByType(Information information) throws Exception;
 
     //根据id获取发布信息
     Information getInfoById(String id) throws Exception;

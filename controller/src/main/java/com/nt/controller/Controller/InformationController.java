@@ -131,10 +131,12 @@ public class InformationController {
      * @参数：[type, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getInfoByType", method = {RequestMethod.GET})
-    public ApiResult getInfoByType(String type, HttpServletRequest request) throws Exception {
-        Information information = new Information();
-        return ApiResult.success(informationService.getInfoByType(type));
+    @RequestMapping(value = "/getInfoByType", method = {RequestMethod.POST})
+    public ApiResult getInfoByType(@RequestBody Information information, HttpServletRequest request) throws Exception {
+        if(StringUtils.isEmpty(information.getType())){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+        }
+        return ApiResult.success(informationService.getInfoByType(information));
     }
 
     /**

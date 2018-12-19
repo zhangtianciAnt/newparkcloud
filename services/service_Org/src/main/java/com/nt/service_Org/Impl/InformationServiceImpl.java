@@ -160,10 +160,15 @@ public class InformationServiceImpl implements InformationService {
      * @返回值：informationList
      */
     @Override
-    public List<Information> getInfoByType(String type) throws Exception {
+    public List<Information> getInfoByType(Information information) throws Exception {
         Query query = new Query();
-        query.addCriteria(Criteria.where("type").is(type));
+        query.addCriteria(Criteria.where("type").is(information.getType()));
         query.addCriteria(Criteria.where("releasestatus").is("1"));
+        if(information .getCurrentPage() != null && information.getPageSize() !=null){
+
+            query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            query.limit(information.getPageSize());
+        }
         query.with(new Sort(Sort.Direction.DESC, "releasetime"));
         List<Information> informationList = mongoTemplate.find(query, Information.class);
         return informationList;
