@@ -31,7 +31,7 @@ public class WorkOrderController {
 
     /**
      * @方法名：saveinformation
-     * @描述：信息发布保存
+     * @描述：工单保存
      * @创建日期：2018/12/13
      * @作者：SUNXU
      * @参数：[information, request]
@@ -59,7 +59,7 @@ public class WorkOrderController {
 
     /**
      * @方法名：getinformation
-     * @描述：获取信息发布列表
+     * @描述：获取工单列表
      * @创建日期：2018/12/13
      * @作者：SUNXU
      * @参数：[request]
