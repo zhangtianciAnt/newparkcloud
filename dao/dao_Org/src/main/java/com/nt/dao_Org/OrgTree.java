@@ -1,5 +1,6 @@
 package com.nt.dao_Org;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
@@ -139,6 +140,9 @@ public class OrgTree extends BaseModel {
     @Override
     public void preUpdate(TokenModel tokenModel){
         super.preUpdate(tokenModel);
+        if(StrUtil.isEmpty(super.getOwner())) {
+            super.setOwner(tokenModel.getUserId());
+        }
         if (orgs != null && orgs.size() > 0) {
             for (OrgTree tmp : this.orgs) {
                 tmp.preUpdate(tokenModel);
