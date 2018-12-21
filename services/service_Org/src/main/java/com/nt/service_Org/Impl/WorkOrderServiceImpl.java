@@ -1,6 +1,8 @@
 package com.nt.service_Org.Impl;
 
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.WorkOrder;
+import com.nt.service_Org.UserService;
 import com.nt.service_Org.WorkOrderService;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -19,6 +22,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private UserService userservice;
 
     /**
      * @方法名：save
@@ -30,6 +36,33 @@ public class WorkOrderServiceImpl implements WorkOrderService {
      */
     @Override
     public void save(WorkOrder workorder, TokenModel tokenModel) throws Exception {
+
+
+            //来源  1.PC后台；2.微信服务号
+            if(workorder.getSource().equals("2")&&workorder.getWorkorderlog()==null)
+            {
+                String createby = tokenModel.getUserId();
+
+                UserVo userVo = userservice.getAccountCustomerById(createby);
+                String createname = userVo.getCustomerInfo().getUserinfo().getCustomername();
+                String createphoto = userVo.getCustomerInfo().getUserinfo().getMobilenumber();
+
+                workorder.setContacts(createname);
+                workorder.setPhonenumber(createphoto);
+                //工单日志
+                List<WorkOrder.WorkOrderLog> wloginfos = new ArrayList<WorkOrder.WorkOrderLog>();
+                WorkOrder.WorkOrderLog log = new WorkOrder.WorkOrderLog();
+                log.setUsername(createname);
+                log.setWorkorderstatus("1");
+                log.setActiondescribe("新建工单");
+                wloginfos.add(log);
+                workorder.setWorkorderlog(wloginfos);
+
+                workorder.preInsert(tokenModel);
+            }
+
+
+
         mongoTemplate.save(workorder);
     }
 
