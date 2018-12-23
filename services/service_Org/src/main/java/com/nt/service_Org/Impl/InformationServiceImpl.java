@@ -62,7 +62,36 @@ public class InformationServiceImpl implements InformationService {
                     }
                 }
             } else {
-                mongoTemplate.save(information);
+                if("2".equals(information.getOccasion())) {
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+                    UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
+                    if(userAccount != null) {
+                        Query queryCus = new Query();
+                        queryCus.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                        CustomerInfo customerInfo = mongoTemplate.findOne(queryCus, CustomerInfo.class);
+                        if(customerInfo != null) {
+                            if(customerInfo.getUserinfo() != null) {
+                                List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
+                                Information.Signupinfo s = new Information.Signupinfo();
+                                s.set_id(tokenModel.getUserId());
+                                s.setCompanyname(customerInfo.getUserinfo().getCompanyname());
+                                s.setPhonenumber(customerInfo.getUserinfo().getMobilenumber());
+                                s.setName(customerInfo.getUserinfo().getCustomername());
+                                signupinfos.add(s);
+                                if(information.getBusinessdocking().getSignupinfo() != null) {
+                                    information.getBusinessdocking().getSignupinfo().addAll(signupinfos);
+                                }else {
+                                    information.getBusinessdocking().setSignupinfo(signupinfos);
+                                }
+
+                                mongoTemplate.save(information);
+                            }
+                        }
+                    }
+                }else {
+                    mongoTemplate.save(information);
+                }
             }
         }
     }
@@ -179,6 +208,21 @@ public class InformationServiceImpl implements InformationService {
         }
         query.with(new Sort(Sort.Direction.DESC, "releasetime"));
         List<Information> informationList = mongoTemplate.find(query, Information.class);
+
+        Long now = (new Date()).getTime();
+        for ( Information i : informationList ) {
+            Information.Activityinfo info = i.getActivityinfo();
+
+            if ( now < info.getStarttime().getTime() ) {
+                info.setActivityStatus("未开始");
+            } else if ( now > info.getEndtime().getTime() ) {
+                info.setActivityStatus("已结束");
+            } else {
+                info.setActivityStatus("进行中");
+            }
+        }
+
+
         return informationList;
     }
 
