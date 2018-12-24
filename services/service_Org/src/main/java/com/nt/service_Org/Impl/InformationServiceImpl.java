@@ -213,15 +213,16 @@ public class InformationServiceImpl implements InformationService {
         for ( Information i : informationList ) {
             Information.Activityinfo info = i.getActivityinfo();
 
-            if ( now < info.getStarttime().getTime() ) {
-                info.setActivityStatus("未开始");
-            } else if ( now > info.getEndtime().getTime() ) {
-                info.setActivityStatus("已结束");
-            } else {
-                info.setActivityStatus("进行中");
+            if(info != null) {
+                if ( now < info.getStarttime().getTime() ) {
+                    info.setActivityStatus("未开始");
+                } else if ( now > info.getEndtime().getTime() ) {
+                    info.setActivityStatus("已结束");
+                } else {
+                    info.setActivityStatus("进行中");
+                }
             }
         }
-
 
         return informationList;
     }
