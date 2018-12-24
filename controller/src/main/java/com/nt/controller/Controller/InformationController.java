@@ -173,4 +173,36 @@ public class InformationController {
         informationService.addActivity(information, id, tokenModel);
         return ApiResult.success();
     }
+
+
+
+    /**
+     * @方法名：getMyActivity
+     * @描述：我的活动信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getMyActivity", method = {RequestMethod.POST})
+    public ApiResult getMyActivity(@RequestBody Information information, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        String id = tokenModel.getUserId();
+        return ApiResult.success(informationService.getMyActivity(information, id));
+    }
+
+    /**
+     * @方法名：getMyPublish
+     * @描述：我的发布信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[information,request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getMyPublish", method = {RequestMethod.POST})
+    public ApiResult getMyPublish(@RequestBody Information information, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        String id = tokenModel.getUserId();
+        return ApiResult.success(informationService.getMyPublish(information, id));
+    }
 }

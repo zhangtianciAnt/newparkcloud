@@ -286,4 +286,90 @@ public class InformationServiceImpl implements InformationService {
             }
         }
     }
+
+
+
+    /**
+     * @方法名：getMyActivity
+     * @描述：我的活动信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[information, request]
+     * @返回值：information
+     */
+    @Override
+    public List<Information> getMyActivity(Information information, String id) throws Exception {
+        Query query = new Query();
+        List<String> types = new ArrayList<>();
+        types.add("6");
+        types.add("7");
+        query.addCriteria(Criteria.where("type").in(types));
+        query.addCriteria(Criteria.where("activityinfo.signupinfo._id").is(id));
+        query.addCriteria(Criteria.where("releasestatus").is("1"));
+        if(information.getCurrentPage() != null && information.getPageSize() !=null){
+            query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            query.limit(information.getPageSize());
+        }
+        query.with(new Sort(Sort.Direction.DESC, "releasetime"));
+        List<Information> informationList = mongoTemplate.find(query, Information.class);
+
+        Long now = (new Date()).getTime();
+        for ( Information i : informationList ) {
+            Information.Activityinfo info = i.getActivityinfo();
+
+            if(info != null) {
+                if ( now < info.getStarttime().getTime() ) {
+                    info.setActivityStatus("未开始");
+                } else if ( now > info.getEndtime().getTime() ) {
+                    info.setActivityStatus("已结束");
+                } else {
+                    info.setActivityStatus("进行中");
+                }
+            }
+        }
+
+        return informationList;
+    }
+
+    /**
+     * @方法名：getMyPublish
+     * @描述：我的发布信息
+     * @创建日期：2018/12/11
+     * @作者：ZHANGYING
+     * @参数：[information, request]
+     * @返回值：information
+     */
+    @Override
+    public List<Information> getMyPublish(Information information, String id) throws Exception {
+        Query query = new Query();
+        List<String> types = new ArrayList<>();
+        types.add("11");
+        types.add("12");
+        query.addCriteria(Criteria.where("type").in(types));
+        query.addCriteria(Criteria.where("businessdocking.signupinfo._id").is(id));
+        query.addCriteria(Criteria.where("releasestatus").is("1"));
+        if(information.getCurrentPage() != null && information.getPageSize() !=null){
+            query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            query.limit(information.getPageSize());
+        }
+        query.with(new Sort(Sort.Direction.DESC, "releasetime"));
+        List<Information> informationList = mongoTemplate.find(query, Information.class);
+
+        Long now = (new Date()).getTime();
+        for ( Information i : informationList ) {
+            Information.Activityinfo info = i.getActivityinfo();
+
+            if(info != null) {
+                if ( now < info.getStarttime().getTime() ) {
+                    info.setActivityStatus("未开始");
+                } else if ( now > info.getEndtime().getTime() ) {
+                    info.setActivityStatus("已结束");
+                } else {
+                    info.setActivityStatus("进行中");
+                }
+            }
+        }
+
+        return informationList;
+    }
 }

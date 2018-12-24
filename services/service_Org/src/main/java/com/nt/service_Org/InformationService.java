@@ -30,4 +30,9 @@ public interface InformationService {
 
     //报名成功添加用户信息
     void addActivity(Information information, String id, TokenModel tokenModel) throws Exception;
+
+    //我的活动
+    List<Information> getMyActivity(Information information, String id) throws Exception;
+    //我的发布
+    List<Information> getMyPublish(Information information, String id) throws Exception;
 }
