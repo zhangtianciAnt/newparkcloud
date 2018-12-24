@@ -89,6 +89,7 @@ public class Information extends BaseModel {
         private String companyname;   //公司名称
         private String name;          //姓名
         private String phonenumber;   //手机号
+        private Integer count; //个数
     }
 
     @Data

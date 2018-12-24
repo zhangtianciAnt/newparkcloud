@@ -169,7 +169,8 @@ public class InformationController {
      */
     @RequestMapping(value = "/addActivity", method = {RequestMethod.POST})
     public ApiResult addActivity(@RequestBody Information information,String id, HttpServletRequest request) throws Exception {
-        informationService.addActivity(information, id);
+        TokenModel tokenModel = tokenService.getToken(request);
+        informationService.addActivity(information, id, tokenModel);
         return ApiResult.success();
     }
 }

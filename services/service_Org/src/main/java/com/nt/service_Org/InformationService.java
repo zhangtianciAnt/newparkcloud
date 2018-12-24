@@ -29,5 +29,5 @@ public interface InformationService {
     Information getInfoById(String id) throws Exception;
 
     //报名成功添加用户信息
-    void addActivity(Information information, String id) throws Exception;
+    void addActivity(Information information, String id, TokenModel tokenModel) throws Exception;
 }

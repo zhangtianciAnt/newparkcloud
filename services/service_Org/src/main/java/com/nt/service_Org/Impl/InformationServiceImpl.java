@@ -252,7 +252,7 @@ public class InformationServiceImpl implements InformationService {
      * @返回值：information
      */
     @Override
-    public void addActivity(Information information, String id) throws Exception {
+    public void addActivity(Information information, String id, TokenModel tokenModel) throws Exception {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(id));
         UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
@@ -264,10 +264,16 @@ public class InformationServiceImpl implements InformationService {
                 if(customerInfo.getUserinfo() != null) {
                     List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
                     Information.Signupinfo s = new Information.Signupinfo();
+                    s.preInsert(tokenModel);
                     s.set_id(id);
                     s.setCompanyname(customerInfo.getUserinfo().getCompanyname());
                     s.setPhonenumber(customerInfo.getUserinfo().getMobilenumber());
                     s.setName(customerInfo.getUserinfo().getCustomername());
+                    int count = 0;
+                    if(information.getActivityinfo().getSignupinfo() != null) {
+                        count = information.getActivityinfo().getSignupinfo().size();
+                    }
+                    s.setCount(count + 1);
                     signupinfos.add(s);
                     if(information.getActivityinfo().getSignupinfo() != null) {
                         information.getActivityinfo().getSignupinfo().addAll(signupinfos);
