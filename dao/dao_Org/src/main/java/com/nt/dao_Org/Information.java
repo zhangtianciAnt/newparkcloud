@@ -60,6 +60,7 @@ public class Information extends BaseModel {
         private Boolean issignup;      //允许报名。true：允许；false不允许（默认）
         private List<Signupinfo>signupinfo; //报名信息
         private String activityStatus; // 活动状态
+        private Integer count; //个数
 
         @Override
         public void preInsert(TokenModel tokenModel){
@@ -89,7 +90,6 @@ public class Information extends BaseModel {
         private String companyname;   //公司名称
         private String name;          //姓名
         private String phonenumber;   //手机号
-        private Integer count; //个数
     }
 
     @Data

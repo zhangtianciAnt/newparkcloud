@@ -262,6 +262,10 @@ public class InformationServiceImpl implements InformationService {
             CustomerInfo customerInfo = mongoTemplate.findOne(queryCus, CustomerInfo.class);
             if(customerInfo != null) {
                 if(customerInfo.getUserinfo() != null) {
+                    int count = 0;
+                    if(information.getActivityinfo().getSignupinfo() != null) {
+                        count = information.getActivityinfo().getSignupinfo().size();
+                    }
                     List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
                     Information.Signupinfo s = new Information.Signupinfo();
                     s.preInsert(tokenModel);
@@ -269,12 +273,8 @@ public class InformationServiceImpl implements InformationService {
                     s.setCompanyname(customerInfo.getUserinfo().getCompanyname());
                     s.setPhonenumber(customerInfo.getUserinfo().getMobilenumber());
                     s.setName(customerInfo.getUserinfo().getCustomername());
-                    int count = 0;
-                    if(information.getActivityinfo().getSignupinfo() != null) {
-                        count = information.getActivityinfo().getSignupinfo().size();
-                    }
-                    s.setCount(count + 1);
                     signupinfos.add(s);
+                    information.getActivityinfo().setCount(count + 1);
                     if(information.getActivityinfo().getSignupinfo() != null) {
                         information.getActivityinfo().getSignupinfo().addAll(signupinfos);
                     }else {
