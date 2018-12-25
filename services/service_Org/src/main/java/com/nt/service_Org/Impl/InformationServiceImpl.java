@@ -313,10 +313,7 @@ public class InformationServiceImpl implements InformationService {
 
         if("activityinfo".equals(name)) {
             Query query = new Query();
-            List<String> types = new ArrayList<>();
-            types.add("6");
-            types.add("7");
-            query.addCriteria(Criteria.where("type").in(types));
+            query.addCriteria(Criteria.where("type").in(information.getType()));
             query.addCriteria(Criteria.where("activityinfo.signupinfo._id").is(id));
             query.addCriteria(Criteria.where("releasestatus").is("1"));
             if(information.getCurrentPage() != null && information.getPageSize() !=null){
@@ -343,10 +340,7 @@ public class InformationServiceImpl implements InformationService {
 
         }else if("businessdocking".equals(name)) {
             Query query = new Query();
-            List<String> types = new ArrayList<>();
-            types.add("11");
-            types.add("12");
-            query.addCriteria(Criteria.where("type").in(types));
+            query.addCriteria(Criteria.where("type").in(information.getType()));
             query.addCriteria(Criteria.where("businessdocking.signupinfo._id").is(id));
             query.addCriteria(Criteria.where("releasestatus").is("1"));
             if(information.getCurrentPage() != null && information.getPageSize() !=null){
