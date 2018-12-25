@@ -69,10 +69,17 @@ public class WorkOrderController {
     public ApiResult getworkorder(@RequestBody WorkOrder workorder,HttpServletRequest request) throws Exception {
 
         TokenModel tokenModel = tokenService.getToken(request);
-        workorder.setTenantid(tokenModel.getTenantId());
-        workorder.setOwners(tokenModel.getOwnerList());
-        workorder.setIds(tokenModel.getIdList());
-        return ApiResult.success(workorderService.get(workorder));
+        if(workorder.getSource().equals("1"))
+        {
+            workorder.setTenantid(tokenModel.getTenantId());
+            workorder.setOwners(tokenModel.getOwnerList());
+            workorder.setIds(tokenModel.getIdList());
+            return ApiResult.success(workorderService.get(workorder));
+        }
+        else{
+            workorder.setOwner(tokenModel.getUserId());
+            return ApiResult.success(workorderService.get(workorder));
+        }
     }
 
     /**
