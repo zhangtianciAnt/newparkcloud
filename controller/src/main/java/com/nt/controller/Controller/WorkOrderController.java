@@ -74,6 +74,7 @@ public class WorkOrderController {
             workorder.setTenantid(tokenModel.getTenantId());
             workorder.setOwners(tokenModel.getOwnerList());
             workorder.setIds(tokenModel.getIdList());
+            workorder.setSource(null);
             return ApiResult.success(workorderService.get(workorder));
         }
         else{
