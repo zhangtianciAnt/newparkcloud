@@ -69,22 +69,27 @@ public class UserController {
     //登陆
     @RequestMapping(value = "/login",method={RequestMethod.POST})
     public ApiResult login(@RequestBody UserAccount userAccount,HttpServletRequest request) throws Exception {
-        if (userAccount == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+        try {
+            if (userAccount == null) {
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            }
+            TokenModel tokenModel = userService.login(userAccount);
+
+            var log = new Log();
+            log.setType(AuthConstants.LOG_TYPE_LOGIN);
+            var logs = new Log.Logs();
+            logs.setIp(HttpUtil.getClientIP(request));
+            logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+            log.setLogs(new ArrayList<Log.Logs>());
+            log.getLogs().add(logs);
+            log.preInsert(tokenModel);
+            logService.save(log);
+
+            return ApiResult.success(tokenModel);
+        } catch (LogicalException ex){
+            return ApiResult.fail(ex.getMessage());
         }
-        TokenModel tokenModel = userService.login(userAccount);
 
-        var log = new Log();
-        log.setType(AuthConstants.LOG_TYPE_LOGIN);
-        var logs = new Log.Logs();
-        logs.setIp(HttpUtil.getClientIP(request));
-        logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
-        log.setLogs(new ArrayList<Log.Logs>());
-        log.getLogs().add(logs);
-        log.preInsert(tokenModel);
-        logService.save(log);
-
-        return ApiResult.success(tokenModel);
     }
 
     //获取当前用户信息
