@@ -1,5 +1,6 @@
 package com.nt.service_Org.Impl;
 
+import cn.hutool.core.util.ImageUtil;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
