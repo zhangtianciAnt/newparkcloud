@@ -58,14 +58,14 @@ public class Detect {
 
             HashMap<String, String> options = new HashMap<String, String>();
             options.put("face_field", "age,beauty,expression,faceshape,gender,glasses,race,qualities");
-            options.put("max_face_num", "2");
+            options.put("max_face_num", max_face_num);
             options.put("face_type", "LIVE");
 
             // 图片数据
             String imgStr = Base64Util.encode(arg0);
             String imageType = "BASE64";
             JSONObject res = client.detect(imgStr, imageType, options);
-            System.out.println(res.toString(2));
+            System.out.println(res.toString());
             return res.toString();
         } catch (Exception e) {
             e.printStackTrace();

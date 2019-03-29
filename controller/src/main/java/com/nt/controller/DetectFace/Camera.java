@@ -3,7 +3,14 @@ package com.nt.controller.DetectFace;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacv.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
+
+import static com.nt.controller.DetectFace.Detect.detectFace;
 
 public class Camera {
     public static void recordCamera(String outputFile, double frameRate)
@@ -31,6 +38,13 @@ public class Camera {
         Frame rotatedFrame=converter.convert(grabbedImage);//不知道为什么这里不做转换就不能推到rtmp
         while (frame.isVisible() && (grabbedImage = converter.convert(grabber.grab())) != null) {
             rotatedFrame = converter.convert(grabbedImage);
+//
+//            Java2DFrameConverter java2dFrameConverter = new Java2DFrameConverter();
+//            BufferedImage bufferedImage= java2dFrameConverter.convert(rotatedFrame);
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            ImageIO.write(bufferedImage, "jpg", out);
+//            String rst = detectFace(out.toByteArray(),"5");
+
             frame.showImage(rotatedFrame);
             if (startTime == 0) {
                 startTime = System.currentTimeMillis();
