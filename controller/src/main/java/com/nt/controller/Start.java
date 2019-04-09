@@ -31,8 +31,8 @@ public class Start {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Start.class, args);
         log.info("服务已启动！！！");
-        System.setProperty("java.awt.headless", "false");
-        recordCamera("rtmp://59.80.34.104:1935/hls/test",25);
+//        System.setProperty("java.awt.headless", "false");
+//        recordCamera("rtmp://59.80.34.104:1935/hls/test",25);
 
     }
 
