@@ -21,6 +21,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/user/getWxById")
                 .excludePathPatterns("/information/addActivity")
                 .excludePathPatterns("/ServiceCategory/getwxservicecategory")
+                .excludePathPatterns("/SignIn/*")
                 .excludePathPatterns("/weChat/getWeChatUserInfo");
     }
 
