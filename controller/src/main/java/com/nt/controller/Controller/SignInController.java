@@ -27,7 +27,7 @@ public class SignInController {
     @Autowired
     private SignInInformationSeivice signInInformationSeivice;
 
-    @RequestMapping(value = "/SignIn", method = {RequestMethod.GET})
+    @RequestMapping(value = "/SignIn", method = {RequestMethod.POST})
     public ApiResult saveservicecategory(String No, HttpServletRequest request) throws Exception {
         SignInInformation signInInformation = new SignInInformation();
         signInInformation.setNo(No) ;
