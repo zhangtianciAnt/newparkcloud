@@ -6,10 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.Table;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="UserInfo")
 public class UserInfo extends BaseModel<UserInfo> {
     /**
 	 *

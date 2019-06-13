@@ -16,6 +16,6 @@ public class SignInInformationSeiviceImpl implements SignInInformationSeivice {
     private SignInInformationMapper signInInformationMapper;
     @Override
     public void insert(SignInInformation signInInformation) throws Exception {
-
+        signInInformationMapper.insert(signInInformation);
     }
 }

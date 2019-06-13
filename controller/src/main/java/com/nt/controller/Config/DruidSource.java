@@ -198,7 +198,7 @@ public class DruidSource {
     public DataSource dataSource()  {
         DruidDataSource datasource = new DruidDataSource();
 
-        datasource.setUrl(this.dbUrl);
+        datasource.setUrl(dbUrl);
         datasource.setUsername(username);
         datasource.setPassword(password);
         datasource.setDriverClassName(driverClassName);
