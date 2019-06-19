@@ -80,6 +80,19 @@ public class SignInController {
             rows.add(row);
         }
         ExcelWriter writer = ExcelUtil.getWriter();
+        writer.addHeaderAlias("no", "工号");
+        writer.addHeaderAlias("name", "姓名");
+        writer.addHeaderAlias("classname", "培训课程");
+        writer.addHeaderAlias("theme", "培训主题");
+        writer.addHeaderAlias("start", "开始时间");
+        writer.addHeaderAlias("zuzhi", "组织方");
+        writer.addHeaderAlias("place", "培训地点");
+        writer.addHeaderAlias("time", "学时");
+        writer.addHeaderAlias("people", "培训讲师");
+        writer.addHeaderAlias("signpeople", "登记人");
+        writer.addHeaderAlias("signdate", "登记时间");
+
+
         writer.write(rows);
 
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
