@@ -1,5 +1,7 @@
 package com.nt.controller.Controller;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.nt.dao_Auth.Vo.SignInVo;
@@ -48,7 +50,7 @@ public class SignInController {
     @RequestMapping(value = "/export", method = {RequestMethod.POST})
     public void export(@RequestBody SignInVo signInVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
         SignInInformation SsignInInformation = new SignInInformation();
-        SsignInInformation.setDate(new Date());
+        SsignInInformation.setDate(DateUtil.parse(DateUtil.today()));
         List<SignInInformation> list = signInInformationMapper.select(SsignInInformation);
 
         List<SignInVo> rows = new ArrayList<SignInVo>();
@@ -57,9 +59,14 @@ public class SignInController {
              ) {
             SignInVo row = new SignInVo();
             row.setNo(item.getNo());
+            UserInfo con = new UserInfo();
+            con.setNo(item.getNo());
+            List<UserInfo> userInfo = userInfoMapper.select(con);
+            if(userInfo.size()>0){
+                row.setName(userInfo.get(0).getName());
+            }
 
-            UserInfo userInfo = userInfoMapper.selectByPrimaryKey(item.getNo());
-            row.setName(userInfo.getName());
+
             row.setClassname(signInVo.getClassname());
             row.setTheme(signInVo.getTheme()) ;
             row.setStart(item.getDate());
