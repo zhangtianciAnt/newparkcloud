@@ -78,7 +78,7 @@ public class UserController {
             var log = new Log();
             log.setType(AuthConstants.LOG_TYPE_LOGIN);
             var logs = new Log.Logs();
-            logs.setIp(HttpUtil.getClientIP(request));
+            //logs.setIp(HttpUtil.getClientIP(request));
             logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
             log.setLogs(new ArrayList<Log.Logs>());
             log.getLogs().add(logs);
