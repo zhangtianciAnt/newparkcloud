@@ -88,8 +88,8 @@ public class SignInController {
 
         writer.write(rows);
 
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setHeader("Content-Disposition","attachment;filename=test.xls");
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition","attachment;filename=培训记录等级.xls");
         ServletOutputStream out=response.getOutputStream();
 
         writer.flush(out);
