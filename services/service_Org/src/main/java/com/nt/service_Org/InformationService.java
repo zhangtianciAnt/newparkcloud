@@ -16,6 +16,7 @@ public interface InformationService {
 
     //获取
     List<Information> get(Information information) throws Exception;
+
     //导出excel
     void importexcel(String id, HttpServletRequest request) throws Exception;
 

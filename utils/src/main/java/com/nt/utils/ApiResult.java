@@ -10,14 +10,14 @@ public class ApiResult {
 
     private static Logger log = LoggerFactory.getLogger(ApiResult.class);
 
-	private int code;	// 返回码
-    private String message;	//	返回消息
+    private int code;    // 返回码
+    private String message;    //	返回消息
 
     @JsonInclude(Include.NON_NULL)
-    private Object data;	// 返回数据
+    private Object data;    // 返回数据
 
     public ApiResult() {
-    	this.setCode(ApiCode.SUCCESS);
+        this.setCode(ApiCode.SUCCESS);
     }
 
     public ApiResult(ApiCode apiCode) {
@@ -29,12 +29,12 @@ public class ApiResult {
     }
 
     public ApiResult(int code, String message, Object data) {
-		this.code = code;
-		this.message = message;
-		this.data = data;
-	}
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
 
-	public String getMessage() {
+    public String getMessage() {
         return message;
     }
 
@@ -42,15 +42,14 @@ public class ApiResult {
         this.message = message;
     }
 
-    public ApiResult(Object data){
-    	this.data=data;
+    public ApiResult(Object data) {
+        this.data = data;
     }
 
     /**
      * 设置自定义错误，其中code设置为-1，一般用于检测参数的错误信息
      *
-     * @param message
-     *            要设置的错误内容
+     * @param message 要设置的错误内容
      */
     public void setCustomerMessage(String message) {
         this.code = -1;
@@ -80,6 +79,7 @@ public class ApiResult {
 
     /**
      * 错误消息
+     *
      * @param message
      * @return
      */
@@ -92,6 +92,7 @@ public class ApiResult {
 
     /**
      * 错误消息
+     *
      * @param apiCode 状态码
      * @return
      */
@@ -101,8 +102,16 @@ public class ApiResult {
         return apiResult;
     }
 
+    public static ApiResult fail(Object data) {
+        ApiResult apiResult = new ApiResult();
+        apiResult.setCode(ApiCode.FAIL);
+        apiResult.setData(data);
+        return apiResult;
+    }
+
     /**
      * 成功消息
+     *
      * @return
      */
     public static ApiResult success() {
@@ -111,6 +120,7 @@ public class ApiResult {
 
     /**
      * 成功消息
+     *
      * @param message 自定义的成功消息
      * @return
      */
@@ -120,25 +130,27 @@ public class ApiResult {
 
     /**
      * 成功消息
+     *
      * @return
      */
     public static ApiResult success(Object data) {
-    	 ApiResult apiResult = new ApiResult();
-         apiResult.setCode(ApiCode.SUCCESS);
-         apiResult.setData(data);
-         return apiResult;
+        ApiResult apiResult = new ApiResult();
+        apiResult.setCode(ApiCode.SUCCESS);
+        apiResult.setData(data);
+        return apiResult;
     }
 
     /**
      * 成功消息
+     *
      * @return
      */
     public static ApiResult success(String message, Object data) {
-    	 ApiResult apiResult = new ApiResult();
-         apiResult.setCode(ApiCode.SUCCESS);
-         apiResult.setMessage(message);
-         apiResult.setData(data);
-         return apiResult;
+        ApiResult apiResult = new ApiResult();
+        apiResult.setCode(ApiCode.SUCCESS);
+        apiResult.setMessage(message);
+        apiResult.setData(data);
+        return apiResult;
     }
 
 

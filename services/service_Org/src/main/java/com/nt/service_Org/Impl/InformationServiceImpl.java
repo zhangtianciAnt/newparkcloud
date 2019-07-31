@@ -43,12 +43,9 @@ public class InformationServiceImpl implements InformationService {
             mongoTemplate.save(information);
         } else {
             if (information.getType().equals("8") || information.getType().equals("9") || information.getType().equals("10")) {
-                if(information.getReleasestatus().equals("2"))
-                {
+                if (information.getReleasestatus().equals("2")) {
                     mongoTemplate.save(information);
-                }
-                else
-                {
+                } else {
                     Query query = new Query();
                     query.addCriteria(Criteria.where("type").is(information.getType()));
                     query.addCriteria(Criteria.where("releasestatus").is("1"));
@@ -62,16 +59,16 @@ public class InformationServiceImpl implements InformationService {
                     }
                 }
             } else {
-                if("2".equals(information.getOccasion())) {
+                if ("2".equals(information.getOccasion())) {
                     Query query = new Query();
                     query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
                     UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
-                    if(userAccount != null) {
+                    if (userAccount != null) {
                         Query queryCus = new Query();
                         queryCus.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
                         CustomerInfo customerInfo = mongoTemplate.findOne(queryCus, CustomerInfo.class);
-                        if(customerInfo != null) {
-                            if(customerInfo.getUserinfo() != null) {
+                        if (customerInfo != null) {
+                            if (customerInfo.getUserinfo() != null) {
                                 List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
                                 Information.Signupinfo s = new Information.Signupinfo();
                                 s.set_id(tokenModel.getUserId());
@@ -79,9 +76,9 @@ public class InformationServiceImpl implements InformationService {
                                 s.setPhonenumber(customerInfo.getUserinfo().getMobilenumber());
                                 s.setName(customerInfo.getUserinfo().getCustomername());
                                 signupinfos.add(s);
-                                if(information.getBusinessdocking().getSignupinfo() != null) {
+                                if (information.getBusinessdocking().getSignupinfo() != null) {
                                     information.getBusinessdocking().getSignupinfo().addAll(signupinfos);
-                                }else {
+                                } else {
                                     information.getBusinessdocking().setSignupinfo(signupinfos);
                                 }
 
@@ -89,7 +86,7 @@ public class InformationServiceImpl implements InformationService {
                             }
                         }
                     }
-                }else {
+                } else {
                     mongoTemplate.save(information);
                 }
             }
@@ -108,14 +105,14 @@ public class InformationServiceImpl implements InformationService {
     public List<Information> get(Information information) throws Exception {
         //共同带权限查询
         Query query = CustmizeQuery(information);
-        query.with(new Sort(Sort.Direction.DESC,   "releasetime"));
-        if(information .getCurrentPage() != null && information.getPageSize() !=null){
+        query.with(new Sort(Sort.Direction.DESC, "releasetime"));
+        if (information.getCurrentPage() != null && information.getPageSize() != null) {
 
-            query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            query.skip((information.getCurrentPage() - 1) * information.getPageSize());
             query.limit(information.getPageSize());
         }
         //优化查询速度
-        if(information.getHttpOriginType() != null && information.getHttpOriginType().equals(AuthConstants.LOG_EQUIPMENT_PC)){
+        if (information.getHttpOriginType() != null && information.getHttpOriginType().equals(AuthConstants.LOG_EQUIPMENT_PC)) {
 
             query.fields().exclude("content");
             query.fields().exclude("imagespath");
@@ -201,22 +198,21 @@ public class InformationServiceImpl implements InformationService {
         Query query = new Query();
         query.addCriteria(Criteria.where("type").is(information.getType()));
         query.addCriteria(Criteria.where("releasestatus").is("1"));
-        if(information .getCurrentPage() != null && information.getPageSize() !=null){
-
-            query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+        if (information.getCurrentPage() != null && information.getPageSize() != null) {
+            query.skip((information.getCurrentPage() - 1) * information.getPageSize());
             query.limit(information.getPageSize());
         }
         query.with(new Sort(Sort.Direction.DESC, "releasetime"));
         List<Information> informationList = mongoTemplate.find(query, Information.class);
 
         Long now = (new Date()).getTime();
-        for ( Information i : informationList ) {
+        for (Information i : informationList) {
             Information.Activityinfo info = i.getActivityinfo();
 
-            if(info != null) {
-                if ( now < info.getStarttime().getTime() ) {
+            if (info != null) {
+                if (now < info.getStarttime().getTime()) {
                     info.setActivityStatus("未开始");
-                } else if ( now > info.getEndtime().getTime() ) {
+                } else if (now > info.getEndtime().getTime()) {
                     info.setActivityStatus("已结束");
                 } else {
                     info.setActivityStatus("进行中");
@@ -242,10 +238,10 @@ public class InformationServiceImpl implements InformationService {
         Information information = mongoTemplate.findOne(query, Information.class);
         Long now = (new Date()).getTime();
         Information.Activityinfo info = information.getActivityinfo();
-        if(info != null) {
-            if ( now < info.getStarttime().getTime() ) {
+        if (info != null) {
+            if (now < info.getStarttime().getTime()) {
                 info.setActivityStatus("未开始");
-            } else if ( now > info.getEndtime().getTime() ) {
+            } else if (now > info.getEndtime().getTime()) {
                 info.setActivityStatus("已结束");
             } else {
                 info.setActivityStatus("进行中");
@@ -268,14 +264,14 @@ public class InformationServiceImpl implements InformationService {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(id));
         UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
-        if(userAccount != null) {
+        if (userAccount != null) {
             Query queryCus = new Query();
             queryCus.addCriteria(Criteria.where("userid").is(id));
             CustomerInfo customerInfo = mongoTemplate.findOne(queryCus, CustomerInfo.class);
-            if(customerInfo != null) {
-                if(customerInfo.getUserinfo() != null) {
+            if (customerInfo != null) {
+                if (customerInfo.getUserinfo() != null) {
                     int count = 0;
-                    if(information.getActivityinfo().getSignupinfo() != null) {
+                    if (information.getActivityinfo().getSignupinfo() != null) {
                         count = information.getActivityinfo().getSignupinfo().size();
                     }
                     List<Information.Signupinfo> signupinfos = new ArrayList<Information.Signupinfo>();
@@ -287,9 +283,9 @@ public class InformationServiceImpl implements InformationService {
                     s.setName(customerInfo.getUserinfo().getCustomername());
                     signupinfos.add(s);
                     information.getActivityinfo().setCount(count + 1);
-                    if(information.getActivityinfo().getSignupinfo() != null) {
+                    if (information.getActivityinfo().getSignupinfo() != null) {
                         information.getActivityinfo().getSignupinfo().addAll(signupinfos);
-                    }else {
+                    } else {
                         information.getActivityinfo().setSignupinfo(signupinfos);
                     }
 
@@ -311,26 +307,26 @@ public class InformationServiceImpl implements InformationService {
     public List<Information> getMyInfo(Information information, String name, String id) throws Exception {
         List<Information> informationList = new ArrayList<Information>();
 
-        if("activityinfo".equals(name)) {
+        if ("activityinfo".equals(name)) {
             Query query = new Query();
             query.addCriteria(Criteria.where("type").is(information.getType()));
             query.addCriteria(Criteria.where("activityinfo.signupinfo._id").is(id));
             query.addCriteria(Criteria.where("releasestatus").is("1"));
-            if(information.getCurrentPage() != null && information.getPageSize() !=null){
-                query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            if (information.getCurrentPage() != null && information.getPageSize() != null) {
+                query.skip((information.getCurrentPage() - 1) * information.getPageSize());
                 query.limit(information.getPageSize());
             }
             query.with(new Sort(Sort.Direction.DESC, "releasetime"));
             informationList = mongoTemplate.find(query, Information.class);
 
             Long now = (new Date()).getTime();
-            for ( Information i : informationList ) {
+            for (Information i : informationList) {
                 Information.Activityinfo info = i.getActivityinfo();
 
-                if(info != null) {
-                    if ( now < info.getStarttime().getTime() ) {
+                if (info != null) {
+                    if (now < info.getStarttime().getTime()) {
                         info.setActivityStatus("未开始");
-                    } else if ( now > info.getEndtime().getTime() ) {
+                    } else if (now > info.getEndtime().getTime()) {
                         info.setActivityStatus("已结束");
                     } else {
                         info.setActivityStatus("进行中");
@@ -338,17 +334,17 @@ public class InformationServiceImpl implements InformationService {
                 }
             }
 
-        }else if("businessdocking".equals(name)) {
+        } else if ("businessdocking".equals(name)) {
             Query query = new Query();
             query.addCriteria(Criteria.where("type").is(information.getType()));
             query.addCriteria(Criteria.where("businessdocking.signupinfo._id").is(id));
             query.addCriteria(Criteria.where("releasestatus").is("1"));
-            if(information.getCurrentPage() != null && information.getPageSize() !=null){
-                query.skip((information .getCurrentPage() - 1) * information.getPageSize());
+            if (information.getCurrentPage() != null && information.getPageSize() != null) {
+                query.skip((information.getCurrentPage() - 1) * information.getPageSize());
                 query.limit(information.getPageSize());
             }
             query.with(new Sort(Sort.Direction.DESC, "releasetime"));
-            informationList =  mongoTemplate.find(query, Information.class);
+            informationList = mongoTemplate.find(query, Information.class);
 
         }
         return informationList;

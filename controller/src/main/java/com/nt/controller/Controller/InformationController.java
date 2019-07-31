@@ -1,8 +1,6 @@
 package com.nt.controller.Controller;
 
 
-
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -51,30 +49,23 @@ public class InformationController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         List<CustomerInfo> customerList = informationService.getcustomerinfo();
-        for(CustomerInfo cinfo:customerList)
-        {
-            if(cinfo.getUserid()!=null && cinfo.getUserid().equals(tokenModel.getUserId()))
-            {
+        for (CustomerInfo cinfo : customerList) {
+            if (cinfo.getUserid() != null && cinfo.getUserid().equals(tokenModel.getUserId())) {
                 information.setReleaseperson(cinfo.getUserinfo().getCustomername());
                 information.setReleasetime(new Date());
             }
         }
-        if(information.getStatus()==null)
-        {
+        if (information.getStatus() == null) {
             information.preInsert(tokenModel);
-            informationService.save(information,tokenModel);
-        }
-        else
-        {
-            if(information.getStatus().equals("1"))
-            {
+            informationService.save(information, tokenModel);
+        } else {
+            if (information.getStatus().equals("1")) {
                 information.preUpdate(tokenModel);
-                informationService.save(information,tokenModel);
+                informationService.save(information, tokenModel);
             }
-            if(information.getStatus().equals("0"))
-            {
+            if (information.getStatus().equals("0")) {
                 information.preInsert(tokenModel);
-                informationService.save(information,tokenModel);
+                informationService.save(information, tokenModel);
             }
         }
         return ApiResult.success();
@@ -89,7 +80,7 @@ public class InformationController {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getinformation", method = {RequestMethod.POST})
-    public ApiResult get(@RequestBody Information information,HttpServletRequest request) throws Exception {
+    public ApiResult get(@RequestBody Information information, HttpServletRequest request) throws Exception {
 //        Information information = new Information();
         TokenModel tokenModel = tokenService.getToken(request);
         information.setTenantid(tokenModel.getTenantId());
@@ -107,15 +98,16 @@ public class InformationController {
      * @返回值：
      */
     @RequestMapping(value = "/importexcel", method = {RequestMethod.GET})
-    public ApiResult importexcel(String id,HttpServletRequest request) throws Exception {
+    public ApiResult importexcel(String id, HttpServletRequest request) throws Exception {
         Information information = new Information();
         TokenModel tokenModel = tokenService.getToken(request);
         information.setTenantid(tokenModel.getTenantId());
         information.setOwners(tokenModel.getOwnerList());
         information.setIds(tokenModel.getIdList());
-        informationService.importexcel(id,request);
+        informationService.importexcel(id, request);
         return ApiResult.success();
     }
+
     /**
      * @方法名：getcustomerinfo
      * @描述：查询customerinfo
@@ -139,7 +131,7 @@ public class InformationController {
      */
     @RequestMapping(value = "/getInfoByType", method = {RequestMethod.POST})
     public ApiResult getInfoByType(@RequestBody Information information, HttpServletRequest request) throws Exception {
-        if(StringUtils.isEmpty(information.getType())){
+        if (StringUtils.isEmpty(information.getType())) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
         return ApiResult.success(informationService.getInfoByType(information));
@@ -168,12 +160,11 @@ public class InformationController {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/addActivity", method = {RequestMethod.POST})
-    public ApiResult addActivity(@RequestBody Information information,String id, HttpServletRequest request) throws Exception {
+    public ApiResult addActivity(@RequestBody Information information, String id, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         informationService.addActivity(information, id, tokenModel);
         return ApiResult.success();
     }
-
 
 
     /**
@@ -181,11 +172,11 @@ public class InformationController {
      * @描述：我的活动，发布
      * @创建日期：2018/12/11
      * @作者：ZHANGYING
-     * @参数：[information, name,request]
+     * @参数：[information, name, request]
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getMyInfo", method = {RequestMethod.POST})
-    public ApiResult getMyInfo(@RequestBody Information information,String name, HttpServletRequest request) throws Exception {
+    public ApiResult getMyInfo(@RequestBody Information information, String name, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         String id = tokenModel.getUserId();
         return ApiResult.success(informationService.getMyInfo(information, name, id));

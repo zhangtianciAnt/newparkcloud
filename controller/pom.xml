@@ -44,6 +44,18 @@
             <version>1.4.4</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_Online</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_VerificationCode</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

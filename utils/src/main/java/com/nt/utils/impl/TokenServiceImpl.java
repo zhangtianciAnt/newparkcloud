@@ -2,6 +2,7 @@ package com.nt.utils.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.mongodb.client.result.DeleteResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -55,6 +56,6 @@ public class TokenServiceImpl implements TokenService {
     public void clearToken(HttpServletRequest request) {
         String token = request.getHeader(AuthConstants.AUTH_TOKEN);
         Query query = new Query(Criteria.where("token").is(token));
-        mongoTemplate.remove(query,TokenModel.class);
+        mongoTemplate.remove(query, TokenModel.class);
     }
 }
