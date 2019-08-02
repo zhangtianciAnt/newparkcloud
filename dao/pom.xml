@@ -9,8 +9,8 @@
     <modules>
         <module>dao_Org</module>
         <module>dao_Auth</module>
-        <module>dao_Online</module>
         <module>dao_VerificationCode</module>
+        <module>dao_PlatformManagement</module>
     </modules>
     <packaging>pom</packaging>
 

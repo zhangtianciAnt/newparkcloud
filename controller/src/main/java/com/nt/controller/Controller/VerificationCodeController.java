@@ -1,3 +1,6 @@
+/**
+ * 短信controller
+ */
 package com.nt.controller.Controller;
 
 import com.alibaba.fastjson.JSON;
@@ -9,15 +12,11 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
-import com.nt.dao_VerificationCode.VerificationCode;
 import com.nt.service_VerificationCode.VerificationCodeService;
 import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.aliyuncs.profile.DefaultProfile;
 
