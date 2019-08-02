@@ -43,6 +43,7 @@ public class MsgConstants {
     public final static String CODE_ERR = "验证码发送失败";
     public final static String CODE_CK_ERR_01 = "验证码验证失败";
     public final static String CODE_CK_ERR_02 = "验证码验证成功，删除失败";
+
     public final static String SUCCESS = "操作成功";
     public final static String FAIL = "操作失败";
 

@@ -7,8 +7,8 @@
     <modules>
         <module>service_Org</module>
         <module>service_Auth</module>
-        <module>service_Online</module>
         <module>service_VerificationCode</module>
+        <module>service_PlatformManagement</module>
     </modules>
     <packaging>pom</packaging>
 
