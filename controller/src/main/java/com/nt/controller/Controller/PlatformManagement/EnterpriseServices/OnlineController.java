@@ -34,4 +34,15 @@ public class OnlineController {
             return ApiResult.fail(ex.getMessage());
         }
     }
+
+    @RequestMapping(value = "/selectOnlineApplication", method = {RequestMethod.POST})
+    public ApiResult selectOnlineApplication(HttpServletRequest request, @RequestBody OnlineApplication onlineApplication) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(onlineApplicationService.select(onlineApplication, tokenModel));
+        } catch (Exception ex) {
+            return ApiResult.fail(ex.getMessage());
+        }
+    }
+
 }
