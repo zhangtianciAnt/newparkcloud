@@ -56,6 +56,7 @@ public class PMInformationDeliveryServiceImpl implements PMInformationDeliverySe
         Update update = new Update();
         update.set("title", pmInformationDelivery.getTitle());
         update.set("explain", pmInformationDelivery.getExplain());
+        update.set("cover", pmInformationDelivery.getCover());
         update.set("publicationState", pmInformationDelivery.getPublicationStatus());
         update.set("auditStatus", pmInformationDelivery.getAuditStatus());
         update.set("serviceProvider", pmInformationDelivery.getServiceProvider());

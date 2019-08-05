@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PlatformManagement.EnterpriseServices;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_ServiceProvider.PMInformationDelivery;
 import com.nt.service_ServiceProvider.PMInformationDeliveryService;
@@ -40,7 +39,7 @@ public class PMInformationDeliveryController {
     @RequestMapping(value = "/selectPMInformationDelivery", method = {RequestMethod.POST})
     public ApiResult selectPMInformationDelivery(HttpServletRequest request, @RequestBody PMInformationDelivery pmInformationDelivery) throws Exception {
         try {
-            TokenModel tokenModel = tokenService.getToken(request);
+//            TokenModel tokenModel = tokenService.getToken(request);
             List<PMInformationDelivery> pmInformationDeliveries = pmInformationDeliveryService.select(pmInformationDelivery);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("pmInformationDelivery", pmInformationDeliveries);

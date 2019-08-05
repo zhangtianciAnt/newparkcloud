@@ -14,7 +14,7 @@ public class PMInformationDelivery extends BaseModel {
     private String _id; // 主键
     private String title;   // 标题啊
     private String typeName;    // 类别
-    private String imagespath;  // 封面地址
+    private String cover;  // 封面
     private String explain;       // 说明
     private String publicationStatus;   //  发布状态
     private String auditStatus; //  审核状态
