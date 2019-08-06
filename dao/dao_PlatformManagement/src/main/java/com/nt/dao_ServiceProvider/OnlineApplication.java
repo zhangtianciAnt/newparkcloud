@@ -16,6 +16,7 @@ public class OnlineApplication extends BaseModel {
     private String serviceProvider_id;
     private String contactsName;    //  联系人
     private String contactsPhone;   //  联系人手机号
+    private String remarks; // 备注
 
     private ServiceProvider serviceProvider;
     private PMInformationDelivery pmInformationDelivery;
