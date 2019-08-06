@@ -45,4 +45,14 @@ public class OnlineController {
         }
     }
 
+    @RequestMapping(value = "/selectByCreateBy", method = {RequestMethod.POST})
+    public ApiResult selectByCreateBy(HttpServletRequest request) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(onlineApplicationService.selectByCreateBy(tokenModel));
+        } catch (Exception ex) {
+            return ApiResult.fail(ex.getMessage());
+        }
+    }
+
 }

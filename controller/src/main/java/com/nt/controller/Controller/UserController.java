@@ -44,8 +44,9 @@ public class UserController {
 
     @Autowired
     private LogService logService;
+
     //注册
-    @RequestMapping(value = "/register",method={RequestMethod.POST})
+    @RequestMapping(value = "/register", method = {RequestMethod.POST})
     public ApiResult addUser(@RequestBody UserAccount userAccount) throws Exception {
         if (userAccount == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     //获取用户账户
-    @RequestMapping(value = "/getCurrentUserAccount",method={RequestMethod.POST})
+    @RequestMapping(value = "/getCurrentUserAccount", method = {RequestMethod.POST})
     public ApiResult getCurrentUserAccount(@RequestBody UserAccount userAccount) throws Exception {
         if (userAccount == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
@@ -67,8 +68,8 @@ public class UserController {
     }
 
     //登陆
-    @RequestMapping(value = "/login",method={RequestMethod.POST})
-    public ApiResult login(@RequestBody UserAccount userAccount,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/login", method = {RequestMethod.POST})
+    public ApiResult login(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         try {
             if (userAccount == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
@@ -86,14 +87,14 @@ public class UserController {
             logService.save(log);
 
             return ApiResult.success(tokenModel);
-        } catch (LogicalException ex){
+        } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());
         }
 
     }
 
     //获取当前用户信息
-    @RequestMapping(value = "/getCurrentUserInfo",method={RequestMethod.POST})
+    @RequestMapping(value = "/getCurrentUserInfo", method = {RequestMethod.POST})
     public ApiResult getCurrentUserInfo(HttpServletRequest request) throws Exception {
         String userId = RequestUtils.CurrentUserId(request);
         var customerInfo = new CustomerInfo();
@@ -102,8 +103,8 @@ public class UserController {
     }
 
     //创建当前用户用户信息
-    @RequestMapping(value = "/inCurrentUserInfo",method={RequestMethod.POST})
-    public ApiResult inCurrentUserInfo(@RequestBody CustomerInfo customerInfo,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/inCurrentUserInfo", method = {RequestMethod.POST})
+    public ApiResult inCurrentUserInfo(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         customerInfo.setUserid(tokenModel.getUserId());
         customerInfo.preInsert(tokenModel);
@@ -112,8 +113,8 @@ public class UserController {
     }
 
     //更新当前用户用户信息
-    @RequestMapping(value = "/upCurrentUserInfo",method={RequestMethod.POST})
-    public ApiResult upCurrentUserInfo(@RequestBody CustomerInfo customerInfo,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/upCurrentUserInfo", method = {RequestMethod.POST})
+    public ApiResult upCurrentUserInfo(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         customerInfo.setUserid(tokenModel.getUserId());
         customerInfo.preUpdate(tokenModel);
@@ -122,16 +123,16 @@ public class UserController {
     }
 
     //当前用户申请成为正式租户
-    @RequestMapping(value = "/applyCurrentUserTenantId",method={RequestMethod.POST})
+    @RequestMapping(value = "/applyCurrentUserTenantId", method = {RequestMethod.POST})
     public ApiResult applyTenantId(HttpServletRequest request) throws Exception {
         var userAccount = new UserAccount();
         userAccount.setUserid(RequestUtils.CurrentUserId(request));
         val userAccountlist = userService.getUserAccount(userAccount);
-        if(userAccountlist.size() <= 0){
+        if (userAccountlist.size() <= 0) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.USER_ERR_01));
-        }else if(userAccountlist.get(0).getStatus().equals(AuthConstants.APPLYTENANTID)){
+        } else if (userAccountlist.get(0).getStatus().equals(AuthConstants.APPLYTENANTID)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.USER_ERR_02));
-        }else{
+        } else {
             TokenModel tokenModel = tokenService.getToken(request);
             userAccountlist.get(0).setStatus(AuthConstants.APPLYTENANTID);
             userAccountlist.get(0).preUpdate(tokenModel);
@@ -148,16 +149,16 @@ public class UserController {
      * @参数：[userVo, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/addAccountCustomer",method={RequestMethod.POST})
-    public ApiResult addAccountCustomer(@RequestBody UserVo userVo,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/addAccountCustomer", method = {RequestMethod.POST})
+    public ApiResult addAccountCustomer(@RequestBody UserVo userVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        if(userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
+        if (userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
             userVo.getUserAccount().preUpdate(tokenModel);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
         }
 
-        if(userVo.getCustomerInfo().getCreateon() != null && userVo.getCustomerInfo().getCreateby() != null) {
+        if (userVo.getCustomerInfo().getCreateon() != null && userVo.getCustomerInfo().getCreateby() != null) {
             userVo.getCustomerInfo().preUpdate(tokenModel);
         } else {
             userVo.getCustomerInfo().preInsert(tokenModel);
@@ -173,7 +174,7 @@ public class UserController {
      * @参数：[orgid, orgtype, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getAccountCustomer",method={RequestMethod.GET})
+    @RequestMapping(value = "/getAccountCustomer", method = {RequestMethod.GET})
     public ApiResult getAccountCustomer(String orgid, String orgtype, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(userService.getAccountCustomer(orgid, orgtype));
@@ -187,8 +188,8 @@ public class UserController {
      * @参数：[userid, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getAccountCustomerById",method={RequestMethod.GET})
-    public ApiResult getAccountCustomerById(String userid,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getAccountCustomerById", method = {RequestMethod.GET})
+    public ApiResult getAccountCustomerById(String userid, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(userService.getAccountCustomerById(userid));
     }
@@ -201,13 +202,13 @@ public class UserController {
      * @参数：[id, mobileCheck]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/mobileCheck",method={RequestMethod.GET})
-    public ApiResult mobileCheck(String id, String mobilenumber,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/mobileCheck", method = {RequestMethod.GET})
+    public ApiResult mobileCheck(String id, String mobilenumber, HttpServletRequest request) throws Exception {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
             userService.mobileCheck(id, mobilenumber);
             return ApiResult.success();
-        }catch(LogicalException e) {
+        } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
         }
     }
@@ -220,7 +221,7 @@ public class UserController {
      * @参数：[userid, status, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/updUserStatus",method={RequestMethod.GET})
+    @RequestMapping(value = "/updUserStatus", method = {RequestMethod.GET})
     public ApiResult updUserStatus(String userid, String status, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         userService.updUserStatus(userid, status);
@@ -235,7 +236,7 @@ public class UserController {
      * @参数：[userAccount, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/setRoleToUser",method={RequestMethod.POST})
+    @RequestMapping(value = "/setRoleToUser", method = {RequestMethod.POST})
     public ApiResult setRoleToUser(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         userService.setRoleToUser(userAccount);
@@ -250,9 +251,9 @@ public class UserController {
      * @参数：[customerInfo, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/updUserInfo",method={RequestMethod.POST})
+    @RequestMapping(value = "/updUserInfo", method = {RequestMethod.POST})
     public ApiResult updUserInfo(@RequestBody CustomerInfo customerInfo) throws Exception {
-        if(customerInfo == null) {
+        if (customerInfo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
 
@@ -267,8 +268,16 @@ public class UserController {
      * @参数：[userid, request]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getWxById",method={RequestMethod.GET})
-    public ApiResult getWxById(String userid,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getWxById", method = {RequestMethod.GET})
+    public ApiResult getWxById(String userid, HttpServletRequest request) throws Exception {
         return ApiResult.success(userService.getWxById(userid));
+    }
+
+    /**
+     * 获取customerinfo表数据
+     */
+    @RequestMapping(value = "/getAllCustomer", method = {RequestMethod.POST})
+    public ApiResult getAllCustomer() throws Exception {
+        return ApiResult.success(userService.getAllCustomerInfo());
     }
 }

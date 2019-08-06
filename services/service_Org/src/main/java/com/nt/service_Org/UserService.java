@@ -3,6 +3,7 @@ package com.nt.service_Org;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
@@ -36,7 +37,7 @@ public interface UserService {
     TokenModel login(UserAccount userAccount) throws Exception;
 
     //获取客户信息
-    List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo)throws Exception;
+    List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception;
 
     // 添加客户信息（公司/个人（个人用户包括注册用户及个人客户））
     void inCustomerInfo(CustomerInfo customerInfo) throws Exception;
@@ -67,6 +68,7 @@ public interface UserService {
 
     /**
      * 微信userId登录
+     *
      * @param weChatUserId 微信userId
      * @return
      * @throws Exception
@@ -75,5 +77,7 @@ public interface UserService {
 
     // 微信端根据用户id获取信息
     Map<String, Object> getWxById(String userid) throws Exception;
+
+    List<CustomerInfo> getAllCustomerInfo();
 
 }

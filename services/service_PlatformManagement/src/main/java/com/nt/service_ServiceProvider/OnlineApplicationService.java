@@ -10,4 +10,6 @@ public interface OnlineApplicationService {
     ApiResult insert(OnlineApplication onlineApplication, TokenModel tokenModel);
 
     List<OnlineApplication> select(OnlineApplication onlineApplication, TokenModel tokenMode);
+
+    List<OnlineApplication> selectByCreateBy(TokenModel tokenMode);
 }

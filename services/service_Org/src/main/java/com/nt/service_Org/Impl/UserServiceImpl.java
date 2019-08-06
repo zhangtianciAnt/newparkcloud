@@ -5,10 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.BeanUtils;
@@ -56,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserAccount> getUserAccount(UserAccount userAccount) throws Exception {
         Query query = CustmizeQuery(userAccount);
-        return mongoTemplate.find(query,UserAccount.class);
+        return mongoTemplate.find(query, UserAccount.class);
     }
 
     /**
@@ -100,16 +97,16 @@ public class UserServiceImpl implements UserService {
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-        List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
+        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
         //数据不存在时
-        if(userAccountlist.size() <= 0){
+        if (userAccountlist.size() <= 0) {
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.LOGIN_ERR_01));
-        }else{
+        } else {
             tokenModel = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
-            if(tokenModel != null){
+            if (tokenModel != null) {
                 tokenService.setToken(tokenModel);
-            }else{
+            } else {
                 tokenModel = new TokenModel();
                 //存在用户时，获取用户信息，生成token
                 tokenModel.setUserId(userAccountlist.get(0).get_id());
@@ -132,7 +129,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception {
         Query query = CustmizeQuery(customerInfo);
-        return mongoTemplate.find(query,CustomerInfo.class);
+        return mongoTemplate.find(query, CustomerInfo.class);
     }
 
     /**
@@ -177,8 +174,8 @@ public class UserServiceImpl implements UserService {
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-        List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
-        if(userAccountlist.size() > 0) {
+        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+        if (userAccountlist.size() > 0) {
             String _id = userAccountlist.get(0).get_id();
             CustomerInfo customerInfo = new CustomerInfo();
             BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
@@ -188,7 +185,7 @@ public class UserServiceImpl implements UserService {
             customerInfo.setUserinfo(userInfo);
             mongoTemplate.save(customerInfo);
             return _id;
-        }else {
+        } else {
             return "";
         }
     }
@@ -202,13 +199,13 @@ public class UserServiceImpl implements UserService {
      * @返回值：List<CustomerInfo>
      */
     @Override
-    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception{
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
         Query query = new Query();
-        if("1".equals(orgtype)) {
+        if ("1".equals(orgtype)) {
             query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
             List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
             return customerInfos;
-        }else {
+        } else {
             query.addCriteria(Criteria.where("userinfo.departmentid").is(orgid));
             List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
             return customerInfos;
@@ -224,7 +221,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：CustomerInfo
      */
     @Override
-    public UserVo getAccountCustomerById(String userid) throws Exception{
+    public UserVo getAccountCustomerById(String userid) throws Exception {
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(userid));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -246,8 +243,8 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public void mobileCheck(String id, String mobilenumber) throws Exception{
-        try{
+    public void mobileCheck(String id, String mobilenumber) throws Exception {
+        try {
             Query query = new Query();
             query.addCriteria(Criteria.where("account").is(mobilenumber));
             query.addCriteria(Criteria.where("_id").ne(id));
@@ -269,7 +266,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public void updUserStatus(String userid, String status) throws Exception{
+    public void updUserStatus(String userid, String status) throws Exception {
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(userid));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -291,11 +288,11 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public void setRoleToUser(UserAccount userAccount) throws Exception{
+    public void setRoleToUser(UserAccount userAccount) throws Exception {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(userAccount.get_id()));
         UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
-        if(userAccountInfo != null) {
+        if (userAccountInfo != null) {
             userAccountInfo.setRoles(userAccount.getRoles());
             mongoTemplate.save(userAccountInfo);
         }
@@ -310,12 +307,12 @@ public class UserServiceImpl implements UserService {
      * @返回值：void
      */
     @Override
-    public UserVo updUserInfo(CustomerInfo customerInfo) throws Exception{
+    public UserVo updUserInfo(CustomerInfo customerInfo) throws Exception {
         UserVo userVo = new UserVo();
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
         UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
-        if(userAccountInfo != null) {
+        if (userAccountInfo != null) {
             //更新账号信息
             userAccountInfo.setAccount(customerInfo.getUserinfo().getMobilenumber());
             userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
@@ -325,13 +322,13 @@ public class UserServiceImpl implements UserService {
             Query queryCusomer = new Query();
             queryCusomer.addCriteria(Criteria.where("userid").is(userAccountInfo.get_id()));
             CustomerInfo upCustomer = mongoTemplate.findOne(queryCusomer, CustomerInfo.class);
-            if(upCustomer != null) {
+            if (upCustomer != null) {
                 upCustomer.getUserinfo().setCompanyname(customerInfo.getUserinfo().getCompanyname());//公司名称
                 upCustomer.getUserinfo().setCustomername(customerInfo.getUserinfo().getCustomername());//真实姓名
                 upCustomer.getUserinfo().setMobilenumber(customerInfo.getUserinfo().getMobilenumber());//联系方式
                 mongoTemplate.save(upCustomer);
                 userVo.setCustomerInfo(upCustomer);
-            }else {
+            } else {
                 CustomerInfo cusInfo = new CustomerInfo();
                 cusInfo.setType(customerInfo.getType());
                 cusInfo.setUserid(userAccountInfo.get_id());
@@ -416,19 +413,19 @@ public class UserServiceImpl implements UserService {
      * @返回值：userVo
      */
     @Override
-    public Map<String, Object> getWxById(String userid) throws Exception{
+    public Map<String, Object> getWxById(String userid) throws Exception {
         UserVo userVo = new UserVo();
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("openid").is(userid));
         UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
         CustomerInfo customerInfo = new CustomerInfo();
-        if(userAccount != null) {
+        if (userAccount != null) {
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             userVo.setCustomerInfo(customerInfo);
             userVo.setUserAccount(userAccount);
-        }else {
+        } else {
             userAccount = new UserAccount();
             // 插入账号
             userAccount.setUserid(userid);
@@ -449,5 +446,10 @@ public class UserServiceImpl implements UserService {
         result.put("userVo", userVo);
         result.put("tokenModel", tokenModel);
         return result;
+    }
+
+    @Override
+    public List<CustomerInfo> getAllCustomerInfo() {
+        return mongoTemplate.findAll(CustomerInfo.class);
     }
 }
