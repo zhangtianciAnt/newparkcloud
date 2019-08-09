@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/controller/controller.iml" filepath="$PROJECT_DIR$/controller/controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dao/dao.iml" filepath="$PROJECT_DIR$/dao/dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dao/dao_Auth/dao_Auth.iml" filepath="$PROJECT_DIR$/dao/dao_Auth/dao_Auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dao/dao_Org/dao_Org.iml" filepath="$PROJECT_DIR$/dao/dao_Org/dao_Org.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dao/dao_PlatformManagement/dao_PlatformManagement.iml" filepath="$PROJECT_DIR$/dao/dao_PlatformManagement/dao_PlatformManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dao/dao_VerificationCode/dao_VerificationCode.iml" filepath="$PROJECT_DIR$/dao/dao_VerificationCode/dao_VerificationCode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/newparkcloud.iml" filepath="$PROJECT_DIR$/newparkcloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/service_Auth/service_Auth.iml" filepath="$PROJECT_DIR$/services/service_Auth/service_Auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/service_Org/service_Org.iml" filepath="$PROJECT_DIR$/services/service_Org/service_Org.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/service_PlatformManagement/service_PlatformManagement.iml" filepath="$PROJECT_DIR$/services/service_PlatformManagement/service_PlatformManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/service_VerificationCode/service_VerificationCode.iml" filepath="$PROJECT_DIR$/services/service_VerificationCode/service_VerificationCode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/services.iml" filepath="$PROJECT_DIR$/services/services.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
+    </modules>
+  </component>
+</project>
