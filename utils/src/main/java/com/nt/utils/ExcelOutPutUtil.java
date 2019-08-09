@@ -35,7 +35,7 @@ public class ExcelOutPutUtil {
                 //设置如果图片缺失不终止生成
                 .ignoreImageMiss(true);
 
-        for(Map.Entry<String, ?> entry : data.entrySet()){
+        for(Map.Entry<String, Object> entry : data.entrySet()){
             jxlsBuilder.putVar(entry.getKey(),entry.getValue());
         }
 
