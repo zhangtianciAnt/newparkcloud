@@ -22,7 +22,7 @@ import java.util.Date;
 public class GlobalAop {
     private static Logger log = LoggerFactory.getLogger(Start.class);
 
-    @Pointcut("execution(public * com.nt.controller.Controller.*.*(..))")
+    @Pointcut("execution(public * com.nt.controller.Controller..*.*(..))")
     public void webLog(){}
 
     //调用接口前
@@ -46,8 +46,7 @@ public class GlobalAop {
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
         // 处理完请求，返回内容
-        if(((ApiResult)ret).getData() != null){
-
+        if( ret !=null && ((ApiResult)ret).getData() != null){
             log.info("返回值 : " + JSONUtil.parse(((ApiResult) ret).getData()).toStringPretty());
         }else{
             log.info("返回值 : 无");
