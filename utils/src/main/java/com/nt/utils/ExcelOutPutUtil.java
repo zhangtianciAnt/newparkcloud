@@ -19,7 +19,7 @@ public class ExcelOutPutUtil {
 
         String imgRoot = resource.getPath();
 
-        response.setContentType("appli  cation/vnd.ms-excel;charset=utf-8");
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setHeader("Content-Disposition","attachment;filename="+fileName+".xlsx");
         ServletOutputStream out=response.getOutputStream();
 
