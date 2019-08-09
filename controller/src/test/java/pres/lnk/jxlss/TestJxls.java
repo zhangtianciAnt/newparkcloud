@@ -58,29 +58,6 @@ public class TestJxls {
         System.out.println(jxlsBuilder.getOutFile().getAbsolutePath());
     }
 
-//    @Test
-//    public void testImage() throws Exception {
-//        String outPath = "D:/out_image.xlsx";
-//        String imgRoot = TestJxls.class.getClassLoader().getResource("jxls_templates").getPath();
-//        String imgPath = "img/zhangsan.jpg";
-//
-//        byte[] imageData = JxlsUtil.me().getImageData(imgRoot.concat("/").concat(imgPath));
-//        JxlsImage jxlsImage = JxlsUtil.me().getJxlsImage(imgRoot.concat("/").concat(imgPath));
-//
-//        JxlsBuilder jxlsBuilder = JxlsBuilder
-//                .getBuilder("xlsx/image.xlsx")
-//                .out(outPath)
-//                .imageRoot(imgRoot)
-//                .putVar("imageStr", imgPath)
-//                .putVar("imageData", imageData)
-//                .putVar("jxlsImage", jxlsImage)
-//                .build();
-//
-//        System.out.println("导出成功");
-//        System.out.println(jxlsBuilder.getOutFile().getAbsolutePath());
-//    }
-
-
     private static Employee getEmployee() {
         return new Employee();
     }
