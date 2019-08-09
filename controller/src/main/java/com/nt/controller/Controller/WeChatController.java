@@ -56,7 +56,7 @@ public class WeChatController {
         try {
             String corpid = "wx541ac13dbbd27c49";
             String appSecret = "3c696edb613a8d36e021cb556058606d";
-
+            // 正式
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
             if (weixinOauth != null && !StringUtils.isEmpty(weixinOauth.getOpenid())) {
                 String openid = weixinOauth.getOpenid();
@@ -64,6 +64,8 @@ public class WeChatController {
             } else {
                 return ApiResult.fail("获取微信openid失败");
             }
+            // 本地测试
+//            return ApiResult.success(userService.getWxById(code));
         } catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }
