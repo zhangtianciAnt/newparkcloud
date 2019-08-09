@@ -11,21 +11,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         //这里可以添加多个拦截器
         registry.addInterceptor(loginTimeInterceptor()).addPathPatterns("/**")
-                .excludePathPatterns("/user/register")
-                .excludePathPatterns("/user/getCurrentUserAccount")
-                .excludePathPatterns("/user/login")
-                .excludePathPatterns("/information/getInfoByType")
-                .excludePathPatterns("/information/getInfoById")
-                .excludePathPatterns("/weChat/getUser")
-                .excludePathPatterns("/user/updUserInfo")
-                .excludePathPatterns("/user/getWxById")
-                .excludePathPatterns("/information/addActivity")
-                .excludePathPatterns("/ServiceCategory/getwxservicecategory")
-                .excludePathPatterns("/SignIn/*")
-                .excludePathPatterns("/weChat/getWeChatUserInfo")
-                .excludePathPatterns("/verificationCode/ckVerificationCode")
-                .excludePathPatterns("/verificationCode/sendVerificationCode")
-                .excludePathPatterns("/user/getAllCustomer")
+                .excludePathPatterns("/excel/**")
         ;
     }
 

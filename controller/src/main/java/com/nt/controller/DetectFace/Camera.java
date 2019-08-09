@@ -10,8 +10,6 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 
-import static com.nt.controller.DetectFace.Detect.detectFace;
-
 public class Camera {
     public static void recordCamera(String outputFile, double frameRate)
             throws Exception, InterruptedException, org.bytedeco.javacv.FrameRecorder.Exception {
