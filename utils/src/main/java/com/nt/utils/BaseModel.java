@@ -8,7 +8,9 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nt.utils.dao.TokenModel;
 import lombok.Data;
-import org.springframework.data.annotation.Transient;
+
+import javax.persistence.Transient;
+
 @Data
 public abstract class BaseModel<T> implements Serializable{
 	/**
@@ -45,20 +47,11 @@ public abstract class BaseModel<T> implements Serializable{
 	 */
 	private String tenantid;
 
-	@org.springframework.data.annotation.Transient
+	@Transient
 	private List<String> owners;
 
-	@org.springframework.data.annotation.Transient
-	private List<String> ids;
-
-	@org.springframework.data.annotation.Transient
-	private Integer currentPage;
-
-	@org.springframework.data.annotation.Transient
-	private Integer pageSize;
-
 	@Transient
-	private String httpOriginType;
+	private List<String> ids;
 
 	public void preInsert(){
 		this.createon = new Date();
