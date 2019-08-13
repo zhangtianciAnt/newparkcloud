@@ -449,7 +449,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getAllCustomerInfo() {
-        return mongoTemplate.findAll(CustomerInfo.class);
+    public List<CustomerInfo> getBasicUserInfo() {
+        Query query = new Query(Criteria.where("type").is("1"));
+        return mongoTemplate.find(query, CustomerInfo.class);
     }
 }

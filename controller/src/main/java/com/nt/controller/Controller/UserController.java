@@ -261,7 +261,7 @@ public class UserController {
     }
 
     /**
-     * @方法名：getWxById
+     * @方法名：getWxById0
      * @描述：微信端根据用户id获取用户账号及用户信息
      * @创建日期：2018/12/06
      * @作者：ZHANGYING
@@ -274,10 +274,10 @@ public class UserController {
     }
 
     /**
-     * 获取customerinfo表数据
+     * 获取外部用户数据
      */
-    @RequestMapping(value = "/getAllCustomer", method = {RequestMethod.POST})
-    public ApiResult getAllCustomer() throws Exception {
-        return ApiResult.success(userService.getAllCustomerInfo());
+    @RequestMapping(value = "/getBasicUserInfo", method = {RequestMethod.POST})
+    public ApiResult getBasicUserInfo() throws Exception {
+        return ApiResult.success(userService.getBasicUserInfo());
     }
 }
