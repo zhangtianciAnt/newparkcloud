@@ -317,6 +317,7 @@ public class UserServiceImpl implements UserService {
             userAccountInfo.setAccount(customerInfo.getUserinfo().getMobilenumber());
             userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
             userAccountInfo.setIsPassing("1");//资质通过 0：没通过；1：通过
+            userAccountInfo.setUsertype(customerInfo.getType());
             mongoTemplate.save(userAccountInfo);
             //更新用户信息
             Query queryCusomer = new Query();
