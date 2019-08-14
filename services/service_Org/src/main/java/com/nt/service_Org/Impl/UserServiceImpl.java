@@ -413,10 +413,13 @@ public class UserServiceImpl implements UserService {
      * @返回值：userVo
      */
     @Override
-    public Map<String, Object> getWxById(String userid) throws Exception {
+    public Map<String, Object> getWxById(String userid, String usertype) throws Exception {
         UserVo userVo = new UserVo();
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("openid").is(userid));
+        // zqu start
+        queryAccount.addCriteria(Criteria.where("usertype").is(usertype));
+        // zqu end
         UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
         CustomerInfo customerInfo = new CustomerInfo();
         if (userAccount != null) {
@@ -429,7 +432,9 @@ public class UserServiceImpl implements UserService {
             userAccount = new UserAccount();
             // 插入账号
             userAccount.setUserid(userid);
-            userAccount.setUsertype("1");
+            // zqu start
+            userAccount.setUsertype(usertype);
+            // zqu end
             userAccount.setOpenid(userid);
             userAccount.setIsPassing("0");
             mongoTemplate.save(userAccount);

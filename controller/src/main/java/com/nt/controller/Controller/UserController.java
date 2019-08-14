@@ -270,7 +270,10 @@ public class UserController {
      */
     @RequestMapping(value = "/getWxById", method = {RequestMethod.GET})
     public ApiResult getWxById(String userid, HttpServletRequest request) throws Exception {
-        return ApiResult.success(userService.getWxById(userid));
+        // zqu start
+//        return ApiResult.success(userService.getWxById(userid));
+        return ApiResult.success();
+        // zqu end
     }
 
     /**

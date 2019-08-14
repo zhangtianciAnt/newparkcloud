@@ -76,7 +76,7 @@ public interface UserService {
     TokenModel wxLogin(String weChatUserId) throws Exception;
 
     // 微信端根据用户id获取信息
-    Map<String, Object> getWxById(String userid) throws Exception;
+    Map<String, Object> getWxById(String userid, String usertype) throws Exception;
 
     List<CustomerInfo> getBasicUserInfo();
 

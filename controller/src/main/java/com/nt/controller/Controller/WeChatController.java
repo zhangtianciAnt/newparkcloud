@@ -1,4 +1,5 @@
 package com.nt.controller.Controller;
+
 import com.nt.service_Org.UserService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
@@ -31,8 +32,8 @@ public class WeChatController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value="/getUser", method={RequestMethod.GET})
-    public ApiResult getWeChatUser(String code) throws Exception{
+    @RequestMapping(value = "/getUser", method = {RequestMethod.GET})
+    public ApiResult getWeChatUser(String code) throws Exception {
 
         try {
             String corpid = "wx541ac13dbbd27c49";
@@ -45,13 +46,13 @@ public class WeChatController {
             } else {
                 return ApiResult.fail("获取微信openid失败");
             }
-        } catch(LogicalException e){
+        } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
         }
     }
 
-    @RequestMapping(value="/getWeChatUserInfo", method={RequestMethod.GET})
-    public ApiResult getWeChatUserInfo(String code) throws Exception{
+    @RequestMapping(value = "/getWeChatUserInfo", method = {RequestMethod.GET})
+    public ApiResult getWeChatUserInfo(String code, String usertype) throws Exception {
 
         try {
             String corpid = "wx541ac13dbbd27c49";
@@ -60,13 +61,13 @@ public class WeChatController {
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
             if (weixinOauth != null && !StringUtils.isEmpty(weixinOauth.getOpenid())) {
                 String openid = weixinOauth.getOpenid();
-                return ApiResult.success(userService.getWxById(openid));
+                return ApiResult.success(userService.getWxById(openid, usertype));
             } else {
                 return ApiResult.fail("获取微信openid失败");
             }
             // 本地测试
-//            return ApiResult.success(userService.getWxById(code));
-        } catch(LogicalException e){
+//            return ApiResult.success(userService.getWxById(code, usertype));
+        } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
         }
     }
