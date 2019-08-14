@@ -311,6 +311,7 @@ public class UserServiceImpl implements UserService {
         UserVo userVo = new UserVo();
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(customerInfo.getUserid()));
+        query.addCriteria(Criteria.where("usertype").is(customerInfo.getType()));
         UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
         if (userAccountInfo != null) {
             //更新账号信息
@@ -322,6 +323,7 @@ public class UserServiceImpl implements UserService {
             //更新用户信息
             Query queryCusomer = new Query();
             queryCusomer.addCriteria(Criteria.where("userid").is(userAccountInfo.get_id()));
+            queryCusomer.addCriteria(Criteria.where("usertype").is(userAccountInfo.getUsertype()));
             CustomerInfo upCustomer = mongoTemplate.findOne(queryCusomer, CustomerInfo.class);
             if (upCustomer != null) {
                 upCustomer.getUserinfo().setCompanyname(customerInfo.getUserinfo().getCompanyname());//公司名称
