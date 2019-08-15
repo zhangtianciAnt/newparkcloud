@@ -9,6 +9,8 @@ import java.util.List;
 public interface PMInformationDeliveryService {
     List<PMInformationDelivery> select(PMInformationDelivery pmInformationDelivery);
 
+    List<PMInformationDelivery> selectByid(TokenModel tokenModel);
+
     ApiResult insert(PMInformationDelivery pmInformationDelivery, TokenModel tokenModel);
 
     ApiResult update(PMInformationDelivery pmInformationDelivery, TokenModel tokenModel);

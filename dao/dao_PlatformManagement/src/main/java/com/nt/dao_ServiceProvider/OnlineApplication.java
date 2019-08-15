@@ -1,5 +1,6 @@
 package com.nt.dao_ServiceProvider;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class OnlineApplication extends BaseModel {
     private String contactsPhone;   //  联系人手机号
     private String remarks; // 备注
 
-    private ServiceProvider serviceProvider;
+    private CustomerInfo customerInfo;
     private PMInformationDelivery pmInformationDelivery;
 
 }

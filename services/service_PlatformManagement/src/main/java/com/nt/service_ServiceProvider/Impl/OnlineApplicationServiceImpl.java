@@ -1,5 +1,6 @@
 package com.nt.service_ServiceProvider.Impl;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_ServiceProvider.OnlineApplication;
 import com.nt.dao_ServiceProvider.PMInformationDelivery;
 import com.nt.dao_ServiceProvider.ServiceProvider;
@@ -45,16 +46,28 @@ public class OnlineApplicationServiceImpl implements OnlineApplicationService {
                 Query query = new Query(Criteria.where("_id").is(item.getPmInformationDelivery_id()));
                 PMInformationDelivery pmInformationDelivery = mongoTemplate.findOne(query, PMInformationDelivery.class);
                 // 查询服务商详情
-                query = new Query(Criteria.where("_id").is(item.getServiceProvider_id()));
-                ServiceProvider serviceProvider = mongoTemplate.findOne(query, ServiceProvider.class);
+                query = new Query(Criteria.where("userid").is(item.getServiceProvider_id()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
 
                 item.setPmInformationDelivery(pmInformationDelivery);
-                item.setServiceProvider(serviceProvider);
+                item.setCustomerInfo(customerInfo);
             }
         } else {
             // select by id
             Query query = new Query(Criteria.where("_id").is(onlineApplication.get_id()));
             onlineApplications = mongoTemplate.find(query, OnlineApplication.class);
+        }
+        return onlineApplications;
+    }
+
+    @Override
+    public List<OnlineApplication> selectBySPId(String serviceProviderId, TokenModel tokenMode) {
+        Query query = new Query(Criteria.where("serviceProvider_id").is(serviceProviderId));
+        List<OnlineApplication> onlineApplications = mongoTemplate.find(query, OnlineApplication.class);
+        for (OnlineApplication OnlineApplication : onlineApplications) {
+            query = new Query(Criteria.where("_id").is(OnlineApplication.getPmInformationDelivery_id()));
+            PMInformationDelivery pmInformationDelivery = mongoTemplate.findOne(query, PMInformationDelivery.class);
+            OnlineApplication.setPmInformationDelivery(pmInformationDelivery);
         }
         return onlineApplications;
     }
@@ -70,11 +83,11 @@ public class OnlineApplicationServiceImpl implements OnlineApplicationService {
             query = new Query(Criteria.where("_id").is(item.getPmInformationDelivery_id()));
             PMInformationDelivery pmInformationDelivery = mongoTemplate.findOne(query, PMInformationDelivery.class);
             // 查询服务商详情
-            query = new Query(Criteria.where("_id").is(item.getServiceProvider_id()));
-            ServiceProvider serviceProvider = mongoTemplate.findOne(query, ServiceProvider.class);
+            query = new Query(Criteria.where("userid").is(item.getServiceProvider_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
 
             item.setPmInformationDelivery(pmInformationDelivery);
-            item.setServiceProvider(serviceProvider);
+            item.setCustomerInfo(customerInfo);
         }
 
 

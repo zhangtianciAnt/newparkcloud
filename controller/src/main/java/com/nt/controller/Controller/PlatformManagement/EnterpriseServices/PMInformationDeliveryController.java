@@ -39,8 +39,20 @@ public class PMInformationDeliveryController {
     @RequestMapping(value = "/selectPMInformationDelivery", method = {RequestMethod.POST})
     public ApiResult selectPMInformationDelivery(HttpServletRequest request, @RequestBody PMInformationDelivery pmInformationDelivery) throws Exception {
         try {
-//            TokenModel tokenModel = tokenService.getToken(request);
             List<PMInformationDelivery> pmInformationDeliveries = pmInformationDeliveryService.select(pmInformationDelivery);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("pmInformationDelivery", pmInformationDeliveries);
+            return ApiResult.success(jsonObject);
+        } catch (Exception ex) {
+            return ApiResult.fail(ex.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/wxSelectPMInformationDeliveryById", method = {RequestMethod.POST})
+    public ApiResult wxSelectPMInformationDeliveryById(HttpServletRequest request, @RequestBody PMInformationDelivery pmInformationDelivery) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            List<PMInformationDelivery> pmInformationDeliveries = pmInformationDeliveryService.selectByid(tokenModel);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("pmInformationDelivery", pmInformationDeliveries);
             return ApiResult.success(jsonObject);

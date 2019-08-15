@@ -45,6 +45,16 @@ public class OnlineController {
         }
     }
 
+    @RequestMapping(value = "/selectOnlineApplicationBySPId", method = {RequestMethod.GET})
+    public ApiResult selectOnlineApplicationBySPId(HttpServletRequest request, String serviceProviderId) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(onlineApplicationService.selectBySPId(serviceProviderId, tokenModel));
+        } catch (Exception ex) {
+            return ApiResult.fail(ex.getMessage());
+        }
+    }
+
     @RequestMapping(value = "/selectByCreateBy", method = {RequestMethod.POST})
     public ApiResult selectByCreateBy(HttpServletRequest request) throws Exception {
         try {

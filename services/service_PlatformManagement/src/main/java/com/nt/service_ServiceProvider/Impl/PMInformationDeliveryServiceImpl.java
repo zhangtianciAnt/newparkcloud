@@ -33,8 +33,21 @@ public class PMInformationDeliveryServiceImpl implements PMInformationDeliverySe
             query.addCriteria(Criteria.where("_id").is(pmInformationDelivery.get_id()));
             pmInformationDeliveries = mongoTemplate.find(query, PMInformationDelivery.class);
         }
-
         return pmInformationDeliveries;
+    }
+
+    @Override
+    public List<PMInformationDelivery> selectByid(TokenModel tokenModel) {
+        List<PMInformationDelivery> pmInformationDeliveries = new ArrayList<PMInformationDelivery>();
+        List<PMInformationDelivery> result = new ArrayList<PMInformationDelivery>();
+        Query query = new Query(Criteria.where("status").is("0"));
+        pmInformationDeliveries = mongoTemplate.find(query, PMInformationDelivery.class);
+        for (PMInformationDelivery pd : pmInformationDeliveries) {
+            if (pd.getServiceProvider().get_id().equals(tokenModel.getUserId())) {
+                result.add(pd);
+            }
+        }
+        return result;
     }
 
     @Override

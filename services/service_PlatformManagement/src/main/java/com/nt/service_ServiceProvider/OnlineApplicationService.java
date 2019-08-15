@@ -11,5 +11,7 @@ public interface OnlineApplicationService {
 
     List<OnlineApplication> select(OnlineApplication onlineApplication, TokenModel tokenMode);
 
+    List<OnlineApplication> selectBySPId(String serviceProviderId, TokenModel tokenMode);
+
     List<OnlineApplication> selectByCreateBy(TokenModel tokenMode);
 }
