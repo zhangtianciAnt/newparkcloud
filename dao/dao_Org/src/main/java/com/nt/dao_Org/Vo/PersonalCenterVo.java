@@ -1,9 +1,11 @@
 package com.nt.dao_Org.Vo;
+
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_Org

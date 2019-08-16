@@ -58,12 +58,12 @@ public class Information extends BaseModel {
         private String contacttel;  //联系电话
         private String contactemail;   //邮箱
         private Boolean issignup;      //允许报名。true：允许；false不允许（默认）
-        private List<Signupinfo>signupinfo; //报名信息
+        private List<Signupinfo> signupinfo; //报名信息
         private String activityStatus; // 活动状态
         private Integer count; //个数
 
         @Override
-        public void preInsert(TokenModel tokenModel){
+        public void preInsert(TokenModel tokenModel) {
             super.preInsert(tokenModel);
             if (signupinfo != null && signupinfo.size() > 0) {
                 for (Signupinfo tmp : this.signupinfo) {
@@ -73,7 +73,7 @@ public class Information extends BaseModel {
         }
 
         @Override
-        public void preUpdate(TokenModel tokenModel){
+        public void preUpdate(TokenModel tokenModel) {
             super.preUpdate(tokenModel);
             if (signupinfo != null && signupinfo.size() > 0) {
                 for (Signupinfo tmp : this.signupinfo) {
@@ -116,7 +116,7 @@ public class Information extends BaseModel {
         private List<Signupinfo> signupinfo; //报名信息
 
         @Override
-        public void preInsert(TokenModel tokenModel){
+        public void preInsert(TokenModel tokenModel) {
             super.preInsert(tokenModel);
             if (signupinfo != null && signupinfo.size() > 0) {
                 for (Signupinfo tmp : this.signupinfo) {
@@ -126,7 +126,7 @@ public class Information extends BaseModel {
         }
 
         @Override
-        public void preUpdate(TokenModel tokenModel){
+        public void preUpdate(TokenModel tokenModel) {
             super.preUpdate(tokenModel);
             if (signupinfo != null && signupinfo.size() > 0) {
                 for (Signupinfo tmp : this.signupinfo) {

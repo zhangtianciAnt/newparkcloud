@@ -369,6 +369,7 @@ public class CustomerInfo extends BaseModel {
     // endregion
 
     // region method
+
     /**
      * @方法名：preInsert
      * @描述：数据插入前，基础字段数据更新
@@ -378,7 +379,7 @@ public class CustomerInfo extends BaseModel {
      * @返回值：void
      */
     @Override
-    public void preInsert(TokenModel tokenModel){
+    public void preInsert(TokenModel tokenModel) {
         this.setCreateby(tokenModel.getUserId());
         this.setCreateon(new Date());
         this.setOwner(tokenModel.getUserId());
@@ -400,7 +401,7 @@ public class CustomerInfo extends BaseModel {
      * @返回值：void
      */
     @Override
-    public void preUpdate(TokenModel tokenModel){
+    public void preUpdate(TokenModel tokenModel) {
         this.setModifyby(tokenModel.getUserId());
         this.setModifyon(new Date());
         if (this.companyinfo != null && this.companyinfo.getContactinfo() != null && this.companyinfo.getContactinfo().size() > 0) {

@@ -12,12 +12,12 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="SignInInformation")
+@Table(name = "SignInInformation")
 public class SignInInformation extends BaseModel<SignInInformation> {
     /**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "No")
     private String no;

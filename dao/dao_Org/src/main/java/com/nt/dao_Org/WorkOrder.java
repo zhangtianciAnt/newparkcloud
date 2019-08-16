@@ -53,12 +53,12 @@ public class WorkOrder extends BaseModel {
     private List<Replymsg> replymsg; //回复消息
 
     private String remark;  //问题描述
-    private List<Photo>photo;
+    private List<Photo> photo;
     private List<WorkOrderLog> workorderlog; //工单日志
 
 
     @Override
-    public void preInsert(TokenModel tokenModel){
+    public void preInsert(TokenModel tokenModel) {
         super.preInsert(tokenModel);
         if (replymsg != null && replymsg.size() > 0) {
             for (Replymsg tmp : this.replymsg) {
@@ -78,7 +78,7 @@ public class WorkOrder extends BaseModel {
     }
 
     @Override
-    public void preUpdate(TokenModel tokenModel){
+    public void preUpdate(TokenModel tokenModel) {
         super.preUpdate(tokenModel);
         if (replymsg != null && replymsg.size() > 0) {
             for (Replymsg tmp : this.replymsg) {

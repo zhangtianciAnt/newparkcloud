@@ -96,6 +96,7 @@ public class ToDoNotice extends BaseModel {
     }
 
     // region method
+
     /**
      * @方法名：preInsert
      * @描述：数据插入前，基础字段数据更新
@@ -105,7 +106,7 @@ public class ToDoNotice extends BaseModel {
      * @返回值：void
      */
     @Override
-    public void preInsert(TokenModel tokenModel){
+    public void preInsert(TokenModel tokenModel) {
         super.preInsert(tokenModel);
         if (toDoInfos != null && toDoInfos.size() > 0) {
             for (ToDoInfos tmp : this.toDoInfos) {
@@ -129,7 +130,7 @@ public class ToDoNotice extends BaseModel {
      * @返回值：void
      */
     @Override
-    public void preUpdate(TokenModel tokenModel){
+    public void preUpdate(TokenModel tokenModel) {
         super.preUpdate(tokenModel);
         if (toDoInfos != null && toDoInfos.size() > 0) {
             for (ToDoInfos tmp : this.toDoInfos) {

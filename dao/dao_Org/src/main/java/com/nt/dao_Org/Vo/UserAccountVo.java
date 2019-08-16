@@ -1,9 +1,11 @@
 package com.nt.dao_Org.Vo;
+
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_Org
@@ -17,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAccountVo  extends BaseModel {
+public class UserAccountVo extends BaseModel {
     /**
      * 原密码 CHANGEPASSWORD
      */

@@ -11,12 +11,12 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="UserInfo")
+@Table(name = "UserInfo")
 public class UserInfo extends BaseModel<UserInfo> {
     /**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "No")
     private String no;

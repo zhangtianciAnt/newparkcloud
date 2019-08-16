@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.List;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_Org
@@ -33,19 +34,19 @@ public class OrgTree extends BaseModel {
      */
     private String _id;
     /**
-     组织ID	ORGID
+     * 组织ID	ORGID
      */
     private String orgid;
     /**
-     节点ID	NODEID
+     * 节点ID	NODEID
      */
     private String nodeid;
     /**
-     节点名称	TITLE
+     * 节点名称	TITLE
      */
     private String title;
     /**
-     节点类型	TYPE
+     * 节点类型	TYPE
      */
     private String type; //1：公司；2：部门
     private String departmentid;
@@ -62,7 +63,7 @@ public class OrgTree extends BaseModel {
     private List<Bankinfo> bankinfo;
     private String upcompany;
     /**
-     组织单元	ORGS
+     * 组织单元	ORGS
      */
     private List<OrgTree> orgs;
 
@@ -111,6 +112,7 @@ public class OrgTree extends BaseModel {
     // endregion
 
     // region method
+
     /**
      * @方法名：preInsert
      * @描述：数据插入前，基础字段数据更新
@@ -120,7 +122,7 @@ public class OrgTree extends BaseModel {
      * @返回值：void
      */
     @Override
-    public void preInsert(TokenModel tokenModel){
+    public void preInsert(TokenModel tokenModel) {
         super.preInsert(tokenModel);
         if (orgs != null && orgs.size() > 0) {
             for (OrgTree tmp : this.orgs) {
@@ -138,9 +140,9 @@ public class OrgTree extends BaseModel {
      * @返回值：void
      */
     @Override
-    public void preUpdate(TokenModel tokenModel){
+    public void preUpdate(TokenModel tokenModel) {
         super.preUpdate(tokenModel);
-        if(StrUtil.isEmpty(super.getOwner())) {
+        if (StrUtil.isEmpty(super.getOwner())) {
             super.setOwner(tokenModel.getUserId());
         }
         if (orgs != null && orgs.size() > 0) {
