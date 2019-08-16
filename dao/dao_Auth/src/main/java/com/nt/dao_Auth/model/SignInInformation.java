@@ -1,6 +1,6 @@
 package com.nt.dao_Auth.model;
 
-import com.nt.utils.BaseModel;
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "SignInInformation")
-public class SignInInformation extends BaseModel<SignInInformation> {
+public class SignInInformation extends BaseModel {
     /**
      *
      */

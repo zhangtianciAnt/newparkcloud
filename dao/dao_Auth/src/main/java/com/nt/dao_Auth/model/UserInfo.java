@@ -1,6 +1,6 @@
 package com.nt.dao_Auth.model;
 
-import com.nt.utils.BaseModel;
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "UserInfo")
-public class UserInfo extends BaseModel<UserInfo> {
+public class UserInfo extends BaseModel {
     /**
      *
      */

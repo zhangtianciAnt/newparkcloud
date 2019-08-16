@@ -50,12 +50,6 @@ public abstract class BaseModel implements Serializable{
 	private List<String> ids;
 
 	@Transient
-	private Integer currentPage;
-
-	@Transient
-	private Integer pageSize;
-
-	@Transient
 	private String httpOriginType;
 
 	public void preInsert(){
