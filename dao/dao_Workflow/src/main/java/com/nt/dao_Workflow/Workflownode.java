@@ -64,7 +64,13 @@ public class Workflownode extends BaseModel {
     private String nodeusertypeid;
 
     /**
-     * 循环退回
+     * 循环退回类型(1-发起人循环,2-指定循环人)
+     */
+    @Column(name = "BACKITEMTYPE")
+    private String backitemtype;
+
+    /**
+     * 循环退回(循环人ID)
      */
     @Column(name = "BACKITEMID")
     private String backitemid;

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper">
+	<select id="ViewWorkflow" resultType="com.Workflow.vo.WorkflowLogVo">
+		SELECT
+		WNI.WORKFLOWNODEINSTANCEID id,
+		WNI.NODENAME title
+		FROM
+		(SELECT
+		WORKFLOWINSTANCEID FROM workflowinstance WHERE DATAID =
+		#{workflowinstance.dataid}
+		AND FORMID = #{workflowinstance.formid} AND
+		TENANTID =
+		#{workflowinstance.tenantid} ORDER BY CREATEON DESC LIMIT 1)
+		WI
+		INNER JOIN
+		workflownodeinstance WNI
+		ON WI.WORKFLOWINSTANCEID =
+		WNI.WORKFLOWINSTANCEID
+		order by WNI.NODEORD
+	</select>
+
+	<update id="stopInstanceByReject">
+		UPDATE workflowinstance
+		SET STATUS = #{status},
+		MODIFYBY = CREATEBY,
+		MODIFYON = now()
+		WHERE WORKFLOWINSTANCEID IN
+		(SELECT WORKFLOWINSTANCEID FROM workflownodeinstance WHERE
+		WORKFLOWNODEINSTANCEID
+		=#{nodeid})
+	</update>
+</mapper>
