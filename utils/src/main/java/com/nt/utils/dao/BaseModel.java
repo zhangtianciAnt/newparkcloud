@@ -3,8 +3,8 @@ package com.nt.utils.dao;
 import cn.hutool.core.util.StrUtil;
 import com.nt.utils.AuthConstants;
 import lombok.Data;
-import org.springframework.data.annotation.Transient;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +45,12 @@ public abstract class BaseModel implements Serializable{
 
 	@Transient
 	private List<String> owners;
+
+	@Transient
+	private Integer currentPage;
+
+	@Transient
+	private Integer pageSize;
 
 	@Transient
 	private List<String> ids;
