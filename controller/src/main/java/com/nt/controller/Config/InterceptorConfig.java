@@ -12,6 +12,8 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
         //这里可以添加多个拦截器
         registry.addInterceptor(loginTimeInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns("/excel/**")
+                .excludePathPatterns("/user/getCurrentUserAccount")
+                .excludePathPatterns("/user/login")
         ;
     }
 
