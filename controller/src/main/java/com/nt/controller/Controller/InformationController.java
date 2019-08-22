@@ -10,6 +10,7 @@ import com.nt.service_Org.InformationService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class InformationController {
     @RequestMapping(value = "/saveinformation", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody Information information, HttpServletRequest request) throws Exception {
         if (information == null || StringUtils.isEmpty(information)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         List<CustomerInfo> customerList = informationService.getcustomerinfo();
@@ -132,7 +133,7 @@ public class InformationController {
     @RequestMapping(value = "/getInfoByType", method = {RequestMethod.POST})
     public ApiResult getInfoByType(@RequestBody Information information, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(information.getType())) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(informationService.getInfoByType(information));
     }

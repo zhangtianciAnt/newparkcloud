@@ -6,6 +6,7 @@ import com.nt.controller.Start;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,10 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ApiResult defaultErrorHandler(HttpServletRequest req, Exception e) {
         log.error(e.getMessage());
-        return ApiResult.fail(MessageUtil.getMessage(MsgConstants.EXCEPTION_ERR_O1));
+        try {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.EXCEPTION_ERR_O1, RequestUtils.CurrentLocale(req)));
+        } catch (Exception e1) {
+            return ApiResult.fail();
+        }
     }
 }

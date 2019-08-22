@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：TokenModel
      */
     @Override
-    public TokenModel login(UserAccount userAccount) throws Exception {
+    public TokenModel login(UserAccount userAccount,String locale) throws Exception {
         TokenModel tokenModel = new TokenModel();
         //根据条件检索数据
         Query query = new Query();
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
         //数据不存在时
         if (userAccountlist.size() <= 0) {
-            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04));
+            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04,locale));
         } else {
             tokenModel = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
             if (tokenModel != null) {

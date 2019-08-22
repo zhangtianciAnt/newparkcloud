@@ -56,7 +56,7 @@ public class RoleController {
     @RequestMapping(value = "/getRoleList",method={RequestMethod.POST})
     public ApiResult getRoleList(@RequestBody Role role, HttpServletRequest request) throws Exception {
         if (role == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         role.setOwners(tokenModel.getOwnerList());
@@ -76,7 +76,7 @@ public class RoleController {
     @RequestMapping(value = "/getRoleInfo",method={RequestMethod.GET})
     public ApiResult getRoleInfo(String roleid, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(roleid)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(roleService.getRoleInfo(roleid));
     }
@@ -92,7 +92,7 @@ public class RoleController {
     @RequestMapping(value = "/saveRole",method={RequestMethod.POST})
     public ApiResult saveRole(@RequestBody Role role, HttpServletRequest request) throws Exception {
         if (role == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(role.getCreateby() == null || role.getCreateon() == null){
@@ -114,7 +114,7 @@ public class RoleController {
     @RequestMapping(value = "/saveMenus",method={RequestMethod.POST})
     public ApiResult saveMenus(@RequestBody AppPermission appPermission, HttpServletRequest request) throws Exception {
         if (appPermission == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(appPermission.getCreateby() == null || appPermission.getCreateon() == null){
@@ -136,7 +136,7 @@ public class RoleController {
     @RequestMapping(value = "/delRoleInfo",method={RequestMethod.POST})
     public ApiResult delRoleInfo(@RequestBody Role role, HttpServletRequest request) throws Exception {
         if (role == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         //获取最新角色信息
@@ -176,7 +176,7 @@ public class RoleController {
     @RequestMapping(value = "/getMembers",method={RequestMethod.GET})
     public ApiResult getMembers(String roleid, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(roleid)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(roleService.getMembers(roleid));
     }

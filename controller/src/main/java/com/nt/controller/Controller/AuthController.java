@@ -5,10 +5,7 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +49,7 @@ public class AuthController {
     @RequestMapping(value = "/getActionsAuth",method={RequestMethod.GET})
     public ApiResult getActionsAuth(String ownerid, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(ownerid)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         String url = request.getHeader(AuthConstants.CURRENTURL);
         TokenModel tokenModel = tokenService.getToken(request);

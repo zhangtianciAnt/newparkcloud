@@ -4,10 +4,7 @@ package com.nt.controller.Controller;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.ToDoNotice.Notices;
 import com.nt.service_Org.ToDoNoticeService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +38,7 @@ public class ToDoNoticeController {
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
 
@@ -84,7 +81,7 @@ public class ToDoNoticeController {
     @RequestMapping(value = "/updatenoticesstatus", method = {RequestMethod.POST})
     public ApiResult updatenoticesstatus(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 //        TokenModel tokenModel = tokenService.getToken(request);
 //        toDoNotice.preInsert(tokenModel);

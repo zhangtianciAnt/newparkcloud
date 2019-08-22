@@ -7,6 +7,7 @@ import com.nt.service_Org.WorkOrderService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class WorkOrderController {
     @RequestMapping(value = "/saveworkorder", method = {RequestMethod.POST})
     public ApiResult saveworkorder(@RequestBody WorkOrder workorder, HttpServletRequest request) throws Exception {
         if (workorder == null || StringUtils.isEmpty(workorder)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(workorder.getStatus()==null)

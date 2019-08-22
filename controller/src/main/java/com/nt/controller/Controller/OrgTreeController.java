@@ -55,7 +55,7 @@ public class OrgTreeController {
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody OrgTree orgTree, HttpServletRequest request) throws Exception {
         if (orgTree == null || StringUtils.isEmpty(orgTree)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(orgTree.getCreateby() == null || orgTree.getCreateon() == null){

@@ -27,8 +27,8 @@ public class MessageUtil {
      * @参数：[msgId]
      * @返回值：java.lang.String
      */
-    public static String getMessage(String msgId) {
-        return getValueByKey(msgId);
+    public static String getMessage(String msgId,String locale) {
+        return getValueByKey(msgId,locale);
     }
 
     /**
@@ -39,10 +39,14 @@ public class MessageUtil {
      * @参数：[msgId]
      * @返回值：java.lang.String
      */
-    private static String getValueByKey(String msgId) {
+    private static String getValueByKey(String msgId,String locale) {
         try {
             //读取文件流
+
             InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message.properties");
+            if(locale.equals("ja")){
+                resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message_ja.properties");
+            }
             //转变为字符流
             InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream, "utf-8");
             //创建 Properties 对象

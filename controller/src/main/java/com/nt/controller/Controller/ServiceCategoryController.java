@@ -6,6 +6,7 @@ import com.nt.service_Org.ServiceCategoryService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class ServiceCategoryController {
     @RequestMapping(value = "/saveservicecategory", method = {RequestMethod.POST})
     public ApiResult saveservicecategory(@RequestBody ServiceCategory servicecategory, HttpServletRequest request) throws Exception {
         if (servicecategory == null || StringUtils.isEmpty(servicecategory)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(servicecategory.getStatus()==null)

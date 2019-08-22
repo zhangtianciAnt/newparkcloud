@@ -30,6 +30,16 @@ public class RequestUtils {
 	}
 
 	/**
+	 * 获取当前语言
+	 *
+	 * @param request
+	 * @return String
+	 */
+	public static String CurrentLocale(HttpServletRequest request) throws Exception {
+		return request.getHeader(AuthConstants.LOCALE);
+	}
+
+	/**
 	 * 获取当前用户类型
 	 *
 	 * @param request

@@ -32,27 +32,29 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                              HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader(AuthConstants.AUTH_TOKEN);
         String url = request.getHeader(AuthConstants.CURRENTURL);
+        String locale = request.getHeader(AuthConstants.LOCALE);
         try {
             if (StrUtil.isNotBlank(token)) {
                 // 验证token
                 if (!tokenService.validToken(request)) {
                     // 验证token失败，则返回直接返回用户未登录错误
-                    errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02)));
+                    errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
                     return false;
 
                 }
             } else {
                 // 验证token失败，则返回直接返回用户未登录错误
-                errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02)));
+                errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
                 return false;
             }
 
         } catch (Exception e) {
-            errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02)));
+            errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
             return false;
         }
 
         TokenModel tokenModel = tokenService.getToken(request);
+        tokenModel.setLocale(locale);
         //获取ownerlist
         if (!StrUtil.isEmpty(url)) {
             List<String> ownerList = getOwnerList(url, tokenModel);

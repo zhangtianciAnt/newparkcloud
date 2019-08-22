@@ -34,7 +34,7 @@ public interface UserService {
     void upUserAccount(UserAccount userAccount) throws Exception;
 
     // 用户登陆
-    TokenModel login(UserAccount userAccount) throws Exception;
+    TokenModel login(UserAccount userAccount,String locale) throws Exception;
 
     //获取客户信息
     List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception;
