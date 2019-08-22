@@ -3,9 +3,10 @@ package com.nt.controller.Config;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.nt.service_Auth.AuthService;
-import com.nt.utils.ApiCode;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +37,18 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                 // 验证token
                 if (!tokenService.validToken(request)) {
                     // 验证token失败，则返回直接返回用户未登录错误
-                    errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
+                    errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02)));
                     return false;
 
                 }
             } else {
                 // 验证token失败，则返回直接返回用户未登录错误
-                errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
+                errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02)));
                 return false;
             }
 
         } catch (Exception e) {
-            errorResponse(response, ApiResult.fail(ApiCode.USER_NOT_LOGIN));
+            errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02)));
             return false;
         }
 

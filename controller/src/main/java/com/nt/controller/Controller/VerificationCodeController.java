@@ -41,19 +41,19 @@ public class VerificationCodeController {
     public ApiResult sendVerificationCode(String phone) throws Exception {
         JSONObject obj = new JSONObject();
         try {
-            if (phone == null || "".equals(phone)) {
-                obj.put("message", MsgConstants.Phone_ERR_01);
-                return ApiResult.fail(obj);
-            }
-            String code = getNonce_str();
-            if (SendSms(phone, code)) {
-                // 向数据库中插入数据
-                obj = verificationCodeService.insert(phone, code);
-            } else {
-                // 验证码发送失败
-                obj.put("message", MsgConstants.CODE_ERR);
-                return ApiResult.fail(obj);
-            }
+//            if (phone == null || "".equals(phone)) {
+//                obj.put("message", MsgConstants.Phone_ERR_01);
+//                return ApiResult.fail(obj);
+//            }
+//            String code = getNonce_str();
+//            if (SendSms(phone, code)) {
+//                // 向数据库中插入数据
+//                obj = verificationCodeService.insert(phone, code);
+//            } else {
+//                // 验证码发送失败
+//                obj.put("message", MsgConstants.CODE_ERR);
+//                return ApiResult.fail(obj);
+//            }
             return ApiResult.success(obj);
         } catch (Exception ex) {
             obj.put("message", ex);

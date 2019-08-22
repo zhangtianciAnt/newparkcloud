@@ -38,7 +38,7 @@ public class ServiceCategoryController {
     @RequestMapping(value = "/saveservicecategory", method = {RequestMethod.POST})
     public ApiResult saveservicecategory(@RequestBody ServiceCategory servicecategory, HttpServletRequest request) throws Exception {
         if (servicecategory == null || StringUtils.isEmpty(servicecategory)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(servicecategory.getStatus()==null)

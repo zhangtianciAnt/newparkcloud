@@ -49,7 +49,7 @@ public class UserController {
     @RequestMapping(value = "/register", method = {RequestMethod.POST})
     public ApiResult addUser(@RequestBody UserAccount userAccount) throws Exception {
         if (userAccount == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         userAccount.preInsert();
         userService.inUserAccount(userAccount);
@@ -60,7 +60,7 @@ public class UserController {
     @RequestMapping(value = "/getCurrentUserAccount", method = {RequestMethod.POST})
     public ApiResult getCurrentUserAccount(@RequestBody UserAccount userAccount) throws Exception {
         if (userAccount == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
 
         var list = userService.getUserAccount(userAccount);
@@ -72,7 +72,7 @@ public class UserController {
     public ApiResult login(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         try {
             if (userAccount == null) {
-                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
             }
             TokenModel tokenModel = userService.login(userAccount);
 
@@ -129,9 +129,9 @@ public class UserController {
         userAccount.setUserid(RequestUtils.CurrentUserId(request));
         val userAccountlist = userService.getUserAccount(userAccount);
         if (userAccountlist.size() <= 0) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.USER_ERR_01));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_04));
         } else if (userAccountlist.get(0).getStatus().equals(AuthConstants.APPLYTENANTID)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.USER_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_05));
         } else {
             TokenModel tokenModel = tokenService.getToken(request);
             userAccountlist.get(0).setStatus(AuthConstants.APPLYTENANTID);
@@ -254,7 +254,7 @@ public class UserController {
     @RequestMapping(value = "/updUserInfo", method = {RequestMethod.POST})
     public ApiResult updUserInfo(@RequestBody CustomerInfo customerInfo) throws Exception {
         if (customerInfo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
 
         return ApiResult.success(userService.updUserInfo(customerInfo));

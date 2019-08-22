@@ -45,7 +45,7 @@ public class InformationController {
     @RequestMapping(value = "/saveinformation", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody Information information, HttpServletRequest request) throws Exception {
         if (information == null || StringUtils.isEmpty(information)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         List<CustomerInfo> customerList = informationService.getcustomerinfo();
@@ -132,7 +132,7 @@ public class InformationController {
     @RequestMapping(value = "/getInfoByType", method = {RequestMethod.POST})
     public ApiResult getInfoByType(@RequestBody Information information, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(information.getType())) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         return ApiResult.success(informationService.getInfoByType(information));
     }

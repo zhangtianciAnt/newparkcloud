@@ -40,7 +40,7 @@ public class WorkOrderController {
     @RequestMapping(value = "/saveworkorder", method = {RequestMethod.POST})
     public ApiResult saveworkorder(@RequestBody WorkOrder workorder, HttpServletRequest request) throws Exception {
         if (workorder == null || StringUtils.isEmpty(workorder)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(workorder.getStatus()==null)

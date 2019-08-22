@@ -41,7 +41,7 @@ public class ToDoNoticeController {
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         TokenModel tokenModel = tokenService.getToken(request);
 
@@ -84,7 +84,7 @@ public class ToDoNoticeController {
     @RequestMapping(value = "/updatenoticesstatus", method = {RequestMethod.POST})
     public ApiResult updatenoticesstatus(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
 //        TokenModel tokenModel = tokenService.getToken(request);
 //        toDoNotice.preInsert(tokenModel);

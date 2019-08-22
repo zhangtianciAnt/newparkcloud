@@ -47,7 +47,7 @@ public class PersonalCenterVoController {
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     public ApiResult save(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
         if (customerInfo == null || StringUtils.isEmpty(customerInfo)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         if(customerInfo.getCreateby() == null || customerInfo.getCreateon() == null){

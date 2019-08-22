@@ -17,15 +17,7 @@ public class ApiResult {
     private Object data;    // 返回数据
 
     public ApiResult() {
-        this.setCode(ApiCode.SUCCESS);
-    }
-
-    public ApiResult(ApiCode apiCode) {
-        this(apiCode.getCode(), apiCode.getMessage(), null);
-    }
-
-    public ApiResult(ApiCode apiCode, Object data) {
-        this(apiCode.getCode(), apiCode.getMessage(), data);
+        this.setCode(0);
     }
 
     public ApiResult(int code, String message, Object data) {
@@ -72,9 +64,8 @@ public class ApiResult {
         this.code = code;
     }
 
-    public void setCode(ApiCode apiCode) {
-        this.code = apiCode.getCode();
-        this.message = apiCode.getMessage();
+    public void setCode(String msg) {
+        this.message = msg;
     }
 
     /**
@@ -93,18 +84,17 @@ public class ApiResult {
     /**
      * 错误消息
      *
-     * @param apiCode 状态码
      * @return
      */
-    public static ApiResult fail(ApiCode apiCode) {
+    public static ApiResult fail() {
         ApiResult apiResult = new ApiResult();
-        apiResult.setCode(apiCode);
+        apiResult.setCode(-1);
         return apiResult;
     }
 
     public static ApiResult fail(Object data) {
         ApiResult apiResult = new ApiResult();
-        apiResult.setCode(ApiCode.FAIL);
+        apiResult.setCode(-1);
         apiResult.setData(data);
         return apiResult;
     }
@@ -135,7 +125,7 @@ public class ApiResult {
      */
     public static ApiResult success(Object data) {
         ApiResult apiResult = new ApiResult();
-        apiResult.setCode(ApiCode.SUCCESS);
+        apiResult.setCode(0);
         apiResult.setData(data);
         return apiResult;
     }
@@ -147,7 +137,7 @@ public class ApiResult {
      */
     public static ApiResult success(String message, Object data) {
         ApiResult apiResult = new ApiResult();
-        apiResult.setCode(ApiCode.SUCCESS);
+        apiResult.setCode(0);
         apiResult.setMessage(message);
         apiResult.setData(data);
         return apiResult;

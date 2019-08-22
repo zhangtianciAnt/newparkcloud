@@ -52,7 +52,7 @@ public class AuthController {
     @RequestMapping(value = "/getActionsAuth",method={RequestMethod.GET})
     public ApiResult getActionsAuth(String ownerid, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(ownerid)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03));
         }
         String url = request.getHeader(AuthConstants.CURRENTURL);
         TokenModel tokenModel = tokenService.getToken(request);
