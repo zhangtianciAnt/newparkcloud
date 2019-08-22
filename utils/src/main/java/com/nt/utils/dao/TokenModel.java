@@ -42,4 +42,6 @@ public class TokenModel implements Serializable {
 	private List<String> idList;
 
     private Date expireDate;
+
+	private String locale;
 }

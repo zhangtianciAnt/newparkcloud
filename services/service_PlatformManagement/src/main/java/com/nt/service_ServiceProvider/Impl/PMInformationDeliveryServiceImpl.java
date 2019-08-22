@@ -43,9 +43,9 @@ public class PMInformationDeliveryServiceImpl implements PMInformationDeliverySe
         pmInformationDelivery.setPublicationStatus("0");
         mongoTemplate.insert(pmInformationDelivery);
         if (pmInformationDelivery.get_id() != null && !"".equals(pmInformationDelivery.get_id())) {
-            return ApiResult.success(MsgConstants.SUCCESS);
+            return ApiResult.success();
         } else {
-            return ApiResult.fail(MsgConstants.FAIL);
+            return ApiResult.fail();
         }
     }
 
@@ -63,9 +63,9 @@ public class PMInformationDeliveryServiceImpl implements PMInformationDeliverySe
         update.set("status", pmInformationDelivery.getStatus());
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, PMInformationDelivery.class);
         if (updateResult.getModifiedCount() > 0) {
-            return ApiResult.success(MsgConstants.SUCCESS);
+            return ApiResult.success();
         } else {
-            return ApiResult.fail(MsgConstants.FAIL);
+            return ApiResult.fail();
         }
     }
 }

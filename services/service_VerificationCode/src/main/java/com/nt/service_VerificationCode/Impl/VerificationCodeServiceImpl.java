@@ -28,9 +28,9 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         verificationCode.setCreateon(new Date());
         mongoTemplate.insert(verificationCode);
         if (verificationCode.get_id() == null || "".equals(verificationCode.get_id())) {
-            jsonObject.put("message", MsgConstants.FAIL);
+            //jsonObject.put("message", MsgConstants.FAIL);
         } else {
-            jsonObject.put("message", MsgConstants.SUCCESS);
+            //jsonObject.put("message", MsgConstants.SUCCESS);
         }
         return jsonObject;
     }
@@ -51,11 +51,11 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
                 return ApiResult.success();
             } else {
                 // 验证码验证成功，删除失败
-                return ApiResult.success(MsgConstants.CODE_CK_ERR_02);
+                return ApiResult.success();
             }
         } else {
             // 验证码验证失败
-            return ApiResult.success(MsgConstants.CODE_CK_ERR_01);
+            return ApiResult.success();
         }
     }
 }

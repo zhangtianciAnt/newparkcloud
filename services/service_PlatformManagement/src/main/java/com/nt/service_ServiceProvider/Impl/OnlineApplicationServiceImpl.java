@@ -28,9 +28,9 @@ public class OnlineApplicationServiceImpl implements OnlineApplicationService {
         onlineApplication.preInsert(tokenModel);
         mongoTemplate.insert(onlineApplication);
         if (onlineApplication.get_id() == null || "".equals(onlineApplication.get_id())) {
-            return ApiResult.fail(MsgConstants.FAIL);
+            return ApiResult.fail();
         } else {
-            return ApiResult.success(MsgConstants.SUCCESS);
+            return ApiResult.success();
         }
     }
 

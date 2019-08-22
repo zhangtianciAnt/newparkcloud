@@ -27,9 +27,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         serviceProvider.preInsert(tokenModel);
         mongoTemplate.insert(serviceProvider);
         if (serviceProvider.get_id() == null || "".equals(serviceProvider.get_id())) {
-            return ApiResult.fail(MsgConstants.FAIL);
+            return ApiResult.fail();
         } else {
-            return ApiResult.success(MsgConstants.SUCCESS);
+            return ApiResult.success();
         }
     }
 
@@ -43,9 +43,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         update.set("modifyon", serviceProvider.getModifyon());
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, ServiceProvider.class);
         if (updateResult.getModifiedCount() > 0) {
-            return ApiResult.success(MsgConstants.SUCCESS);
+            return ApiResult.success();
         } else {
-            return ApiResult.fail(MsgConstants.FAIL);
+            return ApiResult.fail();
         }
     }
 

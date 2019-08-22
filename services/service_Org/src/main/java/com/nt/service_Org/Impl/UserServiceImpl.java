@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
         //数据不存在时
         if (userAccountlist.size() <= 0) {
-            throw new LogicalException(MessageUtil.getMessage(MsgConstants.LOGIN_ERR_01));
+            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04));
         } else {
             tokenModel = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
             if (tokenModel != null) {
