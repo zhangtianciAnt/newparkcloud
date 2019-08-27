@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public abstract class BaseModel implements Serializable{
@@ -61,6 +62,7 @@ public abstract class BaseModel implements Serializable{
 	public void preInsert(){
 		this.createon = new Date();
 		this.status = AuthConstants.DEL_FLAG_NORMAL;
+		this.tenantid= UUID.randomUUID().toString();
 	}
 
     public void preInsert(TokenModel tokenModel){
