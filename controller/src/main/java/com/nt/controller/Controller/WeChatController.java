@@ -38,9 +38,12 @@ public class WeChatController {
         try {
 //            String corpid = "wx541ac13dbbd27c49";
 //            String appSecret = "3c696edb613a8d36e021cb556058606d";
-
-            String corpid = "wx037f91580d6b2d65";
-            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
+            // 服务号
+//            String corpid = "wx037f91580d6b2d65";
+//            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
+            // 订阅号
+            String corpid = "wx63b8ef34287f6127";
+            String appSecret = "2e0123bac5796c9c176224c999a03363";
 
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
             if (weixinOauth != null && !StringUtils.isEmpty(weixinOauth.getOpenid())) {
@@ -60,9 +63,12 @@ public class WeChatController {
         try {
 //            String corpid = "wx541ac13dbbd27c49";
 //            String appSecret = "3c696edb613a8d36e021cb556058606d";
-
-            String corpid = "wx037f91580d6b2d65";
-            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
+// 服务号
+//            String corpid = "wx037f91580d6b2d65";
+//            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
+// 订阅号
+            String corpid = "wx63b8ef34287f6127";
+            String appSecret = "2e0123bac5796c9c176224c999a03363";
 
             // 正式
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
