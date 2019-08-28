@@ -38,18 +38,18 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                 // 验证token
                 if (!tokenService.validToken(request)) {
                     // 验证token失败，则返回直接返回用户未登录错误
-                    errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
+                    errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
                     return false;
 
                 }
             } else {
                 // 验证token失败，则返回直接返回用户未登录错误
-                errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
+                errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
                 return false;
             }
 
         } catch (Exception e) {
-            errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
+            errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
             return false;
         }
 

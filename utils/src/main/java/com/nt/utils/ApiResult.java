@@ -81,6 +81,15 @@ public class ApiResult {
         return apiResult;
     }
 
+    public static ApiResult failtoken(String message) {
+        ApiResult apiResult = new ApiResult();
+
+        apiResult.setCustomerMessage(message);
+        apiResult.setCode(20101);
+        log.warn(message);
+        return apiResult;
+    }
+
     /**
      * 错误消息
      *
