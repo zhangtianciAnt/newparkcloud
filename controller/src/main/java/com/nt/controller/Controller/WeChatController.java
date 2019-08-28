@@ -36,8 +36,11 @@ public class WeChatController {
     public ApiResult getWeChatUser(String code) throws Exception {
 
         try {
-            String corpid = "wx541ac13dbbd27c49";
-            String appSecret = "3c696edb613a8d36e021cb556058606d";
+//            String corpid = "wx541ac13dbbd27c49";
+//            String appSecret = "3c696edb613a8d36e021cb556058606d";
+
+            String corpid = "wx037f91580d6b2d65";
+            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
 
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
             if (weixinOauth != null && !StringUtils.isEmpty(weixinOauth.getOpenid())) {
@@ -55,11 +58,11 @@ public class WeChatController {
     public ApiResult getWeChatUserInfo(String code, String usertype) throws Exception {
 
         try {
-            String corpid = "wx541ac13dbbd27c49";
-            String appSecret = "3c696edb613a8d36e021cb556058606d";
+//            String corpid = "wx541ac13dbbd27c49";
+//            String appSecret = "3c696edb613a8d36e021cb556058606d";
 
-//            String corpid = "wx037f91580d6b2d65";
-//            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
+            String corpid = "wx037f91580d6b2d65";
+            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
 
             // 正式
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
