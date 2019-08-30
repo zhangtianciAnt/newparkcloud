@@ -1,5 +1,7 @@
 package com.nt.controller.Controller;
 
+import com.nt.dao_Org.Information;
+import com.nt.service_Org.InformationService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
@@ -7,10 +9,19 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.WxUserApi;
 import com.nt.utils.dao.WeixinOauth2Token;
 import com.nt.utils.dao.WxEnterpriseUser;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -84,5 +95,4 @@ public class WeChatController {
             return ApiResult.fail(e.getMessage());
         }
     }
-
 }
