@@ -14,6 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface WorkflowServices {
 
+	//获取所有审批流程
+	public List<Workflow> list(Workflow workflow) throws LogicalException;
+
+	//根据id获取数据
+	public Workflow One(String workflowid) throws LogicalException;
+
+	//更新数据
+	public void update(Workflow workflow) throws LogicalException;
+
 	// 是否可以撤销审批
 	public String isDelWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException;
 

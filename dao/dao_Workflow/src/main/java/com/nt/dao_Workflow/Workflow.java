@@ -17,6 +17,7 @@ public class Workflow extends BaseModel {
 	/**
 	 * 流程ID
 	 */
+    @Id
     @Column(name = "WORKFLOWID")
     private String workflowid;
 
@@ -49,11 +50,5 @@ public class Workflow extends BaseModel {
      */
     @Column(name = "WORKFLOWTEXT")
     private String workflowtext;
-
-    /**
-     * 撤回(0-不可撤回;1-可以撤回)
-     */
-    @Column(name = "RETRACT")
-    private String retract;
 
 }

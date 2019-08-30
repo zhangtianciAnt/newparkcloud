@@ -18,6 +18,7 @@ public class Commissioned extends BaseModel {
 	/**
 	 * 委托人ID
 	 */
+	@Id
     @Column(name = "COMMISSIONEDID")
     private String commissionedid;
 

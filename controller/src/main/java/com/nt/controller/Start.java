@@ -1,11 +1,5 @@
 package com.nt.controller;
 
-import org.bytedeco.javacpp.Loader;
-import org.bytedeco.javacpp.avcodec;
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_objdetect;
-import org.bytedeco.javacv.*;
-import org.bytedeco.javacv.Frame;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +14,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import javax.swing.*;
-import java.awt.*;
-
-import static com.nt.controller.DetectFace.Camera.recordCamera;
 
 @SpringBootApplication
 @ComponentScan(basePackages={"com.nt.*"})

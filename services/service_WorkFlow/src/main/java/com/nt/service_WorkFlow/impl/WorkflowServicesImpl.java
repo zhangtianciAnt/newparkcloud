@@ -51,9 +51,25 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	@Autowired
 	private WorkflownodeinstanceMapper workflownodeinstanceMapper;
 
+
+
 	@Autowired
 	private WorkflowstepMapper workflowstepMapper;
 
+	@Override
+	public void update(Workflow workflow) throws LogicalException {
+		workflowMapper.updateByPrimaryKeySelective(workflow);
+	}
+
+	@Override
+	public Workflow One(String workflowid) throws LogicalException {
+		return workflowMapper.selectByPrimaryKey(workflowid);
+	}
+
+	@Override
+	public List<Workflow> list(Workflow workflow) throws LogicalException {
+		return workflowMapper.select(workflow);
+	}
 
 	@Override
 	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, HttpServletRequest request)

@@ -4,10 +4,11 @@ import java.util.List;
 
 import com.nt.dao_Workflow.Vo.WorkflowLogVo;
 import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 
-public interface WorkflowinstanceMapper extends Mapper<Workflowinstance> {
+public interface WorkflowinstanceMapper extends MyMapper<Workflowinstance> {
 
 	List<WorkflowLogVo> ViewWorkflow(@Param("workflowinstance") Workflowinstance workflowinstance);
 

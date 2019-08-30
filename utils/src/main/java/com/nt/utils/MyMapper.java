@@ -3,34 +3,22 @@ package com.nt.utils;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.common.MySqlMapper;
 import tk.mybatis.mapper.common.base.BaseDeleteMapper;
 import tk.mybatis.mapper.common.base.select.SelectAllMapper;
 import tk.mybatis.mapper.common.base.select.SelectCountMapper;
 import tk.mybatis.mapper.common.base.select.SelectOneMapper;
-import tk.mybatis.mapper.provider.base.BaseInsertProvider;
-import tk.mybatis.mapper.provider.base.BaseSelectProvider;
-import tk.mybatis.mapper.provider.base.BaseUpdateProvider;
 
 public interface MyMapper<T> extends
         SelectOneMapper<T>,
         SelectAllMapper<T>,
         SelectCountMapper<T>,
         BaseDeleteMapper<T>{
-    //static final String CACHE_KEY = "''";
 
-    //@Cacheable(value="myehcache", keyGenerator = "CacheKeyGenerator")
     @SelectProvider(type = SelectWithAuth.class, method = "dynamicSQL")
     List<T> selectByRowBounds(T record, RowBounds rowBounds);
 
@@ -40,7 +28,6 @@ public interface MyMapper<T> extends
      * @param record
      * @return
      */
-    //@Cacheable(value="myehcache", keyGenerator = "CacheKeyGenerator")
     @SelectProvider(type = SelectWithAuth.class, method = "dynamicSQL")
     List<T> select(T record);
     /**
@@ -49,7 +36,6 @@ public interface MyMapper<T> extends
      * @param key
      * @return
      */
-    //@Cacheable(value="myehcache", key="#p0")
     @SelectProvider(type = SelectWithAuth.class, method = "dynamicSQL")
     T selectByPrimaryKey(Object key);
     /**
@@ -58,7 +44,6 @@ public interface MyMapper<T> extends
      * @param record
      * @return
      */
-    //@CacheEvict(value="myehcache", allEntries=true)
     @InsertProvider(type = SelectWithAuth.class, method = "dynamicSQL")
     int insert(T record);
     /**
@@ -86,7 +71,6 @@ public interface MyMapper<T> extends
      * @param record
      * @return
      */
-    //@CacheEvict(value="myehcache", allEntries=true)
     @UpdateProvider(type = SelectWithAuth.class, method = "dynamicSQL")
     //@Options(useCache = false, useGeneratedKeys = false)
     int updateByPrimaryKey(T record);
