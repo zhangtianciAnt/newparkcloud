@@ -5,8 +5,10 @@ import cn.hutool.json.JSONUtil;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.impl.TokenServiceImpl;
+import com.nt.utils.services.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +18,7 @@ import java.util.List;
 public class RequestUtils {
 	private static Logger log = LoggerFactory.getLogger(RequestUtils.class);
 	 private static final String OFFSET    = "offset";
-	 private static final String LIMITE    = "limit";
+
 	/**
 	 * 获取当前用户
 	 *

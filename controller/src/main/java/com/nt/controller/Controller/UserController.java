@@ -281,6 +281,7 @@ public class UserController {
      */
     @RequestMapping(value = "/getBasicUserInfo", method = {RequestMethod.POST})
     public ApiResult getBasicUserInfo(HttpServletRequest request) throws Exception {
-        return ApiResult.success(userService.getBasicUserInfo(RequestUtils.CurrentTenantId(request)));
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getBasicUserInfo(tokenModel.getTenantId()));
     }
 }
