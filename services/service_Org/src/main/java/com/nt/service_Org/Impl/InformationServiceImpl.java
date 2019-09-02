@@ -199,7 +199,7 @@ public class InformationServiceImpl implements InformationService {
         query.addCriteria(Criteria.where("type").is(information.getType()));
         query.addCriteria(Criteria.where("releasestatus").is("1"));
         query.addCriteria(Criteria.where("status").is("0"));
-
+        query.addCriteria(Criteria.where("tenantid").is(information.getTenantid()));
         if (information.getCurrentPage() != null && information.getPageSize() != null) {
             query.skip((information.getCurrentPage() - 1) * information.getPageSize());
             query.limit(information.getPageSize());

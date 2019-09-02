@@ -24,7 +24,9 @@ public class PMInformationDeliveryServiceImpl implements PMInformationDeliverySe
     @Override
     public List<PMInformationDelivery> select(PMInformationDelivery pmInformationDelivery) {
         List<PMInformationDelivery> pmInformationDeliveries = new ArrayList<PMInformationDelivery>();
-        Query query = new Query(Criteria.where("status").is("0"));
+        Query query = new Query();
+        query.addCriteria(Criteria.where("status").is("0"));
+        query.addCriteria(Criteria.where("tenantid").is(pmInformationDelivery.getTenantid()));
         if (pmInformationDelivery.get_id() == null || "".equals(pmInformationDelivery.get_id())) {
             // selectAll
             pmInformationDeliveries = mongoTemplate.find(query, PMInformationDelivery.class);

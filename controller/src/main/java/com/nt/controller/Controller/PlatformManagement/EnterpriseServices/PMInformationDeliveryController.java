@@ -39,6 +39,8 @@ public class PMInformationDeliveryController {
     @RequestMapping(value = "/selectPMInformationDelivery", method = {RequestMethod.POST})
     public ApiResult selectPMInformationDelivery(HttpServletRequest request, @RequestBody PMInformationDelivery pmInformationDelivery) throws Exception {
         try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            pmInformationDelivery.setTenantid(tokenModel.getTenantId());
             List<PMInformationDelivery> pmInformationDeliveries = pmInformationDeliveryService.select(pmInformationDelivery);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("pmInformationDelivery", pmInformationDeliveries);

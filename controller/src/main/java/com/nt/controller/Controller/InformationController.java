@@ -134,6 +134,8 @@ public class InformationController {
         if (StringUtils.isEmpty(information.getType())) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.PARAM_ERR_02));
         }
+        TokenModel tokenModel = tokenService.getToken(request);
+        information.setTenantid(tokenModel.getTenantId());
         return ApiResult.success(informationService.getInfoByType(information));
     }
 
