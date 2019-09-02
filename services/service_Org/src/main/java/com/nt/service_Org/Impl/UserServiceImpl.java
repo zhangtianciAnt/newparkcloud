@@ -459,7 +459,7 @@ public class UserServiceImpl implements UserService {
         TokenModel tokenModel = new TokenModel();
         tokenModel.setUserId(userAccount.get_id());
         tokenModel.setUserType(userAccount.getUsertype());
-        tokenModel.setTenantId(userAccount.getTenantid());
+        tokenModel.setTenantId(tenantid);
         tokenService.setToken(tokenModel);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("userVo", userVo);
