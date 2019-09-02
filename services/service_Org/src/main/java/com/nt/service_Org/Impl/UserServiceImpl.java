@@ -2,6 +2,7 @@ package com.nt.service_Org.Impl;
 
 import cn.hutool.crypto.SecureUtil;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Tenant;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
@@ -298,6 +299,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Tenant get(String appid) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("appid").is(appid));
+        return mongoTemplate.findOne(query, Tenant.class);
+    }
+
     /**
      * @方法名：getUserInfo
      * @描述：微信端用获取用户信息
@@ -319,6 +327,7 @@ public class UserServiceImpl implements UserService {
             userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
             userAccountInfo.setIsPassing("1");//资质通过 0：没通过；1：通过
             userAccountInfo.setUsertype(customerInfo.getType());
+            userAccountInfo.setTenantid(customerInfo.getTenantid());
             mongoTemplate.save(userAccountInfo);
             //更新用户信息
             Query queryCusomer = new Query();
@@ -340,6 +349,7 @@ public class UserServiceImpl implements UserService {
                 userInfo.setCustomername(customerInfo.getUserinfo().getCustomername());
                 userInfo.setCompanyname(customerInfo.getUserinfo().getCompanyname());
                 cusInfo.setUserinfo(userInfo);
+                cusInfo.setTenantid(customerInfo.getTenantid());
                 mongoTemplate.save(cusInfo);
                 userVo.setCustomerInfo(cusInfo);
             }
@@ -416,7 +426,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：userVo
      */
     @Override
-    public Map<String, Object> getWxById(String userid, String usertype) throws Exception {
+    public Map<String, Object> getWxById(String userid, String usertype,String tenantid) throws Exception {
         UserVo userVo = new UserVo();
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("openid").is(userid));
@@ -440,6 +450,7 @@ public class UserServiceImpl implements UserService {
             // zqu end
             userAccount.setOpenid(userid);
             userAccount.setIsPassing("0");
+            userAccount.setTenantid(tenantid);
             mongoTemplate.save(userAccount);
             userVo.setCustomerInfo(customerInfo);
             userVo.setUserAccount(userAccount);

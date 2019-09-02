@@ -57,6 +57,11 @@ public class CustomerInfo extends BaseModel {
      */
     private CompanyInfo companyinfo;
 
+    /**
+     * 微信appId
+     */
+    private String appid;
+
     // region 个人信息
     @Data
     public static class UserInfo {

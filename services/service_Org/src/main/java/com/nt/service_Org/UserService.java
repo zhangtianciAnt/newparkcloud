@@ -1,6 +1,7 @@
 package com.nt.service_Org;
 
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Tenant;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.ApiResult;
@@ -76,8 +77,9 @@ public interface UserService {
     TokenModel wxLogin(String weChatUserId) throws Exception;
 
     // 微信端根据用户id获取信息
-    Map<String, Object> getWxById(String userid, String usertype) throws Exception;
+    Map<String, Object> getWxById(String userid, String usertype,String tenantid) throws Exception;
 
     List<CustomerInfo> getBasicUserInfo();
 
+    Tenant get(String appid);
 }
