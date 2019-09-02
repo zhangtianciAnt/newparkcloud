@@ -1,6 +1,8 @@
 package com.nt.controller.Controller;
 
 import com.nt.dao_Org.Tenant;
+import com.nt.dao_Org.Information;
+import com.nt.service_Org.InformationService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
@@ -8,10 +10,19 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.WxUserApi;
 import com.nt.utils.dao.WeixinOauth2Token;
 import com.nt.utils.dao.WxEnterpriseUser;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -37,8 +48,14 @@ public class WeChatController {
     public ApiResult getWeChatUser(String code) throws Exception {
 
         try {
-            String corpid = "wx541ac13dbbd27c49";
-            String appSecret = "3c696edb613a8d36e021cb556058606d";
+//            String corpid = "wx541ac13dbbd27c49";
+//            String appSecret = "3c696edb613a8d36e021cb556058606d";
+            // 服务号
+            String corpid = "wx037f91580d6b2d65";
+            String appSecret = "8a762aa142abc5a4a89dc4269289a306";
+            // 订阅号
+//            String corpid = "wx63b8ef34287f6127";
+//            String appSecret = "2e0123bac5796c9c176224c999a03363";
 
             WeixinOauth2Token weixinOauth = WxUserApi.getWeChatOauth2Token(corpid, appSecret, code);
             if (weixinOauth != null && !StringUtils.isEmpty(weixinOauth.getOpenid())) {
@@ -78,5 +95,4 @@ public class WeChatController {
             return ApiResult.fail(e.getMessage());
         }
     }
-
 }
