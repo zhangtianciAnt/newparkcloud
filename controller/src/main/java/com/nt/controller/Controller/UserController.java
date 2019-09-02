@@ -280,7 +280,7 @@ public class UserController {
      * 获取外部用户数据
      */
     @RequestMapping(value = "/getBasicUserInfo", method = {RequestMethod.POST})
-    public ApiResult getBasicUserInfo() throws Exception {
-        return ApiResult.success(userService.getBasicUserInfo());
+    public ApiResult getBasicUserInfo(HttpServletRequest request) throws Exception {
+        return ApiResult.success(userService.getBasicUserInfo(RequestUtils.CurrentTenantId(request)));
     }
 }

@@ -79,7 +79,7 @@ public interface UserService {
     // 微信端根据用户id获取信息
     Map<String, Object> getWxById(String userid, String usertype,String tenantid) throws Exception;
 
-    List<CustomerInfo> getBasicUserInfo();
+    List<CustomerInfo> getBasicUserInfo(String tenantid);
 
     Tenant get(String appid);
 }

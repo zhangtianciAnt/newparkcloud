@@ -468,8 +468,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getBasicUserInfo() {
-        Query query = new Query(Criteria.where("type").is("1"));
+    public List<CustomerInfo> getBasicUserInfo(String tenantid) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("type").is("1"));
+        query.addCriteria(Criteria.where("tenantid").is(tenantid));
         return mongoTemplate.find(query, CustomerInfo.class);
     }
 }
