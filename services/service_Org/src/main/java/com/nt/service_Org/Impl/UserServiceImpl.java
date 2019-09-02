@@ -327,7 +327,7 @@ public class UserServiceImpl implements UserService {
             userAccountInfo.setPassword(customerInfo.getUserinfo().getMobilenumber());
             userAccountInfo.setIsPassing("1");//资质通过 0：没通过；1：通过
             userAccountInfo.setUsertype(customerInfo.getType());
-            userAccountInfo.setTenantid(customerInfo.getTenantid());
+            //userAccountInfo.setTenantid(customerInfo.getTenantid());
             mongoTemplate.save(userAccountInfo);
             //更新用户信息
             Query queryCusomer = new Query();
@@ -349,7 +349,7 @@ public class UserServiceImpl implements UserService {
                 userInfo.setCustomername(customerInfo.getUserinfo().getCustomername());
                 userInfo.setCompanyname(customerInfo.getUserinfo().getCompanyname());
                 cusInfo.setUserinfo(userInfo);
-                cusInfo.setTenantid(customerInfo.getTenantid());
+                cusInfo.setTenantid(userAccountInfo.getTenantid());
                 mongoTemplate.save(cusInfo);
                 userVo.setCustomerInfo(cusInfo);
             }
