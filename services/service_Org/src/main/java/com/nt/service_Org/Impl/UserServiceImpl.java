@@ -1,5 +1,6 @@
 package com.nt.service_Org.Impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Tenant;
@@ -459,7 +460,11 @@ public class UserServiceImpl implements UserService {
         TokenModel tokenModel = new TokenModel();
         tokenModel.setUserId(userAccount.get_id());
         tokenModel.setUserType(userAccount.getUsertype());
-        tokenModel.setTenantId(tenantid);
+        if(userAccount != null && !StrUtil.isEmpty(userAccount.getTenantid())){
+            tokenModel.setTenantId(userAccount.getTenantid());
+        }else{
+            tokenModel.setTenantId(tenantid);
+        }
         tokenService.setToken(tokenModel);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("userVo", userVo);
