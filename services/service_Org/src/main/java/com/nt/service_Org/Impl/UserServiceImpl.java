@@ -1,5 +1,6 @@
 package com.nt.service_Org.Impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
@@ -202,11 +203,16 @@ public class UserServiceImpl implements UserService {
     public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
         Query query = new Query();
         if ("1".equals(orgtype)) {
-            query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+            if(StrUtil.isNotBlank(orgid)){
+                query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+            }
+
             List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
             return customerInfos;
         } else {
-            query.addCriteria(Criteria.where("userinfo.departmentid").is(orgid));
+            if(StrUtil.isNotBlank(orgid)){
+                query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+            }
             List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
             return customerInfos;
         }
