@@ -2,6 +2,7 @@ package com.nt.controller.Controller;
 
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Workflow.Vo.WorkflowVo;
 import com.nt.dao_Workflow.Workflow;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_WorkFlow.WorkflowServices;
@@ -62,5 +63,36 @@ public class WorkflowController {
             workflowServices.update(rst);
         }
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    public ApiResult create(@RequestBody WorkflowVo workflowVo, HttpServletRequest request) throws Exception {
+        if (workflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        workflowServices.insert(workflowVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/upd",method={RequestMethod.POST})
+    public ApiResult upd(@RequestBody WorkflowVo workflowVo, HttpServletRequest request) throws Exception {
+        if (workflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        workflowServices.upd(workflowVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    public ApiResult one(@RequestBody Workflow workflow, HttpServletRequest request) throws Exception {
+        if (workflow == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        //获取最新角色信息
+        WorkflowVo workflowVo = workflowServices.get(workflow.getWorkflowid());
+        return ApiResult.success(workflowVo);
     }
 }

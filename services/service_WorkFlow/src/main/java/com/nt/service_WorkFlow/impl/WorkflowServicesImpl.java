@@ -12,17 +12,16 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Workflow.*;
-import com.nt.dao_Workflow.Vo.OperationWorkflowVo;
-import com.nt.dao_Workflow.Vo.StartWorkflowVo;
-import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
-import com.nt.dao_Workflow.Vo.WorkflowLogVo;
+import com.nt.dao_Workflow.Vo.*;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.RequestUtils;
+import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -37,7 +36,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional(rollbackFor = Exception.class)
 public class WorkflowServicesImpl implements WorkflowServices {
 
-	private static Logger log = LoggerFactory.getLogger(WorkflowServicesImpl.class);
+    private static Logger log = LoggerFactory.getLogger(WorkflowServicesImpl.class);
 
 	@Autowired
 	private WorkflowMapper workflowMapper;
@@ -51,14 +50,62 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	@Autowired
 	private WorkflownodeinstanceMapper workflownodeinstanceMapper;
 
-
-
 	@Autowired
 	private WorkflowstepMapper workflowstepMapper;
+
+    @Override
+    public void insert(WorkflowVo workflowVo, TokenModel tokenModel) throws LogicalException {
+        Workflow workflow = new Workflow();
+        BeanUtil.copyProperties(workflowVo,workflow);
+        workflow.preInsert(tokenModel);
+        workflow.setWorkflowid(UUID.randomUUID().toString());
+        workflowMapper.insert(workflow);
+
+        for(Workflownode item:workflowVo.getNodeList()){
+            Workflownode workflownode = new Workflownode();
+            BeanUtil.copyProperties(item,workflownode);
+            workflownode.setWorkflowid(workflow.getWorkflowid());
+            workflownode.preInsert(tokenModel);
+            workflownode.setWorkflownodeid(UUID.randomUUID().toString());
+            workflownodeMapper.insert(workflownode);
+        }
+    }
 
 	@Override
 	public void update(Workflow workflow) throws LogicalException {
 		workflowMapper.updateByPrimaryKeySelective(workflow);
+	}
+
+	@Override
+	public void upd(WorkflowVo workflowVo, TokenModel tokenModel) throws LogicalException {
+		Workflow workflow = new Workflow();
+		BeanUtil.copyProperties(workflowVo,workflow);
+		workflowMapper.updateByPrimaryKeySelective(workflow);
+		Workflownode del = new Workflownode();
+		del.setWorkflowid(workflow.getWorkflowid());
+		workflownodeMapper.delete(del);
+
+		for(Workflownode item:workflowVo.getNodeList()){
+			Workflownode workflownode = new Workflownode();
+			BeanUtil.copyProperties(item,workflownode);
+			workflownode.setWorkflowid(workflow.getWorkflowid());
+			workflownode.preInsert(tokenModel);
+			workflownode.setWorkflownodeid(UUID.randomUUID().toString());
+			workflownodeMapper.insert(workflownode);
+		}
+	}
+
+	@Override
+	public WorkflowVo get(String workflowid) throws LogicalException {
+		WorkflowVo workflowVo = new WorkflowVo();
+		Workflow workflow = workflowMapper.selectByPrimaryKey(workflowid);
+		BeanUtil.copyProperties(workflow,workflowVo);
+		Workflownode workflownode = new Workflownode();
+		workflownode.setWorkflowid(workflow.getWorkflowid());
+		List<Workflownode> list = workflownodeMapper.select(workflownode);
+		list = list.stream().sorted(Comparator.comparing(Workflownode::getNodeord)).collect(Collectors.toList());
+		workflowVo.setNodeList(list);
+		return workflowVo;
 	}
 
 	@Override
@@ -581,9 +628,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				workflownodeinstance.setWorkflownodeinstanceid(UUID.randomUUID().toString());
 				if (i <= startWorkflowVo.getUserList().size()) {
 					workflownodeinstance.setItemid(startWorkflowVo.getUserList().get(i));
-				}
-				if ("1".equals(workflownodelist.get(i).getBackitemtype())) {
-					workflownodeinstance.setBackitemid(startWorkflowVo.getUserId());
 				}
 				workflownodeinstance.setCreateby(startWorkflowVo.getUserId());
 				workflownodeinstance.setCreateon(new Date());

@@ -46,34 +46,10 @@ public class Workflownode extends BaseModel {
     private String nodetype;
 
     /**
-     * 节点设置(2-自动审批;3-允许以会签的方式添加审批人员;4-允许以加签的方式添加审批人员;5-退回)
-     */
-    @Column(name = "NODESETTING")
-    private String nodesetting;
-
-    /**
      * 节点人员类型(1-指定人，2-上级领导，3-岗位，4-角色,6-发起人自由选择)
      */
     @Column(name = "NODEUSERTYPE")
     private String nodeusertype;
-
-    /**
-     * 节点人员类型数据ID
-     */
-    @Column(name = "NODEUSERTYPEID")
-    private String nodeusertypeid;
-
-    /**
-     * 循环退回类型(1-发起人循环,2-指定循环人)
-     */
-    @Column(name = "BACKITEMTYPE")
-    private String backitemtype;
-
-    /**
-     * 循环退回(循环人ID)
-     */
-    @Column(name = "BACKITEMID")
-    private String backitemid;
 
     /**
      * 审批人(1-用户ID;)

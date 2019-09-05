@@ -3,8 +3,10 @@ package com.nt.service_WorkFlow;
 import com.nt.dao_Workflow.Vo.OperationWorkflowVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogVo;
+import com.nt.dao_Workflow.Vo.WorkflowVo;
 import com.nt.dao_Workflow.Workflow;
 import com.nt.utils.LogicalException;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 
 
 public interface WorkflowServices {
+
+	public void insert(WorkflowVo workflowVo, TokenModel tokenModel)throws LogicalException;
+
+	public void upd(WorkflowVo workflowVo, TokenModel tokenModel)throws LogicalException;
+
+	//获取所有审批流程
+	public WorkflowVo get(String workflowid) throws LogicalException;
 
 	//获取所有审批流程
 	public List<Workflow> list(Workflow workflow) throws LogicalException;
