@@ -52,18 +52,6 @@ public class Workflownodeinstance extends BaseModel {
     private String nodeusertype;
 
     /**
-     * 节点人员类型数据ID
-     */
-    @Column(name = "NODEUSERTYPEID")
-    private String nodeusertypeid;
-
-    /**
-     * 循环退回
-     */
-    @Column(name = "BACKITEMID")
-    private String backitemid;
-
-    /**
      * 审批人
      */
     @Column(name = "ITEMID")

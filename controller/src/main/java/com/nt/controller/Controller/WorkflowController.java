@@ -107,4 +107,13 @@ public class WorkflowController {
         return ApiResult.success(workflowlist);
     }
 
+    @RequestMapping(value = "/StartWorkflow",method={RequestMethod.POST})
+    public ApiResult StartWorkflow(@RequestBody StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws Exception {
+        if (startWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        workflowServices.StartWorkflow(startWorkflowVo,tokenModel);
+        return ApiResult.success();
+    }
 }

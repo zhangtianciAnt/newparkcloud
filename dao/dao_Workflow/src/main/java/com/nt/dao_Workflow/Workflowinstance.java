@@ -63,10 +63,4 @@ public class Workflowinstance extends BaseModel {
     @Column(name = "DATACONTENT")
     private String datacontent;
 
-    /**
-     * 撤回(0-不可撤回;1-可以撤回)
-     */
-    @Column(name = "RETRACT")
-    private String retract;
-
 }

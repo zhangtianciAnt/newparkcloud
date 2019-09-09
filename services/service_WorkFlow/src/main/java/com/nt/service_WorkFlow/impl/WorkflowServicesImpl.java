@@ -475,11 +475,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
 						workflowstep.setName(item.getNodename());
 						workflowstep.setItemid(user);
-						workflowstep.setCreateby(user);
-						workflowstep.setCreateon(new Date());
-						workflowstep.setOwner(user);
-						workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-						workflowstep.setTenantid(workflowinstance.getTenantid());
+						workflowstep.preInsert(tokenModel);
 						workflowstepMapper.insert(workflowstep);
 
 						// 创建代办
@@ -542,46 +538,46 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						return;
 					}
 
-					// 循环节点_未回到循环开始节点
-					if (!StringUtils.isNullOrEmpty(item.getBackitemid())
-							&& !item.getBackitemid().equals(tokenModel.getUserId())) {
-						// 循环开始人创建代办
-						// 创建节点
-						Workflowstep workflowstep = new Workflowstep();
-						workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
-						workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-						workflowstep.setName(item.getNodename());
-						workflowstep.setItemid(item.getBackitemid());
-						workflowstep.setCreateby(item.getBackitemid());
-						workflowstep.setCreateon(new Date());
-						workflowstep.setOwner(item.getBackitemid());
-						workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-						workflowstep.setTenantid(workflowinstance.getTenantid());
-						workflowstepMapper.insert(workflowstep);
-
-						// 创建代办
-//						TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//						tenanttaskVo.setDataurl(url + "?wfid=" + dataId);
-//						tenanttaskVo.setType("1");
-//						tenanttaskVo.setTitle("您有一个【" + workflowname + "】审批待处理！");
-//						tenanttaskVo.setFromuser(item.getBackitemid());
-//						tenanttaskVo.setContent(dataId);
-//						tenanttaskVo.setCreateby(item.getBackitemid());
-//						tenanttaskVo.setOwner(item.getBackitemid());
-//						tenanttaskVo.setTenantid(workflowinstance.getTenantid());
+//					// 循环节点_未回到循环开始节点
+//					if (!StringUtils.isNullOrEmpty(item.getBackitemid())
+//							&& !item.getBackitemid().equals(tokenModel.getUserId())) {
+//						// 循环开始人创建代办
+//						// 创建节点
+//						Workflowstep workflowstep = new Workflowstep();
+//						workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+//						workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+//						workflowstep.setName(item.getNodename());
+//						workflowstep.setItemid(item.getBackitemid());
+//						workflowstep.setCreateby(item.getBackitemid());
+//						workflowstep.setCreateon(new Date());
+//						workflowstep.setOwner(item.getBackitemid());
+//						workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//						workflowstep.setTenantid(workflowinstance.getTenantid());
+//						workflowstepMapper.insert(workflowstep);
 //
-//						HttpHeaders headers = new HttpHeaders();
-//						Enumeration<String> headerNames = request.getHeaderNames();
-//						while (headerNames.hasMoreElements()) {
-//							String key = (String) headerNames.nextElement();
-//							String value = request.getHeader(key);
-//							headers.add(key, value);
-//						}
-//						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-//						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-//								requestEntity, ApiResult.class);
-						return;
-					}
+//						// 创建代办
+////						TenanttaskVo tenanttaskVo = new TenanttaskVo();
+////						tenanttaskVo.setDataurl(url + "?wfid=" + dataId);
+////						tenanttaskVo.setType("1");
+////						tenanttaskVo.setTitle("您有一个【" + workflowname + "】审批待处理！");
+////						tenanttaskVo.setFromuser(item.getBackitemid());
+////						tenanttaskVo.setContent(dataId);
+////						tenanttaskVo.setCreateby(item.getBackitemid());
+////						tenanttaskVo.setOwner(item.getBackitemid());
+////						tenanttaskVo.setTenantid(workflowinstance.getTenantid());
+////
+////						HttpHeaders headers = new HttpHeaders();
+////						Enumeration<String> headerNames = request.getHeaderNames();
+////						while (headerNames.hasMoreElements()) {
+////							String key = (String) headerNames.nextElement();
+////							String value = request.getHeader(key);
+////							headers.add(key, value);
+////						}
+////						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
+////						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
+////								requestEntity, ApiResult.class);
+//						return;
+//					}
 
 					// 如果节点为最后一个节点时，结束流程
 					if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
@@ -608,12 +604,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflowinstance.setWorkflowinstanceid(UUID.randomUUID().toString());
 			workflowinstance.setDataid(startWorkflowVo.getDataId());
 			workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
-			workflowinstance.setCreateby(startWorkflowVo.getUserId());
-			workflowinstance.setCreateon(new Date());
-			workflowinstance.setOwner(startWorkflowVo.getUserId());
-			workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-			workflowinstance.setModifyby(null);
-			workflowinstance.setModifyon(null);
+			workflowinstance.preInsert(tokenModel);
 			workflowinstanceMapper.insert(workflowinstance);
 
 			// 创建节点实例
@@ -626,14 +617,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				BeanUtils.copyProperties(workflownodelist.get(i), workflownodeinstance);
 				workflownodeinstance.setWorkflowinstanceid(workflowinstance.getWorkflowinstanceid());
 				workflownodeinstance.setWorkflownodeinstanceid(UUID.randomUUID().toString());
-				if (i <= startWorkflowVo.getUserList().size()) {
-					workflownodeinstance.setItemid(startWorkflowVo.getUserList().get(i));
-				}
-				workflownodeinstance.setCreateby(startWorkflowVo.getUserId());
-				workflownodeinstance.setCreateon(new Date());
-				workflownodeinstance.setOwner(startWorkflowVo.getUserId());
-				workflownodeinstance.setModifyby(null);
-				workflownodeinstance.setModifyon(null);
+				workflownodeinstance.preInsert(tokenModel);
 				workflownodeinstanceMapper.insert(workflownodeinstance);
 			}
 
