@@ -111,14 +111,11 @@ public class RequestUtils {
 	/**
 	 * 设置权限列表
 	 *
-	 * @param request
+	 * @param tokenModel
 	 * @return String
 	 */
-	public static <T extends BaseModel> T CurrentPageOwnerList(HttpServletRequest request, T record) throws Exception {
-		String token = request.getHeader(AuthConstants.AUTH_TOKEN);
-		if(!StringUtils.isEmpty(token)){
-			TokenServiceImpl tokenService = new TokenServiceImpl();
-			TokenModel tokenModel = tokenService.getToken(request);
+	public static <T extends BaseModel> T CurrentPageOwnerList(TokenModel tokenModel, T record) throws Exception {
+		if(tokenModel != null){
 			record.setOwners(tokenModel.getOwnerList());
 			record.setIds(tokenModel.getIdList());
 		}else{

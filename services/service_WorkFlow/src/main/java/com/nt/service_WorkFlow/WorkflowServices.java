@@ -39,16 +39,16 @@ public interface WorkflowServices {
 	public void DelWorkflow(String instanceId) throws LogicalException;
 
 	// 是否可以发起审批
-	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws LogicalException;
+	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws LogicalException;
 
 	// 发起审批
-	public void StartWorkflow(StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws LogicalException;
+	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws LogicalException;
 
 	// 是否可以进行审批
 	public Map<String, String> isOperationWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException;
 
 	// 进行审批
-	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, HttpServletRequest request) throws LogicalException;
+	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel) throws LogicalException;
 
 	// 是否可以查看流程
 	public Boolean isViewWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException;

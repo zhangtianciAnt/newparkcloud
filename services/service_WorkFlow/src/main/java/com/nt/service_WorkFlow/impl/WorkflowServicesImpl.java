@@ -119,7 +119,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, HttpServletRequest request)
+	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel)
 			throws LogicalException {
 		try {
 			Workflow workflow = new Workflow();
@@ -127,7 +127,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflow.setTenantid(startWorkflowVo.getTenantId());
 			workflow.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 
-			workflow = RequestUtils.CurrentPageOwnerList(request, workflow);
+			workflow = RequestUtils.CurrentPageOwnerList(tokenModel, workflow);
 
 			List<Workflow> Workflowlist = workflowMapper.select(workflow);
 			if (Workflowlist.size() > 0) {
@@ -326,7 +326,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, HttpServletRequest request)
+	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
 			throws LogicalException {
 		try {
 			// 更新当前节点
@@ -440,7 +440,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 			// 生成下一节点信息
 
-			cresteStep(nodeinstance.getWorkflowinstanceid(), request, operationWorkflowVo.getDataId(),
+			cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
 					operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
 		} catch (Exception e) {
 			log.warn(e.getMessage());
@@ -448,7 +448,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 		}
 	}
 
-	private void cresteStep(String instanceId, HttpServletRequest request, String dataId, String url,
+	private void cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,
 			String workflowname) throws Exception {
 
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
@@ -544,7 +544,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 					// 循环节点_未回到循环开始节点
 					if (!StringUtils.isNullOrEmpty(item.getBackitemid())
-							&& !item.getBackitemid().equals(RequestUtils.CurrentUserId(request))) {
+							&& !item.getBackitemid().equals(tokenModel.getUserId())) {
 						// 循环开始人创建代办
 						// 创建节点
 						Workflowstep workflowstep = new Workflowstep();
@@ -585,7 +585,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 					// 如果节点为最后一个节点时，结束流程
 					if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
-						workflowinstance.setModifyby(RequestUtils.CurrentUserId(request));
+						workflowinstance.setModifyby(tokenModel.getUserId());
 						workflowinstance.setModifyon(new Date());
 						workflowinstance.setStatus(AuthConstants.DEL_FLAG_DELETE);
 						workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
@@ -599,7 +599,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void StartWorkflow(StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws LogicalException {
+	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws LogicalException {
 		try {
 			// 创建流程实例
 			Workflow workflow = workflowMapper.selectByPrimaryKey(startWorkflowVo.getWorkFlowId());
@@ -638,7 +638,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 
 			// 生成节点操作
-			cresteStep(workflowinstance.getWorkflowinstanceid(), request, startWorkflowVo.getDataId(),
+			cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
 					startWorkflowVo.getMenuUrl(), workflow.getWorkflowname());
 		} catch (Exception e) {
 			log.warn(e.getMessage());
