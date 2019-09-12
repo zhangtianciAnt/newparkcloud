@@ -2,7 +2,6 @@ package com.nt.service_Org;
 
 
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.dao_Org.ToDoNotice.Notices;
 
 import java.util.List;
 

@@ -31,7 +31,6 @@ public class AuthConstants {
     public static final String DEL_FLAG_NORMAL = "0";
     public static final String DEL_FLAG_DELETE = "1";
 
-
     public static final String TENANTID = "tenantid";
     public static final String OWNER = "owner";
     public static final String OWNERS = "owners";
@@ -50,7 +49,7 @@ public class AuthConstants {
     public static final String TODONOTICE_TYPE_NOTICE = "2";
 
     public static final String TODO_STATUS_TODO = "0";
-    public static final String TODO_STATUS_DOING = "2";
+    public static final String TODO_STATUS_DELETE = "2";
     public static final String TODO_STATUS_DONE = "1";
     public static final String TODO_STATUS_BACK = "9";
 

@@ -2,17 +2,25 @@ package com.nt.service_Org.Impl;
 
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.dao_Org.ToDoNotice.Notices;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.SocketSessionRegistry;
+import com.nt.utils.dao.TokenModel;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -20,8 +28,17 @@ import static com.nt.utils.MongoObject.CustmizeQuery;
 public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private TodoNoticeMapper todoNoticeMapper;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    /**session操作类*/
+    @Autowired
+    SocketSessionRegistry webAgentSessionRegistry;
+
+    @Autowired
+    private TokenService tokenService;
     /**
      * @方法名：save
      * @描述：消息保存
@@ -32,20 +49,19 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
      */
     @Override
     public void save(ToDoNotice toDoNotice) throws Exception {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("type").is(toDoNotice.getType()));
-        query.addCriteria(Criteria.where("owner").is(toDoNotice.getOwner()));
-        List<ToDoNotice> rst = mongoTemplate.find(query,ToDoNotice.class);
-        if(rst.size() > 0){
-           if(rst.get(0).getStatus().equals(AuthConstants.TODONOTICE_TYPE_TODO)){
-               rst.get(0).getToDoInfos().addAll(toDoNotice.getToDoInfos());
+        toDoNotice.setNoticeid(UUID.randomUUID().toString());
+        todoNoticeMapper.insert(toDoNotice);
+        TokenModel tokenModel = tokenService.getToken(toDoNotice.getOwner());
+        if(webAgentSessionRegistry.getSessionIds(tokenModel.getToken()).stream().findFirst().isPresent()){
+            String sessionId=webAgentSessionRegistry.getSessionIds(tokenModel.getToken()).stream().findFirst().get();
 
-           }else{
-               rst.get(0).getNotices().addAll(toDoNotice.getNotices());
-           }
-            mongoTemplate.save(rst.get(0));
-        }else{
-            mongoTemplate.save(toDoNotice);
+            ToDoNotice condition = new ToDoNotice();
+            condition.setOwner(toDoNotice.getOwner());
+            condition.setStatus(AuthConstants.TODO_STATUS_TODO);
+            condition.setType(toDoNotice.getType());
+            List<ToDoNotice> list = todoNoticeMapper.select(condition);
+
+            messagingTemplate.convertAndSendToUser(sessionId,"/topicMessage/subscribe",list,createHeaders(sessionId));
         }
     }
 
@@ -59,8 +75,8 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
      */
     @Override
     public List<ToDoNotice> get(ToDoNotice toDoNotice) throws Exception {
-        Query query = CustmizeQuery(toDoNotice);
-        return mongoTemplate.find(query, ToDoNotice.class);
+
+        return todoNoticeMapper.select(toDoNotice);
     }
 
     /**
@@ -73,6 +89,13 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
      */
     @Override
     public void updateNoticesStatus(ToDoNotice toDoNotice) throws Exception {
-            mongoTemplate.save(toDoNotice);
+        todoNoticeMapper.updateByPrimaryKeySelective(toDoNotice);
+    }
+
+    private MessageHeaders createHeaders(String sessionId) {
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+        headerAccessor.setSessionId(sessionId);
+        headerAccessor.setLeaveMutable(true);
+        return headerAccessor.getMessageHeaders();
     }
 }

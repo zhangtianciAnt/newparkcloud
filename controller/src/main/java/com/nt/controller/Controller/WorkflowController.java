@@ -1,5 +1,6 @@
 package com.nt.controller.Controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
@@ -114,6 +115,51 @@ public class WorkflowController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         workflowServices.StartWorkflow(startWorkflowVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/isViewWorkflow",method={RequestMethod.POST})
+    public ApiResult isViewWorkflow(@RequestBody StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws Exception {
+        if (startWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(workflowServices.isViewWorkflow(startWorkflowVo));
+    }
+
+    @RequestMapping(value = "/ViewWorkflow",method={RequestMethod.POST})
+    public ApiResult ViewWorkflow(@RequestBody StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws Exception {
+        if (startWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(workflowServices.ViewWorkflow(startWorkflowVo));
+    }
+
+    @RequestMapping(value = "/ViewWorkflow2",method={RequestMethod.POST})
+    public ApiResult ViewWorkflow2(@RequestBody StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws Exception {
+        if (startWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(workflowServices.ViewWorkflow2(startWorkflowVo));
+    }
+
+    @RequestMapping(value = "/isDelWorkflow",method={RequestMethod.POST})
+    public ApiResult isDelWorkflow(@RequestBody StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws Exception {
+        if (startWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(workflowServices.isDelWorkflow(startWorkflowVo));
+    }
+
+    @RequestMapping(value = "/DelWorkflow",method={RequestMethod.POST})
+    public ApiResult DelWorkflow(String instanceId, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(instanceId)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        workflowServices.DelWorkflow(instanceId);
         return ApiResult.success();
     }
 }

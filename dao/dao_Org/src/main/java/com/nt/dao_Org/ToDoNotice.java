@@ -7,10 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
 
-@Document(collection = "todonotice")
+@Table(name = "todonotice")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class ToDoNotice extends BaseModel {
     /**
      * 数据主键ID
      */
-    private String _id;
+    private String noticeid;
 
     /**
      * 类型 1.审批流程代办；2.通知
@@ -26,123 +27,27 @@ public class ToDoNotice extends BaseModel {
     private String type;
 
     /**
-     * 代办信息
+     * 标题
      */
-    private List<ToDoInfos> toDoInfos;
+    private String title;
 
     /**
-     * 通知信息
+     * 数据
      */
-    private List<Notices> notices;
-
-    @Data
-    public static class ToDoInfos extends BaseModel {
-
-        /**
-         * 数据主键ID
-         */
-        private String _id;
-
-        /**
-         * 标题
-         */
-        private String title;
-
-        /**
-         * 公司名称
-         */
-        private String companyname;
-
-        /**
-         * 发起人
-         */
-        private String initiator;
-
-        /**
-         * 当前节点名
-         */
-        private String currentnodename;
-
-        /**
-         * 发起时间
-         */
-        private Date launchtime;
-
-        /**
-         * 到达时间
-         */
-        private Date arrivaltime;
-
-    }
-
-    @Data
-    public static class Notices extends BaseModel {
-
-        /**
-         * 数据主键ID
-         */
-        private String _id;
-
-
-        /**
-         * 标题
-         */
-        private String title;
-
-        /**
-         * 内容
-         */
-        private String content;
-    }
-
-    // region method
+    private String dataid;
 
     /**
-     * @方法名：preInsert
-     * @描述：数据插入前，基础字段数据更新
-     * @创建日期：2018/10/25
-     * @作者：SKAIXX
-     * @参数：[tokenModel]
-     * @返回值：void
+     * 页面
      */
-    @Override
-    public void preInsert(TokenModel tokenModel) {
-        super.preInsert(tokenModel);
-        if (toDoInfos != null && toDoInfos.size() > 0) {
-            for (ToDoInfos tmp : this.toDoInfos) {
-                tmp.preInsert(tokenModel);
-            }
-        }
-
-        if (notices != null && notices.size() > 0) {
-            for (Notices tmp : this.notices) {
-                tmp.preInsert(tokenModel);
-            }
-        }
-    }
+    private String url;
 
     /**
-     * @方法名：preUpdate
-     * @描述：数据更新前，基础字段数据更新
-     * @创建日期：2018/10/25
-     * @作者：SKAIXX
-     * @参数：[tokenModel]
-     * @返回值：void
+     * 发起人
      */
-    @Override
-    public void preUpdate(TokenModel tokenModel) {
-        super.preUpdate(tokenModel);
-        if (toDoInfos != null && toDoInfos.size() > 0) {
-            for (ToDoInfos tmp : this.toDoInfos) {
-                tmp.preUpdate(tokenModel);
-            }
-        }
+    private String initiator;
 
-        if (notices != null && notices.size() > 0) {
-            for (Notices tmp : this.notices) {
-                tmp.preUpdate(tokenModel);
-            }
-        }
-    }
-    // endregion
+    /**
+     * 内容
+     */
+    private String content;
 }

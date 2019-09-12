@@ -12,6 +12,7 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,6 +45,9 @@ public class UserController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     //注册
     @RequestMapping(value = "/register", method = {RequestMethod.POST})
@@ -85,7 +89,7 @@ public class UserController {
             log.getLogs().add(logs);
             log.preInsert(tokenModel);
             logService.save(log);
-
+            messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
             return ApiResult.success(tokenModel);
         } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());

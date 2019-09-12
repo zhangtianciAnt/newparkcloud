@@ -1,22 +1,22 @@
 package com.nt.service_WorkFlow.impl;
 
-import java.util.ArrayList;
+import          java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import cn.hutool.core.bean.BeanUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Workflow.*;
 import com.nt.dao_Workflow.Vo.*;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_WorkFlow.WorkflowServices;
+import com.nt.service_WorkFlow.WorkflownodeinstanceServices;
 import com.nt.service_WorkFlow.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -26,11 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -53,8 +52,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	@Autowired
 	private WorkflowstepMapper workflowstepMapper;
 
-    @Override
-    public void insert(WorkflowVo workflowVo, TokenModel tokenModel) throws LogicalException {
+	@Autowired
+	private ToDoNoticeService toDoNoticeService;
+
+
+	@Override
+    public void insert(WorkflowVo workflowVo, TokenModel tokenModel) throws Exception {
         Workflow workflow = new Workflow();
         BeanUtil.copyProperties(workflowVo,workflow);
         workflow.preInsert(tokenModel);
@@ -72,12 +75,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
 	@Override
-	public void update(Workflow workflow) throws LogicalException {
+	public void update(Workflow workflow) throws Exception {
 		workflowMapper.updateByPrimaryKeySelective(workflow);
 	}
 
 	@Override
-	public void upd(WorkflowVo workflowVo, TokenModel tokenModel) throws LogicalException {
+	public void upd(WorkflowVo workflowVo, TokenModel tokenModel) throws Exception {
 		Workflow workflow = new Workflow();
 		BeanUtil.copyProperties(workflowVo,workflow);
 		workflowMapper.updateByPrimaryKeySelective(workflow);
@@ -96,7 +99,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public WorkflowVo get(String workflowid) throws LogicalException {
+	public WorkflowVo get(String workflowid) throws Exception {
 		WorkflowVo workflowVo = new WorkflowVo();
 		Workflow workflow = workflowMapper.selectByPrimaryKey(workflowid);
 		BeanUtil.copyProperties(workflow,workflowVo);
@@ -109,18 +112,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public Workflow One(String workflowid) throws LogicalException {
+	public Workflow One(String workflowid) throws Exception {
 		return workflowMapper.selectByPrimaryKey(workflowid);
 	}
 
 	@Override
-	public List<Workflow> list(Workflow workflow) throws LogicalException {
+	public List<Workflow> list(Workflow workflow) throws Exception {
 		return workflowMapper.select(workflow);
 	}
 
 	@Override
 	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel)
-			throws LogicalException {
+			throws Exception {
 		try {
 			Workflow workflow = new Workflow();
 			workflow.setFormid(startWorkflowVo.getMenuUrl());
@@ -152,7 +155,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public Map<String, String> isOperationWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException {
+	public Map<String, String> isOperationWorkflow(StartWorkflowVo startWorkflowVo) throws Exception {
 		Workflowinstance workflowinstance = new Workflowinstance();
 		workflowinstance.setDataid(startWorkflowVo.getDataId());
 		workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
@@ -185,7 +188,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public Boolean isViewWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException {
+	public Boolean isViewWorkflow(StartWorkflowVo startWorkflowVo) throws Exception {
 		Boolean rst = false;
 		Workflow workflow = new Workflow();
 		workflow.setFormid(startWorkflowVo.getMenuUrl());
@@ -203,7 +206,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public List<WorkflowLogVo> ViewWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException {
+	public List<WorkflowLogVo> ViewWorkflow(StartWorkflowVo startWorkflowVo) throws Exception {
 		List<WorkflowLogVo> rst = new ArrayList<WorkflowLogVo>();
 		Workflowinstance workflowinstance = new Workflowinstance();
 		workflowinstance.setDataid(startWorkflowVo.getDataId());
@@ -254,7 +257,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 				item.getDetail().add(workflowLogDetailVo);
 				if (!StringUtils.isNullOrEmpty(it.getResult())
-						&& (it.getResult().equals("0") || it.getResult().equals("11") || it.getResult().equals("5"))) {
+						&& (it.getResult().equals("0") || it.getResult().equals("11"))) {
 					approval++;
 				} else if (!StringUtils.isNullOrEmpty(it.getResult()) && it.getResult().equals("1")) {
 					nodeStatus = "驳回";
@@ -297,6 +300,70 @@ public class WorkflowServicesImpl implements WorkflowServices {
 		return rst;
 	}
 
+	@Override
+	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo) throws Exception {
+		List<WorkflowLogDetailVo> rst = new ArrayList<WorkflowLogDetailVo>();
+
+		Workflowinstance workflowinstance = new Workflowinstance();
+		workflowinstance.setDataid(startWorkflowVo.getDataId());
+		workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
+		workflowinstance.setTenantid(startWorkflowVo.getTenantId());
+		List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
+		Workflowinstancelist = Workflowinstancelist.stream()
+				.sorted(Comparator.comparing(Workflowinstance::getCreateon).reversed()).collect(Collectors.toList());
+		for(Workflowinstance item:Workflowinstancelist){
+			Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
+			workflownodeinstance.setWorkflowinstanceid(item.getWorkflowinstanceid());
+			List<Workflownodeinstance> workflownodeinstancelist = workflownodeinstanceMapper.select(workflownodeinstance);
+			workflownodeinstancelist = workflownodeinstancelist.stream()
+					.sorted(Comparator.comparing(Workflownodeinstance::getCreateon).reversed()).collect(Collectors.toList());
+			for(Workflownodeinstance node:workflownodeinstancelist){
+
+				if (node == workflownodeinstancelist.get(0)) {
+					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
+					workflowLogDetailVo.setResult("流程结束");
+					workflowLogDetailVo.setUserId(item.getOwner());
+					workflowLogDetailVo.setSdata(item.getModifyon());
+					workflowLogDetailVo.setEdata(item.getModifyon());
+					workflowLogDetailVo.setIsvirtual("0");
+					rst.add(workflowLogDetailVo);
+				}
+
+				Workflowstep workflowstep = new Workflowstep();
+				workflowstep.setWorkflownodeinstanceid(node.getWorkflownodeinstanceid());
+				List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
+
+				for (Workflowstep it : Workflowsteplist) {
+					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
+					if (StringUtils.isNullOrEmpty(it.getResult())) {
+						workflowLogDetailVo.setResult("进行中");
+					} else {
+						workflowLogDetailVo.setResult(stepResultConvert(it.getResult()));
+					}
+
+					workflowLogDetailVo.setUserId(it.getOwner());
+					workflowLogDetailVo.setRemark(it.getRemark());
+					workflowLogDetailVo.setSdata(it.getCreateon());
+					workflowLogDetailVo.setEdata(it.getModifyon());
+					workflowLogDetailVo.setIsvirtual("1");
+					rst.add(workflowLogDetailVo);
+				}
+
+				if (node == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+
+					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
+					workflowLogDetailVo.setResult("流程开始");
+					workflowLogDetailVo.setUserId(item.getOwner());
+					workflowLogDetailVo.setSdata(item.getCreateon());
+					workflowLogDetailVo.setEdata(item.getCreateon());
+					workflowLogDetailVo.setIsvirtual("0");
+					rst.add(workflowLogDetailVo);
+				}
+			}
+		}
+		return rst;
+	}
+
 	private String stepResultConvert(String code) {
 		switch (code) {
 		case "1":
@@ -327,7 +394,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 	@Override
 	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
-			throws LogicalException {
+			throws Exception {
 		try {
 			// 更新当前节点
 			Workflowstep workflowstep = workflowstepMapper.selectByPrimaryKey(operationWorkflowVo.getId());
@@ -395,17 +462,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 //					tenanttaskVo.setCreateby(operationWorkflowVo.getToAnotherUser());
 //					tenanttaskVo.setOwner(operationWorkflowVo.getToAnotherUser());
 //					tenanttaskVo.setTenantid(operationWorkflowVo.getTenantid());
-//
-//					HttpHeaders headers = new HttpHeaders();
-//					Enumeration<String> headerNames = request.getHeaderNames();
-//					while (headerNames.hasMoreElements()) {
-//						String key = (String) headerNames.nextElement();
-//						String value = request.getHeader(key);
-//						headers.add(key, value);
-//					}
-//					HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-//					restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-//							requestEntity, ApiResult.class);
+
 				} else {
 					for (int i = 0; i < operationWorkflowVo.getUsers().split(",").length; i++) {
 						step.setItemid(operationWorkflowVo.getUsers().split(",")[i]);
@@ -479,50 +536,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						workflowstepMapper.insert(workflowstep);
 
 						// 创建代办
-//						TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//						tenanttaskVo.setDataurl(url + "?wfid=" + dataId);
-//						tenanttaskVo.setType("1");
-//						tenanttaskVo.setTitle("您有一个【" + workflowname + "】审批待处理！");
-//						tenanttaskVo.setFromuser(user);
-//						tenanttaskVo.setContent(dataId);
-//						tenanttaskVo.setCreateby(user);
-//						tenanttaskVo.setOwner(user);
-//						tenanttaskVo.setTenantid(workflowinstance.getTenantid());
-//
-//						HttpHeaders headers = new HttpHeaders();
-//						Enumeration<String> headerNames = request.getHeaderNames();
-//						while (headerNames.hasMoreElements()) {
-//							String key = (String) headerNames.nextElement();
-//							String value = request.getHeader(key);
-//							headers.add(key, value);
-//						}
-//						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-//						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-//								requestEntity, ApiResult.class);
+						ToDoNotice toDoNotice = new ToDoNotice();
+						toDoNotice.setTitle("您有一个【" + workflowname + "】审批待处理！");
+						toDoNotice.setInitiator(tokenModel.getUserId());
+						toDoNotice.setContent(item.getNodename());
+						toDoNotice.setDataid(dataId);
+						toDoNotice.setUrl(url);
+						toDoNotice.preInsert(tokenModel);
+						toDoNoticeService.save(toDoNotice);
 					}
-//					for (String user : item.getCc().split(",")) {
-//						TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//						tenanttaskVo.setDataurl(url + "?wfid=" + dataId);
-//						tenanttaskVo.setType("1");
-//						tenanttaskVo.setTitle("有一个【" + workflowname + "】审批已处理！");
-//						tenanttaskVo.setFromuser(user);
-//						tenanttaskVo.setContent(dataId);
-//						tenanttaskVo.setCreateby(user);
-//						tenanttaskVo.setOwner(user);
-//						tenanttaskVo.setTenantid(workflowinstance.getTenantid());
-//
-//						HttpHeaders headers = new HttpHeaders();
-//						Enumeration<String> headerNames = request.getHeaderNames();
-//						while (headerNames.hasMoreElements()) {
-//							String key = (String) headerNames.nextElement();
-//							String value = request.getHeader(key);
-//							headers.add(key, value);
-//						}
-//						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-//						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-//								requestEntity, ApiResult.class);
-//					}
-					// 创建指定人员代办
 
 					return;
 				}
@@ -537,47 +559,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						// 结束操作
 						return;
 					}
-
-//					// 循环节点_未回到循环开始节点
-//					if (!StringUtils.isNullOrEmpty(item.getBackitemid())
-//							&& !item.getBackitemid().equals(tokenModel.getUserId())) {
-//						// 循环开始人创建代办
-//						// 创建节点
-//						Workflowstep workflowstep = new Workflowstep();
-//						workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
-//						workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-//						workflowstep.setName(item.getNodename());
-//						workflowstep.setItemid(item.getBackitemid());
-//						workflowstep.setCreateby(item.getBackitemid());
-//						workflowstep.setCreateon(new Date());
-//						workflowstep.setOwner(item.getBackitemid());
-//						workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-//						workflowstep.setTenantid(workflowinstance.getTenantid());
-//						workflowstepMapper.insert(workflowstep);
-//
-//						// 创建代办
-////						TenanttaskVo tenanttaskVo = new TenanttaskVo();
-////						tenanttaskVo.setDataurl(url + "?wfid=" + dataId);
-////						tenanttaskVo.setType("1");
-////						tenanttaskVo.setTitle("您有一个【" + workflowname + "】审批待处理！");
-////						tenanttaskVo.setFromuser(item.getBackitemid());
-////						tenanttaskVo.setContent(dataId);
-////						tenanttaskVo.setCreateby(item.getBackitemid());
-////						tenanttaskVo.setOwner(item.getBackitemid());
-////						tenanttaskVo.setTenantid(workflowinstance.getTenantid());
-////
-////						HttpHeaders headers = new HttpHeaders();
-////						Enumeration<String> headerNames = request.getHeaderNames();
-////						while (headerNames.hasMoreElements()) {
-////							String key = (String) headerNames.nextElement();
-////							String value = request.getHeader(key);
-////							headers.add(key, value);
-////						}
-////						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-////						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-////								requestEntity, ApiResult.class);
-//						return;
-//					}
 
 					// 如果节点为最后一个节点时，结束流程
 					if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
@@ -595,7 +576,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws LogicalException {
+	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception {
 		try {
 			// 创建流程实例
 			Workflow workflow = workflowMapper.selectByPrimaryKey(startWorkflowVo.getWorkFlowId());
@@ -631,7 +612,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public String isDelWorkflow(StartWorkflowVo startWorkflowVo) throws LogicalException {
+	public String isDelWorkflow(StartWorkflowVo startWorkflowVo) throws Exception {
 
 		Workflowinstance workflowinstance = new Workflowinstance();
 		workflowinstance.setDataid(startWorkflowVo.getDataId());
@@ -666,7 +647,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void DelWorkflow(String instanceId) throws LogicalException {
+	public void DelWorkflow(String instanceId) throws Exception {
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
 
 		// 结束当前流程 并更新状态为撤销 status 为3
@@ -691,8 +672,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 		}
 		// 结束所有代办
-//		this.restTemplate.getForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/revokeTask?dataid="
-//				+ workflowinstance.getDataid() + "&tenantid=" + workflowinstance.getTenantid(), JSONObject.class);
+
+		ToDoNotice toDoNotice = new ToDoNotice();
+		toDoNotice.setDataid(workflowinstance.getDataid());
+		toDoNotice.setUrl(workflowinstance.getFormid());
+		List<ToDoNotice> rst = toDoNoticeService.get(toDoNotice);
+		for (ToDoNotice item:
+				rst) {
+			item.setStatus(AuthConstants.TODO_STATUS_DELETE);
+			toDoNoticeService.updateNoticesStatus(item);
+		}
 	}
 
 }

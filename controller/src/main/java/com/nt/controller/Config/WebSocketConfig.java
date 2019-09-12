@@ -1,5 +1,8 @@
 package com.nt.controller.Config;
 
+import com.nt.utils.STOMPConnectEventListener;
+import com.nt.utils.SocketSessionRegistry;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
@@ -16,7 +19,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {//注册STOMP协议的节点(endpoint),并映射指定的url
         //注册一个STOMP的endpoint,并指定使用SockJS协议
         registry.addEndpoint("/endpointLogin").setAllowedOrigins("*").addInterceptors(new HandShkeInceptor()).withSockJS();
-
+        registry.addEndpoint("/endpointMessage").setAllowedOrigins("*").addInterceptors(new HandShkeInceptor()).withSockJS();
     }
 
     @Override
@@ -25,6 +28,16 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
         registry.enableSimpleBroker("/topicLogin");
         registry.setApplicationDestinationPrefixes("/topicLogin");
 
+        registry.enableSimpleBroker("/topicMessage");
+        registry.setApplicationDestinationPrefixes("/topicMessage");
     }
 
+    @Bean
+    public SocketSessionRegistry SocketSessionRegistry(){
+        return new SocketSessionRegistry();
+    }
+    @Bean
+    public STOMPConnectEventListener STOMPConnectEventListener(){
+        return new STOMPConnectEventListener();
+    }
 }

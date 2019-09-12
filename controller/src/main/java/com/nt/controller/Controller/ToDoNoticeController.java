@@ -2,7 +2,6 @@ package com.nt.controller.Controller;
 
 
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.dao_Org.ToDoNotice.Notices;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -28,32 +27,6 @@ public class ToDoNoticeController {
     private TokenService tokenService;
 
     /**
-     * @方法名：save
-     * @描述：保存消息
-     * @创建日期：2018/12/13
-     * @作者：SUNXU
-     * @参数：[toDoNotice, request]
-     * @返回值：com.nt.utils.ApiResult
-     */
-    @RequestMapping(value = "/save", method = {RequestMethod.POST})
-    public ApiResult save(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
-        if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-
-        if(toDoNotice.getType().equals(AuthConstants.TODONOTICE_TYPE_TODO)){
-            for(ToDoNotice.ToDoInfos item :toDoNotice.getToDoInfos()){
-                item.setInitiator(tokenModel.getUserId());
-                item.setLaunchtime(new Date());
-            }
-        }
-        toDoNotice.preInsert(tokenModel);
-        toDoNoticeService.save(toDoNotice);
-        return ApiResult.success();
-    }
-
-    /**
      * @方法名：getmessage
      * @描述：获取消息列表
      * @创建日期：2018/12/13
@@ -68,6 +41,7 @@ public class ToDoNoticeController {
         message.setTenantid(tokenModel.getTenantId());
         message.setOwners(tokenModel.getOwnerList());
         message.setIds(tokenModel.getIdList());
+        message.setOwner(tokenModel.getUserId());
         return ApiResult.success(toDoNoticeService.get(message));
     }
     /**
@@ -83,8 +57,8 @@ public class ToDoNoticeController {
         if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        toDoNotice.preInsert(tokenModel);
+        TokenModel tokenModel = tokenService.getToken(request);
+        toDoNotice.preUpdate(tokenModel);
         toDoNoticeService.updateNoticesStatus(toDoNotice);
         return ApiResult.success();
     }
