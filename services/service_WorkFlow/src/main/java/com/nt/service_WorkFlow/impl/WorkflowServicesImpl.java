@@ -1,6 +1,6 @@
 package com.nt.service_WorkFlow.impl;
 
-import          java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,9 +18,7 @@ import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.WorkflownodeinstanceServices;
 import com.nt.service_WorkFlow.mapper.*;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +122,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	@Override
 	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel)
 			throws Exception {
-		try {
+
 			Workflow workflow = new Workflow();
 			workflow.setFormid(startWorkflowVo.getMenuUrl());
 			workflow.setTenantid(startWorkflowVo.getTenantId());
@@ -149,9 +147,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 
 			return new ArrayList<Workflow>();
-		} catch (Exception e) {
-			throw new LogicalException("操作失败!");
-		}
+
 	}
 
 	@Override
@@ -206,7 +202,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public List<WorkflowLogVo> ViewWorkflow(StartWorkflowVo startWorkflowVo) throws Exception {
+	public List<WorkflowLogVo> ViewWorkflow(StartWorkflowVo startWorkflowVo,String locale) throws Exception {
 		List<WorkflowLogVo> rst = new ArrayList<WorkflowLogVo>();
 		Workflowinstance workflowinstance = new Workflowinstance();
 		workflowinstance.setDataid(startWorkflowVo.getDataId());
@@ -223,10 +219,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			if (item == WorkflowLogVolist.get(0)) {
 				WorkflowLogVo endnode = new WorkflowLogVo();
 				endnode.setId("00");
-				endnode.setStepStatus("通过");
-				endnode.setTitle("流程开始");
+				endnode.setStepStatus(MessageUtil.getMessage(MsgConstants.WORKFLOW_03,locale));
+				endnode.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_01,locale));
 				WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
-				workflowLogDetailVo.setResult("流程开始");
+				workflowLogDetailVo.setResult(MessageUtil.getMessage(MsgConstants.WORKFLOW_01,locale));
 				workflowLogDetailVo.setUserId(workflowinstancelist.get(0).getOwner());
 				workflowLogDetailVo.setSdata(workflowinstancelist.get(0).getCreateon());
 				workflowLogDetailVo.setEdata(workflowinstancelist.get(0).getCreateon());
@@ -245,9 +241,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			for (Workflowstep it : Workflowsteplist) {
 				WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
 				if (StringUtils.isNullOrEmpty(it.getResult())) {
-					workflowLogDetailVo.setResult("进行中");
+					workflowLogDetailVo.setResult(MessageUtil.getMessage(MsgConstants.WORKFLOW_04,locale));
 				} else {
-					workflowLogDetailVo.setResult(stepResultConvert(it.getResult()));
+					workflowLogDetailVo.setResult(stepResultConvert(it.getResult(),locale));
 				}
 
 				workflowLogDetailVo.setUserId(it.getOwner());
@@ -260,15 +256,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						&& (it.getResult().equals("0") || it.getResult().equals("11"))) {
 					approval++;
 				} else if (!StringUtils.isNullOrEmpty(it.getResult()) && it.getResult().equals("1")) {
-					nodeStatus = "驳回";
+					nodeStatus = MessageUtil.getMessage(MsgConstants.WORKFLOW_05,locale);
 				} else if (!StringUtils.isNullOrEmpty(it.getResult()) && it.getResult().equals("3")) {
-					nodeStatus = "撤销";
+					nodeStatus = MessageUtil.getMessage(MsgConstants.WORKFLOW_06,locale);
 				} else {
-					nodeStatus = "进行中";
+					nodeStatus = MessageUtil.getMessage(MsgConstants.WORKFLOW_04,locale);
 				}
 			}
 			if (approval != 0 && approval == Workflowsteplist.size())
-				nodeStatus = "通过";
+				nodeStatus = MessageUtil.getMessage(MsgConstants.WORKFLOW_03,locale);
 
 			item.setStepStatus(nodeStatus);
 			rst.add(item);
@@ -283,10 +279,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowLogDetailVo.setResult("");
 				} else {
 
-					endnode.setStepStatus(workResultConvert(workflowinstancelist.get(0).getStatus()));
-					workflowLogDetailVo.setResult(workResultConvert(workflowinstancelist.get(0).getStatus()));
+					endnode.setStepStatus(workResultConvert(workflowinstancelist.get(0).getStatus(),locale));
+					workflowLogDetailVo.setResult(workResultConvert(workflowinstancelist.get(0).getStatus(),locale));
 				}
-				endnode.setTitle("流程结束");
+				endnode.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_02,locale));
 
 				workflowLogDetailVo.setUserId(workflowinstancelist.get(0).getOwner());
 				workflowLogDetailVo.setSdata(workflowinstancelist.get(0).getModifyon());
@@ -301,7 +297,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo) throws Exception {
+	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo,String locale) throws Exception {
 		List<WorkflowLogDetailVo> rst = new ArrayList<WorkflowLogDetailVo>();
 
 		Workflowinstance workflowinstance = new Workflowinstance();
@@ -321,7 +317,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 				if (node == workflownodeinstancelist.get(0)) {
 					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
-					workflowLogDetailVo.setResult("流程结束");
+					workflowLogDetailVo.setResult(MessageUtil.getMessage(MsgConstants.WORKFLOW_02,locale));
 					workflowLogDetailVo.setUserId(item.getOwner());
 					workflowLogDetailVo.setSdata(item.getModifyon());
 					workflowLogDetailVo.setEdata(item.getModifyon());
@@ -336,9 +332,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				for (Workflowstep it : Workflowsteplist) {
 					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
 					if (StringUtils.isNullOrEmpty(it.getResult())) {
-						workflowLogDetailVo.setResult("进行中");
+						workflowLogDetailVo.setResult(MessageUtil.getMessage(MsgConstants.WORKFLOW_04,locale));
 					} else {
-						workflowLogDetailVo.setResult(stepResultConvert(it.getResult()));
+						workflowLogDetailVo.setResult(stepResultConvert(it.getResult(),locale));
 					}
 
 					workflowLogDetailVo.setUserId(it.getOwner());
@@ -352,7 +348,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				if (node == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
 
 					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
-					workflowLogDetailVo.setResult("流程开始");
+					workflowLogDetailVo.setResult(MessageUtil.getMessage(MsgConstants.WORKFLOW_01,locale));
 					workflowLogDetailVo.setUserId(item.getOwner());
 					workflowLogDetailVo.setSdata(item.getCreateon());
 					workflowLogDetailVo.setEdata(item.getCreateon());
@@ -364,29 +360,29 @@ public class WorkflowServicesImpl implements WorkflowServices {
 		return rst;
 	}
 
-	private String stepResultConvert(String code) {
+	private String stepResultConvert(String code,String locale) {
 		switch (code) {
 		case "1":
-			return "驳回";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_05,locale);
 		case "3":
-			return "撤销";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_06,locale);
 		case "11":
-			return "转办";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_07,locale);
 		default:
-			return "通过";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_03,locale);
 		}
 	}
 
-	private String workResultConvert(String code) {
+	private String workResultConvert(String code,String locale) {
 		switch (code) {
 		case "0":
-			return "进行中";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_04,locale);
 		case "1":
-			return "通过";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_03,locale);
 		case "2":
-			return "驳回";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_05,locale);
 		case "3":
-			return "撤销";
+			return MessageUtil.getMessage(MsgConstants.WORKFLOW_06,locale);
 		default:
 			return "";
 		}
@@ -395,7 +391,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	@Override
 	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
 			throws Exception {
-		try {
+
 			// 更新当前节点
 			Workflowstep workflowstep = workflowstepMapper.selectByPrimaryKey(operationWorkflowVo.getId());
 			// 同意&拒绝
@@ -436,10 +432,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				step.setWorkflownodeinstanceid(workflowstep.getWorkflownodeinstanceid());
 				if ("11".equals(operationWorkflowVo.getResult())) {
 
-					step.setName("转办");
+					step.setName(MessageUtil.getMessage(MsgConstants.WORKFLOW_07,tokenModel.getLocale()));
 				} else {
 
-					step.setName("指定");
+					step.setName(MessageUtil.getMessage(MsgConstants.WORKFLOW_08,tokenModel.getLocale()));
 				}
 
 				step.setCreateby(operationWorkflowVo.getUserid());
@@ -499,10 +495,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 			cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
 					operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
-		} catch (Exception e) {
-			log.warn(e.getMessage());
-			throw new LogicalException("操作失败！");
-		}
+
 	}
 
 	private void cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,
@@ -537,7 +530,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 						// 创建代办
 						ToDoNotice toDoNotice = new ToDoNotice();
-						toDoNotice.setTitle("您有一个【" + workflowname + "】审批待处理！");
+						List<String> params = new ArrayList<String>();
+						params.add(workflowname);
+						toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10,params,tokenModel.getLocale()));
 						toDoNotice.setInitiator(tokenModel.getUserId());
 						toDoNotice.setContent(item.getNodename());
 						toDoNotice.setDataid(dataId);
@@ -577,7 +572,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 	@Override
 	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception {
-		try {
+
 			// 创建流程实例
 			Workflow workflow = workflowMapper.selectByPrimaryKey(startWorkflowVo.getWorkFlowId());
 			Workflowinstance workflowinstance = new Workflowinstance();
@@ -605,10 +600,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			// 生成节点操作
 			cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
 					startWorkflowVo.getMenuUrl(), workflow.getWorkflowname());
-		} catch (Exception e) {
-			log.warn(e.getMessage());
-			throw new LogicalException("操作失败！");
-		}
+
 	}
 
 	@Override
@@ -647,7 +639,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void DelWorkflow(String instanceId) throws Exception {
+	public void DelWorkflow(String instanceId,String locale) throws Exception {
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
 
 		// 结束当前流程 并更新状态为撤销 status 为3
@@ -665,7 +657,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			List<Workflowstep> workflowsteplist = workflowstepMapper.select(workflowstep);
 			for (Workflowstep it : workflowsteplist) {
 				it.setResult("3");
-				it.setRemark("流程备发起人撤销！");
+				it.setRemark(MessageUtil.getMessage(MsgConstants.WORKFLOW_09,locale));
 				it.setModifyby(workflowinstance.getCreateby());
 				it.setModifyon(new Date());
 				workflowstepMapper.updateByPrimaryKeySelective(it);

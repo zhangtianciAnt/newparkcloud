@@ -133,7 +133,7 @@ public class WorkflowController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(workflowServices.ViewWorkflow(startWorkflowVo));
+        return ApiResult.success(workflowServices.ViewWorkflow(startWorkflowVo,tokenModel.getLocale()));
     }
 
     @RequestMapping(value = "/ViewWorkflow2",method={RequestMethod.POST})
@@ -142,7 +142,7 @@ public class WorkflowController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(workflowServices.ViewWorkflow2(startWorkflowVo));
+        return ApiResult.success(workflowServices.ViewWorkflow2(startWorkflowVo,tokenModel.getLocale()));
     }
 
     @RequestMapping(value = "/isDelWorkflow",method={RequestMethod.POST})
@@ -159,7 +159,8 @@ public class WorkflowController {
         if (StrUtil.isEmpty(instanceId)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        workflowServices.DelWorkflow(instanceId);
+        TokenModel tokenModel = tokenService.getToken(request);
+        workflowServices.DelWorkflow(instanceId,tokenModel.getLocale());
         return ApiResult.success();
     }
 }

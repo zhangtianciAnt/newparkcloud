@@ -226,12 +226,4 @@ public class DruidSource {
 
         return datasource;
     }
-
-
-    @Bean
-    @Primary
-    //配置事物管理
-    public DataSourceTransactionManager masterTransactionManager() throws SQLException {
-        return new DataSourceTransactionManager(dataSource());
-    }
 }

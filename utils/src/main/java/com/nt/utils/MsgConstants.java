@@ -20,4 +20,15 @@ public class MsgConstants {
      */
     public final static String EXCEPTION_ERR_O1 = "EXCEPTION_ERR_O1";
 
+    public final static String WORKFLOW_01 = "WORKFLOW_01";
+    public final static String WORKFLOW_02 = "WORKFLOW_02";
+    public final static String WORKFLOW_03 = "WORKFLOW_03";
+    public final static String WORKFLOW_04 = "WORKFLOW_04";
+    public final static String WORKFLOW_05 = "WORKFLOW_05";
+    public final static String WORKFLOW_06 = "WORKFLOW_06";
+    public final static String WORKFLOW_07 = "WORKFLOW_07";
+    public final static String WORKFLOW_08 = "WORKFLOW_08";
+    public final static String WORKFLOW_09 = "WORKFLOW_09";
+    public final static String WORKFLOW_10 = "WORKFLOW_10";
+
 }

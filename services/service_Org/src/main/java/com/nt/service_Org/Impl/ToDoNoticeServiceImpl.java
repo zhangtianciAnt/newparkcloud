@@ -18,6 +18,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
+@Transactional(rollbackFor=Exception.class)
 public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     @Autowired
@@ -51,9 +53,9 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     public void save(ToDoNotice toDoNotice) throws Exception {
         toDoNotice.setNoticeid(UUID.randomUUID().toString());
         todoNoticeMapper.insert(toDoNotice);
-        TokenModel tokenModel = tokenService.getToken(toDoNotice.getOwner());
-        if(webAgentSessionRegistry.getSessionIds(tokenModel.getToken()).stream().findFirst().isPresent()){
-            String sessionId=webAgentSessionRegistry.getSessionIds(tokenModel.getToken()).stream().findFirst().get();
+        if(webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()) != null &&
+                webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().isPresent()){
+            String sessionId=webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().get();
 
             ToDoNotice condition = new ToDoNotice();
             condition.setOwner(toDoNotice.getOwner());

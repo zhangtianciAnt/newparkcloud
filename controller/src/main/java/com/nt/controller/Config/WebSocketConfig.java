@@ -19,17 +19,18 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {//注册STOMP协议的节点(endpoint),并映射指定的url
         //注册一个STOMP的endpoint,并指定使用SockJS协议
         registry.addEndpoint("/endpointLogin").setAllowedOrigins("*").addInterceptors(new HandShkeInceptor()).withSockJS();
-        registry.addEndpoint("/endpointMessage").setAllowedOrigins("*").addInterceptors(new HandShkeInceptor()).withSockJS();
+       registry.addEndpoint("/endpointMessage").setAllowedOrigins("*").addInterceptors(new HandShkeInceptor()).withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {//配置消息代理(Message Broker)
         //广播式应配置一个/topic消息代理
-        registry.enableSimpleBroker("/topicLogin");
+        registry.enableSimpleBroker("/topicLogin","/topicMessage");
+        registry.setUserDestinationPrefix("/user");
         registry.setApplicationDestinationPrefixes("/topicLogin");
 
-        registry.enableSimpleBroker("/topicMessage");
-        registry.setApplicationDestinationPrefixes("/topicMessage");
+//        registry.enableSimpleBroker("/topicMessage");
+//        registry.setApplicationDestinationPrefixes("/topicMessage");
     }
 
     @Bean

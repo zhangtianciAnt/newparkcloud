@@ -33,7 +33,7 @@ public interface WorkflowServices {
 	public String isDelWorkflow(StartWorkflowVo startWorkflowVo) throws Exception;
 
 	// 撤销审批
-	public void DelWorkflow(String instanceId) throws Exception;
+	public void DelWorkflow(String instanceId,String locale) throws Exception;
 
 	// 是否可以发起审批
 	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception;
@@ -51,8 +51,8 @@ public interface WorkflowServices {
 	public Boolean isViewWorkflow(StartWorkflowVo startWorkflowVo) throws Exception;
 
 	// 查看流程日志
-	public List<WorkflowLogVo> ViewWorkflow(StartWorkflowVo startWorkflowVo) throws Exception;
+	public List<WorkflowLogVo> ViewWorkflow(StartWorkflowVo startWorkflowVo,String locale) throws Exception;
 
 	// 查看流程日志2
-	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo) throws Exception;
+	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo,String locale) throws Exception;
 }

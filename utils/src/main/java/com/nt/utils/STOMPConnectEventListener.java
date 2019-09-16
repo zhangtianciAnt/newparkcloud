@@ -3,6 +3,7 @@ package com.nt.utils;
 import com.mysql.jdbc.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.impl.TokenServiceImpl;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -14,6 +15,8 @@ public class STOMPConnectEventListener implements ApplicationListener<SessionCon
 	@Autowired
     SocketSessionRegistry webAgentSessionRegistry;
 
+    @Autowired
+    TokenService tokenService;
     @Override
     public void onApplicationEvent(SessionConnectEvent event) {
         StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
@@ -21,7 +24,6 @@ public class STOMPConnectEventListener implements ApplicationListener<SessionCon
         String agentId = sha.getNativeHeader("login").get(0);
         String Userid = "";
         if(!StringUtils.isNullOrEmpty(agentId)){
-			TokenServiceImpl tokenService = new TokenServiceImpl();
 			TokenModel tokenModel = tokenService.getToken(agentId);
 			Userid = tokenModel.getUserId();
 		}
