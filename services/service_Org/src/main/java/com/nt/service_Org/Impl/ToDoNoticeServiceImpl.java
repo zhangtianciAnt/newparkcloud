@@ -92,6 +92,19 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     @Override
     public void updateNoticesStatus(ToDoNotice toDoNotice) throws Exception {
         todoNoticeMapper.updateByPrimaryKeySelective(toDoNotice);
+
+        if(webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()) != null &&
+                webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().isPresent()){
+            String sessionId=webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().get();
+
+            ToDoNotice condition = new ToDoNotice();
+            condition.setOwner(toDoNotice.getOwner());
+            condition.setStatus(AuthConstants.TODO_STATUS_TODO);
+            //condition.setType(toDoNotice.getType());
+            List<ToDoNotice> list = todoNoticeMapper.select(condition);
+
+            messagingTemplate.convertAndSendToUser(sessionId,"/topicMessage/subscribe",list,createHeaders(sessionId));
+        }
     }
 
     private MessageHeaders createHeaders(String sessionId) {

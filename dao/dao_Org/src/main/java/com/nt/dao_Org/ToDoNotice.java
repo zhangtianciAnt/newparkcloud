@@ -44,6 +44,11 @@ public class ToDoNotice extends BaseModel {
     private String url;
 
     /**
+     * 审批URL
+     */
+    private String workflowurl;
+
+    /**
      * 发起人
      */
     private String initiator;

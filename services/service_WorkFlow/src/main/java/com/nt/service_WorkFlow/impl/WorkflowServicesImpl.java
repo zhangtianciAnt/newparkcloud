@@ -494,11 +494,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			// 生成下一节点信息
 
 			cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
-					operationWorkflowVo.getDataUrl(), workflowinstance.getWorkflowname());
+					operationWorkflowVo.getDataUrl(),operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
 
 	}
 
-	private void cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,
+	private void cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
 			String workflowname) throws Exception {
 
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
@@ -537,6 +537,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						toDoNotice.setContent(item.getNodename());
 						toDoNotice.setDataid(dataId);
 						toDoNotice.setUrl(url);
+						toDoNotice.setWorkflowurl(workFlowurl);
 						toDoNotice.preInsert(tokenModel);
 						toDoNoticeService.save(toDoNotice);
 					}
@@ -600,7 +601,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 			// 生成节点操作
 			cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
-					startWorkflowVo.getDataUrl(), workflow.getWorkflowname());
+					startWorkflowVo.getDataUrl(),startWorkflowVo.getMenuUrl(), workflow.getWorkflowname());
 
 	}
 
@@ -668,7 +669,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 		ToDoNotice toDoNotice = new ToDoNotice();
 		toDoNotice.setDataid(workflowinstance.getDataid());
-		toDoNotice.setUrl(workflowinstance.getFormid());
+		toDoNotice.setUrl(workflowinstance.getUrl());
 		List<ToDoNotice> rst = toDoNoticeService.get(toDoNotice);
 		for (ToDoNotice item:
 				rst) {
