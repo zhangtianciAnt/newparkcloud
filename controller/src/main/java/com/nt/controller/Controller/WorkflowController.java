@@ -3,6 +3,7 @@ package com.nt.controller.Controller;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Workflow.Vo.OperationWorkflowVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowVo;
 import com.nt.dao_Workflow.Workflow;
@@ -161,6 +162,25 @@ public class WorkflowController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         workflowServices.DelWorkflow(instanceId,tokenModel.getLocale());
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/isOperationWorkflow",method={RequestMethod.POST})
+    public ApiResult isOperationWorkflow(@RequestBody StartWorkflowVo startWorkflowVo, HttpServletRequest request) throws Exception {
+        if (startWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(workflowServices.isOperationWorkflow(startWorkflowVo));
+    }
+
+    @RequestMapping(value = "/OperationWorkflow",method={RequestMethod.POST})
+    public ApiResult OperationWorkflow(@RequestBody OperationWorkflowVo operationWorkflowVo, HttpServletRequest request) throws Exception {
+        if (operationWorkflowVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        workflowServices.OperationWorkflow(operationWorkflowVo,tokenModel);
         return ApiResult.success();
     }
 }

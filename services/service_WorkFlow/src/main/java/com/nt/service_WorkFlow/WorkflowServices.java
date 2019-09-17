@@ -42,7 +42,7 @@ public interface WorkflowServices {
 	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception;
 
 	// 是否可以进行审批
-	public Map<String, String> isOperationWorkflow(StartWorkflowVo startWorkflowVo) throws Exception;
+	public Map<String, String> isOperationWorkflow(StartWorkflowVo startWorkflowV) throws Exception;
 
 	// 进行审批
 	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel) throws Exception;

@@ -315,16 +315,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					.sorted(Comparator.comparing(Workflownodeinstance::getCreateon).reversed()).collect(Collectors.toList());
 			for(Workflownodeinstance node:workflownodeinstancelist){
 
-				if (node == workflownodeinstancelist.get(0)) {
-					WorkflowLogDetailVo workflowLogDetailVo = new WorkflowLogDetailVo();
-					workflowLogDetailVo.setResult(MessageUtil.getMessage(MsgConstants.WORKFLOW_02,locale));
-					workflowLogDetailVo.setUserId(item.getOwner());
-					workflowLogDetailVo.setSdata(item.getModifyon());
-					workflowLogDetailVo.setEdata(item.getModifyon());
-					workflowLogDetailVo.setIsvirtual("0");
-					rst.add(workflowLogDetailVo);
-				}
-
 				Workflowstep workflowstep = new Workflowstep();
 				workflowstep.setWorkflownodeinstanceid(node.getWorkflownodeinstanceid());
 				List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
@@ -406,9 +396,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflowstepMapper.updateByPrimaryKeySelective(workflowstep);
 
 			// 结束当前代办
-//			this.restTemplate.getForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/revokeTask?dataid="
-//					+ operationWorkflowVo.getDataId() + "&userid=" + operationWorkflowVo.getUserid() + "&tenantid="
-//					+ operationWorkflowVo.getTenantid(), JSONObject.class);
+			ToDoNotice toDoNotice1 = new ToDoNotice();
+			toDoNotice1.setDataid(operationWorkflowVo.getDataId());
+			toDoNotice1.setUrl(operationWorkflowVo.getDataUrl());
+			toDoNotice1.setOwner(tokenModel.getUserId());
+			List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+			for (ToDoNotice item:
+					rst1) {
+				item.setStatus(AuthConstants.TODO_STATUS_DONE);
+				toDoNoticeService.updateNoticesStatus(item);
+			}
 			Workflownodeinstance nodeinstance = workflownodeinstanceMapper
 					.selectByPrimaryKey(workflowstep.getWorkflownodeinstanceid());
 			Workflowinstance workflowinstance = workflowinstanceMapper
@@ -418,10 +415,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				// 结束当前流程 并更新状态为驳回 status 为2
 				workflowinstanceMapper.stopInstanceByReject(workflowstep.getWorkflownodeinstanceid(), "2");
 				// 结束所有代办
-//				this.restTemplate.getForObject(
-//						"http://" + RequestUtil.MESSAGE + "/tenantTask/revokeTask?dataid="
-//								+ operationWorkflowVo.getDataId() + "&tenantid=" + operationWorkflowVo.getTenantid(),
-//						JSONObject.class);
+
+				ToDoNotice toDoNotice = new ToDoNotice();
+				toDoNotice.setDataid(workflowinstance.getDataid());
+				toDoNotice.setUrl(workflowinstance.getUrl());
+				List<ToDoNotice> rst = toDoNoticeService.get(toDoNotice);
+				for (ToDoNotice item:
+						rst) {
+					item.setStatus(AuthConstants.TODO_STATUS_DELETE);
+					toDoNoticeService.updateNoticesStatus(item);
+				}
 			}
 
 			// 转办&指定审批人
