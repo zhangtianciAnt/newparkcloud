@@ -46,6 +46,12 @@ public class Workflowinstance extends BaseModel {
     private String formid;
 
     /**
+     * 所属表单ID
+     */
+    @Column(name = "URL")
+    private String url;
+
+    /**
      * 流程属性
      */
     @Column(name = "WORKFLOWOPERATION")

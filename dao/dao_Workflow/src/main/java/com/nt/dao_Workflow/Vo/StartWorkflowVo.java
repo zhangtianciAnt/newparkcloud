@@ -18,6 +18,8 @@ public class StartWorkflowVo implements Serializable{
 
 	private String menuUrl;
 
+	private String dataUrl;
+
 	private String dataId;
 
 	private String workFlowId;

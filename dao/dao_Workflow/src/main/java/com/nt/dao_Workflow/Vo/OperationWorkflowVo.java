@@ -21,6 +21,8 @@ public class OperationWorkflowVo implements Serializable {
 
 	private String dataId;
 
+	private String dataUrl;
+
 	private String result;
 
 	private String toAnotherUser;

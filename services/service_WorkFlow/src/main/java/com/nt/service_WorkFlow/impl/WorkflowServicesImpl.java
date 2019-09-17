@@ -494,7 +494,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			// 生成下一节点信息
 
 			cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
-					operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
+					operationWorkflowVo.getDataUrl(), workflowinstance.getWorkflowname());
 
 	}
 
@@ -580,6 +580,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflowinstance.setWorkflowinstanceid(UUID.randomUUID().toString());
 			workflowinstance.setDataid(startWorkflowVo.getDataId());
 			workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
+			workflowinstance.setUrl(startWorkflowVo.getDataUrl());
 			workflowinstance.preInsert(tokenModel);
 			workflowinstanceMapper.insert(workflowinstance);
 
@@ -599,7 +600,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 			// 生成节点操作
 			cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
-					startWorkflowVo.getMenuUrl(), workflow.getWorkflowname());
+					startWorkflowVo.getDataUrl(), workflow.getWorkflowname());
 
 	}
 
