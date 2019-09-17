@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/ToDoNotice")
@@ -34,7 +35,7 @@ public class ToDoNoticeController {
      * @参数：[ request]
      * @返回值：toDoNotice
      */
-    @RequestMapping(value = "/getmessage", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getmessage", method = {RequestMethod.POST})
     public ApiResult get(HttpServletRequest request) throws Exception {
         ToDoNotice message = new ToDoNotice();
         TokenModel tokenModel = tokenService.getToken(request);
@@ -53,13 +54,15 @@ public class ToDoNoticeController {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/updatenoticesstatus", method = {RequestMethod.POST})
-    public ApiResult updatenoticesstatus(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception {
-        if (toDoNotice == null || StringUtils.isEmpty(toDoNotice)) {
+    public ApiResult updatenoticesstatus(@RequestBody List<ToDoNotice> toDoNoticelist, HttpServletRequest request) throws Exception {
+        if (toDoNoticelist == null || StringUtils.isEmpty(toDoNoticelist)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        toDoNotice.preUpdate(tokenModel);
-        toDoNoticeService.updateNoticesStatus(toDoNotice);
+        for(ToDoNotice toDoNotice:toDoNoticelist){
+            toDoNotice.preUpdate(tokenModel);
+            toDoNoticeService.updateNoticesStatus(toDoNotice);
+        }
         return ApiResult.success();
     }
 }

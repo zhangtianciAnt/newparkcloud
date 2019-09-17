@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ public class ToDoNotice extends BaseModel {
     /**
      * 数据主键ID
      */
+    @Id
     private String noticeid;
 
     /**

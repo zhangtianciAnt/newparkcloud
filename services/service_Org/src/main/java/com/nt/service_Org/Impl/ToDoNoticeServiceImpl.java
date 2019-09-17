@@ -60,7 +60,7 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
             ToDoNotice condition = new ToDoNotice();
             condition.setOwner(toDoNotice.getOwner());
             condition.setStatus(AuthConstants.TODO_STATUS_TODO);
-            condition.setType(toDoNotice.getType());
+            //condition.setType(toDoNotice.getType());
             List<ToDoNotice> list = todoNoticeMapper.select(condition);
 
             messagingTemplate.convertAndSendToUser(sessionId,"/topicMessage/subscribe",list,createHeaders(sessionId));
