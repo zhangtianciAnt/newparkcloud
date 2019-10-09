@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>services</artifactId>
-    <modules>
-        <module>service_Org</module>
-        <module>service_Auth</module>
-        <module>service_VerificationCode</module>
-        <module>service_WorkFlow</module>
-        <module>service_Pfans</module>
-
-    </modules>
-    <packaging>pom</packaging>
+    <artifactId>service_Pfans</artifactId>
+    <packaging>jar</packaging>
 
     <parent>
-        <artifactId>newparkcloud</artifactId>
+        <artifactId>services</artifactId>
         <groupId>com.nt</groupId>
         <version>1.0.0</version>
     </parent>
@@ -23,12 +15,20 @@
     <dependencies>
         <dependency>
             <groupId>com.nt</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>dao_Pfans</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -36,4 +36,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
