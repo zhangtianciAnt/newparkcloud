@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "pfans2016") 
+@Table(name = "pfans2016")
 public class pfans2016 extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
