@@ -10,16 +10,10 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "pfans2016")
-public class pfans2016 extends BaseModel {
+@Table(name = "abnormal")
+public class Pfans2016 extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
-
-    /**
-     * 审批结果
-     */
-    @Column(name = "RESULT")
-    private String result;
 
     /**
 	 * 考勤异常ID
