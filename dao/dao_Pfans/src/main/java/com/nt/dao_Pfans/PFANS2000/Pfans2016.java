@@ -50,7 +50,7 @@ public class Pfans2016 extends BaseModel {
      * 申请日期
      */
     @Column(name = "APPLICATION_DATE")
-    private Data applicationdate;
+    private Date applicationdate;
 
     /**
      * 异常类别
@@ -62,19 +62,19 @@ public class Pfans2016 extends BaseModel {
      * 发生日期
      */
     @Column(name = "OCCURRENCE_DATE")
-    private Data occurrencedate;
+    private Date occurrencedate;
 
     /**
      * 时间段（开始）
      */
     @Column(name = "PERIOD_START")
-    private Data periodstart;
+    private Date periodstart;
 
     /**
      * 时间段（结束）
      */
     @Column(name = "PERIOD_END")
-    private Data periodend;
+    private Date periodend;
 
     /**
      * 事由
@@ -92,7 +92,7 @@ public class Pfans2016 extends BaseModel {
      * 创建时间
      */
     @Column(name = "CREATEON")
-    private Data createon;
+    private Date createon;
 
     /**
      * 创建人
@@ -104,7 +104,7 @@ public class Pfans2016 extends BaseModel {
      * 更新时间
      */
     @Column(name = "MODIFYON")
-    private Data modifyon;
+    private Date modifyon;
 
     /**
      * 更新人
