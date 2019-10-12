@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "abnormal")
-public class Pfans2016 extends BaseModel {
+public class AbNormal extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
 
