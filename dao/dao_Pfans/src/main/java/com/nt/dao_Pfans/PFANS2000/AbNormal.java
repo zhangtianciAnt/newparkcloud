@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "abnormal")
-public class Pfans2016 extends BaseModel {
+public class AbNormal extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
 
