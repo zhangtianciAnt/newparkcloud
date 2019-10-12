@@ -5,34 +5,47 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class Information extends BaseModel {
+@Table(name = "information")
+public class InformationDelivery extends BaseModel {
 
     private static final long serialVersionUID = 1L;
+    @Id
+    @Column(name = "INFORMATION_ID")
+    private String Informationid;
 
-    private String Information_id;
-
+    @Column(name = "TITLE")
     private String title;
 
+    @Column(name = "ADDRESS")
     private String address;
 
+    @Column(name = "AVAILABLESTATE")
     private String availablestate;
 
+    @Column(name = "CREATEBY")
     private String createby;
 
+    @Column(name = "CREATEON")
     private Date createon;
 
+    @Column(name = "MODIFYBY")
     private String modifyby;
 
+    @Column(name = "MODIFYON")
     private Date modifyon;
 
+    @Column(name = "OWNER")
     private String owner;
 
+    @Column(name = "STATUS")
     private String status;
 
 

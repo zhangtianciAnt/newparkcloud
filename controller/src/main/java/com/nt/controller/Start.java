@@ -16,7 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
 @ComponentScan(basePackages={"com.nt.*"})
-@MapperScan(basePackages = "com.nt.*.mapper")
+@MapperScan(basePackages = "com.nt.**.mapper")
 @EnableTransactionManagement
 @ServletComponentScan("com.nt.*")
 public class Start {
