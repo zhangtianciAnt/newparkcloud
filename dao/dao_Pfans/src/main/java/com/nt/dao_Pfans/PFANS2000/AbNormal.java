@@ -20,7 +20,7 @@ public class AbNormal extends BaseModel {
 	 * 考勤异常ID
 	 */
     @Id
-    @Column(name = "ABNORMAI_ID")
+    @Column(name = "ABNORMAL_ID")
     private String abnormalid;
 
     /**
@@ -82,40 +82,4 @@ public class AbNormal extends BaseModel {
      */
     @Column(name = "CAUSE")
     private String cause;
-
-    /**
-     * 状态
-     */
-    @Column(name = "STATUS")
-    private String status;
-
-    /**
-     * 创建时间
-     */
-    @Column(name = "CREATEON")
-    private Date createon;
-
-    /**
-     * 创建人
-     */
-    @Column(name = "CREATEBY")
-    private String createby;
-
-    /**
-     * 更新时间
-     */
-    @Column(name = "MODIFYON")
-    private Date modifyon;
-
-    /**
-     * 更新人
-     */
-    @Column(name = "MODIFYBY")
-    private String modifyby;
-
-    /**
-     * 负责人
-     */
-    @Column(name = "Owner")
-    private String owner;
 }

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +16,10 @@ import java.util.Date;
 public class InformationDelivery extends BaseModel {
 
     private static final long serialVersionUID = 1L;
+
     @Id
-    @Column(name = "INFORMATION_ID")
-    private String Informationid;
+    @Column(name = "INFORMATIONID")
+    private String informationId;
 
     @Column(name = "TITLE")
     private String title;
@@ -30,23 +30,23 @@ public class InformationDelivery extends BaseModel {
     @Column(name = "AVAILABLESTATE")
     private String availablestate;
 
-    @Column(name = "CREATEBY")
-    private String createby;
+//    @Column(name = "CREATEBY")
+//    private String createby;
+//
+//    @Column(name = "CREATEON")
+//    private Date createon;
+//
+//    @Column(name = "MODIFYBY")
+//    private String modifyby;
+//
+//    @Column(name = "MODIFYON")
+//    private Date modifyon;
+//
+//    @Column(name = "OWNER")
+//    private String owner;
 
-    @Column(name = "CREATEON")
-    private Date createon;
-
-    @Column(name = "MODIFYBY")
-    private String modifyby;
-
-    @Column(name = "MODIFYON")
-    private Date modifyon;
-
-    @Column(name = "OWNER")
-    private String owner;
-
-    @Column(name = "STATUS")
-    private String status;
+//    @Column(name = "STATUS")
+//    private String status;
 
 
 
