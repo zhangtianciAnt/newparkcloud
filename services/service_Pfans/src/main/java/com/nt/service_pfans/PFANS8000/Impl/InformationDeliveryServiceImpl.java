@@ -30,7 +30,7 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
     public void insertInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception {
         if(!informationDelivery.equals(null)){
             informationDelivery.preInsert(tokenModel);
-            informationDelivery.setInformationid(UUID.randomUUID().toString());
+            informationDelivery.setInformationId(UUID.randomUUID().toString());
             informationDeliveryMapper.insertSelective(informationDelivery);
         }
     }

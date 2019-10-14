@@ -16,9 +16,10 @@ import javax.persistence.Table;
 public class InformationDelivery extends BaseModel {
 
     private static final long serialVersionUID = 1L;
+
     @Id
-    @Column(name = "INFORMATION_ID")
-    private String Informationid;
+    @Column(name = "INFORMATIONID")
+    private String informationId;
 
     @Column(name = "TITLE")
     private String title;

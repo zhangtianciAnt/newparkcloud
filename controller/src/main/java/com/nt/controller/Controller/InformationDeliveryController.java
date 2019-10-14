@@ -35,7 +35,7 @@ public class InformationDeliveryController {
 
         TokenModel tokenModel = tokenService.getToken(request);
         informationService.insertInformation(informationDelivery,tokenModel);
-        return ApiResult.success(informationService.getInformation());
+        return ApiResult.success();
     }
 
 }
