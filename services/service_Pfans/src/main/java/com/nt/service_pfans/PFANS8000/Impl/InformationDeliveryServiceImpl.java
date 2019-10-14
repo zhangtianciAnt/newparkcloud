@@ -7,6 +7,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,10 +29,18 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
 
     @Override
     public void insertInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception {
-        if(!informationDelivery.equals(null)){
+        if(!StringUtils.isEmpty(informationDelivery)){
             informationDelivery.preInsert(tokenModel);
-            informationDelivery.setInformationId(UUID.randomUUID().toString());
+            informationDelivery.setInformationid(UUID.randomUUID().toString());
             informationDeliveryMapper.insertSelective(informationDelivery);
+        }
+    }
+
+    @Override
+    public void updateInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception{
+        if(!StringUtils.isEmpty(informationDelivery)){
+            informationDelivery.preUpdate(tokenModel);
+            informationDeliveryMapper.updateByPrimaryKeySelective(informationDelivery);
         }
     }
 }

@@ -3,6 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS8000.mapper.InformationDeliveryMapper">
 	<select id="getInformation" resultType="com.nt.dao_Pfans.PFANS8000.InformationDelivery">
 		select * from information
+		order by createon desc
 	</select>
 
 <!--	<update id="stopInstanceByReject">-->

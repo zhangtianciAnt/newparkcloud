@@ -38,4 +38,11 @@ public class InformationDeliveryController {
         return ApiResult.success();
     }
 
+    @RequestMapping(value="/update",method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody InformationDelivery informationDelivery, HttpServletRequest request) throws Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        informationService.updateInformation(informationDelivery,tokenModel);
+        return ApiResult.success();
+    }
+
 }

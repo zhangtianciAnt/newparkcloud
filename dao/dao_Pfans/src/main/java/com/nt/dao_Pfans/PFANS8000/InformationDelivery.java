@@ -19,7 +19,7 @@ public class InformationDelivery extends BaseModel {
 
     @Id
     @Column(name = "INFORMATIONID")
-    private String informationId;
+    private String informationid;
 
     @Column(name = "TITLE")
     private String title;

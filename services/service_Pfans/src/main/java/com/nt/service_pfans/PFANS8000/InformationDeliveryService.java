@@ -10,4 +10,6 @@ public interface InformationDeliveryService {
     List<InformationDelivery> getInformation() throws Exception;
     //创建
     void insertInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws  Exception;
+    //更新
+    void updateInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception;
 }
