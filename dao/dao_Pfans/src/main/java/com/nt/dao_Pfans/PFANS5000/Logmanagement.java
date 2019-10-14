@@ -73,41 +73,6 @@ public class Logmanagement extends BaseModel {
     @Column(name = "HAS_PROJECT")
     private String has_project;
 
-    /**
-     * 創建人
-     */
-    @Column(name = "CREATEBY")
-    private String createby ;
-    /**
-     * 創建時間
-     */
-    @Column(name = "CREATEON")
-    private Date createon;
-
-
-    /**
-     * 更新人
-     */
-    @Column(name = "MODIFYBY")
-    private String modifyby;
-
-    /**
-     * 更新時間
-     */
-    @Column(name = "MODIFYON")
-    private Date modifyon;
-
-    /**
-     * 負責人
-     */
-    @Column(name = "OWNER")
-    private String owner;
-
-    /**
-     * 狀態
-     */
-    @Column(name = "STATUS")
-    private String starts ;
 
 
 }
