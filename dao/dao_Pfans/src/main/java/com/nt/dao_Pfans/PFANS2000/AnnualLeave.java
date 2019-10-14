@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -16,9 +15,9 @@ public class AnnualLeave extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
-    private String annual_leave_id;
+    private String annualleave_id;
 
-    private String year;
+    private String years;
 
     private String user_id;
 
@@ -26,7 +25,7 @@ public class AnnualLeave extends BaseModel {
 
     private String group_id;
 
-    private Date team_id;
+    private String team_id;
 
     private float annual_leave;
 
@@ -39,5 +38,17 @@ public class AnnualLeave extends BaseModel {
     private float  remaining_annual_leave;
 
     private float  remaining_paid_leave;
+
+    private float annual_leave2;
+
+    private float paid_leave2;
+
+    private float  deduct_annual_leave2;
+
+    private float  deduct_paid_leave2;
+
+    private float  remaining_annual_leave2;
+
+    private float  remaining_paid_leave2;
 
 }
