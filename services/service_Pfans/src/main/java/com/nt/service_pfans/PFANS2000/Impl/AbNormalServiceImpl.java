@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
@@ -18,6 +17,11 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Autowired
     private AbNormalMapper abNormalMapper;
+
+    @Override
+    public List<AbNormal> list(AbNormal abNormal) throws Exception {
+        return abNormalMapper.select(abNormal);
+    }
 
     @Override
     public void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception {

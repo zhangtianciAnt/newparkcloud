@@ -2,7 +2,6 @@ package com.nt.controller.Controller;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
-import com.nt.dao_Workflow.Vo.WorkflowVo;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -23,6 +22,23 @@ public class Pfans2016Controller {
 
     @Autowired
     private TokenService tokenService;
+
+    @RequestMapping(value="/list", method={RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception{
+
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            AbNormal abNormal = new AbNormal();
+            abNormal.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            abNormal.setTenantid(tokenModel.getTenantId());
+            abNormal.setOwners(tokenModel.getOwnerList());
+            abNormal.setIds(tokenModel.getIdList());
+            return ApiResult.success(abNormalService.list(abNormal));
+
+        } catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }
+    }
 
     @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
