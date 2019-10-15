@@ -18,7 +18,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     private AnnualLeaveMapper annualLeaveMapper;
 
     @Override
-    public List<AnnualLeave> getDataList() {
+    public List<AnnualLeave> getDataList(AnnualLeave annualLeave) {
         Calendar cal = Calendar.getInstance();
         String this_year = String.valueOf(cal.get(cal.YEAR));
         String last_year = String.valueOf(cal.get(cal.YEAR) - 1);
