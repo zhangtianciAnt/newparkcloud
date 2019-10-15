@@ -1,5 +1,6 @@
 package com.nt.controller.Controller;
 
+import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @name 年度休假一览
- * @author lin
  */
 @RestController
 @RequestMapping("/annualLeave")
@@ -32,7 +32,10 @@ public class AnnualLeaveController {
      */
     @RequestMapping(value = "/getDataList", method={RequestMethod.GET})
     public ApiResult getDataList(HttpServletRequest request) throws Exception{
+        AnnualLeave annualLeave = new AnnualLeave();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(annualLeaveService.getDataList());
+        annualLeave.setOwners(tokenModel.getOwnerList());
+
+        return ApiResult.success(annualLeaveService.getDataList(annualLeave));
     }
 }
