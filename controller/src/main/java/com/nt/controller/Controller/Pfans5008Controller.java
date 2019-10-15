@@ -36,4 +36,10 @@ public class Pfans5008Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getDataList", method={RequestMethod.GET})
+    public ApiResult getDataList(HttpServletRequest request) throws Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.getDataList());
+    }
+
 }
