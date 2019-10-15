@@ -23,49 +23,49 @@ public class Logmanagement extends BaseModel {
      */
     @Id
     @Column(name = "LOGMANAGEMENT_ID")
-    private String logmanagementid;
+    private String logmanagement_id;
 
     /**
      * 日期
      */
     @Column(name = "LOG_DATE")
-    private Date logdate;
+    private Date log_date;
 
     /**
      * 開始時間
      */
     @Column(name = "TIME_START")
-    private Date timestart;
+    private Date time_start;
 
     /**
      * 結束時間
      */
     @Column(name = "TIME_END")
-    private Date timeend;
+    private Date time_end;
 
     /**
      * 工作項目
      */
     @Column(name = "PROJECT_ID")
-    private String projectid;
+    private String project_id;
 
     /**
      * 工作階段
      */
     @Column(name = "WORK_PHASE")
-    private String workphase;
+    private String work_phase;
 
     /**
      * 行為細分
      */
     @Column(name = "BEHAVIOR_BREAKDOWN")
-    private String behaviorbreakdown;
+    private String behavior_breakdown;
 
     /**
      * 工作備註
      */
     @Column(name = "WORK_MEMO")
-    private String workmemo;
+    private String work_memo;
 
     /**
      * 有無項目
