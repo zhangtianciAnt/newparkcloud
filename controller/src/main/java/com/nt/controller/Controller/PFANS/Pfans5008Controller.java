@@ -1,7 +1,7 @@
-package com.nt.controller.Controller;
+package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS2000.Goalmanagement;
-import com.nt.service_pfans.PFANS2000.GoalmanagementService;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -17,23 +17,29 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/goalmanagement")
-public class Pfans2023Controller {
+@RequestMapping("/logmanagement")
+public class Pfans5008Controller {
 
     @Autowired
-    private GoalmanagementService goalmanagementService;
+    private LogManagementService logmanagementService;
 
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Goalmanagement goalmanagement, HttpServletRequest request) throws Exception {
-        if (goalmanagement == null) {
+    public ApiResult create(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        goalmanagementService.insert(goalmanagement,tokenModel);
+        logmanagementService.insert(logmanagement,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getDataList", method={RequestMethod.GET})
+    public ApiResult getDataList(HttpServletRequest request) throws Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.getDataList());
     }
 
 }

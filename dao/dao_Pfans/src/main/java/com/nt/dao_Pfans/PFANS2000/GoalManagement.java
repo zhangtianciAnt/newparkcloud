@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "goalmanagement")
-public class Goalmanagement extends BaseModel {
+public class GoalManagement extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
 
