@@ -1,8 +1,8 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
-import com.nt.service_pfans.PFANS2000.CasgiftApplyService;
-import com.nt.service_pfans.PFANS2000.mapper.CasgiftApplyMapper;
+import com.nt.dao_Pfans.PFANS2000.Casgiftapply;
+import com.nt.service_pfans.PFANS2000.CasgiftapplyService;
+import com.nt.service_pfans.PFANS2000.mapper.CasgiftapplyMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,13 @@ import java.util.UUID;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
-public class CasgiftApplyServiceImpl implements CasgiftApplyService {
+public class CasgiftapplyServiceImpl implements CasgiftapplyService {
 
     @Autowired
-    private CasgiftApplyMapper casgiftapplyMapper;
+    private CasgiftapplyMapper casgiftapplyMapper;
 
     @Override
-    public List<CasgiftApply> getCasgiftapply() {
+    public List<Casgiftapply> getCasgiftapply() {
          if(casgiftapplyMapper.getCasgiftapply().isEmpty()){
              return null;
          }
@@ -27,7 +27,7 @@ public class CasgiftApplyServiceImpl implements CasgiftApplyService {
     }
 
     @Override
-    public void insertCasgiftapply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception {
+    public void insertCasgiftapply(Casgiftapply casgiftapply, TokenModel tokenModel) throws Exception {
         if(!casgiftapply.equals(null)){
             casgiftapply.preInsert(tokenModel);
             casgiftapply.setCasgiftapply_id(UUID.randomUUID().toString());
