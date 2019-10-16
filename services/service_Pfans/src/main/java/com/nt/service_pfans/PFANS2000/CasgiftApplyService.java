@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CasgiftApplyService {
     //获取
-    List<CasgiftApply> getCasgiftapply() throws Exception;
+    List<CasgiftApply> getCasgiftapply(CasgiftApply Casgiftapply) throws Exception;
     //创建
     void insertCasgiftapply(CasgiftApply casgiftapply, TokenModel tokenModel) throws  Exception;
 }

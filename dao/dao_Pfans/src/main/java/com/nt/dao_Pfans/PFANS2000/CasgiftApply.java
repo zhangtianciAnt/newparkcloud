@@ -22,8 +22,8 @@ public class CasgiftApply extends BaseModel {
 	 * 祝礼金申请ID
 	 */
     @Id
-
-    private String casgiftapply_id;
+    @Column(name = "CASGIFTAPPLY_ID")
+    private String casgiftapplyid;
 
     /**
      * 一级分类ID

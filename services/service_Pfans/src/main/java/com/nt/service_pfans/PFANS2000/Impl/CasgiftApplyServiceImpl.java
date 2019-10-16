@@ -19,18 +19,15 @@ public class CasgiftApplyServiceImpl implements CasgiftApplyService {
     private CasgiftApplyMapper casgiftapplyMapper;
 
     @Override
-    public List<CasgiftApply> getCasgiftapply() {
-         if(casgiftapplyMapper.getCasgiftapply().isEmpty()){
-             return null;
-         }
-        return casgiftapplyMapper.getCasgiftapply();
+    public List<CasgiftApply> getCasgiftapply(CasgiftApply Casgiftapply ) {
+        return casgiftapplyMapper.select(Casgiftapply);
     }
 
     @Override
     public void insertCasgiftapply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception {
         if(!casgiftapply.equals(null)){
             casgiftapply.preInsert(tokenModel);
-            casgiftapply.setCasgiftapply_id(UUID.randomUUID().toString());
+            //casgiftapply.setCasgiftapply_id(UUID.randomUUID().toString());
             casgiftapplyMapper.insertSelective(casgiftapply);
         }
     }
