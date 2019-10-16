@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "casgiftapply")
-public class Casgiftapply extends BaseModel {
+public class CasgiftApply extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -90,5 +90,41 @@ public class Casgiftapply extends BaseModel {
      */
         @Column(name = "UPLOADFILE")
     private String uploadfile;
+
+    /**
+     * 创建人
+     */
+    @Column(name = "CREATEBY")
+    private String CREATEBY;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "CREATEON")
+    private Date CREATEON;
+
+    /**
+     * 更新人
+     */
+    @Column(name = "MODIFYBY")
+    private String modifyby;
+
+    /**
+     * 更新时间
+     */
+    @Column(name = "MODIFYON")
+    private Date modifyon;
+
+    /**
+     * 负责人
+     */
+    @Column(name = "OWNER")
+    private String owner;
+
+    /**
+     * 状态
+     */
+    @Column(name = "STATUS")
+    private String status;
 
 }
