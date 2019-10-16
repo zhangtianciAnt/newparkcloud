@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/annualLeave")
-public class AnnualLeaveController {
+public class Pfans2013Controller {
 
     @Autowired
     private AnnualLeaveService annualLeaveService;
