@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/casgiftapply")
-public class Pfans2020Controller {
+public class Pfans2022Controller {
     //查找信息发布
     @Autowired
     private CasgiftApplyService casgiftapplyService;
