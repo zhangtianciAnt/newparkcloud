@@ -5,6 +5,6 @@
 		SELECT * FROM (
 			SELECT * FROM  logmanagement
 			)a
-		ORDER BY a.log_date;
+		ORDER BY a.log_date,a.TIME_START;
 	</select>
 </mapper>
