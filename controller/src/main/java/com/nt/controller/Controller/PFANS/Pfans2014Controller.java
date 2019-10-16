@@ -24,7 +24,7 @@ public class Pfans2014Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
+    @RequestMapping(value="/getFlexiblework",method = {RequestMethod.GET})
     public ApiResult getFlexiblework(HttpServletRequest request) throws Exception{
         try {
             TokenModel tokenModel = tokenService.getToken(request);
