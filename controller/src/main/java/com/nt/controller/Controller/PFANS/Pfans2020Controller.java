@@ -29,7 +29,6 @@ public class Pfans2020Controller {
     public ApiResult getCasgiftapply(HttpServletRequest request) throws Exception{
 
         try {
-            String a = "1";
             TokenModel tokenModel = tokenService.getToken(request);
             CasgiftApply Casgiftapply = new CasgiftApply();
             Casgiftapply.setStatus(AuthConstants.DEL_FLAG_NORMAL);
