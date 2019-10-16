@@ -1,7 +1,7 @@
-package com.nt.controller.Controller;
+package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS5000.Logmanagement;
-import com.nt.service_pfans.PFANS5000.LogmanagementService;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 public class Pfans5008Controller {
 
     @Autowired
-    private LogmanagementService logmanagementService;
+    private LogManagementService logmanagementService;
 
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Logmanagement logmanagement, HttpServletRequest request) throws Exception {
+    public ApiResult create(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
