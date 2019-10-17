@@ -379,7 +379,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
+	public int OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
 			throws Exception {
 
 			// 更新当前节点
@@ -425,6 +425,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					item.setStatus(AuthConstants.TODO_STATUS_DELETE);
 					toDoNoticeService.updateNoticesStatus(item);
 				}
+				return 1;
 			}
 
 			// 转办&指定审批人
@@ -450,58 +451,25 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					step.setOwner(operationWorkflowVo.getToAnotherUser());
 					workflowstepMapper.insert(step);
 
-					// 创建代办
-//					TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//					tenanttaskVo
-//							.setDataurl(operationWorkflowVo.getMenuUrl() + "?wfid=" + operationWorkflowVo.getDataId());
-//					tenanttaskVo.setType("1");
-//					tenanttaskVo.setFromuser(operationWorkflowVo.getUserid());
-//					tenanttaskVo.setTitle("您有一个【" + workflowinstance.getWorkflowname() + "】审批待处理！");
-//					tenanttaskVo.setContent(operationWorkflowVo.getDataId());
-//					tenanttaskVo.setCreateby(operationWorkflowVo.getToAnotherUser());
-//					tenanttaskVo.setOwner(operationWorkflowVo.getToAnotherUser());
-//					tenanttaskVo.setTenantid(operationWorkflowVo.getTenantid());
-
 				} else {
 					for (int i = 0; i < operationWorkflowVo.getUsers().split(",").length; i++) {
 						step.setItemid(operationWorkflowVo.getUsers().split(",")[i]);
 						step.setOwner(operationWorkflowVo.getUsers().split(",")[i]);
 						workflowstepMapper.insert(step);
-
-						// 创建代办
-//						TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//						tenanttaskVo.setDataurl(
-//								operationWorkflowVo.getMenuUrl() + "?wfid=" + operationWorkflowVo.getDataId());
-//						tenanttaskVo.setType("1");
-//						tenanttaskVo.setTitle("您有一个【" + workflowinstance.getWorkflowname() + "】审批待处理！");
-//						tenanttaskVo.setFromuser(operationWorkflowVo.getUsers().split(",")[i]);
-//						tenanttaskVo.setContent(operationWorkflowVo.getDataId());
-//						tenanttaskVo.setCreateby(operationWorkflowVo.getUsers().split(",")[i]);
-//						tenanttaskVo.setOwner(operationWorkflowVo.getUsers().split(",")[i]);
-//						tenanttaskVo.setTenantid(operationWorkflowVo.getTenantid());
-//
-//						HttpHeaders headers = new HttpHeaders();
-//						Enumeration<String> headerNames = request.getHeaderNames();
-//						while (headerNames.hasMoreElements()) {
-//							String key = (String) headerNames.nextElement();
-//							String value = request.getHeader(key);
-//							headers.add(key, value);
-//						}
-//						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-//						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-//								requestEntity, ApiResult.class);
 					}
 				}
 
 			}
 			// 生成下一节点信息
 
-			cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
+			return cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
 					operationWorkflowVo.getDataUrl(),operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
 
 	}
-
-	private void cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
+	// 0:进行中
+	// 1：拒绝
+	// 2：通过
+	private  int cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
 			String workflowname) throws Exception {
 
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
@@ -545,7 +513,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						toDoNoticeService.save(toDoNotice);
 					}
 
-					return;
+					return 0;
 				}
 				// 有节点信息
 				else {
@@ -556,7 +524,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
 					if (workflowsteplist.size() > 0) {
 						// 结束操作
-						return;
+						return 0;
 					}
 
 					// 如果节点为最后一个节点时，结束流程
@@ -565,6 +533,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						workflowinstance.setModifyon(new Date());
 						workflowinstance.setStatus(AuthConstants.DEL_FLAG_DELETE);
 						workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+						return 2;
 					}
 
 					// 其他_即当前节点均操作完成，则继续循环生成下一节点信息
@@ -572,6 +541,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 		}
 
+		return 0;
 	}
 
 	@Override
