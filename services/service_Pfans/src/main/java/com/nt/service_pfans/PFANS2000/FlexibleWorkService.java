@@ -8,13 +8,15 @@ import java.util.List;
 public interface FlexibleWorkService {
 
     //查看
-    List<FlexibleWork> getFlexibleWork(FlexibleWork flexibleWork)throws Exception;
+    List<FlexibleWork> getFlexibleWork(FlexibleWork flexiblework)throws Exception;
+
+    public FlexibleWork One(String flexibleworkid)throws  Exception;
 
     //创建
-    void insertFlexibleWork(FlexibleWork flexibleWork,TokenModel tokenModel)throws  Exception;
+    public void insert(FlexibleWork flexiblework,TokenModel tokenModel)throws  Exception;
 
     //修改
-    void updateFlexibleWork(FlexibleWork flexibleWork,TokenModel tokenModel)throws  Exception;
+    public void updateFlexibleWork(FlexibleWork flexiblework,TokenModel tokenModel)throws  Exception;
 
 }
 

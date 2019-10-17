@@ -18,6 +18,9 @@ public class FlexibleWork extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @Column(name = "FLEXIBLEWORK_ID")
+    private String flexibleworkid;
+
     @Column(name = "CENTER_ID")
     private String center_id;
 
