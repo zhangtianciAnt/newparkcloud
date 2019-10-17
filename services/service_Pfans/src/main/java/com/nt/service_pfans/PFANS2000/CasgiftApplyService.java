@@ -10,10 +10,12 @@ public interface CasgiftApplyService {
     //查看
     List<CasgiftApply> getCasgiftApply(CasgiftApply casgiftapply) throws Exception;
 
-    //创建
-    void insertCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception;
+    public CasgiftApply One(String casgiftapplyid) throws Exception;
 
     //修改
-    void updateCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception;
+    public void updateCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception;
+
+    //创建
+    public void insert(CasgiftApply casgiftapply, TokenModel tokenModel)throws Exception;
 
 }
