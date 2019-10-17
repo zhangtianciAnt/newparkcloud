@@ -8,7 +8,5 @@ import java.util.List;
 
 public interface CasgiftApplyMapper extends MyMapper<CasgiftApply>{
     List<CasgiftApply> getCasgiftApply();
-    int insert(@Param("casgiftapply") CasgiftApply casgiftapply);
-    int updateSelective(@Param("casgiftapply") CasgiftApply casgiftapply);
 
 }

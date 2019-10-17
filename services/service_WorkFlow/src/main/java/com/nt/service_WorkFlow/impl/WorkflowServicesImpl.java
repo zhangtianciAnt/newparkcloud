@@ -379,9 +379,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public void OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
+	public OutOperationWorkflowVo OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
 			throws Exception {
-
+			OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
 			// 更新当前节点
 			Workflowstep workflowstep = workflowstepMapper.selectByPrimaryKey(operationWorkflowVo.getId());
 			// 同意&拒绝
@@ -425,6 +425,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					item.setStatus(AuthConstants.TODO_STATUS_DELETE);
 					toDoNoticeService.updateNoticesStatus(item);
 				}
+				outOperationWorkflowVo.setState("1");
+				outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+				return outOperationWorkflowVo;
 			}
 
 			// 转办&指定审批人
@@ -450,60 +453,27 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					step.setOwner(operationWorkflowVo.getToAnotherUser());
 					workflowstepMapper.insert(step);
 
-					// 创建代办
-//					TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//					tenanttaskVo
-//							.setDataurl(operationWorkflowVo.getMenuUrl() + "?wfid=" + operationWorkflowVo.getDataId());
-//					tenanttaskVo.setType("1");
-//					tenanttaskVo.setFromuser(operationWorkflowVo.getUserid());
-//					tenanttaskVo.setTitle("您有一个【" + workflowinstance.getWorkflowname() + "】审批待处理！");
-//					tenanttaskVo.setContent(operationWorkflowVo.getDataId());
-//					tenanttaskVo.setCreateby(operationWorkflowVo.getToAnotherUser());
-//					tenanttaskVo.setOwner(operationWorkflowVo.getToAnotherUser());
-//					tenanttaskVo.setTenantid(operationWorkflowVo.getTenantid());
-
 				} else {
 					for (int i = 0; i < operationWorkflowVo.getUsers().split(",").length; i++) {
 						step.setItemid(operationWorkflowVo.getUsers().split(",")[i]);
 						step.setOwner(operationWorkflowVo.getUsers().split(",")[i]);
 						workflowstepMapper.insert(step);
-
-						// 创建代办
-//						TenanttaskVo tenanttaskVo = new TenanttaskVo();
-//						tenanttaskVo.setDataurl(
-//								operationWorkflowVo.getMenuUrl() + "?wfid=" + operationWorkflowVo.getDataId());
-//						tenanttaskVo.setType("1");
-//						tenanttaskVo.setTitle("您有一个【" + workflowinstance.getWorkflowname() + "】审批待处理！");
-//						tenanttaskVo.setFromuser(operationWorkflowVo.getUsers().split(",")[i]);
-//						tenanttaskVo.setContent(operationWorkflowVo.getDataId());
-//						tenanttaskVo.setCreateby(operationWorkflowVo.getUsers().split(",")[i]);
-//						tenanttaskVo.setOwner(operationWorkflowVo.getUsers().split(",")[i]);
-//						tenanttaskVo.setTenantid(operationWorkflowVo.getTenantid());
-//
-//						HttpHeaders headers = new HttpHeaders();
-//						Enumeration<String> headerNames = request.getHeaderNames();
-//						while (headerNames.hasMoreElements()) {
-//							String key = (String) headerNames.nextElement();
-//							String value = request.getHeader(key);
-//							headers.add(key, value);
-//						}
-//						HttpEntity<TenanttaskVo> requestEntity = new HttpEntity<TenanttaskVo>(tenanttaskVo, headers);
-//						restTemplate.postForObject("http://" + RequestUtil.MESSAGE + "/tenantTask/insertTask",
-//								requestEntity, ApiResult.class);
 					}
 				}
 
 			}
 			// 生成下一节点信息
 
-			cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
+			return cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
 					operationWorkflowVo.getDataUrl(),operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
 
 	}
-
-	private void cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
+	// 0:进行中
+	// 1：拒绝
+	// 2：通过
+	private  OutOperationWorkflowVo cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
 			String workflowname) throws Exception {
-
+		OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
 		// 流程进行中
 		if ("0".equals(workflowinstance.getStatus())) {
@@ -544,8 +514,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						toDoNotice.preInsert(tokenModel);
 						toDoNoticeService.save(toDoNotice);
 					}
-
-					return;
+					outOperationWorkflowVo.setState("0");
+					outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+					return outOperationWorkflowVo;
 				}
 				// 有节点信息
 				else {
@@ -556,7 +527,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
 					if (workflowsteplist.size() > 0) {
 						// 结束操作
-						return;
+						outOperationWorkflowVo.setState("0");
+						outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+						return outOperationWorkflowVo;
 					}
 
 					// 如果节点为最后一个节点时，结束流程
@@ -565,6 +538,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						workflowinstance.setModifyon(new Date());
 						workflowinstance.setStatus(AuthConstants.DEL_FLAG_DELETE);
 						workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+						outOperationWorkflowVo.setState("2");
+						outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+						return outOperationWorkflowVo;
 					}
 
 					// 其他_即当前节点均操作完成，则继续循环生成下一节点信息
@@ -572,6 +548,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 		}
 
+		outOperationWorkflowVo.setState("0");
+		outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+		return outOperationWorkflowVo;
 	}
 
 	@Override
