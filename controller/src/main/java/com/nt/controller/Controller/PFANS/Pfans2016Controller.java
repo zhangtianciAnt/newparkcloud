@@ -30,9 +30,7 @@ public class Pfans2016Controller {
             TokenModel tokenModel = tokenService.getToken(request);
             AbNormal abNormal = new AbNormal();
             abNormal.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            abNormal.setTenantid(tokenModel.getTenantId());
             abNormal.setOwners(tokenModel.getOwnerList());
-            abNormal.setIds(tokenModel.getIdList());
             return ApiResult.success(abNormalService.list(abNormal));
 
         } catch(LogicalException e){

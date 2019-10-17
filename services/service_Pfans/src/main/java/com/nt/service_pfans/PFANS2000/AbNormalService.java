@@ -6,8 +6,9 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface AbNormalService {
+
     public void insert(AbNormal abNormal, TokenModel tokenModel)throws Exception;
 
-    //获取所有审批流程
+    //获取异常申请列表信息
     public List<AbNormal> list(AbNormal abNormal) throws Exception;
 }

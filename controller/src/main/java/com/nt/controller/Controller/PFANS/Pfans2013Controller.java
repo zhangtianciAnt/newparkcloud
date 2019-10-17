@@ -1,4 +1,4 @@
-package com.nt.controller.Controller;
+package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
