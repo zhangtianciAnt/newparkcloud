@@ -45,7 +45,7 @@ public interface WorkflowServices {
 	public Map<String, String> isOperationWorkflow(StartWorkflowVo startWorkflowV) throws Exception;
 
 	// 进行审批
-	public int OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel) throws Exception;
+	public OutOperationWorkflowVo OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel) throws Exception;
 
 	// 是否可以查看流程
 	public Boolean isViewWorkflow(StartWorkflowVo startWorkflowVo) throws Exception;

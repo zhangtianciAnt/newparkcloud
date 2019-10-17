@@ -51,4 +51,9 @@ public class Workflow extends BaseModel {
     @Column(name = "WORKFLOWTEXT")
     private String workflowtext;
 
+    /**
+     * 识别码
+     */
+    @Column(name = "CODE")
+    private String code;
 }

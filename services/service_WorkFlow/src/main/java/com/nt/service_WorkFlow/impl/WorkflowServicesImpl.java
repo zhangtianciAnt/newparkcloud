@@ -379,9 +379,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public int OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
+	public OutOperationWorkflowVo OperationWorkflow(OperationWorkflowVo operationWorkflowVo, TokenModel tokenModel)
 			throws Exception {
-
+			OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
 			// 更新当前节点
 			Workflowstep workflowstep = workflowstepMapper.selectByPrimaryKey(operationWorkflowVo.getId());
 			// 同意&拒绝
@@ -425,7 +425,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					item.setStatus(AuthConstants.TODO_STATUS_DELETE);
 					toDoNoticeService.updateNoticesStatus(item);
 				}
-				return 1;
+				outOperationWorkflowVo.setState("1");
+				outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+				return outOperationWorkflowVo;
 			}
 
 			// 转办&指定审批人
@@ -469,9 +471,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	// 0:进行中
 	// 1：拒绝
 	// 2：通过
-	private  int cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
+	private  OutOperationWorkflowVo cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
 			String workflowname) throws Exception {
-
+		OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
 		// 流程进行中
 		if ("0".equals(workflowinstance.getStatus())) {
@@ -512,8 +514,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						toDoNotice.preInsert(tokenModel);
 						toDoNoticeService.save(toDoNotice);
 					}
-
-					return 0;
+					outOperationWorkflowVo.setState("0");
+					outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+					return outOperationWorkflowVo;
 				}
 				// 有节点信息
 				else {
@@ -524,7 +527,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
 					if (workflowsteplist.size() > 0) {
 						// 结束操作
-						return 0;
+						outOperationWorkflowVo.setState("0");
+						outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+						return outOperationWorkflowVo;
 					}
 
 					// 如果节点为最后一个节点时，结束流程
@@ -533,7 +538,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						workflowinstance.setModifyon(new Date());
 						workflowinstance.setStatus(AuthConstants.DEL_FLAG_DELETE);
 						workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
-						return 2;
+						outOperationWorkflowVo.setState("2");
+						outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+						return outOperationWorkflowVo;
 					}
 
 					// 其他_即当前节点均操作完成，则继续循环生成下一节点信息
@@ -541,7 +548,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 		}
 
-		return 0;
+		outOperationWorkflowVo.setState("0");
+		outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+		return outOperationWorkflowVo;
 	}
 
 	@Override

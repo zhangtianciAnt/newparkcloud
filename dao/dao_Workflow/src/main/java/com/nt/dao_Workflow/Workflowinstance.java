@@ -69,4 +69,9 @@ public class Workflowinstance extends BaseModel {
     @Column(name = "DATACONTENT")
     private String datacontent;
 
+    /**
+     * 识别码
+     */
+    @Column(name = "CODE")
+    private String code;
 }
