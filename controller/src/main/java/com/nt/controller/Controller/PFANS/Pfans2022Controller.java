@@ -2,10 +2,10 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
+import com.nt.dao_Workflow.Vo.WorkflowVo;
+import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.service_pfans.PFANS2000.CasgiftApplyService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +40,32 @@ public class Pfans2022Controller {
         }
     }
 
-    @RequestMapping(value="/insert",method = {RequestMethod.POST})
-    public ApiResult insertCasgiftApply(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception{
-
+    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    public ApiResult one(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
-        casgiftapplyService.insertCasgiftApply(casgiftapply,tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(casgiftapplyService.One(casgiftapply.getCasgiftapplyid()));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult updateCasgiftApply(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception{
-
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         casgiftapplyService.updateCasgiftApply(casgiftapply,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    public ApiResult create(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        casgiftapplyService.insert(casgiftapply,tokenModel);
         return ApiResult.success();
     }
 }
