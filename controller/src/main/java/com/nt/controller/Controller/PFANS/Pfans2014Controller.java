@@ -6,7 +6,7 @@ import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +36,19 @@ public class Pfans2014Controller {
         }catch (LogicalException e){
             return  ApiResult.fail(e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "",method =  {RequestMethod.POST})
+    public ApiResult insertFleibleWork(@RequestBody FlexibleWork flexibleWork,HttpServletRequest request)throws  Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        flexibleWorkService.insertFlexibleWork(flexibleWork, tokenModel);
+        return ApiResult.success();
+
+    }
+    public ApiResult updateFlexibleWork(@RequestBody FlexibleWork flexibleWork,HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        flexibleWorkService.insertFlexibleWork(flexibleWork,tokenModel);
+        return  ApiResult.success();
     }
 
 
