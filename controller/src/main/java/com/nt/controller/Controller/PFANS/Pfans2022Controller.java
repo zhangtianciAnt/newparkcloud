@@ -2,10 +2,10 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
+import com.nt.dao_Workflow.Vo.WorkflowVo;
+import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.service_pfans.PFANS2000.CasgiftApplyService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,41 +26,46 @@ public class Pfans2022Controller {
     private TokenService tokenService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getCasgiftapply(HttpServletRequest request) throws Exception{
+    public ApiResult getCasgiftApply(HttpServletRequest request) throws Exception{
 
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            CasgiftApply Casgiftapply = new CasgiftApply();
-            Casgiftapply.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            Casgiftapply.setTenantid(tokenModel.getTenantId());
-            Casgiftapply.setOwners(tokenModel.getOwnerList());
-            Casgiftapply.setIds(tokenModel.getIdList());
-            return ApiResult.success(casgiftapplyService.getCasgiftapply(Casgiftapply));
+            CasgiftApply casgiftapply = new CasgiftApply();
+            casgiftapply.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            casgiftapply.setOwners(tokenModel.getOwnerList());
+            return ApiResult.success(casgiftapplyService.getCasgiftApply(casgiftapply));
 
         } catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }
     }
 
-    @RequestMapping(value="/insert",method = {RequestMethod.POST})
-    public ApiResult insertCasgiftapply(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception{
-
+    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    public ApiResult one(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
-        casgiftapplyService.insertCasgiftapply(casgiftapply,tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(casgiftapplyService.One(casgiftapply.getCasgiftapplyid()));
     }
-    @RequestMapping(value="/view",method = {RequestMethod.POST})
-    public ApiResult viewCasgiftapply(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception{
 
-        TokenModel tokenModel = tokenService.getToken(request);
-        casgiftapplyService.insertCasgiftapply(casgiftapply,tokenModel);
-        return ApiResult.success();
-    }
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateCasgiftapply(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception{
-
+    public ApiResult updateCasgiftApply(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception{
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
-        casgiftapplyService.insertCasgiftapply(casgiftapply,tokenModel);
+        casgiftapplyService.updateCasgiftApply(casgiftapply,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    public ApiResult create(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        casgiftapplyService.insert(casgiftapply,tokenModel);
         return ApiResult.success();
     }
 }

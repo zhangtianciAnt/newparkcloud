@@ -6,8 +6,16 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface CasgiftApplyService {
-    //获取
-    List<CasgiftApply> getCasgiftapply(CasgiftApply Casgiftapply) throws Exception;
+
+    //查看
+    List<CasgiftApply> getCasgiftApply(CasgiftApply casgiftapply) throws Exception;
+
+    public CasgiftApply One(String casgiftapplyid) throws Exception;
+
+    //修改
+    public void updateCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception;
+
     //创建
-    void insertCasgiftapply(CasgiftApply casgiftapply, TokenModel tokenModel) throws  Exception;
+    public void insert(CasgiftApply casgiftapply, TokenModel tokenModel)throws Exception;
+
 }
