@@ -32,6 +32,36 @@ public class GoalManagement extends BaseModel {
     private String center_id;
 
     /**
+     * 年度
+     */
+    @Column(name = "YEARS")
+    private String years;
+
+    /**
+     * 氏名
+     */
+    @Column(name = "NAME")
+    private String name;
+
+    /**
+     * 阶段
+     */
+    @Column(name = "STAGE")
+    private String stage;
+
+    /**
+     * 完成状态
+     */
+    @Column(name = "COMPLETIONSTATUS")
+    private String completionstatus;
+
+    /**
+     * 作成時間
+     */
+    @Column(name = "MAKINGTIME")
+    private Date makingtime;
+
+    /**
      * 所属TLID
      */
     @Column(name = "GROUP_ID")

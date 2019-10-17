@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,6 +17,11 @@ public class GoalManagementServiceImpl implements GoalManagementService {
 
     @Autowired
     private GoalManagementMapper goalmanagementMapper;
+
+    @Override
+    public List<GoalManagement> list(GoalManagement goalManagement) throws Exception {
+        return goalmanagementMapper.select(goalManagement);
+    }
 
     @Override
     public void insert(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception {
