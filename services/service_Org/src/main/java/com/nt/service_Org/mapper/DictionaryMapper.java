@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface DictionaryMapper extends MyMapper<Dictionary> {
 
-    List<Dictionary> getForSelect(@Param("scode") String scode,@Param("ecode") String ecode);
+    List<Dictionary> getForSelect(@Param("code") String code);
 }

@@ -19,7 +19,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     private DictionaryMapper dictionaryMapper;
 
     @Override
-    public List<Dictionary> getForSelect(String scode, String ecode) throws Exception{
-        return dictionaryMapper.getForSelect(scode, ecode);
+    public List<Dictionary> getForSelect(String code) throws Exception{
+        return dictionaryMapper.getForSelect(code);
     }
 }
