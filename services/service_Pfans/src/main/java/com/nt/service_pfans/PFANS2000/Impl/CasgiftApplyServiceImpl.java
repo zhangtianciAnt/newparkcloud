@@ -7,6 +7,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,16 +20,25 @@ public class CasgiftApplyServiceImpl implements CasgiftApplyService {
     private CasgiftApplyMapper casgiftapplyMapper;
 
     @Override
-    public List<CasgiftApply> getCasgiftapply(CasgiftApply Casgiftapply ) {
-        return casgiftapplyMapper.select(Casgiftapply);
+    public List<CasgiftApply> getCasgiftApply(CasgiftApply casgiftapply ) {
+        return casgiftapplyMapper.select(casgiftapply);
     }
 
     @Override
-    public void insertCasgiftapply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception {
+    public void insertCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception {
         if(!casgiftapply.equals(null)){
             casgiftapply.preInsert(tokenModel);
             //casgiftapply.setCasgiftapply_id(UUID.randomUUID().toString());
             casgiftapplyMapper.insertSelective(casgiftapply);
+        }
+    }
+
+    @Override
+    public void updateCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception {
+        if(!casgiftapply.equals(null)){
+            casgiftapply.preUpdate(tokenModel);
+            //casgiftapply.setCasgiftapply_id(UUID.randomUUID().toString());
+            casgiftapplyMapper.updateSelective(casgiftapply);
         }
     }
 }

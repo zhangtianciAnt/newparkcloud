@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "logmanagement")
-public class Logmanagement extends BaseModel {
+public class LogManagement extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
