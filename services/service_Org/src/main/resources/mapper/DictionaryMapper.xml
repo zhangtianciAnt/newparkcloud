@@ -6,6 +6,6 @@
             *
         FROM
             dictionary
-        WHERE CODE BETWEEN #{scode} AND #{ecode}
+        WHERE PCODE = #{code}
     </select>
 </mapper>

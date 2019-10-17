@@ -18,6 +18,8 @@ public class WorkflowVo implements Serializable {
 
     private String workflowname;
 
+    private String code;
+
     private String formid;
 
     private String workflowtext;

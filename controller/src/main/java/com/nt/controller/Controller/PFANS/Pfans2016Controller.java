@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS8000.InformationDelivery;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -38,13 +39,23 @@ public class Pfans2016Controller {
         }
     }
 
-    @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
+    @RequestMapping(value = "/insertInfo",method={RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
         if (abNormal == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         abNormalService.insert(abNormal,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value="/updateInfo",method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception{
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        abNormalService.upd(abNormal,tokenModel);
         return ApiResult.success();
     }
 

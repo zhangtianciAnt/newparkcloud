@@ -68,5 +68,4 @@ public class Workflownodeinstance extends BaseModel {
      */
     @Column(name = "OUTCONDITION")
     private String outcondition;
-
 }
