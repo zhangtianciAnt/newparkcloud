@@ -19,23 +19,24 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/flexiblework")
 public class Pfans2014Controller {
     //查找信息发布
-    @Autowired
-    private FlexibleWorkService flexibleworkService;
-    @Autowired
-    private TokenService tokenService;
+    private FlexibleWorkService flexibleWorkService;
 
-    @RequestMapping(value="/getFlexiblework",method = {RequestMethod.GET})
-    public ApiResult getFlexiblework(HttpServletRequest request) throws Exception{
-        try {
+
+    private  TokenService tokenService;
+
+
+    public ApiResult getFlexibleWork(HttpServletRequest request)throws  Exception{
+
+        try{
             TokenModel tokenModel = tokenService.getToken(request);
-            FlexibleWork Flexiblework = new FlexibleWork();
-            Flexiblework.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            Flexiblework.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(flexibleworkService.getFlexiblework(Flexiblework));
-
-        } catch(LogicalException e){
-            return ApiResult.fail(e.getMessage());
+            FlexibleWork flexibleWork = new FlexibleWork();
+            flexibleWork.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            flexibleWork.setOwners(tokenModel.getOwnerList());
+            return ApiResult.success(flexibleWorkService.getFlexibleWork(flexibleWork));
+        }catch (LogicalException e){
+            return  ApiResult.fail(e.getMessage());
         }
     }
+
 
 }

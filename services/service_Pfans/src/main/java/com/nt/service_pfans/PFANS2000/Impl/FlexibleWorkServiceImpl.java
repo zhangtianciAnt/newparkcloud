@@ -9,16 +9,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class FlexibleWorkServiceImpl implements FlexibleWorkService {
 
-    @Autowired
-    private FlexibleWorkMapper flexibleworkMapper;
+   private FlexibleWorkMapper flexibleWorkMapper;
 
     @Override
-    public List<FlexibleWork> getFlexiblework(FlexibleWork flexiblework ) {
-        return flexibleworkMapper.select(flexiblework);
+    public List<FlexibleWork> getFlexibleWork(FlexibleWork flexibleWork) {
+
+        return flexibleWorkMapper.select(flexibleWork);
+    }
+
+    public void insertFlexibleWork(FlexibleWork flexibleWork,TokenModel tokenModel)throws Exception{
+        if (!flexibleWork.equals(null)){
+            flexibleWork.preInsert(tokenModel);
+            flexibleWorkMapper.insertSelective(flexibleWork);
+        }
+    }
+
+    public void updateFlexibleWork(FlexibleWork flexibleWork,TokenModel tokenModel)throws Exception{
+        if (flexibleWork.equals(null)){
+            flexibleWork.preInsert(tokenModel);
+            flexibleWorkMapper.insertSelective(flexibleWork);
+        }
     }
 }
