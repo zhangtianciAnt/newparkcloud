@@ -15,4 +15,8 @@ public interface LogManagementService {
 
     //获取列表
     List<LogManagement> getDataList();
+
+    void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
+
+    LogManagement One(String Logmanagement_id) throws Exception;
 }
