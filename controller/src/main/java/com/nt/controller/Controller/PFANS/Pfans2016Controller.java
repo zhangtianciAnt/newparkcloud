@@ -38,7 +38,7 @@ public class Pfans2016Controller {
         }
     }
 
-    @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
+    @RequestMapping(value = "/insertInfo",method={RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
         if (abNormal == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -46,6 +46,25 @@ public class Pfans2016Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         abNormalService.insert(abNormal,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value="/updateInfo",method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception{
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        abNormalService.upd(abNormal,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/oneInfo",method={RequestMethod.POST})
+    public ApiResult one(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(abNormalService.One(abNormal.getAbnormalid()));
     }
 
 }

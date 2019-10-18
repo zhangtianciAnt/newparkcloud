@@ -1,4 +1,4 @@
-package com.nt.controller.Controller;
+package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
 
 /**
  * @name 年度休假一览
@@ -35,6 +36,10 @@ public class Pfans2013Controller {
         AnnualLeave annualLeave = new AnnualLeave();
         TokenModel tokenModel = tokenService.getToken(request);
         annualLeave.setOwners(tokenModel.getOwnerList());
+
+        Calendar cal = Calendar.getInstance();
+        String this_year = String.valueOf(cal.get(cal.YEAR));
+        annualLeave.setYears(this_year);
 
         return ApiResult.success(annualLeaveService.getDataList(annualLeave));
     }

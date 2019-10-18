@@ -20,11 +20,11 @@ public class DictionaryController {
     private DictionaryService dictionaryService;
 
     @RequestMapping(value = "/getForSelect",method={RequestMethod.GET})
-    public ApiResult getForSelect(String scode, String ecode, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(scode) || StrUtil.isEmpty(ecode)) {
+    public ApiResult getForSelect(String code, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(code)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
-        return ApiResult.success(dictionaryService.getForSelect(scode,ecode));
+        return ApiResult.success(dictionaryService.getForSelect(code));
     }
 }

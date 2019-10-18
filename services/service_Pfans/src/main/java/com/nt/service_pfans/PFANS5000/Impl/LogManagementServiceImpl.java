@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
-
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
@@ -8,6 +7,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -39,5 +39,18 @@ public class LogManagementServiceImpl implements LogManagementService {
         }
         return lstData;
     }
+    @Override
+    public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception{
+        if(!StringUtils.isEmpty(logmanagement)){
+            logmanagement.preUpdate(tokenModel);
+            logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
+        }
     }
+    @Override
+    public LogManagement One(String logmanagement_id) throws Exception {
+
+        LogManagement log   =logmanagementmapper.selectByPrimaryKey(logmanagement_id);
+        return log;
+    }
+}
 
