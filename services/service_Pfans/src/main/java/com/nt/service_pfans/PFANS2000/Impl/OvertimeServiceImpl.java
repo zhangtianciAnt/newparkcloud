@@ -1,5 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
-
+import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.dao_Pfans.PFANS2000.Overtime;
 import com.nt.service_pfans.PFANS2000.OvertimeService;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
@@ -20,19 +20,21 @@ public class OvertimeServiceImpl implements OvertimeService {
     private OvertimeMapper overtimeMapper;
 
     @Override
-    public List<Overtime> getOvertime() {
-        if(overtimeMapper.getOvertime().isEmpty()){
-            return null;
-        }
-        return overtimeMapper.getOvertime();
+    public List<Overtime> getOvertime(Overtime overtime) throws Exception {
+        return overtimeMapper.select(overtime);
     }
 
+    @Override
+    public Overtime One(String overtimeid) throws Exception {
+
+        return overtimeMapper.selectByPrimaryKey(overtimeid);
+    }
 
     @Override
     public void insertOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
         if(!StringUtils.isEmpty(overtime)){
             overtime.preInsert(tokenModel);
-            overtime.setOvertime_id(UUID.randomUUID().toString());
+            overtime.setOvertimeid(UUID.randomUUID().toString());
             overtimeMapper.insertSelective(overtime);
         }
     }
