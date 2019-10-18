@@ -1,5 +1,6 @@
 package com.nt.service_Org.Impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
@@ -20,6 +21,10 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public List<Dictionary> getForSelect(String code) throws Exception{
-        return dictionaryMapper.getForSelect(code);
+        Dictionary dictionary = new Dictionary();
+        if(StrUtil.isNotBlank(code)){
+            dictionary.setPcode(code);
+        }
+        return dictionaryMapper.select(dictionary);
     }
 }
