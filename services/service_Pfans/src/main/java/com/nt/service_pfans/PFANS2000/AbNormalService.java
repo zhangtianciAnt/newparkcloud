@@ -11,4 +11,9 @@ public interface AbNormalService {
 
     //获取异常申请列表信息
     public List<AbNormal> list(AbNormal abNormal) throws Exception;
+
+    public void upd(AbNormal abNormal, TokenModel tokenModel)throws Exception;
+
+    //根据id获取数据
+    public  AbNormal One(String abnormalid)throws Exception;
 }

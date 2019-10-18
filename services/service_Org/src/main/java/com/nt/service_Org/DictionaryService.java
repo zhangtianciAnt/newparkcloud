@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DictionaryService {
 
-    List<Dictionary> getForSelect(String scode,String ecode) throws Exception;
+    List<Dictionary> getForSelect(String code) throws Exception;
 }

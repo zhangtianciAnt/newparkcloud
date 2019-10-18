@@ -6,5 +6,6 @@
             *
         FROM
             dictionary
+        WHERE PCODE = #{code}
     </select>
 </mapper>

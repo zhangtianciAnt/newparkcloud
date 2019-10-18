@@ -29,4 +29,15 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormal.setAbnormalid(UUID.randomUUID().toString());
         abNormalMapper.insert(abNormal);
     }
+
+    @Override
+    public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        abNormal.preUpdate(tokenModel);
+        abNormalMapper.updateByPrimaryKey(abNormal);
+    }
+
+    @Override
+    public AbNormal One(String abnormalid) throws Exception {
+        return abNormalMapper.selectByPrimaryKey(abnormalid);
+    }
 }
