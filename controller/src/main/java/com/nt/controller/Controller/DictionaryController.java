@@ -27,4 +27,9 @@ public class DictionaryController {
 
         return ApiResult.success(dictionaryService.getForSelect(code));
     }
+
+    @RequestMapping(value = "/all",method={RequestMethod.GET})
+    public ApiResult all(HttpServletRequest request) throws Exception {
+        return ApiResult.success(dictionaryService.getForSelect(""));
+    }
 }

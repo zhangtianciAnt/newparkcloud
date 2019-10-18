@@ -26,7 +26,7 @@ public class InformationDeliveryController {
     public ApiResult getInformation(HttpServletRequest request) throws Exception{
 
         TokenModel tokenModel = tokenService.getToken(request);
-       return ApiResult.success(informationService.getInformation());
+       return ApiResult.success(informationService.getInformation(tokenModel));
     }
 
 

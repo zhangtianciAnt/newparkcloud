@@ -9,6 +9,12 @@ import java.util.List;
  */
 public interface AnnualLeaveService {
 
-    //获取休假列表
+    /**
+     * 获取休假列表
+     *
+     * @param annualLeave
+     * @return
+     * @throws Exception
+     */
     List<AnnualLeave> getDataList(AnnualLeave annualLeave) throws Exception;
 }
