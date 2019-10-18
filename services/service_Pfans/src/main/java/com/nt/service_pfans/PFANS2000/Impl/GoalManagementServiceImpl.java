@@ -22,7 +22,12 @@ public class GoalManagementServiceImpl implements GoalManagementService {
     public List<GoalManagement> list(GoalManagement goalManagement) throws Exception {
         return goalmanagementMapper.select(goalManagement);
     }
+    @Override
+    public GoalManagement One(String goalmanagement_id) throws Exception {
 
+        GoalManagement log   =goalmanagementMapper.selectByPrimaryKey(goalmanagement_id);
+        return log;
+    }
     @Override
     public void insert(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception {
         goalmanagement.preInsert(tokenModel);

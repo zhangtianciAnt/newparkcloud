@@ -22,6 +22,15 @@ public class Pfans2023Controller {
 
     @Autowired
     private TokenService tokenService;
+    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    public ApiResult one(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
+        if (goalmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        GoalManagement log=goalmanagementService.One(goalmanagement.getGoalmanagement_id());
+        return ApiResult.success(log);
+    }
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception{
