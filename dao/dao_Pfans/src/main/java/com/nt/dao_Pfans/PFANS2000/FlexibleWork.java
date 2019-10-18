@@ -42,4 +42,5 @@ public class FlexibleWork extends BaseModel {
     @Column(name = "IMPLEMENT_DATE")
     private String implement_date;
 
+
 }
