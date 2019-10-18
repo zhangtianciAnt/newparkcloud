@@ -1,5 +1,4 @@
 package com.nt.service_pfans.PFANS2000.Impl;
-
 import com.nt.dao_Pfans.PFANS2000.Overtime;
 import com.nt.service_pfans.PFANS2000.OvertimeService;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
@@ -20,11 +19,21 @@ public class OvertimeServiceImpl implements OvertimeService {
     private OvertimeMapper overtimeMapper;
 
     @Override
-    public List<Overtime> getOvertime() {
+    public List<Overtime> getOvertime() throws Exception {
         if(overtimeMapper.getOvertime().isEmpty()){
             return null;
         }
         return overtimeMapper.getOvertime();
+    }
+
+
+    @Override
+    public Overtime getOvertimeOne(String overtime_id) throws Exception {
+        if(overtime_id.equals(" ")){
+            return  null;
+        }
+        return overtimeMapper.selectByPrimaryKey(overtime_id);
+
     }
 
 

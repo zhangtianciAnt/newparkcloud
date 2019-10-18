@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface OvertimeMapper extends MyMapper<Overtime> {
     List<Overtime> getOvertime();
+    Overtime getOvertimeOne( String overtime_id);
     int insert(@Param("overtime") Overtime overtime);
     int updateByPrimaryKey(@Param("overtime") Overtime overtime);
 }

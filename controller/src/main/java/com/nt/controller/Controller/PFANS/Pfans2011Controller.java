@@ -27,6 +27,11 @@ public class Pfans2011Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(overtimeService.getOvertime());
     }
+    @RequestMapping(value ="/One",method = { RequestMethod.POST} )
+    public ApiResult getOvertimeOne( String overtime_id,HttpServletRequest request) throws Exception{
+        TokenModel tokenMode1= tokenService.getToken(request);
+        return ApiResult.success(overtimeService.getOvertimeOne(overtime_id));
+    }
 
     @RequestMapping(value="/insert",method = {RequestMethod.POST})
     public ApiResult insertOvertime(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception{
