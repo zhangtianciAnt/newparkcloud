@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "AnnualLeave")
+@Table(name = "annualleave")
 public class AnnualLeave extends BaseModel {
 
     private static final long serialVersionUID = 1L;
@@ -27,28 +27,37 @@ public class AnnualLeave extends BaseModel {
 
     private String team_id;
 
-    private float annual_leave;
+    private float annual_leave_lastyear;
 
-    private float paid_leave;
+    private float paid_leave_lastyear;
 
-    private float  deduct_annual_leave;
+    private float deduct_annual_leave_lastyear;
 
-    private float  deduct_paid_leave;
+    private float deduct_paid_leave_lastyear;
 
-    private float  remaining_annual_leave;
+    private float remaining_annual_leave_lastyear;
 
-    private float  remaining_paid_leave;
+    private float remaining_paid_leave_lastyear;
 
-    private float annual_leave2;
+    private float annual_leave_thisyear;
 
-    private float paid_leave2;
+    private float paid_leave_thisyear;
 
-    private float  deduct_annual_leave2;
+    private float deduct_annual_leave_thisyear;
 
-    private float  deduct_paid_leave2;
+    private float deduct_paid_leave_thisyear;
 
-    private float  remaining_annual_leave2;
+    private float remaining_annual_leave_thisyear;
 
-    private float  remaining_paid_leave2;
+    private float remaining_paid_leave_thisyear;
+
+    private float remaining_transfer_holiday;
+
+    private float remaining_women_day;
+
+    private float remaining_youth_day;
+
+    private float remaining_parent_teacher_meeting;
+
 
 }
