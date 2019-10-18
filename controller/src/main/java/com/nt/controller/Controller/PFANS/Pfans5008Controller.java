@@ -43,6 +43,9 @@ public class Pfans5008Controller {
     }
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult updateInformation(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception{
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagementService.update(logmanagement,tokenModel);
         return ApiResult.success();

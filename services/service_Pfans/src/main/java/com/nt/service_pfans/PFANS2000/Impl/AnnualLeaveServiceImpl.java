@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -19,13 +18,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Override
     public List<AnnualLeave> getDataList(AnnualLeave annualLeave) {
-        Calendar cal = Calendar.getInstance();
-        String this_year = String.valueOf(cal.get(cal.YEAR));
-        String last_year = String.valueOf(cal.get(cal.YEAR) - 1);
-        List<AnnualLeave> lstData = annualLeaveMapper.getDataList(this_year, last_year);
-        if (lstData.isEmpty()) {
-            return null;
-        }
-        return lstData;
+        return annualLeaveMapper.select(annualLeave);
     }
 }

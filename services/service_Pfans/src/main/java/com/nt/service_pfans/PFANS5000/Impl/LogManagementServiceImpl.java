@@ -41,14 +41,11 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception{
-        if(!StringUtils.isEmpty(logmanagement)){
             logmanagement.preUpdate(tokenModel);
-            logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
-        }
+            logmanagementmapper.updateByPrimaryKey(logmanagement);
     }
     @Override
     public LogManagement One(String logmanagement_id) throws Exception {
-
         LogManagement log   =logmanagementmapper.selectByPrimaryKey(logmanagement_id);
         return log;
     }
