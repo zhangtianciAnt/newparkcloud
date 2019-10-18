@@ -27,37 +27,37 @@ public class AnnualLeave extends BaseModel {
 
     private String team_id;
 
-    private float annual_leave_lastyear;
+    private String annual_leave_lastyear;
 
-    private float paid_leave_lastyear;
+    private String paid_leave_lastyear;
 
-    private float deduct_annual_leave_lastyear;
+    private String deduct_annual_leave_lastyear;
 
-    private float deduct_paid_leave_lastyear;
+    private String deduct_paid_leave_lastyear;
 
-    private float remaining_annual_leave_lastyear;
+    private String remaining_annual_leave_lastyear;
 
-    private float remaining_paid_leave_lastyear;
+    private String remaining_paid_leave_lastyear;
 
-    private float annual_leave_thisyear;
+    private String annual_leave_thisyear;
 
-    private float paid_leave_thisyear;
+    private String paid_leave_thisyear;
 
-    private float deduct_annual_leave_thisyear;
+    private String deduct_annual_leave_thisyear;
 
-    private float deduct_paid_leave_thisyear;
+    private String deduct_paid_leave_thisyear;
 
-    private float remaining_annual_leave_thisyear;
+    private String remaining_annual_leave_thisyear;
 
-    private float remaining_paid_leave_thisyear;
+    private String remaining_paid_leave_thisyear;
 
-    private float remaining_transfer_holiday;
+    private String remaining_transfer_holiday;
 
-    private float remaining_women_day;
+    private String remaining_women_day;
 
-    private float remaining_youth_day;
+    private String remaining_youth_day;
 
-    private float remaining_parent_teacher_meeting;
+    private String remaining_parent_teacher_meeting;
 
 
 }
