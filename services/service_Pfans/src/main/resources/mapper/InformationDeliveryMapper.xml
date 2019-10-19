@@ -3,6 +3,15 @@
 <mapper namespace="com.nt.service_pfans.PFANS8000.mapper.InformationDeliveryMapper">
 	<select id="getInformation" resultType="com.nt.dao_Pfans.PFANS8000.InformationDelivery">
 		select * from information
+		where 1=1
+		<if test="owners != null and owners.size() > 0">
+			and (owner in
+			<foreach item="item" index="index" collection="owners"
+					 open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
 		order by createon desc
 	</select>
 

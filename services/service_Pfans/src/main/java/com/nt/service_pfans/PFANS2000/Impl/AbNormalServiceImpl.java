@@ -35,4 +35,9 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormal.preUpdate(tokenModel);
         abNormalMapper.updateByPrimaryKey(abNormal);
     }
+
+    @Override
+    public AbNormal One(String abnormalid) throws Exception {
+        return abNormalMapper.selectByPrimaryKey(abnormalid);
+    }
 }

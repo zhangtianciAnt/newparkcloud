@@ -30,6 +30,9 @@ public class InformationDelivery extends BaseModel {
     @Column(name = "AVAILABLESTATE")
     private String availablestate;
 
+    @Column(name = "RICHTEXT")
+    private String richtext;
+
 //    @Column(name = "CREATEBY")
 //    private String createby;
 //

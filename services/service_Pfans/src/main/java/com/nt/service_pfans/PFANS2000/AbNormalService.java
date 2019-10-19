@@ -13,4 +13,7 @@ public interface AbNormalService {
     public List<AbNormal> list(AbNormal abNormal) throws Exception;
 
     public void upd(AbNormal abNormal, TokenModel tokenModel)throws Exception;
+
+    //根据id获取数据
+    public  AbNormal One(String abnormalid)throws Exception;
 }
