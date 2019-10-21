@@ -22,6 +22,7 @@ public class Pfans2023Controller {
 
     @Autowired
     private TokenService tokenService;
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
         if (goalmanagement == null) {
@@ -39,15 +40,24 @@ public class Pfans2023Controller {
             TokenModel tokenModel = tokenService.getToken(request);
             GoalManagement goalmanagement = new GoalManagement();
             goalmanagement.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            goalmanagement.setTenantid(tokenModel.getTenantId());
             goalmanagement.setOwners(tokenModel.getOwnerList());
-            goalmanagement.setIds(tokenModel.getIdList());
             return ApiResult.success(goalmanagementService.list(goalmanagement));
 
         } catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }
     }
+
+    @RequestMapping(value="/updateInfo",method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception{
+        if (goalManagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        goalmanagementService.upd(goalManagement,tokenModel);
+        return ApiResult.success();
+    }
+
 
     @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
     public ApiResult create(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {

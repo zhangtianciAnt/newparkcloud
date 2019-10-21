@@ -28,6 +28,12 @@ public class GoalManagementServiceImpl implements GoalManagementService {
         GoalManagement log   =goalmanagementMapper.selectByPrimaryKey(goalmanagement_id);
         return log;
     }
+
+    @Override
+    public void upd (GoalManagement goalManagement, TokenModel tokenModel) throws Exception {
+        goalManagement.preUpdate(tokenModel);
+        goalmanagementMapper.updateByPrimaryKeySelective(goalManagement);
+    }
     @Override
     public void insert(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception {
         goalmanagement.preInsert(tokenModel);
