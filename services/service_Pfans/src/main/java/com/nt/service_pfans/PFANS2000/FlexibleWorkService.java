@@ -6,6 +6,18 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface FlexibleWorkService {
-    //获取
-    List<FlexibleWork> getFlexiblework(FlexibleWork Flexiblework) throws Exception;
+
+    //查看
+    List<FlexibleWork> getFlexibleWork(FlexibleWork flexiblework)throws Exception;
+
+    public FlexibleWork One(String flexibleworkid)throws  Exception;
+
+    //创建
+    public void insert(FlexibleWork flexiblework,TokenModel tokenModel)throws  Exception;
+
+    //修改
+    public void updateFlexibleWork(FlexibleWork flexiblework,TokenModel tokenModel)throws  Exception;
+
 }
+
+

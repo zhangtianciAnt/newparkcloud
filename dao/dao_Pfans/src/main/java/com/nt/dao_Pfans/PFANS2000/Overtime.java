@@ -22,7 +22,7 @@ public class Overtime extends BaseModel {
      */
     @Id
     @Column(name = "OVERTIME_ID")
-    private String overtime_id;
+    private String overtimeid;
 
     /**
      * 申请人ID
@@ -70,13 +70,13 @@ public class Overtime extends BaseModel {
      * 予定加班時間
      */
     @Column(name = "RESERVEOVER_TIME")
-    private float reserveover_time;
+    private String reserveover_time;
 
     /**
      * 实际加班時間
      */
     @Column(name = "ACTUALOVER_TIME")
-    private float actualover_time;
+    private String actualover_time;
 
     /**
      * 预定代休日期
