@@ -2,10 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
 import com.nt.service_pfans.PFANS2000.GoalManagementService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,32 @@ public class Pfans2023Controller {
 
     @Autowired
     private TokenService tokenService;
+    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    public ApiResult one(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
+        if (goalmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        GoalManagement log=goalmanagementService.One(goalmanagement.getGoalmanagement_id());
+        return ApiResult.success(log);
+    }
+
+    @RequestMapping(value="/list", method={RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception{
+
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            GoalManagement goalmanagement = new GoalManagement();
+            goalmanagement.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            goalmanagement.setTenantid(tokenModel.getTenantId());
+            goalmanagement.setOwners(tokenModel.getOwnerList());
+            goalmanagement.setIds(tokenModel.getIdList());
+            return ApiResult.success(goalmanagementService.list(goalmanagement));
+
+        } catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }
+    }
 
     @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
     public ApiResult create(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {

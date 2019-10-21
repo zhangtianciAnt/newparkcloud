@@ -1,7 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 
-import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.dao_Pfans.PFANS2000.FlexibleWork;
 import com.nt.service_pfans.PFANS2000.FlexibleWorkService;
 import com.nt.service_pfans.PFANS2000.mapper.FlexibleWorkMapper;
