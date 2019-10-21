@@ -5,6 +5,8 @@ import com.nt.utils.MyMapper;
 
 import java.util.List;
 
+
 public interface FlexibleWorkMapper extends MyMapper<FlexibleWork>{
-    List<FlexibleWork> getFlexiblework();
+
+
 }

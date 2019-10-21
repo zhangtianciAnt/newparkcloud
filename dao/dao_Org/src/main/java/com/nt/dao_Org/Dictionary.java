@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Dictionary implements Serializable {
+public class Dictionary extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 

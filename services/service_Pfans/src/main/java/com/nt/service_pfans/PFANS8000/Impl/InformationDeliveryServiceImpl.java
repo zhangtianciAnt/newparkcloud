@@ -20,11 +20,15 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
     private InformationDeliveryMapper informationDeliveryMapper;
 
     @Override
-    public List<InformationDelivery> getInformation() {
-         if(informationDeliveryMapper.getInformation().isEmpty()){
+    public List<InformationDelivery> getInformation(TokenModel tokenModel) {
+        List<String> owners = tokenModel.getOwnerList();
+        System.out.println(owners);
+        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.getInformation(owners);
+         if(informationDeliveries.isEmpty()){
              return null;
          }
-        return informationDeliveryMapper.getInformation();
+
+        return informationDeliveries;
     }
 
     @Override

@@ -246,7 +246,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowLogDetailVo.setResult(stepResultConvert(it.getResult(),locale));
 				}
 
-				workflowLogDetailVo.setUserId(it.getOwner());
+				workflowLogDetailVo.setUserId(it.getItemid());
 				workflowLogDetailVo.setRemark(it.getRemark());
 				workflowLogDetailVo.setSdata(it.getCreateon());
 				workflowLogDetailVo.setEdata(it.getModifyon());
@@ -327,7 +327,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						workflowLogDetailVo.setResult(stepResultConvert(it.getResult(),locale));
 					}
 
-					workflowLogDetailVo.setUserId(it.getOwner());
+					workflowLogDetailVo.setUserId(it.getItemid());
 					workflowLogDetailVo.setRemark(it.getRemark());
 					workflowLogDetailVo.setSdata(it.getCreateon());
 					workflowLogDetailVo.setEdata(it.getModifyon());
@@ -512,6 +512,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 						toDoNotice.setUrl(url);
 						toDoNotice.setWorkflowurl(workFlowurl);
 						toDoNotice.preInsert(tokenModel);
+						toDoNotice.setOwner(user);
 						toDoNoticeService.save(toDoNotice);
 					}
 					outOperationWorkflowVo.setState("0");
