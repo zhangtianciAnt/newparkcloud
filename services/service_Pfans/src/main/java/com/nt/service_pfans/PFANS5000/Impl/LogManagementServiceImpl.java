@@ -7,7 +7,6 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -42,7 +41,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception{
             logmanagement.preUpdate(tokenModel);
-            logmanagementmapper.updateByPrimaryKey(logmanagement);
+            logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
     @Override
     public LogManagement One(String logmanagement_id) throws Exception {
