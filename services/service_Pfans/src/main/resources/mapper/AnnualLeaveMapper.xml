@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper">
-<!--	<select id="getDataList" resultType="com.nt.dao_Pfans.PFANS2000.AnnualLeave">-->
-<!--		SELECT * FROM (-->
-<!--			SELECT * FROM annualleave-->
-<!--			WHERE YEARS = #{THIS_YEAR}-->
-<!--			) a-->
-<!--		LEFT JOIN (-->
-<!--			SELECT USER_ID,-->
-<!--				ANNUAL_LEAVE as ANNUAL_LEAVE2,-->
-<!--				PAID_LEAVE as PAID_LEAVE2,-->
-<!--				DEDUCT_ANNUAL_LEAVE as DEDUCT_ANNUAL_LEAVE2,-->
-<!--				DEDUCT_PAID_LEAVE as DEDUCT_PAID_LEAVE2,-->
-<!--				REMAINING_ANNUAL_LEAVE as REMAINING_ANNUAL_LEAVE2,-->
-<!--				REMAINING_PAID_LEAVE as REMAINING_PAID_LEAVE2-->
-<!--			FROM annualleave-->
-<!--			WHERE YEARS = #{LAST_YEAR}-->
-<!--			) b ON a.USER_ID = b.USER_ID-->
-<!--		ORDER BY a.CENTER_ID, a.GROUP_ID, a.TEAM_ID, a.USER_ID;-->
-<!--	</select>-->
+
 </mapper>
