@@ -22,12 +22,10 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
     @Override
     public List<InformationDelivery> getInformation(TokenModel tokenModel) {
         List<String> owners = tokenModel.getOwnerList();
-        System.out.println(owners);
         List<InformationDelivery> informationDeliveries = informationDeliveryMapper.getInformation(owners);
          if(informationDeliveries.isEmpty()){
              return null;
          }
-
         return informationDeliveries;
     }
 
