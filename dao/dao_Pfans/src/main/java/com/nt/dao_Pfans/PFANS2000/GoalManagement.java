@@ -32,6 +32,36 @@ public class GoalManagement extends BaseModel {
     private String center_id;
 
     /**
+     * 年度
+     */
+    @Column(name = "YEARS")
+    private String years;
+
+    /**
+     * 氏名
+     */
+    @Column(name = "NAME")
+    private String name;
+
+    /**
+     * 阶段
+     */
+    @Column(name = "STAGE")
+    private String stage;
+
+    /**
+     * 完成状态
+     */
+    @Column(name = "COMPLETIONSTATUS")
+    private String completionstatus;
+
+    /**
+     * 作成時間
+     */
+    @Column(name = "MAKINGTIME")
+    private Date makingtime;
+
+    /**
      * 所属TLID
      */
     @Column(name = "GROUP_ID")
@@ -70,8 +100,18 @@ public class GoalManagement extends BaseModel {
     /**
      * ( １年間を通じての ) 主な目標
      */
-    @Column(name = "SPECIFIC_GOALS_YEAR")
-    private String specific_goals_year;
+    @Column(name = "SPECIFIC_GOALS_YEAR1")
+    private String specific_goals_year1;
+    /**
+     * ( １年間を通じての ) 主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_YEAR2")
+    private String specific_goals_year2;
+    /**
+     * ( １年間を通じての ) 主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_YEAR3")
+    private String specific_goals_year3;
 
     /**
      * ( １年間を通じての ) 自己啓発目標
@@ -88,8 +128,20 @@ public class GoalManagement extends BaseModel {
     /**
      * 中間チェック ( 9月末時点 ) 主な目標
      */
-    @Column(name = "SPECIFIC_GOALS_SEP")
-    private String specific_goals_sep;
+    @Column(name = "SPECIFIC_GOALS_SEP1")
+    private String specific_goals_sep1;
+
+    /**
+     * 中間チェック ( 9月末時点 ) 主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_SEP2")
+    private String specific_goals_sep2;
+
+    /**
+     * 中間チェック ( 9月末時点 ) 主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_SEP3")
+    private String specific_goals_sep3;
 
     /**
      * 中間チェック ( 9月末時点 ) 自己啓発目標
@@ -112,8 +164,20 @@ public class GoalManagement extends BaseModel {
     /**
      * ３/４年経過時点チェック ( 12月末時点 )主な目標
      */
-    @Column(name = "SPECIFIC_GOALS_DEC")
-    private String specific_goals_dec;
+    @Column(name = "SPECIFIC_GOALS_DEC1")
+    private String specific_goals_dec1;
+
+    /**
+     * ３/４年経過時点チェック ( 12月末時点 )主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_DEC2")
+    private String specific_goals_dec2;
+
+    /**
+     * ３/４年経過時点チェック ( 12月末時点 )主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_DEC3")
+    private String specific_goals_dec3;
 
     /**
      * ３/４年経過時点チェック ( 12月末時点 )自己啓発目標
@@ -136,8 +200,20 @@ public class GoalManagement extends BaseModel {
     /**
      * 4/４最终确认( 3月末時点 ) 主な目標
      */
-    @Column(name = "SPECIFIC_GOALS_MAR")
-    private String specific_goals_mar;
+    @Column(name = "SPECIFIC_GOALS_MAR1")
+    private String specific_goals_mar1;
+
+    /**
+     * 4/４最终确认( 3月末時点 ) 主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_MAR2")
+    private String specific_goals_mar2;
+
+    /**
+     * 4/４最终确认( 3月末時点 ) 主な目標
+     */
+    @Column(name = "SPECIFIC_GOALS_MAR3")
+    private String specific_goals_mar3;
 
     /**
      * 4/４最终确认( 3月末時点 ) 自己啓発目標
