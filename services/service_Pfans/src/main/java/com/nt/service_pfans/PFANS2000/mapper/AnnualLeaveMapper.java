@@ -14,5 +14,4 @@ public interface AnnualLeaveMapper extends MyMapper<AnnualLeave> {
      * @return
      */
     List<AnnualLeave> getDataList(AnnualLeave annualLeave);
-//    List<AnnualLeave> getDataList(@Param("THIS_YEAR") String this_year, @Param("LAST_YEAR") String last_year);
 }
