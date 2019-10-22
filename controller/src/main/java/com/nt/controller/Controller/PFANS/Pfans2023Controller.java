@@ -39,7 +39,8 @@ public class Pfans2023Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(goalmanagementService.list(goalManagement, request));
+        goalManagement.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(goalmanagementService.list(goalManagement));
     }
 
 

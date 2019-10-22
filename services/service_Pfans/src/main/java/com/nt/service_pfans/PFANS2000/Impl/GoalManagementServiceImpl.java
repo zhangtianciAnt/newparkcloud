@@ -20,7 +20,7 @@ public class GoalManagementServiceImpl implements GoalManagementService {
     private GoalManagementMapper goalmanagementMapper;
 
     @Override
-    public List<GoalManagement> list(GoalManagement goalManagement, HttpServletRequest request) throws Exception {
+    public List<GoalManagement> list(GoalManagement goalManagement ) throws Exception {
         return goalmanagementMapper.select(goalManagement);
     }
     @Override
