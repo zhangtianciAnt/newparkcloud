@@ -41,7 +41,8 @@ public class Pfans2017Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(punchcardrecordService.One(punchcardrecord.getPunchCardRecordid()));
+//        return ApiResult.success(punchcardrecordService.One(punchcardrecord.getPunchCardRecordid()));
+        return ApiResult.success();
     }
 
     @RequestMapping(value="/create",method = {RequestMethod.POST})

@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PunchCardRecordServiceImpl implements PunchCardRecordService {
 
         @Autowired
-        private PunchCardRecordMapper PunchCardRecordMapper;
+        private PunchCardRecordMapper punchcardrecordMapper;
 
         @Override
         public List<PunchCardRecord> getPunchCardRecord(PunchCardRecord punchcardrecord) throws Exception {
@@ -30,20 +30,20 @@ public class PunchCardRecordServiceImpl implements PunchCardRecordService {
 
         @Override
         public void insertPunchCardRecord(PunchCardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
-            if (!StringUtils.isEmpty(punchcardrecord)) {
-                punchcardrecord.preInsert(tokenModel);
-                punchcardrecord.setPunchCardRecordid(UUID.randomUUID().toString());
-                punchcardrecordMapper.insert(punchcardrecord);
-            }
+//            if (!StringUtils.isEmpty(punchcardrecord)) {
+//                punchcardrecord.preInsert(tokenModel);
+//                punchcardrecord.setPunchCardRecordid(UUID.randomUUID().toString());
+//                punchcardrecordMapper.insert(punchcardrecord);
+//            }
         }
 
         @Override
         public void updatePunchCardRecord(PunchCardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
-            if (!StringUtils.isEmpty(punchcardrecord)) {
-                punchcardrecord.preUpdate(tokenModel);
-                punchcardrecordMapper.updateByPrimaryKeySelective(punchcardrecord);
-            }
+//            if (!StringUtils.isEmpty(punchcardrecord)) {
+//                punchcardrecord.preUpdate(tokenModel);
+//                punchcardrecordMapper.updateByPrimaryKeySelective(punchcardrecord);
+//            }
         }
     }
-}
+
 
