@@ -25,17 +25,11 @@ public class Pfans2016Controller {
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception{
-
-        try {
             TokenModel tokenModel = tokenService.getToken(request);
             AbNormal abNormal = new AbNormal();
-            abNormal.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//            abNormal.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             abNormal.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(abNormalService.list(abNormal));
-
-        } catch(LogicalException e){
-            return ApiResult.fail(e.getMessage());
-        }
     }
 
     @RequestMapping(value = "/insertInfo",method={RequestMethod.POST})
