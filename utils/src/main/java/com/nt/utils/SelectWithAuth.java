@@ -73,6 +73,7 @@ public class SelectWithAuth extends MapperTemplate{
         for (EntityColumn column : columnList) {
             sql.append(SqlHelper.getIfNotNull(column, " AND " + column.getColumnEqualsHolder(), isNotEmpty()));
         }
+        sql.append("and status <> '1'");
         sql.append("<if test=\"owners != null and owners.size() > 0\"> and (owner in <foreach item=\"item\" index=\"index\" collection=\"owners\" open=\"(\" separator=\",\" close=\")\"> "
                 + " #{item}</foreach> </if>");
         sql.append("<if test=\"ids != null and ids.size() > 0\"> or " + id + " in <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> "
