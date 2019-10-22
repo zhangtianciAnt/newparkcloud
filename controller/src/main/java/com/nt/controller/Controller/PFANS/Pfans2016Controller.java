@@ -27,7 +27,6 @@ public class Pfans2016Controller {
     public ApiResult list(HttpServletRequest request) throws Exception{
             TokenModel tokenModel = tokenService.getToken(request);
             AbNormal abNormal = new AbNormal();
-//            abNormal.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             abNormal.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(abNormalService.list(abNormal));
     }
