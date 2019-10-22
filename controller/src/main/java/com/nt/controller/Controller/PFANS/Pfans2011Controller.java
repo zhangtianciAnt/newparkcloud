@@ -25,7 +25,6 @@ public class Pfans2011Controller {
     public ApiResult getOvertime(HttpServletRequest request) throws Exception{
             TokenModel tokenModel = tokenService.getToken(request);
             Overtime overtime = new Overtime();
-            overtime.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             overtime.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(overtimeService.getOvertime(overtime));
         }
