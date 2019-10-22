@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 @RestController
-@RequestMapping("/Overtime")
+@RequestMapping("/overtime")
 public class Pfans2011Controller {
     //查找
     @Autowired
@@ -26,8 +26,8 @@ public class Pfans2011Controller {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
             Overtime overtime = new Overtime();
-            //overtime.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            //overtime.setOwners(tokenModel.getOwnerList());
+            overtime.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            overtime.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(overtimeService.getOvertime(overtime));
         } catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
@@ -54,6 +54,9 @@ public class Pfans2011Controller {
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult updateOvertime(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception{
+        if (overtime == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         overtimeService.updateOvertime(overtime,tokenModel);
         return ApiResult.success();

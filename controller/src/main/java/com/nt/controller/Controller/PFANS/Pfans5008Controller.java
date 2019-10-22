@@ -25,72 +25,79 @@ public class Pfans5008Controller {
     private LogManagementService logmanagementService;
 
     @Autowired
-    private  CompanyProjectsService companyprojectsService;
+    private CompanyProjectsService companyprojectsService;
 
     @Autowired
-    private  PersonalProjectsService personalprojectsService;
+    private PersonalProjectsService personalprojectsService;
 
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
+    @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        logmanagementService.insert(logmanagement,tokenModel);
+        logmanagementService.insert(logmanagement, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/getDataList", method={RequestMethod.GET})
-    public ApiResult getDataList(HttpServletRequest request) throws Exception{
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.getDataList());
-    }
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateInformation(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        logmanagementService.update(logmanagement,tokenModel);
+        logmanagementService.update(logmanagement, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        LogManagement log=logmanagementService.One(logmanagement.getLogmanagement_id());
+        LogManagement log = logmanagementService.One(logmanagement.getLogmanagement_id());
         return ApiResult.success(log);
     }
-    @RequestMapping(value = "/getCompanyProjectList", method={RequestMethod.POST})
-    public ApiResult getCompanyProjectList(@RequestBody CompanyProjects companyprojects,HttpServletRequest request) throws Exception{
+
+    @RequestMapping(value = "/getCompanyProjectList", method = {RequestMethod.POST})
+    public ApiResult getCompanyProjectList(@RequestBody CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
         if (companyprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyprojectsService.getCompanyProjectList(companyprojects,request));
+        return ApiResult.success(companyprojectsService.getCompanyProjectList(companyprojects, request));
     }
 
-    @RequestMapping(value = "/getProjectList", method={RequestMethod.POST})
-    public ApiResult getProjectList(@RequestBody PersonalProjects personalprojects,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getProjectList", method = {RequestMethod.POST})
+    public ApiResult getProjectList(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
         if (personalprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(personalprojectsService.getProjectList(personalprojects,request));
+        return ApiResult.success(personalprojectsService.getProjectList(personalprojects, request));
     }
-    @RequestMapping(value = "/createProject",method={RequestMethod.POST})
+
+    @RequestMapping(value = "/createProject", method = {RequestMethod.POST})
     public ApiResult createProject(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
         if (personalprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        personalprojectsService.insert(personalprojects,tokenModel);
+        personalprojectsService.insert(personalprojects, tokenModel);
         return ApiResult.success();
     }
+
+    @RequestMapping(value = "/getDataList", method = {RequestMethod.POST})
+    public ApiResult getDataList(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.getDataList(logmanagement, request));
+    }
 }
+
