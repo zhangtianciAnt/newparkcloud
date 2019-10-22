@@ -84,6 +84,11 @@ public class AbNormal extends BaseModel {
     private String periodend;
 
     /**
+     * 时间长度
+     */
+    @Column(name = "LENGTHTIME")
+    private String lengthtime;
+    /**
      * 事由
      */
     @Column(name = "CAUSE")
