@@ -2,10 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.Irregulartiming;
 import com.nt.service_pfans.PFANS2000.IrregulartimingService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +29,15 @@ public class Pfans2020Controller {
      */
    @RequestMapping(value ="/getAllIrregulartiming",method = { RequestMethod.GET})
     public ApiResult getAllIrregulartiming(HttpServletRequest request) throws Exception{
-       TokenModel tokenModel= tokenService.getToken(request);
-      return ApiResult.success(  irregulartimingService.getAllIrregulartiming());
+       try{
+           TokenModel tokenModel = tokenService.getToken(request);
+           Irregulartiming irregulartiming=new Irregulartiming();
+           irregulartiming.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+           irregulartiming.setOwners(tokenModel.getOwnerList());
+           return ApiResult.success(irregulartimingService.getAllIrregulartiming(irregulartiming));
+       }catch (LogicalException e){
+           return ApiResult.fail(e.getMessage());
+       }
    }
 
     /**
@@ -41,10 +45,12 @@ public class Pfans2020Controller {
      * 查看一个人
      */
      @RequestMapping(value =" getIrregulartimingOne",method = { RequestMethod.POST} )
-     public ApiResult getIrregulartimingOne( String irregulartimingid,HttpServletRequest request) throws Exception{
-         //Irregulartiming irregulartiming1=new Irregulartiming();
+     public ApiResult getIrregulartimingOne( @RequestBody Irregulartiming  irregulartiming,HttpServletRequest request) throws Exception{
+         if(irregulartiming==null){
+             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+         }
          TokenModel tokenMode1= tokenService.getToken(request);
-         return ApiResult.success(irregulartimingService.getIrregulartimingOne(irregulartimingid));
+         return ApiResult.success(irregulartimingService.getIrregulartimingOne(irregulartiming.getIrregulartiming_id()));
      }
 
 
@@ -54,7 +60,10 @@ public class Pfans2020Controller {
      */
    @RequestMapping(value = "/insertIrregulartiming",method = {RequestMethod.POST})
     public ApiResult insertIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception{
-     TokenModel tokenModel = tokenService.getToken(request);
+     if(irregulartiming==null){
+         return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+     }
+       TokenModel tokenModel = tokenService.getToken(request);
      irregulartimingService.insertIrregulartiming(irregulartiming,tokenModel);
      return ApiResult.success();
    }
