@@ -52,8 +52,6 @@ public class Pfans2020Controller {
          TokenModel tokenMode1= tokenService.getToken(request);
          return ApiResult.success(irregulartimingService.getIrregulartimingOne(irregulartiming.getIrregulartiming_id()));
      }
-
-
     /**
      * 新建
      *
