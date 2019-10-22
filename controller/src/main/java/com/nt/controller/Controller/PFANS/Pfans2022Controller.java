@@ -31,7 +31,6 @@ public class Pfans2022Controller {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
             CasgiftApply casgiftapply = new CasgiftApply();
-            casgiftapply.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             casgiftapply.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(casgiftapplyService.getCasgiftApply(casgiftapply));
 
