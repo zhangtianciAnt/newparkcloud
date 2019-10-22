@@ -78,6 +78,7 @@ public class Pfans5008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        personalprojects.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(personalprojectsService.getProjectList(personalprojects));
     }
 
