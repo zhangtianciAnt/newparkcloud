@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface LogManagementMapper extends MyMapper<LogManagement> {
 
-    List<LogManagement> getDataList(@Param("THIS_YEAR") String this_year, @Param("LAST_YEAR") String last_year);
+
 }

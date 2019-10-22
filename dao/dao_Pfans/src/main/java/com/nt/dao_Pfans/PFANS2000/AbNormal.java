@@ -60,10 +60,16 @@ public class AbNormal extends BaseModel {
     private String errortype;
 
     /**
-     * 发生日期
+     * 开始日
      */
     @Column(name = "OCCURRENCE_DATE")
     private Date occurrencedate;
+
+    /**
+     * 完了日
+     */
+    @Column(name = "FINISHED_DATE")
+    private Date finisheddate;
 
     /**
      * 时间段（开始）

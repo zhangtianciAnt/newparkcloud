@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,12 +23,10 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
     @Override
     public List<InformationDelivery> getInformation(TokenModel tokenModel) {
         List<String> owners = tokenModel.getOwnerList();
-        System.out.println(owners);
         List<InformationDelivery> informationDeliveries = informationDeliveryMapper.getInformation(owners);
          if(informationDeliveries.isEmpty()){
              return null;
          }
-
         return informationDeliveries;
     }
 
@@ -47,4 +46,16 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
             informationDeliveryMapper.updateByPrimaryKeySelective(informationDelivery);
         }
     }
+
+    @Override
+    public List<InformationDelivery> getOneInformation(String information, TokenModel tokenModel) throws Exception {
+        InformationDelivery informationDelivery  = informationDeliveryMapper.selectByPrimaryKey(information);
+        List<InformationDelivery> informationDeliverys = new ArrayList<InformationDelivery>();
+        informationDeliverys.add(informationDelivery);
+        if(informationDeliverys.isEmpty()){
+            return null;
+        }
+        return informationDeliverys;
+    }
+
 }

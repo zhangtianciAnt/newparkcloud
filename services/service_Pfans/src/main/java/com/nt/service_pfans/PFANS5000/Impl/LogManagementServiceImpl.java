@@ -7,9 +7,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import java.util.Calendar;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,21 +26,18 @@ public class LogManagementServiceImpl implements LogManagementService {
         logmanagementmapper.insert(logmanagement);
     }
 
+
+
     @Override
-    public List<LogManagement> getDataList() {
-        Calendar cal = Calendar.getInstance();
-        String this_year = String.valueOf(cal.get(cal.YEAR));
-        String last_year = String.valueOf(cal.get(cal.YEAR) - 1);
-        List<LogManagement> lstData = logmanagementmapper.getDataList(this_year, last_year);
-        if (lstData.isEmpty()) {
-            return null;
-        }
-        return lstData;
+    public List<LogManagement> getDataList(LogManagement logmanagement,HttpServletRequest request) throws Exception {
+
+        return logmanagementmapper.select(logmanagement) ;
     }
+
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception{
             logmanagement.preUpdate(tokenModel);
-            logmanagementmapper.updateByPrimaryKey(logmanagement);
+            logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
     @Override
     public LogManagement One(String logmanagement_id) throws Exception {
