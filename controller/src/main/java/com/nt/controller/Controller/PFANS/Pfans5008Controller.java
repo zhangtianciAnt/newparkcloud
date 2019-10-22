@@ -73,7 +73,7 @@ public class Pfans5008Controller {
     }
 
     @RequestMapping(value = "/getProjectList", method = {RequestMethod.POST})
-    public ApiResult getProjectList(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
+    public ApiResult getProjectList(@RequestBody PersonalProjects personalprojects,  HttpServletRequest request) throws Exception {
         if (personalprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
