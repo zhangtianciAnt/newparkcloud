@@ -7,7 +7,6 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +28,7 @@ public class LogManagementServiceImpl implements LogManagementService {
 
 
     @Override
-    public List<LogManagement> getDataList(LogManagement logmanagement,HttpServletRequest request) throws Exception {
+    public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
 
         return logmanagementmapper.select(logmanagement) ;
     }

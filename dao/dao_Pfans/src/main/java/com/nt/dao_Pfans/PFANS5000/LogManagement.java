@@ -29,19 +29,19 @@ public class LogManagement extends BaseModel {
      * 日期
      */
     @Column(name = "LOG_DATE")
-    private Date log_date;
+    private String log_date;
 
     /**
      * 開始時間
      */
     @Column(name = "TIME_START")
-    private Date time_start;
+    private String time_start;
 
     /**
      * 結束時間
      */
     @Column(name = "TIME_END")
-    private Date time_end;
+    private String time_end;
 
     /**
      * 工作項目

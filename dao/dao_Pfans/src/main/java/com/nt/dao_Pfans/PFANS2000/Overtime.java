@@ -96,41 +96,7 @@ public class Overtime extends BaseModel {
     @Column(name = "CAUSE")
     private String cause;
 
-    /**
-     * 状态
-     */
-    @Column(name = "STATUS")
-    private String STATUS;
 
-    /**
-     * 创建时间
-     */
-    @Column(name = "CREATEON")
-    private Date CREATEON;
-
-    /**
-     * 创建人
-     */
-    @Column(name = "CREATEBY")
-    private String CREATEBY;
-
-    /**
-     * 更新时间
-     */
-    @Column(name = "MODIFYON")
-    private Date MODIFYON;
-
-    /**
-     * 更新人
-     */
-    @Column(name = "MODIFYBY")
-    private String MODIFYBY;
-
-    /**
-     * 负责人
-     */
-    @Column(name = "OWNER")
-    private String Owner;
 
 
 }

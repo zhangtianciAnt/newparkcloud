@@ -1,5 +1,4 @@
 package com.nt.service_pfans.PFANS2000.Impl;
-import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.dao_Pfans.PFANS2000.Overtime;
 import com.nt.service_pfans.PFANS2000.OvertimeService;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
@@ -35,7 +34,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         if(!StringUtils.isEmpty(overtime)){
             overtime.preInsert(tokenModel);
             overtime.setOvertimeid(UUID.randomUUID().toString());
-            overtimeMapper.insertSelective(overtime);
+            overtimeMapper.insert(overtime);
         }
     }
 

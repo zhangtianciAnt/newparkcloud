@@ -28,16 +28,11 @@ public class Pfans2022Controller {
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getCasgiftApply(HttpServletRequest request) throws Exception{
 
-        try {
+
             TokenModel tokenModel = tokenService.getToken(request);
             CasgiftApply casgiftapply = new CasgiftApply();
-            casgiftapply.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             casgiftapply.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(casgiftapplyService.getCasgiftApply(casgiftapply));
-
-        } catch(LogicalException e){
-            return ApiResult.fail(e.getMessage());
-        }
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})

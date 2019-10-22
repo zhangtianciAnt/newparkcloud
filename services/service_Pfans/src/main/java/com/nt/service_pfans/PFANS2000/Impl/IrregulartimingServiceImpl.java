@@ -21,15 +21,12 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
      *查询列表
      *
      */
-    @Override
-    public List<Irregulartiming> getAllIrregulartiming() throws Exception {
-       
-        if(irregulartimingMapper.getAllIrregulartiming().isEmpty()){
-            return null;
-        }
-        return irregulartimingMapper.getAllIrregulartiming();
-    }
 
+
+    @Override
+    public List<Irregulartiming> getAllIrregulartiming(Irregulartiming irregulartiming) throws Exception {
+        return irregulartimingMapper.select(irregulartiming);
+    }
 
     /**
      *按id查询
@@ -37,11 +34,11 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
      * @return
      */
     @Override
-    public Irregulartiming getIrregulartimingOne(String irregulartimingid) throws Exception {
-        if(irregulartimingid.equals(" ")){
+    public Irregulartiming getIrregulartimingOne(String irregulartiming_id) throws Exception {
+        if(irregulartiming_id.equals(" ")){
             return  null;
         }
-       return irregulartimingMapper.selectByPrimaryKey(irregulartimingid);
+       return irregulartimingMapper.selectByPrimaryKey(irregulartiming_id);
 
     }
 
@@ -57,7 +54,6 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
             irregulartiming.preInsert(tokenModel);
             irregulartiming.setIrregulartiming_id(UUID.randomUUID().toString());
             irregulartimingMapper.insertSelective(irregulartiming);
-
         }
     }
 
@@ -67,8 +63,8 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
      */
     @Override
     public void updateIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel) throws Exception {
-        irregulartiming.preUpdate(tokenModel);
-        irregulartimingMapper.updateByPrimaryKey(irregulartiming);
+
+        irregulartimingMapper.updateByPrimaryKeySelective(irregulartiming);
     }
 
 }

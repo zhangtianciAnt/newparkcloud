@@ -14,7 +14,7 @@ public class PunchCardRecord extends BaseModel {
      */
     @Id
     @Column(name = "PUNCHCARDRECORD_ID")
-    private String punchcardrecord_id;
+    private String punchcardrecordid;
 
     /**
      * 姓名ID

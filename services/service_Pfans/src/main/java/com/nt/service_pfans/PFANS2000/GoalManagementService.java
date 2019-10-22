@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000;
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface GoalManagementService {

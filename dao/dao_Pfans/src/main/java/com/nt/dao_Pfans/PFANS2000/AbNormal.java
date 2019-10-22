@@ -51,7 +51,7 @@ public class AbNormal extends BaseModel {
      * 申请日期
      */
     @Column(name = "APPLICATION_DATE")
-    private Date applicationdate;
+    private String applicationdate;
 
     /**
      * 异常类别
@@ -63,26 +63,31 @@ public class AbNormal extends BaseModel {
      * 开始日
      */
     @Column(name = "OCCURRENCE_DATE")
-    private Date occurrencedate;
+    private String occurrencedate;
 
     /**
      * 完了日
      */
     @Column(name = "FINISHED_DATE")
-    private Date finisheddate;
+    private String finisheddate;
 
     /**
      * 时间段（开始）
      */
     @Column(name = "PERIOD_START")
-    private Date periodstart;
+    private String periodstart;
 
     /**
      * 时间段（结束）
      */
     @Column(name = "PERIOD_END")
-    private Date periodend;
+    private String periodend;
 
+    /**
+     * 时间长度
+     */
+    @Column(name = "LENGTHTIME")
+    private String lengthtime;
     /**
      * 事由
      */
