@@ -23,16 +23,18 @@ public class Pfans2011Controller {
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getOvertime(HttpServletRequest request) throws Exception{
-        try {
             TokenModel tokenModel = tokenService.getToken(request);
             Overtime overtime = new Overtime();
             overtime.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             overtime.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(overtimeService.getOvertime(overtime));
-        } catch(LogicalException e){
-            return ApiResult.fail(e.getMessage());
         }
-    }
+
+
+
+
+
+
     @RequestMapping(value ="/one",method = { RequestMethod.POST} )
     public ApiResult one(@RequestBody Overtime overtime,HttpServletRequest request) throws Exception{
         if (overtime == null) {
