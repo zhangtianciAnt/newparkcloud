@@ -27,15 +27,12 @@ public class Pfans2014Controller {
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getFlexibleWork(HttpServletRequest request)throws  Exception{
 
-        try{
+
             TokenModel tokenModel = tokenService.getToken(request);
             FlexibleWork flexiblework = new FlexibleWork();
-            flexiblework.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             flexiblework.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(flexibleWorkService.getFlexibleWork(flexiblework));
-        }catch (LogicalException e){
-            return  ApiResult.fail(e.getMessage());
-        }
+
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
