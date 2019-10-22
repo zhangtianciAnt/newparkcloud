@@ -34,19 +34,14 @@ public class Pfans2023Controller {
     }
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception{
-
-        try {
-            TokenModel tokenModel = tokenService.getToken(request);
-            GoalManagement goalmanagement = new GoalManagement();
-            goalmanagement.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            goalmanagement.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(goalmanagementService.list(goalmanagement));
-
-        } catch(LogicalException e){
-            return ApiResult.fail(e.getMessage());
+    public ApiResult List(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception {
+        if (goalManagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(goalmanagementService.list(goalManagement, request));
     }
+
 
     @RequestMapping(value="/updateInfo",method = {RequestMethod.POST})
     public ApiResult updateInformation(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception{
