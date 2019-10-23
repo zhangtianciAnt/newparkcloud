@@ -22,7 +22,9 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
     @Override
     public List<InformationDelivery> getInformation(TokenModel tokenModel) throws Exception {
         List<String> owners = tokenModel.getOwnerList();
-        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.getInformation(owners);
+        InformationDelivery information = new InformationDelivery();
+        information.setOwners(tokenModel.getOwnerList());
+        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.select(information);
          if(informationDeliveries.isEmpty()){
              return null;
          }
