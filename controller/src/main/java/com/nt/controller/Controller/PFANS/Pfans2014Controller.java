@@ -45,7 +45,7 @@ public class Pfans2014Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateCasgiftApply(@RequestBody FlexibleWork flexiblework, HttpServletRequest request) throws Exception{
+    public ApiResult updateFlexibleWork(@RequestBody FlexibleWork flexiblework, HttpServletRequest request) throws Exception{
         if (flexiblework == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
