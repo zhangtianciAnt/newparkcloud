@@ -3,6 +3,9 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS8000.InformationDelivery;
 import com.nt.service_pfans.PFANS8000.InformationDeliveryService;
 import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,7 @@ public class Pfans8008Controller {
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})
     public ApiResult getOneInformation(@RequestParam String information, HttpServletRequest request) throws Exception {
         if (information.isEmpty()) {
-            return ApiResult.fail();
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(informationService.getOneInformation(information, tokenModel));
@@ -39,7 +42,7 @@ public class Pfans8008Controller {
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insertInformation(@RequestBody InformationDelivery informationDelivery, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(informationDelivery)) {
-            return ApiResult.fail();
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         informationService.insertInformation(informationDelivery, tokenModel);
@@ -49,7 +52,7 @@ public class Pfans8008Controller {
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult updateInformation(@RequestBody InformationDelivery informationDelivery, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(informationDelivery)) {
-            return ApiResult.fail();
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         informationService.updateInformation(informationDelivery, tokenModel);
