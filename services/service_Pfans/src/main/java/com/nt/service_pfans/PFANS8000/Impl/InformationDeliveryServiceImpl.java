@@ -7,7 +7,6 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +20,11 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
     private InformationDeliveryMapper informationDeliveryMapper;
 
     @Override
-    public List<InformationDelivery> getInformation(TokenModel tokenModel) {
+    public List<InformationDelivery> getInformation(TokenModel tokenModel) throws Exception {
         List<String> owners = tokenModel.getOwnerList();
-        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.getInformation(owners);
+        InformationDelivery information = new InformationDelivery();
+        information.setOwners(tokenModel.getOwnerList());
+        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.select(information);
          if(informationDeliveries.isEmpty()){
              return null;
          }
@@ -32,19 +33,17 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
 
     @Override
     public void insertInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception {
-        if(!StringUtils.isEmpty(informationDelivery)){
+
             informationDelivery.preInsert(tokenModel);
             informationDelivery.setInformationid(UUID.randomUUID().toString());
             informationDeliveryMapper.insertSelective(informationDelivery);
-        }
+
     }
 
     @Override
     public void updateInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception{
-        if(!StringUtils.isEmpty(informationDelivery)){
             informationDelivery.preUpdate(tokenModel);
             informationDeliveryMapper.updateByPrimaryKeySelective(informationDelivery);
-        }
     }
 
     @Override
@@ -52,9 +51,6 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
         InformationDelivery informationDelivery  = informationDeliveryMapper.selectByPrimaryKey(information);
         List<InformationDelivery> informationDeliverys = new ArrayList<InformationDelivery>();
         informationDeliverys.add(informationDelivery);
-        if(informationDeliverys.isEmpty()){
-            return null;
-        }
         return informationDeliverys;
     }
 
