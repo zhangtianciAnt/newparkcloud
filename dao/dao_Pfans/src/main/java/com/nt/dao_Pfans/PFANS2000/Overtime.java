@@ -28,67 +28,67 @@ public class Overtime extends BaseModel {
      * 申请人ID
      */
     @Column(name = "USER_ID")
-    private String user_id;
+    private String userid;
 
     /**
      * 所属グループID
      */
     @Column(name = "CENTER_ID")
-    private String center_id;
+    private String centerid;
 
     /**
      * 所属チームID
      */
     @Column(name = "GROUP_ID")
-    private String group_id;
+    private String groupid;
 
     /**
      * 所属センターID
      */
     @Column(name = "TEAM_ID")
-    private String team_id;
+    private String teamid;
 
     /**
      * 申请日期
      */
     @Column(name = "APPLICATION_DATE")
-    private Date application_date;
+    private Date applicationdate;
 
     /**
      * 予定加班日期
      */
     @Column(name = "RESERVEOVERTIME_DATE")
-    private Date reserveovertime_date;
+    private Date reserveovertimedate;
 
     /**
      * 加班种类
      */
     @Column(name = "OVERTIME_TYPE")
-    private String overtime_type;
+    private String overtimetype;
 
     /**
      * 予定加班時間
      */
     @Column(name = "RESERVEOVER_TIME")
-    private String reserveover_time;
+    private String reserveovertime;
 
     /**
      * 实际加班時間
      */
     @Column(name = "ACTUALOVER_TIME")
-    private String actualover_time;
+    private String actualovertime;
 
     /**
      * 预定代休日期
      */
     @Column(name = "RESERVESUBSTITUTION_DATE")
-    private Date reservesubstitution_date;
+    private Date reservesubstitutiondate;
 
     /**
      * 实际代休日期
      */
     @Column(name = "ACTUALSUBSTITUTION_DATE")
-    private Date actualsubstitution_date;
+    private Date actualsubstitutiondate;
 
     /**
      * 加班事由
