@@ -33,24 +33,5 @@ public class InformationDelivery extends BaseModel {
     @Column(name = "RICHTEXT")
     private String richtext;
 
-//    @Column(name = "CREATEBY")
-//    private String createby;
-//
-//    @Column(name = "CREATEON")
-//    private Date createon;
-//
-//    @Column(name = "MODIFYBY")
-//    private String modifyby;
-//
-//    @Column(name = "MODIFYON")
-//    private Date modifyon;
-//
-//    @Column(name = "OWNER")
-//    private String owner;
-
-//    @Column(name = "STATUS")
-//    private String status;
-
-
 
 }

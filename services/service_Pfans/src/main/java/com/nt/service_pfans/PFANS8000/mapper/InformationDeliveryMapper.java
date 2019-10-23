@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface InformationDeliveryMapper extends MyMapper<InformationDelivery> {
       List<InformationDelivery> getInformation(@Param("owners") List<String> owners);
-      //int insert(@Param("informationDelivery") InformationDelivery informationDelivery);
 }
