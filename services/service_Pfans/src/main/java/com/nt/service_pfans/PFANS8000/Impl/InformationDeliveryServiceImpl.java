@@ -11,9 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class InformationDeliveryServiceImpl implements InformationDeliveryService {
 
     @Autowired
@@ -21,34 +22,31 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
 
     @Override
     public List<InformationDelivery> getInformation(TokenModel tokenModel) throws Exception {
-        List<String> owners = tokenModel.getOwnerList();
         InformationDelivery information = new InformationDelivery();
         information.setOwners(tokenModel.getOwnerList());
         List<InformationDelivery> informationDeliveries = informationDeliveryMapper.select(information);
-         if(informationDeliveries.isEmpty()){
-             return null;
-         }
+        informationDeliveries = informationDeliveries.stream().sorted((a, b) -> b.getCreateon().compareTo(a.getCreateon())).collect(Collectors.toList());
         return informationDeliveries;
     }
 
     @Override
     public void insertInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception {
 
-            informationDelivery.preInsert(tokenModel);
-            informationDelivery.setInformationid(UUID.randomUUID().toString());
-            informationDeliveryMapper.insertSelective(informationDelivery);
+        informationDelivery.preInsert(tokenModel);
+        informationDelivery.setInformationid(UUID.randomUUID().toString());
+        informationDeliveryMapper.insertSelective(informationDelivery);
 
     }
 
     @Override
-    public void updateInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception{
-            informationDelivery.preUpdate(tokenModel);
-            informationDeliveryMapper.updateByPrimaryKeySelective(informationDelivery);
+    public void updateInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception {
+        informationDelivery.preUpdate(tokenModel);
+        informationDeliveryMapper.updateByPrimaryKeySelective(informationDelivery);
     }
 
     @Override
     public List<InformationDelivery> getOneInformation(String information, TokenModel tokenModel) throws Exception {
-        InformationDelivery informationDelivery  = informationDeliveryMapper.selectByPrimaryKey(information);
+        InformationDelivery informationDelivery = informationDeliveryMapper.selectByPrimaryKey(information);
         List<InformationDelivery> informationDeliverys = new ArrayList<InformationDelivery>();
         informationDeliverys.add(informationDelivery);
         return informationDeliverys;
