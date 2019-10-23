@@ -29,15 +29,11 @@ public class Pfans2020Controller {
      */
    @RequestMapping(value ="/getAllIrregulartiming",method = { RequestMethod.GET})
     public ApiResult getAllIrregulartiming(HttpServletRequest request) throws Exception{
-       try{
+
            TokenModel tokenModel = tokenService.getToken(request);
            Irregulartiming irregulartiming=new Irregulartiming();
-           irregulartiming.setStatus(AuthConstants.DEL_FLAG_NORMAL);
            irregulartiming.setOwners(tokenModel.getOwnerList());
            return ApiResult.success(irregulartimingService.getAllIrregulartiming(irregulartiming));
-       }catch (LogicalException e){
-           return ApiResult.fail(e.getMessage());
-       }
    }
 
     /**

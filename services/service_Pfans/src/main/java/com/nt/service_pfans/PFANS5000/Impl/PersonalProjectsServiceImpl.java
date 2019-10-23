@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.nt.utils.dao.TokenModel;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +20,7 @@ public class PersonalProjectsServiceImpl implements PersonalProjectsService {
     private PersonalProjectsMapper personalprojectsMapper;
 
     @Override
-    public List<PersonalProjects> getProjectList(PersonalProjects personalprojects,HttpServletRequest request) throws Exception {
+    public List<PersonalProjects> getProjectList(PersonalProjects personalprojects) throws Exception {
 
         return personalprojectsMapper.select(personalprojects) ;
     }

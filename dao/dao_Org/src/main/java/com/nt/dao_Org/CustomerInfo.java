@@ -106,6 +106,18 @@ public class CustomerInfo extends BaseModel {
          */
         private List<String> departmentid;
         /**
+         * centerid
+         */
+        private List<String> centerid;
+        /**
+         * groupid
+         */
+        private List<String> groupid;
+        /**
+         * teamid
+         */
+        private List<String> teamid;
+        /**
          * 办公电话
          */
         private String tel;
@@ -172,6 +184,7 @@ public class CustomerInfo extends BaseModel {
          * 工商信息
          */
         private IndustryInfo industryinfo;
+
 
         // region 租户信息
         @Data
