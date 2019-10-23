@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -22,10 +21,8 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
 
     @Override
     public List<InformationDelivery> getInformation(TokenModel tokenModel) throws Exception {
-        InformationDelivery information = new InformationDelivery();
-        information.setOwners(tokenModel.getOwnerList());
-        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.select(information);
-        informationDeliveries = informationDeliveries.stream().sorted((a, b) -> b.getCreateon().compareTo(a.getCreateon())).collect(Collectors.toList());
+        List<String> owners = tokenModel.getOwnerList();
+        List<InformationDelivery> informationDeliveries = informationDeliveryMapper.getInformation(owners);
         return informationDeliveries;
     }
 
