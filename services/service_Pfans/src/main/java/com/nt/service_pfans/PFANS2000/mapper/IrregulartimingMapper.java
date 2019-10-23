@@ -8,13 +8,13 @@ package com.nt.service_pfans.PFANS2000.mapper;
 
 
 public interface IrregulartimingMapper extends MyMapper<Irregulartiming> {
-    List<Irregulartiming> getAllIrregulartiming();
+    //List<Irregulartiming> getAllIrregulartiming();
 
-   Irregulartiming getIrregulartimingOne( String irregulartimingid);
+  // Irregulartiming getIrregulartimingOne( String irregulartimingid);
 
-    void insertIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel);
+    //void insertIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel);
 
-    void updateIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel);
+    //void updateIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel);
 
 
 }
