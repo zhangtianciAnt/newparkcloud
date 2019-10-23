@@ -3,6 +3,7 @@ package com.nt.utils.dao;
 import cn.hutool.core.util.StrUtil;
 import com.nt.utils.AuthConstants;
 import lombok.Data;
+import org.springframework.core.annotation.Order;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public abstract class BaseModel implements Serializable{
 	/**
 	 * 创建时间
 	 */
+	@Order
 	private Date createon;
 	/**
 	 * 创建者
