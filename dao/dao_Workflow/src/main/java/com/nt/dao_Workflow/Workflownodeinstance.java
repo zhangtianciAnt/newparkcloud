@@ -68,4 +68,10 @@ public class Workflownodeinstance extends BaseModel {
      */
     @Column(name = "OUTCONDITION")
     private String outcondition;
+
+    /**
+     * 注意事项
+     */
+    @Column(name = "REMARKS")
+    private String remarks;
 }

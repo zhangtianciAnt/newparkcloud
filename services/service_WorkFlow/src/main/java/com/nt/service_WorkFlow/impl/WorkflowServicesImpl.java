@@ -176,6 +176,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					Map<String, String> rst = new HashMap<String, String>();
 					rst.put("id", Workflowsteplist.get(0).getWorkflowstepid());
 					rst.put("type", item.getNodetype());
+					rst.put("remarks",item.getRemarks());
 					return rst;
 				}
 			}
