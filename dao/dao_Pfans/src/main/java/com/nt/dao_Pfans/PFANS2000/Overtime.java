@@ -28,25 +28,25 @@ public class Overtime extends BaseModel {
      * 申请人ID
      */
     @Column(name = "USER_ID")
-    private String user_id;
+    private String userid;
 
     /**
      * 所属グループID
      */
     @Column(name = "CENTER_ID")
-    private String center_id;
+    private String centerid;
 
     /**
      * 所属チームID
      */
     @Column(name = "GROUP_ID")
-    private String group_id;
+    private String groupid;
 
     /**
      * 所属センターID
      */
     @Column(name = "TEAM_ID")
-    private String team_id;
+    private String teamid;
 
     /**
      * 申请日期
