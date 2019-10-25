@@ -141,7 +141,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				if (list.size() == 0) {
 					return Workflowlist;
 				} else if (list.size() > 0 && !(list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0
-						|| list.stream().filter(item -> "2".equals(item.getStatus())).count() > 0)) {
+						|| list.stream().filter(item -> "4".equals(item.getStatus())).count() > 0)) {
 					return Workflowlist;
 				}
 			}
