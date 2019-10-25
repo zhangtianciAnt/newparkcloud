@@ -538,7 +538,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
 						workflowinstance.setModifyby(tokenModel.getUserId());
 						workflowinstance.setModifyon(new Date());
-						workflowinstance.setStatus(AuthConstants.DEL_FLAG_DELETE);
+						workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
 						workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
 						outOperationWorkflowVo.setState("2");
 						outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
