@@ -45,7 +45,7 @@ public class AbNormal extends BaseModel {
      * 申请人ID
      */
     @Column(name = "USER_ID")
-    private String userid;
+    private String user_id;
 
     /**
      * 申请日期

@@ -141,7 +141,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				if (list.size() == 0) {
 					return Workflowlist;
 				} else if (list.size() > 0 && !(list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0
-						|| list.stream().filter(item -> "1".equals(item.getStatus())).count() > 0)) {
+						|| list.stream().filter(item -> "2".equals(item.getStatus())).count() > 0)) {
 					return Workflowlist;
 				}
 			}
@@ -367,7 +367,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 		switch (code) {
 		case "0":
 			return MessageUtil.getMessage(MsgConstants.WORKFLOW_04,locale);
-		case "1":
+		case "4":
 			return MessageUtil.getMessage(MsgConstants.WORKFLOW_03,locale);
 		case "2":
 			return MessageUtil.getMessage(MsgConstants.WORKFLOW_05,locale);
@@ -392,7 +392,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflowstep.setRemark(operationWorkflowVo.getRemark());
 			workflowstep.setModifyby(operationWorkflowVo.getUserid());
 			workflowstep.setModifyon(new Date());
-			workflowstep.setStatus(AuthConstants.DEL_FLAG_DELETE);
+			workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
 			workflowstepMapper.updateByPrimaryKeySelective(workflowstep);
 
 			// 结束当前代办
