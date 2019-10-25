@@ -42,7 +42,7 @@ public class OvertimeServiceImpl implements OvertimeService {
     public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
         if(!StringUtils.isEmpty(overtime)){
             overtime.preUpdate(tokenModel);
-            overtimeMapper.updateByPrimaryKeySelective(overtime);
+            overtimeMapper.updateByPrimaryKey(overtime);
             }
         }
     }
