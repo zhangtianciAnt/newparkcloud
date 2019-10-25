@@ -141,7 +141,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				if (list.size() == 0) {
 					return Workflowlist;
 				} else if (list.size() > 0 && !(list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0
-						|| list.stream().filter(item -> "2".equals(item.getStatus())).count() > 0)) {
+						|| list.stream().filter(item -> "4".equals(item.getStatus())).count() > 0)) {
 					return Workflowlist;
 				}
 			}
@@ -176,6 +176,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					Map<String, String> rst = new HashMap<String, String>();
 					rst.put("id", Workflowsteplist.get(0).getWorkflowstepid());
 					rst.put("type", item.getNodetype());
+					rst.put("remarks",item.getRemarks());
 					return rst;
 				}
 			}
@@ -537,7 +538,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
 						workflowinstance.setModifyby(tokenModel.getUserId());
 						workflowinstance.setModifyon(new Date());
-						workflowinstance.setStatus(AuthConstants.DEL_FLAG_DELETE);
+						workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
 						workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
 						outOperationWorkflowVo.setState("2");
 						outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
