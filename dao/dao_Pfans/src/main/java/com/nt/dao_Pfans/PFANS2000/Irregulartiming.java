@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
+import java.util.Date;
 
 
 @Data
@@ -29,6 +30,8 @@ public class Irregulartiming extends BaseModel {
 
 
     private String reason;
+
+  private Date modifyon;
 
 
 }

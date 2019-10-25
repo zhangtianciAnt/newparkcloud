@@ -62,12 +62,6 @@ public class CasgiftApply extends BaseModel {
     private String user_id;
 
     /**
-     * 所属部门ID
-     */
-    @Column(name = "DEPARTMENT_ID")
-    private String department_id;
-
-    /**
      * 申请日期
      */
 

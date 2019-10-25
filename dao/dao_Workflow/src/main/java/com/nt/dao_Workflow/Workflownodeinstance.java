@@ -46,7 +46,7 @@ public class Workflownodeinstance extends BaseModel {
     private String nodetype;
 
     /**
-     * 节点人员类型(1-指定人，2-上级领导，3-岗位，4-角色)
+     * 节点人员类型(1-指定人，2-上级领导，3-特殊指定)
      */
     @Column(name = "NODEUSERTYPE")
     private String nodeusertype;

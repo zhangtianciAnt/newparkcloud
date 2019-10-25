@@ -40,7 +40,7 @@ public class Pfans2020Controller {
      *
      * 查看一个人
      */
-     @RequestMapping(value =" getIrregulartimingOne",method = { RequestMethod.POST} )
+     @RequestMapping(value ="/getIrregulartimingOne",method = { RequestMethod.POST} )
      public ApiResult getIrregulartimingOne( @RequestBody Irregulartiming  irregulartiming,HttpServletRequest request) throws Exception{
          if(irregulartiming==null){
              return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
