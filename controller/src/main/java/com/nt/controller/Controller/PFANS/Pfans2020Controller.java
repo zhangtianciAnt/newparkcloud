@@ -2,7 +2,10 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.Irregulartiming;
 import com.nt.service_pfans.PFANS2000.IrregulartimingService;
-import com.nt.utils.*;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,57 +27,55 @@ public class Pfans2020Controller {
     private TokenService tokenService;
 
     /**
-     *
      * 查看列表
      */
-   @RequestMapping(value ="/getAllIrregulartiming",method = { RequestMethod.GET})
-    public ApiResult getAllIrregulartiming(HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getAllIrregulartiming", method = {RequestMethod.GET})
+    public ApiResult getAllIrregulartiming(HttpServletRequest request) throws Exception {
 
-           TokenModel tokenModel = tokenService.getToken(request);
-           Irregulartiming irregulartiming=new Irregulartiming();
-           irregulartiming.setOwners(tokenModel.getOwnerList());
-           return ApiResult.success(irregulartimingService.getAllIrregulartiming(irregulartiming));
-   }
+        TokenModel tokenModel = tokenService.getToken(request);
+        Irregulartiming irregulartiming = new Irregulartiming();
+        irregulartiming.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(irregulartimingService.getAllIrregulartiming(irregulartiming));
+    }
 
     /**
-     *
      * 查看一个人
      */
-     @RequestMapping(value ="/getIrregulartimingOne",method = { RequestMethod.POST} )
-     public ApiResult getIrregulartimingOne( @RequestBody Irregulartiming  irregulartiming,HttpServletRequest request) throws Exception{
-         if(irregulartiming==null){
-             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-         }
-         TokenModel tokenMode1= tokenService.getToken(request);
-         return ApiResult.success(irregulartimingService.getIrregulartimingOne(irregulartiming.getIrregulartiming_id()));
-     }
+    @RequestMapping(value = "/getIrregulartimingOne", method = {RequestMethod.POST})
+    public ApiResult getIrregulartimingOne(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception {
+        if (irregulartiming == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenMode1 = tokenService.getToken(request);
+        return ApiResult.success(irregulartimingService.getIrregulartimingOne(irregulartiming.getIrregulartiming_id()));
+    }
+
     /**
      * 新建
-     *
      */
-   @RequestMapping(value = "/insertIrregulartiming",method = {RequestMethod.POST})
-    public ApiResult insertIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception{
-     if(irregulartiming==null){
-         return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-     }
-       TokenModel tokenModel = tokenService.getToken(request);
-     irregulartimingService.insertIrregulartiming(irregulartiming,tokenModel);
-     return ApiResult.success();
-   }
-    /**
-     *修改
-     *
-     */
-   @RequestMapping(value ="/updateIrregulartiming",method={RequestMethod.POST })
-    public ApiResult updateIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request)throws  Exception{
-    if(irregulartiming==null){
-        return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+    @RequestMapping(value = "/insertIrregulartiming", method = {RequestMethod.POST})
+    public ApiResult insertIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception {
+        if (irregulartiming == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        irregulartimingService.insertIrregulartiming(irregulartiming, tokenModel);
+        return ApiResult.success();
     }
-       TokenModel tokenModel = tokenService.getToken(request);
-     irregulartimingService.updateIrregulartiming(irregulartiming,tokenModel);
 
-       return ApiResult.success();
-   }
+    /**
+     * 修改
+     */
+    @RequestMapping(value = "/updateIrregulartiming", method = {RequestMethod.POST})
+    public ApiResult updateIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception {
+        if (irregulartiming == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        irregulartimingService.updateIrregulartiming(irregulartiming, tokenModel);
+
+        return ApiResult.success();
+    }
 
 
 }
