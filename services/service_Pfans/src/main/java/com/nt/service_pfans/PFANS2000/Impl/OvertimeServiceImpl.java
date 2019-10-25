@@ -24,6 +24,10 @@ public class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public List<Overtime> getOvertimelist(Overtime overtime) throws Exception {
+        return overtimeMapper.select(overtime);
+    }
+    @Override
     public Overtime One(String overtimeid) throws Exception {
 
         return overtimeMapper.selectByPrimaryKey(overtimeid);
