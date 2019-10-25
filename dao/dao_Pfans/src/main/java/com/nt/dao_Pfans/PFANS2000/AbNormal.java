@@ -75,22 +75,48 @@ public class AbNormal extends BaseModel {
      * 时间段（开始）
      */
     @Column(name = "PERIOD_START")
-    private String periodstart;
+    private Date periodstart;
 
     /**
      * 时间段（结束）
      */
     @Column(name = "PERIOD_END")
-    private String periodend;
+    private Date periodend;
 
     /**
      * 时间长度
      */
     @Column(name = "LENGTHTIME")
     private String lengthtime;
+
     /**
      * 事由
      */
     @Column(name = "CAUSE")
     private String cause;
+
+    /**
+     * 妊娠诊断医院
+     */
+    @Column(name = "hospital")
+    private String hospital;
+
+    /**
+     * 预产期
+     */
+    @Column(name = "edate")
+    private Date edate;
+
+    /**
+     * 关联加班申请
+     */
+    @Column(name = "relation")
+    private String relation;
+
+    /**
+     * 附件说明
+     */
+    @Column(name = "enclosureexplain")
+    private String enclosureexplain;
+
 }
