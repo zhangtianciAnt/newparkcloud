@@ -68,5 +68,5 @@ public class AuthConstants {
      * 流程审批状态(0:未审批，1:已审批)
      */
     public static final String APPROVED_FLAG_NO = "0";
-    public static final String APPROVED_FLAG_YES = "1";
+    public static final String APPROVED_FLAG_YES = "4";
 }
