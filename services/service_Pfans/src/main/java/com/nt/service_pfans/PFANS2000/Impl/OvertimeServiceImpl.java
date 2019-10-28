@@ -24,6 +24,10 @@ public class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public List<Overtime> getOvertimelist(Overtime overtime) throws Exception {
+        return overtimeMapper.select(overtime);
+    }
+    @Override
     public Overtime One(String overtimeid) throws Exception {
 
         return overtimeMapper.selectByPrimaryKey(overtimeid);
@@ -42,7 +46,7 @@ public class OvertimeServiceImpl implements OvertimeService {
     public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
         if(!StringUtils.isEmpty(overtime)){
             overtime.preUpdate(tokenModel);
-            overtimeMapper.updateByPrimaryKeySelective(overtime);
+            overtimeMapper.updateByPrimaryKey(overtime);
             }
         }
     }

@@ -29,10 +29,16 @@ public class Pfans2011Controller {
             return ApiResult.success(overtimeService.getOvertime(overtime));
         }
 
-
-
-
-
+    @RequestMapping(value="/getOvertimelist",method = {RequestMethod.POST})
+    public ApiResult getOvertimelist(@RequestBody Overtime overtime,HttpServletRequest request) throws Exception{
+        if (overtime == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        overtime.setStatus(AuthConstants.APPROVED_FLAG_YES);
+        overtime.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(overtimeService.getOvertimelist(overtime));
+    }
 
     @RequestMapping(value ="/one",method = { RequestMethod.POST} )
     public ApiResult one(@RequestBody Overtime overtime,HttpServletRequest request) throws Exception{

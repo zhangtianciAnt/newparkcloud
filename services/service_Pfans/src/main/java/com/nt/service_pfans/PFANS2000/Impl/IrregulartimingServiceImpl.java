@@ -1,4 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
+
 import com.nt.dao_Pfans.PFANS2000.Irregulartiming;
 import com.nt.service_pfans.PFANS2000.IrregulartimingService;
 import com.nt.service_pfans.PFANS2000.mapper.IrregulartimingMapper;
@@ -18,10 +19,8 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
     private IrregulartimingMapper irregulartimingMapper;
 
     /**
-     *查询列表
-     *
+     * 查询列表
      */
-
 
     @Override
     public List<Irregulartiming> getAllIrregulartiming(Irregulartiming irregulartiming) throws Exception {
@@ -29,23 +28,20 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
     }
 
     /**
-     *按id查询
-     *
-     * @return
+     * 按id查询
      */
     @Override
     public Irregulartiming getIrregulartimingOne(String irregulartiming_id) throws Exception {
-        if(irregulartiming_id.equals(" ")){
-            return  null;
+        if (irregulartiming_id.equals("")) {
+            return null;
         }
-       return irregulartimingMapper.selectByPrimaryKey(irregulartiming_id);
+        return irregulartimingMapper.selectByPrimaryKey(irregulartiming_id);
 
     }
 
 
-
     /**
-     *新建
+     * 新建
      */
 
     @Override
@@ -58,12 +54,10 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
     }
 
     /**
-     *按id修改
-     *
+     * 按id修改
      */
     @Override
     public void updateIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel) throws Exception {
-
         irregulartimingMapper.updateByPrimaryKeySelective(irregulartiming);
     }
 

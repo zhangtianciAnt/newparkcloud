@@ -9,6 +9,8 @@ public interface OvertimeService {
     //查看
     List<Overtime> getOvertime(Overtime overtime) throws Exception;
 
+    List<Overtime> getOvertimelist(Overtime overtime) throws Exception;
+
     public Overtime One(String overtimeid) throws Exception;
     //增加
     public void insertOvertime(Overtime overtime, TokenModel tokenModel)throws Exception;
