@@ -151,9 +151,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					if(list.size() > 0 && list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0){
 						rst.put("list",Workflowlist);
 						rst.put("can","1");
+						return rst;
 					}else{
 						rst.put("list",Workflowlist);
 						rst.put("can","2");
+						return rst;
 					}
 
 				}

@@ -1,6 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.dao_Workflow.Vo.WorkflowVo;
 import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
@@ -62,5 +62,13 @@ public class Pfans2022Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         casgiftapplyService.insert(casgiftapply,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getCasgiftApplyList", method = {RequestMethod.POST})
+    public ApiResult getCasgiftApplyList(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(casgiftapplyService.getCasgiftApplyList(casgiftapply, request));
     }
 }
