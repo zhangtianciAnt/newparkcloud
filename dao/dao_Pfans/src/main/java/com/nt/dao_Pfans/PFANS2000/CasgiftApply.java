@@ -71,12 +71,61 @@ public class CasgiftApply extends BaseModel {
      * 受验前资格
      */
     @Column(name = "QUALIFICATIONS")
-    private Date qualifications;
+    private String qualifications;
+
     /**
      * 申请金额（元）
      */
     @Column(name = "AMOUNTMONEY")
     private String amoutmoney;
+
+    /**
+     * 被推薦者との関係
+     */
+    @Column(name = "NOMINEERELATIONSHIP")
+    private String nomineerelationship;
+
+    /**
+     * 被推薦者
+     */
+    @Column(name = "NOMINEES")
+    private String nominees;
+
+    /**
+     * 入社形式
+     */
+    @Column(name = "ENTERINGFORM")
+    private String enteringform;
+
+    /**
+     * 入社日
+     */
+    @Column(name = "JOININGDAY")
+    private Date joiningday;
+
+    /**
+     * 正社員登用日
+     */
+    @Column(name = "REGINSTRATIONDAY")
+    private Date reginstrationday;
+
+    /**
+     * 推薦日
+     */
+    @Column(name = "RECOMMENDATIONDAY")
+    private Date recommendationday;
+
+    /**
+     * 配偶姓名
+     */
+    @Column(name = "SPOUSENAME")
+    private String spousename;
+
+    /**
+     * 结婚日
+     */
+    @Column(name = "WEDDINGDAY")
+    private Date weddingday;
 
     /**
      * 备注
