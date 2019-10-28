@@ -88,6 +88,9 @@ public class Pfans5008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        PersonalProjects personal = new PersonalProjects();
+        personal.setUser_id(personalprojects.getUser_id());
+        personalprojectsService.delete(personal, tokenModel);
         personalprojectsService.insert(personalprojects, tokenModel);
         return ApiResult.success();
     }
