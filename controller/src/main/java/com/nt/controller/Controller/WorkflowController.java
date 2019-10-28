@@ -105,8 +105,7 @@ public class WorkflowController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        List<Workflow>  workflowlist= workflowServices.isStartWorkflow(startWorkflowVo,tokenModel);
-        return ApiResult.success(workflowlist);
+        return ApiResult.success(workflowServices.isStartWorkflow(startWorkflowVo,tokenModel));
     }
 
     @RequestMapping(value = "/StartWorkflow",method={RequestMethod.POST})
