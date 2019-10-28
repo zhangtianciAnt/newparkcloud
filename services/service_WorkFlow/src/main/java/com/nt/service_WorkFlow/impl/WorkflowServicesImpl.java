@@ -160,7 +160,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 
 			rst.put("list",Workflowlist);
-			rst.put("can","2");
+			rst.put("can","3");
 			return rst;
 
 	}
