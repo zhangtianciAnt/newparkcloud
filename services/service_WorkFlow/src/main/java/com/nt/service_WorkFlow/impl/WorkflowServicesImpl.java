@@ -120,9 +120,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 	}
 
 	@Override
-	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel)
+	public Map<String,Object>  isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel)
 			throws Exception {
-
+			Map<String,Object> rst = new HashMap<String,Object>();
 			Workflow workflow = new Workflow();
 			workflow.setFormid(startWorkflowVo.getMenuUrl());
 			workflow.setTenantid(startWorkflowVo.getTenantId());
@@ -139,14 +139,29 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				// workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 				List<Workflowinstance> list = workflowinstanceMapper.select(workflowinstance);
 				if (list.size() == 0) {
-					return Workflowlist;
+					rst.put("list",Workflowlist);
+					rst.put("can","0");
+					return rst;
 				} else if (list.size() > 0 && !(list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0
 						|| list.stream().filter(item -> "4".equals(item.getStatus())).count() > 0)) {
-					return Workflowlist;
+					rst.put("list",Workflowlist);
+					rst.put("can","0");
+					return rst;
+				}else{
+					if(list.size() > 0 && list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0){
+						rst.put("list",Workflowlist);
+						rst.put("can","1");
+					}else{
+						rst.put("list",Workflowlist);
+						rst.put("can","2");
+					}
+
 				}
 			}
 
-			return new ArrayList<Workflow>();
+			rst.put("list",Workflowlist);
+			rst.put("can","3");
+			return rst;
 
 	}
 

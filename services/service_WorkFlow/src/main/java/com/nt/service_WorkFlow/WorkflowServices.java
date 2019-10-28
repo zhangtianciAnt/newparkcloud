@@ -36,7 +36,7 @@ public interface WorkflowServices {
 	public void DelWorkflow(String instanceId,String locale) throws Exception;
 
 	// 是否可以发起审批
-	public List<Workflow> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception;
+	public Map<String,Object> isStartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception;
 
 	// 发起审批
 	public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception;
