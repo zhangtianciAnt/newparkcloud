@@ -14,4 +14,6 @@ public interface PersonalProjectsService {
     public List<PersonalProjects> getProjectList(PersonalProjects personalprojects) throws Exception;
 
     void insert(PersonalProjects personalprojects, TokenModel tokenModel)throws Exception;
+
+    void delete( PersonalProjects personal, TokenModel tokenModel)throws Exception;
 }
