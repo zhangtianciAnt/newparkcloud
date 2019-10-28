@@ -31,5 +31,10 @@ public class PersonalProjectsServiceImpl implements PersonalProjectsService {
         personalprojectsMapper.insert(personalprojects);
     }
 
+    @Override
+    public void delete(PersonalProjects personal, TokenModel tokenModel) throws Exception{
+
+        personalprojectsMapper.delete(personal);
+    }
 }
 

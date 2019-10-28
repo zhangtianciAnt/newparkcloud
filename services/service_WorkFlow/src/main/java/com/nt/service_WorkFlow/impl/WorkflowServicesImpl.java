@@ -140,21 +140,27 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				List<Workflowinstance> list = workflowinstanceMapper.select(workflowinstance);
 				if (list.size() == 0) {
 					rst.put("list",Workflowlist);
-					rst.put("can",true);
+					rst.put("can","0");
 					return rst;
 				} else if (list.size() > 0 && !(list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0
 						|| list.stream().filter(item -> "4".equals(item.getStatus())).count() > 0)) {
 					rst.put("list",Workflowlist);
-					rst.put("can",true);
+					rst.put("can","0");
 					return rst;
 				}else{
-					rst.put("list",Workflowlist);
-					rst.put("can",false);
+					if(list.size() > 0 && list.stream().filter(item -> "0".equals(item.getStatus())).count() > 0){
+						rst.put("list",Workflowlist);
+						rst.put("can","1");
+					}else{
+						rst.put("list",Workflowlist);
+						rst.put("can","2");
+					}
+
 				}
 			}
 
 			rst.put("list",Workflowlist);
-			rst.put("can",false);
+			rst.put("can","3");
 			return rst;
 
 	}
