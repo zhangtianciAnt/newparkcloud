@@ -74,6 +74,12 @@ public class TalentPlan extends BaseModel {
     private Date graduationyear;
 
     /**
+     * 次回契約更新
+     */
+    @Column(name = "CONTRACT")
+    private Date contract;
+
+    /**
      * 担当業務
      */
     @Column(name = "BUSINESS")
