@@ -54,13 +54,13 @@ public class HotelReservation extends BaseModel {
      * 客人姓名（汉字）
      */
     @Column(name = "NAME")
-    private Date name;
+    private String name;
 
     /**
      * 客人姓名（罗马字）
      */
     @Column(name = "NAMEROME")
-    private Date namerome;
+    private String namerome;
 
     /**
      * 酒店名称
@@ -72,25 +72,25 @@ public class HotelReservation extends BaseModel {
      * 入住日期
      */
     @Column(name = "CHECKIN")
-    private String checkin;
+    private Date checkin;
 
     /**
      * 退房日期
      */
     @Column(name = "CHECKOUT")
-    private String checkout;
+    private Date checkout;
 
     /**
      * 住几日
      */
     @Column(name = "CHECKINDAYS")
-    private Date checkindays;
+    private String checkindays;
 
     /**
      * 是否吸烟
      */
     @Column(name = "SMOKE")
-    private Date smoke;
+    private String smoke;
 
     /**
      * 备注
