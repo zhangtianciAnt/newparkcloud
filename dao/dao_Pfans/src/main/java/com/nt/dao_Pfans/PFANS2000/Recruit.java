@@ -125,7 +125,7 @@ public class Recruit extends BaseModel {
      * 期望到岗时间
      */
     @Column(name = "EXPECTEDARRIVALTIME")
-    private String expectedappivaltime;
+    private String expectedarrivaltime;
 
     /**
      * 技能等级级别
