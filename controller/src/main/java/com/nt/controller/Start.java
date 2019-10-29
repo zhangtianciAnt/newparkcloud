@@ -1,5 +1,6 @@
 package com.nt.controller;
 
+import com.mongodb.MongoClientOptions;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,5 +40,10 @@ public class Start {
       FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
       bean.setOrder(0);
       return bean;
+    }
+
+    @Bean
+    public MongoClientOptions mongoOptions() {
+        return MongoClientOptions.builder().maxConnectionIdleTime(6000).maxConnectionLifeTime(0).socketKeepAlive(true).socketTimeout(1500).build();
     }
 }
