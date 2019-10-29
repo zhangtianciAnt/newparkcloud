@@ -89,7 +89,7 @@ public class TalentPlan extends BaseModel {
      * 本人の人物・能力的特徴
      */
     @Column(name = "FEATURES")
-    private Date features;
+    private String features;
 
     /**
      * 現有のスキルランク目安標準より1
