@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 
 
@@ -74,13 +73,13 @@ public class BusinessCard extends BaseModel {
      * 事業計画
      */
     @Column(name = "PLAN")
-    private Date plan;
+    private String plan;
 
     /**
      * 事业计划类型
      */
     @Column(name = "TYPE")
-    private Date type;
+    private String type;
 
     /**
      * 事业计划余额
