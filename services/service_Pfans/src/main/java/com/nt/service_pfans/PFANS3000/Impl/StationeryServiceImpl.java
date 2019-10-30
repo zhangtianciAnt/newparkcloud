@@ -1,5 +1,4 @@
 package com.nt.service_pfans.PFANS3000.Impl;
-
 import com.nt.dao_Pfans.PFANS3000.Stationery;
 import com.nt.service_pfans.PFANS3000.StationeryService;
 import com.nt.service_pfans.PFANS3000.mapper.StationeryMapper;
@@ -12,16 +11,20 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 @Transactional(rollbackFor=Exception.class)
-public class StationeryImpl implements StationeryService {
+public class StationeryServiceImpl implements StationeryService {
 
     @Autowired
     private StationeryMapper stationeryMapper;
 
     @Override
     public List<Stationery> getStationery(Stationery stationery) throws Exception {
+        return stationeryMapper.select(stationery);
+    }
+
+    @Override
+    public List<Stationery> getStationerylist(Stationery stationery) throws Exception {
         return stationeryMapper.select(stationery);
     }
 

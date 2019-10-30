@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "businesscard")
+@Table(name = "stationery")
 
 public class Stationery extends BaseModel {
 
@@ -60,13 +61,13 @@ public class Stationery extends BaseModel {
      * 申请日期
      */
     @Column(name = "APPLICATION_DATE")
-    private String applicationdate;
+    private Date applicationdate;
 
     /**
      * 类型
      */
     @Column(name = "TYPE")
-    private String type;
+    private String stationerytype;
 
     /**
      * 名称
@@ -77,14 +78,14 @@ public class Stationery extends BaseModel {
     /**
      * 尺寸类型说明
      */
-    @Column(name = "EXPLAIN")
-    private String explain;
+    @Column(name = "SIZE")
+    private String size;
 
     /**
      * 数量
      */
     @Column(name = "NUMBERS")
-    private String number;
+    private String numbers;
 
     /**
      * 备注
