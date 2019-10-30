@@ -163,11 +163,7 @@ public class InterviewRecord  extends BaseModel {
     @Column(name = "NETWORK")
     private String network;
 
-    /**
-     * 创建时间
-     */
-    @Column(name = "CREATEON")
-    private String createon;
+
 
     /**
      * 推荐
