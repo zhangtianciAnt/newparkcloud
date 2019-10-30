@@ -27,37 +27,37 @@ public class AttendanceSetting extends BaseModel{
      * 上班时间开始
      */
     @Column(name = "WORKSHIFT_START")
-    private Date workshift_start;
+    private String workshift_start;
 
     /**
      * 上班时间结束
      */
     @Column(name = "WORKSHIFT_END")
-    private Date workshift_end;
+    private String workshift_end;
 
     /**
      * 下班时间开始
      */
     @Column(name = "CLOSINGTIME_START")
-    private Date closingtime_start;
+    private String closingtime_start;
 
     /**
      * 下班时间结束
      */
     @Column(name = "CLOSINGTIME_END")
-    private Date closingtime_end;
+    private String closingtime_end;
 
     /**
      * 午休时间开始
      */
     @Column(name = "LUNCHBREAK_START")
-    private Date lunchbreak_start;
+    private String lunchbreak_start;
 
     /**
      * 午休时间结束
      */
     @Column(name = "LUNCHBREAK_END")
-    private Date lunchbreak_end;
+    private String lunchbreak_end;
 
     /**
      * 事假
@@ -102,10 +102,16 @@ public class AttendanceSetting extends BaseModel{
     private String deadline;
 
     /**
-     * 每月考勤异常处理截止提醒时间
+     * 每月考勤异常处理截止提醒日
      */
     @Column(name = "ABNORMALDEADLINE")
     private String abnormaldeadline;
+
+    /**
+     * 每月考勤异常处理截止提醒时间
+     */
+    @Column(name = "ABNORMALDEADLINETIME")
+    private String abnormaldeadlinetime;
 
     /**
      * 病假超限提醒
