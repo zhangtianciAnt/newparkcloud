@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 
 @Data
@@ -50,13 +51,13 @@ public class InterviewRecord  extends BaseModel {
      * 简历接受时间ID
      */
     @Column(name = "ACCEPT_DATE")
-    private String accept_date;
+    private Date accept_date;
 
     /**
      * 向部门推荐时间ID
      */
     @Column(name = "RECOMMEND_DATE")
-    private String recommend_date;
+    private Date recommend_date;
 
     /**
      * 推荐部门ID
@@ -68,7 +69,7 @@ public class InterviewRecord  extends BaseModel {
      * 面试时间ID
      */
     @Column(name = "INTERVIEW_DATE")
-    private String interview_date;
+    private Date interview_date;
 
     /**
      * 面试部门ID
@@ -162,16 +163,6 @@ public class InterviewRecord  extends BaseModel {
      */
     @Column(name = "NETWORK")
     private String network;
-
-
-
-    /**
-     * 推荐
-     */
-    @Column(name = "REfERRER")
-    private String referrer;
-
-
 
 }
 
