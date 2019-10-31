@@ -82,6 +82,12 @@ public class BusinessCard extends BaseModel {
     private String type;
 
     /**
+     * 分类类型
+     */
+    @Column(name = "CLASSIFICATION")
+    private String classification;
+
+    /**
      * 事业计划余额
      */
     @Column(name = "BALANCE")
