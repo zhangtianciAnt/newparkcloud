@@ -8,23 +8,24 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
+
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "hotelreservation")
+@Table(name = "businesscard")
 
-public class HotelReservation extends BaseModel {
+public class BusinessCard extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 来客酒店预订ID
+     * 名片申请ID
      */
     @Id
-    @Column(name = "HOTELRESERVATION_ID")
-    private String hotelreservationid;
+    @Column(name = "BUSINESSCARD_ID")
+    private String businesscardid;
 
     /**
      * 申请人ID
@@ -51,46 +52,40 @@ public class HotelReservation extends BaseModel {
     private String teamid;
 
     /**
-     * 客人姓名（汉字）
+     * 职称
      */
-    @Column(name = "NAME")
-    private String name;
+    @Column(name = "OCCUPATIONAL")
+    private String occupational;
 
     /**
-     * 客人姓名（罗马字）
+     * 内线号
      */
-    @Column(name = "NAMEROME")
-    private String namerome;
+    @Column(name = "INSIDELINE")
+    private String insideline;
 
     /**
-     * 酒店名称
+     * 邮箱地址
      */
-    @Column(name = "HOTEL")
-    private String hotel;
+    @Column(name = "EMAIL")
+    private String email;
 
     /**
-     * 入住日期
+     * 事業計画
      */
-    @Column(name = "CHECKIN")
-    private Date checkin;
+    @Column(name = "PLAN")
+    private String plan;
 
     /**
-     * 退房日期
+     * 事业计划类型
      */
-    @Column(name = "CHECKOUT")
-    private Date checkout;
+    @Column(name = "TYPE")
+    private String type;
 
     /**
-     * 住几日
+     * 事业计划余额
      */
-    @Column(name = "CHECKINDAYS")
-    private String checkindays;
-
-    /**
-     * 是否吸烟
-     */
-    @Column(name = "SMOKE")
-    private String smoke;
+    @Column(name = "BALANCE")
+    private String balance;
 
     /**
      * 备注

@@ -1,8 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
 
-import com.nt.dao_Pfans.PFANS2000.Leaveoffice;
-import com.nt.service_pfans.PFANS2000.LeaveofficeService;
+
+import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
+import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -18,12 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/leaveoffice")
+@RequestMapping("/staffexitprocedure")
 public class Pfans2026Controller {
 
     @Autowired
-    private LeaveofficeService leaveofficeService;
-
+    private StaffexitprocedureService staffexitprocedureService;
     @Autowired
     private TokenService tokenService;
 
@@ -33,21 +33,21 @@ public class Pfans2026Controller {
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Leaveoffice leaveoffice = new Leaveoffice();
-        // leaveoffice.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(leaveofficeService.get(leaveoffice));
+        Staffexitprocedure staffexitprocedure=new Staffexitprocedure();
+        staffexitprocedure.setOwners(tokenModel.getOwnerList());
+       return ApiResult.success(staffexitprocedureService.get(staffexitprocedure));
     }
 
     /**
      * 查看一个人
      */
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
-    public ApiResult one(@RequestBody Leaveoffice leaveoffice, HttpServletRequest request) throws Exception {
-        if (leaveoffice == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+    public ApiResult one(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
+        if(staffexitprocedure==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenMode1 = tokenService.getToken(request);
-        return ApiResult.success(leaveofficeService.one(leaveoffice.getLeaveoffice_id()));
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(staffexitprocedureService.one(staffexitprocedure.getStaffexitprocedure_id()));
     }
 
 
@@ -55,12 +55,12 @@ public class Pfans2026Controller {
      * 新建
      */
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Leaveoffice leaveoffice, HttpServletRequest request) throws Exception {
-        if (leaveoffice == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+    public ApiResult create(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
+        if(staffexitprocedure==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        leaveofficeService.create(leaveoffice, tokenModel);
+        staffexitprocedureService.create(staffexitprocedure,tokenModel);
         return ApiResult.success();
     }
 
@@ -69,15 +69,14 @@ public class Pfans2026Controller {
      * 修改
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Leaveoffice leaveoffice, HttpServletRequest request) throws Exception {
-        if(leaveoffice==null){
+    public ApiResult update(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
+        if(staffexitprocedure==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel=tokenService.getToken(request);
-        leaveofficeService.update(leaveoffice,tokenModel);
+        staffexitprocedureService.update(staffexitprocedure,tokenModel);
         return ApiResult.success();
 
     }
-
 
 }

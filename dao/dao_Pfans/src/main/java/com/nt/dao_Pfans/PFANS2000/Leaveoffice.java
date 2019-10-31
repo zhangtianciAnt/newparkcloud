@@ -22,8 +22,9 @@ public class Leaveoffice  extends BaseModel {
     private String center_id;
     private String group_id;
     private String team_id;
+    private String sex_id;
+    private Date hiredate_date;
     private Date departure_date;
-    private Date application_date;
     private String reason;
     private String address;
     private String fixedtelephone;
