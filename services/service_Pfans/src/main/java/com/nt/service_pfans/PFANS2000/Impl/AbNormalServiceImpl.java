@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class AbNormalServiceImpl implements AbNormalService {
 
     @Autowired

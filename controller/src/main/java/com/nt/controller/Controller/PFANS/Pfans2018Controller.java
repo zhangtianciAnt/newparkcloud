@@ -26,35 +26,35 @@ public class Pfans2018Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/list", method={RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception{
-            TokenModel tokenModel = tokenService.getToken(request);
-            AttendanceSetting attendanceSetting = new AttendanceSetting();
-            attendanceSetting.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(attendanceSettingService.list(attendanceSetting));
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        AttendanceSetting attendanceSetting = new AttendanceSetting();
+        attendanceSetting.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(attendanceSettingService.list(attendanceSetting));
     }
 
-    @RequestMapping(value = "/insertInfo",method={RequestMethod.POST})
+    @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody AttendanceSetting attendanceSetting, HttpServletRequest request) throws Exception {
         if (attendanceSetting == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        attendanceSettingService.insert(attendanceSetting,tokenModel);
+        attendanceSettingService.insert(attendanceSetting, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value="/updateInfo",method = {RequestMethod.POST})
-    public ApiResult updateInformation(@RequestBody AttendanceSetting attendanceSetting, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/updateInfo", method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody AttendanceSetting attendanceSetting, HttpServletRequest request) throws Exception {
         if (attendanceSetting == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        attendanceSettingService.update(attendanceSetting,tokenModel);
+        attendanceSettingService.update(attendanceSetting, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/oneInfo",method={RequestMethod.POST})
+    @RequestMapping(value = "/oneInfo", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody AttendanceSetting attendanceSetting, HttpServletRequest request) throws Exception {
         if (attendanceSetting == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
