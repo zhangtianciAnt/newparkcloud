@@ -23,11 +23,6 @@ public class CompanyProjects extends BaseModel {
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
-
-    @Column(name = "PROJECT_ID")
-    private String project_id;
-
-
     @Column(name = "PROJECT_NAME")
     private String project_name;
 

@@ -35,6 +35,19 @@ public class Pfans8007Controller {
         return ApiResult.success();
     }
 
+
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody WorkingDay workingday, HttpServletRequest request) throws Exception {
+        if (workingday == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        workingdayService.delete(workingday, tokenModel);
+        return ApiResult.success();
+    }
+
+
+
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
     public ApiResult getList(@RequestBody WorkingDay workingday,  HttpServletRequest request) throws Exception {
         if (workingday == null) {
