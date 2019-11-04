@@ -9,6 +9,7 @@
         <module>service_Auth</module>
         <module>service_VerificationCode</module>
         <module>service_WorkFlow</module>
+        <module>service_BASF</module>
 
     </modules>
     <packaging>pom</packaging>
