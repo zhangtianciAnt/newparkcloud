@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <properties resource="application.properties"/>
+    <!-- mysql 连接数据库jar 这里选择自己本地位置 -->
+    <classPathEntry location="/Users/zqu/maven/mysql/mysql-connector-java/5.1.44/mysql-connector-java-5.1.44.jar"/>
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <plugin type="${mapper.plugin}">
+            <property name="mappers" value="${mapper.mappers}"/>
+        </plugin>
+
+        <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://39.108.133.62:3306/BASF"
+                        userId="root"
+                        password="Newtouch1!">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.nt.dao_BASF" targetProject="../dao/dao_BASF/src/main/java">
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="../services/service_BASF/src/main/resources">
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.nt.service_BASF.mapper" targetProject="../services/service_BASF/src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+        <table tableName="%">
+            <generatedKey column="%ID" sqlStatement="Mysql" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>
