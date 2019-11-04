@@ -1,12 +1,13 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.Alarmreceipt;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.BASF10105Services;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +30,23 @@ public class BASF10105Controller {
     @Autowired
     private BASF10105Services basf10105Services;
 
+    @Autowired
+    private TokenService tokenService;
+
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         Deviceinformation deviceinformation = new Deviceinformation();
         deviceinformation.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return ApiResult.success(basf10105Services.list(deviceinformation));
+    }
+
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Deviceinformation deviceinformation, HttpServletRequest request) throws Exception {
+        if (deviceinformation == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        basf10105Services.insert(deviceinformation, tokenModel);
+        return ApiResult.success();
     }
 }
