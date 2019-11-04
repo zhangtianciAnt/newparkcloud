@@ -62,15 +62,6 @@
         </dependency>
         <dependency>
             <groupId>com.nt</groupId>
-<<<<<<< .merge_file_jiaV35
-=======
-            <artifactId>dao_BASF</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nt</groupId>
->>>>>>> .merge_file_n0JDw7
             <artifactId>service_BASF</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
