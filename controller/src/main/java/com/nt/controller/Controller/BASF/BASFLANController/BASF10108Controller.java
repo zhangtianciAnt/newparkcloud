@@ -6,6 +6,7 @@ import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,5 +30,15 @@ public class BASF10108Controller {
         Alarmreceipt alarmreceipt = new Alarmreceipt();
         alarmreceipt.setOwner(userid);
         return ApiResult.success(bASF10108Services.getList(alarmreceipt));
+    }
+
+    @RequestMapping(value = "/createAlarmreceipt", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Alarmreceipt alarmreceipt, HttpServletRequest request) throws Exception {
+        if (alarmreceipt == null) {
+            return ApiResult.fail();
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        bASF10108Services.insert(alarmreceipt, tokenModel);
+        return ApiResult.success();
     }
 }
