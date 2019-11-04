@@ -4,6 +4,7 @@ import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.BASF10105Services;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +28,6 @@ public class BASF10105Controller {
 
     @Autowired
     private BASF10105Services basf10105Services;
-
-    @Autowired
-    private TokenService tokenService;
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
