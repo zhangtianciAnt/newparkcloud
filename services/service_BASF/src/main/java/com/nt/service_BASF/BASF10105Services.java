@@ -21,4 +21,5 @@ public interface BASF10105Services {
 
     //创建设备
     void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
+
 }
