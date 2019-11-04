@@ -1,7 +1,7 @@
 package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.Alarmreceipt;
-import tk.mybatis.mapper.common.Mapper;
+import com.nt.utils.MyMapper;
 
-public interface AlarmreceiptMapper extends Mapper<Alarmreceipt> {
+public interface AlarmreceiptMapper extends MyMapper<Alarmreceipt> {
 }
