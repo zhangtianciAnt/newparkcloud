@@ -1,9 +1,9 @@
 package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.Emailmessage;
+import com.nt.utils.MyMapper;
 import org.springframework.stereotype.Component;
-import tk.mybatis.mapper.common.Mapper;
 
 @Component(value="EmailmessageMapper")
-public interface EmailmessageMapper extends Mapper<Emailmessage> {
+public interface EmailmessageMapper extends MyMapper<Emailmessage> {
 }
