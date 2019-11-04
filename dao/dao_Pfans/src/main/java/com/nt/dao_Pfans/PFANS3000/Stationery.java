@@ -8,24 +8,24 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.util.Date;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "businesscard")
+@Table(name = "stationery")
 
-public class BusinessCard extends BaseModel {
+public class Stationery extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 名片申请ID
+     * 文房具领取申请ID
      */
     @Id
-    @Column(name = "BUSINESSCARD_ID")
-    private String businesscardid;
+    @Column(name = "STATIONERY_ID")
+    private String stationeryid;
 
     /**
      * 申请人ID
@@ -52,46 +52,40 @@ public class BusinessCard extends BaseModel {
     private String teamid;
 
     /**
-     * 职称
+     * 预算单位
      */
-    @Column(name = "OCCUPATIONAL")
-    private String occupational;
+    @Column(name = "COMPANY")
+    private String company;
 
     /**
-     * 内线号
+     * 申请日期
      */
-    @Column(name = "INSIDELINE")
-    private String insideline;
+    @Column(name = "APPLICATION_DATE")
+    private Date applicationdate;
 
     /**
-     * 邮箱地址
-     */
-    @Column(name = "EMAIL")
-    private String email;
-
-    /**
-     * 事業計画
-     */
-    @Column(name = "PLAN")
-    private String plan;
-
-    /**
-     * 事业计划类型
+     * 类型
      */
     @Column(name = "TYPE")
-    private String type;
+    private String stationerytype;
 
     /**
-     * 分类类型
+     * 名称
      */
-    @Column(name = "CLASSIFICATION")
-    private String classification;
+    @Column(name = "NAME")
+    private String name;
 
     /**
-     * 事业计划余额
+     * 尺寸类型说明
      */
-    @Column(name = "BALANCE")
-    private String balance;
+    @Column(name = "SIZE")
+    private String size;
+
+    /**
+     * 数量
+     */
+    @Column(name = "NUMBERS")
+    private String numbers;
 
     /**
      * 备注

@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface AbNormalService {
 
-    public void insert(AbNormal abNormal, TokenModel tokenModel)throws Exception;
+    void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
     //获取异常申请列表信息
-    public List<AbNormal> list(AbNormal abNormal) throws Exception;
+    List<AbNormal> list(AbNormal abNormal) throws Exception;
 
-    public void upd(AbNormal abNormal, TokenModel tokenModel)throws Exception;
+    void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
     //根据id获取数据
-    public  AbNormal One(String abnormalid)throws Exception;
+    AbNormal One(String abnormalid) throws Exception;
 }

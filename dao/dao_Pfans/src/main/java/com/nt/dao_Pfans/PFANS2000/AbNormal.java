@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Data
@@ -14,11 +16,11 @@ import java.util.Date;
 @Table(name = "abnormal")
 public class AbNormal extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-	 * 考勤异常ID
-	 */
+     * 考勤异常ID
+     */
     @Id
     @Column(name = "ABNORMAL_ID")
     private String abnormalid;

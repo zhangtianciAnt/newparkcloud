@@ -28,4 +28,13 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
         return workingdayMapper.select(workingday) ;
     }
+
+    @Override
+    public void delete(WorkingDay workingday, TokenModel tokenModel) throws Exception{
+
+        workingdayMapper.delete(workingday);
+    }
+
+
+
 }
