@@ -23,7 +23,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     public List<Dictionary> getForSelect(String code) throws Exception{
         Dictionary dictionary = new Dictionary();
         if(StrUtil.isNotBlank(code)){
-            dictionary.setCode(code);
+            dictionary.setPcode(code);
         }
         return dictionaryMapper.select(dictionary);
     }
