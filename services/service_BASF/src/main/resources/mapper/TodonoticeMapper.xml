@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.TodonoticeMapper" >
+  <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Todonotice" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="NOTICEID" property="noticeid" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+    <result column="DATAID" property="dataid" jdbcType="VARCHAR" />
+    <result column="URL" property="url" jdbcType="VARCHAR" />
+    <result column="WORKFLOWURL" property="workflowurl" jdbcType="VARCHAR" />
+    <result column="INITIATOR" property="initiator" jdbcType="VARCHAR" />
+    <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+    <result column="CREATEBY" property="createby" jdbcType="VARCHAR" />
+    <result column="CREATEON" property="createon" jdbcType="TIMESTAMP" />
+    <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR" />
+    <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP" />
+    <result column="OWNER" property="owner" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="TENANTID" property="tenantid" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

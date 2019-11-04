@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.WorkflowstepMapper" >
+  <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Workflowstep" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="WORKFLOWSTEPID" property="workflowstepid" jdbcType="VARCHAR" />
+    <result column="WORKFLOWNODEINSTANCEID" property="workflownodeinstanceid" jdbcType="VARCHAR" />
+    <result column="RESULT" property="result" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="ITEMID" property="itemid" jdbcType="VARCHAR" />
+    <result column="CREATEBY" property="createby" jdbcType="VARCHAR" />
+    <result column="CREATEON" property="createon" jdbcType="TIMESTAMP" />
+    <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR" />
+    <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP" />
+    <result column="OWNER" property="owner" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="TENANTID" property="tenantid" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+</mapper>
