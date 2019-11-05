@@ -66,4 +66,23 @@ public class BASF10105Controller {
         deviceinFormationServices.insert(deviceinformation, tokenModel);
         return ApiResult.success();
     }
+
+    /**
+     * @Method delete
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 删除设备
+     * @param deviceinformation
+     * @param request
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/5 15:37
+     */
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody Deviceinformation deviceinformation, HttpServletRequest request) throws Exception {
+        if (deviceinformation == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        deviceinFormationServices.delete(deviceinformation);
+        return ApiResult.success();
+    }
 }
