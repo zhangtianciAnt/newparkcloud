@@ -26,10 +26,11 @@ public class Pfans1004Controller {
     private TokenService tokenService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request) throws Exception{
+    public ApiResult get(String equipment,HttpServletRequest request) throws Exception{
 
             TokenModel tokenModel = tokenService.getToken(request);
             Judgement judgement = new Judgement();
+            judgement.setEquipment(equipment);
             judgement.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(judgementService.getJudgement(judgement));
     }
