@@ -30,11 +30,11 @@ public class BASF10103ServicesImpl implements BASF10103Services {
     private UsergroupMapper usergroupMapper;
 
     /**
+     * @param usergroup
      * @Method list
      * @Author SUN
-     * @Version  1.0
+     * @Version 1.0
      * @Description
-     * @param usergroup
      * @Return java.util.List<Usergroup>
      * @Date 2019/11/4 16:35
      */
