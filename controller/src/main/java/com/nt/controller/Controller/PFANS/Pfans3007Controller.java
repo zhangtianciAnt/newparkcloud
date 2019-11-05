@@ -43,31 +43,31 @@ public class Pfans3007Controller {
     }
 
     @RequestMapping(value ="/one",method = { RequestMethod.POST} )
-    public ApiResult one(@RequestBody AppointmentCar appointmentcar,HttpServletRequest request) throws Exception{
-        if (appointmentcar == null) {
+    public ApiResult one(@RequestBody JapanCondominium japancondominium,HttpServletRequest request) throws Exception{
+        if (japancondominium == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(appointmentcarService.One(appointmentcar.getAppointmentcarid()));
+        return ApiResult.success(japancondominiumService.One(japancondominium.getJapancondominiumid()));
     }
 
     @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception{
-        if (appointmentcar == null) {
+    public ApiResult create(@RequestBody JapanCondominium japancondominium, HttpServletRequest request) throws Exception{
+        if (japancondominium == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        appointmentcarService.insertAppointmentCar(appointmentcar,tokenModel);
+        japancondominiumService.insertJapanCondominium(japancondominium,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateAppointmentCar(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception{
-        if (appointmentcar == null) {
+    public ApiResult updateJapanCondominium(@RequestBody JapanCondominium japancondominium, HttpServletRequest request) throws Exception{
+        if (japancondominium == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        appointmentcarService.updateAppointmentCar(appointmentcar,tokenModel);
+        japancondominiumService.updateJapanCondominium(japancondominium,tokenModel);
         return ApiResult.success();
     }
 
