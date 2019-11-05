@@ -7,7 +7,10 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,10 +27,7 @@ public class BASF10108Controller {
     @RequestMapping(value = "/getAlarmreceiptList", method = {RequestMethod.GET})
     public ApiResult getAlarmreceiptList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        String userid = tokenModel.getUserId();
-        Alarmreceipt alarmreceipt = new Alarmreceipt();
-        alarmreceipt.setOwner(userid);
-        return ApiResult.success(alarmreceiptServices.getList(alarmreceipt));
+        return ApiResult.success(alarmreceiptServices.getList());
     }
 
     @RequestMapping(value = "/createAlarmreceipt", method = {RequestMethod.POST})
@@ -41,7 +41,7 @@ public class BASF10108Controller {
     }
 
     @RequestMapping(value = "/selectAlarmreceipt", method = {RequestMethod.GET})
-    public ApiResult selectAlarmreceipt(@RequestParam String alarmreceiptid, HttpServletRequest request) throws Exception {
+    public ApiResult selectAlarmreceipt(String alarmreceiptid, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(alarmreceiptid)) {
             return ApiResult.fail();
         }
