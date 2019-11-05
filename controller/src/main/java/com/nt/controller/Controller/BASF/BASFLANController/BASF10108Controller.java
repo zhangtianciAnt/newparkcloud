@@ -1,15 +1,13 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Alarmreceipt;
-import com.nt.service_BASF.BASF10108Services;
+import com.nt.service_BASF.AlarmreceiptServices;
 import com.nt.utils.ApiResult;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BASF10108Controller {
 
     @Autowired
-    private BASF10108Services bASF10108Services;
+    private AlarmreceiptServices alarmreceiptServices;
 
     @Autowired
     private TokenService tokenService;
@@ -29,7 +27,7 @@ public class BASF10108Controller {
         String userid = tokenModel.getUserId();
         Alarmreceipt alarmreceipt = new Alarmreceipt();
         alarmreceipt.setOwner(userid);
-        return ApiResult.success(bASF10108Services.getList(alarmreceipt));
+        return ApiResult.success(alarmreceiptServices.getList(alarmreceipt));
     }
 
     @RequestMapping(value = "/createAlarmreceipt", method = {RequestMethod.POST})
@@ -38,7 +36,16 @@ public class BASF10108Controller {
             return ApiResult.fail();
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        bASF10108Services.insert(alarmreceipt, tokenModel);
+        alarmreceiptServices.insert(alarmreceipt, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/selectAlarmreceipt", method = {RequestMethod.GET})
+    public ApiResult selectAlarmreceipt(@RequestParam String alarmreceiptid, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(alarmreceiptid)) {
+            return ApiResult.fail();
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(alarmreceiptServices.select(alarmreceiptid));
     }
 }
