@@ -97,8 +97,8 @@ public class BASF10105Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/5 15:58
      */
-    @RequestMapping(value = "/selectById", method = {RequestMethod.POST})
-    public ApiResult selectById(@RequestBody String deviceid, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String deviceid, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(deviceid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
