@@ -61,4 +61,18 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
         deviceinformation.setDeviceinformationid(UUID.randomUUID().toString());
         deviceinformationMapper.insert(deviceinformation);
     }
+
+    /**
+     * @param deviceinformation
+     * @Method Delete
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 删除设备
+     * @Return void
+     * @Date 2019/11/5 15:31
+     */
+    @Override
+    public void delete(Deviceinformation deviceinformation) throws Exception {
+        deviceinformationMapper.delete(deviceinformation);
+    }
 }
