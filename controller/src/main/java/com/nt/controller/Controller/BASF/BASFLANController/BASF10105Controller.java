@@ -45,7 +45,7 @@ public class BASF10105Controller {
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         Deviceinformation deviceinformation = new Deviceinformation();
-        deviceinformation.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        //deviceinformation.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return ApiResult.success(basf10105Services.list(deviceinformation));
     }
 
