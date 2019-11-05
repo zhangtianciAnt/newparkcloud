@@ -3,10 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.DeviceInformationServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +44,7 @@ public class BASF10105Controller {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        Deviceinformation deviceinformation = new Deviceinformation();
-        return ApiResult.success(deviceinFormationServices.list(deviceinformation));
+        return ApiResult.success(deviceinFormationServices.list());
     }
 
     /**
@@ -86,6 +82,7 @@ public class BASF10105Controller {
         if (deviceinformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        deviceinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
         deviceinFormationServices.delete(deviceinformation);
         return ApiResult.success();
     }

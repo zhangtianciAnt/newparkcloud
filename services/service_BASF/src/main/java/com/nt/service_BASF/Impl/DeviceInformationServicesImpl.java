@@ -41,7 +41,8 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/11/4 16:35
      */
     @Override
-    public List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception {
+    public List<Deviceinformation> list() throws Exception {
+        Deviceinformation deviceinformation = new Deviceinformation();
         return deviceinformationMapper.select(deviceinformation);
     }
 
@@ -73,7 +74,8 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      */
     @Override
     public void delete(Deviceinformation deviceinformation) throws Exception {
-        deviceinformationMapper.delete(deviceinformation);
+        //逻辑删除（status -> "1"）
+        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
     }
 
     /**
