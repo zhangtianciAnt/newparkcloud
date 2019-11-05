@@ -52,18 +52,6 @@ public class JapanCondominium extends BaseModel {
     private String teamid;
 
     /**
-     * 予算番号
-     */
-    @Column(name = "NUMBER")
-    private String number;
-
-    /**
-     * 类别
-     */
-    @Column(name = "TYPE")
-    private String type;
-
-    /**
      * 出張都市
      */
     @Column(name = "BUSINESSCITY")
@@ -76,10 +64,22 @@ public class JapanCondominium extends BaseModel {
     private String travelclubplace;
 
     /**
+     * 预算单位
+     */
+    @Column(name = "BUDGETUNIT")
+    private String budgetunit;
+
+    /**
+     * マンション会社
+     */
+    @Column(name = "CONDOMINIUMCOMPANY")
+    private String condominiumcompany;
+
+    /**
      * マンション場所
      */
-    @Column(name = "MANSIONLOCATION")
-    private String mansionlocation;
+    @Column(name = "APARTMENTPLACE")
+    private String apartmentplace;
 
     /**
      * 部屋番号
@@ -143,28 +143,28 @@ public class JapanCondominium extends BaseModel {
     private String dailycost;
 
     /**
-     * 残劵
+     * 卷类别
      */
     @Column(name = "COPUNTYPE")
     private String copuntype;
 
     /**
-     * 残劵数量
+     * 残劵数
      */
     @Column(name = "COPUNNUMBER")
     private String copunnumber;
 
     /**
-     * 抵值金额
+     * 卷价值
      */
     @Column(name = "COPUNVALUE")
     private String copunvalue;
 
     /**
-     * 使用数量
+     * 使用卷数
      */
-    @Column(name = "USENUMBER")
-    private String usenumber;
+    @Column(name = "COPUNUSENUMBER")
+    private String copunusenumber;
 
     /**
      * 残金金额
@@ -185,7 +185,7 @@ public class JapanCondominium extends BaseModel {
     private String paymoney;
 
     /**
-     * 备注
+     * 備考
      */
     @Column(name = "REMARKS")
     private String remarks;
