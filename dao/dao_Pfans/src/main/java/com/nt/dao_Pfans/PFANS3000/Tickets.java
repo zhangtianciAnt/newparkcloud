@@ -53,8 +53,8 @@ public class Tickets extends BaseModel {
     /**
      * 类别
      */
-    @Column(name = "TYPE")
-    private String type;
+    @Column(name = "TICKETSTYPE")
+    private String ticketstype;
 
     /**
      * 身份证号码
