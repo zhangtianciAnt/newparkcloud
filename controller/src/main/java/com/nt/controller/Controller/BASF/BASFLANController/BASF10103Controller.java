@@ -1,10 +1,13 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
-import com.nt.dao_BASF.Usergroupdetailed;
+
 import com.nt.dao_BASF.Usergroup;
+import com.nt.dao_BASF.Usergroupdetailed;
+import com.nt.dao_BASF.VO.UsergroupVo;
 import com.nt.service_BASF.UsergroupServices;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,8 +37,7 @@ public class BASF10103Controller {
     private TokenService tokenService;
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
-        Usergroup usergroup = new Usergroup();
+    public ApiResult list(@RequestBody Usergroup usergroup ,HttpServletRequest request) throws Exception {
         return ApiResult.success(usergroupServices.list(usergroup));
     }
 
@@ -43,5 +45,19 @@ public class BASF10103Controller {
     public ApiResult getOneUserGroupDetailed(@RequestBody Usergroupdetailed usergroupdetailed, HttpServletRequest request) throws Exception {
 
         return ApiResult.success(usergroupServices.getDetailedList(usergroupdetailed));
+    }
+
+    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
+    public ApiResult insert(@RequestBody UsergroupVo usergroupVo, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        usergroupServices.insert(tokenModel,usergroupVo);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody UsergroupVo usergroupVo, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        usergroupServices.update(tokenModel,usergroupVo);
+        return ApiResult.success();
     }
 }
