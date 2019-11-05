@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Usergroup;
+import com.nt.dao_BASF.Usergroupdetailed;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ import java.util.List;
  */
 public interface BASF10103Services {
 
-    //获取设备列表
+    //获取用户组列表
     List<Usergroup> list(Usergroup usergroup) throws Exception;
+
+    //获取用户组明细列表
+    List<Usergroupdetailed> getDetailedList(Usergroupdetailed usergroupdetailed) throws Exception;
 }

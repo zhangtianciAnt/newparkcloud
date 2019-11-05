@@ -1,11 +1,13 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.Usergroupdetailed;
 import com.nt.dao_BASF.Usergroup;
 import com.nt.service_BASF.BASF10103Services;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +36,12 @@ public class BASF10103Controller {
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         Usergroup usergroup = new Usergroup();
-        usergroup.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return ApiResult.success(basf10103Services.list(usergroup));
+    }
+
+    @RequestMapping(value = "/getOneUserGroupDetailed", method = {RequestMethod.POST})
+    public ApiResult getOneUserGroupDetailed(@RequestBody Usergroupdetailed usergroupdetailed, HttpServletRequest request) throws Exception {
+
+        return ApiResult.success(basf10103Services.getDetailedList(usergroupdetailed));
     }
 }

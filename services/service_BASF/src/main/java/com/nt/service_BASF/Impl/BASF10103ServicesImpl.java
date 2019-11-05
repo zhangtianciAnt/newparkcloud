@@ -1,8 +1,10 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Usergroup;
+import com.nt.dao_BASF.Usergroupdetailed;
 import com.nt.service_BASF.BASF10103Services;
 import com.nt.service_BASF.mapper.UsergroupMapper;
+import com.nt.service_BASF.mapper.UsergroupdetailedMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class BASF10103ServicesImpl implements BASF10103Services {
 
     @Autowired
     private UsergroupMapper usergroupMapper;
+    @Autowired
+    private UsergroupdetailedMapper usergroupdetailedMapper;
 
     /**
      * @param usergroup
@@ -36,10 +40,24 @@ public class BASF10103ServicesImpl implements BASF10103Services {
      * @Version 1.0
      * @Description
      * @Return java.util.List<Usergroup>
-     * @Date 2019/11/4 16:35
+     * @Date 2019/11/4
      */
     @Override
     public List<Usergroup> list(Usergroup usergroup) throws Exception {
         return usergroupMapper.select(usergroup);
+    }
+
+    /**
+     * @param usergroupdetailed
+     * @Method list
+     * @Author SUN
+     * @Version 1.0
+     * @Description
+     * @Return java.util.List<Usergroupdetailed>
+     * @Date 2019/11/5
+     */
+    @Override
+    public List<Usergroupdetailed> getDetailedList(Usergroupdetailed usergroupdetailed) throws Exception {
+        return usergroupdetailedMapper.select(usergroupdetailed);
     }
 }
