@@ -2,8 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Alarmreceipt;
 import com.nt.service_BASF.AlarmreceiptServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.StringUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class BASF10108Controller {
     @RequestMapping(value = "/createAlarmreceipt", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Alarmreceipt alarmreceipt, HttpServletRequest request) throws Exception {
         if (alarmreceipt == null) {
-            return ApiResult.fail();
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         alarmreceiptServices.insert(alarmreceipt, tokenModel);
@@ -43,7 +42,7 @@ public class BASF10108Controller {
     @RequestMapping(value = "/selectAlarmreceipt", method = {RequestMethod.GET})
     public ApiResult selectAlarmreceipt(String alarmreceiptid, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(alarmreceiptid)) {
-            return ApiResult.fail();
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(alarmreceiptServices.select(alarmreceiptid));
