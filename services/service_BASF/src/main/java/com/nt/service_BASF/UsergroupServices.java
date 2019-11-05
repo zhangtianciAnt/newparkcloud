@@ -2,6 +2,8 @@ package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Usergroup;
 import com.nt.dao_BASF.Usergroupdetailed;
+import com.nt.dao_BASF.VO.UsergroupVo;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -21,4 +23,10 @@ public interface UsergroupServices {
 
     //获取用户组明细列表
     List<Usergroupdetailed> getDetailedList(Usergroupdetailed usergroupdetailed) throws Exception;
+
+    //insert用户组
+    void insert(TokenModel tokenModel,UsergroupVo usergroupVo) throws Exception;
+
+    //update用户组
+    void update(TokenModel tokenModel,UsergroupVo usergroupVo) throws Exception;
 }
