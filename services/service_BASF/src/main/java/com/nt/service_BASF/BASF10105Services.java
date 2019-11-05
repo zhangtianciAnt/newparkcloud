@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -17,4 +18,8 @@ public interface BASF10105Services {
 
     //获取设备列表
     public List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception;
+
+    //创建设备
+    void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
+
 }
