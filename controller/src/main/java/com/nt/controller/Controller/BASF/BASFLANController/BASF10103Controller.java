@@ -2,7 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Usergroupdetailed;
 import com.nt.dao_BASF.Usergroup;
-import com.nt.service_BASF.BASF10103Services;
+import com.nt.service_BASF.UsergroupServices;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.services.TokenService;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BASF10103Controller {
 
     @Autowired
-    private BASF10103Services basf10103Services;
+    private UsergroupServices usergroupServices;
 
     @Autowired
     private TokenService tokenService;
@@ -36,12 +36,12 @@ public class BASF10103Controller {
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         Usergroup usergroup = new Usergroup();
-        return ApiResult.success(basf10103Services.list(usergroup));
+        return ApiResult.success(usergroupServices.list(usergroup));
     }
 
     @RequestMapping(value = "/getOneUserGroupDetailed", method = {RequestMethod.POST})
     public ApiResult getOneUserGroupDetailed(@RequestBody Usergroupdetailed usergroupdetailed, HttpServletRequest request) throws Exception {
 
-        return ApiResult.success(basf10103Services.getDetailedList(usergroupdetailed));
+        return ApiResult.success(usergroupServices.getDetailedList(usergroupdetailed));
     }
 }

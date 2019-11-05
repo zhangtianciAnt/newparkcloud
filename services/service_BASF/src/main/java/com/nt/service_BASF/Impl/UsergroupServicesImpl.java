@@ -2,7 +2,7 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Usergroup;
 import com.nt.dao_BASF.Usergroupdetailed;
-import com.nt.service_BASF.BASF10103Services;
+import com.nt.service_BASF.UsergroupServices;
 import com.nt.service_BASF.mapper.UsergroupMapper;
 import com.nt.service_BASF.mapper.UsergroupdetailedMapper;
 import org.slf4j.Logger;
@@ -24,9 +24,9 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class BASF10103ServicesImpl implements BASF10103Services {
+public class UsergroupServicesImpl implements UsergroupServices {
 
-    private static Logger log = LoggerFactory.getLogger(BASF10103ServicesImpl.class);
+    private static Logger log = LoggerFactory.getLogger(UsergroupServicesImpl.class);
 
     @Autowired
     private UsergroupMapper usergroupMapper;
