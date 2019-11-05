@@ -1,7 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Emailmessage;
-import com.nt.service_BASF.BASF10106Service;
+import com.nt.service_BASF.EmailMessageService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
@@ -18,24 +18,24 @@ import javax.servlet.http.HttpServletRequest;
  * 邮件通知
  */
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/BASF10106")
 public class BASF10106Controller {
 
     @Autowired
     private TokenService tokenService;
 
     @Autowired
-    private BASF10106Service basf10106Service;
+    private EmailMessageService emailMessageService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
     public ApiResult get(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
-        return ApiResult.success(basf10106Service.get(emailmessage));
+        return ApiResult.success(emailMessageService.get(emailmessage));
     }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        int result = basf10106Service.insert(tokenModel, emailmessage);
+        int result = emailMessageService.insert(tokenModel, emailmessage);
         if (result > 0) {
             return ApiResult.success(MsgConstants.INFO_01);
         } else {
@@ -46,7 +46,7 @@ public class BASF10106Controller {
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        int result = basf10106Service.update(tokenModel, emailmessage);
+        int result = emailMessageService.update(tokenModel, emailmessage);
         if (result > 0) {
             return ApiResult.success(MsgConstants.INFO_01);
         } else {

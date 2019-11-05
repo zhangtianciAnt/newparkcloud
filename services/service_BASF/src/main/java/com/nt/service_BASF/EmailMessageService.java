@@ -5,7 +5,7 @@ import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
-public interface BASF10106Service {
+public interface EmailMessageService {
     List<Emailmessage> get(Emailmessage emailmessage) throws Exception;
 
     int insert(TokenModel tokenModel, Emailmessage emailmessage) throws Exception;

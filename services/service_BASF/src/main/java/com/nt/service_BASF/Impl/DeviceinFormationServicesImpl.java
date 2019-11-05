@@ -1,7 +1,7 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Deviceinformation;
-import com.nt.service_BASF.BASF10105Services;
+import com.nt.service_BASF.DeviceinFormationServices;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
@@ -24,19 +24,19 @@ import java.util.UUID;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class BASF10105ServicesImpl implements BASF10105Services {
+public class DeviceinFormationServicesImpl implements DeviceinFormationServices {
 
-    private static Logger log = LoggerFactory.getLogger(BASF10105ServicesImpl.class);
+    private static Logger log = LoggerFactory.getLogger(DeviceinFormationServicesImpl.class);
 
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;
 
     /**
+     * @param deviceinformation
      * @Method list
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取设备列表
-     * @param deviceinformation
      * @Return java.util.List<Deviceinformation>
      * @Date 2019/11/4 16:35
      */
@@ -46,12 +46,12 @@ public class BASF10105ServicesImpl implements BASF10105Services {
     }
 
     /**
-     * @Method insert
-     * @Author SKAIXX
-     * @Version  1.0
-     * @Description 创建设备
      * @param deviceinformation
      * @param tokenModel
+     * @Method insert
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 创建设备
      * @Return void
      * @Date 2019/11/4 18:48
      */
