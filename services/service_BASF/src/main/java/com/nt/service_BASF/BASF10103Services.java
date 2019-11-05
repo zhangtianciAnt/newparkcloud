@@ -16,5 +16,5 @@ import java.util.List;
 public interface BASF10103Services {
 
     //获取设备列表
-    public List<Usergroup> list(Usergroup usergroup) throws Exception;
+    List<Usergroup> list(Usergroup usergroup) throws Exception;
 }
