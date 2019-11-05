@@ -1,8 +1,12 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.DeviceInformationServices;
-import com.nt.utils.*;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +37,11 @@ public class BASF10105Controller {
     private TokenService tokenService;
 
     /**
+     * @param request
      * @Method list
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取设备列表
-     * @param request
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/4 19:38
      */
@@ -48,12 +52,12 @@ public class BASF10105Controller {
     }
 
     /**
-     * @Method create
-     * @Author SKAIXX
-     * @Version  1.0
-     * @Description 创建设备
      * @param deviceinformation
      * @param request
+     * @Method create
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 创建设备
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/4 19:39
      */
@@ -68,12 +72,12 @@ public class BASF10105Controller {
     }
 
     /**
-     * @Method delete
-     * @Author SKAIXX
-     * @Version  1.0
-     * @Description 删除设备
      * @param deviceinformation
      * @param request
+     * @Method delete
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 删除设备
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/5 15:37
      */
@@ -83,6 +87,44 @@ public class BASF10105Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         deviceinFormationServices.delete(deviceinformation);
+        return ApiResult.success();
+    }
+
+    /**
+     * @param deviceid
+     * @param request
+     * @Method selectById
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 获取设备详情
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/5 15:58
+     */
+    @RequestMapping(value = "/selectById", method = {RequestMethod.POST})
+    public ApiResult selectById(@RequestBody String deviceid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(deviceid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(deviceinFormationServices.one(deviceid));
+    }
+
+    /**
+     * @param deviceinformation
+     * @param request
+     * @Method update
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 更新设备详情
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/5 16:08
+     */
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody Deviceinformation deviceinformation, HttpServletRequest request) throws Exception {
+        if (deviceinformation == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        deviceinFormationServices.update(deviceinformation, tokenModel);
         return ApiResult.success();
     }
 }

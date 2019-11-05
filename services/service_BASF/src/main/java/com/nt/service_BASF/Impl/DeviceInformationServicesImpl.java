@@ -75,4 +75,34 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     public void delete(Deviceinformation deviceinformation) throws Exception {
         deviceinformationMapper.delete(deviceinformation);
     }
+
+    /**
+     * @param deviceId
+     * @Method one
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 获取设备详情
+     * @Return com.nt.dao_BASF.Deviceinformation
+     * @Date 2019/11/5 15:53
+     */
+    @Override
+    public Deviceinformation one(String deviceid) throws Exception {
+        return deviceinformationMapper.selectByPrimaryKey(deviceid);
+    }
+
+    /**
+     * @param deviceinformation
+     * @param tokenModel
+     * @Method update
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 更新设备详情
+     * @Return void
+     * @Date 2019/11/5 16:07
+     */
+    @Override
+    public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
+        deviceinformation.preUpdate(tokenModel);
+        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+    }
 }

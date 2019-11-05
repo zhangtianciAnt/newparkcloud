@@ -25,4 +25,9 @@ public interface DeviceInformationServices {
     //删除设备
     void delete(Deviceinformation deviceinformation) throws Exception;
 
+    //获取设备详情
+    Deviceinformation one(String deviceid) throws Exception;
+
+    //更新设备详情
+    void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
 }
