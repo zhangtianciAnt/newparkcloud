@@ -1,7 +1,7 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Deviceinformation;
-import com.nt.service_BASF.DeviceinFormationServices;
+import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
@@ -24,9 +24,9 @@ import java.util.UUID;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class DeviceinFormationServicesImpl implements DeviceinFormationServices {
+public class DeviceInformationServicesImpl implements DeviceInformationServices {
 
-    private static Logger log = LoggerFactory.getLogger(DeviceinFormationServicesImpl.class);
+    private static Logger log = LoggerFactory.getLogger(DeviceInformationServicesImpl.class);
 
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;

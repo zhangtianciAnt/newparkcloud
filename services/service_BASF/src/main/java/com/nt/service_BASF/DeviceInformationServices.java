@@ -14,7 +14,7 @@ import java.util.List;
  * @Date: 2019/11/4 16:09
  * @Version: 1.0
  */
-public interface DeviceinFormationServices {
+public interface DeviceInformationServices {
 
     //获取设备列表
     public List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception;
