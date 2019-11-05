@@ -1,8 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
-import com.nt.dao_BASF.Alarmreceipt;
 import com.nt.dao_BASF.Deviceinformation;
-import com.nt.service_BASF.BASF10105Services;
+import com.nt.service_BASF.DeviceinFormationServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -28,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BASF10105Controller {
 
     @Autowired
-    private BASF10105Services basf10105Services;
+    private DeviceinFormationServices deviceinFormationServices;
 
     @Autowired
     private TokenService tokenService;
@@ -46,7 +45,7 @@ public class BASF10105Controller {
     public ApiResult list(HttpServletRequest request) throws Exception {
         Deviceinformation deviceinformation = new Deviceinformation();
         //deviceinformation.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-        return ApiResult.success(basf10105Services.list(deviceinformation));
+        return ApiResult.success(deviceinFormationServices.list(deviceinformation));
     }
 
     /**
@@ -65,7 +64,7 @@ public class BASF10105Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        basf10105Services.insert(deviceinformation, tokenModel);
+        deviceinFormationServices.insert(deviceinformation, tokenModel);
         return ApiResult.success();
     }
 }
