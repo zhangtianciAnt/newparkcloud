@@ -1,7 +1,7 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Emailmessage;
-import com.nt.service_BASF.BASF10106Service;
+import com.nt.service_BASF.EmailMessageService;
 import com.nt.service_BASF.mapper.EmailmessageMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class BASF10106ServiceImpl implements BASF10106Service {
+public class EmailMessageServiceImpl implements EmailMessageService {
 
     @Autowired
     private EmailmessageMapper emailmessageMapper;
