@@ -14,7 +14,7 @@ import java.util.List;
  * @Date: 2019/11/4 16:09
  * @Version: 1.0
  */
-public interface BASF10103Services {
+public interface UsergroupServices {
 
     //获取用户组列表
     List<Usergroup> list(Usergroup usergroup) throws Exception;
