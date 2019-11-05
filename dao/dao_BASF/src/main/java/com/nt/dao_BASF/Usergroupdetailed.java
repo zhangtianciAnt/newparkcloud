@@ -11,18 +11,18 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "usergroup")
-public class Usergroup extends BaseModel {
+@Table(name = "usergroupdetailed")
+public class Usergroupdetailed extends BaseModel {
     @Id
+    private String Usergroupdetailedid;
+
+    /**
+     * 所属用户组
+     */
     private String usergroupid;
 
     /**
-     * 用户组名称
+     * 用户组组员
      */
-    private String usergroupname;
-
-    /**
-     * 用户组说明
-     */
-    private String remark;
+    private String teammember;
 }
