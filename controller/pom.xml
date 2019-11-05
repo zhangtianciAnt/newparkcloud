@@ -62,6 +62,11 @@
         </dependency>
         <dependency>
             <groupId>com.nt</groupId>
+            <artifactId>dao_BASF</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
             <artifactId>service_BASF</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
