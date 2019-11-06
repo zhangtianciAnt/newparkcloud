@@ -25,8 +25,8 @@ public interface UsergroupServices {
     List<Usergroupdetailed> getDetailedList(Usergroupdetailed usergroupdetailed) throws Exception;
 
     //insert用户组
-    void insert(TokenModel tokenModel,UsergroupVo usergroupVo) throws Exception;
+    void insert(TokenModel tokenModel, UsergroupVo usergroupVo) throws Exception;
 
     //update用户组
-    void update(TokenModel tokenModel,UsergroupVo usergroupVo) throws Exception;
+    void update(TokenModel tokenModel, UsergroupVo usergroupVo) throws Exception;
 }
