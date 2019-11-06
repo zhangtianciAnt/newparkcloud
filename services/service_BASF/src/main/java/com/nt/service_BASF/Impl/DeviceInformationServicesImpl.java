@@ -105,6 +105,6 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     @Override
     public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preUpdate(tokenModel);
-        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+        deviceinformationMapper.updateByPrimaryKey(deviceinformation);
     }
 }
