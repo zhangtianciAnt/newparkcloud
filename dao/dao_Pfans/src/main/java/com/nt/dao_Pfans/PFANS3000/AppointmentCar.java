@@ -91,13 +91,13 @@ public class AppointmentCar extends BaseModel {
      * 使用开始时间
      */
     @Column(name = "STARTTIME")
-    private String starttime;
+    private Date starttime;
 
     /**
      * 使用结束时间（预计）
      */
     @Column(name = "ENDTIME")
-    private String endtime;
+    private Date endtime;
 
     /**
      * 航班号
