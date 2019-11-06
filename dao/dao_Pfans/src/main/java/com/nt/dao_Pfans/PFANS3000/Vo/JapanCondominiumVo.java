@@ -13,11 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 public class JapanCondominiumVo {
     /**
-     * 离职申请
+     * 日本出張のマンション予約
      */
     private JapanCondominium japancondominium;
     /**
-     * 引継项目
+     * 使用券
      */
     private List<UseCoupon> usecoupon;
 
