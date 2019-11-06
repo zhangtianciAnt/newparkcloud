@@ -17,6 +17,9 @@ public class FlexibleWork extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 弹性工作制ID
+     */
     @Id
     @Column(name = "FLEXIBLEWORK_ID")
     private String flexibleworkid;
