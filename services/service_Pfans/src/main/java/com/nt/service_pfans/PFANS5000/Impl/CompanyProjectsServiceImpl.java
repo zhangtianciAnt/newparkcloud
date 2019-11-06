@@ -39,7 +39,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public void upd (CompanyProjects companyProjects, TokenModel tokenModel) throws Exception {
         companyProjects.preUpdate(tokenModel);
-        companyprojectsMapper.updateByPrimaryKeySelective(companyProjects);
+        companyprojectsMapper.updateByPrimaryKey(companyProjects);
     }
     @Override
     public void insert(CompanyProjects companyProjects, TokenModel tokenModel) throws Exception {

@@ -1,7 +1,10 @@
 package com.nt.service_pfans.PFANS5000;
 
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -18,4 +21,7 @@ public interface LogManagementService {
     void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
 
     LogManagement One(String Logmanagement_id) throws Exception;
+
+    List<LogManagement> importUser(HttpServletRequest request, TokenModel tokenModel, String flag) throws Exception ;
+    String downloadUserModel() throws LogicalException;
 }

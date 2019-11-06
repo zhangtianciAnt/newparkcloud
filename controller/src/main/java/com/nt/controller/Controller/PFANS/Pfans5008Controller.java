@@ -104,5 +104,26 @@ public class Pfans5008Controller {
         logmanagement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
     }
+
+    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request,String flag){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(logmanagementService.importUser(request,tokenModel,flag));
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
+    @RequestMapping(value = "/downloadUserModel",method={RequestMethod.GET})
+    public ApiResult downloadUserModel(){
+        try{
+            return ApiResult.success(logmanagementService.downloadUserModel());
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
 }
 
