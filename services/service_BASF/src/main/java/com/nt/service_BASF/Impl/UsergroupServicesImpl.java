@@ -84,12 +84,10 @@ public class UsergroupServicesImpl implements UsergroupServices {
         usergroupMapper.insert(usergroup);
 
         String[] strArray = null;
-        if(usergroupVo.getTeammember()!="")
-        {
+        if (usergroupVo.getTeammember() != "") {
             strArray = usergroupVo.getTeammember().split(",");
 
-            for(int i=0;i<strArray.length;i++)
-            {
+            for (int i = 0; i < strArray.length; i++) {
                 Usergroupdetailed usergroupdetailed = new Usergroupdetailed();
                 usergroupdetailed.preInsert(tokenModel);
                 usergroupdetailed.setUsergroupdetailedid(UUID.randomUUID().toString());
@@ -123,12 +121,10 @@ public class UsergroupServicesImpl implements UsergroupServices {
         usergroupdetailedMapper.delete(usergroupdetailed);
 
         String[] strArray = null;
-        if(usergroupVo.getTeammember()!="")
-        {
+        if (usergroupVo.getTeammember() != "") {
             strArray = usergroupVo.getTeammember().split(",");
 
-            for(int i=0;i<strArray.length;i++)
-            {
+            for (int i = 0; i < strArray.length; i++) {
                 Usergroupdetailed usergroupdetailednew = new Usergroupdetailed();
                 usergroupdetailednew.preInsert(tokenModel);
                 usergroupdetailednew.setUsergroupdetailedid(UUID.randomUUID().toString());
