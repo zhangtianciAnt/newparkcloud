@@ -15,6 +15,9 @@ public interface AlarmreceiptServices {
     //创建报警单信息
     void insert(Alarmreceipt alarmreceipt, TokenModel tokenModel) throws Exception;
 
+    //更新报警单信息
+    void update(Alarmreceipt alarmreceipt, TokenModel tokenModel) throws Exception;
+
     //获取报警单信息
     AlarmreceiptVo select(String alarmreceiptid) throws Exception;
 }

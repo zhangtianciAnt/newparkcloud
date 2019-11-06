@@ -39,6 +39,16 @@ public class BASF10108Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/updateAlarmreceipt", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody Alarmreceipt alarmreceipt, HttpServletRequest request) throws Exception {
+        if (alarmreceipt == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        alarmreceiptServices.update(alarmreceipt, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/selectAlarmreceipt", method = {RequestMethod.GET})
     public ApiResult selectAlarmreceipt(String alarmreceiptid, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(alarmreceiptid)) {
