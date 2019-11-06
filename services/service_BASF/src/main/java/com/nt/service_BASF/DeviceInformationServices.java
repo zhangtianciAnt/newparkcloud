@@ -20,14 +20,14 @@ public interface DeviceInformationServices {
     List<Deviceinformation> list() throws Exception;
 
     //创建设备
-    int insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
+    void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
 
     //删除设备
-    int delete(Deviceinformation deviceinformation) throws Exception;
+    void delete(Deviceinformation deviceinformation) throws Exception;
 
     //获取设备详情
     Deviceinformation one(String deviceid) throws Exception;
 
     //更新设备详情
-    int update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
+    void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
 }
