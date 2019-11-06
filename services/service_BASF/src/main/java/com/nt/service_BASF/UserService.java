@@ -15,7 +15,7 @@ import java.util.List;
  * @Version: 1.0
  */
 public interface UserService {
-    List<Emailmessage> get(User user) throws Exception;
+    List<User> get(User user) throws Exception;
 
     void insert(TokenModel tokenModel, User user) throws Exception;
 
