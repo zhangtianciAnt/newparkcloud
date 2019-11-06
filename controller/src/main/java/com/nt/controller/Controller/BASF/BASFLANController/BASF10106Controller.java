@@ -3,7 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import com.nt.dao_BASF.Emailmessage;
 import com.nt.service_BASF.EmailMessageService;
 import com.nt.utils.ApiResult;
-import com.nt.utils.MsgConstants;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +49,7 @@ public class BASF10106Controller {
     @RequestMapping(value = "/del", method = {RequestMethod.POST})
     public ApiResult del(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+        emailmessage.setStatus(AuthConstants.DEL_FLAG_DELETE);
         emailMessageService.del(tokenModel, emailmessage);
         return ApiResult.success();
     }

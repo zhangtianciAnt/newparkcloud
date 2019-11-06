@@ -1,11 +1,8 @@
 package com.nt.service_BASF.Impl;
 
-import cn.hutool.socket.protocol.MsgEncoder;
 import com.nt.dao_BASF.Emailmessage;
 import com.nt.service_BASF.EmailMessageService;
 import com.nt.service_BASF.mapper.EmailmessageMapper;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +37,6 @@ public class EmailMessageServiceImpl implements EmailMessageService {
     @Override
     public void del(TokenModel tokenModel, Emailmessage emailmessage) throws Exception {
         emailmessage.preUpdate(tokenModel);
-        emailmessage.setStatus(AuthConstants.DEL_FLAG_DELETE);
         emailmessageMapper.updateByPrimaryKeySelective(emailmessage);
     }
 }
