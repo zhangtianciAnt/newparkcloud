@@ -63,8 +63,12 @@ public class BASF10105Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        deviceinFormationServices.insert(deviceinformation, tokenModel);
-        return ApiResult.success();
+        int result = deviceinFormationServices.insert(deviceinformation, tokenModel);
+        if (result > 0) {
+            return ApiResult.success(MsgConstants.INFO_01);
+        } else {
+            return ApiResult.fail(MsgConstants.ERROR_01);
+        }
     }
 
     /**
@@ -83,8 +87,12 @@ public class BASF10105Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         deviceinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
-        deviceinFormationServices.delete(deviceinformation);
-        return ApiResult.success();
+        int result = deviceinFormationServices.delete(deviceinformation);
+        if (result > 0) {
+            return ApiResult.success(MsgConstants.INFO_01);
+        } else {
+            return ApiResult.fail(MsgConstants.ERROR_01);
+        }
     }
 
     /**
@@ -121,7 +129,11 @@ public class BASF10105Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        deviceinFormationServices.update(deviceinformation, tokenModel);
-        return ApiResult.success();
+        int result = deviceinFormationServices.update(deviceinformation, tokenModel);
+        if (result > 0) {
+            return ApiResult.success(MsgConstants.INFO_01);
+        } else {
+            return ApiResult.fail(MsgConstants.ERROR_01);
+        }
     }
 }

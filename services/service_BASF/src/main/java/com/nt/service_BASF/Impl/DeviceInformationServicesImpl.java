@@ -57,10 +57,10 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/11/4 18:48
      */
     @Override
-    public void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
+    public int insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preInsert(tokenModel);
         deviceinformation.setDeviceinformationid(UUID.randomUUID().toString());
-        deviceinformationMapper.insert(deviceinformation);
+        return deviceinformationMapper.insert(deviceinformation);
     }
 
     /**
@@ -73,9 +73,9 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/11/5 15:31
      */
     @Override
-    public void delete(Deviceinformation deviceinformation) throws Exception {
+    public int delete(Deviceinformation deviceinformation) throws Exception {
         //逻辑删除（status -> "1"）
-        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+        return deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
     }
 
     /**
@@ -103,8 +103,8 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/11/5 16:07
      */
     @Override
-    public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
+    public int update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preUpdate(tokenModel);
-        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+        return deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
     }
 }
