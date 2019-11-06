@@ -28,7 +28,6 @@ public class Citation extends BaseModel {
     private String user_id;
     @Column(name = "REMARKS")
     private String remarks;
-    @OrderBy("ASC")
     @Column(name = "ROWINDEX")
-    private String rowindex;
+    private Integer rowindex;
 }
