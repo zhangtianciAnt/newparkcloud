@@ -3,7 +3,6 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import com.nt.dao_Pfans.PFANS2000.Citation;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
-import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.service_pfans.PFANS2000.mapper.StaffexitprocedureMapper;
 import com.nt.service_pfans.PFANS2000.mapper.CitationMapper;
@@ -32,32 +31,6 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         return staffexitprocedureMapper.select(staffexitprocedure);
     }
 
-    //新建
-    @Override
-    public void create(Staffexitprocedure staffexitprocedure, TokenModel tokenModel) throws Exception {
-        if (!(staffexitprocedure.equals(null) || staffexitprocedure.equals(""))) {
-            staffexitprocedure.preInsert(tokenModel);
-            staffexitprocedure.setStaffexitprocedure_id(UUID.randomUUID().toString());
-            staffexitprocedureMapper.insertSelective(staffexitprocedure);
-        }
-    }
-
-    //编辑
-//    @Override
-//    public void update(Staffexitprocedure staffexitprocedure, TokenModel tokenModel) throws Exception {
-//        staffexitprocedure.preUpdate(tokenModel);
-//        staffexitprocedureMapper.updateByPrimaryKey(staffexitprocedure);
-//    }
-
-    //按id查询
-    @Override
-    public Staffexitprocedure one(String staffexitprocedure_id) throws Exception {
-        if (staffexitprocedure_id.equals("")) {
-            return null;
-        }
-        return staffexitprocedureMapper.selectByPrimaryKey(staffexitprocedure_id);
-    }
-
     //按id查询
     @Override
     public StaffexitprocedureVo selectById(String staffexitprocedureid) throws Exception {
@@ -70,6 +43,31 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         staffVo.setCitation(citationlist);
         return staffVo;
     }
+
+    //更新
+    @Override
+    public void update(StaffexitprocedureVo staffexitprocedureVo, TokenModel tokenModel) throws Exception {
+        Staffexitprocedure staffexitprocedure = new Staffexitprocedure();
+        BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitprocedure(), staffexitprocedure);
+        staffexitprocedure.preUpdate(tokenModel);
+        staffexitprocedureMapper.updateByPrimaryKey(staffexitprocedure);
+        String staffexitprocedureid = staffexitprocedure.getStaffexitprocedure_id();
+        Citation cita = new Citation();
+        cita.setStaffexitprocedure_id(staffexitprocedureid);
+        citationMapper.delete(cita);
+        List<Citation> citationlist = staffexitprocedureVo.getCitation();
+        if (citationlist != null) {
+            int rowundex = 0;
+            for (Citation citation : citationlist) {
+                rowundex = rowundex + 1;
+                citation.preInsert(tokenModel);
+                citation.setCitation_id(UUID.randomUUID().toString());
+                citation.setStaffexitprocedure_id(staffexitprocedureid);
+                citation.setRowindex(String.valueOf(rowundex));
+                citationMapper.insertSelective(citation);
+            }
+        }
+    }
     //新建
     @Override
     public void insert(StaffexitprocedureVo staffexitprocedureVo, TokenModel tokenModel) throws Exception {
@@ -79,29 +77,16 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         staffexitprocedure.preInsert(tokenModel);
         staffexitprocedure.setStaffexitprocedure_id(staffexitprocedureid);
         staffexitprocedureMapper.insertSelective(staffexitprocedure);
-
         List<Citation> citationlist = staffexitprocedureVo.getCitation();
         if (citationlist != null) {
+            int rowundex = 0;
             for (Citation citation : citationlist) {
+                rowundex = rowundex + 1;
                 citation.preInsert(tokenModel);
                 citation.setCitation_id(UUID.randomUUID().toString());
                 citation.setStaffexitprocedure_id(staffexitprocedureid);
+                citation.setRowindex(String.valueOf(rowundex));
                 citationMapper.insertSelective(citation);
-            }
-        }
-    }
-    //新建
-    @Override
-    public void update(StaffexitprocedureVo staffexitprocedureVo, TokenModel tokenModel) throws Exception {
-        Staffexitprocedure staffexitprocedure = new Staffexitprocedure();
-        BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitprocedure(), staffexitprocedure);
-        staffexitprocedure.preUpdate(tokenModel);
-        staffexitprocedureMapper.updateByPrimaryKey(staffexitprocedure);
-        List<Citation> citationlist = staffexitprocedureVo.getCitation();
-        if (citationlist != null) {
-            for (Citation citation : citationlist) {
-                citation.preUpdate(tokenModel);
-                citationMapper.updateByPrimaryKey(citation);
             }
         }
     }
