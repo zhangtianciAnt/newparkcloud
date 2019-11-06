@@ -31,7 +31,8 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public void updatePurchase(Purchase purchase, TokenModel tokenModel) throws Exception {
-        purchaseMapper.updateByPrimaryKeySelective(purchase);
+        purchase.preUpdate(tokenModel);
+        purchaseMapper.updateByPrimaryKey(purchase);
     }
 
     @Override

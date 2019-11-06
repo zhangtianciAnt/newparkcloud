@@ -32,7 +32,8 @@ public class InterviewRecordServiceImpl implements InterviewRecordService {
 
     @Override
     public void updateInterviewRecord(InterviewRecord interviewrecord, TokenModel tokenModel) throws Exception {
-        interviewrecordMapper.updateByPrimaryKeySelective(interviewrecord);
+        interviewrecord.preUpdate(tokenModel);
+        interviewrecordMapper.updateByPrimaryKey(interviewrecord);
     }
 
     @Override
