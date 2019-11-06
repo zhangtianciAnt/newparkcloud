@@ -32,7 +32,7 @@ public class CasgiftApplyServiceImpl implements CasgiftApplyService {
 
     @Override
     public void updateCasgiftApply(CasgiftApply casgiftapply, TokenModel tokenModel) throws Exception {
-        casgiftapplyMapper.updateByPrimaryKeySelective(casgiftapply);
+        casgiftapplyMapper.updateByPrimaryKey(casgiftapply);
     }
 
     @Override
