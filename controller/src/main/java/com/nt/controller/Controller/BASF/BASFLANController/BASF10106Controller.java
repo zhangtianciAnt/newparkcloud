@@ -36,13 +36,13 @@ public class BASF10106Controller {
     public ApiResult insert(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         emailMessageService.insert(tokenModel, emailmessage);
-        return ApiResult.success(MsgConstants.INFO_01);
+        return ApiResult.success();
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         emailMessageService.update(tokenModel, emailmessage);
-        return ApiResult.success(MsgConstants.INFO_01);
+        return ApiResult.success();
     }
 }
