@@ -163,4 +163,16 @@ public class Judgement extends BaseModel {
     @Column(name = "UPLOADFILE")
     private Date uploadfile;
 
+    /**
+     * 無償设备
+     */
+    @Column(name = "FREEDEVICE")
+    private String freedevice;
+
+    /**
+     * 設備
+     */
+    @Column(name = "EQUIPMENT")
+    private String equipment;
+
 }
