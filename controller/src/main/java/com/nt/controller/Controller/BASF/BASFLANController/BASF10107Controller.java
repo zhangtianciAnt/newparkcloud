@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/BASF10107")
 public class BASF10107Controller {
 
+
     @Autowired
     private TokenService tokenService;
 
@@ -49,6 +50,13 @@ public class BASF10107Controller {
     public ApiResult update(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         emailMessageService.update(tokenModel, emailmessage);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/del", method = {RequestMethod.POST})
+    public ApiResult del(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        emailMessageService.del(tokenModel, emailmessage);
         return ApiResult.success();
     }
 }
