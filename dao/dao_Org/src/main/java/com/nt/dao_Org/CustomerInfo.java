@@ -70,6 +70,18 @@ public class CustomerInfo extends BaseModel {
          */
         private String customername;
         /**
+         * 创建时间
+         */
+        private String personnelclassification;
+        /**
+         * 人员分类
+         */
+        private String creationtime;
+        /**
+         * 证件号
+         */
+        private String documentnumber;
+        /**
          * 手机
          */
         private String mobilenumber;
@@ -77,6 +89,11 @@ public class CustomerInfo extends BaseModel {
          * 邮箱
          */
         private String email;
+        /**
+         * 证件类型
+         */
+        private String documenttype;
+
         /**
          * 身份证号
          */

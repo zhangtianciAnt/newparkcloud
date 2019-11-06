@@ -2,6 +2,7 @@ package com.nt.service_BASF.Impl;
 
 
 import com.nt.dao_BASF.Alarmreceipt;
+import com.nt.dao_BASF.VO.AlarmreceiptVo;
 import com.nt.service_BASF.AlarmreceiptServices;
 import com.nt.service_BASF.mapper.AlarmreceiptMapper;
 import com.nt.utils.dao.TokenModel;
@@ -24,8 +25,8 @@ public class AlarmreceiptServicesImpl implements AlarmreceiptServices {
     private AlarmreceiptMapper alarmreceiptMapper;
 
     @Override
-    public List<Alarmreceipt> getList(Alarmreceipt alarmreceipt) throws Exception {
-        return alarmreceiptMapper.select(alarmreceipt);
+    public List<AlarmreceiptVo> getList() throws Exception {
+        return alarmreceiptMapper.selectAlarmreceiptVoList();
     }
 
     @Override
@@ -36,7 +37,13 @@ public class AlarmreceiptServicesImpl implements AlarmreceiptServices {
     }
 
     @Override
-    public Alarmreceipt select(String alarmreceiptid) throws Exception {
-        return alarmreceiptMapper.selectByPrimaryKey(alarmreceiptid);
+    public void update(Alarmreceipt alarmreceipt, TokenModel tokenModel) throws Exception {
+        alarmreceipt.preUpdate(tokenModel);
+        alarmreceiptMapper.updateByPrimaryKeySelective(alarmreceipt);
+    }
+
+    @Override
+    public AlarmreceiptVo select(String alarmreceiptid) throws Exception {
+        return alarmreceiptMapper.selectAlarmreceiptVo(alarmreceiptid);
     }
 }

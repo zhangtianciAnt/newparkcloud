@@ -1,4 +1,4 @@
-package com.nt.dao_BASF;
+package com.nt.dao_BASF.VO;
 
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "usergroup")
-public class Usergroup extends BaseModel {
+public class UsergroupVo extends BaseModel {
     @Id
     private String usergroupid;
 
@@ -25,4 +24,9 @@ public class Usergroup extends BaseModel {
      * 用户组说明
      */
     private String remark;
+
+    /**
+     * 用户组成员
+     */
+    private String teammember;
 }
