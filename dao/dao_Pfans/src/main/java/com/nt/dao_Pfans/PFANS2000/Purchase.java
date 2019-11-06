@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -170,13 +171,13 @@ public class Purchase  extends BaseModel {
      * 入库日
      */
     @Column(name = "STORAGEDATE")
-    private String storagedate;
+    private Date storagedate;
 
     /**
      * 领取日
      */
     @Column(name = "COLLECTIONDAY")
-    private String collectionday;
+    private Date collectionday;
 
     /**
      * 领取者
@@ -188,7 +189,7 @@ public class Purchase  extends BaseModel {
      * 精算日
      */
     @Column(name = "ACTUARIALDATE")
-    private String actuarialdate;
+    private Date actuarialdate;
 
     /**
      * 精算金額

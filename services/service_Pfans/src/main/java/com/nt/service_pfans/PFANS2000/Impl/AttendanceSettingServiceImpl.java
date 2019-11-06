@@ -33,7 +33,7 @@ public class AttendanceSettingServiceImpl implements AttendanceSettingService {
     @Override
     public void update(AttendanceSetting attendanceSetting, TokenModel tokenModel) throws Exception {
         attendanceSetting.preUpdate(tokenModel);
-        attendanceSettingMapper.updateByPrimaryKeySelective(attendanceSetting);
+        attendanceSettingMapper.updateByPrimaryKey(attendanceSetting);
     }
 
     @Override
