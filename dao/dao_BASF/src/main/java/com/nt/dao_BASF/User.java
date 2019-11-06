@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "User")
+@Table(name = "user")
 public class User extends BaseModel {
     @Id
     private String userid;
