@@ -22,15 +22,15 @@ public class EmailMessageServiceImpl implements EmailMessageService {
     }
 
     @Override
-    public int insert(TokenModel tokenModel, Emailmessage emailmessage) throws Exception {
+    public void insert(TokenModel tokenModel, Emailmessage emailmessage) throws Exception {
         emailmessage.preInsert(tokenModel);
         emailmessage.setEmailmesageid(UUID.randomUUID().toString());
-        return emailmessageMapper.insert(emailmessage);
+        emailmessageMapper.insert(emailmessage);
     }
 
     @Override
-    public int update(TokenModel tokenModel, Emailmessage emailmessage) throws Exception {
+    public void update(TokenModel tokenModel, Emailmessage emailmessage) throws Exception {
         emailmessage.preUpdate(tokenModel);
-        return emailmessageMapper.updateByPrimaryKeySelective(emailmessage);
+        emailmessageMapper.updateByPrimaryKeySelective(emailmessage);
     }
 }
