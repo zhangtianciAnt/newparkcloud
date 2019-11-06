@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS3000.JapanCondominium;
+import com.nt.dao_Pfans.PFANS3000.Vo.JapanCondominiumVo;
 import com.nt.service_pfans.PFANS3000.JapanCondominiumService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -31,6 +32,17 @@ public class Pfans3007Controller {
         return ApiResult.success(japancondominiumService.getJapanCondominium(japancondominium));
     }
 
+    /**
+     * 查看
+     */
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult one(String japancondominiumid, HttpServletRequest request) throws Exception {
+        if(japancondominiumid==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(japancondominiumService.selectById(japancondominiumid));
+    }
+
     @RequestMapping(value="/getJapanCondominiumlist",method = {RequestMethod.POST})
     public ApiResult getJapanCondominiumlist(@RequestBody JapanCondominium japancondominium, HttpServletRequest request) throws Exception{
         if (japancondominium == null) {
@@ -52,22 +64,22 @@ public class Pfans3007Controller {
     }
 
     @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody JapanCondominium japancondominium, HttpServletRequest request) throws Exception{
-        if (japancondominium == null) {
+    public ApiResult create(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{
+        if (japancondominiumVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        japancondominiumService.insertJapanCondominium(japancondominium,tokenModel);
+        japancondominiumService.insertJapanCondominiumVo(japancondominiumVo,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateJapanCondominium(@RequestBody JapanCondominium japancondominium, HttpServletRequest request) throws Exception{
-        if (japancondominium == null) {
+    public ApiResult update(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{
+        if (japancondominiumVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        japancondominiumService.updateJapanCondominium(japancondominium,tokenModel);
+        japancondominiumService.updateJapanCondominiumVo(japancondominiumVo,tokenModel);
         return ApiResult.success();
     }
 
