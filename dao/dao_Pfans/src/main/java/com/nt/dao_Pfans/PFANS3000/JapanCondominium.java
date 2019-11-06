@@ -142,35 +142,12 @@ public class JapanCondominium extends BaseModel {
     @Column(name = "DAILYCOST")
     private String dailycost;
 
-    /**
-     * 卷类别
-     */
-    @Column(name = "COPUNTYPE")
-    private String copuntype;
-
-    /**
-     * 残劵数
-     */
-    @Column(name = "COPUNNUMBER")
-    private String copunnumber;
-
-    /**
-     * 卷价值
-     */
-    @Column(name = "COPUNVALUE")
-    private String copunvalue;
-
-    /**
-     * 使用卷数
-     */
-    @Column(name = "COPUNUSENUMBER")
-    private String copunusenumber;
 
     /**
      * 残金金额
      */
-    @Column(name = "MONEY")
-    private String money;
+    @Column(name = "MONEYS")
+    private String moneys;
 
     /**
      * 使用金额
