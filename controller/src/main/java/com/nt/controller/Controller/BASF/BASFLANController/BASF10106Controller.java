@@ -28,7 +28,7 @@ public class BASF10106Controller {
     private EmailMessageService emailMessageService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
-    public ApiResult get(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
+    public ApiResult get(@RequestBody Emailmessage emailmessage) throws Exception {
         return ApiResult.success(emailMessageService.get(emailmessage));
     }
 
