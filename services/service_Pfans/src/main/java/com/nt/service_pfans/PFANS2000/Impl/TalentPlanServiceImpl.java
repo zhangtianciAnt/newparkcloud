@@ -1,6 +1,4 @@
 package com.nt.service_pfans.PFANS2000.Impl;
-
-import com.nt.dao_Pfans.PFANS2000.GoalManagement;
 import com.nt.dao_Pfans.PFANS2000.TalentPlan;
 import com.nt.service_pfans.PFANS2000.TalentPlanService;
 import com.nt.service_pfans.PFANS2000.mapper.TalentPlanMapper;
