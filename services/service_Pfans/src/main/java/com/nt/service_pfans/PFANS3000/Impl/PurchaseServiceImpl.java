@@ -1,8 +1,8 @@
-package com.nt.service_pfans.PFANS2000.Impl;
+package com.nt.service_pfans.PFANS3000.Impl;
 
-import com.nt.dao_Pfans.PFANS2000.Purchase;
-import com.nt.service_pfans.PFANS2000.PurchaseService;
-import com.nt.service_pfans.PFANS2000.mapper.PurchaseMapper;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.service_pfans.PFANS3000.PurchaseService;
+import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
-    private PurchaseMapper  purchaseMapper;
+    private PurchaseMapper purchaseMapper;
 
     @Override
     public List<Purchase> getPurchase(Purchase purchase) {
