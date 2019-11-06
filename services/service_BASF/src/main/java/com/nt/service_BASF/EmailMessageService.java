@@ -11,4 +11,6 @@ public interface EmailMessageService {
     void insert(TokenModel tokenModel, Emailmessage emailmessage) throws Exception;
 
     void update(TokenModel tokenModel, Emailmessage emailmessage) throws Exception;
+
+    void del(TokenModel tokenModel, Emailmessage emailmessage) throws Exception;
 }

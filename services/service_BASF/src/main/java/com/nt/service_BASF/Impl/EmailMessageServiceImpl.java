@@ -33,4 +33,10 @@ public class EmailMessageServiceImpl implements EmailMessageService {
         emailmessage.preUpdate(tokenModel);
         emailmessageMapper.updateByPrimaryKey(emailmessage);
     }
+
+    @Override
+    public void del(TokenModel tokenModel, Emailmessage emailmessage) throws Exception {
+        emailmessage.preUpdate(tokenModel);
+        emailmessageMapper.updateByPrimaryKeySelective(emailmessage);
+    }
 }

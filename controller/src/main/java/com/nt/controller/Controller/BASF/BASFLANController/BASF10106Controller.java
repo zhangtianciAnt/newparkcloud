@@ -45,4 +45,11 @@ public class BASF10106Controller {
         emailMessageService.update(tokenModel, emailmessage);
         return ApiResult.success();
     }
+
+    @RequestMapping(value = "/del", method = {RequestMethod.POST})
+    public ApiResult del(@RequestBody Emailmessage emailmessage, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        emailMessageService.del(tokenModel, emailmessage);
+        return ApiResult.success();
+    }
 }
