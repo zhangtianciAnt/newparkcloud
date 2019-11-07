@@ -1,4 +1,4 @@
-package com.nt.dao_Pfans.PFANS2000;
+package com.nt.dao_Pfans.PFANS3000;
 
 
 import com.nt.utils.dao.BaseModel;
@@ -39,7 +39,7 @@ public class Purchase  extends BaseModel {
     private String team_id;
 
     @Column(name = "APPLICATION_DATE")
-    private String application_date;
+    private Date application_date;
 
     /**
      * 内线号

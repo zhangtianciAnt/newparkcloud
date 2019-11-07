@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -39,7 +38,7 @@ public class Pfans2026Controller {
      * 查看
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult one(String staffexitprocedureid, HttpServletRequest request) throws Exception {
+    public ApiResult selectById(String staffexitprocedureid, HttpServletRequest request) throws Exception {
         if(staffexitprocedureid==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
