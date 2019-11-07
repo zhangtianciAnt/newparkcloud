@@ -3,7 +3,10 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS3000.JapanCondominium;
 import com.nt.dao_Pfans.PFANS3000.Vo.JapanCondominiumVo;
 import com.nt.service_pfans.PFANS3000.JapanCondominiumService;
-import com.nt.utils.*;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +39,15 @@ public class Pfans3007Controller {
      * 查看
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult one(String japancondominiumid, HttpServletRequest request) throws Exception {
+    public ApiResult selectById(String japancondominiumid, HttpServletRequest request) throws Exception {
         if(japancondominiumid==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(japancondominiumService.selectById(japancondominiumid));
     }
 
-
-
-
-
     @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{
+    public ApiResult insertJapanCondominiumVo(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{
         if (japancondominiumVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -58,7 +57,7 @@ public class Pfans3007Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{
+    public ApiResult updateJapanCondominiumVo(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{
         if (japancondominiumVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

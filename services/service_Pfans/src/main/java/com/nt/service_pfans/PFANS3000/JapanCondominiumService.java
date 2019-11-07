@@ -9,7 +9,6 @@ import java.util.List;
 public interface JapanCondominiumService {
     //列表查询
     List<JapanCondominium> getJapanCondominium(JapanCondominium japancondominium) throws Exception;
-    //List<JapanCondominium> getJapanCondominiumlist(JapanCondominium japancondominium) throws Exception;
 
     // 按id查询
     public JapanCondominiumVo selectById(String japancondominiumid) throws Exception;
