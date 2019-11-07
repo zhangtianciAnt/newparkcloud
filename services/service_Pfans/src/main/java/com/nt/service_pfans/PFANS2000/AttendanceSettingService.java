@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface AttendanceSettingService {
 
-    public void insert(AttendanceSetting attendanceSetting, TokenModel tokenModel)throws Exception;
+    void insert(AttendanceSetting attendanceSetting, TokenModel tokenModel) throws Exception;
 
-    public List<AttendanceSetting> list(AttendanceSetting attendanceSetting) throws Exception;
+    List<AttendanceSetting> list(AttendanceSetting attendanceSetting) throws Exception;
 
-    public void update(AttendanceSetting attendanceSetting, TokenModel tokenModel)throws Exception;
+    void update(AttendanceSetting attendanceSetting, TokenModel tokenModel) throws Exception;
 
-    public  AttendanceSetting One(String attendancesetting_id)throws Exception;
+    AttendanceSetting One(String attendancesetting_id) throws Exception;
 }

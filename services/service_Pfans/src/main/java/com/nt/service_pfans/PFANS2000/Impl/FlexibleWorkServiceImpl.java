@@ -33,7 +33,8 @@ public class FlexibleWorkServiceImpl implements FlexibleWorkService {
 
     @Override
     public void updateFlexibleWork(FlexibleWork flexiblework, TokenModel tokenModel) throws Exception {
-        flexibleworkMapper.updateByPrimaryKeySelective(flexiblework);
+        flexiblework.preUpdate(tokenModel);
+        flexibleworkMapper.updateByPrimaryKey(flexiblework);
     }
 
     @Override

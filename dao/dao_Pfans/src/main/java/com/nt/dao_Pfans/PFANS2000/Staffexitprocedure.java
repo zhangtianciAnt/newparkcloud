@@ -18,6 +18,9 @@ public class Staffexitprocedure extends BaseModel {
     private String staffexitprocedure_id;
 
     private String user_id;
+    private String center_id;
+    private String group_id;
+    private String team_id;
     private Date application_date;
     private Date hope_exit_date;
     private String reason;
@@ -41,6 +44,8 @@ public class Staffexitprocedure extends BaseModel {
     private String impact_resignation;
     private String influence_information_security;
     private String retirement_strategy;
+    private  String impact_resignation_external;
+    private String impact_resignation_internal;
     private String phase;
 
 }

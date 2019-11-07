@@ -5,15 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "attendancesetting")
 
-public class AttendanceSetting extends BaseModel{
+public class AttendanceSetting extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class AttendanceSettingServiceImpl implements AttendanceSettingService {
 
     @Autowired
@@ -33,7 +33,7 @@ public class AttendanceSettingServiceImpl implements AttendanceSettingService {
     @Override
     public void update(AttendanceSetting attendanceSetting, TokenModel tokenModel) throws Exception {
         attendanceSetting.preUpdate(tokenModel);
-        attendanceSettingMapper.updateByPrimaryKeySelective(attendanceSetting);
+        attendanceSettingMapper.updateByPrimaryKey(attendanceSetting);
     }
 
     @Override

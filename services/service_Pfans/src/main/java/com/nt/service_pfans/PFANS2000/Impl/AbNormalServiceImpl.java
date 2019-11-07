@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class AbNormalServiceImpl implements AbNormalService {
 
     @Autowired
@@ -33,7 +33,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
-        abNormalMapper.updateByPrimaryKeySelective(abNormal);
+        abNormalMapper.updateByPrimaryKey(abNormal);
     }
 
     @Override
