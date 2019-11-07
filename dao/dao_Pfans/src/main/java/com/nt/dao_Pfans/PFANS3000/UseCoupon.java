@@ -55,4 +55,7 @@ public class UseCoupon extends BaseModel {
     @Column(name = "COPUNUSENUMBER")
     private String copunusenumber;
 
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
+
 }

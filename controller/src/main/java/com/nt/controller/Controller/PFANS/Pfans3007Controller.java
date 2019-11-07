@@ -43,25 +43,9 @@ public class Pfans3007Controller {
         return ApiResult.success(japancondominiumService.selectById(japancondominiumid));
     }
 
-    @RequestMapping(value="/getJapanCondominiumlist",method = {RequestMethod.POST})
-    public ApiResult getJapanCondominiumlist(@RequestBody JapanCondominium japancondominium, HttpServletRequest request) throws Exception{
-        if (japancondominium == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        japancondominium.setStatus(AuthConstants.APPROVED_FLAG_YES);
-        japancondominium.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(japancondominiumService.getJapanCondominiumlist(japancondominium));
-    }
 
-    @RequestMapping(value ="/one",method = { RequestMethod.POST} )
-    public ApiResult one(@RequestBody JapanCondominium japancondominium,HttpServletRequest request) throws Exception{
-        if (japancondominium == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(japancondominiumService.One(japancondominium.getJapancondominiumid()));
-    }
+
+
 
     @RequestMapping(value="/create",method = {RequestMethod.POST})
     public ApiResult create(@RequestBody JapanCondominiumVo japancondominiumVo, HttpServletRequest request) throws Exception{

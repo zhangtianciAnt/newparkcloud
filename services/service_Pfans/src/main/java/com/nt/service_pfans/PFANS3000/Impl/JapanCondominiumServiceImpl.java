@@ -11,10 +11,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,18 +33,7 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         return japancondominiumMapper.select(japancondominium);
     }
 
-    @Override
-    public List<JapanCondominium> getJapanCondominiumlist(JapanCondominium japancondominium) throws Exception {
-        return japancondominiumMapper.select(japancondominium);
-    }
-    //按id查询
-    @Override
-    public JapanCondominium One(String japancondominiumid) throws Exception {
-        if (japancondominiumid.equals("")) {
-            return null;
-        }
-        return japancondominiumMapper.selectByPrimaryKey(japancondominiumid);
-    }
+
     //按id查询
     @Override
     public JapanCondominiumVo selectById(String japancondominiumid) throws Exception {
@@ -50,30 +41,37 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         UseCoupon usecoupon = new UseCoupon();
         usecoupon.setJapancondominiumid(japancondominiumid);
         List<UseCoupon> usecouponlist = usecouponMapper.select(usecoupon);
+        usecouponlist = usecouponlist.stream().sorted(Comparator.comparing(UseCoupon::getRowindex)).collect(Collectors.toList());
         JapanCondominium Japan = japancondominiumMapper.selectByPrimaryKey(japancondominiumid);
         japanVo.setJapancondominium(Japan);
         japanVo.setUsecoupon(usecouponlist);
         return japanVo;
     }
 
+    //更新
     @Override
-    public void insertJapanCondominium(JapanCondominium japancondominium, TokenModel tokenModel) throws Exception {
-        if(!StringUtils.isEmpty(japancondominium)){
-            japancondominium.preInsert(tokenModel);
-            japancondominium.setJapancondominiumid(UUID.randomUUID().toString());
-            japancondominiumMapper.insert(japancondominium);
+    public void updateJapanCondominiumVo(JapanCondominiumVo japancondominiumVo, TokenModel tokenModel) throws Exception {
+        JapanCondominium japancondominium = new JapanCondominium();
+        BeanUtils.copyProperties(japancondominiumVo.getJapancondominium(), japancondominium);
+        japancondominium.preUpdate(tokenModel);
+        japancondominiumMapper.updateByPrimaryKey(japancondominium);
+        String japancondominiumid = japancondominium.getJapancondominiumid();
+        UseCoupon usec = new UseCoupon();
+        usec.setJapancondominiumid(japancondominiumid);
+        usecouponMapper.delete(usec);
+        List<UseCoupon> usecouponlist = japancondominiumVo.getUsecoupon();
+        if (usecouponlist != null) {
+            int rowundex = 0;
+            for (UseCoupon usecoupon : usecouponlist) {
+                rowundex = rowundex + 1;
+                usecoupon.preInsert(tokenModel);
+                usecoupon.setUsecouponid(UUID.randomUUID().toString());
+                usecoupon.setJapancondominiumid(japancondominiumid);
+                usecoupon.setRowindex(rowundex);
+                usecouponMapper.insertSelective(usecoupon);
+            }
         }
     }
-
-
-    @Override
-    public void updateJapanCondominium(JapanCondominium japancondominium, TokenModel tokenModel) throws Exception {
-        if(!StringUtils.isEmpty(japancondominium)){
-            japancondominium.preUpdate(tokenModel);
-            japancondominiumMapper.updateByPrimaryKey(japancondominium);
-        }
-    }
-
     //新建
     @Override
     public void insertJapanCondominiumVo(JapanCondominiumVo japancondominiumVo, TokenModel tokenModel) throws Exception {
@@ -83,30 +81,18 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         japancondominium.preInsert(tokenModel);
         japancondominium.setJapancondominiumid(japancondominiumid);
         japancondominiumMapper.insertSelective(japancondominium);
-
         List<UseCoupon> usecouponlist = japancondominiumVo.getUsecoupon();
         if (usecouponlist != null) {
+            int rowundex = 0;
             for (UseCoupon usecoupon : usecouponlist) {
+                rowundex = rowundex + 1;
                 usecoupon.preInsert(tokenModel);
                 usecoupon.setUsecouponid(UUID.randomUUID().toString());
                 usecoupon.setJapancondominiumid(japancondominiumid);
+                usecoupon.setRowindex(rowundex);
                 usecouponMapper.insertSelective(usecoupon);
             }
         }
     }
-    //更新
-    @Override
-    public void updateJapanCondominiumVo(JapanCondominiumVo japancondominiumVo, TokenModel tokenModel) throws Exception {
-        JapanCondominium japancondominium = new JapanCondominium();
-        BeanUtils.copyProperties(japancondominiumVo.getJapancondominium(), japancondominium);
-        japancondominium.preUpdate(tokenModel);
-        japancondominiumMapper.updateByPrimaryKey(japancondominium);
-        List<UseCoupon> usecouponlist = japancondominiumVo.getUsecoupon();
-        if (usecouponlist != null) {
-            for (UseCoupon usecoupon : usecouponlist) {
-                usecoupon.preUpdate(tokenModel);
-                usecouponMapper.updateByPrimaryKey(usecoupon);
-            }
-        }
-    }
+
 }
