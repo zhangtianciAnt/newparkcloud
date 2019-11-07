@@ -40,26 +40,28 @@ public class Seal extends BaseModel {
     @Column(name = "TEAM_ID")
     private String teamid;
 
+    @Column(name = "APPLICATION_DATE ")
+    private Date application_date;
 
     @Column(name = "PRINTSCORE ")
-    private Date printscode;
+    private String printscore;
 
     @Column(name = "FILENAME ")
-    private Date filename;
+    private String filename;
 
     @Column(name = "CLIENT ")
-    private Date client;
+    private String client;
 
     @Column(name = "FILETYPE ")
-    private Date filetype;
+    private String filetype;
 
     @Column(name = "SEALTYPE ")
-    private Date sealtype;
+    private String sealtype;
 
     @Column(name = "APPLICATIONNUMBER ")
-    private Date applicationnumber;
+    private String applicationnumber;
 
     @Column(name = "REMARKS ")
-    private Date remarks;
+    private String remarks;
 
 }
