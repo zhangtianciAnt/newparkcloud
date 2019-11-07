@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -38,6 +40,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         Citation citation = new Citation();
         citation.setStaffexitprocedure_id(staffexitprocedureid);
         List<Citation> citationlist = citationMapper.select(citation);
+        citationlist = citationlist.stream().sorted(Comparator.comparing(Citation::getRowindex)).collect(Collectors.toList());
         Staffexitprocedure Staff = staffexitprocedureMapper.selectByPrimaryKey(staffexitprocedureid);
         staffVo.setStaffexitprocedure(Staff);
         staffVo.setCitation(citationlist);
@@ -63,7 +66,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 citation.preInsert(tokenModel);
                 citation.setCitation_id(UUID.randomUUID().toString());
                 citation.setStaffexitprocedure_id(staffexitprocedureid);
-                citation.setRowindex(String.valueOf(rowundex));
+                citation.setRowindex(rowundex);
                 citationMapper.insertSelective(citation);
             }
         }
@@ -85,7 +88,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 citation.preInsert(tokenModel);
                 citation.setCitation_id(UUID.randomUUID().toString());
                 citation.setStaffexitprocedure_id(staffexitprocedureid);
-                citation.setRowindex(String.valueOf(rowundex));
+                citation.setRowindex(rowundex);
                 citationMapper.insertSelective(citation);
             }
         }
