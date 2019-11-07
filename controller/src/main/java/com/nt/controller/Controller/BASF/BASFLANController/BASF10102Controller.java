@@ -1,7 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
-import com.nt.dao_BASF.User;
-import com.nt.service_BASF.UserService;
+import com.nt.dao_BASF.BASFUser;
+import com.nt.service_BASF.BASFUserService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
@@ -31,29 +31,29 @@ public class BASF10102Controller {
     private TokenService tokenService;
 
     @Autowired
-    private UserService userService;
+    private BASFUserService userService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
-    public ApiResult get(@RequestBody User user) throws Exception {
+    public ApiResult get(@RequestBody BASFUser user) throws Exception {
         return ApiResult.success(userService.get(user));
     }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody User user, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody BASFUser user, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         userService.insert(tokenModel, user);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody User user, HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody BASFUser user, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         userService.update(tokenModel, user);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/del", method = {RequestMethod.POST})
-    public ApiResult del(@RequestBody User user, HttpServletRequest request) throws Exception {
+    public ApiResult del(@RequestBody BASFUser user, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         user.setStatus(AuthConstants.DEL_FLAG_DELETE);
         userService.del(tokenModel, user);

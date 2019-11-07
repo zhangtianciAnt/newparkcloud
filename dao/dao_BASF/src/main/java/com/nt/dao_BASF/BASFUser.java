@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
-public class User extends BaseModel {
+public class BASFUser extends BaseModel {
     @Id
     private String userid;
 
