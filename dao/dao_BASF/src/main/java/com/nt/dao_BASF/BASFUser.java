@@ -25,7 +25,10 @@ public class BASFUser extends BaseModel {
      * 电话号码
      */
     private String phonenumber;
-
+    /**
+     * 邮箱
+     */
+    private String email;
     /**
      * 证件类别
      */

@@ -21,5 +21,6 @@
     <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR" />
     <result column="Owner" property="owner" jdbcType="VARCHAR" />
     <result column="TENANTID" property="tenantid" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR"/>
   </resultMap>
 </mapper>
