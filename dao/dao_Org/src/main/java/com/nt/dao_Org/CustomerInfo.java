@@ -108,19 +108,19 @@ public class CustomerInfo extends BaseModel {
         /**
          * centerid
          */
-        private List<String> centerid;
+        private String centerid;
         /**
          * groupid
          */
-        private List<String> groupid;
+        private String groupid;
         /**
          * teamid
          */
-        private List<String> teamid;
+        private String teamid;
         /**
          * 办公电话
          */
-        private String tel;
+        private String phone;
         /**
          * 工号
          */
@@ -133,6 +133,69 @@ public class CustomerInfo extends BaseModel {
          * 公司名称
          */
         private String companyname;
+
+        /**
+         * ad域账号
+         */
+        private String adfield;
+        /**
+         * 生日
+         */
+        private String birthday;
+        /**
+         * 年龄
+         */
+        private String age;
+        /**
+         * 结婚日
+         */
+        private String marryday;
+        /**
+         * 国籍
+         */
+        private String nationality;
+        /**
+         * 民族
+         */
+        private String nation;
+        /**
+         * 户籍
+         */
+        private String register;
+        /**
+         * 护照
+         */
+        private String passport;
+        /**
+         * 社会保険番号
+         */
+        private String security;
+        /**
+         * 公积金
+         */
+        private String housefund;
+        /**
+         * 婚姻状况
+         */
+        private String marital;
+        /**
+         * 独生子女光栄書締切日
+         */
+        private String children;
+        /**
+         * 仕事経験有無
+         */
+        private String experience;
+        /**
+         * 住所
+         */
+        private String address;
+        /**
+         * 内線番号
+         */
+        private String extension;
+
+
     }
     // endregion
 
