@@ -1,10 +1,29 @@
-# Created by .ignore support plugin (hsz.mobi)
-### Example user template template
-### Example user template
-
-# IntelliJ project files
-.idea
-*.iml
-out
-gen
-!/controller/src/main/resources/jxls_templates/employee.xlsx
+.idea/
+newparkcloud.iml
+controller/controller.iml
+controller/target/
+dao/dao.iml
+dao/dao_Auth/dao_Auth.iml
+dao/dao_Auth/target/
+dao/dao_BASF/dao_BASF.iml
+dao/dao_BASF/target/
+dao/dao_Org/dao_Org.iml
+dao/dao_Org/target/
+dao/dao_VerificationCode/dao_VerificationCode.iml
+dao/dao_VerificationCode/target/
+dao/dao_Workflow/dao_Workflow.iml
+dao/dao_Workflow/target/
+services/service_Auth/target/
+services/service_BASF/target/
+services/service_Org/target/
+services/service_VerificationCode/target/
+services/service_WorkFlow/target/
+utils/target/
+services/services.iml
+services/service_Auth/service_Auth.iml
+services/service_BASF/service_BASF.iml
+services/service_Org/service_Org.iml
+services/service_VerificationCode/service_VerificationCode.iml
+services/service_WorkFlow/service_WorkFlow.iml
+utils/utils.iml
+logs/
