@@ -17,15 +17,15 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public List<User> get(User user) throws Exception {
-        return UserMapper.select(user);
+    public  List<User> get(User user) throws Exception {
+        return userMapper.select(user);
     }
 
     @Override
     public void insert(TokenModel tokenModel, User user) throws Exception {
         user.preInsert(tokenModel);
-        user.userid(UUID.randomUUID().toString());
-        UserMapper.insert(user);
+        user.setUserid(UUID.randomUUID().toString());
+        userMapper.insert(user);
     }
 
     @Override
