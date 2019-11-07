@@ -27,7 +27,6 @@ public class UseCoupon extends BaseModel {
     /**
      * 日本出張のマンション予約ID
      */
-    @Id
     @Column(name = "JAPANCONDOMINIUM_ID")
     private String japancondominiumid;
 
