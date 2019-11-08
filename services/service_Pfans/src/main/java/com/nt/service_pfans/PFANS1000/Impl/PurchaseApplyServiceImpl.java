@@ -26,6 +26,12 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
     @Autowired
     private ShoppingDetailedMapper shoppingDetailedMapper;
 
+    //列表查询
+    @Override
+    public List<PurchaseApply> get(PurchaseApply purchaseApply) throws Exception {
+        return purchaseApplyMapper.select(purchaseApply);
+    }
+
     //按id查询
     @Override
     public PurchaseApplyVo selectById(String purchaseApplyid) throws Exception {
