@@ -33,7 +33,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
-        abNormalMapper.updateByPrimaryKeySelective(abNormal);
+        abNormalMapper.updateByPrimaryKey(abNormal);
     }
 
     @Override

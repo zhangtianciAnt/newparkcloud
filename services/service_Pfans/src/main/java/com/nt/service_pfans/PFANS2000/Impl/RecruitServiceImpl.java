@@ -32,7 +32,7 @@ public class RecruitServiceImpl implements RecruitService {
 
     @Override
     public void updateRecruit(Recruit recruit, TokenModel tokenModel) throws Exception {
-        recruitMapper.updateByPrimaryKeySelective(recruit);
+        recruitMapper.updateByPrimaryKey(recruit);
     }
 
     @Override

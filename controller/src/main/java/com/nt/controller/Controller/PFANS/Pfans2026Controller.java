@@ -1,8 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
-
-
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
+import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -26,7 +24,6 @@ public class Pfans2026Controller {
     private StaffexitprocedureService staffexitprocedureService;
     @Autowired
     private TokenService tokenService;
-
     /*
      * 列表查看
      * */
@@ -37,46 +34,40 @@ public class Pfans2026Controller {
         staffexitprocedure.setOwners(tokenModel.getOwnerList());
        return ApiResult.success(staffexitprocedureService.get(staffexitprocedure));
     }
-
     /**
-     * 查看一个人
+     * 查看
      */
-    @RequestMapping(value = "/one", method = {RequestMethod.POST})
-    public ApiResult one(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
-        if(staffexitprocedure==null){
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String staffexitprocedureid, HttpServletRequest request) throws Exception {
+        if(staffexitprocedureid==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
-        return ApiResult.success(staffexitprocedureService.one(staffexitprocedure.getStaffexitprocedure_id()));
+        return ApiResult.success(staffexitprocedureService.selectById(staffexitprocedureid));
     }
-
-
-    /**
-     * 新建
-     */
-    @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
-        if(staffexitprocedure==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        staffexitprocedureService.create(staffexitprocedure,tokenModel);
-        return ApiResult.success();
-    }
-
     /**
      *
      * 修改
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
-        if(staffexitprocedure==null){
+    public ApiResult update(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
+        if(staffexitprocedureVo==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel=tokenService.getToken(request);
-        staffexitprocedureService.update(staffexitprocedure,tokenModel);
+        staffexitprocedureService.update(staffexitprocedureVo,tokenModel);
         return ApiResult.success();
 
     }
-
+    /**
+     * 新建
+     */
+    @RequestMapping(value = "insert", method = { RequestMethod.POST })
+    public ApiResult insert(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception{
+        if (staffexitprocedureVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        staffexitprocedureService.insert(staffexitprocedureVo,tokenModel);
+        return ApiResult.success();
+    }
 }

@@ -33,7 +33,7 @@ public class TicketsServiceImpl implements TicketsService {
     @Override
     public void update(Tickets tickets, TokenModel tokenModel) throws Exception {
         tickets.preUpdate(tokenModel);
-        ticketsMapper.updateByPrimaryKeySelective(tickets);
+        ticketsMapper.updateByPrimaryKey(tickets);
     }
 
     @Override
