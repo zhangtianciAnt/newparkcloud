@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "fixedassets")
-public class Fixedassets   extends BaseModel {
+public class    Fixedassets   extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -57,14 +58,14 @@ public class Fixedassets   extends BaseModel {
      * 起案日
      */
     @Column(name = "CASEDATE")
-    private String casedate;
+    private Date casedate;
 
 
     /**
      * 決裁日
      */
     @Column(name = "JUDGEMENTDAY")
-    private String judgementday;
+    private Date judgementday;
 
 
     /**
@@ -92,14 +93,14 @@ public class Fixedassets   extends BaseModel {
      * 輸入日
      */
     @Column(name = "INPUTDATE")
-    private String inputdate;
+    private Date inputdate;
 
 
     /**
      * 監督解除日
      */
     @Column(name = "RELEASEDATE")
-    private String releasedate;
+    private Date releasedate;
 
 
     /**
