@@ -118,6 +118,18 @@ public class CustomerInfo extends BaseModel {
          */
         private String teamid;
         /**
+         * centername
+         */
+        private String centername;
+        /**
+         * groupname
+         */
+        private String groupname;
+        /**
+         * teamname
+         */
+        private String teamname;
+        /**
          * 办公电话
          */
         private String phone;
