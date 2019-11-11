@@ -41,6 +41,13 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Override
+    public List<ToDoNotice> list(ToDoNotice todonotice) throws Exception {
+        return todoNoticeMapper.select(todonotice);
+    }
+
+
     /**
      * @方法名：save
      * @描述：消息保存
