@@ -118,6 +118,18 @@ public class CustomerInfo extends BaseModel {
          */
         private String teamid;
         /**
+         * centername
+         */
+        private String centername;
+        /**
+         * groupname
+         */
+        private String groupname;
+        /**
+         * teamname
+         */
+        private String teamname;
+        /**
          * 办公电话
          */
         private String phone;
@@ -194,6 +206,123 @@ public class CustomerInfo extends BaseModel {
          * 内線番号
          */
         private String extension;
+        /**
+         * 最終卒業学校
+         */
+        private String graduation;
+        /**
+         * 最終学位
+         */
+        private String degree;
+        /**
+         * 最終学歷
+         */
+        private String educational;
+        /**
+         * 専攻
+         */
+        private String specialty;
+        /**
+         * 卒業年月日
+         */
+        private String graduationday;
+        /**
+         * 仕事開事年月日
+         */
+        private String workday;
+        /**
+         * 社員ID
+         */
+        private String memberid;
+        /**
+         * 予算単位
+         */
+        private String budgetunit;
+        /**
+         * 職務
+         */
+        private String post;
+        /**
+         * ランク
+         */
+        private String rank;
+        /**
+         * 劳动合同类型
+         */
+        private String laborcontracttype;
+        /**
+         * 固定期限締切日
+         */
+        private String fixedate;
+        /**
+         * 労働契約締切日
+         */
+        private String laborcontractday;
+        /**
+         * 入社年月日
+         */
+        private String enterday;
+        /**
+         * 昇格昇号年月日
+         */
+        private String upgraded;
+        /**
+         * 今年年休数
+         */
+        private String annualyear;
+        /**
+         * 去年年休数(残)
+         */
+        private String annuallastyear;
+        /**
+         * 今年福利年休数
+         */
+        private String welfareyear;
+        /**
+         * 去年福利年休数(残)
+         */
+        private String welfarelastyear;
+        /**
+         * 今年法定年休数
+         */
+        private String restyear;
+        /**
+         * 去年法定年休数(残)
+         */
+        private String restlastyear;
+        /**
+         * 口座番号
+         */
+        private String seatnumber;
+        /**
+         * 給料
+         */
+        private String salary;
+        /**
+         * 采用决裁
+         */
+        private String caution;
+        /**
+         * 養老保険基数
+         */
+        private String oldageinsurance;
+        /**
+         * 住宅積立金納付基数
+         */
+        private String houseinsurance;
+        /**
+         * 医療保険基数
+         */
+        private String medicalinsurance;
+
+
+        private List<TableInfo> educationTable;
+        private List<TableInfo> skillTable;
+        private List<TableInfo> languageTable;
+        private List<TableInfo> beforeWorkTable;
+        private List<TableInfo> workAfterTable;
+        private List<TableInfo> trainTable;
+        private List<TableInfo> rewardTable;
 
 
     }
@@ -353,7 +482,6 @@ public class CustomerInfo extends BaseModel {
             private String billingaddress;
         }
         // endregion
-
         // region 工商信息
         @Data
         public static class IndustryInfo {
@@ -440,6 +568,20 @@ public class CustomerInfo extends BaseModel {
             private String scopeofoperation;
         }
         // endregion
+    }
+
+    @Data
+    public static class TableInfo{
+        private String[] time;
+        private String school;
+        private String notes;
+        private String name;
+        private String ability;
+        private String programme;
+        private String company;
+        private String postion;
+        private String level;
+        private String _time;
     }
     // endregion
     // endregion
