@@ -22,7 +22,7 @@ public class PublicExpense extends BaseModel {
     private String publicexpenseid;
 
     @Column(name = "USER_ID")
-    private String userid;
+    private String user_id;
 
     @Column(name = "CENTER_ID")
     private String centerid;
