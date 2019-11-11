@@ -12,6 +12,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "usecoupon")
 public class UseCoupon extends BaseModel {
 
     private static final long serialVersionUID = 1L;
@@ -26,7 +27,6 @@ public class UseCoupon extends BaseModel {
     /**
      * 日本出張のマンション予約ID
      */
-    @Id
     @Column(name = "JAPANCONDOMINIUM_ID")
     private String japancondominiumid;
 
@@ -53,5 +53,8 @@ public class UseCoupon extends BaseModel {
      */
     @Column(name = "COPUNUSENUMBER")
     private String copunusenumber;
+
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 
 }
