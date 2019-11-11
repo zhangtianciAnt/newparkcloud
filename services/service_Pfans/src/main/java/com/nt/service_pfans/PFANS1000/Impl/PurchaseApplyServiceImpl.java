@@ -37,12 +37,12 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
     public PurchaseApplyVo selectById(String purchaseApplyid) throws Exception {
         PurchaseApplyVo pucaVo = new PurchaseApplyVo();
         ShoppingDetailed shoppingDetailed = new ShoppingDetailed();
-        shoppingDetailed.setShoppingdetailed_id(purchaseApplyid);
+        shoppingDetailed.setPurchaseapply_id(purchaseApplyid);
         List<ShoppingDetailed> shoppingDetailedlist = shoppingDetailedMapper.select(shoppingDetailed);
         shoppingDetailedlist = shoppingDetailedlist.stream().sorted(Comparator.comparing(ShoppingDetailed::getRowindex)).collect(Collectors.toList());
         PurchaseApply puca = purchaseApplyMapper.selectByPrimaryKey(purchaseApplyid);
         pucaVo.setPurchaseApply(puca);
-        pucaVo.setShoppingDetaileds(shoppingDetailedlist);
+        pucaVo.setShoppingDetailed(shoppingDetailedlist);
         return pucaVo;
     }
 
@@ -57,7 +57,7 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         ShoppingDetailed spd = new ShoppingDetailed();
         spd.setPurchaseapply_id(spurchaseApplyid);
         shoppingDetailedMapper.delete(spd);
-        List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetaileds();
+        List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetailed();
         if (shoppingDetailedlist != null) {
             int rowundex = 0;
             for (ShoppingDetailed shoppingDetailed : shoppingDetailedlist) {
@@ -80,7 +80,7 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         purchaseApply.preInsert(tokenModel);
         purchaseApply.setPurchaseapply_id(purchaseApplyid);
         purchaseApplyMapper.insertSelective(purchaseApply);
-        List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetaileds();
+        List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetailed();
         if (shoppingDetailedlist != null) {
             int rowundex = 0;
             for (ShoppingDetailed shoppingDetailed : shoppingDetailedlist) {

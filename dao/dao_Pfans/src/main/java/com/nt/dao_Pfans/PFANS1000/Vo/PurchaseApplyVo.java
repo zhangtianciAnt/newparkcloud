@@ -20,5 +20,5 @@ public class PurchaseApplyVo {
     /**
      * 千元以下物品购入项目
      */
-    private List<ShoppingDetailed> shoppingDetaileds;
+    private List<ShoppingDetailed> shoppingDetailed;
 }

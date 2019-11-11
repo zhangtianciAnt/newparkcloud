@@ -64,8 +64,8 @@ public class CompanyProjects extends BaseModel {
     /**
      * 项目类型
      */
-    @Column(name = "TYPE")
-    private String type;
+    @Column(name = "PROJECTTYPE")
+    private String projecttype;
 
     /**
      * 项目领域
@@ -118,8 +118,8 @@ public class CompanyProjects extends BaseModel {
     /**
      * 开发语言
      */
-    @Column(name = "LANGUAGE")
-    private String language;
+    @Column(name = "LANGUAGES")
+    private String languages;
 
     /**
      * 之前立项情况
