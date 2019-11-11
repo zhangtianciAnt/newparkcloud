@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/overtime")
 public class Pfans2011Controller {
@@ -21,16 +22,16 @@ public class Pfans2011Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getOvertime(HttpServletRequest request) throws Exception{
-            TokenModel tokenModel = tokenService.getToken(request);
-            Overtime overtime = new Overtime();
-            overtime.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(overtimeService.getOvertime(overtime));
-        }
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getOvertime(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Overtime overtime = new Overtime();
+        overtime.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(overtimeService.getOvertime(overtime));
+    }
 
-    @RequestMapping(value="/getOvertimelist",method = {RequestMethod.POST})
-    public ApiResult getOvertimelist(@RequestBody Overtime overtime,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getOvertimelist", method = {RequestMethod.POST})
+    public ApiResult getOvertimelist(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
         if (overtime == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -40,8 +41,8 @@ public class Pfans2011Controller {
         return ApiResult.success(overtimeService.getOvertimelist(overtime));
     }
 
-    @RequestMapping(value ="/one",method = { RequestMethod.POST} )
-    public ApiResult one(@RequestBody Overtime overtime,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
         if (overtime == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -49,23 +50,23 @@ public class Pfans2011Controller {
         return ApiResult.success(overtimeService.One(overtime.getOvertimeid()));
     }
 
-    @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
         if (overtime == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        overtimeService.insertOvertime(overtime,tokenModel);
+        overtimeService.insertOvertime(overtime, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateOvertime(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateOvertime(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
         if (overtime == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        overtimeService.updateOvertime(overtime,tokenModel);
+        overtimeService.updateOvertime(overtime, tokenModel);
         return ApiResult.success();
     }
 

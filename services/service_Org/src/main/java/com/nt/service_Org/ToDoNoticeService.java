@@ -7,6 +7,11 @@ import java.util.List;
 
 public interface ToDoNoticeService {
 
+
+
+    List<ToDoNotice> list(ToDoNotice todonotice) throws Exception;
+
+
     //保存消息
     void save(ToDoNotice toDoNotice) throws Exception;
 

@@ -27,6 +27,14 @@ public class ToDoNoticeController {
     @Autowired
     private TokenService tokenService;
 
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult list(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        ToDoNotice todonotice = new ToDoNotice();
+        todonotice.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(toDoNoticeService.list(todonotice));
+    }
+
     /**
      * @方法名：getmessage
      * @描述：获取消息列表
