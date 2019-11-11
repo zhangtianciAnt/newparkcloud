@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -26,14 +27,15 @@ public class Pfans5001Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
-        if (companyProjects == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+    /**
+     * 查看
+     */
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String companyprojectsid, HttpServletRequest request) throws Exception {
+        if(companyprojectsid==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        CompanyProjects log=companyProjectsService.One(companyProjects.getCompanyprojects_id());
-        return ApiResult.success(log);
+        return ApiResult.success(companyProjectsService.selectById(companyprojectsid));
     }
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
@@ -47,25 +49,32 @@ public class Pfans5001Controller {
     }
 
 
-    @RequestMapping(value="/updateInfo",method = {RequestMethod.POST})
-    public ApiResult updateInformation(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception{
-        if (companyProjects == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+    /**
+     *
+     * 修改
+     */
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody CompanyProjectsVo companyProjectsVo, HttpServletRequest request) throws Exception {
+        if(companyProjectsVo==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        companyProjectsService.upd(companyProjects,tokenModel);
+        TokenModel tokenModel=tokenService.getToken(request);
+        companyProjectsService.update(companyProjectsVo,tokenModel);
         return ApiResult.success();
+
     }
 
 
-    @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
-        if (companyProjects == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+    /**
+     * 新建
+     */
+    @RequestMapping(value = "/insert", method = { RequestMethod.POST })
+    public ApiResult insert(@RequestBody CompanyProjectsVo companyProjectsVo, HttpServletRequest request) throws Exception{
+        if (companyProjectsVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        companyProjectsService.insert(companyProjects,tokenModel);
+        companyProjectsService.insert(companyProjectsVo,tokenModel);
         return ApiResult.success();
     }
-
 }
