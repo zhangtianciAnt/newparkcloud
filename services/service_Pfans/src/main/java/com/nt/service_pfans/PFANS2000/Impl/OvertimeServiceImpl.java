@@ -35,7 +35,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public void insertOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
-        if(!StringUtils.isEmpty(overtime)){
+        if (!StringUtils.isEmpty(overtime)) {
             overtime.preInsert(tokenModel);
             overtime.setOvertimeid(UUID.randomUUID().toString());
             overtimeMapper.insert(overtime);
@@ -44,9 +44,9 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
-        if(!StringUtils.isEmpty(overtime)){
+        if (!StringUtils.isEmpty(overtime)) {
             overtime.preUpdate(tokenModel);
             overtimeMapper.updateByPrimaryKey(overtime);
-            }
         }
     }
+}

@@ -22,16 +22,16 @@ public class Pfans3006Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getAppointmentCar(HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getAppointmentCar(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         AppointmentCar appointmentcar = new AppointmentCar();
         appointmentcar.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(appointmentcarService.getAppointmentCar(appointmentcar));
     }
 
-    @RequestMapping(value="/getAppointmentCarlist",method = {RequestMethod.POST})
-    public ApiResult getAppointmentCarlist(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getAppointmentCarlist", method = {RequestMethod.POST})
+    public ApiResult getAppointmentCarlist(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception {
         if (appointmentcar == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -41,8 +41,8 @@ public class Pfans3006Controller {
         return ApiResult.success(appointmentcarService.getAppointmentCarlist(appointmentcar));
     }
 
-    @RequestMapping(value ="/one",method = { RequestMethod.POST} )
-    public ApiResult one(@RequestBody AppointmentCar appointmentcar,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception {
         if (appointmentcar == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -50,23 +50,23 @@ public class Pfans3006Controller {
         return ApiResult.success(appointmentcarService.One(appointmentcar.getAppointmentcarid()));
     }
 
-    @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception {
         if (appointmentcar == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        appointmentcarService.insertAppointmentCar(appointmentcar,tokenModel);
+        appointmentcarService.insertAppointmentCar(appointmentcar, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateAppointmentCar(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateAppointmentCar(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception {
         if (appointmentcar == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        appointmentcarService.updateAppointmentCar(appointmentcar,tokenModel);
+        appointmentcarService.updateAppointmentCar(appointmentcar, tokenModel);
         return ApiResult.success();
     }
 

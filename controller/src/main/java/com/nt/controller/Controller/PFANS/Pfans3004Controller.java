@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/stationery")
 public class Pfans3004Controller {
@@ -21,16 +22,16 @@ public class Pfans3004Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getStationery(HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getStationery(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Stationery stationery = new Stationery();
         stationery.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(stationeryService.getStationery(stationery));
     }
 
-    @RequestMapping(value="/getStationerylist",method = {RequestMethod.POST})
-    public ApiResult getStationerylist(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getStationerylist", method = {RequestMethod.POST})
+    public ApiResult getStationerylist(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception {
         if (stationery == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -40,8 +41,8 @@ public class Pfans3004Controller {
         return ApiResult.success(stationeryService.getStationerylist(stationery));
     }
 
-    @RequestMapping(value ="/one",method = { RequestMethod.POST} )
-    public ApiResult one(@RequestBody Stationery stationery,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception {
         if (stationery == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -49,23 +50,23 @@ public class Pfans3004Controller {
         return ApiResult.success(stationeryService.One(stationery.getStationeryid()));
     }
 
-    @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception {
         if (stationery == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        stationeryService.insertStationery(stationery,tokenModel);
+        stationeryService.insertStationery(stationery, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateStationery(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateStationery(@RequestBody Stationery stationery, HttpServletRequest request) throws Exception {
         if (stationery == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        stationeryService.updateStationery(stationery,tokenModel);
+        stationeryService.updateStationery(stationery, tokenModel);
         return ApiResult.success();
     }
 
