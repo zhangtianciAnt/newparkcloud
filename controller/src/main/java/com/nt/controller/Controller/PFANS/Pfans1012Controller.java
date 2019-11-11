@@ -82,18 +82,17 @@ public class Pfans1012Controller {
     }
 
 
-/*
-* 裁决号
-* */
+    /*
+    * 裁决号
+    * */
 
-@RequestMapping(value="/getJudgement" ,method = {RequestMethod.POST})
+    @RequestMapping(value="/getJudgement" ,method = {RequestMethod.POST})
     public ApiResult getJudgement(@RequestBody Judgement judgement,HttpServletRequest request) throws Exception{
     if(judgement==null){
         return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
     }
     TokenModel tokenModel=tokenService.getToken(request);
-    judgement.setOwners(tokenModel.getOwnerList());
     return ApiResult.success(judgementService.getJudgement(judgement));
-}
+    }
 
 }
