@@ -50,7 +50,7 @@ public class MessageUtil {
             //读取文件流
 
             InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message.properties");
-            if(locale.equals("ja")){
+            if(StrUtil.isNotBlank(locale) && locale.equals("ja")){
                 resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message_ja.properties");
             }
             //转变为字符流

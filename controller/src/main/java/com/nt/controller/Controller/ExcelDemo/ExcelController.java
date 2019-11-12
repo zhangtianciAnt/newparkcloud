@@ -28,7 +28,13 @@ public class ExcelController {
         data.put("emp",emp);
         data.put("educationList",educationList);
         data.put("workList",workList);
-        ExcelOutPutUtil.OutPut("123","employee.xlsx",data,response);
+        ExcelOutPutUtil.OutPut("123","jiejipai.xlsx",data,response);
+
+//        Map<String, Object> data = new HashMap<>();
+//        Employee emp = getEmployee();
+//        emp.setName("测试公司");
+//        data.put("emp",emp);
+//        ExcelOutPutUtil.OutPut("222","test.xlsx",data,response);
     }
 
     private static Employee getEmployee() {
@@ -46,7 +52,7 @@ public class ExcelController {
 
     private static List<Experience> getWorkList() {
         List<Experience> list = new ArrayList<>();
-//        list.add(new Experience("广州科腾信息技术有限公司"));
+        list.add(new Experience("广州科腾信息技术有限公司"));
         return list;
     }
 }
