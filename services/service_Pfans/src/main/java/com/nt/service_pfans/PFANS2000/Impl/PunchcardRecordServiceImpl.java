@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import com.mysql.jdbc.StringUtils;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -54,41 +55,43 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-
-            List<PunchcardRecord> error = importCheck(list);
-
-            int k = 1;
-            for (int i = 1; i < list.size(); i++) {
-                PunchcardRecord punchcardrecord = new PunchcardRecord();
-                List<Object> value = list.get(k);
-                k++;
-                if (value != null && !value.isEmpty()) {
-                    if (value.get(0).toString().equals("")) {
-                        continue;
+            if (StringUtils.isNullOrEmpty(flag)) {
+                // 格式check
+                List<PunchcardRecord> error = importCheck(list);
+                return error;
+            } else {
+                int k = 1;
+                for (int i = 1; i < list.size(); i++) {
+                    PunchcardRecord punchcardrecord = new PunchcardRecord();
+                    List<Object> value = list.get(k);
+                    k++;
+                    if (value != null && !value.isEmpty()) {
+                        if (value.get(0).toString().equals("")) {
+                            continue;
+                        }
+                        Query query = new Query();
+                        String customername = value.get(0).toString();
+                        query.addCriteria(Criteria.where("userinfo.customername").is(customername));
+                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        punchcardrecord.setUser_id(customerInfo.getUserid());
+                        punchcardrecord.setCenterid(value.get(1).toString());
+                        punchcardrecord.setGroupid(value.get(2).toString());
+                        punchcardrecord.setTeamid(value.get(3).toString());
+                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String Punchcardrecord_date = value.get(4).toString();
+                        String Time_start = value.get(5).toString();
+                        String Time_end = value.get(6).toString();
+                        punchcardrecord.setPunchcardrecord_date(sf1.parse(Punchcardrecord_date));
+                        punchcardrecord.setTime_start(sf.parse(Time_start));
+                        punchcardrecord.setTime_end(sf.parse(Time_end));
                     }
-                    Query query = new Query();
-                    String customername = value.get(0).toString();
-                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    punchcardrecord.setUser_id(customerInfo.getUserid());
-                    punchcardrecord.setCenterid(value.get(1).toString());
-                    punchcardrecord.setGroupid(value.get(2).toString());
-                    punchcardrecord.setTeamid(value.get(3).toString());
-                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String Punchcardrecord_date = value.get(4).toString();
-                    String Time_start = value.get(5).toString();
-                    String Time_end = value.get(6).toString();
-                    punchcardrecord.setPunchcardrecord_date(sf1.parse(Punchcardrecord_date));
-                    punchcardrecord.setTime_start(sf.parse(Time_start));
-                    punchcardrecord.setTime_end(sf.parse(Time_end));
+                    punchcardrecord.preInsert(tokenModel);
+                    punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
+                    punchcardrecordMapper.insert(punchcardrecord);
+                    listVo.add(punchcardrecord);
                 }
-                punchcardrecord.preInsert(tokenModel);
-                punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
-                punchcardrecordMapper.insert(punchcardrecord);
-                listVo.add(punchcardrecord);
             }
-
             return listVo;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
