@@ -34,11 +34,11 @@ public class GlobalAop {
         // 记录下请求内容
         log.info("方法调用开始>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         log.info("接口地址 : " + request.getRequestURL().toString());
+        log.info("请求时间 : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
         log.info("请求类型 : " + request.getMethod());
         log.info("IP : " + request.getRemoteAddr());
         log.info("类名 : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         log.info("参数 : " + Arrays.toString(joinPoint.getArgs()));
-        log.info("请求时间 : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
         log.info("方法调用开始<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
@@ -56,7 +56,10 @@ public class GlobalAop {
     //接口结束
     @After("webLog()")
     public void after(JoinPoint joinPoint){
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
         log.info("方法调用结束>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        log.info("接口地址 : " + request.getRequestURL().toString());
         log.info("TIME : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
         log.info("方法调用结束<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
