@@ -50,7 +50,7 @@ public class BASF10201Controller {
      * @Method create
      * @Author Wxz
      * @Version 1.0
-     * @Description 创建设备
+     * @Description 创建接警单
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:20
      */
@@ -108,12 +108,12 @@ public class BASF10201Controller {
      * @Method update
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新设备详情
+     * @Description 更新接警单详情
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:38
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Firealarm firealarm , HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody  Firealarm firealarm , HttpServletRequest request) throws Exception {
         if (firealarm == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }

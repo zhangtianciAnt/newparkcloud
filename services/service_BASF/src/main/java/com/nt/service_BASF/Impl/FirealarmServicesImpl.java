@@ -68,13 +68,13 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Method Delete
      * @Author Wxz
      * @Version 1.0
-     * @Description 删除设备
+     * @Description 删除接警单
      * @Return void
      * @Date 2019/11/12 11：06
      */
     @Override
     public void delete(Firealarm firealarm) throws Exception {
-        //
+        //逻辑删除（status -> "1"）
         firealarmMapper.updateByPrimaryKeySelective(firealarm);
     }
 
