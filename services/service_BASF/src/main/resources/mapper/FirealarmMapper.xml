@@ -28,5 +28,12 @@
         <result column="smsmod" property="smsmod" jdbcType="VARCHAR" />
         <result column="remarks" property="remarks" jdbcType="VARCHAR" />
         <result column="firealarmno" property="firealarmno" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
 </mapper>
