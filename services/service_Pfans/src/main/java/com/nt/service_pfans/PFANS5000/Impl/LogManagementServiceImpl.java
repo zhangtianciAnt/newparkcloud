@@ -72,10 +72,11 @@ public class LogManagementServiceImpl implements LogManagementService {
             // 解析excel
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-
+            if (StringUtils.isNullOrEmpty(flag)) {
                 // 格式check
                 List<LogManagement> error = importCheck(list);
-
+                return error;
+            } else {
                 int k = 1;
                 for (int i = 1; i < list.size(); i++) {
                     LogManagement logmanagement = new LogManagement();
@@ -94,11 +95,11 @@ public class LogManagementServiceImpl implements LogManagementService {
                         logmanagement.setTime_start(sf.parse(Time_start));
                         logmanagement.setTime_end(sf.parse(Time_end));
                         logmanagement.setWork_memo(value.get(8).toString());
-                        if (logmanagement.getProject_id().length()>0) {
-                            String s2="01";
+                        if (logmanagement.getProject_id().length() > 0) {
+                            String s2 = "01";
                             logmanagement.setHas_project(s2);
                         } else {
-                            String s3="02";
+                            String s3 = "02";
                             logmanagement.setHas_project(s3);
                         }
                     }
@@ -107,6 +108,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     logmanagementmapper.insert(logmanagement);
                     listVo.add(logmanagement);
                 }
+            }
             return listVo;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
