@@ -56,7 +56,10 @@ public class GlobalAop {
     //接口结束
     @After("webLog()")
     public void after(JoinPoint joinPoint){
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
         log.info("方法调用结束>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        log.info("接口地址 : " + request.getRequestURL().toString());
         log.info("TIME : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
         log.info("方法调用结束<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }

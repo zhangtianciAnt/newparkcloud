@@ -202,20 +202,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
         Query query = new Query();
-        if ("1".equals(orgtype)) {
-            if(StrUtil.isNotBlank(orgid)){
-                query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
-            }
-
-            List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
-            return customerInfos;
-        } else {
-            if(StrUtil.isNotBlank(orgid)){
-                query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
-            }
-            List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
-            return customerInfos;
+        if(StrUtil.isNotBlank(orgid)){
+            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                    Criteria.where("userinfo.groupid").is(orgid),Criteria.where("userinfo.teamid").is(orgid)));
         }
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        return customerInfos;
     }
 
     /**
