@@ -18,6 +18,6 @@ public interface PublicExpenseService {
     //编辑
     void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception;
     //按id查询
-    PublicExpense selectById(String publicexpenseid) throws Exception;
+    PublicExpenseVo selectById(String publicexpenseid) throws Exception;
 
 }
