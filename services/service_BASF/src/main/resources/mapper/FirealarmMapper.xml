@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.FirealarmMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Firealarm">
+        <!--
+           WARNING - @mbg.generated
+         -->
+        <id column="firealarmid" property="firealarmid" jdbcType="VARCHAR" />
+        <result column="alarmpeo" property="alarmpeo" jdbcType="VARCHAR" />
+        <result column="alarmtimes" property="alarmtimes" jdbcType="TIMESTAMP" />
+        <result column="replypho" property="replypho" jdbcType="VARCHAR" />
+        <result column="accunit" property="accunit" jdbcType="VARCHAR" />
+        <result column="windirection" property="windirection" jdbcType="VARCHAR" />
+        <result column="speloc" property="speloc" jdbcType="VARCHAR" />
+        <result column="indevice" property="indevice" jdbcType="VARCHAR" />
+        <result column="casualties" property="casualties" jdbcType="VARCHAR" />
+        <result column="typacc" property="typacc" jdbcType="VARCHAR" />
+        <result column="chemno" property="chemno" jdbcType="VARCHAR" />
+        <result column="chemname" property="chemname" jdbcType="VARCHAR" />
+        <result column="policetim" property="policetim" jdbcType="TIMESTAMP" />
+        <result column="acctime" property="acctime" jdbcType="TIMESTAMP" />
+        <result column="pickloc" property="pickloc" jdbcType="VARCHAR" />
+        <result column="pickpho" property="pickpho" jdbcType="VARCHAR" />
+        <result column="protype" property="protype" jdbcType="VARCHAR" />
+        <result column="prono" property="prono" jdbcType="VARCHAR" />
+        <result column="emplan" property="emplan" jdbcType="VARCHAR" />
+        <result column="alarmlev" property="alarmlev" jdbcType="VARCHAR" />
+        <result column="smsmod" property="smsmod" jdbcType="VARCHAR" />
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+        <result column="firealarmno" property="firealarmno" jdbcType="VARCHAR" />
+    </resultMap>
+</mapper>
