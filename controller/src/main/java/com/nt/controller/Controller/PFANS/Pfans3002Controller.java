@@ -26,8 +26,8 @@ public class Pfans3002Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getHotelReservation(HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getHotelReservation(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         HotelReservation hotelreservation = new HotelReservation();
         hotelreservation.setOwners(tokenModel.getOwnerList());
@@ -35,12 +35,8 @@ public class Pfans3002Controller {
     }
 
 
-
-
-
-
-    @RequestMapping(value ="/one",method = { RequestMethod.POST} )
-    public ApiResult one(@RequestBody HotelReservation hotelreservation,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody HotelReservation hotelreservation, HttpServletRequest request) throws Exception {
         if (hotelreservation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -48,23 +44,23 @@ public class Pfans3002Controller {
         return ApiResult.success(hotelreservationService.One(hotelreservation.getHotelreservationid()));
     }
 
-    @RequestMapping(value="/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody HotelReservation hotelreservation, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody HotelReservation hotelreservation, HttpServletRequest request) throws Exception {
         if (hotelreservation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        hotelreservationService.insertHotelReservation(hotelreservation,tokenModel);
+        hotelreservationService.insertHotelReservation(hotelreservation, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateHotelReservation(@RequestBody HotelReservation hotelreservation, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateHotelReservation(@RequestBody HotelReservation hotelreservation, HttpServletRequest request) throws Exception {
         if (hotelreservation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        hotelreservationService.updateHotelReservation(hotelreservation,tokenModel);
+        hotelreservationService.updateHotelReservation(hotelreservation, tokenModel);
         return ApiResult.success();
     }
 

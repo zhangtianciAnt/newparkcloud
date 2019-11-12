@@ -22,7 +22,7 @@ public class PunchcardRecord extends BaseModel {
     @Column(name = "PUNCHCARDRECORD_ID")
     private String punchcardrecord_id;
 
-    @Id
+
     @Column(name = "USER_ID")
     private String user_id;
 
