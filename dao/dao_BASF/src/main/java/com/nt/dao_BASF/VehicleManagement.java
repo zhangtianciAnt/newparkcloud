@@ -4,6 +4,8 @@ import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Data
@@ -11,6 +13,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Table(name="vehiclemanagement")
 public class VehicleManagement extends BaseModel {
+    @Id
+    private String vehiclemanagementid;
     /**
      *一号车状态
      */
