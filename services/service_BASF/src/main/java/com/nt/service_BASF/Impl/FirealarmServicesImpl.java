@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF.Impl
- * @ClassName:
+ * @ClassName:BASF10201ServicesImpl
  * @Author: Wxz
  * @Description: BASF接警单模块实现类
  * @Date: 2019/11/12 10:50

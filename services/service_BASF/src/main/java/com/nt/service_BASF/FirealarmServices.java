@@ -8,9 +8,9 @@ import java.util.List;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF
- * @ClassName:
+ * @ClassName:BASF10201Services
  * @Author: Wxz
- * @Description:
+ * @Description:接警单管理接口
  * @Date: 2019/11/12 10:36
  * @Version: 1.0
  */
