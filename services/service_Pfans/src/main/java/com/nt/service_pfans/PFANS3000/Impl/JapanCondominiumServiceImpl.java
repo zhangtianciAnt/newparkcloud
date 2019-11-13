@@ -1,8 +1,10 @@
 package com.nt.service_pfans.PFANS3000.Impl;
 
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS3000.JapanCondominium;
 import com.nt.dao_Pfans.PFANS3000.UseCoupon;
 import com.nt.dao_Pfans.PFANS3000.Vo.JapanCondominiumVo;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS3000.JapanCondominiumService;
 import com.nt.service_pfans.PFANS3000.mapper.JapanCondominiumMapper;
 import com.nt.service_pfans.PFANS3000.mapper.UseCouponMapper;
@@ -27,6 +29,8 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
     private JapanCondominiumMapper japancondominiumMapper;
     @Autowired
     private UseCouponMapper usecouponMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public List<JapanCondominium> getJapanCondominium(JapanCondominium japancondominium) throws Exception {
@@ -69,8 +73,18 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 usecoupon.setJapancondominiumid(japancondominiumid);
                 usecoupon.setRowindex(rowundex);
                 usecouponMapper.insertSelective(usecoupon);
+                Dictionary dictionary = new Dictionary();
+                dictionary.preInsert(tokenModel);
+                dictionary.setCode(usecoupon.getCopuntype());
+                dictionary.setValue2(usecoupon.getCopunnumber());
+                dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
+        Dictionary dictionary = new Dictionary();
+        dictionary.preInsert(tokenModel);
+        dictionary.setCode(japancondominium.getCondominiumcompany());
+        dictionary.setValue2(japancondominium.getMoneys());
+        dictionaryMapper.updateByPrimaryKeySelective(dictionary);
     }
     //新建
     @Override
@@ -91,8 +105,18 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 usecoupon.setJapancondominiumid(japancondominiumid);
                 usecoupon.setRowindex(rowundex);
                 usecouponMapper.insertSelective(usecoupon);
+                Dictionary dictionary = new Dictionary();
+                dictionary.preUpdate(tokenModel);
+                dictionary.setCode(usecoupon.getCopuntype());
+                dictionary.setValue2(usecoupon.getCopunnumber());
+                dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
+        Dictionary dictionary = new Dictionary();
+        dictionary.preUpdate(tokenModel);
+        dictionary.setCode(japancondominium.getCondominiumcompany());
+        dictionary.setValue2(japancondominium.getMoneys());
+        dictionaryMapper.updateByPrimaryKeySelective(dictionary);
     }
 
 }
