@@ -167,7 +167,7 @@ public class Recruit extends BaseModel {
      * 经验要求
      */
     @Column(name = "EXPERIENCE")
-    private Date experience;
+    private String experience;
 
     /**
      * 其他要求
