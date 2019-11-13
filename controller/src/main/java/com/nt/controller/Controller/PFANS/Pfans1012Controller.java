@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
+import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
@@ -59,12 +60,12 @@ public class Pfans1012Controller {
      * 新建
      */
     @RequestMapping(value = "/insert",method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception {
-        if (publicExpense == null) {
+    public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
+        if (publicExpenseVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        publicExpenseService.insert(publicExpense,tokenModel);
+        publicExpenseService.insert(publicExpenseVo,tokenModel);
         return ApiResult.success();
     }
 
@@ -72,12 +73,12 @@ public class Pfans1012Controller {
      * 修改
      */
     @RequestMapping(value = "/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody  PublicExpense publicExpense, HttpServletRequest request) throws Exception {
-        if (publicExpense == null) {
+    public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
+        if (publicExpenseVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        publicExpenseService.update(publicExpense,tokenModel);
+        publicExpenseService.update(publicExpenseVo,tokenModel);
         return ApiResult.success();
     }
 

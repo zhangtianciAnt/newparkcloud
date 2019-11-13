@@ -54,6 +54,7 @@ public class Pfans8007Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        workingday.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(workingdayService.getList(workingday));
     }
 }
