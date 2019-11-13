@@ -1,4 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
+
 import com.nt.dao_Pfans.PFANS2000.Overtime;
 import com.nt.service_pfans.PFANS2000.OvertimeService;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -28,24 +30,19 @@ public class OvertimeServiceImpl implements OvertimeService {
     }
     @Override
     public Overtime One(String overtimeid) throws Exception {
-
         return overtimeMapper.selectByPrimaryKey(overtimeid);
     }
 
     @Override
     public void insertOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
-        if (!StringUtils.isEmpty(overtime)) {
-            overtime.preInsert(tokenModel);
-            overtime.setOvertimeid(UUID.randomUUID().toString());
-            overtimeMapper.insert(overtime);
-        }
+        overtime.preInsert(tokenModel);
+        overtime.setOvertimeid(UUID.randomUUID().toString());
+        overtimeMapper.insert(overtime);
     }
 
     @Override
     public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
-        if (!StringUtils.isEmpty(overtime)) {
-            overtime.preUpdate(tokenModel);
-            overtimeMapper.updateByPrimaryKey(overtime);
-        }
+        overtime.preUpdate(tokenModel);
+        overtimeMapper.updateByPrimaryKey(overtime);
     }
 }
