@@ -11,8 +11,8 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="firealarm")
-public class Firealarm  extends BaseModel {
+@Table(name = "firealarm")
+public class Firealarm extends BaseModel {
 
     @Id
     private String firealarmid;
@@ -65,7 +65,7 @@ public class Firealarm  extends BaseModel {
     /**
      * 化学品数量
      */
-    private String chemno;
+    private Integer chemno;
 
     /**
      * 化学品名称
@@ -103,28 +103,35 @@ public class Firealarm  extends BaseModel {
     private String prono;
 
     /**
-     *应急预案选择
+     * 应急预案选择
      */
     private String emplan;
 
     /**
-     *报警等级
+     * 报警等级
      */
     private String alarmlev;
 
     /**
-     *短信模板
+     * 短信模板
      */
     private String smsmod;
 
     /**
-     *注释
+     * 注释
      */
     private String remarks;
 
     /**
-     *接警单编号
+     * 接警单编号
      */
     private String firealarmno;
+
+
+    /**
+     * 接警单状态
+     */
+    private String completesta;
+
 
 }

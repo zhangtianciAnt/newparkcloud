@@ -60,6 +60,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
     public void insert(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         firealarm.preInsert(tokenModel);
         firealarm.setFirealarmid(UUID.randomUUID().toString());
+        firealarm.setCompletesta("0");
         firealarmMapper.insert(firealarm);
     }
 
@@ -105,6 +106,9 @@ public class FirealarmServicesImpl implements FirealarmServices {
     @Override
     public void update(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         firealarm.preUpdate(tokenModel);
+//        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+//        Date date = new Date(System.currentTimeMillis());
+//        firealarm.setPolicetim(formatter.format(date));
         firealarmMapper.updateByPrimaryKey(firealarm);
     }
 }
