@@ -95,10 +95,6 @@ public class Overtime extends BaseModel {
      */
     @Column(name = "CAUSE")
     private String cause;
-
-
-
-
 }
 
 
