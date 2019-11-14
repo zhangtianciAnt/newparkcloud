@@ -3,6 +3,7 @@
 <mapper namespace="com.nt.service_BASF.mapper.VehicletrajectoryMapper.xml">
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Vehicletrajectory">
         <id column="vehicletrajectoryid" property="vehicletrajectoryid" jdbcType="VARCHAR" />
+        <result column="vehicleinformationid" property="vehicleinformationid" jdbcType="VARCHAR"/>
         <result column="vehiclestarttime" property="vehiclestarttime" jdbcType="TIMESTAMP"/>
         <result column="vehicleendtime" property="vehicleendtime" jdbcType="TIMESTAMP"/>
         <result column="vehicleviolationtype" property="vehicleviolationtype" jdbcType="VARCHAR"/>

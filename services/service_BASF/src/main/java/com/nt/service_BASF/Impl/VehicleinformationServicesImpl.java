@@ -62,19 +62,19 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         vehicleinformationMapper.updateByPrimaryKey(vehicleinformation);
     }
 
-    /**
-     * @param vehicleinformationid
-     * @Method one
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 获取车辆信息详情
-     * @Return com.nt.dao_BASF.vehicleinformationid
-     * @Date 2019/11/14 13:37
-     */
-    @Override
-    public Vehicleinformation one(String vehicleinformationid) throws Exception {
-        return vehicleinformationMapper.selectByPrimaryKey(vehicleinformationid);
-    }
+//    /**
+//     * @param vehicleinformationid
+//     * @Method one
+//     * @Author Wxz
+//     * @Version 1.0
+//     * @Description 获取车辆信息详情
+//     * @Return com.nt.dao_BASF.vehicleinformationid
+//     * @Date 2019/11/14 13:37
+//     */
+//    @Override
+//    public Vehicleinformation one(String vehicleinformationid) throws Exception {
+//        return vehicleinformationMapper.selectByPrimaryKey(vehicleinformationid);
+//    }
 
     /**
      * @param vehicleinformation

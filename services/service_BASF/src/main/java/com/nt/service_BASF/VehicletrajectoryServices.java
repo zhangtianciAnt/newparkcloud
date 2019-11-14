@@ -15,6 +15,7 @@ import java.util.List;
  */
 public interface VehicletrajectoryServices {
 
-    //获取车辆轨迹列表
-    List<Vehicletrajectory> list()throws Exception;
+
+    //获取车辆信息详情
+    Vehicletrajectory one(String vehicleinformationid) throws Exception;
 }

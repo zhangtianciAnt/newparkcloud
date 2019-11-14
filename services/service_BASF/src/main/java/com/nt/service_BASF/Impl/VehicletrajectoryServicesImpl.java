@@ -30,17 +30,16 @@ public class VehicletrajectoryServicesImpl implements VehicletrajectoryServices 
     private VehicletrajectoryMapper vehicletrajectoryMapper;
 
     /**
-     * @param Vehicletrajectory
-     * @Method list
+     * @param vehicleinformationid
+     * @Method one
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取车辆轨迹列表
-     * @Return java.util.List<Vehicletrajectory>
-     * @Date 2019/11/14 14：31
+     * @Description 获取车辆轨迹信息详情
+     * @Return com.nt.dao_BASF.vehicleinformationid
+     * @Date 2019/11/14 16：16
      */
     @Override
-    public List<Vehicletrajectory> list() throws Exception {
-        Vehicletrajectory vehicletrajectory = new Vehicletrajectory();
-        return vehicletrajectoryMapper.select(vehicletrajectory);
+    public Vehicletrajectory one(String vehicleinformationid) throws Exception {
+        return vehicletrajectoryMapper.selectByPrimaryKey(vehicleinformationid);
     }
 }

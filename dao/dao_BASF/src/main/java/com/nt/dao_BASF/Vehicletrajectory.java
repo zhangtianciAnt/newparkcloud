@@ -27,6 +27,11 @@ public class Vehicletrajectory extends BaseModel {
     private String vehicletrajectoryid;
 
     /**
+     * 主表外键
+     */
+    private String vehicleinformationid;
+
+    /**
      *轨迹开始时间
      */
     private String vehiclestarttime;

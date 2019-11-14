@@ -2,7 +2,6 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Vehicleinformation;
-import com.nt.dao_BASF.Vehicletrajectory;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_BASF.VehicletrajectoryServices;
 import com.nt.utils.*;
@@ -38,19 +37,6 @@ public class BASF10701Controller {
     @Autowired
     private TokenService tokenService;
 
-    /**
-     * @param request
-     * @Method list
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 获取车辆轨迹详情列表
-     * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/14 14:37
-     */
-    @RequestMapping(value = "/vehicletrajectorylist",method = {RequestMethod.POST})
-    public ApiResult vehicletrajectorylist(HttpServletRequest request)throws Exception{
-        return ApiResult.success(vehicletrajectoryServices.list());
-    }
 
     /**
      * @param request
@@ -61,8 +47,8 @@ public class BASF10701Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/14 13：49
      */
-    @RequestMapping(value = "/vehicleinformationlist",method = {RequestMethod.POST})
-    public ApiResult vehicleinformationlist(HttpServletRequest request)throws Exception{
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception {
         return ApiResult.success(vehicleinformationServices.list());
     }
 
@@ -102,7 +88,7 @@ public class BASF10701Controller {
         if (StrUtil.isEmpty(vehicleinformationid)){
             return ApiResult.success(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(vehicleinformationServices.one(vehicleinformationid));
+        return ApiResult.success(vehicletrajectoryServices.one(vehicleinformationid));
     }
 
     /**
