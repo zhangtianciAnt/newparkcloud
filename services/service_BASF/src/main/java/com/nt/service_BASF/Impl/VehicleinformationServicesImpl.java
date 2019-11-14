@@ -89,6 +89,6 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public void update(Vehicleinformation vehicleinformation, TokenModel tokenModel) throws Exception {
         vehicleinformation.preUpdate(tokenModel);
-        vehicleinformationMapper.updateByPrimaryKey(vehicleinformation);
+        vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
     }
 }
