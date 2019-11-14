@@ -33,7 +33,7 @@ public class Environment extends BaseModel {
      * 预警阈值
      */
 
-    private Integer threshold;
+    private String threshold;
 
 
 }

@@ -91,9 +91,9 @@ public class BASF10301Controller {
      * @param environmentid
      * @param request
      * @Method selectById
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
-     * @Description 获取接警单详情
+     * @Description 获取数据监控详情
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:35
      */

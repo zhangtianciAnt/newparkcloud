@@ -27,7 +27,7 @@ import java.util.UUID;
 @Transactional(rollbackFor = Exception.class)
 public class EnvironmentServicesImpl implements EnvironmentServices {
 
-    private static Logger log = LoggerFactory.getLogger(DeviceInformationServicesImpl.class);
+    private static Logger log = LoggerFactory.getLogger(EnvironmentServicesImpl.class);
 
     @Autowired
     private EnvironmentMapper environmentMapper;

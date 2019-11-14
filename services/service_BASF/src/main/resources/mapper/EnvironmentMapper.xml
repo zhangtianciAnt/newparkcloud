@@ -8,7 +8,7 @@
         <id column="environmentid" property="environmentid" jdbcType="VARCHAR"/>
         <result column="monitor" property="monitor" jdbcType="VARCHAR"/>
         <result column="alertlevel" property="alertlevel" jdbcType="VARCHAR"/>
-        <result column="threshold" property="threshold" jdbcType="INTEGER"/>
+        <result column="threshold" property="threshold" jdbcType="VARCHAR"/>
 
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
