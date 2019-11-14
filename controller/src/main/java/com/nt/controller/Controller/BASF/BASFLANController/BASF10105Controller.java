@@ -43,8 +43,8 @@ public class BASF10105Controller {
      * @Date 2019/11/4 19:38
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(deviceinFormationServices.list());
+    public ApiResult list(@RequestBody Deviceinformation deviceinformation, HttpServletRequest request) throws Exception {
+        return ApiResult.success(deviceinFormationServices.list(deviceinformation));
     }
 
     /**

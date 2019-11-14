@@ -17,7 +17,7 @@ import java.util.List;
 public interface DeviceInformationServices {
 
     //获取设备列表
-    List<Deviceinformation> list() throws Exception;
+    List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception;
 
     //创建设备
     void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
