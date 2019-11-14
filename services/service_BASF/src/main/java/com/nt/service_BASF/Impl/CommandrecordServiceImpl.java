@@ -22,8 +22,8 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
 
     /**
      * @方法名：save
-     * @描述：信息发布保存
-     * @创建日期：2018/12/13
+     * @描述：接警指挥信息保存
+     * @创建日期：2019/11/13
      * @作者：SUNXU
      * @参数：[information, request]
      * @返回值：
@@ -38,8 +38,8 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
 
     /**
      * @方法名：get
-     * @描述：获取信息发布列表
-     * @创建日期：2018/12/13
+     * @描述：获取接警指挥信息
+     * @创建日期：2019/11/13
      * @作者：SUNXU
      * @参数：[information, request]
      * @返回值：Information

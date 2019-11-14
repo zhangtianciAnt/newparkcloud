@@ -7,10 +7,10 @@ import java.util.List;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF
- * @ClassName: BASF10103Services
+ * @ClassName: BASF20201Services
  * @Author: SUN
- * @Description: BASF用户组模块接口
- * @Date: 2019/11/4 16:09
+ * @Description: BASF大屏接警指挥
+ * @Date: 2019/11/14 16:09
  * @Version: 1.0
  */
 public interface CommandrecordServices {
