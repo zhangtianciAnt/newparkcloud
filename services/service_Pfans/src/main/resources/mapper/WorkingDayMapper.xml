@@ -4,4 +4,9 @@
 <delete id="deletete">
        DELETE FROM workingday WHERE WORKINGDATE= #{day};
 </delete>
+<select id="getDataList" resultType="com.nt.dao_Pfans.PFANS8000.WorkingDay">
+SELECT * FROM workingday
+			 WHERE #{THIS_YEAR} >= YEARS AND
+		YEARS >=#{LAST_YEAR}
+</select>
 </mapper>

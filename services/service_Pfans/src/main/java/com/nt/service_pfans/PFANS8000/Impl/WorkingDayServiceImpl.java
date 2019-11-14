@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -27,9 +28,15 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         workingdayMapper.insert(workingday);
     }
     @Override
-    public List<WorkingDay> getList(WorkingDay workingday) throws Exception {
-
-        return workingdayMapper.select(workingday) ;
+    public List<WorkingDay> getDataList() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        String this_year = String.valueOf(cal.get(cal.YEAR)+1);
+        String last_year = String.valueOf(cal.get(cal.YEAR) - 3);
+        List<WorkingDay> workingday = workingdayMapper.getDataList(this_year, last_year);
+        if (workingday.isEmpty()) {
+            return null;
+        }
+        return workingday;
     }
 
     @Override
