@@ -11,5 +11,6 @@
         <result column="CarStatus4" property="CarStatus4" jdbcType="VARCHAR"/>
         <result column="CarStatus5" property="CarStatus5" jdbcType="VARCHAR"/>
         <result column="CarStatus6" property="CarStatus6" jdbcType="VARCHAR"/>
+
     </resultMap>
 </mapper>
