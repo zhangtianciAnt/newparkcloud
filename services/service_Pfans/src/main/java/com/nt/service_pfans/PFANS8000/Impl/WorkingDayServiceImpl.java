@@ -7,6 +7,9 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,9 +33,13 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     @Override
-    public void delete(WorkingDay workingday, TokenModel tokenModel) throws Exception{
+    public void deletete(WorkingDay workingday, TokenModel tokenModel) throws Exception{
 
-        workingdayMapper.delete(workingday);
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+        String strTemp = sf1.format(workingday.getWorkingdate());
+        Date delDate = sf1.parse(strTemp);
+        workingday.setWorkingdate(delDate);
+        workingdayMapper.deletete(workingday.getWorkingdate());
     }
 
 
