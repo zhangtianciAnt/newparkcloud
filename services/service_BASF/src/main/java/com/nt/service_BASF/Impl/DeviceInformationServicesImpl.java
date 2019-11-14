@@ -43,7 +43,7 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     @Override
     public List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception {
 //        Deviceinformation deviceinformation = new Deviceinformation();
-        deviceinformation = new Deviceinformation();
+//        deviceinformation = new Deviceinformation();
         return deviceinformationMapper.select(deviceinformation);
     }
 
