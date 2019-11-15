@@ -19,11 +19,6 @@ public interface VehicleinformationServices {
     //获取车辆列表
     List<Vehicleinformation> list()throws Exception;
 
-    //删除车辆信息
-    void delete(Vehicleinformation vehicleinformation)throws Exception;
-
-//    //获取车辆信息详情
-//    Vehicleinformation one(String vehicleinformationid) throws Exception;
 
     //更新车辆信息
     void update(Vehicleinformation vehicleinformation, TokenModel tokenModel)throws Exception;

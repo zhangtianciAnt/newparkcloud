@@ -46,36 +46,6 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         return vehicleinformationMapper.select(vehicleinformation);
     }
 
-
-    /**
-     * @param vehicleinformation
-     * @Method Delete
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 删除车辆信息
-     * @Return void
-     * @Date 2019/11/14 13:34
-     */
-    @Override
-    public void delete(Vehicleinformation vehicleinformation) throws Exception {
-        //逻辑删除（status -> "1"）
-        vehicleinformationMapper.updateByPrimaryKey(vehicleinformation);
-    }
-
-//    /**
-//     * @param vehicleinformationid
-//     * @Method one
-//     * @Author Wxz
-//     * @Version 1.0
-//     * @Description 获取车辆信息详情
-//     * @Return com.nt.dao_BASF.vehicleinformationid
-//     * @Date 2019/11/14 13:37
-//     */
-//    @Override
-//    public Vehicleinformation one(String vehicleinformationid) throws Exception {
-//        return vehicleinformationMapper.selectByPrimaryKey(vehicleinformationid);
-//    }
-
     /**
      * @param vehicleinformation
      * @param tokenModel

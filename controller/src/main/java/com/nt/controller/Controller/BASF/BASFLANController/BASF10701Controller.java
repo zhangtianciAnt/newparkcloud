@@ -52,27 +52,6 @@ public class BASF10701Controller {
         return ApiResult.success(vehicleinformationServices.list());
     }
 
-
-    /**
-     * @param vehicleinformation
-     * @param request
-     * @Method delete
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 删除车辆信息
-     * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/14 13:57
-     */
-    @RequestMapping(value = "/delete",method = {RequestMethod.POST})
-    public ApiResult delete(@RequestBody Vehicleinformation vehicleinformation,HttpServletRequest request)throws Exception{
-        if (vehicleinformation == null){
-            return ApiResult.success(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
-        }
-        vehicleinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
-        vehicleinformationServices.delete(vehicleinformation);
-        return ApiResult.success();
-    }
-
     /**
      * @param vehicleinformationid
      * @param request
