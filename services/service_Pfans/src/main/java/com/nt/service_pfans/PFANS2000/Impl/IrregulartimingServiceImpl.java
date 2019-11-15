@@ -18,18 +18,12 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
     @Autowired
     private IrregulartimingMapper irregulartimingMapper;
 
-    /**
-     * 查询列表
-     */
 
     @Override
     public List<Irregulartiming> getAllIrregulartiming(Irregulartiming irregulartiming) throws Exception {
         return irregulartimingMapper.select(irregulartiming);
     }
 
-    /**
-     * 按id查询
-     */
     @Override
     public Irregulartiming getIrregulartimingOne(String irregulartiming_id) throws Exception {
         if (irregulartiming_id.equals("")) {
@@ -38,11 +32,6 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
         return irregulartimingMapper.selectByPrimaryKey(irregulartiming_id);
 
     }
-
-
-    /**
-     * 新建
-     */
 
     @Override
     public void insertIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel) throws Exception {
@@ -53,9 +42,7 @@ public class IrregulartimingServiceImpl implements IrregulartimingService {
         }
     }
 
-    /**
-     * 按id修改
-     */
+
     @Override
     public void updateIrregulartiming(Irregulartiming irregulartiming, TokenModel tokenModel) throws Exception {
         irregulartimingMapper.updateByPrimaryKeySelective(irregulartiming);
