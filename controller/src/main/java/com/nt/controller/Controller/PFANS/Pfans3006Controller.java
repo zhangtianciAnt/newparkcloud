@@ -19,7 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/appointmentcar")
 public class Pfans3006Controller {
-    //查找
+
     @Autowired
     private AppointmentCarService appointmentcarService;
     @Autowired
