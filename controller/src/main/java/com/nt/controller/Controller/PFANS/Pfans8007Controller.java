@@ -55,7 +55,7 @@ public class Pfans8007Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         workingday.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(workingdayService.getList(workingday));
+        return ApiResult.success(workingdayService.getDataList());
     }
 }
 

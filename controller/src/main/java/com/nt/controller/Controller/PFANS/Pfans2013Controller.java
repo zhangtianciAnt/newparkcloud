@@ -43,4 +43,14 @@ public class Pfans2013Controller {
 
         return ApiResult.success(annualLeaveService.getDataList(annualLeave));
     }
+    /**
+     * 数据做成
+     */
+    @RequestMapping(value = "insert", method = {RequestMethod.GET})
+    public ApiResult insert(HttpServletRequest request) throws Exception {
+
+        TokenModel tokenModel = tokenService.getToken(request);
+        annualLeaveService.insert(tokenModel);
+        return ApiResult.success();
+    }
 }

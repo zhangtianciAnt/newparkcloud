@@ -43,6 +43,9 @@ public class Seal extends BaseModel {
     @Column(name = "APPLICATION_DATE ")
     private Date application_date;
 
+    @Column(name = "USEDATE" )
+    private Date usedate;
+
     @Column(name = "PRINTSCORE ")
     private String printscore;
 
@@ -58,8 +61,6 @@ public class Seal extends BaseModel {
     @Column(name = "SEALTYPE ")
     private String sealtype;
 
-    @Column(name = "APPLICATIONNUMBER ")
-    private String applicationnumber;
 
     @Column(name = "REMARKS ")
     private String remarks;
