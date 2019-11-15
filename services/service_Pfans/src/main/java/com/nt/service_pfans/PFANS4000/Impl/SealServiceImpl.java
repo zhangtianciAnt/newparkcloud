@@ -33,7 +33,7 @@ public class SealServiceImpl implements SealService {
     @Override
     public void upd(Seal seal, TokenModel tokenModel) throws Exception {
         seal.preUpdate(tokenModel);
-        sealMapper.updateByPrimaryKeySelective(seal);
+        sealMapper.updateByPrimaryKey(seal);
     }
 
     @Override
