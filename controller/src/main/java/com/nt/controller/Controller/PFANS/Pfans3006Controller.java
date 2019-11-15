@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/appointmentcar")
 public class Pfans3006Controller {
-    //查找
+
     @Autowired
     private AppointmentCarService appointmentcarService;
     @Autowired
@@ -67,6 +67,13 @@ public class Pfans3006Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         appointmentcarService.updateAppointmentCar(appointmentcar, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public ApiResult Download(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        appointmentcarService.download(tokenModel);
         return ApiResult.success();
     }
 
