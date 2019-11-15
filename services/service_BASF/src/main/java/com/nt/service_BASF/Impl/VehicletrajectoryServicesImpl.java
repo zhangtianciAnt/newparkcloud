@@ -1,5 +1,6 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.dao_BASF.Vehicletrajectory;
 import com.nt.service_BASF.VehicletrajectoryServices;
 import com.nt.service_BASF.mapper.VehicletrajectoryMapper;
@@ -39,7 +40,9 @@ public class VehicletrajectoryServicesImpl implements VehicletrajectoryServices 
      * @Date 2019/11/14 16：16
      */
     @Override
-    public Vehicletrajectory one(String vehicleinformationid) throws Exception {
-        return vehicletrajectoryMapper.selectByPrimaryKey(vehicleinformationid);
+    public List<Vehicletrajectory> one(String vehicleinformationid) throws Exception {
+        Vehicletrajectory vehicletrajectory = new Vehicletrajectory();
+        vehicletrajectory.setVehicleinformationid(vehicleinformationid);
+        return vehicletrajectoryMapper.select(vehicletrajectory);
     }
 }

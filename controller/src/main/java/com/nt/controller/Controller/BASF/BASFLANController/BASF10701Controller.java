@@ -79,7 +79,7 @@ public class BASF10701Controller {
      * @Method selectById
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取车辆信息详情
+     * @Description 获取车辆轨迹信息详情
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/14 14：01
      */

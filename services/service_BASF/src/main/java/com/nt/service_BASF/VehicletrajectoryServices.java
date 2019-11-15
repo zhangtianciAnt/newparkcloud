@@ -17,5 +17,5 @@ public interface VehicletrajectoryServices {
 
 
     //获取车辆信息详情
-    Vehicletrajectory one(String vehicleinformationid) throws Exception;
+    List<Vehicletrajectory> one(String vehicleinformationid) throws Exception;
 }
