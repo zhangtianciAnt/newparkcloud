@@ -26,9 +26,7 @@ public class Pfans2020Controller {
     @Autowired
     private TokenService tokenService;
 
-    /**
-     * 查看列表
-     */
+
     @RequestMapping(value = "/getAllIrregulartiming", method = {RequestMethod.GET})
     public ApiResult getAllIrregulartiming(HttpServletRequest request) throws Exception {
 
@@ -38,9 +36,7 @@ public class Pfans2020Controller {
         return ApiResult.success(irregulartimingService.getAllIrregulartiming(irregulartiming));
     }
 
-    /**
-     * 查看一个人
-     */
+
     @RequestMapping(value = "/getIrregulartimingOne", method = {RequestMethod.POST})
     public ApiResult getIrregulartimingOne(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception {
         if (irregulartiming == null) {
@@ -50,9 +46,7 @@ public class Pfans2020Controller {
         return ApiResult.success(irregulartimingService.getIrregulartimingOne(irregulartiming.getIrregulartiming_id()));
     }
 
-    /**
-     * 新建
-     */
+
     @RequestMapping(value = "/insertIrregulartiming", method = {RequestMethod.POST})
     public ApiResult insertIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception {
         if (irregulartiming == null) {
@@ -63,9 +57,7 @@ public class Pfans2020Controller {
         return ApiResult.success();
     }
 
-    /**
-     * 修改
-     */
+
     @RequestMapping(value = "/updateIrregulartiming", method = {RequestMethod.POST})
     public ApiResult updateIrregulartiming(@RequestBody Irregulartiming irregulartiming, HttpServletRequest request) throws Exception {
         if (irregulartiming == null) {
