@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -48,62 +49,62 @@ public class AnnualLeave extends BaseModel {
     /**
      * 法定年假(上年度)
      */
-    private String annual_leave_lastyear;
+    private BigDecimal annual_leave_lastyear;
 
     /**
      * 福利年假(上年度)
      */
-    private String paid_leave_lastyear;
+    private BigDecimal paid_leave_lastyear;
 
     /**
      * 法定年假扣除(上年度)
      */
-    private String deduct_annual_leave_lastyear;
+    private BigDecimal deduct_annual_leave_lastyear;
 
     /**
      * 福利年假扣除(上年度)
      */
-    private String deduct_paid_leave_lastyear;
+    private BigDecimal deduct_paid_leave_lastyear;
 
     /**
      * 法定年假剩余(上年度)
      */
-    private String remaining_annual_leave_lastyear;
+    private BigDecimal remaining_annual_leave_lastyear;
 
     /**
      * 福利年假剩余(上年度)
      */
-    private String remaining_paid_leave_lastyear;
+    private BigDecimal remaining_paid_leave_lastyear;
 
     /**
      * 法定年假(本年度)
      */
-    private String annual_leave_thisyear;
+    private BigDecimal annual_leave_thisyear;
 
     /**
      * 福利年假(本年度)
      */
-    private String paid_leave_thisyear;
+    private BigDecimal paid_leave_thisyear;
 
     /**
      * 法定年假扣除(本年度)
      */
-    private String deduct_annual_leave_thisyear;
+    private BigDecimal deduct_annual_leave_thisyear;
 
     /**
      * 福利年假扣除(本年度)
      */
-    private String deduct_paid_leave_thisyear;
+    private BigDecimal deduct_paid_leave_thisyear;
 
     /**
      * 法定年假剩余(本年度)
      */
-    private String remaining_annual_leave_thisyear;
+    private BigDecimal remaining_annual_leave_thisyear;
 
     /**
      * 福利年假剩余(本年度)
      */
-    private String remaining_paid_leave_thisyear;
+    private BigDecimal remaining_paid_leave_thisyear;
 
     /**
      * 代休剩余
