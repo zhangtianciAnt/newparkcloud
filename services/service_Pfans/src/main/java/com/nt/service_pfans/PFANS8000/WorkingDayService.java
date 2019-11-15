@@ -10,7 +10,6 @@ public interface WorkingDayService {
 
     void insert(WorkingDay workingday, TokenModel tokenModel)throws Exception;
 
-    List<WorkingDay> getList(WorkingDay workingday) throws Exception;
-
+    List<WorkingDay> getDataList()throws Exception;
     void deletete(WorkingDay workingday, TokenModel tokenModel)throws Exception;
 }

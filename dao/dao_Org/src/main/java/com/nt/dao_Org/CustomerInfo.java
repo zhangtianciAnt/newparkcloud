@@ -219,6 +219,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String educational;
         /**
+         * 试用期截止日
+         */
+        private String enddate;
+        /**
          * 専攻
          */
         private String specialty;

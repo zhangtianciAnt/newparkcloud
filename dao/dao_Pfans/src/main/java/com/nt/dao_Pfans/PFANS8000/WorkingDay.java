@@ -19,11 +19,15 @@ public class WorkingDay  extends BaseModel{
     @Column(name = "WORKINGDAY_ID")
     private String workingday_id;
 
-    @Id
+
     @Column(name = "WORKINGDATE")
     private Date workingdate;
 
-    @Id
+
+    @Column(name = "YEARS")
+    private String years;
+
+
     @Column(name = "TYPE")
     private String type;
 }
