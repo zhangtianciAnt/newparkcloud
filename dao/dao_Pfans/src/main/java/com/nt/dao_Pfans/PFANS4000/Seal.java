@@ -43,7 +43,7 @@ public class Seal extends BaseModel {
     @Column(name = "APPLICATION_DATE ")
     private Date application_date;
 
-    @Column(name = "USEDATE ")
+    @Column(name = "USEDATE" )
     private Date usedate;
 
     @Column(name = "PRINTSCORE ")
