@@ -5,5 +5,4 @@ import com.nt.utils.MyMapper;
 import java.util.List;
 
 public interface StationeryMapper extends MyMapper<Stationery> {
-    List<Stationery> getStationery();
 }
