@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/appointmentcar")
 public class Pfans3006Controller {
-
+    //查找
     @Autowired
     private AppointmentCarService appointmentcarService;
     @Autowired
@@ -71,10 +74,8 @@ public class Pfans3006Controller {
     }
 
     @RequestMapping(value = "/download", method = {RequestMethod.GET})
-    public ApiResult Download(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        appointmentcarService.download(tokenModel);
-        return ApiResult.success();
+    public void download(HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        ExcelOutPutUtil.OutPut("jiejipai","jiejipai.xlsx",data,response);
     }
-
 }
