@@ -44,7 +44,6 @@ public class AppointmentCarServiceImpl implements AppointmentCarService {
         }
     }
 
-
     @Override
     public void updateAppointmentCar(AppointmentCar appointmentcar, TokenModel tokenModel) throws Exception {
         if(!StringUtils.isEmpty(appointmentcar)){

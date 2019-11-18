@@ -37,8 +37,6 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         return japancondominiumMapper.select(japancondominium);
     }
 
-
-    //按id查询
     @Override
     public JapanCondominiumVo selectById(String japancondominiumid) throws Exception {
         JapanCondominiumVo japanVo = new JapanCondominiumVo();
@@ -52,7 +50,6 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         return japanVo;
     }
 
-    //更新
     @Override
     public void updateJapanCondominiumVo(JapanCondominiumVo japancondominiumVo, TokenModel tokenModel) throws Exception {
         JapanCondominium japancondominium = new JapanCondominium();
@@ -86,7 +83,7 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         dictionary.setValue2(japancondominium.getMoneys());
         dictionaryMapper.updateByPrimaryKeySelective(dictionary);
     }
-    //新建
+
     @Override
     public void insertJapanCondominiumVo(JapanCondominiumVo japancondominiumVo, TokenModel tokenModel) throws Exception {
         String japancondominiumid = UUID.randomUUID().toString();

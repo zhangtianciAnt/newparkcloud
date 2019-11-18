@@ -6,5 +6,4 @@ import com.nt.utils.MyMapper;
 import java.util.List;
 
 public interface HotelReservationMapper extends MyMapper<HotelReservation> {
-    List<HotelReservation> getHotelReservation();
 }

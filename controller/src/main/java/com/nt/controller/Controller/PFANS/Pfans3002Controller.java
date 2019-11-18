@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/hotelreservation")
 public class Pfans3002Controller {
-    //查找
+
     @Autowired
     private HotelReservationService hotelreservationService;
     @Autowired
@@ -33,7 +33,6 @@ public class Pfans3002Controller {
         hotelreservation.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(hotelreservationService.getHotelReservation(hotelreservation));
     }
-
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody HotelReservation hotelreservation, HttpServletRequest request) throws Exception {

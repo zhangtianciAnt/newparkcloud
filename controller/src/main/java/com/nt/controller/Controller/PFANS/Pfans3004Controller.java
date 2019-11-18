@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/stationery")
 public class Pfans3004Controller {
-    //查找
+
     @Autowired
     private StationeryService stationeryService;
     @Autowired

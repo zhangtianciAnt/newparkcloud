@@ -43,7 +43,6 @@ public class StationeryServiceImpl implements StationeryService {
         }
     }
 
-
     @Override
     public void updateStationery(Stationery stationery, TokenModel tokenModel) throws Exception {
         if(!StringUtils.isEmpty(stationery)){

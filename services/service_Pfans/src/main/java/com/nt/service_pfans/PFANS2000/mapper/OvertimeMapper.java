@@ -5,5 +5,4 @@ import com.nt.utils.MyMapper;
 import java.util.List;
 
 public interface OvertimeMapper extends MyMapper<Overtime> {
-    List<Overtime> getOvertime();
 }

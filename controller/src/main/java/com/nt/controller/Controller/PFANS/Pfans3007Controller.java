@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
-
 
 @RestController
 @RequestMapping("/japancondominium")
 public class Pfans3007Controller {
-    //查找
+
     @Autowired
     private JapanCondominiumService japancondominiumService;
     @Autowired
@@ -35,9 +33,6 @@ public class Pfans3007Controller {
         return ApiResult.success(japancondominiumService.getJapanCondominium(japancondominium));
     }
 
-    /**
-     * 查看
-     */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String japancondominiumid, HttpServletRequest request) throws Exception {
         if (japancondominiumid == null) {
