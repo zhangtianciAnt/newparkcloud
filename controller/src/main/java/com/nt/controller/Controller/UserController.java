@@ -145,12 +145,6 @@ public class UserController {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/del", method = {RequestMethod.POST})
-    public ApiResult del(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        userService.del(tokenModel.getUserId());
-        return ApiResult.success();
-    }
 
     /**
      * @方法名：addAccountCustomer
