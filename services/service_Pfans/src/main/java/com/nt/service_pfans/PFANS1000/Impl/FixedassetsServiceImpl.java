@@ -20,13 +20,11 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
 
     @Override
     public List<Fixedassets> getFixedassets(Fixedassets fixedassets) {
-
         return fixedassetsMapper.select(fixedassets);
     }
 
     @Override
     public Fixedassets One(String fixedassets_id) throws Exception {
-
         return fixedassetsMapper.selectByPrimaryKey(fixedassets_id);
     }
 
@@ -38,18 +36,9 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
 
     @Override
     public void insert(Fixedassets fixedassets, TokenModel tokenModel) throws Exception {
-
         fixedassets.preInsert(tokenModel);
         fixedassets.setFixedassets_id(UUID.randomUUID().toString()) ;
         fixedassetsMapper.insert(fixedassets);
     }
-
-
-
-
-
-
-
-
 
 }

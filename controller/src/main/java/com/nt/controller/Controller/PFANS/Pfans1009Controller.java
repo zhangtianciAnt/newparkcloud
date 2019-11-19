@@ -20,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/fixedassets")
 public class Pfans1009Controller {
 
-
-    //查找信息发布
     @Autowired
     private FixedassetsService fixedassetsService;
 
@@ -30,8 +28,6 @@ public class Pfans1009Controller {
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getFixedassets(HttpServletRequest request)throws  Exception{
-
-
         TokenModel tokenModel = tokenService.getToken(request);
         Fixedassets fixedassets = new Fixedassets();
         fixedassets.setOwners(tokenModel.getOwnerList());
@@ -67,7 +63,6 @@ public class Pfans1009Controller {
         fixedassetsService.insert(fixedassets,tokenModel);
         return ApiResult.success();
     }
-
 
 }
 
