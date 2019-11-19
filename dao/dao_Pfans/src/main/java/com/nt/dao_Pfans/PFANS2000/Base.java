@@ -21,7 +21,7 @@ public class Base extends BaseModel {
      * 基数ID
      */
     @Id
-    @Column(name = "base_id")
+    @Column(name = "BASE_ID")
     private String base_id;
 
     /**
@@ -33,102 +33,102 @@ public class Base extends BaseModel {
     /**
      * 部门
      */
-    @Column(name = "department_id")
+    @Column(name = "DEPARTMENT_ID")
     private String department_id;
 
     /**
      * 名字
      */
-    @Column(name = "user_id")
+    @Column(name = "USER_ID")
     private String user_id;
 
     /**
      * Rn
      */
-    @Column(name = "rn")
+    @Column(name = "RN")
     private String rn;
 
     /**
      * 性別
      */
-    @Column(name = "sex")
+    @Column(name = "SEX")
     private String sex;
 
     /**
      * 独生子女
      */
-    @Column(name = "onlychild")
+    @Column(name = "ONLYCHILD")
     private String onlychild;
 
     /**
      * 入/退職/産休
      */
-    @Column(name = "type")
+    @Column(name = "TYPE")
     private String type;
 
     /**
      * 奨金計上
      */
-    @Column(name = "bonus")
+    @Column(name = "BONUS")
     private String bonus;
 
     /**
      * 1999年前社会人
      */
-    @Column(name = "sociology")
+    @Column(name = "SOCIOLOGY")
     private String sociology;
 
     /**
      * 大連戸籍
      */
-    @Column(name = "registered")
+    @Column(name = "REGISTERED")
     private String registered;
 
     /**
      * 2019年6月
      */
-    @Column(name = "mastmonth")
+    @Column(name = "MASTMONTH")
     private String mastmonth;
 
     /**
      * 2019年7月
      */
-    @Column(name = "thismonth")
+    @Column(name = "THISMONTH")
     private String thismonth;
 
     /**
      * 養老・失業・工傷基数
      */
-    @Column(name = "pension")
+    @Column(name = "PENSION")
     private String pension;
 
     /**
      * 医療・生育基数
      */
-    @Column(name = "medical")
+    @Column(name = "MEDICAL")
     private String medical;
 
     /**
      * 公积金基数
      */
-    @Column(name = "accumulation")
+    @Column(name = "ACCUMULATION")
     private String accumulation;
 
     /**
      * 采暖费
      */
-    @Column(name = "heating")
+    @Column(name = "HEATING")
     private String heating;
 
     /**
      * 入社日
      */
-    @Column(name = "workdate")
+    @Column(name = "WORKDATE")
     private Date workdate;
 
     /**
      * 顺序
      */
-    @Column(name = "rowindex")
+    @Column(name = "ROWINDEX")
     private Integer rowindex;
 }
