@@ -57,11 +57,13 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Date 2019/11/12 10:55
      */
     @Override
-    public void insert(Firealarm firealarm, TokenModel tokenModel) throws Exception {
+    public String insert(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         firealarm.preInsert(tokenModel);
-        firealarm.setFirealarmid(UUID.randomUUID().toString());
+        String ccid = UUID.randomUUID().toString();
+        firealarm.setFirealarmid(ccid);
         firealarm.setCompletesta("0");
         firealarmMapper.insert(firealarm);
+        return ccid;
     }
 
     /**
