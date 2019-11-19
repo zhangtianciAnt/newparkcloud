@@ -21,13 +21,11 @@ public class FlexibleWorkServiceImpl implements FlexibleWorkService {
 
     @Override
     public List<FlexibleWork> getFlexibleWork(FlexibleWork flexiblework) {
-
         return flexibleworkMapper.select(flexiblework);
     }
 
     @Override
     public FlexibleWork One(String flexibleworkid) throws Exception {
-
         return flexibleworkMapper.selectByPrimaryKey(flexibleworkid);
     }
 
@@ -39,7 +37,6 @@ public class FlexibleWorkServiceImpl implements FlexibleWorkService {
 
     @Override
     public void insert(FlexibleWork flexiblework, TokenModel tokenModel) throws Exception {
-
         flexiblework.preInsert(tokenModel);
         flexiblework.setFlexibleworkid(UUID.randomUUID().toString()) ;
         flexibleworkMapper.insert(flexiblework);

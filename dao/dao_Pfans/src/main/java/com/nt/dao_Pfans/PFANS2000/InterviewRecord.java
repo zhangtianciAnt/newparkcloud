@@ -26,7 +26,6 @@ public class InterviewRecord  extends BaseModel {
     @Column(name = "INTERVIEWRECORD_ID")
     private String interviewrecord_id;
 
-
     /**
      * 姓名ID
      */
@@ -44,8 +43,6 @@ public class InterviewRecord  extends BaseModel {
      */
     @Column(name = "EMAIL")
     private String email;
-
-
 
     /**
      * 简历接受时间ID
@@ -89,7 +86,6 @@ public class InterviewRecord  extends BaseModel {
     @Column(name = "SCHOOL")
     private String school;
 
-
     /**
      * 教育补充信息
      */
@@ -107,7 +103,6 @@ public class InterviewRecord  extends BaseModel {
      */
     @Column(name = "TECHNOLOGY")
     private String technology;
-
 
     /**
      * 面试是否通过
@@ -132,7 +127,6 @@ public class InterviewRecord  extends BaseModel {
      */
     @Column(name = "SALARY")
     private String salary;
-
 
     /**
      * 结果说明
