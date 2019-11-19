@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS2000.OtherTwo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.dao_Pfans.PFANS2000.Giving;
+import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -26,6 +28,9 @@ public class Pfans2005Controller {
     @Autowired
     private GivingService givingService;
 
+    @Autowired
+    private OtherTwoService othertwoService;
+
     @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Giving giving, HttpServletRequest request) throws Exception {
         if (giving == null) {
@@ -43,5 +48,23 @@ public class Pfans2005Controller {
         Giving giving=new Giving();
         giving.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(givingService.getDataList(giving));
+    }
+
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        OtherTwo othertwo = new OtherTwo();
+        othertwo.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(othertwoService.list(othertwo));
+    }
+
+    @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody  OtherTwo othertwo, HttpServletRequest request) throws Exception {
+        if (othertwo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        othertwoService.insert(othertwo, tokenModel);
+        return ApiResult.success();
     }
 }
