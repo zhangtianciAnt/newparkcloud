@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/flexiblework")
 public class Pfans2014Controller {
 
-    //查找信息发布
     @Autowired
     private FlexibleWorkService flexibleWorkService;
 
@@ -26,13 +25,10 @@ public class Pfans2014Controller {
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getFlexibleWork(HttpServletRequest request)throws  Exception{
-
-
             TokenModel tokenModel = tokenService.getToken(request);
             FlexibleWork flexiblework = new FlexibleWork();
             flexiblework.setOwners(tokenModel.getOwnerList());
             return ApiResult.success(flexibleWorkService.getFlexibleWork(flexiblework));
-
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
@@ -63,6 +59,4 @@ public class Pfans2014Controller {
         flexibleWorkService.insert(flexiblework,tokenModel);
         return ApiResult.success();
     }
-
-
 }
