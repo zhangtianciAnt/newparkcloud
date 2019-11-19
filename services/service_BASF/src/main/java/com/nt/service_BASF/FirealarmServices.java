@@ -20,7 +20,7 @@ public interface FirealarmServices {
     List<Firealarm> list() throws Exception;
 
     //创建报警单
-    void insert(Firealarm firealarm, TokenModel tokenModel)throws Exception;
+    String insert(Firealarm firealarm, TokenModel tokenModel) throws Exception;
 
     //删除报警单
     void delete(Firealarm firealarm)throws Exception;

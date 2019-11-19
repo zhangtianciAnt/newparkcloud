@@ -61,7 +61,7 @@ public class BASF10201Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         firealarmServices.insert(firealarm,tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(firealarmServices.insert(firealarm, tokenModel));
     }
 
     /**
