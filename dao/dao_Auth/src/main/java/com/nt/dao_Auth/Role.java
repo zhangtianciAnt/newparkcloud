@@ -43,7 +43,7 @@ public class Role extends BaseModel {
     /**
      * 角色描述
      */
-    private boolean defaultrole;
+    private String defaultrole;
 
 
     /**

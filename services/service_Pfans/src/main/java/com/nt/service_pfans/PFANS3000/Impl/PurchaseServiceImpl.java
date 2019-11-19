@@ -20,12 +20,11 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public List<Purchase> getPurchase(Purchase purchase) {
-
         return purchaseMapper.select(purchase);
     }
+
     @Override
     public Purchase One(String purchase_id) throws Exception {
-
         return purchaseMapper.selectByPrimaryKey(purchase_id);
     }
 
@@ -37,10 +36,8 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public void insert(Purchase purchase, TokenModel tokenModel) throws Exception {
-
         purchase.preInsert(tokenModel);
         purchase.setPurchase_id(UUID.randomUUID().toString()) ;
         purchaseMapper.insert(purchase);
     }
-
 }

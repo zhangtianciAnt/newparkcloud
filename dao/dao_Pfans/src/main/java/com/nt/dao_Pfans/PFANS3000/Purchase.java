@@ -197,5 +197,4 @@ public class Purchase  extends BaseModel {
     @Column(name = "ACTUARIALAMOUNT")
     private String actuarialamount;
 
-
 }

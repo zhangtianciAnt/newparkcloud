@@ -28,13 +28,11 @@ public class Pfans2003Controller {
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult getInterviewRecord(HttpServletRequest request) throws Exception {
-
         TokenModel tokenModel = tokenService.getToken(request);
         InterviewRecord interviewrecord = new InterviewRecord();
         interviewrecord.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(interviewrecordService.getInterviewRecord(interviewrecord));
     }
-
 
     @RequestMapping(value="/one",method={RequestMethod.POST})
     public ApiResult  one(@RequestBody InterviewRecord interviewrecord,HttpServletRequest request)throws Exception{
@@ -43,10 +41,7 @@ public class Pfans2003Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(interviewrecordService.One(interviewrecord.getInterviewrecord_id()));
-
     }
-
-
 
     @RequestMapping(value = "/update",method = {RequestMethod.POST})
     public ApiResult updateInterviewRecord(@RequestBody InterviewRecord interviewrecord, HttpServletRequest request)throws Exception{
@@ -58,9 +53,6 @@ public class Pfans2003Controller {
         return ApiResult.success();
     }
 
-
-
-
     @RequestMapping(value = "/create",method={RequestMethod.POST})
     public ApiResult create(@RequestBody InterviewRecord interviewrecord, HttpServletRequest request) throws Exception {
         if (interviewrecord == null) {
@@ -70,5 +62,4 @@ public class Pfans2003Controller {
         interviewrecordService.insert(interviewrecord,tokenModel);
         return ApiResult.success();
     }
-
 }
