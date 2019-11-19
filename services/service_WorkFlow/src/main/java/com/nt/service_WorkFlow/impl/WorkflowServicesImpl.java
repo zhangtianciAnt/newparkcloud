@@ -408,7 +408,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			}
 			workflowstep.setResult(operationWorkflowVo.getResult());
 			workflowstep.setRemark(operationWorkflowVo.getRemark());
-			workflowstep.setModifyby(operationWorkflowVo.getUserid());
+			workflowstep.setModifyby(tokenModel.getUserId());
 			workflowstep.setModifyon(new Date());
 			workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
 			workflowstepMapper.updateByPrimaryKeySelective(workflowstep);
@@ -462,7 +462,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					step.setName(MessageUtil.getMessage(MsgConstants.WORKFLOW_08,tokenModel.getLocale()));
 				}
 
-				step.setCreateby(operationWorkflowVo.getUserid());
+				step.setCreateby(tokenModel.getUserId());
 				step.setCreateon(new Date());
 				step.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 				step.setTenantid(operationWorkflowVo.getTenantid());
@@ -483,14 +483,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			// 生成下一节点信息
 
 			return cresteStep(nodeinstance.getWorkflowinstanceid(), tokenModel, operationWorkflowVo.getDataId(),
-					operationWorkflowVo.getDataUrl(),operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname());
+					operationWorkflowVo.getDataUrl(),operationWorkflowVo.getMenuUrl(), workflowinstance.getWorkflowname(),operationWorkflowVo.getUserlist());
 
 	}
 	// 0:进行中
 	// 1：拒绝
 	// 2：通过
 	private  OutOperationWorkflowVo cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url,String workFlowurl,
-			String workflowname) throws Exception {
+			String workflowname ,List<String> userList) throws Exception {
 		OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
 		Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
 		// 流程进行中
@@ -509,30 +509,64 @@ public class WorkflowServicesImpl implements WorkflowServices {
 				List<Workflowstep> workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
 				// 当前节点无任何信息_根据节点实例创建节点操作信息
 				if (workflowsteplist.size() == 0) {
-					for (String user : item.getItemid().split(",")) {
-						// 创建节点
-						Workflowstep workflowstep = new Workflowstep();
-						workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
-						workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-						workflowstep.setName(item.getNodename());
-						workflowstep.setItemid(user);
-						workflowstep.preInsert(tokenModel);
-						workflowstepMapper.insert(workflowstep);
+					//指定审批人
+					if("1".equals(item.getNodeusertype())){
+						for (String user : item.getItemid().split(",")) {
+							// 创建节点
+							Workflowstep workflowstep = new Workflowstep();
+							workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+							workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+							workflowstep.setName(item.getNodename());
+							workflowstep.setItemid(user);
+							workflowstep.preInsert(tokenModel);
+							workflowstepMapper.insert(workflowstep);
 
-						// 创建代办
-						ToDoNotice toDoNotice = new ToDoNotice();
-						List<String> params = new ArrayList<String>();
-						params.add(workflowname);
-						toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10,params,tokenModel.getLocale()));
-						toDoNotice.setInitiator(tokenModel.getUserId());
-						toDoNotice.setContent(item.getNodename());
-						toDoNotice.setDataid(dataId);
-						toDoNotice.setUrl(url);
-						toDoNotice.setWorkflowurl(workFlowurl);
-						toDoNotice.preInsert(tokenModel);
-						toDoNotice.setOwner(user);
-						toDoNoticeService.save(toDoNotice);
+							// 创建代办
+							ToDoNotice toDoNotice = new ToDoNotice();
+							List<String> params = new ArrayList<String>();
+							params.add(workflowname);
+							toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10,params,tokenModel.getLocale()));
+							toDoNotice.setInitiator(tokenModel.getUserId());
+							toDoNotice.setContent(item.getNodename());
+							toDoNotice.setDataid(dataId);
+							toDoNotice.setUrl(url);
+							toDoNotice.setWorkflowurl(workFlowurl);
+							toDoNotice.preInsert(tokenModel);
+							toDoNotice.setOwner(user);
+							toDoNoticeService.save(toDoNotice);
+						}
+						//逐级审批
+					}else if("2".equals(item.getNodeusertype())){
+
+						//节点指定
+					}else if("3".equals(item.getNodeusertype())){
+						for(String user:userList){
+							// 创建节点
+							Workflowstep workflowstep = new Workflowstep();
+							workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+							workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+							workflowstep.setName(item.getNodename());
+							workflowstep.setItemid(user);
+							workflowstep.preInsert(tokenModel);
+							workflowstepMapper.insert(workflowstep);
+
+							// 创建代办
+							ToDoNotice toDoNotice = new ToDoNotice();
+							List<String> params = new ArrayList<String>();
+							params.add(workflowname);
+							toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10,params,tokenModel.getLocale()));
+							toDoNotice.setInitiator(tokenModel.getUserId());
+							toDoNotice.setContent(item.getNodename());
+							toDoNotice.setDataid(dataId);
+							toDoNotice.setUrl(url);
+							toDoNotice.setWorkflowurl(workFlowurl);
+							toDoNotice.preInsert(tokenModel);
+							toDoNotice.setOwner(user);
+							toDoNoticeService.save(toDoNotice);
+						}
+
 					}
+
 					outOperationWorkflowVo.setState("0");
 					outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
 					return outOperationWorkflowVo;
@@ -591,6 +625,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflownode.setWorkflowid(workflow.getWorkflowid());
 			workflownode.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 			List<Workflownode> workflownodelist = workflownodeMapper.select(workflownode);
+			workflownodelist = workflownodelist.stream()
+				.sorted(Comparator.comparing(Workflownode::getNodeord)).collect(Collectors.toList());
+
+			if(workflownodelist.size() > 0 && "3".equals(workflownodelist.get(0).getNodeusertype()) && startWorkflowVo.getUserList().size()==0 ){
+				throw new LogicalException("未指定审批人！");
+			}
 			for (int i = 0; i < workflownodelist.size(); i++) {
 				Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
 				BeanUtils.copyProperties(workflownodelist.get(i), workflownodeinstance);
@@ -602,7 +642,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 			// 生成节点操作
 			cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
-					startWorkflowVo.getDataUrl(),startWorkflowVo.getMenuUrl(), workflow.getWorkflowname());
+					startWorkflowVo.getDataUrl(),startWorkflowVo.getMenuUrl(), workflow.getWorkflowname(),startWorkflowVo.getUserList());
 
 	}
 
