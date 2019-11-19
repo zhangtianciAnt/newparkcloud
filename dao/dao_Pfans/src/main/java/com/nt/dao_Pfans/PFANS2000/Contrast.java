@@ -24,6 +24,12 @@ public class Contrast extends BaseModel {
     private String contrast_id;
 
     /**
+     * 給与計算ID
+     */
+    @Column(name = "GIVING_ID")
+    private String giving_id;
+
+    /**
      * 部門
      */
     @Column(name = "DEPARTMENT_ID")
