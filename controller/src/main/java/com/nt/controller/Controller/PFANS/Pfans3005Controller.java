@@ -20,23 +20,18 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/purchase")
 public class Pfans3005Controller {
 
-    //查找信息发布
     @Autowired
     private PurchaseService  purchaseService;
 
     @Autowired
     private TokenService tokenService;
 
-
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getPurchase(HttpServletRequest request)throws  Exception{
-
-
         TokenModel tokenModel = tokenService.getToken(request);
         Purchase purchase = new Purchase();
         purchase.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(purchaseService.getPurchase(purchase));
-
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
