@@ -3,6 +3,8 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSONArray;
+import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
@@ -21,12 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import com.nt.dao_Org.CustomerInfo;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import com.mysql.jdbc.StringUtils;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -73,15 +74,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         String customername = value.get(0).toString();
                         query.addCriteria(Criteria.where("userinfo.customername").is(customername));
                         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        Query query2 = new Query();
                         punchcardrecord.setUser_id(customerInfo.getUserid());
-                        punchcardrecord.setCenterid(value.get(1).toString());
-                        punchcardrecord.setGroupid(value.get(2).toString());
-                        punchcardrecord.setTeamid(value.get(3).toString());
+                        punchcardrecord.setCenterid(customerInfo.getUserinfo().getCentername());
+                        punchcardrecord.setGroupid(customerInfo.getUserinfo().getCentername());
+                        punchcardrecord.setTeamid(customerInfo.getUserinfo().getCentername());
                         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
                         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String Punchcardrecord_date = value.get(4).toString();
-                        String Time_start = value.get(5).toString();
-                        String Time_end = value.get(6).toString();
+                        String Punchcardrecord_date = value.get(1).toString();
+                        String Time_start = value.get(2).toString();
+                        String Time_end = value.get(3).toString();
                         punchcardrecord.setPunchcardrecord_date(sf1.parse(Punchcardrecord_date));
                         punchcardrecord.setTime_start(sf.parse(Time_start));
                         punchcardrecord.setTime_end(sf.parse(Time_end));
@@ -106,15 +108,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         Map checkMobileMap = new HashMap();
         Map checkEmailMap = new HashMap();
         model.add("姓名");
-        model.add("センター");
-        model.add("グループ");
-        model.add("チーム");
         model.add("日期");
         model.add("首次打卡");
         model.add("末次打卡");
         List<Object> key = list.get(0);
         try {
-            // check字段名称是否正确
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
@@ -129,17 +127,28 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
+                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String dateStart = value.get(2).toString();
+                    String dateend = value.get(3).toString();
+                    int result=dateStart.compareTo(dateend);
+                    if (result >= 0 ){
+                        throw new LogicalException("导入失败，第" + (k) + "行时间格式错误，开始时间不可以大于或等于结束时间");
+                    }
                     if (value.size() > 0) {
-                        punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.setUser_id(value.get(0).toString());
-                        punchcardrecord.setCenterid(value.get(1).toString());
-                        punchcardrecord.setGroupid(value.get(2).toString());
-                        punchcardrecord.setTeamid(value.get(3).toString());
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        punchcardrecord.setPunchcardrecord_date(sf1.parse(value.get(4).toString()));
-                        punchcardrecord.setTime_start(sf.parse(value.get(5).toString()));
-                        punchcardrecord.setTime_end(sf.parse(value.get(6).toString()));
+                    }
+                    if (value.size() > 1) {
+                        String date = value.get(1).toString();
+                        String date1 = value.get(1).toString();
+                        date = date.substring(5,7);
+                        date1 = date1.substring(8,10);
+                        if(Integer.parseInt(date1)>31){
+                            throw new LogicalException("导入失败，第" + (k) + "行第" + (i + 1) + "列日期格式错误，请输入正确的日子");
+                        }
+                        if(Integer.parseInt(date)>12){
+                            throw new LogicalException("导入失败，第" + (k) + "行第" + (i + 1) + "列日期格式错误，请输入正确的月份");
+                        }
                     }
                 }
             }
