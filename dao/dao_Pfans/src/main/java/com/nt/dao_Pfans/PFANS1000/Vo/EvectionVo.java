@@ -26,7 +26,7 @@ public class EvectionVo {
     /**
      * 交通费明细
      */
-    private List<TrafficDetails> trafficDetails;
+    private List<TrafficDetails> trafficdetails;
     /**
      * 住宿费明细
      */
