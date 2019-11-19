@@ -31,7 +31,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     public List<WorkingDay> getDataList() throws Exception {
         Calendar cal = Calendar.getInstance();
         String this_year = String.valueOf(cal.get(cal.YEAR)+2);
-        String last_year = String.valueOf(cal.get(cal.YEAR) - 4);
+        String last_year = String.valueOf(cal.get(cal.YEAR) - 3);
         List<WorkingDay> workingday = workingdayMapper.getDataList(this_year, last_year);
         if (workingday.isEmpty()) {
             return null;

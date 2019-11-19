@@ -47,5 +47,5 @@ public class Staffexitprocedure extends BaseModel {
     private  String impact_resignation_external;
     private String impact_resignation_internal;
     private String phase;
-
+    private String stage;
 }
