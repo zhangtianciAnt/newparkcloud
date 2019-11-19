@@ -35,6 +35,8 @@ public class Pfans2017Controller {
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(punchcardrecordService.importUser(request,tokenModel,flag));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
