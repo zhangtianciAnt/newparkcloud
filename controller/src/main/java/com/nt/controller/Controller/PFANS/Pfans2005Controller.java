@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
+import com.nt.dao_Pfans.PFANS2000.Contrast;
 import com.nt.service_pfans.PFANS2000.GivingService;
+import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.dao_Pfans.PFANS2000.Giving;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.utils.ApiResult;
@@ -20,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/giving")
-public class Pfans2005Controller {   
+public class Pfans2005Controller {
 
     @Autowired
     private TokenService tokenService;
@@ -30,6 +32,9 @@ public class Pfans2005Controller {
 
     @Autowired
     private OtherTwoService othertwoService;
+
+    @Autowired
+    private ContrastService contrastService;
 
     @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Giving giving, HttpServletRequest request) throws Exception {
@@ -66,5 +71,20 @@ public class Pfans2005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         othertwoService.insert(othertwo, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "insertContrast", method = {RequestMethod.GET})
+    public ApiResult insert(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        contrastService.insert(tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getListContrast", method = {RequestMethod.GET})
+    public ApiResult getList(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        Contrast contrast =new Contrast();
+//        contrast.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contrastService.getList(null));
     }
 }

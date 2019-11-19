@@ -25,6 +25,12 @@ public class OtherDetails extends BaseModel {
     @Column(name = "PUBLICEXPENSE_ID")
     private String publicexpense_id;
 
+    /**
+     * 境内/外出差精算ID
+     */
+    @Column(name = "EVECTION_ID")
+    private String evectionid;
+
     @Column(name = "JUDGEMENT_ID")
     private String judgement_id;
 
