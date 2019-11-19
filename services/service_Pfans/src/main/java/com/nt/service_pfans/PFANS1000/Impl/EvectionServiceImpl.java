@@ -8,7 +8,6 @@ import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
 import com.nt.service_pfans.PFANS1000.mapper.OtherDetailsMapper;
 import com.nt.service_pfans.PFANS1000.mapper.TrafficDetailsMapper;
-import com.nt.utils.MyMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
