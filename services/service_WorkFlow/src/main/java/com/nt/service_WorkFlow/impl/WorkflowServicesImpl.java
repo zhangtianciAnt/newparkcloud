@@ -193,7 +193,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					Map<String, String> rst = new HashMap<String, String>();
 					rst.put("id", Workflowsteplist.get(0).getWorkflowstepid());
 					rst.put("type", item.getNodetype());
+					rst.put("nodeusertype", item.getNodeusertype());
 					rst.put("remarks",item.getRemarks());
+					rst.put("nodeord",item.getNodeord().toString());
+					rst.put("code",Workflowinstancelist.get(0).getCode());
 					return rst;
 				}
 			}
@@ -540,6 +543,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
 						//节点指定
 					}else if("3".equals(item.getNodeusertype())){
+
+						if(userList.size()==0 ){
+							throw new LogicalException("当前节点未指定审批人！");
+						}
+
 						for(String user:userList){
 							// 创建节点
 							Workflowstep workflowstep = new Workflowstep();
@@ -628,9 +636,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 			workflownodelist = workflownodelist.stream()
 				.sorted(Comparator.comparing(Workflownode::getNodeord)).collect(Collectors.toList());
 
-			if(workflownodelist.size() > 0 && "3".equals(workflownodelist.get(0).getNodeusertype()) && startWorkflowVo.getUserList().size()==0 ){
-				throw new LogicalException("未指定审批人！");
-			}
+
 			for (int i = 0; i < workflownodelist.size(); i++) {
 				Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
 				BeanUtils.copyProperties(workflownodelist.get(i), workflownodeinstance);
