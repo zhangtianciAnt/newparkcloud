@@ -87,8 +87,8 @@ public class Base extends BaseModel {
     /**
      * 2019年6月
      */
-    @Column(name = "MASTMONTH")
-    private String mastmonth;
+    @Column(name = "LASTMONTH")
+    private String lastmonth;
 
     /**
      * 2019年7月
