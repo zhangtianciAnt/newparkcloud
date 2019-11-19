@@ -20,11 +20,11 @@ public class Evection extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 日本出張のマンション予約ID
+     * 境内/外出差精算ID
      */
     @Id
     @Column(name = "EVECTION_ID")
-    private String EVECTIONID;
+    private String evectionid;
 
     /**
      * 申请人ID
@@ -51,16 +51,34 @@ public class Evection extends BaseModel {
     private String teamid;
 
     /**
-     * 出張都市
+     * 内线
      */
-    @Column(name = "BUSINESSCITY")
-    private String businesscity;
+    @Column(name = "TELEPHONE")
+    private String telephone;
 
     /**
-     * 出張会社場所
+     * 出差地点
      */
-    @Column(name = "TRAVELCLUBPLACE")
-    private String travelclubplace;
+    @Column(name = "PLACE")
+    private String place;
+
+    /**
+     * 出差开始日期
+     */
+    @Column(name = "STARTDATE")
+    private Date startdate;
+
+    /**
+     * 出差结束日期
+     */
+    @Column(name = "ENDDATE")
+    private Date enddate;
+
+    /**
+     * 出差日数
+     */
+    @Column(name = "DATENUMBER")
+    private String datenumber;
 
     /**
      * 预算单位
@@ -69,102 +87,46 @@ public class Evection extends BaseModel {
     private String budgetunit;
 
     /**
-     * マンション会社
+     * 借款总额
      */
-    @Column(name = "CONDOMINIUMCOMPANY")
-    private String condominiumcompany;
+    @Column(name = "LOANAMOUNT")
+    private String loanamount;
 
     /**
-     * マンション場所
+     * 支出总额
      */
-    @Column(name = "APARTMENTPLACE")
-    private String apartmentplace;
+    @Column(name = "TOTALPAY")
+    private Date totalpay;
 
     /**
-     * 部屋番号
+     * 结余
      */
-    @Column(name = "HOUSENUMBER")
-    private String housenumber;
+    @Column(name = "BALANCE")
+    private String balance;
 
     /**
-     * 契約開始日
+     * 外币总额
      */
-    @Column(name = "CONTRACTSTARTDATE")
-    private Date contractstartdate;
+    @Column(name = "TOTALCURRENCY")
+    private String totalcurrency;
 
     /**
-     * 契約終了日
+     * 外币金额
      */
-    @Column(name = "CONTRACTENDDATE")
-    private Date contractenddate;
+    @Column(name = "FOREIGNCURRENCY")
+    private String foreigncurrency;
 
     /**
-     * 契約日数
+     * 摘要
      */
-    @Column(name = "CONTRACTDATENUMBER")
-    private String contractdatenumber;
+    @Column(name = "REMARK")
+    private String remark;
 
     /**
-     * 出張開始日
+     * 区分
      */
-    @Column(name = "BUSINESSSTARTDATE")
-    private Date businessstartdate;
-
-    /**
-     * 出張終了日
-     */
-    @Column(name = "BUSINESSENDDATE")
-    private Date businessenddate;
-
-    /**
-     * 出張日数
-     */
-    @Column(name = "BUSINESSDATENUMBER")
-    private String businessdatenumber;
-
-
-    /**
-     * 契約対応時間
-     */
-    @Column(name = "CONTRACTTIME")
-    private Date contracttime;
-
-    /**
-     * 総費用(円)
-     */
-    @Column(name = "TOTALCOST")
-    private String totalcost;
-
-    /**
-     * 費用/日(円)
-     */
-    @Column(name = "DAILYCOST")
-    private String dailycost;
-
-
-    /**
-     * 残金金额
-     */
-    @Column(name = "MONEYS")
-    private String moneys;
-
-    /**
-     * 使用金额
-     */
-    @Column(name = "USEMONEY")
-    private String usemoney;
-
-    /**
-     * 另支付金额
-     */
-    @Column(name = "PAYMONEY")
-    private String paymoney;
-
-    /**
-     * 備考
-     */
-    @Column(name = "REMARKS")
-    private String remarks;
+    @Column(name = "TYPE")
+    private Date type;
 
 
 }
