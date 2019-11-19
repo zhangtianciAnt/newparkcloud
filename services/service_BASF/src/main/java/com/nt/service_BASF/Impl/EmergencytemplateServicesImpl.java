@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,6 +67,8 @@ public class EmergencytemplateServicesImpl implements EmergencytemplateServices 
     public void insert(Emergencytemplate emergencytemplate, TokenModel tokenModel) throws Exception {
         emergencytemplate.preInsert(tokenModel);
         emergencytemplate.setTemplateid(UUID.randomUUID().toString());
+        Date date = new Date();
+        emergencytemplate.setTemplatetim(date);
         emergencytemplateMapper.insert(emergencytemplate);
 
     }

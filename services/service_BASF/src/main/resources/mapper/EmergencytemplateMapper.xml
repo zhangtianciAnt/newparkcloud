@@ -7,6 +7,7 @@
          -->
         <id column="templateid" property="templateid" jdbcType="VARCHAR"/>
         <result column="templatename" property="templatename" jdbcType="VARCHAR"/>
+        <result column="templatelevel" property="templatelevel" jdbcType="VARCHAR"/>
         <result column="templatetype" property="templatetype" jdbcType="VARCHAR"/>
         <result column="templatefile" property="templatefile" jdbcType="VARCHAR"/>
         <result column="templatetim" property="templatetim" jdbcType="TIMESTAMP"/>
