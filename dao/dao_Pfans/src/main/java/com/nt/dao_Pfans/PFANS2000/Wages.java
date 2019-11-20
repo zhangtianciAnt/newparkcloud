@@ -19,234 +19,234 @@ public class Wages extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "wages_ID")
+    @Column(name = "WAGES_ID")
     private String wages_id;
 
-    @Column(name = "giving_id")
+    @Column(name = "GIVING_ID")
     private String giving_id;
 
-    @Column(name = "department_id")
+    @Column(name = "DEPARTMENT_ID")
     private String department_id;
 
-    @Column(name = "user_id")
+    @Column(name = "USER_ID")
     private String user_id;
 
-    @Column(name = "workString")
+    @Column(name = "WORKSTRING")
     private Date workString;
 
-    @Column(name = "sex")
+    @Column(name = "SEX")
     private String sex;
 
-    @Column(name = "onlychild")
+    @Column(name = "ONLYCHILD")
     private String onlychild;
 
-    @Column(name = "type")
+    @Column(name = "TYPE")
     private String type;
 
-    @Column(name = "bonus")
+    @Column(name = "BONUS")
     private String bonus;
 
-    @Column(name = "sociology")
+    @Column(name = "SOCIOLOGY")
     private String sociology;
 
-    @Column(name = "registered")
+    @Column(name = "REGISTERED")
     private String registered;
 
-    @Column(name = "pension")
+    @Column(name = "PENSION")
     private String pension;
 
-    @Column(name = "medical")
+    @Column(name = "MEDICAL")
     private String medical;
 
-    @Column(name = "accumulation")
+    @Column(name = "ACCUMULATION")
     private String accumulation;
 
-    @Column(name = "lastmonth")
+    @Column(name = "LASTMONTH")
     private String lastmonth;
 
-    @Column(name = "thismonth")
+    @Column(name = "THISMONTH")
     private String thismonth;
 
-    @Column(name = "birthrest")
+    @Column(name = "BIRTHREST")
     private String birthrest;
 
-    @Column(name = "thismonthbasic")
+    @Column(name = "THISMONTHBASIC")
     private String thismonthbasic;
 
-    @Column(name = "shortillness")
+    @Column(name = "SHORTILLNESS")
     private String shortillness;
 
-    @Column(name = "longillness")
+    @Column(name = "LONGILLNESS")
     private String longillness;
 
-    @Column(name = "owediligence")
+    @Column(name = "OWEDILIGENCE")
     private String owediligence;
 
-    @Column(name = "owingcontrol")
+    @Column(name = "OWINGCONTROL")
     private String owingcontrol;
 
-    @Column(name = "actualamount")
+    @Column(name = "ACTUALAMOUNT")
     private String actualamount;
 
-    @Column(name = "supplement")
+    @Column(name = "SUPPLEMENT")
     private String supplement;
 
-    @Column(name = "telephonesubsidy")
+    @Column(name = "TELEPHONESUBSIDY")
     private String telephonesubsidy;
 
-    @Column(name = "housingsubsidy")
+    @Column(name = "HOUSINGSUBSIDY")
     private String housingsubsidy;
 
-    @Column(name = "lunchsubsidy")
+    @Column(name = "LUNCHSUBSIDY")
     private String lunchsubsidy;
 
-    @Column(name = "overtimesubsidy")
+    @Column(name = "OVERTIMESUBSIDY")
     private String overtimesubsidy;
 
-    @Column(name = "other1")
+    @Column(name = "OTHER1")
     private String other1;
 
-    @Column(name = "total1")
+    @Column(name = "TOTAL1")
     private String total1;
 
-    @Column(name = "traffic")
+    @Column(name = "TRAFFIC")
     private String traffic;
 
-    @Column(name = "washingtheory")
+    @Column(name = "WASHINGTHEORY")
     private String washingtheory;
 
-    @Column(name = "other2")
+    @Column(name = "OTHER2")
     private String other2;
 
-    @Column(name = "appreciation")
+    @Column(name = "APPRECIATION")
     private String appreciation;
 
-    @Column(name = "other3")
+    @Column(name = "OTHER3")
     private String other3;
 
-    @Column(name = "total2")
+    @Column(name = "TOTAL2")
     private String total2;
 
-    @Column(name = "taxestotal")
+    @Column(name = "TAXESTOTAL")
     private String taxestotal;
 
-    @Column(name = "heating")
+    @Column(name = "HEATING")
     private String heating;
 
-    @Column(name = "onlychildmoney")
+    @Column(name = "ONLYCHILDMONEY")
     private String onlychildmoney;
 
-    @Column(name = "total3")
+    @Column(name = "TOTAL3")
     private String total3;
 
-    @Column(name = "totalwages")
+    @Column(name = "TOTALWAGES")
     private String totalwages;
 
-    @Column(name = "endowmentinsurance")
+    @Column(name = "ENDOWMENTINSURANCE")
     private String endowmentinsurance;
 
-    @Column(name = "medicalinsurance")
+    @Column(name = "MEDICALINSURANCE")
     private String medicalinsurance;
 
-    @Column(name = "unemploymentinsurance")
+    @Column(name = "UNEMPLOYMENTINSURANCE")
     private String unemploymentinsurance;
 
-    @Column(name = "socialinsurance")
+    @Column(name = "SOCIALINSURANCE")
     private String socialinsurance;
 
-    @Column(name = "adjustment")
+    @Column(name = "ADJUSTMENT")
     private String adjustment;
 
-    @Column(name = "accumulationfund")
+    @Column(name = "ACCUMULATIONFUND")
     private String accumulationfund;
 
-    @Column(name = "disciplinarycontrol")
+    @Column(name = "DISCIPLINARYCONTROL")
     private String disciplinarycontrol;
 
-    @Column(name = "thismonthterm")
+    @Column(name = "THISMONTHTERM")
     private String thismonthterm;
 
-    @Column(name = "thismonthadditional")
+    @Column(name = "THISMONTHADDITIONAL")
     private String thismonthadditional;
 
-    @Column(name = "thismonthdutyfree")
+    @Column(name = "THISMONTHDUTYFREE")
     private String thismonthdutyfree;
 
-    @Column(name = "lastdutyfree")
+    @Column(name = "LASTDUTYFREE")
     private String lastdutyfree;
 
-    @Column(name = "housingmoneys")
+    @Column(name = "HOUSINGMONEYS")
     private String housingmoneys;
 
-    @Column(name = "other4")
+    @Column(name = "OTHER4")
     private String other4;
 
-    @Column(name = "other5")
+    @Column(name = "OTHER5")
     private String other5;
 
-    @Column(name = "shouldwages")
+    @Column(name = "SHOULDWAGES")
     private String shouldwages;
 
-    @Column(name = "shouldcumulative")
+    @Column(name = "SHOULDCUMULATIVE")
     private String shouldcumulative;
 
-    @Column(name = "shouldpaytaxes")
+    @Column(name = "SHOULDPAYTAXES")
     private String shouldpaytaxes;
 
-    @Column(name = "thismonthadjustment")
+    @Column(name = "THISMONTHADJUSTMENT")
     private String thismonthadjustment;
 
-    @Column(name = "thisadjustment")
+    @Column(name = "THISADJUSTMENT")
     private String thisadjustment;
 
-    @Column(name = "realwages")
+    @Column(name = "REALWAGES")
     private String realwages;
 
-    @Column(name = "comendowmentinsurance")
+    @Column(name = "COMENDOWMENTINSURANCE")
     private String comendowmentinsurance;
 
-    @Column(name = "commedicalinsurance")
+    @Column(name = "COMMEDICALINSURANCE")
     private String commedicalinsurance;
 
-    @Column(name = "comunemploymentinsurance")
+    @Column(name = "COMUNEMPLOYMENTINSURANCE")
     private String comunemploymentinsurance;
 
-    @Column(name = "cominjuryinsurance")
+    @Column(name = "COMINJURYINSURANCE")
     private String cominjuryinsurance;
 
-    @Column(name = "combirthinsurance")
+    @Column(name = "COMBIRTHINSURANCE")
     private String combirthinsurance;
 
-    @Column(name = "comheating")
+    @Column(name = "COMHEATING")
     private String comheating;
 
-    @Column(name = "comaccumulationfund")
+    @Column(name = "COMACCUMULATIONFUND")
     private String comaccumulationfund;
 
-    @Column(name = "total")
+    @Column(name = "TOTAL")
     private String total;
 
-    @Column(name = "totaladjustment")
+    @Column(name = "TOTALADJUSTMENT")
     private String totaladjustment;
 
-    @Column(name = "labourunionbase")
+    @Column(name = "LABOURUNIONBASE")
     private String labourunionbase;
 
-    @Column(name = "labourunionfunds")
+    @Column(name = "LABOURUNIONFUNDS")
     private String labourunionfunds;
 
-    @Column(name = "comtotalwages")
+    @Column(name = "COMTOTALWAGES")
     private String comtotalwages;
 
-    @Column(name = "bonusmoney")
+    @Column(name = "BONUSMONEY")
     private String bonusmoney;
 
-    @Column(name = "totalbonus")
+    @Column(name = "TOTALBONUS")
     private String totalbonus;
 
-    @Column(name = "other6")
+    @Column(name = "OTHER6")
     private String other6;
 
-    @Column(name = "rowindex")
+    @Column(name = "ROWINDEX")
     private Integer rowindex;
 }
