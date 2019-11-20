@@ -23,9 +23,14 @@ public class Deviceinformation extends BaseModel {
     private String deviceno;
 
     /**
-     * 设备分类
+     * 设备大分类
      */
     private String devicetype;
+
+    /**
+     * 设备小分类
+     */
+    private String devicetypesmall;
 
     /**
      * 设备名称
