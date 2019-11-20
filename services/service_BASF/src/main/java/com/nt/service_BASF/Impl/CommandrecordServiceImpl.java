@@ -27,11 +27,12 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
      * @返回值：
      */
     @Override
-    public void save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception {
+    public String save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception {
         if (commandrecord != null ) {
             commandrecord.preInsert(tokenModel);
             mongoTemplate.save(commandrecord);
         }
+        return commandrecord.get_id();
     }
 
     /**

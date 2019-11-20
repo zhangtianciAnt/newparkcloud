@@ -69,17 +69,14 @@ public class BASF20201Controller {
 
         if (commandrecord.getStatus() == null) {
             commandrecord.preInsert(tokenModel);
-            commandrecordService.save(commandrecord, tokenModel);
         } else {
             if (commandrecord.getStatus().equals("1")) {
                 commandrecord.preUpdate(tokenModel);
-                commandrecordService.save(commandrecord, tokenModel);
             }
             if (commandrecord.getStatus().equals("0")) {
                 commandrecord.preInsert(tokenModel);
-                commandrecordService.save(commandrecord, tokenModel);
             }
         }
-        return ApiResult.success();
+        return ApiResult.success(commandrecordService.save(commandrecord, tokenModel));
     }
 }
