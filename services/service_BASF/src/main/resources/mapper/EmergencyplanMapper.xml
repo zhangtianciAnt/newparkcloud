@@ -8,5 +8,7 @@
         <result column="filename" property="filename" jdbcType="VARCHAR"/>
         <result column="creationtime" property="creationtime" jdbcType="TIMESTAMP"/>
         <result column="affiliatetemplate" property="affiliatetemplate" jdbcType="VARCHAR"/>
+        <result column="planlevel" property="planlevel" jdbcType="VARCHAR"/>
+        <result column="plantype" property="plantype" jdbcType="VARCHAR"/>
     </resultMap>
 </mapper>

@@ -56,4 +56,16 @@ public class Emergencyplan extends BaseModel {
      */
     private String affiliatetemplate;
 
+
+    /*
+     * 预案级别
+     */
+    private String planlevel;
+
+
+    /*
+     * 预案类型
+     */
+    private String plantype;
+
 }
