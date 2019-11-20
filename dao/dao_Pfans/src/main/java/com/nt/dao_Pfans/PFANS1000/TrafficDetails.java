@@ -22,16 +22,10 @@ public class TrafficDetails extends BaseModel {
     private String trafficdetails_id;
 
     @Column(name = "PUBLICEXPENSE_ID")
-    private String publicexpense_id;
+    private String publicexpenseid;
 
-    /**
-     * 境内/外出差精算ID
-     */
     @Column(name = "EVECTION_ID")
     private String evectionid;
-
-    @Column(name = "JUDGEMENT_ID")
-    private String judgement_id;
 
     @Column(name = "TRAFFICDATE")
     private Date trafficdate;
