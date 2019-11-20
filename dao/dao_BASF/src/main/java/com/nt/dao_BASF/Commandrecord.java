@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Id;
 import java.util.List;
 
 /**
@@ -27,7 +28,8 @@ public class Commandrecord extends BaseModel {
     /**
      * 数据主键ID
      */
-    //消防报警单主键
+    private String _id;
+    //消防报警单的主键
     private String firealarmid;
     //消防报警单编号
     private String firealarmno;

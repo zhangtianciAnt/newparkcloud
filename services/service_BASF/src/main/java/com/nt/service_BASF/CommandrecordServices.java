@@ -19,5 +19,5 @@ public interface CommandrecordServices {
     void save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception;
 
     //获取
-    List<Commandrecord> get(Commandrecord commandrecord) throws Exception;
+    Commandrecord get(String cid) throws Exception;
 }

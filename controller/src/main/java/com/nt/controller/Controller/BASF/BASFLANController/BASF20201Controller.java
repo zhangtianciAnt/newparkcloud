@@ -44,14 +44,12 @@ public class BASF20201Controller {
     private TokenService tokenService;
 
 
-    @RequestMapping(value = "/getcommandrecord", method = {RequestMethod.POST})
-    public ApiResult get(@RequestBody Commandrecord commandrecord, HttpServletRequest request) throws Exception {
-//        Information information = new Information();
-        TokenModel tokenModel = tokenService.getToken(request);
-        commandrecord.setTenantid(tokenModel.getTenantId());
-        commandrecord.setOwners(tokenModel.getOwnerList());
-        commandrecord.setIds(tokenModel.getIdList());
-        return ApiResult.success(commandrecordService.get(commandrecord));
+    @RequestMapping(value = "/getcommandrecord", method = {RequestMethod.GET})
+    public ApiResult get(String cid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(cid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(commandrecordService.get(cid));
     }
 
     /**
