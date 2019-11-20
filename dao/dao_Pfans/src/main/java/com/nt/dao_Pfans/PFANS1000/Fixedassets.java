@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,13 +24,11 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "FIXEDASSETS_ID")
     private String fixedassets_id;
 
-
     /**
      * 所属センター
      */
     @Column(name = "CENTER_ID")
     private String center_id;
-
 
     /**
      * 所属グループ
@@ -39,13 +36,11 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "GROUP_ID")
     private String group_id;
 
-
     /**
      * 所属チーム
      */
     @Column(name = "TEAM_ID")
     private String team_id;
-
 
     /**
      * 申请人
@@ -53,13 +48,11 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "USER_ID")
     private String user_id;
 
-
     /**
      * 起案日
      */
     @Column(name = "CASEDATE")
     private Date casedate;
-
 
     /**
      * 決裁日
@@ -67,13 +60,11 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "JUDGEMENTDAY")
     private Date judgementday;
 
-
     /**
      * 资产类型
      */
     @Column(name = "ASSETTYPE")
     private String assettype;
-
 
     /**
      * 是否安装加密软件
@@ -81,13 +72,11 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "INSTALLSOFTWARE")
     private String installsoftware;
 
-
     /**
      * 是否适合带出
      */
     @Column(name = "SUITABLEBRINGOUT")
     private String suitablebringout;
-
 
     /**
      * 輸入日
@@ -95,13 +84,11 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "INPUTDATE")
     private Date inputdate;
 
-
     /**
      * 監督解除日
      */
     @Column(name = "RELEASEDATE")
     private Date releasedate;
-
 
     /**
      * 目的
@@ -109,20 +96,17 @@ public class    Fixedassets   extends BaseModel {
     @Column(name = "OBJECTIVE")
     private String objective;
 
-
     /**
      * 貸出／修理先（住所、電話、社名など）
      */
     @Column(name = "BORROWING")
     private String borrowing;
 
-
     /**
      * 貸出／修理／持出期間
      */
     @Column(name = "REPAIR")
     private String repair;
-
 
     /**
      * 貸出／修理契約書

@@ -120,7 +120,7 @@ public class Purchase  extends BaseModel {
     private String procurementproject;
 
     /**
-     * 固定资产编号
+     * 固定(簿外)资产编号
      */
     @Column(name = "FIXEDASSETSNO")
     private String fixedassetsno;
@@ -196,6 +196,5 @@ public class Purchase  extends BaseModel {
      */
     @Column(name = "ACTUARIALAMOUNT")
     private String actuarialamount;
-
 
 }

@@ -31,24 +31,14 @@ public class Pfans2017Controller {
         return ApiResult.success(punchcardrecordService.list(punchcardrecord));
     }
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
-    public ApiResult importUser(HttpServletRequest request,String flag){
+    public ApiResult importUser(HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(punchcardrecordService.importUser(request,tokenModel,flag));
+            return ApiResult.success(punchcardrecordService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
     }
-
-    @RequestMapping(value = "/downloadUserModel",method={RequestMethod.GET})
-    public ApiResult downloadUserModel(){
-        try{
-            return ApiResult.success(punchcardrecordService.downloadUserModel());
-        }catch(LogicalException e){
-            return ApiResult.fail(e.getMessage());
-        } catch (Exception e) {
-            return ApiResult.fail("操作失败！");
-        }
-    }
-
 }

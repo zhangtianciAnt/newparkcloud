@@ -20,13 +20,11 @@ public class InterviewRecordServiceImpl implements InterviewRecordService {
 
     @Override
     public List<InterviewRecord> getInterviewRecord(InterviewRecord interviewrecord) {
-
         return interviewrecordMapper.select(interviewrecord);
     }
 
     @Override
     public InterviewRecord One(String interviewrecord_id) throws Exception{
-
         return interviewrecordMapper.selectByPrimaryKey(interviewrecord_id);
     }
 
@@ -38,12 +36,8 @@ public class InterviewRecordServiceImpl implements InterviewRecordService {
 
     @Override
     public void insert(InterviewRecord interviewrecord, TokenModel tokenModel) throws Exception {
-
         interviewrecord.preInsert(tokenModel);
         interviewrecord.setInterviewrecord_id(UUID.randomUUID().toString()); ;
         interviewrecordMapper.insert(interviewrecord);
     }
-
-
-
 }
