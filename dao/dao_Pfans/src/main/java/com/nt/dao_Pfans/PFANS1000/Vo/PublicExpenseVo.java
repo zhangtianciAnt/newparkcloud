@@ -18,17 +18,17 @@ public class PublicExpenseVo {
     /*
      * 分录传票
      * */
-    private PublicExpense publicExpense;
+    private PublicExpense publicexpense;
 
     /*
      * 交通明细*/
-    private List<TrafficDetails> trafficDetails;
+    private List<TrafficDetails> trafficdetails;
 
     /*采购明细
      * */
-    private List<PurchaseDetails> purchaseDetails;
+    private List<PurchaseDetails> purchasedetails;
     /*
      * 其他费用明细
      * */
-    private List<OtherDetails> otherDetails;
+    private List<OtherDetails> otherdetails;
 }

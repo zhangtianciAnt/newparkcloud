@@ -22,10 +22,10 @@ public class TrafficDetails extends BaseModel {
     private String trafficdetails_id;
 
     @Column(name = "PUBLICEXPENSE_ID")
-    private String publicexpense_id;
+    private String publicexpenseid;
 
-    @Column(name = "JUDGEMENT_ID")
-    private String judgement_id;
+    @Column(name = "EVECTION_ID")
+    private String evection_id;
 
     @Column(name = "TRAFFICDATE")
     private Date trafficdate;

@@ -23,13 +23,13 @@ public class OtherDetails extends BaseModel {
     private String otherdetails_id;
 
     @Column(name = "PUBLICEXPENSE_ID")
-    private String publicexpense_id;
+    private String publicexpenseid;
 
-    @Column(name = "JUDGEMENT_ID")
-    private String judgement_id;
+    @Column(name = "EVECTION_ID")
+    private String evection_id;
 
-    @Column(name = "TRAFFICDATE")
-    private Date trafficdate;
+    @Column(name = "OTHERDETAILSDATE")
+    private Date otherdetailsdate;
 
 
     @Column(name = "COSTITEM")
