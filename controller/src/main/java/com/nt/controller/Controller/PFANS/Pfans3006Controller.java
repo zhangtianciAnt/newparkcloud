@@ -73,7 +73,7 @@ public class Pfans3006Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    @RequestMapping(value = "/download", method = {RequestMethod.POST})
     public void download(HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
         ExcelOutPutUtil.OutPut("jiejipai","jiejipai.xlsx",data,response);
