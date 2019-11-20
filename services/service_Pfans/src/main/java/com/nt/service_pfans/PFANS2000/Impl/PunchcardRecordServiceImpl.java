@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -43,11 +42,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<PunchcardRecord> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<PunchcardRecord> listVo = new ArrayList<PunchcardRecord>();
-            List<Object> error = new ArrayList<Object>();
-            Jedis jedis = null;
+            List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
             f = File.createTempFile("tmp", null);
@@ -66,6 +64,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 }
             }
             int k = 1;
+            int accesscount = 0;
+            int error = 0;
             for (int i = 1; i < list.size(); i++) {
                 PunchcardRecord punchcardrecord = new PunchcardRecord();
                 List<Object> value = list.get(k);
@@ -78,9 +78,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String Time_start = value.get(2).toString();
                     String Time_end = value.get(3).toString();
-                    int result = Time_start.compareTo(Time_end);
-                    if (result >= 0) {
-                        error.add("导入失败，第" + (k) + "行时间格式错误，开始时间不可以大于或等于结束时间");
+                    int result1 = Time_start.compareTo(Time_end);
+                    if (result1 >= 0) {
+                        error = error + 1;
+                        Result.add(" 第" + (k-1) + "行时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
                         continue;
                     }
                     if (value.size() > 1) {
@@ -89,11 +90,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         date = date.substring(5, 7);
                         date1 = date1.substring(8, 10);
                         if (Integer.parseInt(date1) > 31) {
-                            error.add("导入失败，第" + (k) + "行第" + (i + 1) + "列日期格式错误，请输入正确的日子");
+                            error = error + 1;
+                            Result.add(" 第" + (k-1) + "行日期格式错误，请输入正确的日子，导入失败");
                             continue;
                         }
                         if (Integer.parseInt(date) > 12) {
-                            error.add("导入失败，第" + (k) + "行第" + (i + 1) + "列日期格式错误，请输入正确的月份");
+                            error = error + 1;
+                            Result.add(" 第" + (k-1) + "行日期格式错误，请输入正确的月份，导入失败");
                             continue;
                         }
                     }
@@ -114,10 +117,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                 punchcardrecordMapper.insert(punchcardrecord);
                 listVo.add(punchcardrecord);
-                String strings = error.toString();
-                jedis.rpush(String.valueOf(listVo), strings);
+                accesscount = accesscount + 1;
             }
-            return listVo;
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }

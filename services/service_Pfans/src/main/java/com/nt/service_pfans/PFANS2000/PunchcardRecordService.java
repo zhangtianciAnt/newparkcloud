@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface PunchcardRecordService {
     List<PunchcardRecord> list(PunchcardRecord punchcardrecord) throws Exception;
-    List<PunchcardRecord> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
 
 }
