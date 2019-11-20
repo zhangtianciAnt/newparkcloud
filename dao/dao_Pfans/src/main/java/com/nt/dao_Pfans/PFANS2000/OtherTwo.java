@@ -23,6 +23,9 @@ public class OtherTwo extends BaseModel {
     @Column(name = "OTHERTWO_ID")
     private String othertwo_id;
 
+    @Column(name = "GIVING_ID")
+    private String giving_id;
+
     @Column(name = "USER_ID")
     private String user_id;
 
