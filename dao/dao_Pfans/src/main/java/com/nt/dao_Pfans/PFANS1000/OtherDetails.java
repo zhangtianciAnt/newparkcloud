@@ -26,7 +26,7 @@ public class OtherDetails extends BaseModel {
     private String publicexpenseid;
 
     @Column(name = "EVECTION_ID")
-    private String evection_id;
+    private String evectionid;
 
     @Column(name = "OTHERDETAILSDATE")
     private Date otherdetailsdate;
