@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
 import com.nt.dao_Pfans.PFANS2000.Contrast;
+import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.dao_Pfans.PFANS2000.Giving;
@@ -36,6 +37,9 @@ public class Pfans2005Controller {
 
     @Autowired
     private ContrastService contrastService;
+
+    @Autowired
+    private DutyfreeService dutyfreeService;
 
     @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Giving giving, HttpServletRequest request) throws Exception {
@@ -97,6 +101,12 @@ public class Pfans2005Controller {
 //        Contrast contrast =new Contrast();
 //        contrast.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(contrastService.getList(null));
+    }
+
+    @RequestMapping(value = "/getListdutyfree", method = {RequestMethod.GET})
+    public ApiResult getListdutyfree(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(dutyfreeService.getdutyfree(tokenModel));
     }
 
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
