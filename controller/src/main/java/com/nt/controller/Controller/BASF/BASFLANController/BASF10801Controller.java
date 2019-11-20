@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletRequest;
  * @ProjectName: BASF应急平台
  * @Package: com.nt.controller.Controller.BASF.BASFLANController
  * @ClassName: BASF10801Controller
- * @Author: Wxz
- * @Description: BASF接警单管理模块Controller
+ * @Author: WXL
+ * @Description: BASF应急预案管理模块Controller
  * @Date: 2019/11/18 18：03
  * @Version: 1.0
  */
@@ -38,9 +38,9 @@ public class BASF10801Controller {
     /**
      * @param request
      * @Method list
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
-     * @Description 获取接警单列表
+     * @Description 获取模板列表
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/18 18：03
      */
@@ -53,9 +53,9 @@ public class BASF10801Controller {
      * @param emergencytemplate
      * @param request
      * @Method create
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
-     * @Description 创建接警单
+     * @Description 创建模板
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/18 18:03
      */
@@ -73,7 +73,7 @@ public class BASF10801Controller {
      * @param emergencytemplate
      * @param request
      * @Method delete
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
      * @Description 删除模板
      * @Return com.nt.utils.ApiResult
@@ -93,9 +93,9 @@ public class BASF10801Controller {
      * @param templateid
      * @param request
      * @Method selectById
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
-     * @Description 获取接警单详情
+     * @Description 获取模板详情
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/18 18:01
      */
@@ -111,7 +111,7 @@ public class BASF10801Controller {
      * @param emergencytemplate
      * @param request
      * @Method update
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
      * @Description 更新模板详情
      * @Return com.nt.utils.ApiResult
