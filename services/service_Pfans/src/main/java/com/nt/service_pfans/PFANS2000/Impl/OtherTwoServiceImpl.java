@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.mapper.OtherTwoMapper;
 import com.nt.utils.LogicalException;
@@ -54,74 +55,34 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception{
         othertwoMapper.delete(othertwo);
     }
-
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<OtherTwo> importUser(HttpServletRequest request, TokenModel tokenModel, String flag) throws Exception {
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
+            List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            if (StringUtils.isNullOrEmpty(flag)) {
-                List<OtherTwo> error = importCheck(list);
-                return error;
-            } else {
-                int k = 1;
-                for (int i = 1; i < list.size()-1; i++) {
-                    OtherTwo othertwo = new OtherTwo();
-                    List<Object> value = list.get(k);
-                    k++;
-                    if (value != null && !value.isEmpty()) {
-                        if (value.get(0).toString().equals("")) {
-                            continue;
-                        }
-                        Query query = new Query();
-                        String customername = value.get(1).toString();
-                        query.addCriteria(Criteria.where("userinfo.customername").is(customername));
-                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        othertwo.setUser_id(customerInfo.getUserid());
-                        othertwo.setMoneys(value.get(2).toString());
-                        othertwo.setRootknot(value.get(3).toString());
-                    }
-                    int rowundex = i;
-                    othertwo.setRowindex(rowundex);
-                    othertwo.setType("1");
-                    othertwo.preInsert(tokenModel);
-                    othertwo.setOthertwo_id(UUID.randomUUID().toString());
-                    othertwoMapper.insert(othertwo);
-                    listVo.add(othertwo);
-                }
-            }
-            return listVo;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
-    }
-
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private List<OtherTwo> importCheck(List<List<Object>> list) throws Exception {
-        List<OtherTwo> listVo = new ArrayList<OtherTwo>();
-        List<Object> model = new ArrayList<Object>();
-        Map checkMobileMap = new HashMap();
-        Map checkEmailMap = new HashMap();
-        model.add("No.");
-        model.add("名字");
-        model.add("金額");
-        model.add("根拠");
-        List<Object> key = list.get(0);
-        try {
+            List<Object> model = new ArrayList<Object>();
+            model.add("No.");
+            model.add("名字");
+            model.add("金額");
+            model.add("根拠");
+            List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
             }
             int k = 1;
-            OtherTwo othertwo = new OtherTwo();
+            int accesscount = 0;
+            int error = 0;
             for (int i = 1; i < list.size(); i++) {
+                OtherTwo othertwo = new OtherTwo();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
@@ -130,18 +91,34 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     }
                     if(value.size() > 2) {
                         if (value.get(2).toString().length()>20) {
-                            throw new LogicalException("导入失败，第" + (k) + "行第" + (i + 1) + "列金额长度超出范围，请输入长度为20位之内的金额");
+                            throw new LogicalException(" 第" + (k-1) + "行金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                         }
                     }
                     if(value.size() > 3) {
                         if (value.get(3).toString().length()>20) {
-                            throw new LogicalException("导入失败，第" + (k) + "行第" + (i + 1) + "列根拠长度超出范围，请输入长度为20位之内的根拠");
+                            throw new LogicalException(" 第" + (k-1) + "行根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
                         }
                     }
+                    Query query = new Query();
+                    String customername = value.get(1).toString();
+                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    othertwo.setUser_id(customerInfo.getUserid());
+                    othertwo.setMoneys(value.get(2).toString());
+                    othertwo.setRootknot(value.get(3).toString());
                 }
+                int rowundex = i;
+                othertwo.setRowindex(rowundex);
+                othertwo.setType("1");
+                othertwo.preInsert(tokenModel);
+                othertwo.setOthertwo_id(UUID.randomUUID().toString());
+                othertwoMapper.insert(othertwo);
                 listVo.add(othertwo);
+                accesscount = accesscount + 1;
             }
-            return listVo;
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }

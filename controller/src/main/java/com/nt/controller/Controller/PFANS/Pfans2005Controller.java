@@ -6,10 +6,7 @@ import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.dao_Pfans.PFANS2000.Giving;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +70,16 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody OtherTwo othertwo, HttpServletRequest request) throws Exception {
+        if (othertwo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        othertwoService.deletete(othertwo, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "insertContrast", method = {RequestMethod.GET})
     public ApiResult insert(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -86,5 +93,17 @@ public class Pfans2005Controller {
 //        Contrast contrast =new Contrast();
 //        contrast.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(contrastService.getList(null));
+    }
+
+    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(othertwoService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 }
