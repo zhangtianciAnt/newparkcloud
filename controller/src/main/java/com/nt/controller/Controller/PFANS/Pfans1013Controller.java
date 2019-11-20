@@ -26,7 +26,7 @@ public class Pfans1013Controller {
     private TokenService tokenService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult getEvection(HttpServletRequest request) throws Exception {
+    public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Evection evection = new Evection();
         evection.setOwners(tokenModel.getOwnerList());
