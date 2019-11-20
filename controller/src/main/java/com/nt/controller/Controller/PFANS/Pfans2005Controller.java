@@ -73,6 +73,16 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody OtherTwo othertwo, HttpServletRequest request) throws Exception {
+        if (othertwo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        othertwoService.deletete(othertwo, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "insertContrast", method = {RequestMethod.GET})
     public ApiResult insert(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
