@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.QuestionManageMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.QuestionManage">
+        <!--
+           WARNING - @mbg.generated
+         -->
+        <id column="questionid" property="questionid" jdbcType="VARCHAR"/>
+        <result column="questiontype" property="questiontype" jdbcType="VARCHAR"/>
+        <result column="questiontopic" property="questiontopic" jdbcType="VARCHAR"/>
+        <result column="option1" property="option1" jdbcType="VARCHAR"/>
+        <result column="option2" property="option2" jdbcType="VARCHAR"/>
+        <result column="option3" property="option3" jdbcType="VARCHAR"/>
+        <result column="option4" property="option4" jdbcType="VARCHAR"/>
+        <result column="option5" property="option5" jdbcType="VARCHAR"/>
+        <result column="score" property="score" jdbcType="VARCHAR"/>
+        <result column="questionanswers" property="questionanswers" jdbcType="VARCHAR"/>
+        <result column="answersanalysis" property="answersanalysis" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

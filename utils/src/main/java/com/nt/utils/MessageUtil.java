@@ -30,13 +30,14 @@ public class MessageUtil {
      * @参数：[msgId]
      * @返回值：java.lang.String
      */
-    public static String getMessage(String msgId,String locale) {
-        return getValueByKey(msgId,locale);
+    public static String getMessage(String msgId, String locale) {
+        return getValueByKey(msgId, locale);
     }
 
-    public static String getMessage(String msgId,List<String> parms,String locale) {
-        return getValueByKey(msgId,parms,locale);
+    public static String getMessage(String msgId, List<String> parms, String locale) {
+        return getValueByKey(msgId, parms, locale);
     }
+
     /**
      * @方法名：getValueByKey
      * @描述：读取properties文件
@@ -45,12 +46,12 @@ public class MessageUtil {
      * @参数：[msgId]
      * @返回值：java.lang.String
      */
-    private static String getValueByKey(String msgId,String locale) {
+    private static String getValueByKey(String msgId, String locale) {
         try {
             //读取文件流
 
             InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message.properties");
-            if(locale.equals("ja")){
+            if (locale.equals("ja")) {
                 resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message_ja.properties");
             }
             //转变为字符流
@@ -88,7 +89,7 @@ public class MessageUtil {
             //读取文件流
 
             InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message.properties");
-            if(locale.equals("ja")){
+            if (locale.equals("ja")) {
                 resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("message_ja.properties");
             }
             //转变为字符流
@@ -104,9 +105,9 @@ public class MessageUtil {
                 String key = (String) enumeration.nextElement();
                 if (key.equals(msgId)) {
                     String rst = properties.getProperty(key);
-                    for(int i=0;i<parms.size();i++ ){
-                        String oldChar = "&"+ StrUtil.toString(i+1);
-                        rst = rst.replace(oldChar,parms.get(i));
+                    for (int i = 0; i < parms.size(); i++) {
+                        String oldChar = "&" + StrUtil.toString(i + 1);
+                        rst = rst.replace(oldChar, parms.get(i));
                     }
                     return rst;
                 }
