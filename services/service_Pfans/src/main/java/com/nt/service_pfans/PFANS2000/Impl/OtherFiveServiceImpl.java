@@ -2,12 +2,10 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.OtherTwo;
-import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
-import com.nt.service_pfans.PFANS2000.OtherTwoService;
-import com.nt.service_pfans.PFANS2000.mapper.OtherTwoMapper;
+import com.nt.dao_Pfans.PFANS2000.OtherFive;
+import com.nt.service_pfans.PFANS2000.OtherFiveService;
+import com.nt.service_pfans.PFANS2000.mapper.OtherFiveMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,43 +21,34 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class OtherTwoServiceImpl implements OtherTwoService {
+public class OtherFiveServiceImpl implements OtherFiveService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private OtherTwoMapper othertwoMapper;
+    private OtherFiveMapper otherfiveMapper;
 
     @Override
-    public List<OtherTwo> list(OtherTwo othertwo) throws Exception {
-        return othertwoMapper.select(othertwo);
+    public List<OtherFive> listFive(OtherFive otherfive) throws Exception {
+        return otherfiveMapper.select(otherfive);
     }
 
     @Override
-    public void insert(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
-        othertwo.preInsert(tokenModel);
-        othertwo.setOthertwo_id(UUID.randomUUID().toString());
-        int rowundex = 0;
-        rowundex = rowundex + 1;
-        othertwo.setRowindex(rowundex);
-        othertwoMapper.insert(othertwo);
-    }
-
-    @Override
-    public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception{
-        othertwoMapper.delete(othertwo);
+    public void deleteFive(OtherFive otherfive, TokenModel tokenModel) throws Exception{
+        otherfiveMapper.delete(otherfive);
     }
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
-            List<OtherTwo> listVo = new ArrayList<OtherTwo>();
+            List<OtherFive> listVo = new ArrayList<OtherFive>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
@@ -69,9 +58,17 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
-            model.add("名字");
-            model.add("金額");
-            model.add("根拠");
+            model.add("部門");
+            model.add("姓名");
+            model.add("补充医保");
+            model.add("意外保险");
+            model.add("体检");
+            model.add("福祉合計");
+            model.add("工会福祉");
+            model.add("忘年会奖品");
+            model.add("組合旅游费");
+            model.add("合計");
+            model.add("备注");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -82,7 +79,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             int accesscount = 0;
             int error = 0;
             for (int i = 1; i < list.size()-1; i++) {
-                OtherTwo othertwo = new OtherTwo();
+                OtherFive otherfive = new OtherFive();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
@@ -104,20 +101,27 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(1).toString();
+                    String customername = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.customername").is(customername));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    othertwo.setUser_id(customerInfo.getUserid());
-                    othertwo.setMoneys(value.get(2).toString());
-                    othertwo.setRootknot(value.get(3).toString());
+                    otherfive.setUser_id(customerInfo.getUserid());
+                    otherfive.setDepartment_id(value.get(1).toString());
+                    otherfive.setMedicalinsurance(value.get(3).toString());
+                    otherfive.setAccident(value.get(4).toString());
+                    otherfive.setPhysical(value.get(5).toString());
+                    otherfive.setWelfaretotal(value.get(6).toString());
+                    otherfive.setLabourunion(value.get(7).toString());
+                    otherfive.setAnnualmeeting(value.get(8).toString());
+                    otherfive.setTravel(value.get(9).toString());
+                    otherfive.setTotal(value.get(10).toString());
+                    otherfive.setRemarks(value.get(11).toString());
                 }
+                otherfive.setOtherfive_id(UUID.randomUUID().toString());
                 int rowundex = i;
-                othertwo.setRowindex(rowundex);
-                othertwo.setType("1");
-                othertwo.preInsert(tokenModel);
-                othertwo.setOthertwo_id(UUID.randomUUID().toString());
-                othertwoMapper.insert(othertwo);
-                listVo.add(othertwo);
+                otherfive.setRowindex(rowundex);
+                otherfive.preInsert(tokenModel);
+                otherfiveMapper.insert(otherfive);
+                listVo.add(otherfive);
                 accesscount = accesscount + 1;
             }
             Result.add("失败数：" + error);
