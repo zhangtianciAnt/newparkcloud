@@ -1,12 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS2000.OtherTwo;
-import com.nt.dao_Pfans.PFANS2000.OtherFive;
-import com.nt.dao_Pfans.PFANS2000.Contrast;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
-import com.nt.dao_Pfans.PFANS2000.Giving;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFiveService;
 import com.nt.utils.*;
@@ -50,6 +47,26 @@ public class Pfans2005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         givingService.insert(giving, tokenModel);
         return ApiResult.success();
+    }
+
+    /**
+     * 生成基数表
+     * FJL
+     * */
+    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
+    public ApiResult insertBase(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        givingService.insertBase(tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     * 获取基数表列表
+     * FJL
+     * */
+    @RequestMapping(value = "/getListBase", method = {RequestMethod.GET})
+    public ApiResult getListtBase(HttpServletRequest request) throws Exception {
+        return ApiResult.success(givingService.getListtBase(null));
     }
 
     @RequestMapping(value = "/listFive", method = {RequestMethod.POST})
