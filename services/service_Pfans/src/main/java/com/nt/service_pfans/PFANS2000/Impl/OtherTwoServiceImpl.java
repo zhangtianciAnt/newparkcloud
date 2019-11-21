@@ -90,6 +90,12 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
+                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if(!Pattern.matches(click, value.get(2).toString())){
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
+                        continue;
+                    }
                     if (value.size() > 2) {
                         if (value.get(2).toString().length() > 20) {
                             error = error + 1;
