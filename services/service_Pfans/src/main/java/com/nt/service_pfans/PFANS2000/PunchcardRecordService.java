@@ -11,12 +11,8 @@ import java.util.List;
 
 
 public interface PunchcardRecordService {
-
-    //获取异常申请列表信息
     List<PunchcardRecord> list(PunchcardRecord punchcardrecord) throws Exception;
+    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
-
-    List<PunchcardRecord> importUser(HttpServletRequest request, TokenModel tokenModel,String flag) throws Exception ;
-    String downloadUserModel() throws LogicalException;
 
 }

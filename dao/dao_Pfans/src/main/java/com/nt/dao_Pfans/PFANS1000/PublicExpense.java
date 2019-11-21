@@ -87,6 +87,9 @@ public class PublicExpense extends BaseModel {
     @Column(name = "LOAN")
     private String loan;
 
+    @Column(name = "JUDGEMENT")
+    private String judgement;
+
     @Column(name = "FULLNAME")
     private String fullname;
 }

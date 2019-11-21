@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/judgement")
 public class Pfans1004Controller {
-    //查找信息发布
     @Autowired
     private JudgementService judgementService;
     @Autowired

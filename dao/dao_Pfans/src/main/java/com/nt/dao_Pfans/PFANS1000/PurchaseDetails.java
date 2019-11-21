@@ -22,13 +22,10 @@ public class PurchaseDetails extends BaseModel {
     private String purchasedetails_id;
 
     @Column(name = "PUBLICEXPENSE_ID")
-    private String publicexpense_id;
+    private String publicexpenseid;
 
-    @Column(name = "JUDGEMENT_ID")
-    private String judgement_id;
-
-    @Column(name = "TRAFFICDATE")
-    private Date trafficdate;
+    @Column(name = "PURCHASEDETAILSDATE")
+    private Date purchasedetailsdate;
 
     @Column(name = "PROCUREMENTPROJECT")
     private String procurementproject;

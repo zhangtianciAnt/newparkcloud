@@ -50,20 +50,20 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     public void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();
-        BeanUtils.copyProperties(publicExpenseVo.getPublicExpense(),publicExpense);
+        BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(),publicExpense);
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
         publicExpenseMapper.insertSelective(publicExpense);
-        List<TrafficDetails> trafficDetailslist = publicExpenseVo.getTrafficDetails();
-        List<PurchaseDetails> purchaseDetailslist=publicExpenseVo.getPurchaseDetails();
-        List<OtherDetails> otherDetailslist=publicExpenseVo.getOtherDetails();
+        List<TrafficDetails> trafficDetailslist = publicExpenseVo.getTrafficdetails();
+        List<PurchaseDetails> purchaseDetailslist = publicExpenseVo.getPurchasedetails();
+        List<OtherDetails> otherDetailslist=publicExpenseVo.getOtherdetails();
         if (trafficDetailslist != null) {
             int rowundex = 0;
             for (TrafficDetails trafficDetails : trafficDetailslist) {
                 rowundex = rowundex + 1;
                 trafficDetails.preInsert(tokenModel);
                 trafficDetails.setTrafficdetails_id(UUID.randomUUID().toString());
-                trafficDetails.setPublicexpense_id(publicexpenseid);
+                trafficDetails.setPublicexpenseid(publicexpenseid);
                 trafficDetails.setRowindex(rowundex);
                 trafficDetailsMapper.insertSelective(trafficDetails);
             }
@@ -74,7 +74,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 rowundex = rowundex + 1;
                 purchaseDetails.preInsert(tokenModel);
                 purchaseDetails.setPurchasedetails_id(UUID.randomUUID().toString());
-                purchaseDetails.setPublicexpense_id(publicexpenseid);
+                purchaseDetails.setPublicexpenseid(publicexpenseid);
                 purchaseDetails.setRowindex(rowundex);
                 purchaseDetailsMapper.insertSelective(purchaseDetails);
             }
@@ -85,7 +85,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 rowundex = rowundex + 1;
                 otherDetails.preInsert(tokenModel);
                 otherDetails.setOtherdetails_id(UUID.randomUUID().toString());
-                otherDetails.setPublicexpense_id(publicexpenseid);
+                otherDetails.setPublicexpenseid(publicexpenseid);
                 otherDetails.setRowindex(rowundex);
                 otherDetailsMapper.insertSelective(otherDetails);
             }
@@ -96,25 +96,25 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     @Override
     public void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
         PublicExpense publicExpense = new PublicExpense();
-        BeanUtils.copyProperties(publicExpenseVo.getPublicExpense(),publicExpense);
+        BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(),publicExpense);
         publicExpense.preUpdate(tokenModel);
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
         String spublicexpenseid = publicExpense.getPublicexpenseid();
 
         TrafficDetails traffic = new TrafficDetails();
-        traffic.setPublicexpense_id(spublicexpenseid);
+        traffic.setPublicexpenseid(spublicexpenseid);
         trafficDetailsMapper.delete(traffic);
-        List<TrafficDetails> trafficlist = publicExpenseVo.getTrafficDetails();
+        List<TrafficDetails> trafficlist = publicExpenseVo.getTrafficdetails();
 
         PurchaseDetails purchase=new PurchaseDetails();
         purchase.setPurchasedetails_id(spublicexpenseid);
         purchaseDetailsMapper.delete(purchase);
-        List<PurchaseDetails> purchaselist=publicExpenseVo.getPurchaseDetails();
+        List<PurchaseDetails> purchaselist=publicExpenseVo.getPurchasedetails();
 
         OtherDetails other=new OtherDetails();
         other.setOtherdetails_id(spublicexpenseid);
         otherDetailsMapper.delete(other);
-        List<OtherDetails> otherlist=publicExpenseVo.getOtherDetails();
+        List<OtherDetails> otherlist=publicExpenseVo.getOtherdetails();
 
         if (trafficlist != null) {
             int rowundex = 0;
@@ -122,7 +122,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 rowundex = rowundex + 1;
                 trafficDetails.preInsert(tokenModel);
                 trafficDetails.setTrafficdetails_id(UUID.randomUUID().toString());
-                trafficDetails.setPublicexpense_id(spublicexpenseid);
+                trafficDetails.setPublicexpenseid(spublicexpenseid);
                 trafficDetails.setRowindex(rowundex);
                 trafficDetailsMapper.insertSelective(trafficDetails);
             }
@@ -133,7 +133,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 rowundex = rowundex + 1;
                 purchaseDetails.preInsert(tokenModel);
                 purchaseDetails.setPurchasedetails_id(UUID.randomUUID().toString());
-                purchaseDetails.setPublicexpense_id(spublicexpenseid);
+                purchaseDetails.setPublicexpenseid(spublicexpenseid);
                 purchaseDetails.setRowindex(rowundex);
                 purchaseDetailsMapper.insertSelective(purchaseDetails);
             }
@@ -144,7 +144,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 rowundex = rowundex + 1;
                 otherDetails.preInsert(tokenModel);
                 otherDetails.setOtherdetails_id(UUID.randomUUID().toString());
-                otherDetails.setPublicexpense_id(spublicexpenseid);
+                otherDetails.setPublicexpenseid(spublicexpenseid);
                 otherDetails.setRowindex(rowundex);
                 otherDetailsMapper.insertSelective(otherDetails);
             }
@@ -160,9 +160,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         TrafficDetails trafficDetails = new TrafficDetails();
         PurchaseDetails purchaseDetails=new PurchaseDetails();
         OtherDetails otherDetails=new OtherDetails();
-        trafficDetails.setTrafficdetails_id(publicexpenseid);
-        purchaseDetails.setPurchasedetails_id(publicexpenseid);
-        otherDetails.setOtherdetails_id(publicexpenseid);
+        trafficDetails.setPublicexpenseid(publicexpenseid);
+        purchaseDetails.setPublicexpenseid(publicexpenseid);
+        otherDetails.setPublicexpenseid(publicexpenseid);
         List<TrafficDetails> trafficDetailslist = trafficDetailsMapper.select(trafficDetails);
         List<PurchaseDetails> purchaseDetailslist =purchaseDetailsMapper.select(purchaseDetails);
         List<OtherDetails> otherDetailslist=otherDetailsMapper.select(otherDetails);
@@ -170,10 +170,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         purchaseDetailslist=purchaseDetailslist.stream().sorted(Comparator.comparing(PurchaseDetails::getAnnexno)).collect(Collectors.toList());
         otherDetailslist=otherDetailslist.stream().sorted(Comparator.comparing(OtherDetails::getAnnexno)).collect(Collectors.toList());
         PublicExpense pub = publicExpenseMapper.selectByPrimaryKey(publicexpenseid);
-        pubVo.setPublicExpense(pub);
-        pubVo.setTrafficDetails(trafficDetailslist);
-        pubVo.setPurchaseDetails(purchaseDetailslist);
-        pubVo.setOtherDetails(otherDetailslist);
+        pubVo.setPublicexpense(pub);
+        pubVo.setTrafficdetails(trafficDetailslist);
+        pubVo.setPurchasedetails(purchaseDetailslist);
+        pubVo.setOtherdetails(otherDetailslist);
         return pubVo;
     }
 
