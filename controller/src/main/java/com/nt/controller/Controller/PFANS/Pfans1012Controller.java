@@ -48,13 +48,13 @@ public class Pfans1012Controller {
     /**
      * 查看一个人
      */
-    @RequestMapping(value = "/selectById",method = {RequestMethod.POST})
-    public ApiResult selectById(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception {
-        if (publicExpense == null) {
+    @RequestMapping(value = "/selectById",method = {RequestMethod.GET})
+    public ApiResult selectById(String publicexpenseid, HttpServletRequest request) throws Exception {
+        if (publicexpenseid == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenMode1 = tokenService.getToken(request);
-        return ApiResult.success(publicExpenseService.selectById(publicExpense.getPublicexpenseid()));
+        return ApiResult.success(publicExpenseService.selectById(publicexpenseid));
     }
 
     /**

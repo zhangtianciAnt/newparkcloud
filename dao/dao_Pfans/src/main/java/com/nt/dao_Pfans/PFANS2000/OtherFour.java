@@ -8,37 +8,28 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "othertwo")
-public class OtherTwo extends BaseModel {
-
+@Table(name = "OtherFour")
+public class OtherFour extends BaseModel {
     private static final long serialVersionUID = 1L;
-
-
     @Id
-    @Column(name = "OTHERTWO_ID")
-    private String othertwo_id;
-
+    @Column(name = "OTHERFOUR_ID")
+    private String otherfour_id;
+    @Column(name = "DEPARTMENT_ID")
+    private String department_id;
     @Column(name = "GIVING_ID")
     private String giving_id;
-
+    @Column(name = "SOCIALSECURITY")
+    private String socialsecurity;
     @Column(name = "USER_ID")
     private String user_id;
-
-    @Column(name = "MONEYS")
-    private String moneys;
-
-    @Column(name = "ROOTKNOT")
-    private String rootknot;
-
-    @Column(name = "TYPE")
-    private String type;
-
+    @Column(name = "TOTAL")
+    private String total;
+    @Column(name = "REMARKS")
+    private String remarks;
     @Column(name = "ROWINDEX")
     private Integer rowindex;
-
 }

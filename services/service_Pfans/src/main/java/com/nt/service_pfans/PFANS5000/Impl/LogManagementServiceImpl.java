@@ -65,15 +65,12 @@ public class LogManagementServiceImpl implements LogManagementService {
         try {
             List<LogManagement> listVo = new ArrayList<LogManagement>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
-            // MultipartFile转为File
             File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
-            // 解析excel
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             if (StringUtils.isNullOrEmpty(flag)) {
-                // 格式check
                 List<LogManagement> error = importCheck(list);
                 return error;
             } else {
@@ -156,8 +153,8 @@ public class LogManagementServiceImpl implements LogManagementService {
                         logmanagement.setWork_memo(value.get(8).toString());
                     }
                 }
+                listVo.add(logmanagement);
             }
-            listVo.add(logmanagement);
             return listVo;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());

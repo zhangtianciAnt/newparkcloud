@@ -1,7 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
-import com.nt.service_pfans.PFANS1000.JudgementService;
+import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
+import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -17,57 +17,57 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/judgement")
-public class Pfans1004Controller {
+@RequestMapping("/softwaretransfer")
+public class Pfans1008Controller {
+    //查找信息发布
     @Autowired
-    private JudgementService judgementService;
+    private SoftwaretransferService softwaretransferService;
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult get(String equipment,HttpServletRequest request) throws Exception{
+    public ApiResult get(HttpServletRequest request) throws Exception{
 
             TokenModel tokenModel = tokenService.getToken(request);
-            Judgement judgement = new Judgement();
-            judgement.setEquipment(equipment);
-            judgement.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(judgementService.getJudgement(judgement));
+            Softwaretransfer softwaretransfer = new Softwaretransfer();
+            softwaretransfer.setOwners(tokenModel.getOwnerList());
+            return ApiResult.success(softwaretransferService.getSoftwaretransfer(softwaretransfer));
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult one(@RequestBody Softwaretransfer softwaretransfer, HttpServletRequest request) throws Exception {
+        if (softwaretransfer == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(judgementService.One(judgement.getJudgementid()));
+        return ApiResult.success(softwaretransferService.One(softwaretransfer.getSoftwaretransferid()));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateJudgement(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception{
-        if (judgement == null) {
+    public ApiResult updateSoftwaretransfer(@RequestBody Softwaretransfer softwaretransfer, HttpServletRequest request) throws Exception{
+        if (softwaretransfer == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.updateJudgement(judgement,tokenModel);
+        softwaretransferService.updateSoftwaretransfer(softwaretransfer,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult create(@RequestBody Softwaretransfer softwaretransfer, HttpServletRequest request) throws Exception {
+        if (softwaretransfer == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.insert(judgement,tokenModel);
+        softwaretransferService.insert(softwaretransfer,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/getJudgementList", method = {RequestMethod.POST})
-    public ApiResult getJudgementList(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    @RequestMapping(value = "/getSoftwaretransferList", method = {RequestMethod.POST})
+    public ApiResult getSoftwaretransferList(@RequestBody Softwaretransfer softwaretransfer, HttpServletRequest request) throws Exception {
+        if (softwaretransfer == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(judgementService.getJudgementList(judgement, request));
+        return ApiResult.success(softwaretransferService.getSoftwaretransferList(softwaretransfer, request));
     }
 }

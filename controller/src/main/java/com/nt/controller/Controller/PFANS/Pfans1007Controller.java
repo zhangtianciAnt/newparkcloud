@@ -1,7 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
-import com.nt.service_pfans.PFANS1000.JudgementService;
+import com.nt.dao_Pfans.PFANS1000.Assetinformation;
+import com.nt.service_pfans.PFANS1000.AssetinformationService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -17,57 +17,57 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/judgement")
-public class Pfans1004Controller {
+@RequestMapping("/assetinformation")
+public class Pfans1007Controller {
+    //查找信息发布
     @Autowired
-    private JudgementService judgementService;
+    private AssetinformationService assetinformationService;
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult get(String equipment,HttpServletRequest request) throws Exception{
+    public ApiResult get(HttpServletRequest request) throws Exception{
 
             TokenModel tokenModel = tokenService.getToken(request);
-            Judgement judgement = new Judgement();
-            judgement.setEquipment(equipment);
-            judgement.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(judgementService.getJudgement(judgement));
+            Assetinformation assetinformation = new Assetinformation();
+            assetinformation.setOwners(tokenModel.getOwnerList());
+            return ApiResult.success(assetinformationService.getAssetinformation(assetinformation));
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult one(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception {
+        if (assetinformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(judgementService.One(judgement.getJudgementid()));
+        return ApiResult.success(assetinformationService.One(assetinformation.getAssetinformationid()));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateJudgement(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception{
-        if (judgement == null) {
+    public ApiResult updateAssetinformation(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception{
+        if (assetinformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.updateJudgement(judgement,tokenModel);
+        assetinformationService.updateAssetinformation(assetinformation,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult create(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception {
+        if (assetinformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.insert(judgement,tokenModel);
+        assetinformationService.insert(assetinformation,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/getJudgementList", method = {RequestMethod.POST})
-    public ApiResult getJudgementList(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    @RequestMapping(value = "/getAssetinformationList", method = {RequestMethod.POST})
+    public ApiResult getAssetinformationList(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception {
+        if (assetinformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(judgementService.getJudgementList(judgement, request));
+        return ApiResult.success(assetinformationService.getAssetinformationList(assetinformation, request));
     }
 }
