@@ -106,8 +106,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     punchcardrecord.setUser_id(customerInfo.getUserid());
                     punchcardrecord.setCenterid(customerInfo.getUserinfo().getCentername());
-                    punchcardrecord.setGroupid(customerInfo.getUserinfo().getCentername());
-                    punchcardrecord.setTeamid(customerInfo.getUserinfo().getCentername());
+                    punchcardrecord.setGroupid(customerInfo.getUserinfo().getGroupname());
+                    punchcardrecord.setTeamid(customerInfo.getUserinfo().getTeamname());
                     String Punchcardrecord_date = value.get(1).toString();
                     punchcardrecord.setPunchcardrecord_date(sf1.parse(Punchcardrecord_date));
                     punchcardrecord.setTime_start(sf.parse(Time_start));
