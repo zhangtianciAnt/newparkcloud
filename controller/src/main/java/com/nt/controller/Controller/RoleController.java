@@ -1,27 +1,16 @@
 package com.nt.controller.Controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
-import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.Log;
-import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.RoleService;
-import com.nt.service_Org.LogService;
-import com.nt.service_Org.UserService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 
 /**
  * @ProjectName: newparkcloud
@@ -58,10 +47,6 @@ public class RoleController {
         if (role == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        role.setOwners(tokenModel.getOwnerList());
-        role.setTenantid(tokenModel.getTenantId());
-        role.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return ApiResult.success(roleService.getRoleList(role));
     }
 
@@ -179,6 +164,19 @@ public class RoleController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(roleService.getMembers(roleid));
+    }
+
+    /**
+     * @方法名：getDefaultRole
+     * @描述：判断是否已存在默认角色
+     * @创建日期：2019/11/19
+     * @作者：LUZHAOWEI
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getDefaultRole",method={RequestMethod.GET})
+    public ApiResult getDefaultRole(HttpServletRequest request, @RequestParam String defaultrole) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(roleService.getDefaultRole(defaultrole));
     }
 
     /**

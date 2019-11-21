@@ -1,12 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS2000.OtherTwo;
-import com.nt.dao_Pfans.PFANS2000.OtherFive;
-import com.nt.dao_Pfans.PFANS2000.Contrast;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
-import com.nt.dao_Pfans.PFANS2000.Giving;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFiveService;
 import com.nt.utils.*;
@@ -52,7 +49,27 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/listFive", method = {RequestMethod.POST})
+    /**
+     * 生成基数表
+     * FJL
+     * */
+    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
+    public ApiResult insertBase(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        givingService.insertBase(tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     * 获取基数表列表
+     * FJL
+     * */
+    @RequestMapping(value = "/getListBase", method = {RequestMethod.GET})
+    public ApiResult getListtBase(HttpServletRequest request) throws Exception {
+        return ApiResult.success(givingService.getListtBase(null));
+    }
+
+    @RequestMapping(value = "/listFive", method = {RequestMethod.GET})
     public ApiResult listFive(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherFive otherfive = new OtherFive();
@@ -78,7 +95,7 @@ public class Pfans2005Controller {
         return ApiResult.success(givingService.getDataList(giving));
     }
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherTwo othertwo = new OtherTwo();
