@@ -59,13 +59,13 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         shoppingDetailedMapper.delete(spd);
         List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetailed();
         if (shoppingDetailedlist != null) {
-            int rowundex = 0;
+            int rowindex = 0;
             for (ShoppingDetailed shoppingDetailed : shoppingDetailedlist) {
-                rowundex = rowundex + 1;
+                rowindex = rowindex + 1;
                 shoppingDetailed.preInsert(tokenModel);
                 shoppingDetailed.setShoppingdetailed_id(UUID.randomUUID().toString());
                 shoppingDetailed.setPurchaseapply_id(spurchaseApplyid);
-                shoppingDetailed.setRowindex(rowundex);
+                shoppingDetailed.setRowindex(rowindex);
                 shoppingDetailedMapper.insertSelective(shoppingDetailed);
             }
         }
@@ -82,13 +82,13 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         purchaseApplyMapper.insertSelective(purchaseApply);
         List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetailed();
         if (shoppingDetailedlist != null) {
-            int rowundex = 0;
+            int rowindex = 0;
             for (ShoppingDetailed shoppingDetailed : shoppingDetailedlist) {
-                rowundex = rowundex + 1;
+                rowindex = rowindex + 1;
                 shoppingDetailed.preInsert(tokenModel);
                 shoppingDetailed.setShoppingdetailed_id(UUID.randomUUID().toString());
                 shoppingDetailed.setPurchaseapply_id(purchaseApplyid);
-                shoppingDetailed.setRowindex(rowundex);
+                shoppingDetailed.setRowindex(rowindex);
                 shoppingDetailedMapper.insertSelective(shoppingDetailed);
             }
         }
