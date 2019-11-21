@@ -36,12 +36,12 @@ public class OtherFiveServiceImpl implements OtherFiveService {
     private OtherFiveMapper otherfiveMapper;
 
     @Override
-    public List<OtherFive> list(OtherFive otherfive) throws Exception {
+    public List<OtherFive> listFive(OtherFive otherfive) throws Exception {
         return otherfiveMapper.select(otherfive);
     }
 
     @Override
-    public void deletete(OtherFive otherfive, TokenModel tokenModel) throws Exception{
+    public void deleteFive(OtherFive otherfive, TokenModel tokenModel) throws Exception{
         otherfiveMapper.delete(otherfive);
     }
     @Override
@@ -58,9 +58,17 @@ public class OtherFiveServiceImpl implements OtherFiveService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
-            model.add("名字");
-            model.add("金額");
-            model.add("根拠");
+            model.add("部門");
+            model.add("姓名");
+            model.add("补充医保");
+            model.add("意外保险");
+            model.add("体检");
+            model.add("福祉合計");
+            model.add("工会福祉");
+            model.add("忘年会奖品");
+            model.add("組合旅游费");
+            model.add("合計");
+            model.add("备注");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -93,11 +101,22 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(1).toString();
+                    String customername = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.customername").is(customername));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     otherfive.setUser_id(customerInfo.getUserid());
+                    otherfive.setDepartment_id(value.get(1).toString());
+                    otherfive.setMedicalinsurance(value.get(3).toString());
+                    otherfive.setAccident(value.get(4).toString());
+                    otherfive.setPhysical(value.get(5).toString());
+                    otherfive.setWelfaretotal(value.get(6).toString());
+                    otherfive.setLabourunion(value.get(7).toString());
+                    otherfive.setAnnualmeeting(value.get(8).toString());
+                    otherfive.setTravel(value.get(9).toString());
+                    otherfive.setTotal(value.get(10).toString());
+                    otherfive.setRemarks(value.get(11).toString());
                 }
+                otherfive.setOtherfive_id(UUID.randomUUID().toString());
                 int rowundex = i;
                 otherfive.setRowindex(rowundex);
                 otherfive.preInsert(tokenModel);
