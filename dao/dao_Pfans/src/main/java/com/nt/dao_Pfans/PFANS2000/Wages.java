@@ -31,8 +31,8 @@ public class Wages extends BaseModel {
     @Column(name = "USER_ID")
     private String user_id;
 
-    @Column(name = "WORKSTRING")
-    private Date workString;
+    @Column(name = "WORKDATE")
+    private Date workdate;
 
     @Column(name = "SEX")
     private String sex;

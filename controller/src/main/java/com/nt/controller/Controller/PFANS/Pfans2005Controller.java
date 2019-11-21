@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
+import com.nt.dao_Pfans.PFANS2000.OtherFive;
 import com.nt.dao_Pfans.PFANS2000.Contrast;
+import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.dao_Pfans.PFANS2000.Giving;
@@ -37,6 +39,9 @@ public class Pfans2005Controller {
     @Autowired
     private ContrastService contrastService;
 
+    @Autowired
+    private DutyfreeService dutyfreeService;
+
     @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Giving giving, HttpServletRequest request) throws Exception {
         if (giving == null) {
@@ -47,6 +52,23 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/listFive", method = {RequestMethod.POST})
+    public ApiResult listFive(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        OtherFive otherfive = new OtherFive();
+        otherfive.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(otherfiveService.listFive(otherfive));
+    }
+
+    @RequestMapping(value = "/deleteFive", method = {RequestMethod.POST})
+    public ApiResult deleteFive(@RequestBody OtherFive otherfive, HttpServletRequest request) throws Exception {
+        if (otherfive == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        otherfiveService.deleteFive(otherfive, tokenModel);
+        return ApiResult.success();
+    }
 
     @RequestMapping(value = "/getDataList", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
@@ -97,6 +119,12 @@ public class Pfans2005Controller {
 //        Contrast contrast =new Contrast();
 //        contrast.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(contrastService.getList(null));
+    }
+
+    @RequestMapping(value = "/getListdutyfree", method = {RequestMethod.GET})
+    public ApiResult getListdutyfree(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(dutyfreeService.getdutyfree(tokenModel));
     }
 
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})

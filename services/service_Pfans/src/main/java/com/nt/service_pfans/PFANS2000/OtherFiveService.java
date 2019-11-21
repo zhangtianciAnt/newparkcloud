@@ -9,10 +9,10 @@ import java.util.List;
 public interface OtherFiveService {
 
 
-    List<OtherFive> list(OtherFive otherfive) throws Exception;
+    List<OtherFive> listFive(OtherFive otherfive) throws Exception;
 
 
-    void deletete(OtherFive otherfive, TokenModel tokenModel)throws Exception;
+    void deleteFive(OtherFive otherfive, TokenModel tokenModel)throws Exception;
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
