@@ -52,7 +52,7 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/listFive", method = {RequestMethod.POST})
+    @RequestMapping(value = "/listFive", method = {RequestMethod.GET})
     public ApiResult listFive(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherFive otherfive = new OtherFive();
