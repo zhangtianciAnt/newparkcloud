@@ -24,6 +24,8 @@ public class Pfans1013Controller {
     private EvectionService evectionService;
     @Autowired
     private TokenService tokenService;
+//    @Autowired
+//    private JudgementService judgementService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
@@ -61,4 +63,18 @@ public class Pfans1013Controller {
         return ApiResult.success();
     }
 
+
+
+//    /*
+//     * 裁决号
+//     * */
+//
+//    @RequestMapping(value="/getJudgement" ,method = {RequestMethod.POST})
+//    public ApiResult getJudgement(@RequestBody Judgement judgement,HttpServletRequest request) throws Exception{
+//        if(judgement==null){
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        TokenModel tokenModel=tokenService.getToken(request);
+//        return ApiResult.success(judgementService.getJudgement(judgement));
+//    }
 }

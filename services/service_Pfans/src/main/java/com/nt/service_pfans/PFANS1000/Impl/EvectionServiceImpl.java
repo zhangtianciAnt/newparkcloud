@@ -1,10 +1,12 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.AccommodationDetails;
 import com.nt.dao_Pfans.PFANS1000.Evection;
 import com.nt.dao_Pfans.PFANS1000.OtherDetails;
 import com.nt.dao_Pfans.PFANS1000.TrafficDetails;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.service_pfans.PFANS1000.EvectionService;
+import com.nt.service_pfans.PFANS1000.mapper.AccommodationDetailsMapper;
 import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
 import com.nt.service_pfans.PFANS1000.mapper.OtherDetailsMapper;
 import com.nt.service_pfans.PFANS1000.mapper.TrafficDetailsMapper;
@@ -27,8 +29,8 @@ public class EvectionServiceImpl implements EvectionService {
     private EvectionMapper evectionMapper;
     @Autowired
     private TrafficDetailsMapper trafficdetailsMapper;
-    //@Autowired
-    //private Mapper Mapper;
+    @Autowired
+    private AccommodationDetailsMapper accommodationdetailsMapper;
     @Autowired
     private OtherDetailsMapper otherdetailsMapper;
 
@@ -42,25 +44,25 @@ public class EvectionServiceImpl implements EvectionService {
         EvectionVo eveVo = new EvectionVo();
 
         TrafficDetails trafficdetails = new TrafficDetails();
-        //TrafficDetails trafficdetails = new TrafficDetails();
+        AccommodationDetails accommodationdetails = new AccommodationDetails();
         OtherDetails otherdetails = new OtherDetails();
 
         trafficdetails.setEvectionid(evectionid);
-        //trafficdetails.setEvectionid(evectionid);
+        accommodationdetails.setEvectionid(evectionid);
         otherdetails.setEvectionid(evectionid);
 
         List<TrafficDetails> trafficdetailslist = trafficdetailsMapper.select(trafficdetails);
-        //List<TrafficDetails> trafficdetailslist = trafficdetailsMapper.select(trafficdetails);
+        List<AccommodationDetails> accommodationdetailslist = accommodationdetailsMapper.select(accommodationdetails);
         List<OtherDetails> otherdetailslist = otherdetailsMapper.select(otherdetails);
 
         trafficdetailslist = trafficdetailslist.stream().sorted(Comparator.comparing(TrafficDetails::getRowindex)).collect(Collectors.toList());
-        //trafficdetailslist = trafficdetailslist.stream().sorted(Comparator.comparing(TrafficDetails::getRowindex)).collect(Collectors.toList());
+        accommodationdetailslist = accommodationdetailslist.stream().sorted(Comparator.comparing(AccommodationDetails::getRowindex)).collect(Collectors.toList());
         otherdetailslist = otherdetailslist.stream().sorted(Comparator.comparing(OtherDetails::getRowindex)).collect(Collectors.toList());
 
         Evection Eve = evectionMapper.selectByPrimaryKey(evectionid);
         eveVo.setEvection(Eve);
         eveVo.setTrafficdetails(trafficdetailslist);
-        //eveVo.setTrafficDetails(trafficdetailslist);
+        eveVo.setAccommodationdetails(accommodationdetailslist);
         eveVo.setOtherdetails(otherdetailslist);
         return eveVo;
     }
@@ -72,20 +74,21 @@ public class EvectionServiceImpl implements EvectionService {
         evection.preUpdate(tokenModel);
         evectionMapper.updateByPrimaryKey(evection);
         String evectionid = evection.getEvectionid();
+
         TrafficDetails traffic = new TrafficDetails();
-        //TrafficDetails traffic = new TrafficDetails();
+        AccommodationDetails accommodation = new AccommodationDetails();
         OtherDetails other = new OtherDetails();
 
         traffic.setEvectionid(evectionid);
-        //traffic.setEvectionid(evectionid);
+        accommodation.setEvectionid(evectionid);
         other.setEvectionid(evectionid);
 
         trafficdetailsMapper.delete(traffic);
-        //trafficdetailsMapper.delete(traffic);
+        accommodationdetailsMapper.delete(accommodation);
         otherdetailsMapper.delete(other);
 
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
-        //List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
+        List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
 
         if (trafficdetailslist != null) {
@@ -101,18 +104,18 @@ public class EvectionServiceImpl implements EvectionService {
             }
         }
 
-//        if (trafficdetailslist != null) {
-//            int rowindex = 0;
-//            for (TrafficDetails trafficdetails : trafficdetailslist) {
-//                rowindex = rowindex + 1;
-//                trafficdetails.preInsert(tokenModel);
-//                trafficdetails.getTrafficdetails_id(UUID.randomUUID().toString());
-//                trafficdetails.setEvectionid(evectionid);
-//                trafficdetails.setRowindex(rowindex);
-//                trafficdetailsMapper.insertSelective(trafficdetails);
-//
-//            }
-//        }
+        if (accommodationdetailslist != null) {
+            int rowindex = 0;
+            for (AccommodationDetails accommodationdetails : accommodationdetailslist) {
+                rowindex = rowindex + 1;
+                accommodationdetails.preInsert(tokenModel);
+                accommodationdetails.setAccommodationdetails_id(UUID.randomUUID().toString());
+                accommodationdetails.setEvectionid(evectionid);
+                accommodationdetails.setRowindex(rowindex);
+                accommodationdetailsMapper.insertSelective(accommodationdetails);
+
+            }
+        }
 
         if (otherdetailslist != null) {
             int rowindex = 0;
@@ -137,8 +140,9 @@ public class EvectionServiceImpl implements EvectionService {
         evection.preInsert(tokenModel);
         evection.setEvectionid(evectionid);
         evectionMapper.insertSelective(evection);
+
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
-        //List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
+        List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
 
         if (trafficdetailslist != null) {
@@ -153,17 +157,17 @@ public class EvectionServiceImpl implements EvectionService {
             }
         }
 
-//        if (trafficdetailslist != null) {
-//            int rowindex = 0;
-//            for (TrafficDetails trafficdetails : trafficdetailslist) {
-//                rowindex = rowindex + 1;
-//                trafficdetails.preInsert(tokenModel);
-//                trafficdetails.setTrafficdetails_id(UUID.randomUUID().toString());
-//                trafficdetails.setEvectionid(evectionid);
-//                trafficdetails.setRowindex(rowindex);
-//                trafficdetailsMapper.insertSelective(trafficdetails);
-//            }
-//        }
+        if (accommodationdetailslist != null) {
+            int rowindex = 0;
+            for (AccommodationDetails accommodationdetails : accommodationdetailslist) {
+                rowindex = rowindex + 1;
+                accommodationdetails.preInsert(tokenModel);
+                accommodationdetails.setAccommodationdetails_id(UUID.randomUUID().toString());
+                accommodationdetails.setEvectionid(evectionid);
+                accommodationdetails.setRowindex(rowindex);
+                accommodationdetailsMapper.insertSelective(accommodationdetails);
+            }
+        }
 
         if (otherdetailslist != null) {
             int rowindex = 0;
