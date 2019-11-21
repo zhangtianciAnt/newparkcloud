@@ -2,10 +2,8 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
-import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.mapper.OtherTwoMapper;
 import com.nt.utils.LogicalException;
@@ -23,8 +21,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -52,9 +52,10 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     }
 
     @Override
-    public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception{
+    public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwoMapper.delete(othertwo);
     }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
@@ -81,7 +82,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
-            for (int i = 1; i < list.size()-1; i++) {
+            for (int i = 1; i < list.size() - 1; i++) {
                 OtherTwo othertwo = new OtherTwo();
                 List<Object> value = list.get(k);
                 k++;
@@ -89,17 +90,23 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    if(value.size() > 2) {
-                        if (value.get(2).toString().length()>20) {
+                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if(!Pattern.matches(click, value.get(2).toString())){
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
+                        continue;
+                    }
+                    if (value.size() > 2) {
+                        if (value.get(2).toString().length() > 20) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行金额长度超出范围，请输入长度为20位之内的金额，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
-                    if(value.size() > 3) {
-                        if (value.get(3).toString().length()>20) {
+                    if (value.size() > 3) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
                             continue;
                         }
                     }

@@ -81,7 +81,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     int result1 = Time_start.compareTo(Time_end);
                     if (result1 >= 0) {
                         error = error + 1;
-                        Result.add(" 第" + (k-1) + "行时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
+                        Result.add("模板第" + (k-1) + "行的时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
                         continue;
                     }
                     if (value.size() > 1) {
@@ -91,12 +91,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         date1 = date1.substring(8, 10);
                         if (Integer.parseInt(date1) > 31) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行日期格式错误，请输入正确的日子，导入失败");
+                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的日子，导入失败");
                             continue;
                         }
                         if (Integer.parseInt(date) > 12) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行日期格式错误，请输入正确的月份，导入失败");
+                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的月份，导入失败");
                             continue;
                         }
                     }

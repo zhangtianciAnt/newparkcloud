@@ -70,6 +70,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/listFive", method = {RequestMethod.POST})
+    @RequestMapping(value = "/listFive", method = {RequestMethod.GET})
     public ApiResult listFive(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherFive otherfive = new OtherFive();
@@ -95,7 +96,7 @@ public class Pfans2005Controller {
         return ApiResult.success(givingService.getDataList(giving));
     }
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherTwo othertwo = new OtherTwo();
