@@ -8,6 +8,7 @@
     <id column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR" />
     <result column="deviceno" property="deviceno" jdbcType="VARCHAR" />
     <result column="devicetype" property="devicetype" jdbcType="VARCHAR" />
+    <result column="devicetypesmall" property="devicetypesmall" jdbcType="VARCHAR"/>
     <result column="devicename" property="devicename" jdbcType="VARCHAR" />
     <result column="personliable" property="personliable" jdbcType="VARCHAR" />
     <result column="region" property="region" jdbcType="VARCHAR" />

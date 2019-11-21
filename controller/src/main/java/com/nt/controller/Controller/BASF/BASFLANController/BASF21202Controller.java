@@ -1,10 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
-
-
-import com.nt.dao_BASF.Emergencytemplate;
-import com.nt.service_BASF.EmergencytemplateServices;
+import com.nt.dao_BASF.Course;
+import com.nt.service_BASF.CourseServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -20,18 +18,18 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.controller.Controller.BASF.BASFLANController
- * @ClassName: BASF10801Controller
+ * @ClassName: BASF21201Controller
  * @Author: WXL
- * @Description: BASF应急预案管理模块Controller
- * @Date: 2019/11/18 18：03
+ * @Description: BASF培训课程管理模块Controller
+ * @Date: 2019/11/20 15：39
  * @Version: 1.0
  */
 @RestController
-@RequestMapping("/BASF10801")
-public class BASF10801Controller {
+@RequestMapping("/BASF21202")
+public class BASF21202Controller {
 
     @Autowired
-    private EmergencytemplateServices emergencytemplateServices;
+    private CourseServices courseServices;
     @Autowired
     private TokenService tokenService;
 
@@ -40,90 +38,90 @@ public class BASF10801Controller {
      * @Method list
      * @Author WXL
      * @Version 1.0
-     * @Description 获取模板列表
+     * @Description 获取培训课程列表
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/18 18：03
+     * @Date 2019/11/20 16：24
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(emergencytemplateServices.list());
+        return ApiResult.success(courseServices.list());
     }
 
     /**
-     * @param emergencytemplate
+     * @param course
      * @param request
      * @Method create
-     * @Author WXL
+     * @Author Wxz
      * @Version 1.0
-     * @Description 创建模板
+     * @Description 创建培训课程
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/18 18:03
+     * @Date 2019/11/20 16:24
      */
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Emergencytemplate emergencytemplate, HttpServletRequest request) throws Exception {
-        if (emergencytemplate == null) {
+    public ApiResult create(@RequestBody Course course, HttpServletRequest request) throws Exception {
+        if (course == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        emergencytemplateServices.insert(emergencytemplate, tokenModel);
+        courseServices.insert(course, tokenModel);
         return ApiResult.success();
     }
 
     /**
-     * @param emergencytemplate
+     * @param course
      * @param request
      * @Method delete
      * @Author WXL
      * @Version 1.0
-     * @Description 删除模板
+     * @Description 删除课程
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/18 18：02
+     * @Date 2019/11/20 16：25
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})
-    public ApiResult delete(@RequestBody Emergencytemplate emergencytemplate, HttpServletRequest request) throws Exception {
-        if (emergencytemplate == null) {
+    public ApiResult delete(@RequestBody Course course, HttpServletRequest request) throws Exception {
+        if (course == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        emergencytemplate.setStatus(AuthConstants.DEL_FLAG_DELETE);
-        emergencytemplateServices.delete(emergencytemplate);
+        course.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        courseServices.delete(course);
         return ApiResult.success();
     }
 
     /**
-     * @param templateid
+     * @param courseid
      * @param request
      * @Method selectById
      * @Author WXL
      * @Version 1.0
-     * @Description 获取模板详情
+     * @Description 获取课程详情
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/18 18:01
+     * @Date 2019/11/20 16:26
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult selectById(String templateid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(templateid)) {
+    public ApiResult selectById(String courseid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(courseid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(emergencytemplateServices.one(templateid));
+        return ApiResult.success(courseServices.one(courseid));
     }
 
     /**
-     * @param emergencytemplate
+     * @param course
      * @param request
      * @Method update
-     * @Author WXL
+     * @Author Wxz
      * @Version 1.0
-     * @Description 更新模板详情
+     * @Description 更新课程详情
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/18 18:01
+     * @Date 2019/11/20 16:26
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Emergencytemplate emergencytemplate, HttpServletRequest request) throws Exception {
-        if (emergencytemplate == null) {
+    public ApiResult update(@RequestBody Course course, HttpServletRequest request) throws Exception {
+        if (course == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        emergencytemplateServices.update(emergencytemplate, tokenModel);
+        courseServices.update(course, tokenModel);
         return ApiResult.success();
     }
 }

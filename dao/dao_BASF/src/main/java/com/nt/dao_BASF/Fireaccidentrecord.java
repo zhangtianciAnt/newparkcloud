@@ -19,52 +19,29 @@ public class Fireaccidentrecord extends BaseModel {
     private String fireaccidentrecordid;
 
     /**
-     * 编号
+     * 事故编号
      */
     private String fireaccidentno;
 
     /**
-     * 接警单ID
+     * 消防报警单ID
      */
     private String firealarmid;
     /**
-     * 接警单单号
+     * 消防报警单单号
      */
     private String firealarmno;
     /**
-     * 指挥记录单id
+     * 消防接警单id
      */
     private String commandrecordid;
     /**
-     * 指挥记录单号
+     * 消防接警单单号
      */
     private String commandrecordno;
     /**
      * 事故时间
      */
     private Date accidenttime;
-    /**
-     * 事故地点
-     */
-    private String accidentlocation;
-    /**
-     * 经济损失
-     */
-    private String economicloss;
-    /**
-     * 事故原因
-     */
-    private String reason;
-    /**
-     * 伤亡情况
-     */
-    private String casualtysituation;
-    /**
-     * 处理经过
-     */
-    private String treatmentprocess;
-    /**
-     * 语音地址
-     */
-    private String voiceurl;
+
 }

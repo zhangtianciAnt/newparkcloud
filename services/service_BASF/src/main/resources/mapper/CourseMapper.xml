@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.CourseMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Course">
+        <!--
+           WARNING - @mbg.generated
+         -->
+        <id column="courseid" property="courseid" jdbcType="VARCHAR"/>
+        <result column="coursename" property="coursename" jdbcType="VARCHAR"/>
+        <result column="coursetype" property="coursetype" jdbcType="VARCHAR"/>
+        <result column="courselimt" property="courselimt" jdbcType="VARCHAR"/>
+        <result column="timetype" property="timetype" jdbcType="VARCHAR"/>
+        <result column="coursefile" property="coursefile" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

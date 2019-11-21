@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.EmergencyplanMapper.xml">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Emergencyplan">
+        <id column="emergencyplanid" property="emergencyplanid" jdbcType="VARCHAR"/>
+        <result column="emergencyplanname" property="emergencyplanname" jdbcType="VARCHAR"/>
+        <result column="compilationunit" property="compilationunit" jdbcType="VARCHAR"/>
+        <result column="filename" property="filename" jdbcType="VARCHAR"/>
+        <result column="creationtime" property="creationtime" jdbcType="TIMESTAMP"/>
+        <result column="affiliatetemplate" property="affiliatetemplate" jdbcType="VARCHAR"/>
+        <result column="planlevel" property="planlevel" jdbcType="VARCHAR"/>
+        <result column="plantype" property="plantype" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

@@ -16,8 +16,8 @@ import java.util.List;
 public interface CommandrecordServices {
 
     //保存
-    void save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception;
+    String save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception;
 
     //获取
-    List<Commandrecord> get(Commandrecord commandrecord) throws Exception;
+    Commandrecord get(String cid) throws Exception;
 }
