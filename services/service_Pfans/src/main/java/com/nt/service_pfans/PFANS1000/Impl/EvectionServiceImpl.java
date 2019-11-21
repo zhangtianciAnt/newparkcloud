@@ -74,6 +74,7 @@ public class EvectionServiceImpl implements EvectionService {
         evection.preUpdate(tokenModel);
         evectionMapper.updateByPrimaryKey(evection);
         String evectionid = evection.getEvectionid();
+
         TrafficDetails traffic = new TrafficDetails();
         AccommodationDetails accommodation = new AccommodationDetails();
         OtherDetails other = new OtherDetails();
@@ -139,6 +140,7 @@ public class EvectionServiceImpl implements EvectionService {
         evection.preInsert(tokenModel);
         evection.setEvectionid(evectionid);
         evectionMapper.insertSelective(evection);
+
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
         List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
