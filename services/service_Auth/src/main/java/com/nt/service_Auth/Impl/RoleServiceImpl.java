@@ -5,7 +5,6 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.RoleService;
 import com.nt.utils.AuthConstants;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
@@ -150,6 +150,17 @@ public class RoleServiceImpl implements RoleService {
             }
         }
         return new AuthVo(appId, menuId);
+    }
+
+    @Override
+    public boolean getDefaultRole(String defaultrole) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("defaultrole").is(defaultrole));
+        List<Role> roleList = mongoTemplate.find(query, Role.class);
+        if(roleList.isEmpty()){
+            return false;
+        }
+        return true;
     }
 
     //获取当前登陆人的所有角色信息

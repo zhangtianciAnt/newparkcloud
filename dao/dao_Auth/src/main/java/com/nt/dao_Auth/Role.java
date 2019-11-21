@@ -41,7 +41,7 @@ public class Role extends BaseModel {
      */
     private String description;
     /**
-     * 角色描述
+     * 默认角色
      */
     private String defaultrole;
 
