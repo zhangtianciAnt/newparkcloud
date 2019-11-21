@@ -86,17 +86,59 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    if(value.size() > 2) {
-                        if (value.get(2).toString().length()>20) {
-                            error = error + 1;
-                            Result.add(" 第" + (k-1) + "行金额长度超出范围，请输入长度为20位之内的金额，导入失败");
-                            continue;
-                        }
-                    }
                     if(value.size() > 3) {
                         if (value.get(3).toString().length()>20) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
+                            Result.add("模板第" + (k-1) + "行的补充医保长度超出范围，请输入长度为20位之内的补充医保，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 4) {
+                        if (value.get(4).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的意外保险长度超出范围，请输入长度为20位之内的意外保险，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 5) {
+                        if (value.get(5).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的体检长度超出范围，请输入长度为20位之内的体检，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 6) {
+                        if (value.get(6).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的福祉合計长度超出范围，请输入长度为20位之内的福祉合計，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 7) {
+                        if (value.get(7).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的工会福祉长度超出范围，请输入长度为20位之内的工会福祉，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 8) {
+                        if (value.get(8).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的忘年会奖品长度超出范围，请输入长度为20位之内的忘年会奖品，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 9) {
+                        if (value.get(9).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的組合旅游费长度超出范围，请输入长度为20位之内的組合旅游费，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 10) {
+                        if (value.get(10).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的合計长度超出范围，请输入长度为20位之内的合計，导入失败");
                             continue;
                         }
                     }
