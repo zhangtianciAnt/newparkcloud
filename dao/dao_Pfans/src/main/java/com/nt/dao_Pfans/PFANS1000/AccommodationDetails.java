@@ -72,16 +72,28 @@ public class AccommodationDetails extends BaseModel {
     private String facilityname;
 
     /**
-     * 住宿津贴
+     * 住宿津贴（人民币）
      */
     @Column(name = "ACCOMMODATIONALLOWANCE")
     private String accommodationallowance;
 
     /**
-     * 出差津贴
+     * 住宿津贴（外币）
+     */
+    @Column(name = "ACCOMMODATION")
+    private String accommodation;
+
+    /**
+     * 出差津贴（人民币）
      */
     @Column(name = "TRAVELALLOWANCE")
     private String travelallowance;
+
+    /**
+     * 出差津贴（外币）
+     */
+    @Column(name = "TRAVEL")
+    private String travel;
 
     /**
      * 自宅/亲属家津贴
@@ -94,6 +106,12 @@ public class AccommodationDetails extends BaseModel {
      */
     @Column(name = "TRAIN")
     private String train;
+
+    /**
+     * 飞机过夜津贴（夜间6小时以上）（外币）
+     */
+    @Column(name = "PLANE")
+    private String plane;
 
     /**
      * 附件号
