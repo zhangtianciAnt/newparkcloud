@@ -175,4 +175,29 @@ public class Judgement extends BaseModel {
     @Column(name = "EQUIPMENT")
     private String equipment;
 
+    /**
+     * 决裁类型
+     */
+    @Column(name = "DECISIVE")
+    private String decisive;
+
+    /**EQUIPMENT
+     * 折旧期限
+     */
+    @Column(name = "PERIOD")
+    private String period;
+
+    /**
+     * 开始时间
+     */
+    @Column(name = "STARTDATE")
+    private Date startdate;
+
+    /**
+     * 结束时间
+     */
+    @Column(name = "ENDDATE")
+    private Date enddate;
+
+
 }

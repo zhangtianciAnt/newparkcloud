@@ -38,28 +38,25 @@ public class OtherFive extends BaseModel {
     private String accident;
 
     @Column(name = "PHYSICAL")
-    private Integer physical;
+    private String physical;
 
     @Column(name = "WELFARETOTAL")
-    private Integer welfaretotal;
+    private String welfaretotal;
 
     @Column(name = "LABOURUNION")
-    private Integer labourunion;
-
-    @Column(name = "WELFARE")
-    private Integer welfare;
+    private String labourunion;
 
     @Column(name = "ANNUALMEETING")
-    private Integer annualmeeting;
+    private String annualmeeting;
 
     @Column(name = "TRAVEL")
-    private Integer travel;
+    private String travel;
 
     @Column(name = "TOTAL")
-    private Integer total;
+    private String total;
 
     @Column(name = "REMARKS")
-    private Integer remarks;
+    private String remarks;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;

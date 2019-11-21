@@ -88,7 +88,7 @@ public class Assetinformation extends BaseModel {
     /**
      * 附件
      */
-    @Column(name = "ENCLOSURE")
-    private String enclosure;
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
 
 }
