@@ -1,8 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
-import com.nt.dao_BASF.Course;
-import com.nt.service_BASF.CourseServices;
+import com.nt.dao_BASF.Program;
+import com.nt.service_BASF.ProgramServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -18,18 +18,18 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.controller.Controller.BASF.BASFLANController
- * @ClassName: BASF21202Controller
+ * @ClassName: BASF21203Controller
  * @Author: WXL
- * @Description: BASF培训课程管理模块Controller
- * @Date: 2019/11/20 15：39
+ * @Description: BASF培训项目奖管理模块Controller
+ * @Date: 2019/11/21 13：56
  * @Version: 1.0
  */
 @RestController
-@RequestMapping("/BASF21202")
-public class BASF21202Controller {
+@RequestMapping("/BASF21203")
+public class BASF21203Controller {
 
     @Autowired
-    private CourseServices courseServices;
+    private ProgramServices programServices;
     @Autowired
     private TokenService tokenService;
 
@@ -38,90 +38,90 @@ public class BASF21202Controller {
      * @Method list
      * @Author WXL
      * @Version 1.0
-     * @Description 获取培训课程列表
+     * @Description 获取培训项目列表
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/20 16：24
+     * @Date 2019/11/21 13：56
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(courseServices.list());
+        return ApiResult.success(programServices.list());
     }
 
     /**
-     * @param course
+     * @param program
      * @param request
      * @Method create
      * @Author Wxz
      * @Version 1.0
-     * @Description 创建培训课程
+     * @Description 创建培训项目
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/20 16:24
      */
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Course course, HttpServletRequest request) throws Exception {
-        if (course == null) {
+    public ApiResult create(@RequestBody Program program, HttpServletRequest request) throws Exception {
+        if (program == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        courseServices.insert(course, tokenModel);
+        programServices.insert(program, tokenModel);
         return ApiResult.success();
     }
 
     /**
-     * @param course
+     * @param program
      * @param request
      * @Method delete
      * @Author WXL
      * @Version 1.0
-     * @Description 删除课程
+     * @Description 删除项目
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/20 16：25
+     * @Date 2019/11/21 13：58
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})
-    public ApiResult delete(@RequestBody Course course, HttpServletRequest request) throws Exception {
-        if (course == null) {
+    public ApiResult delete(@RequestBody Program program, HttpServletRequest request) throws Exception {
+        if (program == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        course.setStatus(AuthConstants.DEL_FLAG_DELETE);
-        courseServices.delete(course);
+        program.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        programServices.delete(program);
         return ApiResult.success();
     }
 
     /**
-     * @param courseid
+     * @param programid
      * @param request
      * @Method selectById
      * @Author WXL
      * @Version 1.0
-     * @Description 获取课程详情
+     * @Description 获取项目详情
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/20 16:26
+     * @Date 2019/11/21 13:58
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult selectById(String courseid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(courseid)) {
+    public ApiResult selectById(String programid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(programid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(courseServices.one(courseid));
+        return ApiResult.success(programServices.one(programid));
     }
 
     /**
-     * @param course
+     * @param program
      * @param request
      * @Method update
-     * @Author Wxz
+     * @Author WXL
      * @Version 1.0
-     * @Description 更新课程详情
+     * @Description 更新项目详情
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/20 16:26
+     * @Date 2019/11/21 16:00
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Course course, HttpServletRequest request) throws Exception {
-        if (course == null) {
+    public ApiResult update(@RequestBody Program program, HttpServletRequest request) throws Exception {
+        if (program == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        courseServices.update(course, tokenModel);
+        programServices.update(program, tokenModel);
         return ApiResult.success();
     }
 }
