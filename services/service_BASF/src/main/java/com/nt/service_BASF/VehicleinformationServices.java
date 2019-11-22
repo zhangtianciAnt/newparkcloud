@@ -19,7 +19,6 @@ public interface VehicleinformationServices {
     //获取车辆列表
     List<Vehicleinformation> list()throws Exception;
 
-
     //更新车辆信息
     void update(Vehicleinformation vehicleinformation, TokenModel tokenModel)throws Exception;
 }
