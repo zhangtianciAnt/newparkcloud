@@ -30,6 +30,9 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
     public String save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception {
         if (commandrecord != null ) {
             commandrecord.preInsert(tokenModel);
+            Query query = new Query();
+            String no = "CDD" + String.format("%09d", mongoTemplate.count(query, Commandrecord.class));
+            commandrecord.setCommandrecordno(no);
             mongoTemplate.save(commandrecord);
         }
         return commandrecord.get_id();
