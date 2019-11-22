@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.nt.service_pfans.PFANS2000.AppreciationService;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -26,6 +26,9 @@ public class Pfans2005Controller {
 
     @Autowired
     private GivingService givingService;
+
+    @Autowired
+    private AppreciationService appreciationService;
 
     @Autowired
     private OtherTwoService othertwoService;
@@ -161,6 +164,18 @@ public class Pfans2005Controller {
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(otherfiveService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
+    @RequestMapping(value = "/importUser2",method={RequestMethod.POST})
+    public ApiResult importUser2(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(appreciationService.importUser(request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
