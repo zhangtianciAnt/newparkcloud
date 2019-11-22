@@ -1,14 +1,9 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.Base;
-import com.nt.dao_Pfans.PFANS2000.Contrast;
-import com.nt.dao_Pfans.PFANS2000.Giving;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.GivingService;
-import com.nt.service_pfans.PFANS2000.mapper.BaseMapper;
-import com.nt.service_pfans.PFANS2000.mapper.ContrastMapper;
-import com.nt.service_pfans.PFANS2000.mapper.GivingMapper;
-import com.nt.service_pfans.PFANS2000.mapper.OtherTwoGLMapper;
+import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,9 +23,6 @@ public class GivingServiceImpl implements GivingService {
     private GivingMapper givingMapper;
 
     @Autowired
-    private OtherTwoGLMapper othertwoGLMapper;
-
-    @Autowired
     private BaseMapper baseMapper;
 
     @Autowired
@@ -38,6 +30,13 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private ContrastMapper contrastMapper;
+
+
+    @Autowired
+    private CasgiftApplyMapper casgiftapplyMapper;
+
+    @Autowired
+    private OtherTwoMapper othertwoMapper;
 
     /**
      * 生成基数表
@@ -79,12 +78,27 @@ public class GivingServiceImpl implements GivingService {
         }
     }
 
+
     @Override
-    public void getDataList(String givingid, TokenModel tokenModel) throws Exception {
-        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY-MM-DD");
-        String strTemp1 = sf1.format(new Date());
-        Date delDate1 = sf1.parse(strTemp1);
-        othertwoGLMapper.getDataList(delDate1);
+    public void insertOtherTwo(String givingid, TokenModel tokenModel) throws Exception {
+        CasgiftApply casgiftapply = new CasgiftApply();
+        casgiftapply.setPayment("0");
+        casgiftapply.setStatus("4");
+        List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
+        int rowundex = 0;
+        for (CasgiftApply casgift : casgiftapplylist) {
+            rowundex = rowundex + 1;
+            OtherTwo othertwo = new OtherTwo();
+            String othertwoid = UUID.randomUUID().toString();
+            othertwo.preInsert(tokenModel);
+            othertwo.setOthertwo_id(othertwoid);
+            othertwo.setGiving_id(givingid);
+            othertwo.setType("0");
+            othertwo.setRowindex(rowundex);
+            othertwo.setRootknot(casgift.getTwoclass());
+            othertwo.setMoneys(casgift.getAmoutmoney());
+            othertwoMapper.insertSelective(othertwo);
+        }
     }
 
     /**
