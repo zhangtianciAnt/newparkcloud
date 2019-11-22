@@ -70,9 +70,15 @@ public class AppreciationServiceImpl implements AppreciationService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
-            model.add("名字");
+            model.add("氏名");
+            model.add("評価");
             model.add("金額");
-            model.add("根拠");
+            model.add("備考");
+            model.add("扩展1");
+            model.add("扩展2");
+            model.add("扩展3");
+            model.add("扩展4");
+            model.add("扩展5");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -90,23 +96,16 @@ public class AppreciationServiceImpl implements AppreciationService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!Pattern.matches(click, value.get(2).toString())){
+                    String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if (!Pattern.matches(click, value.get(3).toString())) {
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
                     }
-                    if (value.size() > 2) {
-                        if (value.get(2).toString().length() > 20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
-                            continue;
-                        }
-                    }
                     if (value.size() > 3) {
                         if (value.get(3).toString().length() > 20) {
                             error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
@@ -115,7 +114,13 @@ public class AppreciationServiceImpl implements AppreciationService {
                     query.addCriteria(Criteria.where("userinfo.customername").is(customername));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     appreciation.setUser_id(customerInfo.getUserid());
-
+                    appreciation.setCommentary(value.get(2).toString());
+                    appreciation.setRemarks(value.get(4).toString());
+                    appreciation.setOther1(value.get(5).toString());
+                    appreciation.setOther2(value.get(6).toString());
+                    appreciation.setOther3(value.get(7).toString());
+                    appreciation.setOther4(value.get(8).toString());
+                    appreciation.setOther5(value.get(9).toString());
                 }
                 int rowundex = i;
                 appreciation.setRowindex(rowundex);
