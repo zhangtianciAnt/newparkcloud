@@ -10,7 +10,7 @@ public interface AssetinformationService {
     //查看
     List<Assetinformation> getAssetinformation(Assetinformation assetinformation) throws Exception;
 
-    public Assetinformation One(String assetinformationid) throws Exception;
+    public Assetinformation selectById(String assetinformationid) throws Exception;
 
     //修改
     public void updateAssetinformation(Assetinformation assetinformation, TokenModel tokenModel) throws Exception;
