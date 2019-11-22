@@ -1,10 +1,9 @@
 package com.nt.controller.Controller;
 
-import cn.hutool.http.HttpUtil;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
@@ -45,7 +44,6 @@ public class UserController {
 
     @Autowired
     private LogService logService;
-
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 

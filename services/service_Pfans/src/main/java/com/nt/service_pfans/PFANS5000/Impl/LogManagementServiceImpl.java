@@ -58,109 +58,59 @@ public class LogManagementServiceImpl implements LogManagementService {
         LogManagement log = logmanagementmapper.selectByPrimaryKey(logmanagement_id);
         return log;
     }
-
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<LogManagement> importUser(HttpServletRequest request, TokenModel tokenModel, String flag) throws Exception {
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
-            List<LogManagement> listVo = new ArrayList<LogManagement>();
+            List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            if (StringUtils.isNullOrEmpty(flag)) {
-                List<LogManagement> error = importCheck(list);
-                return error;
-            } else {
-                int k = 1;
-                for (int i = 1; i < list.size(); i++) {
-                    LogManagement logmanagement = new LogManagement();
-                    List<Object> value = list.get(k);
-                    k++;
-                    if (value != null && !value.isEmpty()) {
-                        if (value.get(0).toString().equals("")) {
-                            continue;
-                        }
-                        String Log_date = value.get(5).toString();
-                        String Time_start = value.get(6).toString();
-                        String Time_end = value.get(7).toString();
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        logmanagement.setLog_date(sf1.parse(Log_date));
-                        logmanagement.setTime_start(sf.parse(Time_start));
-                        logmanagement.setTime_end(sf.parse(Time_end));
-                        logmanagement.setWork_memo(value.get(8).toString());
-                        if (logmanagement.getProject_id().length() > 0) {
-                            String s2 = "01";
-                            logmanagement.setHas_project(s2);
-                        } else {
-                            String s3 = "02";
-                            logmanagement.setHas_project(s3);
-                        }
-                    }
-                    logmanagement.preInsert(tokenModel);
-                    logmanagement.setLogmanagement_id(UUID.randomUUID().toString());
-                    logmanagementmapper.insert(logmanagement);
-                    listVo.add(logmanagement);
-                }
-            }
-            return listVo;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private List<LogManagement> importCheck(List<List<Object>> list) throws Exception {
-        List<LogManagement> listVo = new ArrayList<LogManagement>();
-        List<Object> model = new ArrayList<Object>();
-        Map checkMobileMap = new HashMap();
-        Map checkEmailMap = new HashMap();
-        model.add("姓名");
-        model.add("センター");
-        model.add("グループ");
-        model.add("チーム");
-        model.add("项目");
-        model.add("日志日期");
-        model.add("开始时间");
-        model.add("结束时间");
-        model.add("工作备注");
-        List<Object> key = list.get(0);
-        try {
-            // check字段名称是否正确
+            List<Object> model = new ArrayList<Object>();
+            model.add("姓名");
+            model.add("センター");
+            model.add("グループ");
+            model.add("チーム");
+            model.add("项目");
+            model.add("日志日期");
+            model.add("开始时间");
+            model.add("结束时间");
+            model.add("工作备注");
+            List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
+
             }
             int k = 1;
-            LogManagement logmanagement = new LogManagement();
+            int accesscount = 0;
+            int error = 0;
             for (int i = 1; i < list.size(); i++) {
+                LogManagement logmanagement = new LogManagement();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    if (value.size() > 0) {
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        logmanagement.setLog_date(sf1.parse(value.get(5).toString()));
-                        logmanagement.setTime_start(sf.parse(value.get(6).toString()));
-                        logmanagement.setTime_end(sf.parse(value.get(7).toString()));
-                        logmanagement.setWork_memo(value.get(8).toString());
-                    }
+
                 }
-                listVo.add(logmanagement);
+                logmanagement.preInsert(tokenModel);
+                logmanagement.setLogmanagement_id(UUID.randomUUID().toString());
+                logmanagementmapper.insert(logmanagement);
+                accesscount = accesscount + 1;
             }
-            return listVo;
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
-
     @SuppressWarnings("rawtypes")
     @Override
     public String downloadUserModel() throws LogicalException {

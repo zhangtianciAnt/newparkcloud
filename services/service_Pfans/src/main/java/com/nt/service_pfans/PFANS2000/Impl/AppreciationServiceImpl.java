@@ -3,9 +3,9 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
-import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
-import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
+import com.nt.dao_Pfans.PFANS2000.Appreciation;
+import com.nt.service_pfans.PFANS2000.AppreciationService;
+import com.nt.service_pfans.PFANS2000.mapper.AppreciationMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,30 +21,46 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class PunchcardRecordServiceImpl implements PunchcardRecordService {
-    @Autowired
-    private PunchcardRecordMapper punchcardrecordMapper;
+public class AppreciationServiceImpl implements AppreciationService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private AppreciationMapper appreciationMapper;
+
     @Override
-    public List<PunchcardRecord> list(PunchcardRecord punchcardrecord) throws Exception {
-        return punchcardrecordMapper.select(punchcardrecord);
+    public List<Appreciation> list(Appreciation appreciation) throws Exception {
+        return appreciationMapper.select(appreciation);
+    }
+
+    @Override
+    public void insert(Appreciation appreciation, TokenModel tokenModel) throws Exception {
+        appreciation.preInsert(tokenModel);
+        appreciation.setAppreciation_id(UUID.randomUUID().toString());
+        int rowundex = 0;
+        rowundex = rowundex + 1;
+        appreciation.setRowindex(rowundex);
+        appreciationMapper.insert(appreciation);
+    }
+
+    @Override
+    public void deletete(Appreciation appreciation, TokenModel tokenModel) throws Exception {
+        appreciationMapper.delete(appreciation);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
-            List<PunchcardRecord> listVo = new ArrayList<PunchcardRecord>();
+            List<Appreciation> listVo = new ArrayList<Appreciation>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
@@ -53,10 +69,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
-            model.add("姓名");
-            model.add("日期");
-            model.add("首次打卡");
-            model.add("末次打卡");
+            model.add("No.");
+            model.add("氏名");
+            model.add("評価");
+            model.add("金額");
+            model.add("備考");
+            model.add("扩展1");
+            model.add("扩展2");
+            model.add("扩展3");
+            model.add("扩展4");
+            model.add("扩展5");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -66,57 +88,46 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
-            for (int i = 1; i < list.size(); i++) {
-                PunchcardRecord punchcardrecord = new PunchcardRecord();
+            for (int i = 1; i < list.size() - 1; i++) {
+                Appreciation appreciation = new Appreciation();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String Time_start = value.get(2).toString();
-                    String Time_end = value.get(3).toString();
-                    int result1 = Time_start.compareTo(Time_end);
-                    if (result1 >= 0) {
+                    String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if (!Pattern.matches(click, value.get(3).toString())) {
                         error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
                     }
-                    if (value.size() > 1) {
-                        String date = value.get(1).toString();
-                        String date1 = value.get(1).toString();
-                        date = date.substring(5, 7);
-                        date1 = date1.substring(8, 10);
-                        if (Integer.parseInt(date1) > 31) {
+                    if (value.size() > 3) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的日子，导入失败");
-                            continue;
-                        }
-                        if (Integer.parseInt(date) > 12) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的月份，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(0).toString();
+                    String customername = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.customername").is(customername));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    punchcardrecord.setUser_id(customerInfo.getUserid());
-                    punchcardrecord.setCenterid(customerInfo.getUserinfo().getCentername());
-                    punchcardrecord.setGroupid(customerInfo.getUserinfo().getGroupname());
-                    punchcardrecord.setTeamid(customerInfo.getUserinfo().getTeamname());
-                    String Punchcardrecord_date = value.get(1).toString();
-                    punchcardrecord.setPunchcardrecord_date(sf1.parse(Punchcardrecord_date));
-                    punchcardrecord.setTime_start(sf.parse(Time_start));
-                    punchcardrecord.setTime_end(sf.parse(Time_end));
+                    appreciation.setUser_id(customerInfo.getUserid());
+                    appreciation.setCommentary(value.get(2).toString());
+                    appreciation.setRemarks(value.get(4).toString());
+                    appreciation.setOther1(value.get(5).toString());
+                    appreciation.setOther2(value.get(6).toString());
+                    appreciation.setOther3(value.get(7).toString());
+                    appreciation.setOther4(value.get(8).toString());
+                    appreciation.setOther5(value.get(9).toString());
                 }
-                punchcardrecord.preInsert(tokenModel);
-                punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
-                punchcardrecordMapper.insert(punchcardrecord);
-                listVo.add(punchcardrecord);
+                int rowundex = i;
+                appreciation.setRowindex(rowundex);
+                appreciation.preInsert(tokenModel);
+                appreciation.setAppreciation_id(UUID.randomUUID().toString());
+                appreciationMapper.insert(appreciation);
+                listVo.add(appreciation);
                 accesscount = accesscount + 1;
             }
             Result.add("失败数：" + error);

@@ -22,6 +22,6 @@ public interface LogManagementService {
 
     LogManagement One(String Logmanagement_id) throws Exception;
 
-    List<LogManagement> importUser(HttpServletRequest request, TokenModel tokenModel, String flag) throws Exception ;
+    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
     String downloadUserModel() throws LogicalException;
 }
