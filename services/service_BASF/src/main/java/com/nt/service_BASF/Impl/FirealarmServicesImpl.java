@@ -18,7 +18,7 @@ import java.util.UUID;
  * @Package: com.nt.service_BASF.Impl
  * @ClassName:BASF10201ServicesImpl
  * @Author: Wxz
- * @Description: BASF接警单模块实现类
+ * @Description: BASF报警单模块实现类
  * @Date: 2019/11/12 10:50
  * @Version: 1.0
  */
@@ -36,7 +36,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Method list
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取接警单列表
+     * @Description 获取报警单列表
      * @Return java.util.List<Firealarm>
      * @Date 2019/11/12 10:54
      */
@@ -52,7 +52,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Method insert
      * @Author Wxz
      * @Version 1.0
-     * @Description 创建接警单
+     * @Description 创建报警单
      * @Return void
      * @Date 2019/11/12 10:55
      */
@@ -71,7 +71,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Method Delete
      * @Author Wxz
      * @Version 1.0
-     * @Description 删除接警单
+     * @Description 删除报警单
      * @Return void
      * @Date 2019/11/12 11：06
      */
@@ -86,7 +86,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Method one
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取接警单详情
+     * @Description 获取报警单详情
      * @Return com.nt.dao_BASF.Firealarm
      * @Date 2019/11/12 11：07
      */
@@ -101,7 +101,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Method update
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新接警单详情
+     * @Description 更新报警单详情
      * @Return void
      * @Date 2019/11/12 11：07
      */
@@ -113,4 +113,20 @@ public class FirealarmServicesImpl implements FirealarmServices {
 //        firealarm.setPolicetim(formatter.format(date));
         firealarmMapper.updateByPrimaryKey(firealarm);
     }
+
+    /**
+     * @param firealarm
+     * @Method upcompletesta
+     * @Author 王哲
+     * @Version 1.0
+     * @Description 更新报警单状态
+     * @Return void
+     * @Date 2019/11/22 16：45
+     */
+    @Override
+    public void upcompletesta(Firealarm firealarm) throws Exception {
+        //状态更新（completesta -> "1"）
+        firealarmMapper.updateByPrimaryKeySelective(firealarm);
+    }
+
 }

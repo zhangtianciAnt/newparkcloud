@@ -1,6 +1,7 @@
 package com.nt.service_BASF.Impl;
 import com.nt.dao_BASF.Commandrecord;
 import com.nt.utils.dao.TokenModel;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import com.nt.service_BASF.CommandrecordServices;
 
+import javax.print.DocFlavor;
 import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -27,15 +29,21 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
      * @返回值：
      */
     @Override
-    public String save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception {
+    public Commandrecord.ret save(Commandrecord commandrecord, TokenModel tokenModel) throws Exception {
+        Commandrecord.ret ret = new Commandrecord.ret();
         if (commandrecord != null ) {
             commandrecord.preInsert(tokenModel);
             Query query = new Query();
             String no = "CDD" + String.format("%09d", mongoTemplate.count(query, Commandrecord.class));
             commandrecord.setCommandrecordno(no);
             mongoTemplate.save(commandrecord);
+
+
+            ret.set_id(commandrecord.get_id());
+            ret.setCon(no);
+            return ret;
         }
-        return commandrecord.get_id();
+        return ret;
     }
 
     /**

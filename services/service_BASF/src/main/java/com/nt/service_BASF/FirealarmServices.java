@@ -10,7 +10,7 @@ import java.util.List;
  * @Package: com.nt.service_BASF
  * @ClassName:BASF10201Services
  * @Author: Wxz
- * @Description:接警单管理接口
+ * @Description:报警单管理接口
  * @Date: 2019/11/12 10:36
  * @Version: 1.0
  */
@@ -30,5 +30,8 @@ public interface FirealarmServices {
 
     //更新报警单
     void update(Firealarm firealarm, TokenModel tokenModel)throws Exception;
+
+    //更新报警单状态
+    void upcompletesta(Firealarm firealarm) throws Exception;
 
 }
