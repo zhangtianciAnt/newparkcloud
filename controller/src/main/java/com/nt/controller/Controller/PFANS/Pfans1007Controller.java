@@ -34,12 +34,12 @@ public class Pfans1007Controller {
             return ApiResult.success(assetinformationService.getAssetinformation(assetinformation));
     }
 
-    @RequestMapping(value = "/one", method = {RequestMethod.GET})
-    public ApiResult one(String assetinformationid, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String assetinformationid, HttpServletRequest request) throws Exception {
         if (assetinformationid == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(assetinformationService.One(assetinformationid));
+        return ApiResult.success(assetinformationService.selectById(assetinformationid));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})

@@ -26,7 +26,7 @@ public class AssetinformationServiceImpl implements AssetinformationService {
     }
 
     @Override
-    public Assetinformation One(String assetinformationid) throws Exception {
+    public Assetinformation selectById(String assetinformationid) throws Exception {
 
         return assetinformationMapper.selectByPrimaryKey(assetinformationid);
     }

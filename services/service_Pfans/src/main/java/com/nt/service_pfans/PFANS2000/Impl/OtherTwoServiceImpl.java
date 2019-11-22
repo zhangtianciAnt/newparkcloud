@@ -58,7 +58,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
             List<String> Result = new ArrayList<String>();
@@ -115,6 +115,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    othertwo.setGiving_id(Givingid);
                     othertwo.setJobnumber(value.get(1).toString());
                     othertwo.setUser_id(customerInfo.getUserid());
                     othertwo.setMoneys(value.get(2).toString());
