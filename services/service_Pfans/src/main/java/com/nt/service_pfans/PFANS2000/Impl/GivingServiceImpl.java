@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Base;
 import com.nt.dao_Pfans.PFANS2000.Contrast;
@@ -9,6 +8,7 @@ import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.BaseMapper;
 import com.nt.service_pfans.PFANS2000.mapper.ContrastMapper;
 import com.nt.service_pfans.PFANS2000.mapper.GivingMapper;
+import com.nt.service_pfans.PFANS2000.mapper.OtherTwoGLMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,6 +28,9 @@ public class GivingServiceImpl implements GivingService {
     private GivingMapper givingMapper;
 
     @Autowired
+    private OtherTwoGLMapper othertwoGLMapper;
+
+    @Autowired
     private BaseMapper baseMapper;
 
     @Autowired
@@ -39,9 +42,9 @@ public class GivingServiceImpl implements GivingService {
     /**
      * 生成基数表
      * FJL
-     * */
+     */
     @Override
-    public void insertBase(String givingid,TokenModel tokenModel) throws Exception {
+    public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             int rowindex = 0;
@@ -76,17 +79,25 @@ public class GivingServiceImpl implements GivingService {
         }
     }
 
+    @Override
+    public void getDataList(String givingid, TokenModel tokenModel) throws Exception {
+        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY-MM-DD");
+        String strTemp1 = sf1.format(new Date());
+        Date delDate1 = sf1.parse(strTemp1);
+        othertwoGLMapper.getDataList(delDate1);
+    }
+
     /**
      * 生成基数表
      * FJL
-     * */
+     */
     @Override
-    public void insertBase1(String givingid,TokenModel tokenModel) throws Exception {
+    public void insertBase1(String givingid, TokenModel tokenModel) throws Exception {
         Base base = new Base();
         base.setGiving_id(givingid);
         List<Base> baselist = baseMapper.select(base);
-        if(baselist != null){
-            for(Base base1 : baselist){
+        if (baselist != null) {
+            for (Base base1 : baselist) {
                 Contrast contrast = new Contrast();
                 String consrastid = UUID.randomUUID().toString();
                 contrast.preInsert(tokenModel);
@@ -102,7 +113,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
     @Override
-    public List<Base> getListtBase(Base base) throws Exception{
+    public List<Base> getListtBase(Base base) throws Exception {
         return baseMapper.select(base);
     }
 
@@ -115,7 +126,7 @@ public class GivingServiceImpl implements GivingService {
         giving1.setGenerationdate(new Date());
         givingMapper.delete(giving1);
 
-        String givingid =  UUID.randomUUID().toString();
+        String givingid = UUID.randomUUID().toString();
         Giving giving = new Giving();
         giving.preInsert(tokenModel);
         giving.setGiving_id(givingid);
@@ -123,10 +134,10 @@ public class GivingServiceImpl implements GivingService {
 //        String strTemp1 = sf1.format(new Date());
 //        Date delDate1 = sf1.parse(strTemp1);
         giving.setGenerationdate(new Date());
-;
+        ;
         givingMapper.insert(giving);
-        insertBase(givingid,tokenModel);
-        insertBase1(givingid,tokenModel);
+        insertBase(givingid, tokenModel);
+        insertBase1(givingid, tokenModel);
     }
 
     @Override
