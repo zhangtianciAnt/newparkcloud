@@ -31,6 +31,9 @@ public class OtherFive extends BaseModel {
     @Column(name = "USER_ID")
     private String user_id;
 
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
+
     @Column(name = "MEDICALINSURANCE")
     private String medicalinsurance;
 

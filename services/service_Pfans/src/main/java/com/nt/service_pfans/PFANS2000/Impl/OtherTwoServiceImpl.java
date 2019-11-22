@@ -70,6 +70,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
+            model.add("工号");
             model.add("名字");
             model.add("金額");
             model.add("根拠");
@@ -111,9 +112,10 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(1).toString();
-                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
+                    String jobnumber = value.get(1).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    othertwo.setJobnumber(value.get(1).toString());
                     othertwo.setUser_id(customerInfo.getUserid());
                     othertwo.setMoneys(value.get(2).toString());
                     othertwo.setRootknot(value.get(3).toString());

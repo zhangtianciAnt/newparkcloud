@@ -70,6 +70,7 @@ public class AppreciationServiceImpl implements AppreciationService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
+            model.add("工号");
             model.add("氏名");
             model.add("評価");
             model.add("金額");
@@ -97,7 +98,7 @@ public class AppreciationServiceImpl implements AppreciationService {
                         continue;
                     }
                     String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if (!Pattern.matches(click, value.get(3).toString())) {
+                    if (!Pattern.matches(click, value.get(4).toString())) {
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
@@ -110,17 +111,18 @@ public class AppreciationServiceImpl implements AppreciationService {
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(1).toString();
-                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
+                    String jobnumber = value.get(1).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    appreciation.setJobnumber(value.get(1).toString());
                     appreciation.setUser_id(customerInfo.getUserid());
-                    appreciation.setCommentary(value.get(2).toString());
-                    appreciation.setRemarks(value.get(4).toString());
-                    appreciation.setOther1(value.get(5).toString());
-                    appreciation.setOther2(value.get(6).toString());
-                    appreciation.setOther3(value.get(7).toString());
-                    appreciation.setOther4(value.get(8).toString());
-                    appreciation.setOther5(value.get(9).toString());
+                    appreciation.setCommentary(value.get(3).toString());
+                    appreciation.setRemarks(value.get(5).toString());
+                    appreciation.setOther1(value.get(6).toString());
+                    appreciation.setOther2(value.get(7).toString());
+                    appreciation.setOther3(value.get(8).toString());
+                    appreciation.setOther4(value.get(9).toString());
+                    appreciation.setOther5(value.get(10).toString());
                 }
                 int rowundex = i;
                 appreciation.setRowindex(rowundex);
