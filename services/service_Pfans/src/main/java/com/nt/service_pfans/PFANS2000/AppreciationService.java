@@ -16,6 +16,6 @@ public interface AppreciationService {
 
     void deletete(Appreciation appreciation, TokenModel tokenModel)throws Exception;
 
-    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+    List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
 }

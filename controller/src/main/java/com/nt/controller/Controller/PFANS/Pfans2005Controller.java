@@ -148,10 +148,10 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
-    public ApiResult importUser(HttpServletRequest request){
+    public ApiResult importUser(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(othertwoService.importUser(request,tokenModel));
+            return ApiResult.success(othertwoService.importUser(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
@@ -160,10 +160,10 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUser1",method={RequestMethod.POST})
-    public ApiResult importUser1(HttpServletRequest request){
+    public ApiResult importUser1(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(otherfiveService.importUser(request,tokenModel));
+            return ApiResult.success(otherfiveService.importUser(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
@@ -172,10 +172,10 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUser2",method={RequestMethod.POST})
-    public ApiResult importUser2(HttpServletRequest request){
+    public ApiResult importUser2(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(appreciationService.importUser(request,tokenModel));
+            return ApiResult.success(appreciationService.importUser(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {

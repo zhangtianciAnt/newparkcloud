@@ -47,7 +47,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
     }
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherFive> listVo = new ArrayList<OtherFive>();
             List<String> Result = new ArrayList<String>();
@@ -175,6 +175,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     otherfive.setUser_id(customerInfo.getUserid());
+                    otherfive.setGiving_id(Givingid);
                     otherfive.setDepartment_id(value.get(1).toString());
                     otherfive.setJobnumber(value.get(2).toString());
                     otherfive.setMedicalinsurance(value.get(4).toString());
