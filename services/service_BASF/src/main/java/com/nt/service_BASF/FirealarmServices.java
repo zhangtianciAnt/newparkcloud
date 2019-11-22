@@ -32,6 +32,6 @@ public interface FirealarmServices {
     void update(Firealarm firealarm, TokenModel tokenModel)throws Exception;
 
     //更新报警单状态
-    void upcompletesta(Firealarm firealarm) throws Exception;
+    void upcompletesta(Firealarm firealarm, TokenModel tokenModel) throws Exception;
 
 }

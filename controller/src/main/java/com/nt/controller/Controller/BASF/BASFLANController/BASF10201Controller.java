@@ -137,7 +137,8 @@ public class BASF10201Controller {
         if (firealarm == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        firealarmServices.upcompletesta(firealarm);
+        TokenModel tokenModel = tokenService.getToken(request);
+        firealarmServices.upcompletesta(firealarm, tokenModel);
         return ApiResult.success();
     }
 }

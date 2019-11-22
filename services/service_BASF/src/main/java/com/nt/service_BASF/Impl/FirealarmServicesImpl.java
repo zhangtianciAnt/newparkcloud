@@ -124,7 +124,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
      * @Date 2019/11/22 16：45
      */
     @Override
-    public void upcompletesta(Firealarm firealarm) throws Exception {
+    public void upcompletesta(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         //状态更新（completesta -> "1"）
         firealarmMapper.updateByPrimaryKeySelective(firealarm);
     }
