@@ -96,7 +96,7 @@ public class Evection extends BaseModel {
      * 支出总额
      */
     @Column(name = "TOTALPAY")
-    private Date totalpay;
+    private String totalpay;
 
     /**
      * 结余
@@ -126,7 +126,13 @@ public class Evection extends BaseModel {
      * 区分
      */
     @Column(name = "TYPE")
-    private Date type;
+    private String type;
+
+    /**
+     * 决裁号
+     */
+    @Column(name = "JUDGEMENT")
+    private String judgement;
 
 
 }

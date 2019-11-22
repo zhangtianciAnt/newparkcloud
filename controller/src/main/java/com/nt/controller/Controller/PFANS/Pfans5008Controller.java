@@ -109,7 +109,7 @@ public class Pfans5008Controller {
     public ApiResult importUser(HttpServletRequest request,String flag){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(logmanagementService.importUser(request,tokenModel,flag));
+            return ApiResult.success(logmanagementService.importUser(request,tokenModel));
         }catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
