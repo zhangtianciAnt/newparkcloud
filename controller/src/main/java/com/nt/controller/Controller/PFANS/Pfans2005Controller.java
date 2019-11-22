@@ -39,13 +39,13 @@ public class Pfans2005Controller {
     @Autowired
     private DutyfreeService dutyfreeService;
 
-    @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Giving giving, HttpServletRequest request) throws Exception {
-        if (giving == null) {
+    @RequestMapping(value = "/creategiving", method = {RequestMethod.GET})
+    public ApiResult creategiving(String generation, HttpServletRequest request) throws Exception {
+        if (generation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        givingService.insert(giving, tokenModel);
+        givingService.insert(generation, tokenModel);
         return ApiResult.success();
     }
 
@@ -53,12 +53,12 @@ public class Pfans2005Controller {
      * 生成基数表
      * FJL
      * */
-    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
-    public ApiResult insertBase(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        givingService.insertBase(tokenModel);
-        return ApiResult.success();
-    }
+//    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
+//    public ApiResult insertBase(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        givingService.insertBase(tokenModel);
+//        return ApiResult.success();
+//    }
 
     /**
      * 获取基数表列表

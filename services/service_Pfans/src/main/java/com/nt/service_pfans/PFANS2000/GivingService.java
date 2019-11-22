@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface GivingService {
 
-    void insert(Giving giving, TokenModel tokenModel)throws Exception;
+    void insert(String generation, TokenModel tokenModel)throws Exception;
 
     /**
      * 生成基数表
      * FJL
      * */
-    void insertBase(TokenModel tokenModel)throws Exception;
+    void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
 
     List<Base> getListtBase(Base base) throws Exception;
 
