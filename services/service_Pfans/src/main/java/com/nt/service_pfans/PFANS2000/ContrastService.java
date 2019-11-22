@@ -6,8 +6,8 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface ContrastService {
-
-    void insert(TokenModel tokenModel) throws Exception;
+//
+//    void insert(TokenModel tokenModel) throws Exception;
 
     List<Contrast> getList(Contrast contrast) throws Exception;
 }

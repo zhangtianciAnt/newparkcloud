@@ -1,10 +1,13 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Base;
+import com.nt.dao_Pfans.PFANS2000.Contrast;
 import com.nt.dao_Pfans.PFANS2000.Giving;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.BaseMapper;
+import com.nt.service_pfans.PFANS2000.mapper.ContrastMapper;
 import com.nt.service_pfans.PFANS2000.mapper.GivingMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +32,9 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ContrastMapper contrastMapper;
 
     /**
      * 生成基数表
@@ -69,6 +76,31 @@ public class GivingServiceImpl implements GivingService {
         }
     }
 
+    /**
+     * 生成基数表
+     * FJL
+     * */
+    @Override
+    public void insertBase1(String givingid,TokenModel tokenModel) throws Exception {
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        List<Base> baselist = baseMapper.select(base);
+        if(baselist != null){
+            for(Base base1 : baselist){
+                Contrast contrast = new Contrast();
+                String consrastid = UUID.randomUUID().toString();
+                contrast.preInsert(tokenModel);
+                contrast.setGiving_id(base1.getGiving_id());
+                contrast.setContrast_id(consrastid);
+                contrast.setUser_id(base1.getUser_id());
+                contrast.setOwner(base1.getUser_id());
+                contrast.setDepartment_id(base1.getDepartment_id());
+
+                contrastMapper.insertSelective(contrast);
+            }
+        }
+    }
+
     @Override
     public List<Base> getListtBase(Base base) throws Exception{
         return baseMapper.select(base);
@@ -76,20 +108,25 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
+//        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM");
+        Giving giving1 = new Giving();
+//        String strTemp = sf1.format(new Date());
+//        Date delDate = sf1.parse(strTemp);
+        giving1.setGenerationdate(new Date());
+        givingMapper.delete(giving1);
+
         String givingid =  UUID.randomUUID().toString();
         Giving giving = new Giving();
         giving.preInsert(tokenModel);
         giving.setGiving_id(givingid);
         giving.setGeneration(generation);
+//        String strTemp1 = sf1.format(new Date());
+//        Date delDate1 = sf1.parse(strTemp1);
         giving.setGenerationdate(new Date());
+;
         givingMapper.insert(giving);
         insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
+        insertBase1(givingid,tokenModel);
     }
 
     @Override

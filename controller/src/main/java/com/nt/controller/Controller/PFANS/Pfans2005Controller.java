@@ -53,17 +53,6 @@ public class Pfans2005Controller {
     }
 
     /**
-     * 生成基数表
-     * FJL
-     * */
-//    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
-//    public ApiResult insertBase(HttpServletRequest request) throws Exception {
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        givingService.insertBase(tokenModel);
-//        return ApiResult.success();
-//    }
-
-    /**
      * 获取基数表列表
      * FJL
      * */
@@ -126,12 +115,6 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "insertContrast", method = {RequestMethod.GET})
-    public ApiResult insert(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        contrastService.insert(tokenModel);
-        return ApiResult.success();
-    }
 
     @RequestMapping(value = "/getListContrast", method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request) throws Exception {

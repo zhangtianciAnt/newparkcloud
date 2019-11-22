@@ -30,32 +30,32 @@ public class ContrastServiceImpl implements ContrastService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Override
-    public void insert(TokenModel tokenModel) throws Exception {
-        List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
-        if (customerinfo != null) {
-            for (CustomerInfo customer : customerinfo) {
-
-                Base base = new Base();
-                base.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());
-                base.setUser_id(customer.getUserid());
-                List<Base> baselist = baseMapper.select(base);
-                if(baselist.size() > 0){
-                    String user_id = baselist.get(0).getUser_id();
-                    String department_id = baselist.get(0).getDepartment_id();
-                }
-                Contrast contrast = new Contrast();
-                String consrastid = UUID.randomUUID().toString();
-                contrast.preInsert(tokenModel);
-                contrast.setContrast_id(consrastid);
-                contrast.setUser_id(customer.getUserid());
-                contrast.setOwner(customer.getUserid());
-                contrast.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());
-
-                contrastMapper.insertSelective(contrast);
-            }
-        }
-    }
+//    @Override
+//    public void insert(TokenModel tokenModel) throws Exception {
+//        List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
+//        if (customerinfo != null) {
+//            for (CustomerInfo customer : customerinfo) {
+//
+//                Base base = new Base();
+//                base.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());
+//                base.setUser_id(customer.getUserid());
+//                List<Base> baselist = baseMapper.select(base);
+//                if(baselist.size() > 0){
+//                    String user_id = baselist.get(0).getUser_id();
+//                    String department_id = baselist.get(0).getDepartment_id();
+//                }
+//                Contrast contrast = new Contrast();
+//                String consrastid = UUID.randomUUID().toString();
+//                contrast.preInsert(tokenModel);
+//                contrast.setContrast_id(consrastid);
+//                contrast.setUser_id(customer.getUserid());
+//                contrast.setOwner(customer.getUserid());
+//                contrast.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());
+//
+//                contrastMapper.insertSelective(contrast);
+//            }
+//        }
+//    }
 
     @Override
     public List<Contrast> getList(Contrast contrast) throws Exception {
