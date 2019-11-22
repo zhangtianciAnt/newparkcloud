@@ -5,6 +5,7 @@ import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
+import com.nt.service_pfans.PFANS2000.OtherFourService;
 import com.nt.service_pfans.PFANS2000.OtherFiveService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -32,6 +33,9 @@ public class Pfans2005Controller {
 
     @Autowired
     private OtherTwoService othertwoService;
+
+    @Autowired
+    private OtherFourService otherfourService;
 
     @Autowired
     private OtherFiveService otherfiveService;
@@ -176,6 +180,18 @@ public class Pfans2005Controller {
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(appreciationService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+    //其他4
+    @RequestMapping(value = "/importUser4",method={RequestMethod.POST})
+    public ApiResult importUser4(String givingid,HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(otherfourService.importUser4(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
