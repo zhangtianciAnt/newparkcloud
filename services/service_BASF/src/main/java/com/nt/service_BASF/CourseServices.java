@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF
- * @ClassName:BASF21201Services
+ * @ClassName:BASF21202Services
  * @Author: WXL
  * @Description:数据监控管理接口
  * @Date: 2019/11/20 15:50

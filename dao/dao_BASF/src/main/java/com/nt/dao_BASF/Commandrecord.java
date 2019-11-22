@@ -238,4 +238,11 @@ public class Commandrecord extends BaseModel {
         private Car car7;
         private Car car8;
     }
+
+    //返回值
+    @Data
+    public static class ret {
+        private String _id;
+        private String con;
+    }
 }

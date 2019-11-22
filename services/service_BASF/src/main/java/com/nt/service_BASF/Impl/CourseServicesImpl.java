@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF.Impl
- * @ClassName:BASF21201ServicesImpl
+ * @ClassName:BASF21202ServicesImpl
  * @Author: WXL
  * @Description: BASF数据监控模块实现类
  * @Date: 2019/11/18 17:00

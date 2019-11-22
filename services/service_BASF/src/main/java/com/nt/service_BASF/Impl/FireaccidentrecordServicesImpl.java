@@ -4,11 +4,13 @@ import com.nt.dao_BASF.Fireaccidentrecord;
 import com.nt.service_BASF.FireaccidentrecordServices;
 import com.nt.service_BASF.mapper.FireaccidentrecordMapper;
 import com.nt.utils.dao.TokenModel;
+import jdk.jfr.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Calendar;
 import java.util.List;
@@ -58,18 +60,8 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         String id = UUID.randomUUID().toString();
         fireaccidentrecord.setFireaccidentrecordid(id);
 
-        Calendar now = Calendar.getInstance();
-        String YY = now.get(Calendar.YEAR)+"";
-        String MM = (now.get(Calendar.MONTH)+1)+"";
-        String DD = now.get(Calendar.DAY_OF_MONTH)+"";
-        String no = YY+MM+DD;
-
-
-
-
+        String no = "FAT" + String.format("%09d", fireaccidentrecordMapper.selectCount(new Fireaccidentrecord()));
         fireaccidentrecord.setFireaccidentno(no);
-
-
         fireaccidentrecordMapper.insert(fireaccidentrecord);
     }
 

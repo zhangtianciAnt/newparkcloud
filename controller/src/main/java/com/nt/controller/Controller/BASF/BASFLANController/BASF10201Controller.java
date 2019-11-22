@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Package: com.nt.controller.Controller.BASF.BASFLANController
  * @ClassName: BASF10201Controller
  * @Author: Wxz
- * @Description: BASF接警单管理模块Controller
+ * @Description: BASF报警单管理模块Controller
  * @Date: 2019/11/12 11：39
  * @Version: 1.0
  */
@@ -35,7 +35,7 @@ public class BASF10201Controller {
      * @Method list
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取接警单列表
+     * @Description 获取报警单列表
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13：10
      */
@@ -50,7 +50,7 @@ public class BASF10201Controller {
      * @Method create
      * @Author Wxz
      * @Version 1.0
-     * @Description 创建接警单
+     * @Description 创建报警单
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:20
      */
@@ -70,7 +70,7 @@ public class BASF10201Controller {
      * @Method delete
      * @Author Wxz
      * @Version 1.0
-     * @Description 删除接警单
+     * @Description 删除报警单
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13：31
      */
@@ -90,7 +90,7 @@ public class BASF10201Controller {
      * @Method selectById
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取接警单详情
+     * @Description 获取报警单详情
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:35
      */
@@ -108,7 +108,7 @@ public class BASF10201Controller {
      * @Method update
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新接警单详情
+     * @Description 更新报警单详情
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:38
      */
@@ -119,6 +119,25 @@ public class BASF10201Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         firealarmServices.update(firealarm,tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     * @param firealarm
+     * @param request
+     * @Method upcompletesta
+     * @Author 王哲
+     * @Version 1.0
+     * @Description 更新报警单完成状态
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/22 16：45
+     */
+    @RequestMapping(value = "/upcompletesta", method = {RequestMethod.POST})
+    public ApiResult upcompletesta(@RequestBody Firealarm firealarm, HttpServletRequest request) throws Exception {
+        if (firealarm == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        firealarmServices.upcompletesta(firealarm);
         return ApiResult.success();
     }
 }
