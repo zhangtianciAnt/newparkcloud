@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      * */
     @Override
-    public void insertBase(TokenModel tokenModel) throws Exception {
+    public void insertBase(String givingid,TokenModel tokenModel) throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             int rowindex = 0;
@@ -43,6 +44,7 @@ public class GivingServiceImpl implements GivingService {
                 String baseid = UUID.randomUUID().toString();
                 base.preInsert(tokenModel);
                 base.setBase_id(baseid);
+                base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
                 base.setOwner(customer.getUserid());
                 base.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());  //部门
@@ -73,10 +75,21 @@ public class GivingServiceImpl implements GivingService {
     }
 
     @Override
-    public void insert(Giving giving, TokenModel tokenModel) throws Exception {
+    public void insert(String generation, TokenModel tokenModel) throws Exception {
+        String givingid =  UUID.randomUUID().toString();
+        Giving giving = new Giving();
         giving.preInsert(tokenModel);
-        giving.setGiving_id(UUID.randomUUID().toString());
+        giving.setGiving_id(givingid);
+        giving.setGeneration(generation);
+        giving.setGenerationdate(new Date());
         givingMapper.insert(giving);
+        insertBase(givingid,tokenModel);
+        insertBase(givingid,tokenModel);
+        insertBase(givingid,tokenModel);
+        insertBase(givingid,tokenModel);
+        insertBase(givingid,tokenModel);
+        insertBase(givingid,tokenModel);
+        insertBase(givingid,tokenModel);
     }
 
     @Override

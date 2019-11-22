@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.nt.service_pfans.PFANS2000.AppreciationService;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -28,6 +28,9 @@ public class Pfans2005Controller {
     private GivingService givingService;
 
     @Autowired
+    private AppreciationService appreciationService;
+
+    @Autowired
     private OtherTwoService othertwoService;
 
     @Autowired
@@ -39,13 +42,13 @@ public class Pfans2005Controller {
     @Autowired
     private DutyfreeService dutyfreeService;
 
-    @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Giving giving, HttpServletRequest request) throws Exception {
-        if (giving == null) {
+    @RequestMapping(value = "/creategiving", method = {RequestMethod.GET})
+    public ApiResult creategiving(String generation, HttpServletRequest request) throws Exception {
+        if (generation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        givingService.insert(giving, tokenModel);
+        givingService.insert(generation, tokenModel);
         return ApiResult.success();
     }
 
@@ -53,12 +56,12 @@ public class Pfans2005Controller {
      * 生成基数表
      * FJL
      * */
-    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
-    public ApiResult insertBase(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        givingService.insertBase(tokenModel);
-        return ApiResult.success();
-    }
+//    @RequestMapping(value = "insertBase", method = {RequestMethod.GET})
+//    public ApiResult insertBase(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        givingService.insertBase(tokenModel);
+//        return ApiResult.success();
+//    }
 
     /**
      * 获取基数表列表
@@ -161,6 +164,18 @@ public class Pfans2005Controller {
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(otherfiveService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
+    @RequestMapping(value = "/importUser2",method={RequestMethod.POST})
+    public ApiResult importUser2(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(appreciationService.importUser(request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
