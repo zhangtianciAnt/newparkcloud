@@ -20,6 +20,8 @@ public class OtherFour extends BaseModel {
     private String otherfour_id;
     @Column(name = "DEPARTMENT_ID")
     private String department_id;
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
     @Column(name = "GIVING_ID")
     private String giving_id;
     @Column(name = "SOCIALSECURITY")
