@@ -64,4 +64,10 @@ public class Contrast extends BaseModel {
      */
     @Column(name = "REASON")
     private String reason;
+
+    /**
+     * 顺序
+     */
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 }

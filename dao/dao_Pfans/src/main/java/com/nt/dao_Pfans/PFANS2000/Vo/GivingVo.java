@@ -1,9 +1,6 @@
 package com.nt.dao_Pfans.PFANS2000.Vo;
 
-import com.nt.dao_Pfans.PFANS2000.Appreciation;
-import com.nt.dao_Pfans.PFANS2000.Giving;
-import com.nt.dao_Pfans.PFANS2000.OtherFive;
-import com.nt.dao_Pfans.PFANS2000.OtherTwo;
+import com.nt.dao_Pfans.PFANS2000.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,9 @@ public class GivingVo {
 
     private List<OtherFive> otherFive;
 
-
     private List<Appreciation> appreciation;
+
+    private List<Base> base;
+
+    private List<Contrast> contrasts;
 }

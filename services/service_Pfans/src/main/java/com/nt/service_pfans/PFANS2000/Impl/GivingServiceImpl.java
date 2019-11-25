@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -40,10 +43,57 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
+    @Autowired
+    private OtherFiveMapper otherfiveMapper;
+
+    @Autowired
+    private AppreciationMapper appreciationMapper;
+
+
     /**
      * 生成基数表
      * FJL
      */
+    @Override
+    public GivingVo List(String giving_id) throws Exception {
+        GivingVo GivingVo = new GivingVo();
+        Giving Giving = new Giving();
+        Giving.setGiving_id(giving_id);
+        GivingVo.setGiving(Giving);
+
+        OtherTwo othertwo = new OtherTwo();
+        othertwo.setGiving_id(giving_id);
+        List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
+        othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
+        GivingVo.setOtherTwo(othertwolist);
+
+        Appreciation appreciation = new Appreciation();
+        appreciation.setGiving_id(giving_id);
+        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        GivingVo.setAppreciation(appreciationlist);
+
+        OtherFive otherfive = new OtherFive();
+        otherfive.setGiving_id(giving_id);
+        List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
+        otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
+        GivingVo.setOtherFive(otherfivelist);
+
+        Base base = new Base();
+        base.setGiving_id(giving_id);
+        List<Base> baselist = baseMapper.select(base);
+        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        GivingVo.setBase(baselist);
+
+        Contrast contrast = new Contrast();
+        contrast.setGiving_id(giving_id);
+        List<Contrast> contrastList = contrastMapper.select(contrast);
+        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        GivingVo.setContrasts(contrastList);
+
+        return GivingVo;
+    }
+
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
@@ -59,7 +109,7 @@ public class GivingServiceImpl implements GivingService {
                 base.setUser_id(customer.getUserid());  //名字
 //                base.setOwner(customer.getUserid());
                 String departmentid = customer.getUserinfo().getDepartmentid().toString();
-                String name = departmentid.replace("[","").replace("]","");
+                String name = departmentid.replace("[", "").replace("]", "");
                 base.setDepartment_id(name);  //部门[]
 //              base.setRn(customer.get);  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
@@ -67,7 +117,7 @@ public class GivingServiceImpl implements GivingService {
                 //入/退職/産休
 //                base.setBonus(customer);  //奨金計上
                 //1999年前社会人
-                if(customer.getUserinfo().getRegister() == "大連"){
+                if (customer.getUserinfo().getRegister() == "大連") {
                     base.setRegistered("是"); //大連戸籍
                 }
                 base.setRegistered("-"); //大連戸籍
@@ -142,11 +192,11 @@ public class GivingServiceImpl implements GivingService {
             }
         }
     }
-
-    @Override
-    public List<Base> getListtBase(Base base) throws Exception {
-        return baseMapper.select(base);
-    }
+//
+//    @Override
+//    public List<Base> getListtBase(Base base) throws Exception {
+//        return baseMapper.select(base);
+//    }
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
