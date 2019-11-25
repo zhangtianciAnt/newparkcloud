@@ -94,8 +94,8 @@ public class AppreciationServiceImpl implements AppreciationService {
                         Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
                     }
-                    if (value.size() > 3) {
-                        if (value.get(3).toString().length() > 20) {
+                    if (value.size() > 4) {
+                        if (value.get(4).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
@@ -107,7 +107,9 @@ public class AppreciationServiceImpl implements AppreciationService {
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     appreciation.setJobnumber(value.get(1).toString());
                     appreciation.setUser_id(customerInfo.getUserid());
+                    appreciation.setGiving_id(Givingid);
                     appreciation.setCommentary(value.get(3).toString());
+                    appreciation.setAmount(value.get(4).toString());
                     appreciation.setRemarks(value.get(5).toString());
                     appreciation.setOther1(value.get(6).toString());
                     appreciation.setOther2(value.get(7).toString());

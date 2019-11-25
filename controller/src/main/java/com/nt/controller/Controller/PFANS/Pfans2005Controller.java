@@ -69,7 +69,6 @@ public class Pfans2005Controller {
     public ApiResult listFive(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherFive otherfive = new OtherFive();
-        otherfive.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(otherfiveService.listFive(otherfive));
     }
 
@@ -87,7 +86,6 @@ public class Pfans2005Controller {
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Giving giving=new Giving();
-        giving.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(givingService.getDataList(giving));
     }
 
@@ -95,7 +93,6 @@ public class Pfans2005Controller {
     public ApiResult listothertwo(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         OtherTwo othertwo = new OtherTwo();
-        othertwo.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(othertwoService.list(othertwo));
     }
 
