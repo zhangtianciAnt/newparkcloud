@@ -20,7 +20,7 @@ public interface GivingService {
      * 生成基数表
      * FJL
      * */
-    void insertBase1(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
 
     List<Base> getListtBase(Base base) throws Exception;
 

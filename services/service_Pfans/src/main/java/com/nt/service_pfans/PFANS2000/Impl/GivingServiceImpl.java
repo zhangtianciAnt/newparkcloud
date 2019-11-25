@@ -108,7 +108,7 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      */
     @Override
-    public void insertBase1(String givingid, TokenModel tokenModel) throws Exception {
+    public void insertContrast(String givingid, TokenModel tokenModel) throws Exception {
         Base base = new Base();
         base.setGiving_id(givingid);
         List<Base> baselist = baseMapper.select(base);
@@ -135,25 +135,22 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
-//        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM");
-        Giving giving1 = new Giving();
-//        String strTemp = sf1.format(new Date());
-//        Date delDate = sf1.parse(strTemp);
-        giving1.setGenerationdate(new Date());
-        givingMapper.delete(giving1);
-
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String givingid = UUID.randomUUID().toString();
         Giving giving = new Giving();
         giving.preInsert(tokenModel);
         giving.setGiving_id(givingid);
         giving.setGeneration(generation);
-//        String strTemp1 = sf1.format(new Date());
-//        Date delDate1 = sf1.parse(strTemp1);
         giving.setGenerationdate(new Date());
-        ;
+        giving.setMonths(sf1.format(new Date()));
+
+        Giving giving1 = new Giving();
+        String strTemp = sf1.format(new Date());
+        giving1.setMonths(strTemp);
+        givingMapper.delete(giving1);
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
-        insertBase1(givingid, tokenModel);
+        insertContrast(givingid, tokenModel);
     }
 
     @Override
