@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -25,29 +24,29 @@ public class Assetinformation extends BaseModel {
     @Column(name = "ASSETINFORMATION_ID")
     private String assetinformationid;
 
-//    /**
-//     * 件名
-//     */
-//    @Column(name = "CENTER_ID")
-//    private String center_id;
+    /**
+     * 件名
+     */
+    @Column(name = "CENTER_ID")
+    private String center_id;
 
-//    /**
-//     * 件名
-//     */
-//    @Column(name = "GROUP_ID")
-//    private String group_id;
-//
-//    /**
-//     * 件名
-//     */
-//    @Column(name = "TEAM_ID")
-//    private String team_id;
-//
-//    /**
-//     * 件名
-//     */
-//    @Column(name = "USER_ID")
-//    private String user_id;
+    /**
+     * 件名
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    /**
+     * 件名
+     */
+    @Column(name = "TEAM_ID")
+    private String team_id;
+
+    /**
+     * 件名
+     */
+    @Column(name = "USER_ID")
+    private String user_id;
 
     /**
      * 件名

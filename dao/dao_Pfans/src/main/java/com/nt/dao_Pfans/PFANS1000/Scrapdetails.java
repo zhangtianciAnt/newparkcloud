@@ -25,6 +25,11 @@ public class Scrapdetails extends BaseModel {
     @Column(name = "SCRAPDETAILS_ID")
     private String scrapdetailsid;
 
+    @Id
+    @Column(name = "ASSETINFORMATION_ID")
+    private String assetinformationid;
+
+
     /**
      * 固定资产名称
      */
@@ -78,5 +83,11 @@ public class Scrapdetails extends BaseModel {
      */
     @Column(name = "REMARKS")
     private String remarks;
+
+    /**
+     * 排序
+     */
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 
 }
