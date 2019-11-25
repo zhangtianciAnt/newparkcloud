@@ -81,14 +81,17 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertOtherTwo(String givingid, TokenModel tokenModel) throws Exception {
+        OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
         casgiftapply.setStatus("4");
         List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
+        othertwo.setType("0");
+        othertwoMapper.delete(othertwo);
         int rowundex = 0;
         for (CasgiftApply casgift : casgiftapplylist) {
             rowundex = rowundex + 1;
-            OtherTwo othertwo = new OtherTwo();
+          
             String othertwoid = UUID.randomUUID().toString();
             othertwo.preInsert(tokenModel);
             othertwo.setOthertwo_id(othertwoid);
