@@ -7,6 +7,7 @@ import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFourService;
 import com.nt.service_pfans.PFANS2000.OtherFiveService;
+import com.nt.service_pfans.PFANS2000.AppreciationService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.nt.service_pfans.PFANS2000.AppreciationService;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -106,10 +106,21 @@ public class Pfans2005Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        othertwoService.deletete(othertwo, tokenModel);
+        othertwoService.deleteteothertwo(othertwo, tokenModel);
         return ApiResult.success();
     }
 
+
+    @RequestMapping(value = "/deleteteappreciation", method = {RequestMethod.POST})
+    public ApiResult deleteteappreciation(@RequestBody Appreciation appreciation, HttpServletRequest request) throws Exception {
+        if (appreciation == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        appreciationService.deleteteappreciation(appreciation, tokenModel);
+        return ApiResult.success();
+    }
+    
 
     @RequestMapping(value = "/getListContrast", method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request) throws Exception {

@@ -42,7 +42,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     }
 
     @Override
-    public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
+    public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwoMapper.delete(othertwo);
     }
 

@@ -41,18 +41,9 @@ public class AppreciationServiceImpl implements AppreciationService {
         return appreciationMapper.select(appreciation);
     }
 
-    @Override
-    public void insert(Appreciation appreciation, TokenModel tokenModel) throws Exception {
-        appreciation.preInsert(tokenModel);
-        appreciation.setAppreciation_id(UUID.randomUUID().toString());
-        int rowundex = 0;
-        rowundex = rowundex + 1;
-        appreciation.setRowindex(rowundex);
-        appreciationMapper.insert(appreciation);
-    }
 
     @Override
-    public void deletete(Appreciation appreciation, TokenModel tokenModel) throws Exception {
+    public void deleteteappreciation(Appreciation appreciation, TokenModel tokenModel) throws Exception {
         appreciationMapper.delete(appreciation);
     }
 

@@ -8,13 +8,10 @@ import java.util.List;
 
 public interface AppreciationService {
 
-    void insert(Appreciation appreciation, TokenModel tokenModel) throws Exception;
-
-
     List<Appreciation> list(Appreciation appreciation) throws Exception;
 
 
-    void deletete(Appreciation appreciation, TokenModel tokenModel)throws Exception;
+    void deleteteappreciation(Appreciation appreciation, TokenModel tokenModel)throws Exception;
 
     List<String> importUserappreciation(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
