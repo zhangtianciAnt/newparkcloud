@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.DevicetrainerMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Devicetrainer">
+        <!--
+           WARNING - @mbg.generated
+         -->
+        <id column="devicetrainerid" property="devicetrainerid" jdbcType="VARCHAR"/>
+        <result column="programid" property="programid" jdbcType="VARCHAR"/>
+        <result column="proname" property="proname" jdbcType="VARCHAR"/>
+        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>
+        <result column="deviceprincipal" property="deviceprincipal" jdbcType="VARCHAR"/>
+        <result column="participateno" property="participateno" jdbcType="INTEGER"/>
+        <result column="traincourse" property="traincourse" jdbcType="VARCHAR"/>
+        <result column="traintim" property="traintim" jdbcType="TIMESTAMP"/>
+        <result column="traintype" property="traintype" jdbcType="VARCHAR"/>
+        <result column="trainpeo" property="trainpeo" jdbcType="VARCHAR"/>
+
+
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>
