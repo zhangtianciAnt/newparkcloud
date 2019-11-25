@@ -134,7 +134,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUserothertwo",method={RequestMethod.POST})
-    public ApiResult importUserothertwo(@RequestBody String givingid,HttpServletRequest request){
+    public ApiResult importUserothertwo( String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(othertwoService.importUserothertwo(givingid,request,tokenModel));
@@ -146,7 +146,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUserotherfive",method={RequestMethod.POST})
-    public ApiResult importUserotherfive(@RequestBody String givingid,HttpServletRequest request){
+    public ApiResult importUserotherfive( String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(otherfiveService.importUserotherfive(givingid,request,tokenModel));
@@ -158,7 +158,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUserappreciation",method={RequestMethod.POST})
-    public ApiResult importUserappreciation(@RequestBody String givingid,HttpServletRequest request){
+    public ApiResult importUserappreciation( String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(appreciationService.importUserappreciation(givingid,request,tokenModel));
@@ -170,7 +170,7 @@ public class Pfans2005Controller {
     }
     //其他4
     @RequestMapping(value = "/importUserotherfour",method={RequestMethod.POST})
-    public ApiResult importUserotherfour(@RequestBody String givingid,HttpServletRequest request){
+    public ApiResult importUserotherfour( String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(otherfourService.importUserotherfour(givingid,request,tokenModel));

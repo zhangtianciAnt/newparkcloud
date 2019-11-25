@@ -79,20 +79,20 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                         continue;
                     }
                     String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!Pattern.matches(click, value.get(2).toString())){
+                    if(!Pattern.matches(click, value.get(3).toString())){
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
                     }
-                    if (value.size() > 2) {
-                        if (value.get(2).toString().length() > 20) {
+                    if (value.size() > 3) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
-                    if (value.size() > 3) {
-                        if (value.get(3).toString().length() > 20) {
+                    if (value.size() > 4) {
+                        if (value.get(4).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
                             continue;
@@ -105,8 +105,8 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     othertwo.setGiving_id(Givingid);
                     othertwo.setJobnumber(value.get(1).toString());
                     othertwo.setUser_id(customerInfo.getUserid());
-                    othertwo.setMoneys(value.get(2).toString());
-                    othertwo.setRootknot(value.get(3).toString());
+                    othertwo.setMoneys(value.get(3).toString());
+                    othertwo.setRootknot(value.get(4).toString());
                 }
                 int rowundex = i;
                 othertwo.setRowindex(rowundex);
