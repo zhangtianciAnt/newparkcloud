@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.Vo.AssetinformationVo;
 import com.nt.dao_Pfans.PFANS1000.Assetinformation;
 import com.nt.service_pfans.PFANS1000.AssetinformationService;
 import com.nt.utils.ApiResult;
@@ -43,30 +44,22 @@ public class Pfans1007Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateAssetinformation(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception{
-        if (assetinformation == null) {
+    public ApiResult updateAssetinformation(@RequestBody AssetinformationVo assetinformationVo, HttpServletRequest request) throws Exception{
+        if (assetinformationVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        assetinformationService.updateAssetinformation(assetinformation,tokenModel);
+        assetinformationService.updateAssetinformation(assetinformationVo,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception {
-        if (assetinformation == null) {
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    public ApiResult insert(@RequestBody AssetinformationVo assetinformationVo, HttpServletRequest request) throws Exception {
+        if (assetinformationVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        assetinformationService.insert(assetinformation,tokenModel);
+        assetinformationService.insert(assetinformationVo,tokenModel);
         return ApiResult.success();
-    }
-
-    @RequestMapping(value = "/getAssetinformationList", method = {RequestMethod.POST})
-    public ApiResult getAssetinformationList(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception {
-        if (assetinformation == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        return ApiResult.success(assetinformationService.getAssetinformationList(assetinformation, request));
     }
 }
