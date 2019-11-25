@@ -1,7 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Fixedassets;
-import com.nt.service_pfans.PFANS1000.FixedassetsService;
+import com.nt.dao_Pfans.PFANS1000.LoanApplication;
+import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -16,53 +16,52 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+
 @RestController
-@RequestMapping("/fixedassets")
-public class Pfans1009Controller {
+@RequestMapping("/loanapplication")
+public class Pfans1006Controller {
 
     @Autowired
-    private FixedassetsService fixedassetsService;
+    private LoanApplicationService loanapplicationService;
 
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getFixedassets(HttpServletRequest request)throws  Exception{
+    public ApiResult getLoanapplication(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
-        Fixedassets fixedassets = new Fixedassets();
-        fixedassets.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(fixedassetsService.getFixedassets(fixedassets));
+        LoanApplication loanapplication = new LoanApplication();
+        loanapplication.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
 
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Fixedassets fixedassets, HttpServletRequest request) throws Exception {
-        if (fixedassets == null) {
+    public ApiResult one(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+        if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(fixedassetsService.One(fixedassets.getFixedassets_id()));
+        return ApiResult.success(loanapplicationService.One(loanapplication.getLoanapplication_id()));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateFixedassets(@RequestBody Fixedassets fixedassets, HttpServletRequest request) throws Exception{
-        if (fixedassets == null) {
+    public ApiResult updateFlexibleWork(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception{
+        if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        fixedassetsService.updateFixedassets(fixedassets,tokenModel);
+        loanapplicationService.updateLoanApplication(loanapplication,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Fixedassets fixedassets, HttpServletRequest request) throws Exception {
-        if (fixedassets == null) {
+    public ApiResult create(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+        if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        fixedassetsService.insert(fixedassets,tokenModel);
+        loanapplicationService.insert(loanapplication,tokenModel);
         return ApiResult.success();
     }
-
 }
-
