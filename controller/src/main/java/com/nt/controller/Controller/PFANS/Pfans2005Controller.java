@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
+import com.nt.service_pfans.PFANS2000.GivingListService;
 import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFourService;
@@ -27,6 +28,9 @@ public class Pfans2005Controller {
 
     @Autowired
     private GivingService givingService;
+
+    @Autowired
+    private GivingListService givinglistService;
 
     @Autowired
     private AppreciationService appreciationService;
@@ -65,12 +69,13 @@ public class Pfans2005Controller {
         return ApiResult.success(givingService.getListtBase(null));
     }
 
-    @RequestMapping(value = "/listFive", method = {RequestMethod.GET})
-    public ApiResult listFive(HttpServletRequest request) throws Exception {
+
+    @RequestMapping(value = "/givinglist", method = {RequestMethod.GET})
+    public ApiResult get(String giving_id,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        OtherFive otherfive = new OtherFive();
-        return ApiResult.success(otherfiveService.listFive(otherfive));
+        return ApiResult.success(givinglistService.List(giving_id));
     }
+
 
     @RequestMapping(value = "/deleteFive", method = {RequestMethod.POST})
     public ApiResult deleteFive(@RequestBody OtherFive otherfive, HttpServletRequest request) throws Exception {
@@ -89,12 +94,7 @@ public class Pfans2005Controller {
         return ApiResult.success(givingService.getDataList(giving));
     }
 
-    @RequestMapping(value = "/listothertwo", method = {RequestMethod.GET})
-    public ApiResult listothertwo(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        OtherTwo othertwo = new OtherTwo();
-        return ApiResult.success(othertwoService.list(othertwo));
-    }
+
 
 
     @RequestMapping(value = "/deleteothertwo", method = {RequestMethod.POST})
@@ -134,7 +134,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUserothertwo",method={RequestMethod.POST})
-    public ApiResult importUserothertwo(String givingid,HttpServletRequest request){
+    public ApiResult importUserothertwo(@RequestBody String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(othertwoService.importUserothertwo(givingid,request,tokenModel));
@@ -146,7 +146,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUserotherfive",method={RequestMethod.POST})
-    public ApiResult importUserotherfive(String givingid,HttpServletRequest request){
+    public ApiResult importUserotherfive(@RequestBody String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(otherfiveService.importUserotherfive(givingid,request,tokenModel));
@@ -158,7 +158,7 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/importUserappreciation",method={RequestMethod.POST})
-    public ApiResult importUserappreciation(String givingid,HttpServletRequest request){
+    public ApiResult importUserappreciation(@RequestBody String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(appreciationService.importUserappreciation(givingid,request,tokenModel));
@@ -170,7 +170,7 @@ public class Pfans2005Controller {
     }
     //其他4
     @RequestMapping(value = "/importUserotherfour",method={RequestMethod.POST})
-    public ApiResult importUserotherfour(String givingid,HttpServletRequest request){
+    public ApiResult importUserotherfour(@RequestBody String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(otherfourService.importUserotherfour(givingid,request,tokenModel));

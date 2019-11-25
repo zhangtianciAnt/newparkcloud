@@ -36,10 +36,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
-    @Override
-    public List<OtherTwo> list(OtherTwo othertwo) throws Exception {
-        return othertwoMapper.select(othertwo);
-    }
+
 
     @Override
     public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {

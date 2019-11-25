@@ -37,12 +37,6 @@ public class AppreciationServiceImpl implements AppreciationService {
     private AppreciationMapper appreciationMapper;
 
     @Override
-    public List<Appreciation> list(Appreciation appreciation) throws Exception {
-        return appreciationMapper.select(appreciation);
-    }
-
-
-    @Override
     public void deleteteappreciation(Appreciation appreciation, TokenModel tokenModel) throws Exception {
         appreciationMapper.delete(appreciation);
     }

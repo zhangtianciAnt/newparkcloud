@@ -9,7 +9,7 @@ import java.util.List;
 public interface OtherTwoService {
 
 
-    List<OtherTwo> list(OtherTwo othertwo) throws Exception;
+
 
 
     void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel)throws Exception;

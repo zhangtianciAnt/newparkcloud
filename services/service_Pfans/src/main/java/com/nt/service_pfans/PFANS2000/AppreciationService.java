@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AppreciationService {
 
-    List<Appreciation> list(Appreciation appreciation) throws Exception;
+
 
 
     void deleteteappreciation(Appreciation appreciation, TokenModel tokenModel)throws Exception;

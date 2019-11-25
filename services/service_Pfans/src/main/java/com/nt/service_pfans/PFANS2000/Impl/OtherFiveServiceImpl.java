@@ -36,10 +36,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
     @Autowired
     private OtherFiveMapper otherfiveMapper;
 
-    @Override
-    public List<OtherFive> listFive(OtherFive otherfive) throws Exception {
-        return otherfiveMapper.select(otherfive);
-    }
+
 
     @Override
     public void deleteFive(OtherFive otherfive, TokenModel tokenModel) throws Exception{
