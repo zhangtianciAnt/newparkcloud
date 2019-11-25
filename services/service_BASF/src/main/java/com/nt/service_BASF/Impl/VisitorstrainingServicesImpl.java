@@ -27,7 +27,9 @@ public class VisitorstrainingServicesImpl implements VisitorstrainingServices {
 
     @Override
     public List<Visitorstraining> list() throws Exception {
-        return visitorstrainingMapper.select(new Visitorstraining());
+        Visitorstraining visitorstraining = new Visitorstraining();
+        visitorstraining.setStatus("0");
+        return visitorstrainingMapper.select(visitorstraining);
     }
 
     @Override
