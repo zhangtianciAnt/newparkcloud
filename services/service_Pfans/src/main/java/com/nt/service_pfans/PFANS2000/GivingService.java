@@ -15,6 +15,13 @@ public interface GivingService {
      * */
     void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
 
+    void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
+    /**
+     * 生成基数表
+     * FJL
+     * */
+    void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
+
     List<Base> getListtBase(Base base) throws Exception;
 
     List<Giving> getDataList(Giving giving) throws Exception;

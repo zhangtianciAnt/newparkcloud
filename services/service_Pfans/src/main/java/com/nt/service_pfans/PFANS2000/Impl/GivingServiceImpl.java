@@ -1,17 +1,18 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.Base;
-import com.nt.dao_Pfans.PFANS2000.Giving;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.GivingService;
-import com.nt.service_pfans.PFANS2000.mapper.BaseMapper;
-import com.nt.service_pfans.PFANS2000.mapper.GivingMapper;
+import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,12 +30,22 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private ContrastMapper contrastMapper;
+
+
+    @Autowired
+    private CasgiftApplyMapper casgiftapplyMapper;
+
+    @Autowired
+    private OtherTwoMapper othertwoMapper;
+
     /**
      * 生成基数表
      * FJL
-     * */
+     */
     @Override
-    public void insertBase(String givingid,TokenModel tokenModel) throws Exception {
+    public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             int rowindex = 0;
@@ -46,15 +57,21 @@ public class GivingServiceImpl implements GivingService {
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
-                base.setOwner(customer.getUserid());
-                base.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());  //部门
+//                base.setOwner(customer.getUserid());
+                String departmentid = customer.getUserinfo().getDepartmentid().toString();
+                String name = departmentid.replace("[","").replace("]","");
+                base.setDepartment_id(name);  //部门[]
 //              base.setRn(customer.get);  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
 //                base.setOnlychild(customer.getUserinfo().getChildren());  //独生子女
                 //入/退職/産休
 //                base.setBonus(customer);  //奨金計上
                 //1999年前社会人
-//                base.setRegistered(customer.getUserinfo().getNationality()); //大連戸籍
+                if(customer.getUserinfo().getRegister() == "大連"){
+                    base.setRegistered("是"); //大連戸籍
+                }
+                base.setRegistered("-"); //大連戸籍
+
                 //2019年6月
                 //2019年7月
                 base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
@@ -62,34 +79,94 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-//                base.setWorkdate(customer.getUserinfo().getEnterday().format('YYYY-MM-DD'));  //入社日
+                base.setWorkdate(customer.getUserinfo().getEnterday());     //入社日
+
                 base.setRowindex(rowindex);
                 baseMapper.insertSelective(base);
             }
         }
     }
 
+
     @Override
-    public List<Base> getListtBase(Base base) throws Exception{
+    public void insertOtherTwo(String givingid, TokenModel tokenModel) throws Exception {
+        OtherTwo othertwo = new OtherTwo();
+        CasgiftApply casgiftapply = new CasgiftApply();
+        casgiftapply.setPayment("0");
+        casgiftapply.setStatus("4");
+        List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
+        othertwo.setType("0");
+        othertwoMapper.delete(othertwo);
+        int rowundex = 0;
+        for (CasgiftApply casgift : casgiftapplylist) {
+            rowundex = rowundex + 1;
+            String othertwoid = UUID.randomUUID().toString();
+            othertwo.preInsert(tokenModel);
+            othertwo.setOthertwo_id(othertwoid);
+            othertwo.setGiving_id(givingid);
+            othertwo.setUser_id(casgift.getUser_id());
+            Query query = new Query();
+            String User_id = casgift.getUser_id();
+            query.addCriteria(Criteria.where("userid").is(User_id));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            othertwo.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            othertwo.setType("0");
+            othertwo.setRowindex(rowundex);
+            othertwo.setRootknot(casgift.getTwoclass());
+            othertwo.setMoneys(casgift.getAmoutmoney());
+            othertwoMapper.insertSelective(othertwo);
+        }
+    }
+
+    /**
+     * 生成基数表
+     * FJL
+     */
+    @Override
+    public void insertContrast(String givingid, TokenModel tokenModel) throws Exception {
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        List<Base> baselist = baseMapper.select(base);
+        if (baselist != null) {
+            for (Base base1 : baselist) {
+                Contrast contrast = new Contrast();
+                String consrastid = UUID.randomUUID().toString();
+                contrast.preInsert(tokenModel);
+                contrast.setGiving_id(base1.getGiving_id());
+                contrast.setContrast_id(consrastid);
+                contrast.setUser_id(base1.getUser_id());
+                contrast.setOwner(base1.getUser_id());
+                contrast.setDepartment_id(base1.getDepartment_id());
+
+                contrastMapper.insertSelective(contrast);
+            }
+        }
+    }
+
+    @Override
+    public List<Base> getListtBase(Base base) throws Exception {
         return baseMapper.select(base);
     }
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
-        String givingid =  UUID.randomUUID().toString();
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
+        String givingid = UUID.randomUUID().toString();
         Giving giving = new Giving();
         giving.preInsert(tokenModel);
         giving.setGiving_id(givingid);
         giving.setGeneration(generation);
         giving.setGenerationdate(new Date());
+        giving.setMonths(sf1.format(new Date()));
+
+        Giving giving1 = new Giving();
+        String strTemp = sf1.format(new Date());
+        giving1.setMonths(strTemp);
+        givingMapper.delete(giving1);
         givingMapper.insert(giving);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
-        insertBase(givingid,tokenModel);
+        insertBase(givingid, tokenModel);
+        insertContrast(givingid, tokenModel);
+        insertOtherTwo(givingid, tokenModel);
     }
 
     @Override
