@@ -36,29 +36,16 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
-    @Override
-    public List<OtherTwo> list(OtherTwo othertwo) throws Exception {
-        return othertwoMapper.select(othertwo);
-    }
+
 
     @Override
-    public void insert(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
-        othertwo.preInsert(tokenModel);
-        othertwo.setOthertwo_id(UUID.randomUUID().toString());
-        int rowundex = 0;
-        rowundex = rowundex + 1;
-        othertwo.setRowindex(rowundex);
-        othertwoMapper.insert(othertwo);
-    }
-
-    @Override
-    public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
+    public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwoMapper.delete(othertwo);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
             List<String> Result = new ArrayList<String>();

@@ -7,6 +7,8 @@ import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,15 +57,21 @@ public class GivingServiceImpl implements GivingService {
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
-                base.setOwner(customer.getUserid());
-                base.setDepartment_id(customer.getUserinfo().getDepartmentid().toString());  //部门
+//                base.setOwner(customer.getUserid());
+                String departmentid = customer.getUserinfo().getDepartmentid().toString();
+                String name = departmentid.replace("[","").replace("]","");
+                base.setDepartment_id(name);  //部门[]
 //              base.setRn(customer.get);  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
 //                base.setOnlychild(customer.getUserinfo().getChildren());  //独生子女
                 //入/退職/産休
 //                base.setBonus(customer);  //奨金計上
                 //1999年前社会人
-//                base.setRegistered(customer.getUserinfo().getNationality()); //大連戸籍
+                if(customer.getUserinfo().getRegister() == "大連"){
+                    base.setRegistered("是"); //大連戸籍
+                }
+                base.setRegistered("-"); //大連戸籍
+
                 //2019年6月
                 //2019年7月
                 base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
@@ -71,7 +79,8 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-//                base.setWorkdate(customer.getUserinfo().getEnterday().format('YYYY-MM-DD'));  //入社日
+                base.setWorkdate(customer.getUserinfo().getEnterday());     //入社日
+
                 base.setRowindex(rowindex);
                 baseMapper.insertSelective(base);
             }
@@ -81,18 +90,26 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertOtherTwo(String givingid, TokenModel tokenModel) throws Exception {
+        OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
         casgiftapply.setStatus("4");
         List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
+        othertwo.setType("0");
+        othertwoMapper.delete(othertwo);
         int rowundex = 0;
         for (CasgiftApply casgift : casgiftapplylist) {
             rowundex = rowundex + 1;
-            OtherTwo othertwo = new OtherTwo();
             String othertwoid = UUID.randomUUID().toString();
             othertwo.preInsert(tokenModel);
             othertwo.setOthertwo_id(othertwoid);
             othertwo.setGiving_id(givingid);
+            othertwo.setUser_id(casgift.getUser_id());
+            Query query = new Query();
+            String User_id = casgift.getUser_id();
+            query.addCriteria(Criteria.where("userid").is(User_id));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            othertwo.setJobnumber(customerInfo.getUserinfo().getJobnumber());
             othertwo.setType("0");
             othertwo.setRowindex(rowundex);
             othertwo.setRootknot(casgift.getTwoclass());
@@ -106,7 +123,7 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      */
     @Override
-    public void insertBase1(String givingid, TokenModel tokenModel) throws Exception {
+    public void insertContrast(String givingid, TokenModel tokenModel) throws Exception {
         Base base = new Base();
         base.setGiving_id(givingid);
         List<Base> baselist = baseMapper.select(base);
@@ -133,25 +150,23 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
-//        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM");
-        Giving giving1 = new Giving();
-//        String strTemp = sf1.format(new Date());
-//        Date delDate = sf1.parse(strTemp);
-        giving1.setGenerationdate(new Date());
-        givingMapper.delete(giving1);
-
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String givingid = UUID.randomUUID().toString();
         Giving giving = new Giving();
         giving.preInsert(tokenModel);
         giving.setGiving_id(givingid);
         giving.setGeneration(generation);
-//        String strTemp1 = sf1.format(new Date());
-//        Date delDate1 = sf1.parse(strTemp1);
         giving.setGenerationdate(new Date());
-        ;
+        giving.setMonths(sf1.format(new Date()));
+
+        Giving giving1 = new Giving();
+        String strTemp = sf1.format(new Date());
+        giving1.setMonths(strTemp);
+        givingMapper.delete(giving1);
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
-        insertBase1(givingid, tokenModel);
+        insertContrast(givingid, tokenModel);
+        insertOtherTwo(givingid, tokenModel);
     }
 
     @Override

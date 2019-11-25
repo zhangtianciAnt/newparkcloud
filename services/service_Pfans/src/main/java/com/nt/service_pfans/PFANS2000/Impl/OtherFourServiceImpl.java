@@ -48,7 +48,7 @@ public class OtherFourServiceImpl implements OtherFourService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser4(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserotherfour(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherFour> listVo = new ArrayList<OtherFour>();
             List<String> Result = new ArrayList<String>();
