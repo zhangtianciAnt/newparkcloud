@@ -124,7 +124,7 @@ public class Base extends BaseModel {
      * 入社日
      */
     @Column(name = "WORKDATE")
-    private Date workdate;
+    private String workdate;
 
     /**
      * 顺序
