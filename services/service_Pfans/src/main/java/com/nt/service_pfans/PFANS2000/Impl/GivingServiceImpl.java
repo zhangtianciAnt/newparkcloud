@@ -7,6 +7,8 @@ import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +97,12 @@ public class GivingServiceImpl implements GivingService {
             othertwo.preInsert(tokenModel);
             othertwo.setOthertwo_id(othertwoid);
             othertwo.setGiving_id(givingid);
+            othertwo.setUser_id(casgift.getUser_id());
+            Query query = new Query();
+            String User_id = casgift.getUser_id();
+            query.addCriteria(Criteria.where("userid").is(User_id));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            othertwo.setJobnumber(customerInfo.getUserinfo().getJobnumber());
             othertwo.setType("0");
             othertwo.setRowindex(rowundex);
             othertwo.setRootknot(casgift.getTwoclass());
@@ -151,6 +159,7 @@ public class GivingServiceImpl implements GivingService {
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
         insertContrast(givingid, tokenModel);
+        insertOtherTwo(givingid, tokenModel);
     }
 
     @Override
