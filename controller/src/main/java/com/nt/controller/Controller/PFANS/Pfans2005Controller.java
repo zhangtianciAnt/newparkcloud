@@ -120,7 +120,7 @@ public class Pfans2005Controller {
         appreciationService.deleteteappreciation(appreciation, tokenModel);
         return ApiResult.success();
     }
-    
+
 
     @RequestMapping(value = "/getListContrast", method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request) throws Exception {
