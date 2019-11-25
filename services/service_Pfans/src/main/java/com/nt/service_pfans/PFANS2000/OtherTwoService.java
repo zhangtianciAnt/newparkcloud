@@ -16,6 +16,6 @@ public interface OtherTwoService {
 
     void deletete(OtherTwo othertwo, TokenModel tokenModel)throws Exception;
 
-    List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+    List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
 }

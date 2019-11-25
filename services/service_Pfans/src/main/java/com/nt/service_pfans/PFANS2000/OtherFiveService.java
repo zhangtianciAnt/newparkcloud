@@ -14,6 +14,6 @@ public interface OtherFiveService {
 
     void deleteFive(OtherFive otherfive, TokenModel tokenModel)throws Exception;
 
-    List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+    List<String> importUserotherfive(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
 }

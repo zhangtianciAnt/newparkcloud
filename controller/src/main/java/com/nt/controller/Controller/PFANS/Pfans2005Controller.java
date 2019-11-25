@@ -134,11 +134,11 @@ public class Pfans2005Controller {
         return ApiResult.success(dutyfreeService.getdutyfree(tokenModel));
     }
 
-    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
-    public ApiResult importUser(String givingid,HttpServletRequest request){
+    @RequestMapping(value = "/importUserothertwo",method={RequestMethod.POST})
+    public ApiResult importUserothertwo(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(othertwoService.importUser(givingid,request,tokenModel));
+            return ApiResult.success(othertwoService.importUserothertwo(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
@@ -146,11 +146,11 @@ public class Pfans2005Controller {
         }
     }
 
-    @RequestMapping(value = "/importUser1",method={RequestMethod.POST})
-    public ApiResult importUser1(String givingid,HttpServletRequest request){
+    @RequestMapping(value = "/importUserotherfive",method={RequestMethod.POST})
+    public ApiResult importUserotherfive(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(otherfiveService.importUser(givingid,request,tokenModel));
+            return ApiResult.success(otherfiveService.importUserotherfive(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
@@ -158,11 +158,11 @@ public class Pfans2005Controller {
         }
     }
 
-    @RequestMapping(value = "/importUser2",method={RequestMethod.POST})
-    public ApiResult importUser2(String givingid,HttpServletRequest request){
+    @RequestMapping(value = "/importUserappreciation",method={RequestMethod.POST})
+    public ApiResult importUserappreciation(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(appreciationService.importUser(givingid,request,tokenModel));
+            return ApiResult.success(appreciationService.importUserappreciation(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
@@ -170,11 +170,11 @@ public class Pfans2005Controller {
         }
     }
     //其他4
-    @RequestMapping(value = "/importUser4",method={RequestMethod.POST})
-    public ApiResult importUser4(String givingid,HttpServletRequest request){
+    @RequestMapping(value = "/importUserotherfour",method={RequestMethod.POST})
+    public ApiResult importUserotherfour(String givingid,HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(otherfourService.importUser4(givingid,request,tokenModel));
+            return ApiResult.success(otherfourService.importUserotherfour(givingid,request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {

@@ -47,7 +47,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
     }
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserotherfive(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherFive> listVo = new ArrayList<OtherFive>();
             List<String> Result = new ArrayList<String>();

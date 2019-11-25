@@ -58,7 +58,7 @@ public class AppreciationServiceImpl implements AppreciationService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserappreciation(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<Appreciation> listVo = new ArrayList<Appreciation>();
             List<String> Result = new ArrayList<String>();

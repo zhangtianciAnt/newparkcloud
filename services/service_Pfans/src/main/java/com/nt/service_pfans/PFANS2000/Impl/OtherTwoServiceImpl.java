@@ -58,7 +58,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
             List<String> Result = new ArrayList<String>();
