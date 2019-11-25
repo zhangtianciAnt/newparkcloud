@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS2000;
 
-import com.nt.dao_Pfans.PFANS2000.Base;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.utils.dao.TokenModel;
 import com.nt.dao_Pfans.PFANS2000.Giving;
@@ -17,8 +16,6 @@ public interface GivingService {
     void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
 
     void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
-
-//    List<Base> getListtBase(Base base) throws Exception;
 
     List<Giving> getDataList(Giving giving) throws Exception;
 

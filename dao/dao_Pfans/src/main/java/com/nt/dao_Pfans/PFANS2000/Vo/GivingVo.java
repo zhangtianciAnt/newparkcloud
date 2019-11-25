@@ -22,5 +22,5 @@ public class GivingVo {
 
     private List<Base> base;
 
-    private List<Contrast> contrasts;
+    private List<Contrast> contrast;
 }

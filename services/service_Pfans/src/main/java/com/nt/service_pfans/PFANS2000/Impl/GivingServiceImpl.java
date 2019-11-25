@@ -84,12 +84,12 @@ public class GivingServiceImpl implements GivingService {
         List<Base> baselist = baseMapper.select(base);
         baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         GivingVo.setBase(baselist);
-
-        Contrast contrast = new Contrast();
-        contrast.setGiving_id(giving_id);
-        List<Contrast> contrastList = contrastMapper.select(contrast);
-        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
-        GivingVo.setContrasts(contrastList);
+//
+//        Contrast contrast = new Contrast();
+//        contrast.setGiving_id(giving_id);
+//        List<Contrast> contrastList = contrastMapper.select(contrast);
+//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+//        GivingVo.setContrast(contrastList);
 
         return GivingVo;
     }
