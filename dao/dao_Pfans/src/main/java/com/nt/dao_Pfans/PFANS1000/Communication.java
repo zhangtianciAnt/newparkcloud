@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 
 @Data
@@ -15,7 +16,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Table(name = "communication")
 public class Communication  extends BaseModel {
-
 
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +33,12 @@ public class Communication  extends BaseModel {
     private String user_id;
 
     /**
+     * 参加理由
+     */
+    @Column(name = "REASON")
+    private String reason;
+
+    /**
      * 备注
      */
     @Column(name = "REMARKS")
@@ -42,7 +48,7 @@ public class Communication  extends BaseModel {
      * 使用日期
      */
     @Column(name = "USEDATE")
-    private String usedate;
+    private Date usedate;
 
     /**
      * 公司名称
