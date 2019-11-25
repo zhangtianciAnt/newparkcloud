@@ -91,7 +91,6 @@ public class GivingServiceImpl implements GivingService {
         int rowundex = 0;
         for (CasgiftApply casgift : casgiftapplylist) {
             rowundex = rowundex + 1;
-          
             String othertwoid = UUID.randomUUID().toString();
             othertwo.preInsert(tokenModel);
             othertwo.setOthertwo_id(othertwoid);
