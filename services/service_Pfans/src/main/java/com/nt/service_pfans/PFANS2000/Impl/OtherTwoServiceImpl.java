@@ -42,16 +42,6 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     }
 
     @Override
-    public void insert(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
-        othertwo.preInsert(tokenModel);
-        othertwo.setOthertwo_id(UUID.randomUUID().toString());
-        int rowundex = 0;
-        rowundex = rowundex + 1;
-        othertwo.setRowindex(rowundex);
-        othertwoMapper.insert(othertwo);
-    }
-
-    @Override
     public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwoMapper.delete(othertwo);
     }

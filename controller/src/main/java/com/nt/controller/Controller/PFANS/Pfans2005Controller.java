@@ -99,15 +99,6 @@ public class Pfans2005Controller {
         return ApiResult.success(othertwoService.list(othertwo));
     }
 
-    @RequestMapping(value = "/insertothertwo", method = {RequestMethod.POST})
-    public ApiResult insertothertwo(@RequestBody  OtherTwo othertwo, HttpServletRequest request) throws Exception {
-        if (othertwo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        othertwoService.insert(othertwo, tokenModel);
-        return ApiResult.success();
-    }
 
     @RequestMapping(value = "/deleteothertwo", method = {RequestMethod.POST})
     public ApiResult deleteothertwo(@RequestBody OtherTwo othertwo, HttpServletRequest request) throws Exception {

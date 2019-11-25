@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface OtherTwoService {
 
-    void insert(OtherTwo othertwo, TokenModel tokenModel) throws Exception;
-
 
     List<OtherTwo> list(OtherTwo othertwo) throws Exception;
 
@@ -17,5 +15,6 @@ public interface OtherTwoService {
     void deletete(OtherTwo othertwo, TokenModel tokenModel)throws Exception;
 
     List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+
 
 }
