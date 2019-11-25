@@ -62,12 +62,4 @@ public class Pfans1007Controller {
         assetinformationService.insert(assetinformationVo,tokenModel);
         return ApiResult.success();
     }
-
-    @RequestMapping(value = "/getAssetinformationList", method = {RequestMethod.POST})
-    public ApiResult getAssetinformationList(@RequestBody Assetinformation assetinformation, HttpServletRequest request) throws Exception {
-        if (assetinformation == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        return ApiResult.success(assetinformationService.getAssetinformationList(assetinformation, request));
-    }
 }
