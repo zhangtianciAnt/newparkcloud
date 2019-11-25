@@ -7,6 +7,16 @@
         <result column="vehiclestarttime" property="vehiclestarttime" jdbcType="TIMESTAMP"/>
         <result column="vehicleendtime" property="vehicleendtime" jdbcType="TIMESTAMP"/>
         <result column="vehicleviolationtype" property="vehicleviolationtype" jdbcType="VARCHAR"/>
+        <result column="vehiclenumber" property="vehiclenumber" jdbcType="VARCHAR"/>
+        <result column="drivername" property="drivername" jdbcType="VARCHAR"/>
+        <result column="vehiclecompany" property="vehiclecompany" jdbcType="VARCHAR"/>
 
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
 </mapper>

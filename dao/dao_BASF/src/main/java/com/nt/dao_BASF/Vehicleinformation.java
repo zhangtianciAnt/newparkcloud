@@ -41,9 +41,14 @@ public class Vehicleinformation extends BaseModel {
     private String vehicletype;
 
     /**
-     *车辆权限
+     *创建时间
      */
-    private String vehiclelimit;
+    private String createtime;
+
+    /**
+     * 更新时间
+     */
+    private String updatetime;
 
 
 

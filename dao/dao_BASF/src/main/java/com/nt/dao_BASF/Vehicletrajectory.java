@@ -45,4 +45,20 @@ public class Vehicletrajectory extends BaseModel {
      *车辆违规状态
      */
     private String vehicleviolationtype;
+
+    /**
+     * 车牌号
+     */
+    private String vehiclenumber;
+
+    /**
+     * 驾驶员姓名
+     */
+    private String drivername;
+
+    /**
+     * 车辆所属公司
+     */
+    private String vehiclecompany;
+
 }

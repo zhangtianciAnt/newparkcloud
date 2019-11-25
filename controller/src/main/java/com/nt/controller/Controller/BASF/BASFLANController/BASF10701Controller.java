@@ -37,7 +37,6 @@ public class BASF10701Controller {
     @Autowired
     private TokenService tokenService;
 
-
     /**
      * @param request
      * @Method list
