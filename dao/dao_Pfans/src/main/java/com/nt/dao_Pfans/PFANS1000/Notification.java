@@ -26,6 +26,12 @@ public class Notification extends BaseModel {
     private String notificationid;
 
     /**
+     * 所属固定資産·ソフトウェア移転届
+     */
+    @Column(name = "SOFTWARETRANSFER_ID")
+    private String softwaretransfer_id;
+
+    /**
      * 資産管理番号
      */
     @Column(name = "MANAGEMENT")
