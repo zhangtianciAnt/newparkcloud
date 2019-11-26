@@ -107,7 +107,6 @@ public class Pfans2005Controller {
         return ApiResult.success(dutyfreeService.getdutyfree(tokenModel));
     }
 
-
     @RequestMapping(value = "/importUserothertwo",method={RequestMethod.POST})
     public ApiResult importUserothertwo( String givingid,HttpServletRequest request){
         try{

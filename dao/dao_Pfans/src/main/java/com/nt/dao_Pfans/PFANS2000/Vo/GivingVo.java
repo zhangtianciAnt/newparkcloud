@@ -24,5 +24,7 @@ public class GivingVo {
 
     private List<Contrast> contrast;
 
+    private List<AccumulatedTaxVo> accumulatedTaxVo;
+
     private List<DisciplinaryVo> DisciplinaryVo;
 }

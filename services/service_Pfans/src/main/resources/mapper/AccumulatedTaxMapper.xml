@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.AccumulatedTaxMapper">
+    <select id="getaccumulatedTax" parameterType="com.nt.dao_Pfans.PFANS2000.Base"
+            resultType="com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo">
+		SELECT
+ USER_ID,
+ january,
+ february,
+ march,
+ april,
+ may,
+ june,
+ july,
+ august,
+ september,
+ october,
+ november,
+ december,
+ january + february + march + april + may + june + july + august + september + october + november AS sumThis
+FROM
+ (
+SELECT
+ base.USER_ID,SHOULDWAGES,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '01' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) january,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '02' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) february,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '03' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) march,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '04' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) april,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '05' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) may,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '06' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) june,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '07' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) july,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '08' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) august,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '09' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) september,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '10' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) october,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '11' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) november,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '12' ) THEN
+ THISMONTHADJUSTMENT ELSE 0
+END
+ ) december
+FROM
+ base
+ LEFT JOIN wages ON base.USER_ID = wages.USER_ID
+ AND wages.STATUS = '0'
+WHERE
+ base.STATUS = '0'
+GROUP BY
+ USER_ID,SHOULDWAGES
+ ) tablewages
+	</select>
+</mapper>
