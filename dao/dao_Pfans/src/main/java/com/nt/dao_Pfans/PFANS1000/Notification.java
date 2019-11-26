@@ -19,11 +19,17 @@ public class Notification extends BaseModel {
 	private static final long serialVersionUID = 1L;
 
     /**
-	 * ソフトウェア移転届
+	 * 固定資産ソフトウェア移転届明细
 	 */
     @Id
     @Column(name = "NOTIFICATION_ID")
-    private String notification_id;
+    private String notificationid;
+
+    /**
+     * 所属固定資産·ソフトウェア移転届
+     */
+    @Column(name = "SOFTWARETRANSFER_ID")
+    private String softwaretransfer_id;
 
     /**
      * 資産管理番号
@@ -47,7 +53,7 @@ public class Notification extends BaseModel {
      * 移転後責任者
      */
     @Column(name = "EAFTER")
-    private String eafter;
+    private Date eafter;
 
     /**
      * 移転原因

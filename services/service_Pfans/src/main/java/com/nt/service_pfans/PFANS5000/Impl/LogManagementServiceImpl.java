@@ -1,16 +1,22 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
+import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -33,10 +39,20 @@ public class LogManagementServiceImpl implements LogManagementService {
     @Autowired
     private LogManagementMapper logmanagementmapper;
 
+    @Autowired
+    private PersonalProjectsMapper personalprojectsMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Override
     public void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
         logmanagement.preInsert(tokenModel);
         logmanagement.setLogmanagement_id(UUID.randomUUID().toString());
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(logmanagement.getCreateby()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
         logmanagementmapper.insert(logmanagement);
     }
 
@@ -58,109 +74,106 @@ public class LogManagementServiceImpl implements LogManagementService {
         LogManagement log = logmanagementmapper.selectByPrimaryKey(logmanagement_id);
         return log;
     }
-
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<LogManagement> importUser(HttpServletRequest request, TokenModel tokenModel, String flag) throws Exception {
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
-            List<LogManagement> listVo = new ArrayList<LogManagement>();
+            List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            if (StringUtils.isNullOrEmpty(flag)) {
-                List<LogManagement> error = importCheck(list);
-                return error;
-            } else {
-                int k = 1;
-                for (int i = 1; i < list.size(); i++) {
-                    LogManagement logmanagement = new LogManagement();
-                    List<Object> value = list.get(k);
-                    k++;
-                    if (value != null && !value.isEmpty()) {
-                        if (value.get(0).toString().equals("")) {
-                            continue;
-                        }
-                        String Log_date = value.get(5).toString();
-                        String Time_start = value.get(6).toString();
-                        String Time_end = value.get(7).toString();
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        logmanagement.setLog_date(sf1.parse(Log_date));
-                        logmanagement.setTime_start(sf.parse(Time_start));
-                        logmanagement.setTime_end(sf.parse(Time_end));
-                        logmanagement.setWork_memo(value.get(8).toString());
-                        if (logmanagement.getProject_id().length() > 0) {
-                            String s2 = "01";
-                            logmanagement.setHas_project(s2);
-                        } else {
-                            String s3 = "02";
-                            logmanagement.setHas_project(s3);
-                        }
-                    }
-                    logmanagement.preInsert(tokenModel);
-                    logmanagement.setLogmanagement_id(UUID.randomUUID().toString());
-                    logmanagementmapper.insert(logmanagement);
-                    listVo.add(logmanagement);
-                }
-            }
-            return listVo;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private List<LogManagement> importCheck(List<List<Object>> list) throws Exception {
-        List<LogManagement> listVo = new ArrayList<LogManagement>();
-        List<Object> model = new ArrayList<Object>();
-        Map checkMobileMap = new HashMap();
-        Map checkEmailMap = new HashMap();
-        model.add("姓名");
-        model.add("センター");
-        model.add("グループ");
-        model.add("チーム");
-        model.add("项目");
-        model.add("日志日期");
-        model.add("开始时间");
-        model.add("结束时间");
-        model.add("工作备注");
-        List<Object> key = list.get(0);
-        try {
-            // check字段名称是否正确
+            List<Object> model = new ArrayList<Object>();
+            model.add("工号");
+            model.add("姓名");
+            model.add("项目");
+            model.add("日志日期");
+            model.add("开始时间");
+            model.add("结束时间");
+            model.add("工作备注");
+            List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
+
             }
             int k = 1;
-            LogManagement logmanagement = new LogManagement();
+            int accesscount = 0;
+            int error = 0;
             for (int i = 1; i < list.size(); i++) {
+                LogManagement logmanagement = new LogManagement();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    if (value.size() > 0) {
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        logmanagement.setLog_date(sf1.parse(value.get(5).toString()));
-                        logmanagement.setTime_start(sf.parse(value.get(6).toString()));
-                        logmanagement.setTime_end(sf.parse(value.get(7).toString()));
-                        logmanagement.setWork_memo(value.get(8).toString());
+                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String Time_start = value.get(4).toString();
+                    String Time_end = value.get(5).toString();
+                    int result1 = Time_start.compareTo(Time_end);
+                    if (result1 >= 0) {
+                        error = error + 1;
+                        Result.add("模板第" + (k-1) + "行的时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
+                        continue;
                     }
+                    if (value.size() > 3) {
+                        String date = value.get(3).toString();
+                        String date1 = value.get(3).toString();
+                        date = date.substring(5, 7);
+                        date1 = date1.substring(8, 10);
+                        if (Integer.parseInt(date1) > 31) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的日子，导入失败");
+                            continue;
+                        }
+                        if (Integer.parseInt(date) > 12) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的月份，导入失败");
+                            continue;
+                        }
+                    }
+                    if (value.size() > 6) {
+                        if (value.get(6).toString().length() > 50) {
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的工作备注长度超出范围，请输入长度为50位之内的工作备注，导入失败");
+                            continue;
+                        }
+                    }
+                    Query query = new Query();
+                    String jobnumber = value.get(0).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    logmanagement.preInsert(tokenModel);
+                    logmanagement.setCreateby(customerInfo.getUserid());
+                    PersonalProjects personalprojects = new PersonalProjects();
+                    List<PersonalProjects> personalprojectsList = personalprojectsMapper.select(personalprojects);
+                    for(PersonalProjects projects : personalprojectsList){
+                        if( projects.getProject_name().equals(value.get(2).toString())){
+                            logmanagement.setProject_id(projects.getProject_id());
+                        }
+                    }
+                    logmanagement.setJobnumber(value.get(0).toString());
+                    logmanagement.setLog_date(sf1.parse(value.get(3).toString()));
+                    logmanagement.setTime_start(sf.parse(Time_start));
+                    logmanagement.setTime_end(sf.parse(Time_end));
+                    logmanagement.setWork_memo(value.get(6).toString());
                 }
-                listVo.add(logmanagement);
+                logmanagement.setLogmanagement_id(UUID.randomUUID().toString());
+                logmanagementmapper.insert(logmanagement);
+                accesscount = accesscount + 1;
             }
-            return listVo;
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
-
     @SuppressWarnings("rawtypes")
     @Override
     public String downloadUserModel() throws LogicalException {

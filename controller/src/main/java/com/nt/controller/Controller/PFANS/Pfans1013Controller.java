@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Evection;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
+import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -24,6 +26,8 @@ public class Pfans1013Controller {
     private EvectionService evectionService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private BusinessService businessService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
@@ -61,4 +65,16 @@ public class Pfans1013Controller {
         return ApiResult.success();
     }
 
+    /*
+     * 出差申请ID号
+     * */
+
+    @RequestMapping(value="/getBusiness" ,method = {RequestMethod.POST})
+    public ApiResult getBusiness(@RequestBody Business business, HttpServletRequest request) throws Exception{
+        if(business==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(businessService.get(business));
+    }
 }

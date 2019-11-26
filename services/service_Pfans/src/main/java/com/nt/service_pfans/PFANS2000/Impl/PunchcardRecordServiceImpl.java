@@ -53,6 +53,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
+            model.add("工号");
             model.add("姓名");
             model.add("日期");
             model.add("首次打卡");
@@ -76,39 +77,40 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     }
                     SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String Time_start = value.get(2).toString();
-                    String Time_end = value.get(3).toString();
+                    String Time_start = value.get(3).toString();
+                    String Time_end = value.get(4).toString();
                     int result1 = Time_start.compareTo(Time_end);
                     if (result1 >= 0) {
                         error = error + 1;
-                        Result.add(" 第" + (k-1) + "行时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
+                        Result.add("模板第" + (k-1) + "行的时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
                         continue;
                     }
                     if (value.size() > 1) {
-                        String date = value.get(1).toString();
-                        String date1 = value.get(1).toString();
+                        String date = value.get(2).toString();
+                        String date1 = value.get(2).toString();
                         date = date.substring(5, 7);
                         date1 = date1.substring(8, 10);
                         if (Integer.parseInt(date1) > 31) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行日期格式错误，请输入正确的日子，导入失败");
+                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的日子，导入失败");
                             continue;
                         }
                         if (Integer.parseInt(date) > 12) {
                             error = error + 1;
-                            Result.add(" 第" + (k-1) + "行日期格式错误，请输入正确的月份，导入失败");
+                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的月份，导入失败");
                             continue;
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(0).toString();
-                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
+                    String jobnumber = value.get(0).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    punchcardrecord.setJobnumber(value.get(0).toString());
                     punchcardrecord.setUser_id(customerInfo.getUserid());
                     punchcardrecord.setCenterid(customerInfo.getUserinfo().getCentername());
-                    punchcardrecord.setGroupid(customerInfo.getUserinfo().getCentername());
-                    punchcardrecord.setTeamid(customerInfo.getUserinfo().getCentername());
-                    String Punchcardrecord_date = value.get(1).toString();
+                    punchcardrecord.setGroupid(customerInfo.getUserinfo().getGroupname());
+                    punchcardrecord.setTeamid(customerInfo.getUserinfo().getTeamname());
+                    String Punchcardrecord_date = value.get(2).toString();
                     punchcardrecord.setPunchcardrecord_date(sf1.parse(Punchcardrecord_date));
                     punchcardrecord.setTime_start(sf.parse(Time_start));
                     punchcardrecord.setTime_end(sf.parse(Time_end));

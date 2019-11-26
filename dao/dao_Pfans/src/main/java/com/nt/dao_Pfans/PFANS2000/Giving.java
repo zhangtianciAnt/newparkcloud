@@ -31,4 +31,7 @@ public class Giving extends BaseModel {
     @Column(name = "GENERATION")
     private String generation;
 
+    @Column(name = "MONTHS")
+    private String months;
+
 }

@@ -57,6 +57,12 @@ public class Evection extends BaseModel {
     private String telephone;
 
     /**
+     * 出差申请关联
+     */
+    @Column(name = "BUSINESS_ID")
+    private String business_id;
+
+    /**
      * 出差地点
      */
     @Column(name = "PLACE")
@@ -87,16 +93,28 @@ public class Evection extends BaseModel {
     private String budgetunit;
 
     /**
+     * 借款申请单号
+     */
+    @Column(name = "LOAN")
+    private String loan;
+
+    /**
      * 借款总额
      */
     @Column(name = "LOANAMOUNT")
     private String loanamount;
 
     /**
+     * 币种
+     */
+    @Column(name = "CURRENCY")
+    private String currency;
+
+    /**
      * 支出总额
      */
     @Column(name = "TOTALPAY")
-    private Date totalpay;
+    private String totalpay;
 
     /**
      * 结余
@@ -117,6 +135,24 @@ public class Evection extends BaseModel {
     private String foreigncurrency;
 
     /**
+     * 日元汇率
+     */
+    @Column(name = "JPYFXRATE")
+    private String jpyfxrate;
+
+    /**
+     * 美元汇率
+     */
+    @Column(name = "DOLLARFXRATE")
+    private String dollarfxrate;
+
+    /**
+     * 其他汇率
+     */
+    @Column(name = "OTHERFXRATE")
+    private String otherfxrate;
+
+    /**
      * 摘要
      */
     @Column(name = "REMARK")
@@ -126,7 +162,13 @@ public class Evection extends BaseModel {
      * 区分
      */
     @Column(name = "TYPE")
-    private Date type;
+    private String type;
+
+    /**
+     * 决裁号
+     */
+    @Column(name = "JUDGEMENT")
+    private String judgement;
 
 
 }

@@ -19,7 +19,7 @@ public class Softwaretransfer extends BaseModel {
 	private static final long serialVersionUID = 1L;
 
     /**
-	 * 固定資産
+	 * 固定資産·ソフトウェア移転届
 	 */
     @Id
     @Column(name = "SOFTWARETRANSFER_ID")
@@ -108,5 +108,6 @@ public class Softwaretransfer extends BaseModel {
      */
     @Column(name = "TUBEBUDGETUNIT")
     private String tubebudgetunit;
+
 
 }

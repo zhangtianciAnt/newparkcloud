@@ -44,6 +44,12 @@ public class Start {
 
     @Bean
     public MongoClientOptions mongoOptions() {
-        return MongoClientOptions.builder().maxConnectionIdleTime(6000).maxConnectionLifeTime(0).socketKeepAlive(true).socketTimeout(1500).build();
+        return MongoClientOptions.builder()
+                .maxConnectionIdleTime(60000)
+                .maxConnectionLifeTime(0)
+                .connectTimeout(10000)
+                .socketTimeout(60000)
+                .maxWaitTime(120000)
+                .build();
     }
 }
