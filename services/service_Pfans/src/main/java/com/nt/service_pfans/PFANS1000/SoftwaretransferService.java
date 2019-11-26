@@ -1,25 +1,21 @@
 package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
+import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
 import com.nt.utils.dao.TokenModel;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface SoftwaretransferService {
 
-    //查看
+    //新建
+    void insert(SoftwaretransferVo softwaretransferVo, TokenModel tokenModel) throws Exception;
+
+    //编辑
+    void updateSoftwaretransfer(SoftwaretransferVo softwaretransferVo, TokenModel tokenModel) throws Exception;
+
+    //按id查询
+    SoftwaretransferVo selectById(String softwaretransferid) throws Exception;
+
     List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception;
-
-    public Softwaretransfer One(String softwaretransferid) throws Exception;
-
-    //修改
-    public void updateSoftwaretransfer(Softwaretransfer softwaretransfer, TokenModel tokenModel) throws Exception;
-
-    //创建
-    public void insert(Softwaretransfer softwaretransfer, TokenModel tokenModel)throws Exception;
-
-    //计算金额
-    public List<Softwaretransfer> getSoftwaretransferList(Softwaretransfer softwaretransfer, HttpServletRequest request) throws Exception;
-
 }

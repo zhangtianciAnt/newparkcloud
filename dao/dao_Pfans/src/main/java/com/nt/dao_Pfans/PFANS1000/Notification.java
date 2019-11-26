@@ -29,7 +29,7 @@ public class Notification extends BaseModel {
      * 所属固定資産·ソフトウェア移転届
      */
     @Column(name = "SOFTWARETRANSFER_ID")
-    private String softwaretransfer_id;
+    private String softwaretransferid;
 
     /**
      * 資産管理番号
@@ -61,4 +61,9 @@ public class Notification extends BaseModel {
     @Column(name = "REASON")
     private String reason;
 
+    /**
+     * 排序
+     */
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 }

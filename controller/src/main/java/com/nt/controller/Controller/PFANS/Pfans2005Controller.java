@@ -3,8 +3,6 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
-import com.nt.service_pfans.PFANS2000.GivingListService;
-import com.nt.service_pfans.PFANS2000.ContrastService;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFourService;
 import com.nt.service_pfans.PFANS2000.OtherFiveService;
@@ -30,9 +28,6 @@ public class Pfans2005Controller {
     private GivingService givingService;
 
     @Autowired
-    private GivingListService givinglistService;
-
-    @Autowired
     private AppreciationService appreciationService;
 
     @Autowired
@@ -43,9 +38,6 @@ public class Pfans2005Controller {
 
     @Autowired
     private OtherFiveService otherfiveService;
-
-    @Autowired
-    private ContrastService contrastService;
 
     @Autowired
     private DutyfreeService dutyfreeService;
@@ -60,20 +52,10 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
-    /**
-     * 获取基数表列表
-     * FJL
-     * */
-    @RequestMapping(value = "/getListBase", method = {RequestMethod.GET})
-    public ApiResult getListtBase(HttpServletRequest request) throws Exception {
-        return ApiResult.success(givingService.getListtBase(null));
-    }
-
-
     @RequestMapping(value = "/givinglist", method = {RequestMethod.GET})
     public ApiResult get(String giving_id,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(givinglistService.List(giving_id));
+        return ApiResult.success(givingService.List(giving_id));
     }
 
 
@@ -118,14 +100,6 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
-
-    @RequestMapping(value = "/getListContrast", method = {RequestMethod.GET})
-    public ApiResult getList(HttpServletRequest request) throws Exception {
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        Contrast contrast =new Contrast();
-//        contrast.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(contrastService.getList(null));
-    }
 
     @RequestMapping(value = "/getListdutyfree", method = {RequestMethod.GET})
     public ApiResult getListdutyfree(HttpServletRequest request) throws Exception {

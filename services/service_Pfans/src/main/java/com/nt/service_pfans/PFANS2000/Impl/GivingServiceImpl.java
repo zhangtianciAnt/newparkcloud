@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -40,10 +43,57 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
+    @Autowired
+    private OtherFiveMapper otherfiveMapper;
+
+    @Autowired
+    private AppreciationMapper appreciationMapper;
+
+
     /**
      * 生成基数表
      * FJL
      */
+    @Override
+    public GivingVo List(String giving_id) throws Exception {
+        GivingVo givingVo = new GivingVo();
+        Giving giving = new Giving();
+        giving.setGiving_id(giving_id);
+        givingVo.setGiving(giving);
+
+        OtherTwo othertwo = new OtherTwo();
+        othertwo.setGiving_id(giving_id);
+        List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
+        othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherTwo(othertwolist);
+
+        Appreciation appreciation = new Appreciation();
+        appreciation.setGiving_id(giving_id);
+        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        givingVo.setAppreciation(appreciationlist);
+
+        OtherFive otherfive = new OtherFive();
+        otherfive.setGiving_id(giving_id);
+        List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
+        otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherFive(otherfivelist);
+
+        Base base = new Base();
+        base.setGiving_id(giving_id);
+        List<Base> baselist = baseMapper.select(base);
+        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        givingVo.setBase(baselist);
+//
+//        Contrast contrast = new Contrast();
+//        contrast.setGiving_id(giving_id);
+//        List<Contrast> contrastList = contrastMapper.select(contrast);
+//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+//        givingVo.setContrast(contrastList);
+
+        return givingVo;
+    }
+
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
@@ -59,19 +109,32 @@ public class GivingServiceImpl implements GivingService {
                 base.setUser_id(customer.getUserid());  //名字
 //                base.setOwner(customer.getUserid());
                 String departmentid = customer.getUserinfo().getDepartmentid().toString();
-                String name = departmentid.replace("[","").replace("]","");
-                base.setDepartment_id(name);  //部门[]
-//              base.setRn(customer.get);  //RN
+                String name = departmentid.replace("[", "").replace("]", "");
+                base.setDepartment_id(name);  //部门
+                base.setRn(customer.getUserinfo().getRank());  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
-//                base.setOnlychild(customer.getUserinfo().getChildren());  //独生子女
-                //入/退職/産休
-//                base.setBonus(customer);  //奨金計上
-                //1999年前社会人
-                if(customer.getUserinfo().getRegister() == "大連"){
-                    base.setRegistered("是"); //大連戸籍
+                if (customer.getUserinfo().getChildren() != null) {
+                    base.setOnlychild("是");  //独生子女
+                } else {
+                    base.setOnlychild("");  //独生子女
                 }
-                base.setRegistered("-"); //大連戸籍
-
+                //入/退職/産休
+                //奨金計上
+                base.setBonus(customer.getUserinfo().getDifference());
+                //1999年前社会人
+                SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
+                String strTemp = sf1.format(customer.getUserinfo().getWorkday());
+                if (Integer.parseInt(strTemp) > 1999) {
+                    base.setSociology("是");
+                } else {
+                    base.setSociology("-");
+                }
+                //大連戸籍
+                if (customer.getUserinfo().getRegister() == "大連") {
+                    base.setRegistered("是");
+                } else {
+                    base.setRegistered("-");
+                }
                 //2019年6月
                 //2019年7月
                 base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
@@ -79,8 +142,15 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-                base.setWorkdate(customer.getUserinfo().getEnterday());     //入社日
-
+                if (customer.getUserinfo().getRank() == "R9") {
+                    base.setHeating("229");
+                } else if (customer.getUserinfo().getRank() == "R8") {
+                    base.setHeating("172");
+                } else if (customer.getUserinfo().getRank() == "R7") {
+                    base.setHeating("139");
+                }
+                //入社日
+                base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
                 baseMapper.insertSelective(base);
             }
@@ -142,11 +212,11 @@ public class GivingServiceImpl implements GivingService {
             }
         }
     }
-
-    @Override
-    public List<Base> getListtBase(Base base) throws Exception {
-        return baseMapper.select(base);
-    }
+//
+//    @Override
+//    public List<Base> getListtBase(Base base) throws Exception {
+//        return baseMapper.select(base);
+//    }
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
