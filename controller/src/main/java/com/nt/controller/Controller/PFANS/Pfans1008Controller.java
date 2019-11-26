@@ -34,7 +34,7 @@ public class Pfans1008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Softwaretransfer softwaretransfer =new Softwaretransfer();
         softwaretransfer.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(softwaretransferService.get(softwaretransfer));
+        return ApiResult.success(softwaretransferService.getSoftwaretransfer(softwaretransfer));
     }
 
     /**
@@ -70,7 +70,7 @@ public class Pfans1008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        softwaretransferService.update(softwaretransferVo, tokenModel);
+        softwaretransferService.updateSoftwaretransfer(softwaretransferVo, tokenModel);
         return ApiResult.success();
 
     }
