@@ -1,5 +1,13 @@
 package com.nt.service_BASF.Impl;
-
+/**
+ * @ProjectName: BASF应急平台
+ * @Package: com.nt.service_BASF.Impl
+ * @ClassName: BASFImageServicesImpl
+ * @Author: LXY
+ * @Description: 首页超链接接口实现类
+ * @Date: 2019/11/22
+ * @Version: 1.0
+ */
 import com.nt.dao_BASF.BASFImage;
 import com.nt.service_BASF.BASFImageService;
 import com.nt.service_BASF.mapper.BASFImageMapper;

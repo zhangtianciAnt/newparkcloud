@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF
- * @ClassName: BASF10102Services
+ * @ClassName: BASFImageService
  * @Author: LXY
- * @Description: 人员通讯录模块接口
- * @Date: 2019/11/6 22.51
+ * @Description: 首页超链接模块接口
+ * @Date: 2019/11/22
  * @Version: 1.0
  */
 public interface BASFImageService {

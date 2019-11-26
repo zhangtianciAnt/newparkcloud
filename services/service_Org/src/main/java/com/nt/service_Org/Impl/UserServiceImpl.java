@@ -263,6 +263,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    @Override
+    public void del(String userId) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(userId));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        customerInfo.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        mongoTemplate.save(customerInfo);
+    }
+
     /**
      * @方法名：updUserStatus
      * @描述：更新用户状态

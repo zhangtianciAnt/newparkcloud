@@ -1,5 +1,13 @@
 package com.nt.service_BASF.Impl;
-
+/**
+ * @ProjectName: BASF应急平台
+ * @Package: com.nt.service_BASF.Impl
+ * @ClassName: BASFUserServiceImpl
+ * @Author: LXY
+ * @Description: 人员通讯录接口实现类
+ * @Date: 2019/11/06
+ * @Version: 1.0
+ */
 import com.nt.dao_BASF.BASFUser;
 import com.nt.service_BASF.BASFUserService;
 import com.nt.service_BASF.mapper.BASFUserMapper;

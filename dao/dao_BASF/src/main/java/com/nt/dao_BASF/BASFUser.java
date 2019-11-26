@@ -1,5 +1,13 @@
 package com.nt.dao_BASF;
-
+/**
+ * @ProjectName: BASF应急平台
+ * @Package: com.nt.dao_BASF
+ * @ClassName: user
+ * @Description: 人员通讯录数据表
+ * @Author: LXY
+ * @CreateDate: 2019/11/06
+ * @Version: 1.0
+ */
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,24 +46,18 @@ public class BASFUser extends BaseModel {
      * 证件号
      */
     private String documentnumber;
-
-    /**
-     * 用户组id
-     */
-    private String usergroupid;
-
     /**
      * 性别
      */
     private String sex;
 
     /**
-     * 岗位id
+     * 人员类别
      */
-    private String postid;
+    private String personneltype;
 
     /**
-     * 门禁id
+     * 承包商名称
      */
-    private String accessid;
+    private String contractorname;
 }

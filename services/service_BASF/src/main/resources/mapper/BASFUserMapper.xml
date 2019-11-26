@@ -10,10 +10,9 @@
     <result column="phonenumber" property="phonenumber" jdbcType="VARCHAR" />
     <result column="documenttype" property="documenttype" jdbcType="VARCHAR" />
     <result column="documentnumber" property="documentnumber" jdbcType="VARCHAR" />
-    <result column="usergroupid" property="usergroupid" jdbcType="VARCHAR" />
     <result column="sex" property="sex" jdbcType="VARCHAR" />
-    <result column="postid" property="postid" jdbcType="VARCHAR" />
-    <result column="accessid" property="accessid" jdbcType="VARCHAR" />
+    <result column="personneltype" property="postid" jdbcType="VARCHAR"/>
+    <result column="contractorname" property="accessid" jdbcType="VARCHAR"/>
     <result column="STATUS" property="status" jdbcType="VARCHAR" />
     <result column="CREATEON" property="createon" jdbcType="TIMESTAMP" />
     <result column="CREATEBY" property="createby" jdbcType="VARCHAR" />

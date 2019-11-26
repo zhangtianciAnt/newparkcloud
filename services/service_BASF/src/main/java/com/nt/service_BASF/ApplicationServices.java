@@ -1,5 +1,13 @@
 package com.nt.service_BASF;
-
+/**
+ * @ProjectName: BASF应急平台
+ * @Package: com.nt.service_BASF
+ * @ClassName: ApplicationServices
+ * @Author: LXY
+ * @Description: 消防设备申请模块接口
+ * @Date: 2019/11/13
+ * @Version: 1.0
+ */
 import com.nt.dao_BASF.Application;
 import com.nt.utils.dao.TokenModel;
 import com.nt.dao_BASF.VO.ApplicationVo;

@@ -33,8 +33,11 @@ public interface UserService {
     // 更新用户
     void upUserAccount(UserAccount userAccount) throws Exception;
 
+    // 删除用户
+    void del(String userId) throws Exception;
+
     // 用户登陆
-    TokenModel login(UserAccount userAccount,String locale) throws Exception;
+    TokenModel login(UserAccount userAccount, String locale) throws Exception;
 
     //获取客户信息
     List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception;

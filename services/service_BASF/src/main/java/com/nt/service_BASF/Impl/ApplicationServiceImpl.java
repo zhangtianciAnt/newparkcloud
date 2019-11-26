@@ -1,5 +1,13 @@
 package com.nt.service_BASF.Impl;
-
+/**
+ * @ProjectName: BASF应急平台
+ * @Package: com.nt.service_BASF.Impl
+ * @ClassName: ApplicationServiceImpl
+ * @Author: LXY
+ * @Description: 消防设备申请接口实现类
+ * @Date: 2019/11/15
+ * @Version: 1.0
+ */
 import com.nt.dao_BASF.Application;
 import com.nt.service_BASF.ApplicationServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;

@@ -1,5 +1,13 @@
 package com.nt.dao_BASF;
-
+/**
+ * @ProjectName: BASF应急平台
+ * @Package: com.nt.dao_BASF
+ * @ClassName: application
+ * @Description: 消防设备申请数据表
+ * @Author: LXY
+ * @CreateDate: 2019/11/04
+ * @Version: 1.0
+ */
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
