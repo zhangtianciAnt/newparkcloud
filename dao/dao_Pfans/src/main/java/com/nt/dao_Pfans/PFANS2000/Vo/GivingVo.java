@@ -23,4 +23,6 @@ public class GivingVo {
     private List<Base> base;
 
     private List<Contrast> contrast;
+
+    private List<DisciplinaryVo> DisciplinaryVo;
 }

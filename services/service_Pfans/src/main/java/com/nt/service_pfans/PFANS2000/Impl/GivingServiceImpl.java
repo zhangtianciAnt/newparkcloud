@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.DisciplinaryVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
@@ -49,6 +50,10 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private AppreciationMapper appreciationMapper;
 
+    @Autowired
+    private DisciplinaryMapper disciplinaryMapper;
+
+
 
     /**
      * 生成基数表
@@ -60,6 +65,9 @@ public class GivingServiceImpl implements GivingService {
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
         givingVo.setGiving(giving);
+
+        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
+        givingVo.setDisciplinaryVo(disciplinary);
 
         OtherTwo othertwo = new OtherTwo();
         othertwo.setGiving_id(giving_id);
