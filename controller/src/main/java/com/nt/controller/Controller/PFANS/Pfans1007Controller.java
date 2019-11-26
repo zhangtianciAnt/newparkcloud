@@ -53,13 +53,14 @@ public class Pfans1007Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    @RequestMapping(value = "insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody AssetinformationVo assetinformationVo, HttpServletRequest request) throws Exception {
         if (assetinformationVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        assetinformationService.insert(assetinformationVo,tokenModel);
+        assetinformationService.insert(assetinformationVo, tokenModel);
         return ApiResult.success();
     }
+
 }

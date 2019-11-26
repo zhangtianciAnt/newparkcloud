@@ -33,8 +33,8 @@ public class Salesdetails extends BaseModel {
     /**
      * 固定资产名称
      */
-    @Column(name = "FIXEDASSETNAME")
-    private String fixedassetname;
+    @Column(name = "FIXEDASSETNAM")
+    private String fixedassetnam;
 
     /**
      * megas编号

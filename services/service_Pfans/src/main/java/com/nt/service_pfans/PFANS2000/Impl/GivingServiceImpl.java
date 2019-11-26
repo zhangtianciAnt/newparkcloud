@@ -56,42 +56,42 @@ public class GivingServiceImpl implements GivingService {
      */
     @Override
     public GivingVo List(String giving_id) throws Exception {
-        GivingVo GivingVo = new GivingVo();
-        Giving Giving = new Giving();
-        Giving.setGiving_id(giving_id);
-        GivingVo.setGiving(Giving);
+        GivingVo givingVo = new GivingVo();
+        Giving giving = new Giving();
+        giving.setGiving_id(giving_id);
+        givingVo.setGiving(giving);
 
         OtherTwo othertwo = new OtherTwo();
         othertwo.setGiving_id(giving_id);
         List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
         othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
-        GivingVo.setOtherTwo(othertwolist);
+        givingVo.setOtherTwo(othertwolist);
 
         Appreciation appreciation = new Appreciation();
         appreciation.setGiving_id(giving_id);
         List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
         appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
-        GivingVo.setAppreciation(appreciationlist);
+        givingVo.setAppreciation(appreciationlist);
 
         OtherFive otherfive = new OtherFive();
         otherfive.setGiving_id(giving_id);
         List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
         otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
-        GivingVo.setOtherFive(otherfivelist);
+        givingVo.setOtherFive(otherfivelist);
 
         Base base = new Base();
         base.setGiving_id(giving_id);
         List<Base> baselist = baseMapper.select(base);
         baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
-        GivingVo.setBase(baselist);
+        givingVo.setBase(baselist);
 //
 //        Contrast contrast = new Contrast();
 //        contrast.setGiving_id(giving_id);
 //        List<Contrast> contrastList = contrastMapper.select(contrast);
 //        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
-//        GivingVo.setContrast(contrastList);
+//        givingVo.setContrast(contrastList);
 
-        return GivingVo;
+        return givingVo;
     }
 
     @Override
@@ -110,18 +110,31 @@ public class GivingServiceImpl implements GivingService {
 //                base.setOwner(customer.getUserid());
                 String departmentid = customer.getUserinfo().getDepartmentid().toString();
                 String name = departmentid.replace("[", "").replace("]", "");
-                base.setDepartment_id(name);  //部门[]
-//              base.setRn(customer.get);  //RN
+                base.setDepartment_id(name);  //部门
+                base.setRn(customer.getUserinfo().getRank());  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
-//                base.setOnlychild(customer.getUserinfo().getChildren());  //独生子女
-                //入/退職/産休
-//                base.setBonus(customer);  //奨金計上
-                //1999年前社会人
-                if (customer.getUserinfo().getRegister() == "大連") {
-                    base.setRegistered("是"); //大連戸籍
+                if (customer.getUserinfo().getChildren() != null) {
+                    base.setOnlychild("是");  //独生子女
+                } else {
+                    base.setOnlychild("");  //独生子女
                 }
-                base.setRegistered("-"); //大連戸籍
-
+                //入/退職/産休
+                //奨金計上
+                base.setBonus(customer.getUserinfo().getDifference());
+                //1999年前社会人
+                SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
+                String strTemp = sf1.format(customer.getUserinfo().getWorkday());
+                if (Integer.parseInt(strTemp) > 1999) {
+                    base.setSociology("是");
+                } else {
+                    base.setSociology("-");
+                }
+                //大連戸籍
+                if (customer.getUserinfo().getRegister() == "大連") {
+                    base.setRegistered("是");
+                } else {
+                    base.setRegistered("-");
+                }
                 //2019年6月
                 //2019年7月
                 base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
@@ -129,8 +142,15 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-                base.setWorkdate(customer.getUserinfo().getEnterday());     //入社日
-
+                if (customer.getUserinfo().getRank() == "R9") {
+                    base.setHeating("229");
+                } else if (customer.getUserinfo().getRank() == "R8") {
+                    base.setHeating("172");
+                } else if (customer.getUserinfo().getRank() == "R7") {
+                    base.setHeating("139");
+                }
+                //入社日
+                base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
                 baseMapper.insertSelective(base);
             }
