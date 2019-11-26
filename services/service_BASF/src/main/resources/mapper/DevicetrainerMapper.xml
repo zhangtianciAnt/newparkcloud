@@ -12,7 +12,7 @@
         <result column="deviceprincipal" property="deviceprincipal" jdbcType="VARCHAR"/>
         <result column="participateno" property="participateno" jdbcType="INTEGER"/>
         <result column="traincourse" property="traincourse" jdbcType="VARCHAR"/>
-        <result column="traintim" property="traintim" jdbcType="TIMESTAMP"/>
+        <result column="traintim" property="traintim" jdbcType="VARCHAR"/>
         <result column="traintype" property="traintype" jdbcType="VARCHAR"/>
         <result column="trainpeo" property="trainpeo" jdbcType="VARCHAR"/>
 

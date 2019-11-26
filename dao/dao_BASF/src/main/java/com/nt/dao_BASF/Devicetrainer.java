@@ -62,7 +62,7 @@ public class Devicetrainer extends BaseModel {
     /*
      * 培训时间
      */
-    private Date traintim;
+    private String traintim;
 
 
     /*
