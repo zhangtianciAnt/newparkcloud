@@ -21,8 +21,6 @@ public interface GivingService {
 
     List<Giving> getDataList(Giving giving) throws Exception;
 
-    public List<AccumulatedTaxVo> getaccumulatedTax(TokenModel tokenModel) throws Exception;
-
 }
 
 
