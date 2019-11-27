@@ -50,7 +50,7 @@ public class Business extends BaseModel {
     /**
      * 申请日期
      */
-    @Column(name = "APPLICATIONDATE")
+    @Column(name = "APPLICATION_DATE")
     private Date applicationdate;
 
     /**
