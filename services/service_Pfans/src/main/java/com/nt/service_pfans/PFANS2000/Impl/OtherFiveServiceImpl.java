@@ -186,7 +186,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     otherfive.setRemarks(value.get(12).toString());
                 }
                 otherfive.setOtherfive_id(UUID.randomUUID().toString());
-                int rowundex = i;
+                int rowundex = accesscount+ 1;
                 otherfive.setRowindex(rowundex);
                 otherfive.preInsert(tokenModel);
                 otherfiveMapper.insert(otherfive);
