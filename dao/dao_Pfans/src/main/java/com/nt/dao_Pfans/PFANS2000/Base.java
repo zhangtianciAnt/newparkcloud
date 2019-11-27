@@ -131,4 +131,10 @@ public class Base extends BaseModel {
      */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
+
+    /**
+     * 工号
+     */
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
 }

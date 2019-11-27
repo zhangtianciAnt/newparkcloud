@@ -108,7 +108,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     othertwo.setMoneys(value.get(3).toString());
                     othertwo.setRootknot(value.get(4).toString());
                 }
-                int rowundex = i;
+                int rowundex = accesscount+ 1;
                 othertwo.setRowindex(rowundex);
                 othertwo.setType("1");
                 othertwo.preInsert(tokenModel);
