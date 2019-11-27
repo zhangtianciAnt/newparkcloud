@@ -113,6 +113,7 @@ public class UserServiceImpl implements UserService {
                 tokenModel.setUserId(userAccountlist.get(0).get_id());
                 tokenModel.setUserType(userAccountlist.get(0).getUsertype());
                 tokenModel.setTenantId(userAccountlist.get(0).getTenantid());
+                tokenModel.setLocale(locale);
                 tokenService.setToken(tokenModel);
             }
         }

@@ -2,6 +2,9 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.DisciplinaryVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.DutyfreeVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
@@ -31,11 +34,13 @@ public class GivingServiceImpl implements GivingService {
     private BaseMapper baseMapper;
 
     @Autowired
+    private DutyfreeMapper dutyfreeMapper;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
     private ContrastMapper contrastMapper;
-
 
     @Autowired
     private CasgiftApplyMapper casgiftapplyMapper;
@@ -49,6 +54,12 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private AppreciationMapper appreciationMapper;
 
+    @Autowired
+    private AccumulatedTaxMapper accumulatedTaxMapper;
+
+    @Autowired
+    private DisciplinaryMapper disciplinaryMapper;
+
 
     /**
      * 生成基数表
@@ -60,6 +71,9 @@ public class GivingServiceImpl implements GivingService {
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
         givingVo.setGiving(giving);
+
+        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
+        givingVo.setDisciplinaryVo(disciplinary);
 
         OtherTwo othertwo = new OtherTwo();
         othertwo.setGiving_id(giving_id);
@@ -84,12 +98,18 @@ public class GivingServiceImpl implements GivingService {
         List<Base> baselist = baseMapper.select(base);
         baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
-//
-//        Contrast contrast = new Contrast();
-//        contrast.setGiving_id(giving_id);
-//        List<Contrast> contrastList = contrastMapper.select(contrast);
-//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
-//        givingVo.setContrast(contrastList);
+
+        Contrast contrast = new Contrast();
+        contrast.setGiving_id(giving_id);
+        List<Contrast> contrastList = contrastMapper.select(contrast);
+        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        givingVo.setContrast(contrastList);
+
+        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
+        givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
+
+        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
+        givingVo.setDutyfreeVo(dutyfreeVolist);
 
         return givingVo;
     }
@@ -111,29 +131,31 @@ public class GivingServiceImpl implements GivingService {
                 String departmentid = customer.getUserinfo().getDepartmentid().toString();
                 String name = departmentid.replace("[", "").replace("]", "");
                 base.setDepartment_id(name);  //部门
+                base.setJobnumber(customer.getUserinfo().getJobnumber());  //工号
                 base.setRn(customer.getUserinfo().getRank());  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
                 if (customer.getUserinfo().getChildren() != null) {
-                    base.setOnlychild("是");  //独生子女
+                    base.setOnlychild("1");  //独生子女
                 } else {
-                    base.setOnlychild("");  //独生子女
+                    base.setOnlychild("2");  //独生子女
                 }
                 //入/退職/産休
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
                 //1999年前社会人
-                SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
-                String strTemp = sf1.format(customer.getUserinfo().getWorkday());
-                if (Integer.parseInt(strTemp) > 1999) {
-                    base.setSociology("是");
-                } else {
-                    base.setSociology("-");
-                }
+//                if(customer.getUserinfo().getWorkday() != null){
+//                    String strWorkday = customer.getUserinfo().getWorkday().substring(0,4);
+//                    if (Integer.parseInt(strWorkday) > 1999) {
+//                        base.setSociology("1");
+//                    } else {
+//                        base.setSociology("2");
+//                    }
+//                }
                 //大連戸籍
-                if (customer.getUserinfo().getRegister() == "大連") {
-                    base.setRegistered("是");
+                if (customer.getUserinfo().getRegister() == "大连") {
+                    base.setRegistered("1");
                 } else {
-                    base.setRegistered("-");
+                    base.setRegistered("2");
                 }
                 //2019年6月
                 //2019年7月
@@ -142,13 +164,17 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-                if (customer.getUserinfo().getRank() == "R9") {
-                    base.setHeating("229");
-                } else if (customer.getUserinfo().getRank() == "R8") {
-                    base.setHeating("172");
-                } else if (customer.getUserinfo().getRank() == "R7") {
-                    base.setHeating("139");
-                }
+//                if (customer.getUserinfo().getRank() != null) {
+//                    String strRank = customer.getUserinfo().getRank().substring(2);
+//                    int rank = Integer.parseInt(strRank);
+//                    if (rank >= 21009) {
+//                        base.setHeating("229");
+//                    } else if (customer.getUserinfo().getRank() == "PR021008") {
+//                        base.setHeating("172");
+//                    } else if (rank <= 21007) {
+//                        base.setHeating("139");
+//                    }
+//                }
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
@@ -198,7 +224,9 @@ public class GivingServiceImpl implements GivingService {
         base.setGiving_id(givingid);
         List<Base> baselist = baseMapper.select(base);
         if (baselist != null) {
+            int rowindex = 0;
             for (Base base1 : baselist) {
+                rowindex = rowindex + 1;
                 Contrast contrast = new Contrast();
                 String consrastid = UUID.randomUUID().toString();
                 contrast.preInsert(tokenModel);
@@ -206,17 +234,13 @@ public class GivingServiceImpl implements GivingService {
                 contrast.setContrast_id(consrastid);
                 contrast.setUser_id(base1.getUser_id());
                 contrast.setOwner(base1.getUser_id());
+                contrast.setRowindex(rowindex);
                 contrast.setDepartment_id(base1.getDepartment_id());
 
                 contrastMapper.insertSelective(contrast);
             }
         }
     }
-//
-//    @Override
-//    public List<Base> getListtBase(Base base) throws Exception {
-//        return baseMapper.select(base);
-//    }
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {

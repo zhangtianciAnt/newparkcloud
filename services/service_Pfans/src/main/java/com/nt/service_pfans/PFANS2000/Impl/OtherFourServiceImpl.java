@@ -108,7 +108,7 @@ public class OtherFourServiceImpl implements OtherFourService {
                     otherFour.setTotal(value.get(5).toString());
                     otherFour.setRemarks(value.get(6).toString());
                 }
-                int rowundex = i;
+                int rowundex = accesscount+ 1;
                 otherFour.setRowindex(rowundex);
                 otherFour.preInsert(tokenModel);
                 otherFour.setOtherfour_id(UUID.randomUUID().toString());
