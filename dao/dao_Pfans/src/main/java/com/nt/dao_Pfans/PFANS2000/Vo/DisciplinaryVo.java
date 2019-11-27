@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccumulatedTaxVo {
+public class DisciplinaryVo {
     /**
      * 基数表
      */
     private String user_id;
-
+    /**
+     * 工资表
+     */
     private String january;
     private String february;
     private String march;
@@ -25,12 +27,9 @@ public class AccumulatedTaxVo {
     private String october;
     private String november;
     private String december;
-    private String sumThis;
-    /**
-     * 当月応発工資（工资总额(纳税+免税)+只納税）
-     */
-    private String shouldwages;
+    private String total;
 
-    private Integer rowindex;
+
+
 
 }

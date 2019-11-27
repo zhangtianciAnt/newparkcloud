@@ -2,6 +2,8 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.DisciplinaryVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
@@ -49,6 +51,13 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private AppreciationMapper appreciationMapper;
 
+    @Autowired
+    private AccumulatedTaxMapper accumulatedTaxMapper;
+
+    @Autowired
+    private DisciplinaryMapper disciplinaryMapper;
+
+
 
     /**
      * 生成基数表
@@ -60,6 +69,9 @@ public class GivingServiceImpl implements GivingService {
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
         givingVo.setGiving(giving);
+
+        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
+        givingVo.setDisciplinaryVo(disciplinary);
 
         OtherTwo othertwo = new OtherTwo();
         othertwo.setGiving_id(giving_id);
@@ -84,12 +96,17 @@ public class GivingServiceImpl implements GivingService {
         List<Base> baselist = baseMapper.select(base);
         baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
-//
-//        Contrast contrast = new Contrast();
-//        contrast.setGiving_id(giving_id);
-//        List<Contrast> contrastList = contrastMapper.select(contrast);
-//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
-//        givingVo.setContrast(contrastList);
+
+        Contrast contrast = new Contrast();
+        contrast.setGiving_id(giving_id);
+        List<Contrast> contrastList = contrastMapper.select(contrast);
+        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        givingVo.setContrast(contrastList);
+
+        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
+        givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
+
+
 
         return givingVo;
     }
@@ -122,13 +139,13 @@ public class GivingServiceImpl implements GivingService {
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
                 //1999年前社会人
-                SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
-                String strTemp = sf1.format(customer.getUserinfo().getWorkday());
-                if (Integer.parseInt(strTemp) > 1999) {
-                    base.setSociology("是");
-                } else {
-                    base.setSociology("-");
-                }
+//                SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
+//                String strTemp = sf1.format(customer.getUserinfo().getWorkday());
+//                if (Integer.parseInt(strTemp) > 1999) {
+//                    base.setSociology("是");
+//                } else {
+//                    base.setSociology("-");
+//                }
                 //大連戸籍
                 if (customer.getUserinfo().getRegister() == "大連") {
                     base.setRegistered("是");
@@ -198,7 +215,9 @@ public class GivingServiceImpl implements GivingService {
         base.setGiving_id(givingid);
         List<Base> baselist = baseMapper.select(base);
         if (baselist != null) {
+            int rowindex = 0;
             for (Base base1 : baselist) {
+                rowindex = rowindex + 1;
                 Contrast contrast = new Contrast();
                 String consrastid = UUID.randomUUID().toString();
                 contrast.preInsert(tokenModel);
@@ -206,17 +225,13 @@ public class GivingServiceImpl implements GivingService {
                 contrast.setContrast_id(consrastid);
                 contrast.setUser_id(base1.getUser_id());
                 contrast.setOwner(base1.getUser_id());
+                contrast.setRowindex(rowindex);
                 contrast.setDepartment_id(base1.getDepartment_id());
 
                 contrastMapper.insertSelective(contrast);
             }
         }
     }
-//
-//    @Override
-//    public List<Base> getListtBase(Base base) throws Exception {
-//        return baseMapper.select(base);
-//    }
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
