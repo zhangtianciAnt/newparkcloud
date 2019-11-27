@@ -1,7 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.*;
-import com.nt.service_pfans.PFANS2000.DutyfreeService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFourService;
@@ -39,8 +38,6 @@ public class Pfans2005Controller {
     @Autowired
     private OtherFiveService otherfiveService;
 
-    @Autowired
-    private DutyfreeService dutyfreeService;
 
     @RequestMapping(value = "/creategiving", method = {RequestMethod.GET})
     public ApiResult creategiving(String generation, HttpServletRequest request) throws Exception {
@@ -100,12 +97,6 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
-
-    @RequestMapping(value = "/getListdutyfree", method = {RequestMethod.GET})
-    public ApiResult getListdutyfree(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(dutyfreeService.getdutyfree(tokenModel));
-    }
 
     @RequestMapping(value = "/importUserothertwo",method={RequestMethod.POST})
     public ApiResult importUserothertwo( String givingid,HttpServletRequest request){
