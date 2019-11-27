@@ -86,6 +86,15 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/deleteotherfour", method = {RequestMethod.POST})
+    public ApiResult deleteotherfour(@RequestBody OtherFour otherFour, HttpServletRequest request) throws Exception {
+        if (otherFour == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        otherfourService.deleteotherfour(otherFour, tokenModel);
+        return ApiResult.success();
+    }
 
     @RequestMapping(value = "/deleteteappreciation", method = {RequestMethod.POST})
     public ApiResult deleteteappreciation(@RequestBody Appreciation appreciation, HttpServletRequest request) throws Exception {
