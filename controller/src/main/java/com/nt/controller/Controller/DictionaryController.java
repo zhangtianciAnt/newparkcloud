@@ -35,6 +35,15 @@ public class DictionaryController {
         return ApiResult.success(dictionaryService.getForSelect(code));
     }
 
+    @RequestMapping(value = "/getForvalue2",method={RequestMethod.GET})
+    public ApiResult getForvalue2(String value2, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(value2)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        return ApiResult.success(dictionaryService.getForvalue2(value2));
+    }
+
     @RequestMapping(value = "/all",method={RequestMethod.GET})
     public ApiResult all(HttpServletRequest request) throws Exception {
         return ApiResult.success(dictionaryService.getForSelect(""));

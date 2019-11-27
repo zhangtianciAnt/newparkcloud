@@ -46,8 +46,8 @@ public class Softwaretransfer extends BaseModel {
     /**
      * 起案者
      */
-    @Column(name = "INITIATOR")
-    private String initiator;
+    @Column(name = "USER_ID")
+    private String user_id;
 
     /**
      * 内線番号

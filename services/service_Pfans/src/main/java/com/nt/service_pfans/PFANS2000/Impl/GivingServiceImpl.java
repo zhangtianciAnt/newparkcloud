@@ -4,6 +4,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.DisciplinaryVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.DutyfreeVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
@@ -33,11 +34,13 @@ public class GivingServiceImpl implements GivingService {
     private BaseMapper baseMapper;
 
     @Autowired
+    private DutyfreeMapper dutyfreeMapper;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
     private ContrastMapper contrastMapper;
-
 
     @Autowired
     private CasgiftApplyMapper casgiftapplyMapper;
@@ -105,6 +108,8 @@ public class GivingServiceImpl implements GivingService {
         List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
         givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
 
+        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
+        givingVo.setDutyfreeVo(dutyfreeVolist);
 
         return givingVo;
     }
