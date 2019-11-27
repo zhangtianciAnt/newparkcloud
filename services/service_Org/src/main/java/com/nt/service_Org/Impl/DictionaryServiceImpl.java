@@ -29,6 +29,16 @@ public class DictionaryServiceImpl implements DictionaryService {
         }
         return dictionaryMapper.select(dictionary);
     }
+
+    @Override
+    public List<Dictionary> getForvalue2(String value2) throws Exception {
+        Dictionary dictionary = new Dictionary();
+        if(StrUtil.isNotBlank(value2)){
+            dictionary.setValue2(value2);
+        }
+        return dictionaryMapper.select(dictionary);
+    }
+
     @Override
     public void updateDictionary(Dictionary dictionary, TokenModel tokenModel) throws Exception {
         if(!StringUtils.isEmpty(dictionary)){
