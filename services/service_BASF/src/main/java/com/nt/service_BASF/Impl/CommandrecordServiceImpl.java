@@ -22,7 +22,7 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
 
     /**
      * @方法名：save
-     * @描述：接警指挥信息保存
+     * @描述：消防接警信息保存
      * @创建日期：2019/11/13
      * @作者：SUNXU
      * @参数：[information, request]
@@ -48,7 +48,7 @@ public class CommandrecordServiceImpl implements CommandrecordServices {
 
     /**
      * @方法名：get
-     * @描述：获取接警指挥信息
+     * @描述：获取消防接警信息
      * @创建日期：2019/11/13
      * @作者：SUNXU
      * @参数：[information, request]

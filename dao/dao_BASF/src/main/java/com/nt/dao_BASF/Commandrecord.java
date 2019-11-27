@@ -183,6 +183,8 @@ public class Commandrecord extends BaseModel {
         private String publisher;
         //指令
         private String mark;
+        //修改后的指示
+        private String mark2;
     }
 
     //应急处置
@@ -192,6 +194,8 @@ public class Commandrecord extends BaseModel {
         private String time;
         //处置措施
         private String mark;
+        //修改后的措施
+        private String mark2;
     }
 
     //医疗

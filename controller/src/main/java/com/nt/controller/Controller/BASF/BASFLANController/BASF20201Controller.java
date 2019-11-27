@@ -29,7 +29,7 @@ import java.util.List;
  * @Package: com.nt.controller.Controller.BASF.BASFLANController
  * @ClassName: BASF20201Controller
  * @Author: SUN
- * @Description: BASFERC接警页面Controller
+ * @Description: BASFERC消防接警页面Controller
  * @Date: 2019/11/11 17:22
  * @Version: 1.0
  */
