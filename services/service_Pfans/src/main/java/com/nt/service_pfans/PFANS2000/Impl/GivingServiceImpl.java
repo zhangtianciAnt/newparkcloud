@@ -2,12 +2,10 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
-import com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo;
-import com.nt.dao_Pfans.PFANS2000.Vo.DisciplinaryVo;
-import com.nt.dao_Pfans.PFANS2000.Vo.DutyfreeVo;
-import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.*;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -35,6 +33,9 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private DutyfreeMapper dutyfreeMapper;
+
+    @Autowired
+    private ComprehensiveMapper comprehensiveMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -131,6 +132,9 @@ public class GivingServiceImpl implements GivingService {
 
         List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
         givingVo.setDutyfreeVo(dutyfreeVolist);
+
+        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
+        givingVo.setComprehensiveVo(comprehensiveVolist);
 
         return givingVo;
     }

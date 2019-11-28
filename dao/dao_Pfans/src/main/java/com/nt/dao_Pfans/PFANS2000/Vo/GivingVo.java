@@ -33,4 +33,6 @@ public class GivingVo {
     private List<DisciplinaryVo> DisciplinaryVo;
 
     private List<DutyfreeVo> dutyfreeVo;
+
+    private List<ComprehensiveVo> comprehensiveVo;
 }
