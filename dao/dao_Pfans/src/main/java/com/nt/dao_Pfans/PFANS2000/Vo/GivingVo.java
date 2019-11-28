@@ -14,6 +14,8 @@ public class GivingVo {
 
     private Giving giving;
 
+    private List<OtherOne> otherOne;
+
     private List<OtherTwo> otherTwo;
 
     private List<OtherFive> otherFive;

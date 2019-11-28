@@ -13,6 +13,8 @@ public interface GivingService {
 
     void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
 
+    void insertOtherOne(String  givingid,TokenModel tokenModel)throws Exception;
+
     void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
 
     void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
