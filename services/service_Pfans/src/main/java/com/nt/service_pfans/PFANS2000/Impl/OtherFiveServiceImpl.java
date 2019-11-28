@@ -171,7 +171,9 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     String jobnumber = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    otherfive.setUser_id(customerInfo.getUserid());
+                    if (customerInfo != null) {
+                        otherfive.setUser_id(customerInfo.getUserid());
+                    }
                     otherfive.setGiving_id(Givingid);
                     otherfive.setDepartment_id(value.get(1).toString());
                     otherfive.setJobnumber(value.get(2).toString());

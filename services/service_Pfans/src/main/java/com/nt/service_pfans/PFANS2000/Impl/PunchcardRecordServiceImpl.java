@@ -105,8 +105,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     String jobnumber = value.get(0).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        punchcardrecord.setUser_id(customerInfo.getUserid());
+                    }
                     punchcardrecord.setJobnumber(value.get(0).toString());
-                    punchcardrecord.setUser_id(customerInfo.getUserid());
                     punchcardrecord.setCenterid(customerInfo.getUserinfo().getCentername());
                     punchcardrecord.setGroupid(customerInfo.getUserinfo().getGroupname());
                     punchcardrecord.setTeamid(customerInfo.getUserinfo().getTeamname());

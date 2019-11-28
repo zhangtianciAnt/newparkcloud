@@ -100,9 +100,11 @@ public class OtherFourServiceImpl implements OtherFourService {
                     String jobnumber = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        otherFour.setUser_id(customerInfo.getUserid());
+                    }
                     otherFour.setGiving_id(Givingid);
                     otherFour.setJobnumber(value.get(2).toString());
-                    otherFour.setUser_id(customerInfo.getUserid());
                     otherFour.setDepartment_id(value.get(1).toString());
                     otherFour.setSocialsecurity(value.get(4).toString());
                     otherFour.setTotal(value.get(5).toString());

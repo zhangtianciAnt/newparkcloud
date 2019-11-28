@@ -99,8 +99,10 @@ public class AppreciationServiceImpl implements AppreciationService {
                     String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        appreciation.setUser_id(customerInfo.getUserid());
+                    }
                     appreciation.setJobnumber(value.get(1).toString());
-                    appreciation.setUser_id(customerInfo.getUserid());
                     appreciation.setGiving_id(Givingid);
                     appreciation.setCommentary(value.get(3).toString());
                     appreciation.setAmount(value.get(4).toString());

@@ -148,8 +148,10 @@ public class LogManagementServiceImpl implements LogManagementService {
                     String jobnumber = value.get(0).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        logmanagement.setCreateby(customerInfo.getUserid());
+                    }
                     logmanagement.preInsert(tokenModel);
-                    logmanagement.setCreateby(customerInfo.getUserid());
                     PersonalProjects personalprojects = new PersonalProjects();
                     List<PersonalProjects> personalprojectsList = personalprojectsMapper.select(personalprojects);
                     for(PersonalProjects projects : personalprojectsList){

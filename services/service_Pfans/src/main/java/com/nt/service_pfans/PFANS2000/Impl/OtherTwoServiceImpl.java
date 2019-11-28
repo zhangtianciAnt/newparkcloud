@@ -101,9 +101,12 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        othertwo.setUser_id(customerInfo.getUserid());
+                    }
                     othertwo.setJobnumber(value.get(1).toString());
                     othertwo.setGiving_id(Givingid);
-                    othertwo.setUser_id(customerInfo.getUserid());
+
                     othertwo.setMoneys(value.get(3).toString());
                     othertwo.setRootknot(value.get(4).toString());
                 }
