@@ -21,6 +21,11 @@ public class DevicetrainerVo extends BaseModel {
     private String programid;
 
     /**
+     * 用户组主键
+     */
+    private String usergroupid;
+
+    /**
      * 参与培训项目名称
      */
     private String proname;

@@ -78,6 +78,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
             vo.setCreatepeople(dev.getCreateby());           //培训人员的装置培训负责人
             vo.setDevicetrainerid(dev.getDevicetrainerid()); //培训人员主键
             vo.setProgramid(dev.getProgramid());             //培训人员的培训项目主键
+            vo.setUsergroupid(dev.getUsergroupid());          //用户组主键
 
             int count = 0;
 
@@ -158,7 +159,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
     @Override
     public void update(Devicetrainer devicetrainer, TokenModel tokenModel) throws Exception {
         devicetrainer.preUpdate(tokenModel);
-        devicetrainerMapper.updateByPrimaryKey(devicetrainer);
+        devicetrainerMapper.updateByPrimaryKeySelective(devicetrainer);
     }
 
 }

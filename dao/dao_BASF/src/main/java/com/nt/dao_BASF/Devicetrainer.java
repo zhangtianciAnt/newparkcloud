@@ -39,4 +39,6 @@ public class Devicetrainer extends BaseModel {
     private String createby;
 
 
+
+
 }
