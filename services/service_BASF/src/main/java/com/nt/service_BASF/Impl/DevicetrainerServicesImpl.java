@@ -70,7 +70,6 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
             //获取培训项目
             Program program = programMapper.selectByPrimaryKey(programid);
 
-
             vo.setProname(program.getProgramname());          //培训项目名称
             vo.setTraincourse(program.getProgramclass());     //培训项目的培训类别
             vo.setTraintim(program.getProgramtime());         //培训项目的培训时间
@@ -84,21 +83,16 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
 
             String userid = dev.getUsergroupid();
             if (userid != null) {
-
                 String[] al = userid.split(",");
                 for (int i = 0; i < al.length; i++) {
                     Usergroupdetailed usergroupdetailed = new Usergroupdetailed();
                     usergroupdetailed.setUsergroupid(al[i]);
                     count += usergroupdetailedMapper.selectCount(usergroupdetailed);
                 }
-
                 vo.setParticipateno(count);
             }
-
-
             listVo.add(vo);
         }
-
         return listVo;
     }
 

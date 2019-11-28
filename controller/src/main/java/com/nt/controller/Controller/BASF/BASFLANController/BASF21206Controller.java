@@ -50,9 +50,8 @@ public class BASF21206Controller {
 
     /**
      * @param devicetrainer
-     * @param requestlist
      * @Method create
-     * @Author Wxz
+     * @Author WxL
      * @Version 1.0
      * @Description 创建培训人员
      * @Return com.nt.utils.ApiResult
