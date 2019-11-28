@@ -1,8 +1,13 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Devicetrainer;
+import com.nt.dao_BASF.Program;
+import com.nt.dao_BASF.Usergroupdetailed;
+import com.nt.dao_BASF.VO.DevicetrainerVo;
 import com.nt.service_BASF.DevicetrainerServices;
 import com.nt.service_BASF.mapper.DevicetrainerMapper;
+import com.nt.service_BASF.mapper.ProgramMapper;
+import com.nt.service_BASF.mapper.UsergroupdetailedMapper;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,10 +37,14 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
 
     @Autowired
     private DevicetrainerMapper devicetrainerMapper;
+    @Autowired
+    private ProgramMapper programMapper;
+    @Autowired
+    private UsergroupdetailedMapper usergroupdetailedMapper;
 
 
     /**
-     * @param Devicetrainer
+     * @param
      * @Method list
      * @Author WXL
      * @Version 1.0
@@ -46,6 +56,49 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
     public List<Devicetrainer> list() throws Exception {
         Devicetrainer devicetrainer = new Devicetrainer();
         return devicetrainerMapper.select(devicetrainer);
+    }
+
+    @Override
+    public List<DevicetrainerVo> listVo() throws Exception {
+        Devicetrainer devicetrainer = new Devicetrainer();
+        //获取培训人员信息
+        List<Devicetrainer> list1 = devicetrainerMapper.select(devicetrainer);
+        List<DevicetrainerVo> listVo = new ArrayList<>();
+        for (Devicetrainer dev : list1) {
+            DevicetrainerVo vo = new DevicetrainerVo();
+            String programid = dev.getProgramid();
+            //获取培训项目
+            Program program = programMapper.selectByPrimaryKey(programid);
+
+
+            vo.setProname(program.getProgramname());          //培训项目名称
+            vo.setTraincourse(program.getProgramclass());     //培训项目的培训类别
+            vo.setTraintim(program.getProgramtime());         //培训项目的培训时间
+            vo.setTraintype(program.getProgramtype());        //培训项目的培训类别
+            vo.setDevicename(dev.getDevicename());            //培训人员的设备名称
+            vo.setCreatepeople(dev.getCreateby());           //培训人员的装置培训负责人
+            vo.setDevicetrainerid(dev.getDevicetrainerid()); //培训人员主键
+            vo.setProgramid(dev.getProgramid());             //培训人员的培训项目主键
+
+            int count = 0;
+
+            String userid = dev.getUsergroupid();
+            if (userid != null) {
+                String[] al = userid.split(",");
+                for (int i = 0; i < al.length; i++) {
+                    Usergroupdetailed usergroupdetailed = new Usergroupdetailed();
+                    usergroupdetailed.setUsergroupid(al[i]);
+                    count += usergroupdetailedMapper.selectCount(usergroupdetailed);
+                }
+
+                vo.setParticipateno(count);
+            }
+
+
+            listVo.add(vo);
+        }
+
+        return listVo;
     }
 
 

@@ -34,7 +34,7 @@ public class Devicetrainer extends BaseModel {
     private String devicename;
 
     /**
-     *
+     *培训装置负责人
      */
     private String createby;
 

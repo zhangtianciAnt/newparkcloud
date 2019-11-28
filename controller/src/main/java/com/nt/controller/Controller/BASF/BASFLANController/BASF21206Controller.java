@@ -45,12 +45,12 @@ public class BASF21206Controller {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(devicetrainerServices.list());
+        return ApiResult.success(devicetrainerServices.listVo());
     }
 
     /**
      * @param devicetrainer
-     * @param request
+     * @param requestlist
      * @Method create
      * @Author Wxz
      * @Version 1.0

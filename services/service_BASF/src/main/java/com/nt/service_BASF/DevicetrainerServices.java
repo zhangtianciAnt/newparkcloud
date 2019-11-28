@@ -2,6 +2,7 @@ package com.nt.service_BASF;
 
 
 import com.nt.dao_BASF.Devicetrainer;
+import com.nt.dao_BASF.VO.DevicetrainerVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public interface DevicetrainerServices {
 
     //获取培训项目列表
     List<Devicetrainer> list() throws Exception;
+
+    //获取培训项目列表
+    List<DevicetrainerVo> listVo() throws Exception;
 
     //创建培训项目
     void insert(Devicetrainer devicetrainer, TokenModel tokenModel) throws Exception;
