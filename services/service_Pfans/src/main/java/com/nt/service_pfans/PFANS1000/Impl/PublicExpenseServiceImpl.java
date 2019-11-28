@@ -107,12 +107,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         List<TrafficDetails> trafficlist = publicExpenseVo.getTrafficdetails();
 
         PurchaseDetails purchase=new PurchaseDetails();
-        purchase.setPurchasedetails_id(spublicexpenseid);
+        purchase.setPublicexpenseid(spublicexpenseid);
         purchaseDetailsMapper.delete(purchase);
         List<PurchaseDetails> purchaselist=publicExpenseVo.getPurchasedetails();
 
         OtherDetails other=new OtherDetails();
-        other.setOtherdetails_id(spublicexpenseid);
+        other.setPublicexpenseid(spublicexpenseid);
         otherDetailsMapper.delete(other);
         List<OtherDetails> otherlist=publicExpenseVo.getOtherdetails();
 
