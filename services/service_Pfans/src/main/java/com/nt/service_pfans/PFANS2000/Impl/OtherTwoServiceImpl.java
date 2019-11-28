@@ -45,7 +45,15 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Override
     public void update(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwo.preUpdate(tokenModel);
-        othertwoMapper.updateByPrimaryKey(othertwo);
+        OtherTwo otherTwo = new OtherTwo();
+        List<OtherTwo> othertwolist = othertwoMapper.select(otherTwo);
+        for (OtherTwo Other : othertwolist) {
+            if (Integer.parseInt(othertwo.getType())==0) {
+                Other.setMoneys1(null);
+                Other.setRootknot1(null);
+                othertwoMapper.updateByPrimaryKey(Other);
+            }
+        }
     }
 
     @Override
