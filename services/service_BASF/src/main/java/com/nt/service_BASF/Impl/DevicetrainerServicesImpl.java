@@ -84,6 +84,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
 
             String userid = dev.getUsergroupid();
             if (userid != null) {
+
                 String[] al = userid.split(",");
                 for (int i = 0; i < al.length; i++) {
                     Usergroupdetailed usergroupdetailed = new Usergroupdetailed();
