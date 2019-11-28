@@ -105,8 +105,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     String jobnumber = value.get(0).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    punchcardrecord.setJobnumber(value.get(0).toString());
-                    punchcardrecord.setUser_id(customerInfo.getUserid());
+                    if (customerInfo != null) {
+                        punchcardrecord.setUser_id(customerInfo.getUserid());
+                        punchcardrecord.setJobnumber(value.get(0).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     punchcardrecord.setCenterid(customerInfo.getUserinfo().getCentername());
                     punchcardrecord.setGroupid(customerInfo.getUserinfo().getGroupname());
                     punchcardrecord.setTeamid(customerInfo.getUserinfo().getTeamname());
