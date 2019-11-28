@@ -43,6 +43,12 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     }
 
     @Override
+    public void update(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
+        othertwo.preUpdate(tokenModel);
+        othertwoMapper.updateByPrimaryKey(othertwo);
+    }
+
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUserothertwo(String Givingid, HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
@@ -103,10 +109,14 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         othertwo.setUser_id(customerInfo.getUserid());
+                        othertwo.setJobnumber(value.get(1).toString());
                     }
-                    othertwo.setJobnumber(value.get(1).toString());
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     othertwo.setGiving_id(Givingid);
-
                     othertwo.setMoneys(value.get(3).toString());
                     othertwo.setRootknot(value.get(4).toString());
                 }
@@ -127,7 +137,6 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                         for (OtherTwo Other : othertwolist) {
                             if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
                                 othertwoMapper.delete(Other);
-                                accesscount = accesscount - 1;
                             }
                         }
                     }

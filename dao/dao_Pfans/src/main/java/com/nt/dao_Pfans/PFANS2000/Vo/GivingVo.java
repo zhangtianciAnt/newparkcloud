@@ -18,6 +18,8 @@ public class GivingVo {
 
     private List<OtherFive> otherFive;
 
+    private List<OtherFour> otherFour;
+
     private List<Appreciation> appreciation;
 
     private List<Base> base;

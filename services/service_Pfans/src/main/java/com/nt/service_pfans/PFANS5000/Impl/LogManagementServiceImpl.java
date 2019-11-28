@@ -150,6 +150,12 @@ public class LogManagementServiceImpl implements LogManagementService {
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         logmanagement.setCreateby(customerInfo.getUserid());
+                        logmanagement.setJobnumber(value.get(0).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
                     }
                     logmanagement.preInsert(tokenModel);
                     PersonalProjects personalprojects = new PersonalProjects();
@@ -159,7 +165,6 @@ public class LogManagementServiceImpl implements LogManagementService {
                             logmanagement.setProject_id(projects.getProject_id());
                         }
                     }
-                    logmanagement.setJobnumber(value.get(0).toString());
                     logmanagement.setLog_date(sf1.parse(value.get(3).toString()));
                     logmanagement.setTime_start(sf.parse(Time_start));
                     logmanagement.setTime_end(sf.parse(Time_end));
