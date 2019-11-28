@@ -8,15 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 public interface AssetinformationService {
 
-    //查看
     List<Assetinformation> getAssetinformation(Assetinformation assetinformation) throws Exception;
 
     public AssetinformationVo selectById(String assetinformationid) throws Exception;
 
-    //修改
     void updateAssetinformation(AssetinformationVo assetinformationVo, TokenModel tokenModel) throws Exception;
 
-    //创建
     public void insert(AssetinformationVo assetinformationVo, TokenModel tokenModel)throws Exception;
 
 }

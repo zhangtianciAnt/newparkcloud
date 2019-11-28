@@ -51,6 +51,12 @@ public class PublicExpense extends BaseModel {
     @Column(name = "MONEYS")
     private String moneys;
 
+    @Column(name = "CURRENCYRATE")
+    private String currencyrate;
+
+    @Column(name = "RMBEXPENDITURE")
+    private String rmbexpenditure;
+
     @Column(name = "CURRENCY")
     private String currency;
 
@@ -95,4 +101,31 @@ public class PublicExpense extends BaseModel {
 
     @Column(name = "FULLNAME")
     private String fullname;
+
+    @Column(name = "SUBJECTNUMBER")
+    private String subjectnumber;
+
+    @Column(name = "SUBJECTNAME")
+    private String subjectname;
+
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    @Column(name = "PURCHASESUBJECTNUMBER")
+    private String purchasesubjectnumber;
+
+    @Column(name = "PURCHASESUBJECTNAME")
+    private String purchasesubjectname;
+
+    @Column(name = "PURCHASEREMARKS")
+    private String purchaseremarks;
+
+    @Column(name = "OTHERSUBJECTNUMBER")
+    private String othersubjectnumber;
+
+    @Column(name = "OTHERSUBJECTNAME")
+    private String othersubjectname;
+
+    @Column(name = "OTHERREMARKS")
+    private String otherremarks;
 }

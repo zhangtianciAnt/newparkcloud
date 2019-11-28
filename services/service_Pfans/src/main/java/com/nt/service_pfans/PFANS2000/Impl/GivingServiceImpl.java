@@ -2,12 +2,10 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
-import com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo;
-import com.nt.dao_Pfans.PFANS2000.Vo.DisciplinaryVo;
-import com.nt.dao_Pfans.PFANS2000.Vo.DutyfreeVo;
-import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.*;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +29,13 @@ public class GivingServiceImpl implements GivingService {
     private BaseMapper baseMapper;
 
     @Autowired
+    private WagesMapper wagesMapper;
+
+    @Autowired
     private DutyfreeMapper dutyfreeMapper;
+
+    @Autowired
+    private ComprehensiveMapper comprehensiveMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -43,10 +44,16 @@ public class GivingServiceImpl implements GivingService {
     private ContrastMapper contrastMapper;
 
     @Autowired
+    private AbNormalMapper abNormalMapper;
+
+    @Autowired
     private CasgiftApplyMapper casgiftapplyMapper;
 
     @Autowired
     private OtherTwoMapper othertwoMapper;
+
+    @Autowired
+    private OtherOneMapper otherOneMapper;
 
     @Autowired
     private OtherFiveMapper otherfiveMapper;
@@ -77,6 +84,12 @@ public class GivingServiceImpl implements GivingService {
 
         List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
         givingVo.setDisciplinaryVo(disciplinary);
+
+        OtherOne otherOne = new OtherOne();
+        otherOne.setGiving_id(giving_id);
+        List<OtherOne> otherOnelist = otherOneMapper.select(otherOne);
+        otherOnelist = otherOnelist.stream().sorted(Comparator.comparing(OtherOne::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherOne(otherOnelist);
 
         OtherTwo othertwo = new OtherTwo();
         othertwo.setGiving_id(giving_id);
@@ -120,7 +133,58 @@ public class GivingServiceImpl implements GivingService {
         List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
         givingVo.setDutyfreeVo(dutyfreeVolist);
 
+        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
+        givingVo.setComprehensiveVo(comprehensiveVolist);
+
         return givingVo;
+    }
+
+    @Override
+    public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
+        OtherOne otherOne = new OtherOne();
+        AbNormal abNormal = new AbNormal();
+        abNormal.setStatus("4");
+        List<AbNormal> abNormalinfo = abNormalMapper.select(abNormal);
+        if (abNormalinfo != null) {
+            int rowindex = 0;
+            for (AbNormal abNor : abNormalinfo) {
+                if (abNor.getErrortype().equals("PR013012") || abNor.getErrortype().equals("PR013013")) {
+                    rowindex = rowindex + 1;
+                    String otherOneid = UUID.randomUUID().toString();
+                    otherOne.preInsert(tokenModel);
+                    otherOne.setOtherone_id(otherOneid);
+                    otherOne.setGiving_id(givingid);
+                    otherOne.setUser_id(abNor.getUser_id());
+                    if (abNor.getErrortype().equals("PR013012")) {
+                        otherOne.setReststart(abNor.getOccurrencedate());
+                        otherOne.setRestend(abNor.getFinisheddate());
+                        otherOne.setAttendance("-1");
+                        otherOne.setOther1("-1");
+                        otherOne.setBasedata("-1");
+                        otherOne.setType("1");
+                    } else if (abNor.getErrortype().equals("PR013013")) {
+                        otherOne.setStartdate(abNor.getOccurrencedate());
+                        otherOne.setEnddate(abNor.getFinisheddate());
+                        otherOne.setVacation("-2");
+                        otherOne.setHandsupport("-2");
+                        otherOne.setType("2");
+                    }
+                    Query query = new Query();
+                    String User_id = abNor.getUser_id();
+                    query.addCriteria(Criteria.where("userid").is(User_id));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        String departmentid = customerInfo.getUserinfo().getDepartmentid().toString();
+                        String name = departmentid.replace("[", "").replace("]", "");
+                        otherOne.setDepartment_id(name);
+                        otherOne.setSex(customerInfo.getUserinfo().getSex());
+                        otherOne.setWorkdate(customerInfo.getUserinfo().getEnterday());
+                    }
+                    otherOne.setRowindex(rowindex);
+                    otherOneMapper.insertSelective(otherOne);
+                }
+            }
+        }
     }
 
     @Override
@@ -245,6 +309,26 @@ public class GivingServiceImpl implements GivingService {
                 contrast.setOwner(base1.getUser_id());
                 contrast.setRowindex(rowindex);
                 contrast.setDepartment_id(base1.getDepartment_id());
+//
+//                Wages wages = new Wages();
+//                wages.setGiving_id(givingid);
+//                List<Wages> wageslist = wagesMapper.select(wages);
+//                if(wageslist != null){
+//                    contrast.setThismonth(wageslist.getRealwages());
+//
+//                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+//                    String strTemp = sf1.format(new Date());
+//                    Date delDate = sf1.parse(strTemp);
+//                    Calendar c = Calendar.getInstance();
+//                    c.setTime(delDate);
+//                    c.add(Calendar.MONTH, -1);
+//
+//                    int year1 = c.get(Calendar.YEAR);    //获取年
+//                    int month1 = c.get(Calendar.MONTH) + 1;
+//
+//
+//                    contrast.setLastmonth();
+//                }
 
                 contrastMapper.insertSelective(contrast);
             }
@@ -270,6 +354,7 @@ public class GivingServiceImpl implements GivingService {
         insertBase(givingid, tokenModel);
         insertContrast(givingid, tokenModel);
         insertOtherTwo(givingid, tokenModel);
+        insertOtherOne(givingid, tokenModel);
     }
 
     @Override
