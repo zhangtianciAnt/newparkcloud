@@ -183,7 +183,9 @@ public class Commandrecord extends BaseModel {
         private String publisher;
         //指令
         private String mark;
-        //修改后的指示
+        //最后修改时间
+        private String uptime;
+        //最后修改的措施
         private String mark2;
     }
 
@@ -194,7 +196,9 @@ public class Commandrecord extends BaseModel {
         private String time;
         //处置措施
         private String mark;
-        //修改后的措施
+        //最后修改时间
+        private String uptime;
+        //最后修改的措施
         private String mark2;
     }
 
