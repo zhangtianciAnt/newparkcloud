@@ -17,7 +17,7 @@ public interface TokenService {
 
     Boolean validToken(HttpServletRequest request);
 
-    TokenModel getToken(HttpServletRequest request);
+    TokenModel getToken(HttpServletRequest request) throws Exception;
 
     TokenModel getToken(String token);
 

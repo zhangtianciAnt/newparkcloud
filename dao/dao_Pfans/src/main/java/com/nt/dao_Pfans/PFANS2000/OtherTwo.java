@@ -26,6 +26,9 @@ public class OtherTwo extends BaseModel {
     @Column(name = "GIVING_ID")
     private String giving_id;
 
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
+
     @Column(name = "USER_ID")
     private String user_id;
 
@@ -34,6 +37,12 @@ public class OtherTwo extends BaseModel {
 
     @Column(name = "ROOTKNOT")
     private String rootknot;
+
+    @Column(name = "MONEYS1")
+    private String moneys1;
+
+    @Column(name = "ROOTKNOT1")
+    private String rootknot1;
 
     @Column(name = "TYPE")
     private String type;

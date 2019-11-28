@@ -25,11 +25,16 @@ public class Salesdetails extends BaseModel {
     @Column(name = "SALESDETAILS_ID")
     private String salesdetailsid;
 
+    @Id
+    @Column(name = "ASSETINFORMATION_ID")
+    private String assetinformationid;
+
+
     /**
      * 固定资产名称
      */
-    @Column(name = "FIXEDASSETNAME")
-    private String fixedassetname;
+    @Column(name = "FIXEDASSETNAM")
+    private String fixedassetnam;
 
     /**
      * megas编号
@@ -84,5 +89,11 @@ public class Salesdetails extends BaseModel {
      */
     @Column(name = "REMARKS")
     private String remarks;
+
+    /**
+     * 排序
+     */
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 
 }

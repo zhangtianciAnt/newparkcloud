@@ -45,7 +45,7 @@ public class Pfans1009Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateFlexibleWork(@RequestBody Fixedassets fixedassets, HttpServletRequest request) throws Exception{
+    public ApiResult updateFixedassets(@RequestBody Fixedassets fixedassets, HttpServletRequest request) throws Exception{
         if (fixedassets == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

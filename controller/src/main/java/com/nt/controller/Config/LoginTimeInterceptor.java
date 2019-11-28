@@ -36,12 +36,12 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         try {
             if (StrUtil.isNotBlank(token)) {
                 // 验证token
-                if (!tokenService.validToken(request)) {
-                    // 验证token失败，则返回直接返回用户未登录错误
-                    errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
-                    return false;
-
-                }
+//                if (!tokenService.validToken(request)) {
+//                    // 验证token失败，则返回直接返回用户未登录错误
+//                    errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
+//                    return false;
+//
+//                }
             } else {
                 // 验证token失败，则返回直接返回用户未登录错误
                 errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
@@ -53,14 +53,14 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        TokenModel tokenModel = tokenService.getToken(request);
-        tokenModel.setLocale(locale);
-        //获取ownerlist
-        if (!StrUtil.isEmpty(url)) {
-            List<String> ownerList = getOwnerList(url, tokenModel);
-            tokenModel.setOwnerList(ownerList);
-        }
-        tokenService.setToken(tokenModel);
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        tokenModel.setLocale(locale);
+//        //获取ownerlist
+//        if (!StrUtil.isEmpty(url)) {
+//            List<String> ownerList = getOwnerList(url, tokenModel);
+//            tokenModel.setOwnerList(ownerList);
+//        }
+//        tokenService.setToken(tokenModel);
         return true;
     }
 

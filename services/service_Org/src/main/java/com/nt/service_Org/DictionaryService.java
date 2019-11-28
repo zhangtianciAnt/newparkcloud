@@ -9,6 +9,8 @@ public interface DictionaryService {
 
     List<Dictionary> getForSelect(String code) throws Exception;
 
+    List<Dictionary> getForvalue2(String value2) throws Exception;
+
     public void updateDictionary(Dictionary dictionary, TokenModel tokenModel)throws Exception;
 
 }

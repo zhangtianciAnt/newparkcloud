@@ -134,6 +134,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String phone;
         /**
+         * 奖金记上区别
+         */
+        private String difference;
+        /**
          * 工号
          */
         private String jobnumber;

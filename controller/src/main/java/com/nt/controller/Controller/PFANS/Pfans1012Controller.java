@@ -1,10 +1,12 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Judgement;
+import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 
+import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -32,6 +34,9 @@ public class Pfans1012Controller {
 
     @Autowired
     private JudgementService judgementService;
+
+    @Autowired
+    private LoanApplicationService loanapplicationService;
 
 
     /*
@@ -96,5 +101,17 @@ public class Pfans1012Controller {
     TokenModel tokenModel=tokenService.getToken(request);
     return ApiResult.success(judgementService.getJudgement(judgement));
     }
+    /*
+     * 暂借款申请编号
+     * */
+    @RequestMapping(value="/getloanapplication" ,method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+        if (loanapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(loanapplicationService.One(loanapplication.getLoanapplication_id()));
+    }
+
 
 }

@@ -11,16 +11,26 @@ public class AccumulatedTaxVo {
     /**
      * 基数表
      */
-    private String USER_ID;
+    private String user_id;
 
-    /**
-     * 本月应扣缴所得税
-     */
-    private String THISMONTHADJUSTMENT;
-
+    private String january;
+    private String february;
+    private String march;
+    private String april;
+    private String may;
+    private String june;
+    private String july;
+    private String august;
+    private String september;
+    private String october;
+    private String november;
+    private String december;
+    private String sumThis;
     /**
      * 当月応発工資（工资总额(纳税+免税)+只納税）
      */
-    private String SHOULDWAGES;
+    private String shouldwages;
+
+    private Integer rowindex;
 
 }

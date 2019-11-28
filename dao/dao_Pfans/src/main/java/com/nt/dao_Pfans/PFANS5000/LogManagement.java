@@ -73,6 +73,7 @@ public class LogManagement extends BaseModel {
     @Column(name = "HAS_PROJECT")
     private String has_project;
 
-
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
 
 }

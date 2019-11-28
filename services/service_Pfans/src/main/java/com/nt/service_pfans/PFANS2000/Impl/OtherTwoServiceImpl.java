@@ -36,29 +36,15 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
-    @Override
-    public List<OtherTwo> list(OtherTwo othertwo) throws Exception {
-        return othertwoMapper.select(othertwo);
-    }
 
     @Override
-    public void insert(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
-        othertwo.preInsert(tokenModel);
-        othertwo.setOthertwo_id(UUID.randomUUID().toString());
-        int rowundex = 0;
-        rowundex = rowundex + 1;
-        othertwo.setRowindex(rowundex);
-        othertwoMapper.insert(othertwo);
-    }
-
-    @Override
-    public void deletete(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
+    public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwoMapper.delete(othertwo);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserothertwo(String Givingid, HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
             List<String> Result = new ArrayList<String>();
@@ -70,6 +56,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
+            model.add("工号");
             model.add("名字");
             model.add("金額");
             model.add("根拠");
@@ -90,40 +77,58 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!Pattern.matches(click, value.get(2).toString())){
+                    String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if (!Pattern.matches(click, value.get(3).toString())) {
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
                     }
-                    if (value.size() > 2) {
-                        if (value.get(2).toString().length() > 20) {
+                    if (value.size() > 3) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
-                    if (value.size() > 3) {
-                        if (value.get(3).toString().length() > 20) {
+                    if (value.size() > 4) {
+                        if (value.get(4).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
                             continue;
                         }
                     }
                     Query query = new Query();
-                    String customername = value.get(1).toString();
-                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
+                    String jobnumber = value.get(1).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    othertwo.setJobnumber(value.get(1).toString());
+                    othertwo.setGiving_id(Givingid);
                     othertwo.setUser_id(customerInfo.getUserid());
-                    othertwo.setMoneys(value.get(2).toString());
-                    othertwo.setRootknot(value.get(3).toString());
+                    othertwo.setMoneys(value.get(3).toString());
+                    othertwo.setRootknot(value.get(4).toString());
                 }
-                int rowundex = i;
+                int rowundex = accesscount + 1;
                 othertwo.setRowindex(rowundex);
                 othertwo.setType("1");
                 othertwo.preInsert(tokenModel);
                 othertwo.setOthertwo_id(UUID.randomUUID().toString());
                 othertwoMapper.insert(othertwo);
+                OtherTwo Othertwo = new OtherTwo();
+                List<OtherTwo> otherTwolist = othertwoMapper.select(Othertwo);
+                for (OtherTwo other : otherTwolist) {
+                    if (Integer.parseInt(value.get(1).toString()) == Integer.parseInt(other.getJobnumber()) && Integer.parseInt(other.getType()) == 0) {
+                        other.setMoneys1(value.get(3).toString());
+                        other.setRootknot1(value.get(4).toString());
+                        othertwoMapper.updateByPrimaryKey(other);
+                        List<OtherTwo> othertwolist = othertwoMapper.select(Othertwo);
+                        for (OtherTwo Other : othertwolist) {
+                            if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
+                                othertwoMapper.delete(Other);
+                                accesscount = accesscount - 1;
+                            }
+                        }
+                    }
+                }
                 listVo.add(othertwo);
                 accesscount = accesscount + 1;
             }

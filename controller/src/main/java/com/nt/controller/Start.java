@@ -47,8 +47,9 @@ public class Start {
         return MongoClientOptions.builder()
                 .maxConnectionIdleTime(60000)
                 .maxConnectionLifeTime(0)
-                .connectTimeout(0)
+                .connectTimeout(10000)
                 .socketTimeout(0)
+                .maxWaitTime(120000)
                 .build();
     }
 }
