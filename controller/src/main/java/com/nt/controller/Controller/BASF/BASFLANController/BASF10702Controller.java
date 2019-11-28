@@ -36,7 +36,7 @@ public class BASF10702Controller {
     private TokenService tokenService;
 
     /**
-     * @param request
+     * @param driverInformation
      * @Method list
      * @Author Wxz
      * @Version 1.0
@@ -45,8 +45,22 @@ public class BASF10702Controller {
      * @Date 2019/11/22 15：22
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(driverInformationServices.list());
+    public ApiResult list(@RequestBody(required = false) DriverInformation driverInformation) throws Exception {
+        return ApiResult.success(driverInformationServices.list(driverInformation));
+    }
+
+    /**
+     * @param driverInformation
+     * @Method list
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 查询是否为黑名单
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/28 9:37
+     */
+    @RequestMapping(value = "/checkblack", method = {RequestMethod.POST})
+    public ApiResult checkblack(@RequestBody DriverInformation driverInformation) throws Exception {
+        return ApiResult.success(driverInformationServices.checkblack(driverInformation));
     }
 
     /**

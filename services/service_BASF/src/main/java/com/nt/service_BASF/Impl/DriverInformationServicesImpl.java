@@ -40,10 +40,28 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
      * @Date 2019/11/22 15:05
      */
     @Override
-    public List<DriverInformation> list() throws Exception {
-        DriverInformation driverInformation = new DriverInformation();
+    public List<DriverInformation> list(DriverInformation driverInformation) throws Exception {
         return driverInformationMapper.select(driverInformation);
     }
+
+    /**
+     * @param driverInformation
+     * @Method list
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 查询是否为黑名单
+     * @Return java.util.List<driverInformation>
+     * @Date 2019/11/28 9:36
+     */
+    @Override
+    public boolean checkblack(DriverInformation driverInformation) throws Exception {
+        driverInformationMapper.select(driverInformation);
+        if (driverInformation.getDriverblacklist() == "1") {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * @param driverInformation
