@@ -17,7 +17,10 @@ import java.util.List;
 public interface DriverInformationServices {
 
     //获取驾驶员列表
-    List<DriverInformation> list() throws Exception;
+    List<DriverInformation> list(DriverInformation driverInformation) throws Exception;
+
+    //查询是否为黑名单
+    boolean checkblack(DriverInformation driverInformation) throws Exception;
 
     //更新驾驶员信息
     void update(DriverInformation driverInformation, TokenModel tokenModel) throws Exception;
