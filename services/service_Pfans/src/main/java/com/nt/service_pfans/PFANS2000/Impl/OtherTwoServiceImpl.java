@@ -37,15 +37,28 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     private OtherTwoMapper othertwoMapper;
 
 
-
     @Override
     public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
         othertwoMapper.delete(othertwo);
     }
 
     @Override
+    public void update(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
+        othertwo.preUpdate(tokenModel);
+        OtherTwo otherTwo = new OtherTwo();
+        List<OtherTwo> othertwolist = othertwoMapper.select(otherTwo);
+        for (OtherTwo Other : othertwolist) {
+            if (Integer.parseInt(othertwo.getType())==0) {
+                Other.setMoneys1(null);
+                Other.setRootknot1(null);
+                othertwoMapper.updateByPrimaryKey(Other);
+            }
+        }
+    }
+
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUserothertwo(String Givingid, HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
             List<String> Result = new ArrayList<String>();
@@ -78,8 +91,8 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!Pattern.matches(click, value.get(3).toString())){
+                    String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if (!Pattern.matches(click, value.get(3).toString())) {
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                         continue;
@@ -102,18 +115,40 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        othertwo.setUser_id(customerInfo.getUserid());
+                        othertwo.setJobnumber(value.get(1).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     othertwo.setGiving_id(Givingid);
-                    othertwo.setJobnumber(value.get(1).toString());
-                    othertwo.setUser_id(customerInfo.getUserid());
                     othertwo.setMoneys(value.get(3).toString());
                     othertwo.setRootknot(value.get(4).toString());
                 }
-                int rowundex = accesscount+ 1;
+                int rowundex = accesscount + 1;
                 othertwo.setRowindex(rowundex);
                 othertwo.setType("1");
                 othertwo.preInsert(tokenModel);
                 othertwo.setOthertwo_id(UUID.randomUUID().toString());
                 othertwoMapper.insert(othertwo);
+                OtherTwo Othertwo = new OtherTwo();
+                List<OtherTwo> otherTwolist = othertwoMapper.select(Othertwo);
+                for (OtherTwo other : otherTwolist) {
+                    if (Integer.parseInt(value.get(1).toString()) == Integer.parseInt(other.getJobnumber()) && Integer.parseInt(other.getType()) == 0) {
+                        other.setMoneys1(value.get(3).toString());
+                        other.setRootknot1(value.get(4).toString());
+                        othertwoMapper.updateByPrimaryKey(other);
+                        List<OtherTwo> othertwolist = othertwoMapper.select(Othertwo);
+                        for (OtherTwo Other : othertwolist) {
+                            if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
+                                othertwoMapper.delete(Other);
+                            }
+                        }
+                    }
+                }
                 listVo.add(othertwo);
                 accesscount = accesscount + 1;
             }

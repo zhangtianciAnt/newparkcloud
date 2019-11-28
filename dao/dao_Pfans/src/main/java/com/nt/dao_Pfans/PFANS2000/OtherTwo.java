@@ -38,6 +38,12 @@ public class OtherTwo extends BaseModel {
     @Column(name = "ROOTKNOT")
     private String rootknot;
 
+    @Column(name = "MONEYS1")
+    private String moneys1;
+
+    @Column(name = "ROOTKNOT1")
+    private String rootknot1;
+
     @Column(name = "TYPE")
     private String type;
 

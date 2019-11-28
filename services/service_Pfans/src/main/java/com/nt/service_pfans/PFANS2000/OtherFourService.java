@@ -8,10 +8,6 @@ import java.util.List;
 
 public interface OtherFourService {
 
-
-    List<OtherFour> listotherfour(OtherFour otherFour) throws Exception;
-
-
     void deleteotherfour(OtherFour otherFour, TokenModel tokenModel)throws Exception;
 
     List<String> importUserotherfour(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;

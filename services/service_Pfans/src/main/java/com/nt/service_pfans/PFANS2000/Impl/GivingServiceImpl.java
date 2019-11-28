@@ -58,6 +58,9 @@ public class GivingServiceImpl implements GivingService {
     private OtherFiveMapper otherfiveMapper;
 
     @Autowired
+    private OtherFourMapper otherfourMapper;
+
+    @Autowired
     private AppreciationMapper appreciationMapper;
 
     @Autowired
@@ -104,6 +107,12 @@ public class GivingServiceImpl implements GivingService {
         List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
         otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherFive(otherfivelist);
+
+        OtherFour otherfour = new OtherFour();
+        otherfour.setGiving_id(giving_id);
+        List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
+        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherFour(otherfourlist);
 
         Base base = new Base();
         base.setGiving_id(giving_id);

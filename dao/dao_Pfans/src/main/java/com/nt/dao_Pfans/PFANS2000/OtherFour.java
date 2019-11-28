@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "OtherFour")
+@Table(name = "otherfour")
 public class OtherFour extends BaseModel {
     private static final long serialVersionUID = 1L;
     @Id

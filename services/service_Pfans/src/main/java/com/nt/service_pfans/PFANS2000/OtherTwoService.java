@@ -16,5 +16,5 @@ public interface OtherTwoService {
 
     List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
-
+    void update(OtherTwo othertwo, TokenModel tokenModel)throws Exception;
 }
