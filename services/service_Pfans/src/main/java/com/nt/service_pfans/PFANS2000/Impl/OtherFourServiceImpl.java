@@ -58,7 +58,7 @@ public class OtherFourServiceImpl implements OtherFourService {
             model.add("No.");
             model.add("部門");
             model.add("工号");
-            model.add("名字");
+            model.add("姓名");
             model.add("社保大病险");
             model.add("合計");
             model.add("备注");
