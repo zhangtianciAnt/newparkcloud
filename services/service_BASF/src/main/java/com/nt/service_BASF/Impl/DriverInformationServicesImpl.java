@@ -54,9 +54,11 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
      * @Date 2019/11/28 9:36
      */
     @Override
-    public boolean checkblack(DriverInformation driverInformation) throws Exception {
-        driverInformationMapper.select(driverInformation);
-        if (driverInformation.getDriverblacklist() == "1") {
+    public boolean checkblack(String driverIdNo) throws Exception {
+        DriverInformation driverInformation = new DriverInformation();
+        driverInformation.setDriveridnumber(driverIdNo);
+        driverInformation = driverInformationMapper.select(driverInformation).get(0);
+        if ("1".equals(driverInformation.getDriverblacklist())) {
             return true;
         }
         return false;

@@ -59,8 +59,8 @@ public class BASF10702Controller {
      * @Date 2019/11/28 9:37
      */
     @RequestMapping(value = "/checkblack", method = {RequestMethod.POST})
-    public ApiResult checkblack(@RequestBody DriverInformation driverInformation) throws Exception {
-        return ApiResult.success(driverInformationServices.checkblack(driverInformation));
+    public ApiResult checkblack(String driverIdNo) throws Exception {
+        return ApiResult.success(driverInformationServices.checkblack(driverIdNo));
     }
 
     /**

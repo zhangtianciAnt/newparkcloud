@@ -20,7 +20,7 @@ public interface DriverInformationServices {
     List<DriverInformation> list(DriverInformation driverInformation) throws Exception;
 
     //查询是否为黑名单
-    boolean checkblack(DriverInformation driverInformation) throws Exception;
+    boolean checkblack(String driverIdNo) throws Exception;
 
     //更新驾驶员信息
     void update(DriverInformation driverInformation, TokenModel tokenModel) throws Exception;
