@@ -36,5 +36,7 @@ public class GivingVo {
 
     private List<ComprehensiveVo> comprehensiveVo;
 
+    private List<Additional> addiTional;
+
     private String strFlg;
 }

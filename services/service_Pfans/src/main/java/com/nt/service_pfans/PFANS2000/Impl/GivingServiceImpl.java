@@ -79,6 +79,8 @@ public class GivingServiceImpl implements GivingService {
     private DisciplinaryMapper disciplinaryMapper;
 
 
+    @Autowired
+    private AdditionalMapper additionalMapper;
     /**
      * 生成基数表
      * FJL
@@ -116,6 +118,14 @@ public class GivingServiceImpl implements GivingService {
         List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
         otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherFive(otherfivelist);
+
+
+        Additional additional = new Additional();
+        additional.setGiving_id(giving_id);
+        List<Additional> additionallist = additionalMapper.select(additional);
+        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
+        givingVo.setAddiTional(additionallist);
+
 
         OtherFour otherfour = new OtherFour();
         otherfour.setGiving_id(giving_id);

@@ -2,11 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
-import com.nt.service_pfans.PFANS2000.GivingService;
-import com.nt.service_pfans.PFANS2000.OtherTwoService;
-import com.nt.service_pfans.PFANS2000.OtherFourService;
-import com.nt.service_pfans.PFANS2000.OtherFiveService;
-import com.nt.service_pfans.PFANS2000.AppreciationService;
+import com.nt.service_pfans.PFANS2000.*;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -35,6 +31,8 @@ public class Pfans2005Controller {
 
     @Autowired
     private OtherFourService otherfourService;
+    @Autowired
+    private AdditionalService additionalService;
 
     @Autowired
     private OtherFiveService otherfiveService;
@@ -94,6 +92,16 @@ public class Pfans2005Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         otherfourService.deleteotherfour(otherFour, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/deleteadditional", method = {RequestMethod.POST})
+    public ApiResult deleteadditional(@RequestBody Additional additional, HttpServletRequest request) throws Exception {
+        if (additional == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        additionalService.deleteadditional(additional, tokenModel);
         return ApiResult.success();
     }
 
@@ -157,6 +165,17 @@ public class Pfans2005Controller {
         }
     }
 
+    @RequestMapping(value = "/importUseradditional",method={RequestMethod.POST})
+    public ApiResult importUseradditional( String givingid,HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(additionalService.importUseradditional(givingid,request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
     /**
      * 保存
      */

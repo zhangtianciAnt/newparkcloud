@@ -69,7 +69,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             model.add("金額");
             model.add("根拠");
             List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
+            for (int i = 0; i <= key.size()-1; i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }

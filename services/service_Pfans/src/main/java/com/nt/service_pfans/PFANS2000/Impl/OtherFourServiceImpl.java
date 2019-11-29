@@ -71,7 +71,7 @@ public class OtherFourServiceImpl implements OtherFourService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
-            for (int i = 1; i < list.size() - 1; i++) {
+            for (int i = 1; i <= list.size() - 1; i++) {
                 OtherFour otherFour = new OtherFour();
                 List<Object> value = list.get(k);
                 k++;
