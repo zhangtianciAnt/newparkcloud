@@ -16,11 +16,9 @@ import javax.persistence.Table;
 public class OtherTwo2 extends BaseModel {
 
     private static final long serialVersionUID = 1L;
-
-
     @Id
-    @Column(name = "OTHERTWO_ID")
-    private String othertwo_id;
+    @Column(name = "OTHERTWO2_ID")
+    private String othertwo2_id;
 
     @Column(name = "GIVING_ID")
     private String giving_id;
