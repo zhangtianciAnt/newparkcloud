@@ -21,6 +21,8 @@ public interface GivingService {
 
     List<Giving> getDataList(Giving giving) throws Exception;
 
+    void save(GivingVo givingvo, TokenModel tokenModel)throws Exception;
+
 }
 
 

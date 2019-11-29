@@ -7,6 +7,7 @@ import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -155,30 +156,40 @@ public class GivingServiceImpl implements GivingService {
                     otherOne.setOtherone_id(otherOneid);
                     otherOne.setGiving_id(givingid);
                     otherOne.setUser_id(abNor.getUser_id());
-                    if (abNor.getErrortype().equals("PR013012")) {
-                        otherOne.setReststart(abNor.getOccurrencedate());
-                        otherOne.setRestend(abNor.getFinisheddate());
-                        otherOne.setAttendance("-1");
-                        otherOne.setOther1("-1");
-                        otherOne.setBasedata("-1");
-                        otherOne.setType("1");
-                    } else if (abNor.getErrortype().equals("PR013013")) {
-                        otherOne.setStartdate(abNor.getOccurrencedate());
-                        otherOne.setEnddate(abNor.getFinisheddate());
-                        otherOne.setVacation("-2");
-                        otherOne.setHandsupport("-2");
-                        otherOne.setType("2");
-                    }
                     Query query = new Query();
                     String User_id = abNor.getUser_id();
                     query.addCriteria(Criteria.where("userid").is(User_id));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        String departmentid = customerInfo.getUserinfo().getDepartmentid().toString();
-                        String name = departmentid.replace("[", "").replace("]", "");
-                        otherOne.setDepartment_id(name);
+                        otherOne.setDepartment_id(customerInfo.getUserinfo().getCenterid());
                         otherOne.setSex(customerInfo.getUserinfo().getSex());
                         otherOne.setWorkdate(customerInfo.getUserinfo().getEnterday());
+                    }
+                    if (abNor.getErrortype().equals("PR013012")) {
+                        otherOne.setReststart(abNor.getOccurrencedate());
+                        otherOne.setRestend(abNor.getFinisheddate());
+                        otherOne.setAttendance("-1");
+                        otherOne.setOther1("-1");
+                        otherOne.setType("1");
+                    } else if (abNor.getErrortype().equals("PR013013")) {
+                        otherOne.setStartdate(abNor.getOccurrencedate());
+                        otherOne.setEnddate(abNor.getFinisheddate());
+                        int intLengthtime = Integer.parseInt(abNor.getLengthtime())/8;
+                        String strLengthtime = String.valueOf(intLengthtime);
+                        otherOne.setVacation(strLengthtime);
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        String beginTime  = customerInfo.getUserinfo().getEnterday();
+                        Date date1 = format.parse(beginTime );
+                        Date date2 = format.parse("2012-08-31");
+                        long beginMillisecond = date1.getTime();
+                        long endMillisecond = date2.getTime();
+                        if(beginMillisecond >= endMillisecond){
+                            otherOne.setHandsupport(strLengthtime);
+                        } else {
+                            otherOne.setHandsupport("0");
+                        }
+                        otherOne.setType("2");
                     }
                     otherOne.setRowindex(rowindex);
                     otherOneMapper.insertSelective(otherOne);
@@ -201,9 +212,7 @@ public class GivingServiceImpl implements GivingService {
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
 //                base.setOwner(customer.getUserid());
-                String departmentid = customer.getUserinfo().getDepartmentid().toString();
-                String name = departmentid.replace("[", "").replace("]", "");
-                base.setDepartment_id(name);  //部门
+                base.setDepartment_id(customer.getUserinfo().getCenterid());
                 base.setJobnumber(customer.getUserinfo().getJobnumber());  //工号
                 base.setRn(customer.getUserinfo().getRank());  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
@@ -216,14 +225,14 @@ public class GivingServiceImpl implements GivingService {
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
                 //1999年前社会人
-//                if(customer.getUserinfo().getWorkday() != null){
-//                    String strWorkday = customer.getUserinfo().getWorkday().substring(0,4);
-//                    if (Integer.parseInt(strWorkday) > 1999) {
-//                        base.setSociology("1");
-//                    } else {
-//                        base.setSociology("2");
-//                    }
-//                }
+                if(customer.getUserinfo().getWorkday() != null && customer.getUserinfo().getWorkday().length() > 0 ){
+                    String strWorkday = customer.getUserinfo().getWorkday().substring(0,4);
+                    if (Integer.parseInt(strWorkday) > 1999) {
+                        base.setSociology("1");
+                    } else {
+                        base.setSociology("2");
+                    }
+                }
                 //大連戸籍
                 if (customer.getUserinfo().getRegister() == "大连") {
                     base.setRegistered("1");
@@ -237,17 +246,17 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-//                if (customer.getUserinfo().getRank() != null) {
-//                    String strRank = customer.getUserinfo().getRank().substring(2);
-//                    int rank = Integer.parseInt(strRank);
-//                    if (rank >= 21009) {
-//                        base.setHeating("229");
-//                    } else if (customer.getUserinfo().getRank() == "PR021008") {
-//                        base.setHeating("172");
-//                    } else if (rank <= 21007) {
-//                        base.setHeating("139");
-//                    }
-//                }
+                if (customer.getUserinfo().getRank() != null && customer.getUserinfo().getRank().length() > 0) {
+                    String strRank = customer.getUserinfo().getRank().substring(2);
+                    int rank = Integer.parseInt(strRank);
+                    if (rank >= 21009) {
+                        base.setHeating("229");
+                    } else if (customer.getUserinfo().getRank() == "PR021008") {
+                        base.setHeating("172");
+                    } else if (rank <= 21007) {
+                        base.setHeating("139");
+                    }
+                }
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
@@ -349,6 +358,7 @@ public class GivingServiceImpl implements GivingService {
         Giving giving1 = new Giving();
         String strTemp = sf1.format(new Date());
         giving1.setMonths(strTemp);
+        giving1.setCreateby(giving.getCreateby());
         givingMapper.delete(giving1);
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
@@ -361,5 +371,37 @@ public class GivingServiceImpl implements GivingService {
     public List<Giving> getDataList(Giving giving) throws Exception {
 
         return givingMapper.select(giving);
+    }
+
+    @Override
+    public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
+        if(givingvo.getStrFlg().equals("1")){
+            List<Base> baselist = new ArrayList<>();
+            BeanUtils.copyProperties(givingvo.getBase(), baselist);
+            if (baselist != null) {
+                int rowundex = 0;
+                for (Base base : baselist) {
+                    base.preUpdate(tokenModel);
+                    baseMapper.updateByPrimaryKey(base);
+                }
+            }
+        }
+        else if(givingvo.getStrFlg().equals("2")){
+            List<OtherOne> otheronelist = givingvo.getOtherOne();
+            if (otheronelist != null) {
+                for (OtherOne otherOne : otheronelist) {
+                    otherOne.preUpdate(tokenModel);
+                    otherOneMapper.updateByPrimaryKeySelective(otherOne);
+                }
+            }
+        }  else if(givingvo.getStrFlg().equals("3")){
+            List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
+            if (otherTwolist != null) {
+                for (OtherTwo othertwo : otherTwolist) {
+                    othertwo.preUpdate(tokenModel);
+                    othertwoMapper.updateByPrimaryKeySelective(othertwo);
+                }
+            }
+        }
     }
 }
