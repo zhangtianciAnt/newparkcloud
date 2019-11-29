@@ -161,9 +161,7 @@ public class GivingServiceImpl implements GivingService {
                     query.addCriteria(Criteria.where("userid").is(User_id));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        String departmentid = customerInfo.getUserinfo().getDepartmentid().toString();
-                        String name = departmentid.replace("[", "").replace("]", "");
-                        otherOne.setDepartment_id(name);
+                        otherOne.setDepartment_id(customerInfo.getUserinfo().getCenterid());
                         otherOne.setSex(customerInfo.getUserinfo().getSex());
                         otherOne.setWorkdate(customerInfo.getUserinfo().getEnterday());
                     }
@@ -214,9 +212,7 @@ public class GivingServiceImpl implements GivingService {
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
 //                base.setOwner(customer.getUserid());
-                String departmentid = customer.getUserinfo().getDepartmentid().toString();
-                String name = departmentid.replace("[", "").replace("]", "");
-                base.setDepartment_id(name);  //部门
+                base.setDepartment_id(customer.getUserinfo().getCenterid());
                 base.setJobnumber(customer.getUserinfo().getJobnumber());  //工号
                 base.setRn(customer.getUserinfo().getRank());  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
@@ -229,14 +225,14 @@ public class GivingServiceImpl implements GivingService {
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
                 //1999年前社会人
-//                if(customer.getUserinfo().getWorkday() != null){
-//                    String strWorkday = customer.getUserinfo().getWorkday().substring(0,4);
-//                    if (Integer.parseInt(strWorkday) > 1999) {
-//                        base.setSociology("1");
-//                    } else {
-//                        base.setSociology("2");
-//                    }
-//                }
+                if(customer.getUserinfo().getWorkday() != null && customer.getUserinfo().getWorkday().length() > 0 ){
+                    String strWorkday = customer.getUserinfo().getWorkday().substring(0,4);
+                    if (Integer.parseInt(strWorkday) > 1999) {
+                        base.setSociology("1");
+                    } else {
+                        base.setSociology("2");
+                    }
+                }
                 //大連戸籍
                 if (customer.getUserinfo().getRegister() == "大连") {
                     base.setRegistered("1");
@@ -250,17 +246,17 @@ public class GivingServiceImpl implements GivingService {
 
                 base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
                 //采暖费
-//                if (customer.getUserinfo().getRank() != null) {
-//                    String strRank = customer.getUserinfo().getRank().substring(2);
-//                    int rank = Integer.parseInt(strRank);
-//                    if (rank >= 21009) {
-//                        base.setHeating("229");
-//                    } else if (customer.getUserinfo().getRank() == "PR021008") {
-//                        base.setHeating("172");
-//                    } else if (rank <= 21007) {
-//                        base.setHeating("139");
-//                    }
-//                }
+                if (customer.getUserinfo().getRank() != null && customer.getUserinfo().getRank().length() > 0) {
+                    String strRank = customer.getUserinfo().getRank().substring(2);
+                    int rank = Integer.parseInt(strRank);
+                    if (rank >= 21009) {
+                        base.setHeating("229");
+                    } else if (customer.getUserinfo().getRank() == "PR021008") {
+                        base.setHeating("172");
+                    } else if (rank <= 21007) {
+                        base.setHeating("139");
+                    }
+                }
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
@@ -362,6 +358,7 @@ public class GivingServiceImpl implements GivingService {
         Giving giving1 = new Giving();
         String strTemp = sf1.format(new Date());
         giving1.setMonths(strTemp);
+        giving1.setCreateby(giving.getCreateby());
         givingMapper.delete(giving1);
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
