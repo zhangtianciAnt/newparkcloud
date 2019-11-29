@@ -410,14 +410,12 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
-        if (givingvo.getStrFlg().equals("1")) {
-            List<Base> baselist = new ArrayList<>();
-            BeanUtils.copyProperties(givingvo.getBase(), baselist);
-            if (baselist != null) {
-                int rowundex = 0;
-                for (Base base : baselist) {
-                    base.preUpdate(tokenModel);
-                    baseMapper.updateByPrimaryKey(base);
+        if (givingvo.getStrFlg().equals("16")) {
+            List<Contrast> contrastlist = new ArrayList<>();
+            if (contrastlist != null) {
+                for (Contrast contrast : contrastlist) {
+                    contrast.preUpdate(tokenModel);
+                    contrastMapper.updateByPrimaryKeySelective(contrast);
                 }
             }
         } else if (givingvo.getStrFlg().equals("2")) {
