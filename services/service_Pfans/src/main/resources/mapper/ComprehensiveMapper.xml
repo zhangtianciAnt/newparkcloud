@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.ComprehensiveMapper">
 	<select id="getcomprehensive" parameterType="com.nt.dao_Pfans.PFANS2000.Base" resultType="com.nt.dao_Pfans.PFANS2000.Vo.ComprehensiveVo">
+
 		SELECT USER_ID, month1wages, month1appreciation,month2wages,month2appreciation,month3wages,month3appreciation,month4wages,month4appreciation,month5wages,month5appreciation,month6wages,month6appreciation,month7wages,month7appreciation,month8wages,month8appreciation,month9wages,month9appreciation,month10wages,month10appreciation,month11wages,month11appreciation,month12wages,month12appreciation,
  month1wages + month1appreciation + month2wages + month2appreciation + month3wages+ month3appreciation + month4wages +month4appreciation+ month5wages +month5appreciation+month6wages+month6appreciation + month7wages +month7appreciation + month8wages+month8appreciation + month9wages +month9appreciation + month10wages +month10appreciation + month11wages +month11appreciation + month12wages + month12appreciation AS total
 FROM

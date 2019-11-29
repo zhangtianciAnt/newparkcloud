@@ -8,20 +8,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "othertwo")
-public class OtherTwo extends BaseModel {
+@Table(name = "othertwo2")
+public class OtherTwo2 extends BaseModel {
 
     private static final long serialVersionUID = 1L;
-
-
     @Id
-    @Column(name = "OTHERTWO_ID")
-    private String othertwo_id;
+    @Column(name = "OTHERTWO2_ID")
+    private String othertwo2_id;
 
     @Column(name = "GIVING_ID")
     private String giving_id;

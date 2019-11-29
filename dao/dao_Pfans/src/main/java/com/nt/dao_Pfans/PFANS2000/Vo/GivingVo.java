@@ -35,4 +35,6 @@ public class GivingVo {
     private List<DutyfreeVo> dutyfreeVo;
 
     private List<ComprehensiveVo> comprehensiveVo;
+
+    private String strFlg;
 }

@@ -26,9 +26,6 @@ public class Pfans1008Controller {
     @Autowired
     private TokenService tokenService;
 
-    /**
-     * 列表查看
-     */
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -37,9 +34,6 @@ public class Pfans1008Controller {
         return ApiResult.success(softwaretransferService.getSoftwaretransfer(softwaretransfer));
     }
 
-    /**
-     * 新建
-     */
     @RequestMapping(value = "insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody SoftwaretransferVo softwaretransferVo, HttpServletRequest request) throws Exception {
         if (softwaretransferVo == null) {
@@ -50,9 +44,6 @@ public class Pfans1008Controller {
         return ApiResult.success();
     }
 
-    /**
-     * 查看
-     */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String softwaretransferid, HttpServletRequest request) throws Exception {
         if (softwaretransferid == null) {
@@ -61,9 +52,6 @@ public class Pfans1008Controller {
         return ApiResult.success(softwaretransferService.selectById(softwaretransferid));
     }
 
-    /**
-     * 修改
-     */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody SoftwaretransferVo softwaretransferVo, HttpServletRequest request) throws Exception {
         if (softwaretransferVo == null) {

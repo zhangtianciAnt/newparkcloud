@@ -43,20 +43,6 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     }
 
     @Override
-    public void update(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
-        othertwo.preUpdate(tokenModel);
-        OtherTwo otherTwo = new OtherTwo();
-        List<OtherTwo> othertwolist = othertwoMapper.select(otherTwo);
-        for (OtherTwo Other : othertwolist) {
-            if (Integer.parseInt(othertwo.getType())==0) {
-                Other.setMoneys1(null);
-                Other.setRootknot1(null);
-                othertwoMapper.updateByPrimaryKey(Other);
-            }
-        }
-    }
-
-    @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUserothertwo(String Givingid, HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
@@ -134,21 +120,6 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 othertwo.preInsert(tokenModel);
                 othertwo.setOthertwo_id(UUID.randomUUID().toString());
                 othertwoMapper.insert(othertwo);
-                OtherTwo Othertwo = new OtherTwo();
-                List<OtherTwo> otherTwolist = othertwoMapper.select(Othertwo);
-                for (OtherTwo other : otherTwolist) {
-                    if (Integer.parseInt(value.get(1).toString()) == Integer.parseInt(other.getJobnumber()) && Integer.parseInt(other.getType()) == 0) {
-                        other.setMoneys1(value.get(3).toString());
-                        other.setRootknot1(value.get(4).toString());
-                        othertwoMapper.updateByPrimaryKey(other);
-                        List<OtherTwo> othertwolist = othertwoMapper.select(Othertwo);
-                        for (OtherTwo Other : othertwolist) {
-                            if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
-                                othertwoMapper.delete(Other);
-                            }
-                        }
-                    }
-                }
                 listVo.add(othertwo);
                 accesscount = accesscount + 1;
             }
