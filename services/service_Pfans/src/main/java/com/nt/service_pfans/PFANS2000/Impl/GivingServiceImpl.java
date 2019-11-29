@@ -7,6 +7,7 @@ import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -361,5 +362,21 @@ public class GivingServiceImpl implements GivingService {
     public List<Giving> getDataList(Giving giving) throws Exception {
 
         return givingMapper.select(giving);
+    }
+
+    @Override
+    public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
+        if(givingvo.getStrFlg().equals("1")){
+            Base base = new Base();
+            BeanUtils.copyProperties(givingvo.getBase(), base);
+            base.preUpdate(tokenModel);
+            baseMapper.updateByPrimaryKey(base);
+        }
+        else if(givingvo.getStrFlg().equals("2")){
+            OtherOne otherOne = new OtherOne();
+            BeanUtils.copyProperties(givingvo.getOtherOne(), otherOne);
+            otherOne.preUpdate(tokenModel);
+            otherOneMapper.updateByPrimaryKey(otherOne);
+        }
     }
 }
