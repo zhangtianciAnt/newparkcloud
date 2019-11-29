@@ -8,13 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "othertwo")
-public class OtherTwo extends BaseModel {
+@Table(name = "othertwo2")
+public class OtherTwo2 extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
