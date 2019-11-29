@@ -137,14 +137,16 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 OtherTwo Othertwo = new OtherTwo();
                 List<OtherTwo> otherTwolist = othertwoMapper.select(Othertwo);
                 for (OtherTwo other : otherTwolist) {
-                    if (Integer.parseInt(value.get(1).toString()) == Integer.parseInt(other.getJobnumber()) && Integer.parseInt(other.getType()) == 0) {
-                        other.setMoneys1(value.get(3).toString());
-                        other.setRootknot1(value.get(4).toString());
-                        othertwoMapper.updateByPrimaryKey(other);
-                        List<OtherTwo> othertwolist = othertwoMapper.select(Othertwo);
-                        for (OtherTwo Other : othertwolist) {
-                            if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
-                                othertwoMapper.delete(Other);
+                    if(other.getJobnumber()!=null) {
+                        if (Integer.parseInt(value.get(1).toString()) == Integer.parseInt(other.getJobnumber()) && Integer.parseInt(other.getType()) == 0) {
+                            other.setMoneys1(value.get(3).toString());
+                            other.setRootknot1(value.get(4).toString());
+                            othertwoMapper.updateByPrimaryKey(other);
+                            List<OtherTwo> othertwolist = othertwoMapper.select(Othertwo);
+                            for (OtherTwo Other : othertwolist) {
+                                if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
+                                    othertwoMapper.delete(Other);
+                                }
                             }
                         }
                     }
