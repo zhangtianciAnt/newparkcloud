@@ -26,13 +26,11 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     @Autowired
     private NotificationMapper notificationMapper;
 
-    //列表查询
     @Override
     public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
         return softwaretransferMapper.select(softwaretransfer);
     }
 
-    //按id查询
     @Override
     public SoftwaretransferVo selectById(String softwaretransferid) throws Exception {
         SoftwaretransferVo softVo = new SoftwaretransferVo();
@@ -46,7 +44,6 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
         return softVo;
     }
 
-    //更新
     @Override
     public void updateSoftwaretransfer(SoftwaretransferVo softwaretransferVo, TokenModel tokenModel) throws Exception {
         Softwaretransfer softwaretransfer = new Softwaretransfer();
@@ -71,7 +68,6 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
         }
     }
 
-    //新建
     @Override
     public void insert(SoftwaretransferVo softwaretransferVo, TokenModel tokenModel) throws Exception {
         String softwaretransferid = UUID.randomUUID().toString();
