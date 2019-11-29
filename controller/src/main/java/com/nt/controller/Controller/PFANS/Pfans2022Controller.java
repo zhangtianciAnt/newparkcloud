@@ -1,11 +1,11 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
-import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
-import com.nt.dao_Workflow.Vo.WorkflowVo;
-import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.service_pfans.PFANS2000.CasgiftApplyService;
-import com.nt.utils.*;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/casgiftapply")
 public class Pfans2022Controller {
-    //查找信息发布
+
     @Autowired
     private CasgiftApplyService casgiftapplyService;
     @Autowired

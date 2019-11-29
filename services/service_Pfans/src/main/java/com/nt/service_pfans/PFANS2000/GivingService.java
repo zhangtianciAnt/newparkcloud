@@ -11,15 +11,17 @@ public interface GivingService {
 
     void insert(String generation, TokenModel tokenModel)throws Exception;
 
-    void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertBase(String  oldgivingid,String  givingid,TokenModel tokenModel)throws Exception;
 
-    void insertOtherOne(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertOtherOne(String oldgivingid,String  givingid,TokenModel tokenModel)throws Exception;
 
     void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
 
-    void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertContrast(String oldgivingid,String  givingid,TokenModel tokenModel)throws Exception;
 
     List<Giving> getDataList(Giving giving) throws Exception;
+
+    void save(GivingVo givingvo, TokenModel tokenModel)throws Exception;
 
 }
 
