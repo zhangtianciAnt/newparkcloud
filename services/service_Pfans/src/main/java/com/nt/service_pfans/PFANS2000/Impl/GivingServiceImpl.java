@@ -376,16 +376,24 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
         if(givingvo.getStrFlg().equals("1")){
-            Base base = new Base();
-            BeanUtils.copyProperties(givingvo.getBase(), base);
-            base.preUpdate(tokenModel);
-            baseMapper.updateByPrimaryKey(base);
+            List<Base> baselist = new ArrayList<>();
+            BeanUtils.copyProperties(givingvo.getBase(), baselist);
+            if (baselist != null) {
+                int rowundex = 0;
+                for (Base base : baselist) {
+                    base.preUpdate(tokenModel);
+                    baseMapper.updateByPrimaryKey(base);
+                }
+            }
         }
         else if(givingvo.getStrFlg().equals("2")){
-            OtherOne otherOne = new OtherOne();
-            BeanUtils.copyProperties(givingvo.getOtherOne(), otherOne);
-            otherOne.preUpdate(tokenModel);
-            otherOneMapper.updateByPrimaryKey(otherOne);
+            List<OtherOne> otheronelist = givingvo.getOtherOne();
+            if (otheronelist != null) {
+                for (OtherOne otherOne : otheronelist) {
+                    otherOne.preUpdate(tokenModel);
+                    otherOneMapper.updateByPrimaryKeySelective(otherOne);
+                }
+            }
         }
     }
 }
