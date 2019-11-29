@@ -176,6 +176,7 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setRestend(abNor.getFinisheddate());
                         otherOne.setAttendance("-1");
                         otherOne.setOther1("-1");
+                        otherOne.setBasedata("2");
                         otherOne.setType("1");
                     } else if (abNor.getErrortype().equals("PR013013")) {
                         otherOne.setStartdate(abNor.getOccurrencedate());
