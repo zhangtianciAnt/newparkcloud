@@ -36,7 +36,7 @@ public class OtherTwo2 extends BaseModel {
 
     @Column(name = "ROOTKNOT")
     private String rootknot;
-    
+
     @Column(name = "TYPE")
     private String type;
 
