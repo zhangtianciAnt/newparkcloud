@@ -4,7 +4,10 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
+import com.nt.dao_Pfans.PFANS2000.OtherTwo2;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
+import com.nt.service_pfans.PFANS2000.mapper.GivingMapper;
+import com.nt.service_pfans.PFANS2000.mapper.OtherTwo2Mapper;
 import com.nt.service_pfans.PFANS2000.mapper.OtherTwoMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -36,6 +39,11 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
+    @Autowired
+    private GivingMapper givingMapper;
+
+    @Autowired
+    private OtherTwo2Mapper othertwo2Mapper;
 
     @Override
     public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
@@ -120,6 +128,16 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 othertwo.preInsert(tokenModel);
                 othertwo.setOthertwo_id(UUID.randomUUID().toString());
                 othertwoMapper.insert(othertwo);
+                List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(Givingid);
+                if(otherTwo2List.size()>0){
+                    for(OtherTwo2 otherTwo2 :otherTwo2List){
+                        otherTwo2.preInsert(tokenModel);
+                        otherTwo2.setUser_id(otherTwo2.getUser_id());
+                        otherTwo2.setMoneys(otherTwo2.getMoneys());
+                        otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+                        othertwo2Mapper.insert(otherTwo2);
+                    }
+                }
                 listVo.add(othertwo);
                 accesscount = accesscount + 1;
             }

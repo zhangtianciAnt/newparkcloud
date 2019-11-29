@@ -58,6 +58,9 @@ public class GivingServiceImpl implements GivingService {
     private OtherTwoMapper othertwoMapper;
 
     @Autowired
+    private OtherTwo2Mapper othertwo2Mapper;
+
+    @Autowired
     private OtherOneMapper otherOneMapper;
 
     @Autowired
@@ -319,6 +322,16 @@ public class GivingServiceImpl implements GivingService {
             othertwo.setMoneys(casgift.getAmoutmoney());
             othertwoMapper.insertSelective(othertwo);
         }
+        List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(givingid);
+        if(otherTwo2List.size()>0){
+            for(OtherTwo2 otherTwo2 :otherTwo2List){
+                otherTwo2.preInsert(tokenModel);
+                otherTwo2.setUser_id(otherTwo2.getUser_id());
+                otherTwo2.setMoneys(otherTwo2.getMoneys());
+                otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+                othertwo2Mapper.insert(otherTwo2);
+            }
+        }
     }
 
     /**
@@ -433,6 +446,16 @@ public class GivingServiceImpl implements GivingService {
                 for (OtherTwo othertwo : otherTwolist) {
                     othertwo.preUpdate(tokenModel);
                     othertwoMapper.updateByPrimaryKeySelective(othertwo);
+                    List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(othertwo.getGiving_id());
+                    if(otherTwo2List.size()>0){
+                        for(OtherTwo2 otherTwo2 :otherTwo2List){
+                            otherTwo2.preInsert(tokenModel);
+                            otherTwo2.setUser_id(otherTwo2.getUser_id());
+                            otherTwo2.setMoneys(otherTwo2.getMoneys());
+                            otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+                            othertwo2Mapper.insert(otherTwo2);
+                        }
+                    }
                 }
             }
         }
