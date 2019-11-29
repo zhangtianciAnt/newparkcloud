@@ -394,6 +394,14 @@ public class GivingServiceImpl implements GivingService {
                     otherOneMapper.updateByPrimaryKeySelective(otherOne);
                 }
             }
+        }  else if(givingvo.getStrFlg().equals("3")){
+            List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
+            if (otherTwolist != null) {
+                for (OtherTwo othertwo : otherTwolist) {
+                    othertwo.preUpdate(tokenModel);
+                    othertwoMapper.updateByPrimaryKeySelective(othertwo);
+                }
+            }
         }
     }
 }
