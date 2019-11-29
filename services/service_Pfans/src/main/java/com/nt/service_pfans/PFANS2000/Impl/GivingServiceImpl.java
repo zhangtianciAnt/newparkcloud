@@ -412,7 +412,7 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
         if (givingvo.getStrFlg().equals("16")) {
-            List<Contrast> contrastlist = new ArrayList<>();
+            List<Contrast> contrastlist = givingvo.getContrast();
             if (contrastlist != null) {
                 for (Contrast contrast : contrastlist) {
                     contrast.preUpdate(tokenModel);
