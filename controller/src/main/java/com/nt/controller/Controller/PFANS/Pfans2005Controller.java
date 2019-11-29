@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
 import com.nt.service_pfans.PFANS2000.OtherFourService;
@@ -163,5 +164,18 @@ public class Pfans2005Controller {
         }catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
+    }
+
+    /**
+     * 保存
+     */
+    @RequestMapping(value = "save", method = { RequestMethod.POST })
+    public ApiResult insert(@RequestBody GivingVo givingvo, HttpServletRequest request) throws Exception{
+        if (givingvo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        givingService.save(givingvo,tokenModel);
+        return ApiResult.success();
     }
 }
