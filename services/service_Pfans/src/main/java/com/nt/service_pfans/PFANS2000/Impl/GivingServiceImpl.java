@@ -155,20 +155,6 @@ public class GivingServiceImpl implements GivingService {
                     otherOne.setOtherone_id(otherOneid);
                     otherOne.setGiving_id(givingid);
                     otherOne.setUser_id(abNor.getUser_id());
-                    if (abNor.getErrortype().equals("PR013012")) {
-                        otherOne.setReststart(abNor.getOccurrencedate());
-                        otherOne.setRestend(abNor.getFinisheddate());
-                        otherOne.setAttendance("-1");
-                        otherOne.setOther1("-1");
-                        otherOne.setBasedata("-1");
-                        otherOne.setType("1");
-                    } else if (abNor.getErrortype().equals("PR013013")) {
-                        otherOne.setStartdate(abNor.getOccurrencedate());
-                        otherOne.setEnddate(abNor.getFinisheddate());
-                        otherOne.setVacation("-2");
-                        otherOne.setHandsupport("-2");
-                        otherOne.setType("2");
-                    }
                     Query query = new Query();
                     String User_id = abNor.getUser_id();
                     query.addCriteria(Criteria.where("userid").is(User_id));
@@ -179,6 +165,32 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setDepartment_id(name);
                         otherOne.setSex(customerInfo.getUserinfo().getSex());
                         otherOne.setWorkdate(customerInfo.getUserinfo().getEnterday());
+                    }
+                    if (abNor.getErrortype().equals("PR013012")) {
+                        otherOne.setReststart(abNor.getOccurrencedate());
+                        otherOne.setRestend(abNor.getFinisheddate());
+                        otherOne.setAttendance("-1");
+                        otherOne.setOther1("-1");
+                        otherOne.setType("1");
+                    } else if (abNor.getErrortype().equals("PR013013")) {
+                        otherOne.setStartdate(abNor.getOccurrencedate());
+                        otherOne.setEnddate(abNor.getFinisheddate());
+                        int intLengthtime = Integer.parseInt(abNor.getLengthtime())/8;
+                        String strLengthtime = String.valueOf(intLengthtime);
+                        otherOne.setVacation(strLengthtime);
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        String beginTime  = customerInfo.getUserinfo().getEnterday();
+                        Date date1 = format.parse(beginTime );
+                        Date date2 = format.parse("2012-08-31");
+                        long beginMillisecond = date1.getTime();
+                        long endMillisecond = date2.getTime();
+                        if(beginMillisecond >= endMillisecond){
+                            otherOne.setHandsupport(strLengthtime);
+                        } else {
+                            otherOne.setHandsupport("0");
+                        }
+                        otherOne.setType("2");
                     }
                     otherOne.setRowindex(rowindex);
                     otherOneMapper.insertSelective(otherOne);
