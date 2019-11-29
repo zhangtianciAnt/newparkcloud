@@ -36,10 +36,6 @@ public class DriverInformation extends BaseModel {
      */
     private String driveridnumber;
 
-    /**
-     * 黑名单
-     */
-    private String driverblacklist;
 
     /**
      * 违规时间

@@ -22,6 +22,6 @@ public interface DriverInformationServices {
     //查询是否为黑名单
     boolean checkblack(String driverIdNo) throws Exception;
 
-    //更新驾驶员信息
-    void update(DriverInformation driverInformation, TokenModel tokenModel) throws Exception;
+    //删除驾驶员黑名单信息
+    void delete(DriverInformation driverInformation) throws Exception;
 }

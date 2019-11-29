@@ -54,11 +54,8 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
      * @Date 2019/11/28 9:36
      */
     @Override
-    public boolean checkblack(String driverIdNo) throws Exception {
-        DriverInformation driverInformation = new DriverInformation();
-        driverInformation.setDriveridnumber(driverIdNo);
-        driverInformation = driverInformationMapper.select(driverInformation).get(0);
-        if ("1".equals(driverInformation.getDriverblacklist())) {
+    public boolean checkblack(DriverInformation driverInformation) throws Exception {
+        if (driverInformationMapper.select(driverInformation) != null) {
             return true;
         }
         return false;
@@ -67,17 +64,16 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
 
     /**
      * @param driverInformation
-     * @param tokenModel
-     * @Method update
+     * @Method Delete
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新驾驶员信息
+     * @Description 删除驾驶员黑名单信息
      * @Return void
-     * @Date 2019/11/22 15：11
+     * @Date 2019/11/29 10：13
      */
     @Override
-    public void update(DriverInformation driverInformation, TokenModel tokenModel) throws Exception {
-        driverInformation.preUpdate(tokenModel);
+    public void delete(DriverInformation driverInformation) throws Exception {
+        //逻辑删除（status -> "1"）
         driverInformationMapper.updateByPrimaryKeySelective(driverInformation);
     }
 }

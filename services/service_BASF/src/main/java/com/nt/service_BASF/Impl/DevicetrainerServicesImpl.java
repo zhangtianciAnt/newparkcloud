@@ -69,7 +69,6 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
             String programid = dev.getProgramid();
             //获取培训项目
             Program program = programMapper.selectByPrimaryKey(programid);
-
             vo.setProname(program.getProgramname());          //培训项目名称
             vo.setTraincourse(program.getProgramclass());     //培训项目的培训类别
             vo.setTraintim(program.getProgramtime());         //培训项目的培训时间
@@ -78,10 +77,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
             vo.setCreatepeople(dev.getCreateby());           //培训人员的装置培训负责人
             vo.setDevicetrainerid(dev.getDevicetrainerid()); //培训人员主键
             vo.setProgramid(dev.getProgramid());             //培训人员的培训项目主键
-            vo.setUsergroupid(dev.getUsergroupid());          //用户组主键
-
             int count = 0;
-
             String userid = dev.getUsergroupid();
             if (userid != null) {
                 String[] al = userid.split(",");
