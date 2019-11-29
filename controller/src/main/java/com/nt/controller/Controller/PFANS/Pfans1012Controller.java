@@ -39,9 +39,7 @@ public class Pfans1012Controller {
     private LoanApplicationService loanapplicationService;
 
 
-    /*
-    * 列表查看
-    * */
+
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
@@ -50,9 +48,7 @@ public class Pfans1012Controller {
         return ApiResult.success(publicExpenseService.get(publicExpense));
     }
 
-    /**
-     * 查看一个人
-     */
+
     @RequestMapping(value = "/selectById",method = {RequestMethod.GET})
     public ApiResult selectById(String publicexpenseid, HttpServletRequest request) throws Exception {
         if (publicexpenseid == null) {
@@ -62,9 +58,7 @@ public class Pfans1012Controller {
         return ApiResult.success(publicExpenseService.selectById(publicexpenseid));
     }
 
-    /**
-     * 新建
-     */
+
     @RequestMapping(value = "/insert",method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {
@@ -75,9 +69,7 @@ public class Pfans1012Controller {
         return ApiResult.success();
     }
 
-    /**
-     * 修改
-     */
+
     @RequestMapping(value = "/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {

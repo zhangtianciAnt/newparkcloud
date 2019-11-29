@@ -42,23 +42,18 @@ public class EvectionServiceImpl implements EvectionService {
     @Override
     public EvectionVo selectById(String evectionid) throws Exception {
         EvectionVo eveVo = new EvectionVo();
-
         TrafficDetails trafficdetails = new TrafficDetails();
         AccommodationDetails accommodationdetails = new AccommodationDetails();
         OtherDetails otherdetails = new OtherDetails();
-
         trafficdetails.setEvectionid(evectionid);
         accommodationdetails.setEvectionid(evectionid);
         otherdetails.setEvectionid(evectionid);
-
         List<TrafficDetails> trafficdetailslist = trafficdetailsMapper.select(trafficdetails);
         List<AccommodationDetails> accommodationdetailslist = accommodationdetailsMapper.select(accommodationdetails);
         List<OtherDetails> otherdetailslist = otherdetailsMapper.select(otherdetails);
-
         trafficdetailslist = trafficdetailslist.stream().sorted(Comparator.comparing(TrafficDetails::getRowindex)).collect(Collectors.toList());
         accommodationdetailslist = accommodationdetailslist.stream().sorted(Comparator.comparing(AccommodationDetails::getRowindex)).collect(Collectors.toList());
         otherdetailslist = otherdetailslist.stream().sorted(Comparator.comparing(OtherDetails::getRowindex)).collect(Collectors.toList());
-
         Evection Eve = evectionMapper.selectByPrimaryKey(evectionid);
         eveVo.setEvection(Eve);
         eveVo.setTrafficdetails(trafficdetailslist);
@@ -76,19 +71,18 @@ public class EvectionServiceImpl implements EvectionService {
         String evectionid = evection.getEvectionid();
 
         TrafficDetails traffic = new TrafficDetails();
-        AccommodationDetails accommodation = new AccommodationDetails();
-        OtherDetails other = new OtherDetails();
-
-        traffic.setEvectionid(evectionid);
-        accommodation.setEvectionid(evectionid);
-        other.setEvectionid(evectionid);
-
+        traffic.setPublicexpenseid(evectionid);
         trafficdetailsMapper.delete(traffic);
-        accommodationdetailsMapper.delete(accommodation);
-        otherdetailsMapper.delete(other);
-
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
+
+        AccommodationDetails accommodation = new AccommodationDetails();
+        accommodation.setEvectionid(evectionid);
+        accommodationdetailsMapper.delete(accommodation);
         List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
+
+        OtherDetails other = new OtherDetails();
+        other.setEvectionid(evectionid);
+        otherdetailsMapper.delete(other);
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
 
         if (trafficdetailslist != null) {
@@ -100,10 +94,8 @@ public class EvectionServiceImpl implements EvectionService {
                 trafficdetails.setEvectionid(evectionid);
                 trafficdetails.setRowindex(rowindex);
                 trafficdetailsMapper.insertSelective(trafficdetails);
-
             }
         }
-
         if (accommodationdetailslist != null) {
             int rowindex = 0;
             for (AccommodationDetails accommodationdetails : accommodationdetailslist) {
@@ -113,10 +105,8 @@ public class EvectionServiceImpl implements EvectionService {
                 accommodationdetails.setEvectionid(evectionid);
                 accommodationdetails.setRowindex(rowindex);
                 accommodationdetailsMapper.insertSelective(accommodationdetails);
-
             }
         }
-
         if (otherdetailslist != null) {
             int rowindex = 0;
             for (OtherDetails otherdetails : otherdetailslist) {
@@ -140,7 +130,6 @@ public class EvectionServiceImpl implements EvectionService {
         evection.preInsert(tokenModel);
         evection.setEvectionid(evectionid);
         evectionMapper.insertSelective(evection);
-
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
         List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
