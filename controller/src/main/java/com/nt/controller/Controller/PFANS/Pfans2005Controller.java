@@ -105,6 +105,15 @@ public class Pfans2005Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateInformation(@RequestBody OtherTwo othertwo, HttpServletRequest request) throws Exception {
+        if (othertwo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        othertwoService.update(othertwo, tokenModel);
+        return ApiResult.success();
+    }
 
     @RequestMapping(value = "/deleteteappreciation", method = {RequestMethod.POST})
     public ApiResult deleteteappreciation(@RequestBody Appreciation appreciation, HttpServletRequest request) throws Exception {

@@ -51,6 +51,11 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     }
 
     @Override
+    public void update(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
+        othertwo.preUpdate(tokenModel);
+        othertwoMapper.updateByPrimaryKey(othertwo);
+    }
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUserothertwo(String Givingid, HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
