@@ -10,6 +10,7 @@
         <result column="createby" property="createby" jdbcType="VARCHAR"/>
         <result column="usergroupid" property="usergroupid" jdbcType="VARCHAR"/>
         <result column="devicename" property="devicename" jdbcType="VARCHAR"/>
+        <result column="trainers" property="trainers" jdbcType="VARCHAR"/>
 
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>

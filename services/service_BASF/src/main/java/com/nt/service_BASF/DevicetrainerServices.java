@@ -19,10 +19,10 @@ import java.util.List;
 public interface DevicetrainerServices {
 
     //获取培训项目列表
-    List<Devicetrainer> list() throws Exception;
+    List<Devicetrainer> list(Devicetrainer devicetrainer) throws Exception;
 
     //获取培训项目列表
-    List<DevicetrainerVo> listVo() throws Exception;
+    List<DevicetrainerVo> listVo(DevicetrainerVo devicetrainerVo) throws Exception;
 
     //创建培训项目
     void insert(Devicetrainer devicetrainer, TokenModel tokenModel) throws Exception;

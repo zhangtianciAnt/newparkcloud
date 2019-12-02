@@ -53,13 +53,12 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
      * @Date 2019/11/25 14:16
      */
     @Override
-    public List<Devicetrainer> list() throws Exception {
-        Devicetrainer devicetrainer = new Devicetrainer();
+    public List<Devicetrainer> list(Devicetrainer devicetrainer) throws Exception {
         return devicetrainerMapper.select(devicetrainer);
     }
 
     @Override
-    public List<DevicetrainerVo> listVo() throws Exception {
+    public List<DevicetrainerVo> listVo(DevicetrainerVo devicetrainerVo) throws Exception {
         Devicetrainer devicetrainer = new Devicetrainer();
         //获取培训人员信息
         List<Devicetrainer> list1 = devicetrainerMapper.select(devicetrainer);
@@ -90,7 +89,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
                     usergroupdetailed.setUsergroupid(al[i]);
                     count += usergroupdetailedMapper.selectCount(usergroupdetailed);
                 }
-                vo.setParticipateno(count);
+                vo.setParticipateno(count);//获取参加培训人员的数量
             }
             listVo.add(vo);
         }

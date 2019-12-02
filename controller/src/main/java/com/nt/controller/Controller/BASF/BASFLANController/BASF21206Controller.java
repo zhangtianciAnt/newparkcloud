@@ -3,6 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 
 import com.nt.dao_BASF.Devicetrainer;
+import com.nt.dao_BASF.VO.DevicetrainerVo;
 import com.nt.service_BASF.DevicetrainerServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -44,9 +45,26 @@ public class BASF21206Controller {
      * @Date 2019/11/25 14：20
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(devicetrainerServices.listVo());
+    public ApiResult list(@RequestBody DevicetrainerVo devicetrainerVo,HttpServletRequest request) throws Exception {
+        return ApiResult.success(devicetrainerServices.listVo(devicetrainerVo));
     }
+
+
+    /**
+     * @param request
+     * @Method list
+     * @Author WXL
+     * @Version 1.0
+     * @Description 获取培训人员列表的培训人员的id
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/25 14：20
+     */
+    @RequestMapping(value = "/listid", method = {RequestMethod.POST})
+    public ApiResult listid(@RequestBody Devicetrainer devicetrainer,HttpServletRequest request) throws Exception {
+        return ApiResult.success(devicetrainerServices.list(devicetrainer));
+    }
+
+
 
     /**
      * @param devicetrainer
