@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.nt.utils.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +27,11 @@ public class FileController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private String getToken() throws Exception {
-        String url = "http://39.108.133.62:8002/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=admin";
+    @Value("${file.url}")String Url;
+
+    @RequestMapping(value = "/getToken",method={RequestMethod.GET})
+    private ApiResult getToken() throws Exception {
+        String url = Url + "/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=admin";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
@@ -36,7 +40,7 @@ public class FileController {
         ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.GET,requestEntity,String.class);
         String value = rst.getBody();
         JSONObject string_to_json = JSONUtil.parseObj(value);
-        return string_to_json.getStr("data");
+        return ApiResult.success(string_to_json);
 
     }
 }
