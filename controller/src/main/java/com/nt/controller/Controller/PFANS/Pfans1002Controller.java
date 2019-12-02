@@ -20,16 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/business")
 public class Pfans1002Controller {
-
     @Autowired
     private BusinessService businessService;
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request) throws Exception {
+    public ApiResult get(String businesstype,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Business business = new Business();
+        business.setBusinesstype(businesstype);
         business.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(businessService.get(business));
     }
