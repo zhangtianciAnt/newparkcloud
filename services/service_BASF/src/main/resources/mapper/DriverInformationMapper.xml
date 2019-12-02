@@ -5,7 +5,6 @@
         <id column="driverid" property="driverid" jdbcType="VARCHAR"/>
         <result column="drivername" property="drivername" jdbcType="VARCHAR"/>
         <result column="driveridnumber" property="driveridnumber" jdbcType="VARCHAR"/>
-        <result column="blacklist" property="blacklist" jdbcType="VARCHAR"/>
         <result column="drivertime" property="drivertime" jdbcType="TIMESTAMP"/>
         <result column="violationtype" property="violationtype" jdbcType="VARCHAR"/>
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>

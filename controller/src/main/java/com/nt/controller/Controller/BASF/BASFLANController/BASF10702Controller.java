@@ -2,10 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.DriverInformation;
 import com.nt.service_BASF.DriverInformationServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +47,7 @@ public class BASF10702Controller {
     }
 
     /**
-     * @param driverInformation
+     * @param driveridnum
      * @Method list
      * @Author Wxz
      * @Version 1.0
@@ -59,27 +56,27 @@ public class BASF10702Controller {
      * @Date 2019/11/28 9:37
      */
     @RequestMapping(value = "/checkblack", method = {RequestMethod.POST})
-    public ApiResult checkblack(String driverIdNo) throws Exception {
-        return ApiResult.success(driverInformationServices.checkblack(driverIdNo));
+    public ApiResult checkblack(String driveridnum) throws Exception {
+        return ApiResult.success(driverInformationServices.checkblack(driveridnum));
     }
 
     /**
      * @param driverInformation
      * @param request
-     * @Method update
+     * @Method delete
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新驾驶员信息
+     * @Description 删除驾驶员黑名单信息
      * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/22 15：25
+     * @Date 2019/11/29 10：15
      */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody DriverInformation driverInformation, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody DriverInformation driverInformation, HttpServletRequest request) throws Exception {
         if (driverInformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        driverInformationServices.update(driverInformation, tokenModel);
+        driverInformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        driverInformationServices.delete(driverInformation);
         return ApiResult.success();
     }
 }
