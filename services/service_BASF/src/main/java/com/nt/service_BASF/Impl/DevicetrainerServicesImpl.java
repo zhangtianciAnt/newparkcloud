@@ -60,6 +60,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
     @Override
     public List<DevicetrainerVo> listVo(DevicetrainerVo devicetrainerVo) throws Exception {
         Devicetrainer devicetrainer = new Devicetrainer();
+        devicetrainer.setProgramid(devicetrainerVo.getProgramid());
         //获取培训人员信息
         List<Devicetrainer> list1 = devicetrainerMapper.select(devicetrainer);
         List<DevicetrainerVo> listVo = new ArrayList<>();
