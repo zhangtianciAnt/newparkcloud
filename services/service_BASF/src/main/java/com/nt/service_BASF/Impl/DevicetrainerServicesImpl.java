@@ -76,6 +76,7 @@ public class DevicetrainerServicesImpl implements DevicetrainerServices {
             vo.setCreatepeople(dev.getCreateby());           //培训人员的装置培训负责人
             vo.setDevicetrainerid(dev.getDevicetrainerid()); //培训人员主键
             vo.setProgramid(dev.getProgramid());             //培训人员的培训项目主键
+            vo.setUsergroupid(dev.getUsergroupid());
             int count = 0;
             String userid = dev.getUsergroupid();
             if (userid != null) {
