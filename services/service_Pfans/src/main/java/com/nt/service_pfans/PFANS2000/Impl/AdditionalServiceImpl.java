@@ -73,7 +73,7 @@ public class AdditionalServiceImpl implements AdditionalService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
-            for (int i = 1; i <= list.size() - 1; i++) {
+            for (int i = 1; i < list.size() - 1; i++) {
                 Additional additional = new Additional();
                 List<Object> value = list.get(k);
                 k++;
