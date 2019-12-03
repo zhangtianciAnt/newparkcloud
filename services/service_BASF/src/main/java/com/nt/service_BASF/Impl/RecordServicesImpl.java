@@ -1,12 +1,15 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.Program;
 import com.nt.dao_BASF.Record;
 import com.nt.service_BASF.RecordServices;
+import com.nt.service_BASF.mapper.ProgramMapper;
 import com.nt.service_BASF.mapper.RecordMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,11 +27,29 @@ public class RecordServicesImpl implements RecordServices {
 
     @Autowired
     private RecordMapper recordMapper;
+    @Autowired
+    private ProgramMapper programMapper;
 
     @Override
     public List<Record> list(Record record) throws Exception {
 //        Record record = new Record();
         record.setStatus("0");
+        Program program = programMapper.selectByPrimaryKey(record.getProgramid());
+        int num = recordMapper.selectCount(record);
+        List<Record> list1=new ArrayList();
+        list1 = recordMapper.select(record);
+        int i = 0;
+        for(Record record1:list1){
+            if(record1.getIfmakeup() == 1){
+                i = i+1;
+            }
+        }
+        Double per =  Double.valueOf(i) /Double.valueOf(num)*100;
+        String a = per + "%";
+        program.setPassrate(a);
+
+        program.setActualpeo(num);
+        programMapper.updateByPrimaryKeySelective(program);
         return recordMapper.select(record);
     }
 

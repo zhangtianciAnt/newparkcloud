@@ -13,7 +13,7 @@
         <result column="programmod" property="programmod" jdbcType="VARCHAR"/>
         <result column="programtype" property="programtype" jdbcType="VARCHAR"/>
         <result column="isforce" property="isforce" jdbcType="VARCHAR"/>
-        <result column="actualpeo" property="actualpeo" jdbcType="VARCHAR"/>
+        <result column="actualpeo" property="actualpeo" jdbcType="INTEGER"/>
         <result column="passrate" property="passrate" jdbcType="VARCHAR"/>
         <result column="programspace" property="programspace" jdbcType="VARCHAR"/>
         <result column="devicepeo" property="devicepeo" jdbcType="VARCHAR"/>

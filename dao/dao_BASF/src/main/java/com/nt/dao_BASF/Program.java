@@ -68,7 +68,7 @@ public class Program extends BaseModel {
     /*
      * 实际参与人数
      */
-    private String actualpeo;
+    private Integer actualpeo;
 
 
     /*
