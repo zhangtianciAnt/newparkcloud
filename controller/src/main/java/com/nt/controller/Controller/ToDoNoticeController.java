@@ -35,6 +35,11 @@ public class ToDoNoticeController {
         return ApiResult.success(toDoNoticeService.list(todonotice));
     }
 
+    @RequestMapping(value = "/getList", method = {RequestMethod.GET})
+    public ApiResult getList(String status,HttpServletRequest request) throws Exception {
+        return ApiResult.success(toDoNoticeService.getDataList(status));
+    }
+
     /**
      * @方法名：getmessage
      * @描述：获取消息列表
