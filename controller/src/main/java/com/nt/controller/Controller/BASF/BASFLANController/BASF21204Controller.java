@@ -34,8 +34,8 @@ public class BASF21204Controller {
     private TokenService tokenService;
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(recordServices.list());
+    public ApiResult list(@RequestBody Record record, HttpServletRequest request) throws Exception {
+        return ApiResult.success(recordServices.list(record));
     }
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})

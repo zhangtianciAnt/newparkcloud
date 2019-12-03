@@ -17,7 +17,7 @@ import java.util.List;
 public interface RecordServices {
 
     //获取人员培训记录列表
-    List<Record> list() throws Exception;
+    List<Record> list(Record record) throws Exception;
 
     //创建人员培训记录
     void insert(Record record, TokenModel tokenModel) throws Exception;

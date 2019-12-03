@@ -26,8 +26,8 @@ public class RecordServicesImpl implements RecordServices {
     private RecordMapper recordMapper;
 
     @Override
-    public List<Record> list() throws Exception {
-        Record record = new Record();
+    public List<Record> list(Record record) throws Exception {
+//        Record record = new Record();
         record.setStatus("0");
         return recordMapper.select(record);
     }
