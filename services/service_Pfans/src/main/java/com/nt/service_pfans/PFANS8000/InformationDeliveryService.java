@@ -14,4 +14,9 @@ public interface InformationDeliveryService {
     void updateInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception;
     //获取一条
     List<InformationDelivery> getOneInformation(String information,TokenModel tokenModel) throws Exception;
+
+    //获取
+    List<InformationDelivery> getListType(InformationDelivery informationDelivery) throws Exception;
+
+
 }

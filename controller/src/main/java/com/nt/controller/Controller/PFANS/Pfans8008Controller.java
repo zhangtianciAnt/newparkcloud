@@ -29,6 +29,20 @@ public class Pfans8008Controller {
         return ApiResult.success(informationService.getInformation(tokenModel));
     }
 
+
+    @RequestMapping(value = "/getListType", method = {RequestMethod.GET})
+    public ApiResult get(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        InformationDelivery informationDelivery=new InformationDelivery();
+        informationDelivery.setOwners(tokenModel.getOwnerList());
+        informationDelivery.setAvailablestate("0");
+        return ApiResult.success(informationService.getListType(informationDelivery));
+    }
+
+
+
+
+
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})
     public ApiResult getOneInformation(@RequestParam String information, HttpServletRequest request) throws Exception {
         if (information.isEmpty()) {
