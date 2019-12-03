@@ -121,4 +121,9 @@ public class AbNormal extends BaseModel {
     @Column(name = "enclosureexplain")
     private String enclosureexplain;
 
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
 }

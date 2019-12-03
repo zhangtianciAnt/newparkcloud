@@ -26,6 +26,14 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
         return informationDeliveries;
     }
 
+
+
+    public List<InformationDelivery> getListType(InformationDelivery informationDelivery) throws Exception {
+        return informationDeliveryMapper.select(informationDelivery);
+    }
+
+
+
     @Override
     public void insertInformation(InformationDelivery informationDelivery, TokenModel tokenModel) throws Exception {
 

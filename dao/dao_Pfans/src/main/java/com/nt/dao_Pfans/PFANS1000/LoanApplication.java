@@ -9,11 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "communication")
+@Table(name = "loanapplication")
 public class LoanApplication extends BaseModel {
 
     private static final long serialVersionUID = 1L;
@@ -66,7 +65,7 @@ public class LoanApplication extends BaseModel {
      * 模块
      */
     @Column(name = "MODULEID")
-    private Date moduleid;
+    private String moduleid;
 
     /**
      * 发票/日记账编号
@@ -75,10 +74,16 @@ public class LoanApplication extends BaseModel {
     private String accountnumber;
 
     /**
-     * 预计报销
+     * 预计报销日
      */
     @Column(name = "REIMBURSEMENT")
     private String reimbursement;
+
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATION_DATE")
+    private String application_date;
 
     /**
      * 货币选择
@@ -114,7 +119,7 @@ public class LoanApplication extends BaseModel {
      * 收款方全称
      */
     @Column(name = "PAYEENAME")
-    private Date payeename;
+    private String payeename;
 
     /**
      * 收款方编码
@@ -141,16 +146,10 @@ public class LoanApplication extends BaseModel {
     private String name;
 
     /**
-     * 个人编码
+     * 转账收款方全称
      */
-    @Column(name = "CODE")
-    private String code;
-
-    /**
-     * 拟报销日期
-     */
-    @Column(name = "PROPOSEDDATE")
-    private String proposeddate;
+    @Column(name = "ACCOUNTPAYEENAME")
+    private String accountpayeename;
 
     /**
      * 延期原因

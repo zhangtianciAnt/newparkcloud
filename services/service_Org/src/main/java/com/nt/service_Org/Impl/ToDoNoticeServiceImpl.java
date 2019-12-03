@@ -20,6 +20,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +48,15 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
         return todoNoticeMapper.select(todonotice);
     }
 
+    @Override
+    public List<ToDoNotice> getDataList(String status) throws Exception {
+        String STATUS = status;
+        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS);
+        if (todonotice.isEmpty()) {
+            return null;
+        }
+        return todonotice;
+    }
 
     /**
      * @方法名：save
