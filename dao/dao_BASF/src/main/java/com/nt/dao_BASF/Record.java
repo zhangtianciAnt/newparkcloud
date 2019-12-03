@@ -29,10 +29,21 @@ public class Record extends BaseModel {
     @Id
     private String recordid;
 
+
+    /**
+     * 培训项目主键
+     */
+    private String programid;
+
     /**
      * 人员姓名
      */
     private String username;
+
+    /**
+     * 员工号
+     */
+    private String peonum;
 
     /**
      * 人员类别
@@ -83,4 +94,9 @@ public class Record extends BaseModel {
      * 证书
      */
     private String certificate;
+
+    /**
+     * 是否是补考
+     */
+    private String ifmakeup;
 }
