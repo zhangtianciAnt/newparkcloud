@@ -46,7 +46,7 @@ public class Pfans1013Controller {
     }
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult insertEvectionVo(@RequestBody EvectionVo evectionVo, HttpServletRequest request) throws Exception {
+    public ApiResult create(@RequestBody EvectionVo evectionVo, HttpServletRequest request) throws Exception {
         if (evectionVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -56,7 +56,7 @@ public class Pfans1013Controller {
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult updateEvectionVo(@RequestBody EvectionVo evectionVo, HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody EvectionVo evectionVo, HttpServletRequest request) throws Exception {
         if (evectionVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -77,4 +77,20 @@ public class Pfans1013Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(businessService.get(business));
     }
+
+   /*
+   * 借款金额
+
+   @RequestMapping(value="/getmoney" ,method = {RequestMethod.POST})
+   public ApiResult getBusiness(@RequestBody Business business, HttpServletRequest request) throws Exception{
+       if(business==null){
+           return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+       }
+       TokenModel tokenModel=tokenService.getToken(request);
+       return ApiResult.success(businessService.get(business));
+   }
+
+    */
+
+
 }

@@ -116,8 +116,8 @@ public class AccommodationDetails extends BaseModel {
     /**
      * 附件号
      */
-    @Column(name = "ANNEX")
-    private String annex;
+    @Column(name = "ANNEXNO")
+    private String annexno;
 
     /**
      * 顺序
