@@ -29,4 +29,7 @@ public interface UsergroupServices {
 
     //update用户组
     void update(TokenModel tokenModel, UsergroupVo usergroupVo) throws Exception;
+
+    //delete用户组
+    void delete(TokenModel tokenModel, Usergroup usergroup) throws Exception;
 }
