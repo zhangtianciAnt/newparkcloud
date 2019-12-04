@@ -90,8 +90,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             model.add("姓名");
             model.add("项目");
             model.add("日志日期");
-            model.add("开始时间");
-            model.add("结束时间");
+            model.add("时差");
             model.add("工作备注");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
@@ -112,15 +111,6 @@ public class LogManagementServiceImpl implements LogManagementService {
                         continue;
                     }
                     SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String Time_start = value.get(4).toString();
-                    String Time_end = value.get(5).toString();
-                    int result1 = Time_start.compareTo(Time_end);
-                    if (result1 >= 0) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的时间格式错误，开始时间不可以大于或等于结束时间，导入失败");
-                        continue;
-                    }
                     if (value.size() > 3) {
                         String date = value.get(3).toString();
                         String date1 = value.get(3).toString();
@@ -166,9 +156,8 @@ public class LogManagementServiceImpl implements LogManagementService {
                         }
                     }
                     logmanagement.setLog_date(sf1.parse(value.get(3).toString()));
-                    logmanagement.setTime_start(sf.parse(Time_start));
-                    logmanagement.setTime_end(sf.parse(Time_end));
-                    logmanagement.setWork_memo(value.get(6).toString());
+                    logmanagement.setTime_start(value.get(4).toString());
+                    logmanagement.setWork_memo(value.get(5).toString());
                 }
                 logmanagement.setLogmanagement_id(UUID.randomUUID().toString());
                 logmanagementmapper.insert(logmanagement);
