@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class JapanCondominiumServiceImpl implements JapanCondominiumService {

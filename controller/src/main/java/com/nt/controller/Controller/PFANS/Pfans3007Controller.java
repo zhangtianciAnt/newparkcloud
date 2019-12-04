@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/japancondominium")
 public class Pfans3007Controller {
-
     @Autowired
     private JapanCondominiumService japancondominiumService;
     @Autowired
