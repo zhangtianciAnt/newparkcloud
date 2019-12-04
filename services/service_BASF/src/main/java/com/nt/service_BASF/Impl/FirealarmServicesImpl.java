@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,6 +61,24 @@ public class FirealarmServicesImpl implements FirealarmServices {
      */
     @Override
     public String insert(Firealarm firealarm, TokenModel tokenModel) throws Exception {
+
+        Firealarm firealarm1 =new Firealarm();
+        String yyMMdd = new SimpleDateFormat("yyMMdd").format(new Date()).toString();
+        int a = firealarmMapper.selectCount(firealarm1);
+        String countno =new DecimalFormat("00").format(a+1);
+        String typec = null;
+        switch (firealarm.getTypacc()){
+            case "BC013001": typec = "FAS";//火灾事故
+                break;
+            case "BC013002": typec = "PDA";//生产事故
+                break;
+            case "BC013003": typec = "EPA";//爆炸事故
+                break;
+            case "BC013004": typec = "OTA";//其他事故
+                break;
+        }
+        firealarm.setFirealarmno(yyMMdd+typec+countno);
+
         firealarm.preInsert(tokenModel);
         String ccid = UUID.randomUUID().toString();
         firealarm.setFirealarmid(ccid);
