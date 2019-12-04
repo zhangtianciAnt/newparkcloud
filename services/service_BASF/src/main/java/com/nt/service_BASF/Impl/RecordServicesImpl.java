@@ -40,7 +40,7 @@ public class RecordServicesImpl implements RecordServices {
         list1 = recordMapper.select(record);
         int i = 0;
         for(Record record1:list1){
-            if(record1.getIfmakeup() == 1){
+            if(record1.getIfmakeup() == "1"){
                 i = i+1;
             }
         }

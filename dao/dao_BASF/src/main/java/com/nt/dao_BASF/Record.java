@@ -98,5 +98,5 @@ public class Record extends BaseModel {
     /**
      * 是否是补考
      */
-    private Integer ifmakeup;
+    private String ifmakeup;
 }
