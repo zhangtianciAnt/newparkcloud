@@ -24,6 +24,10 @@ public class GivingVo {
 
     private List<Appreciation> appreciation;
 
+    private List<Lackattendance> lackattendance;
+
+    private List<Residual> residual;
+
     private List<Base> base;
 
     private List<Contrast> contrast;

@@ -8,7 +8,6 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -58,6 +57,12 @@ public class GivingServiceImpl implements GivingService {
     private OtherTwoMapper othertwoMapper;
 
     @Autowired
+    private LackattendanceMapper lackattendanceMapper;
+
+    @Autowired
+    private ResidualMapper residualMapper;
+
+    @Autowired
     private OtherTwo2Mapper othertwo2Mapper;
 
     @Autowired
@@ -81,6 +86,7 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private AdditionalMapper additionalMapper;
+
     /**
      * 生成基数表
      * FJL
@@ -126,6 +132,18 @@ public class GivingServiceImpl implements GivingService {
         additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
         givingVo.setAddiTional(additionallist);
 
+
+        Lackattendance lackattendance = new Lackattendance();
+        lackattendance.setGiving_id(giving_id);
+        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
+        lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
+        givingVo.setLackattendance(lackattendancellist);
+
+        Residual residual = new Residual();
+        residual.setGiving_id(giving_id);
+        List<Residual> residualllist = residualMapper.select(residual);
+        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
+        givingVo.setResidual(residualllist);
 
         OtherFour otherfour = new OtherFour();
         otherfour.setGiving_id(giving_id);
@@ -333,8 +351,8 @@ public class GivingServiceImpl implements GivingService {
             othertwoMapper.insertSelective(othertwo);
         }
         List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(givingid);
-        if(otherTwo2List.size()>0){
-            for(OtherTwo2 otherTwo2 :otherTwo2List){
+        if (otherTwo2List.size() > 0) {
+            for (OtherTwo2 otherTwo2 : otherTwo2List) {
                 otherTwo2.preInsert(tokenModel);
                 otherTwo2.setUser_id(otherTwo2.getUser_id());
                 otherTwo2.setMoneys(otherTwo2.getMoneys());
@@ -386,7 +404,7 @@ public class GivingServiceImpl implements GivingService {
 
                         String year1 = String.valueOf(c.get(Calendar.YEAR));    //获取年
                         String month1 = String.valueOf(c.get(Calendar.MONTH) + 1);
-                        String aa = year1 +"-"+ month1;
+                        String aa = year1 + "-" + month1;
                         if (strTemp.equals(strTemp1)) {
                             contrast.setThismonth(wa.getRealwages());
                         } else if (strTemp1.equals(aa)) {
@@ -450,15 +468,31 @@ public class GivingServiceImpl implements GivingService {
                     otherOneMapper.updateByPrimaryKeySelective(otherOne);
                 }
             }
-        }  else if(givingvo.getStrFlg().equals("3")){
+        } else if (givingvo.getStrFlg().equals("8")) {
+            List<Lackattendance> lackattendancelist = givingvo.getLackattendance();
+            if (lackattendancelist != null) {
+                for (Lackattendance lackattendance : lackattendancelist) {
+                    lackattendance.preUpdate(tokenModel);
+                    lackattendanceMapper.updateByPrimaryKeySelective(lackattendance);
+                }
+            }
+        } else if (givingvo.getStrFlg().equals("9")) {
+            List<Residual> residuallist = givingvo.getResidual();
+            if (residuallist != null) {
+                for (Residual residual : residuallist) {
+                    residual.preUpdate(tokenModel);
+                    residualMapper.updateByPrimaryKeySelective(residual);
+                }
+            }
+        } else if (givingvo.getStrFlg().equals("3")) {
             List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
             if (otherTwolist != null) {
                 for (OtherTwo othertwo : otherTwolist) {
                     othertwo.preUpdate(tokenModel);
                     othertwoMapper.updateByPrimaryKeySelective(othertwo);
                     List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(othertwo.getGiving_id());
-                    if(otherTwo2List.size()>0){
-                        for(OtherTwo2 otherTwo2 :otherTwo2List){
+                    if (otherTwo2List.size() > 0) {
+                        for (OtherTwo2 otherTwo2 : otherTwo2List) {
                             otherTwo2.preInsert(tokenModel);
                             otherTwo2.setUser_id(otherTwo2.getUser_id());
                             otherTwo2.setMoneys(otherTwo2.getMoneys());
