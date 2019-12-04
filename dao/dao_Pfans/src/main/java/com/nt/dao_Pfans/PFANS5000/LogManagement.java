@@ -35,13 +35,11 @@ public class LogManagement extends BaseModel {
      * 開始時間
      */
     @Column(name = "TIME_START")
-    private Date time_start;
+    private String time_start;
 
-    /**
-     * 結束時間
-     */
-    @Column(name = "TIME_END")
-    private Date time_end;
+
+    @Column(name = "WBS_ID")
+    private String wbs_id;
 
     /**
      * 工作項目
@@ -72,6 +70,7 @@ public class LogManagement extends BaseModel {
      */
     @Column(name = "HAS_PROJECT")
     private String has_project;
+
 
     @Column(name = "JOBNUMBER")
     private String jobnumber;

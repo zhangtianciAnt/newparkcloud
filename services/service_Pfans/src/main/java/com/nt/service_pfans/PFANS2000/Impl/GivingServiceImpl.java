@@ -125,23 +125,17 @@ public class GivingServiceImpl implements GivingService {
         otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherFive(otherfivelist);
 
-
         Additional additional = new Additional();
         additional.setGiving_id(giving_id);
         List<Additional> additionallist = additionalMapper.select(additional);
         additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
         givingVo.setAddiTional(additionallist);
 
-
-        Lackattendance lackattendance = new Lackattendance();
-        lackattendance.setGiving_id(giving_id);
-        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
+        List<Lackattendance> lackattendancellist = givingMapper.selectLackattendance(giving_id);
         lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
         givingVo.setLackattendance(lackattendancellist);
 
-        Residual residual = new Residual();
-        residual.setGiving_id(giving_id);
-        List<Residual> residualllist = residualMapper.select(residual);
+        List<Residual> residualllist = givingMapper.selectResidual(giving_id);
         residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
         givingVo.setResidual(residualllist);
 
@@ -321,6 +315,15 @@ public class GivingServiceImpl implements GivingService {
         }
     }
 
+    @Override
+    public void insertResidual(String givingid, TokenModel tokenModel) throws Exception {
+
+    }
+
+    @Override
+    public void insertLackattendance(String givingid, TokenModel tokenModel) throws Exception {
+
+    }
 
     @Override
     public void insertOtherTwo(String givingid, TokenModel tokenModel) throws Exception {
