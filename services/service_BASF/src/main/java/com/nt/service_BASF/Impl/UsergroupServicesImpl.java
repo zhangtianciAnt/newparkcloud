@@ -134,4 +134,10 @@ public class UsergroupServicesImpl implements UsergroupServices {
             }
         }
     }
+
+    @Override
+    public void delete(TokenModel tokenModel,Usergroup usergroup) throws Exception {
+        //逻辑删除（status -> "1"）
+        usergroupMapper.updateByPrimaryKeySelective(usergroup);
+    }
 }
