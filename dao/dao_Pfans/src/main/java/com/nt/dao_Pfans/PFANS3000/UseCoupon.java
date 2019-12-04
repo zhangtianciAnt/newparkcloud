@@ -33,26 +33,26 @@ public class UseCoupon extends BaseModel {
     /**
      * 卷类别
      */
-    @Column(name = "COPUNTYPE")
-    private String copuntype;
+    @Column(name = "COUPONTYPE")
+    private String coupontype;
 
     /**
      * 残劵数
      */
-    @Column(name = "COPUNNUMBER")
-    private String copunnumber;
+    @Column(name = "COUPONNUMBER")
+    private String couponnumber;
 
     /**
      * 卷价值
      */
-    @Column(name = "COPUNVALUE")
-    private String copunvalue;
+    @Column(name = "COUPONVALUE")
+    private String couponvalue;
 
     /**
      * 使用卷数
      */
-    @Column(name = "COPUNUSENUMBER")
-    private String copunusenumber;
+    @Column(name = "COUPONUSENUMBER")
+    private String couponusenumber;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;

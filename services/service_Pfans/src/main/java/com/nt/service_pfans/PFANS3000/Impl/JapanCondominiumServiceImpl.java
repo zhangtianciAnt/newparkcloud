@@ -72,8 +72,8 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 usecouponMapper.insertSelective(usecoupon);
                 Dictionary dictionary = new Dictionary();
                 dictionary.preInsert(tokenModel);
-                dictionary.setCode(usecoupon.getCopuntype());
-                dictionary.setValue2(usecoupon.getCopunnumber());
+                dictionary.setCode(usecoupon.getCoupontype());
+                dictionary.setValue2(usecoupon.getCouponnumber());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
@@ -104,8 +104,8 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 usecouponMapper.insertSelective(usecoupon);
                 Dictionary dictionary = new Dictionary();
                 dictionary.preUpdate(tokenModel);
-                dictionary.setCode(usecoupon.getCopuntype());
-                dictionary.setValue2(usecoupon.getCopunnumber());
+                dictionary.setCode(usecoupon.getCoupontype());
+                dictionary.setValue2(usecoupon.getCouponnumber());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
