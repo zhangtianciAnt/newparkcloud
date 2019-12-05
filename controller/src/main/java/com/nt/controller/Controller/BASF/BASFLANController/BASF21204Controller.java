@@ -77,4 +77,24 @@ public class BASF21204Controller {
         return ApiResult.success();
     }
 
+    /**
+     * @ProjectName: BASF应急平台
+     * @Package: com.nt.controller.Controller.BASF.BASFLANController
+     * @ClassName: BASF21204
+     * @Author: LXY
+     * @Description: EXECL导入
+     * @Date: 2019/12/15
+     * @Version: 1.0
+     */
+    @RequestMapping(value = "/importUser", method = {RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(recordServices.insert(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
 }

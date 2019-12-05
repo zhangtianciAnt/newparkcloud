@@ -13,6 +13,7 @@
     <result column="sex" property="sex" jdbcType="VARCHAR" />
     <result column="personneltype" property="postid" jdbcType="VARCHAR"/>
     <result column="contractorname" property="accessid" jdbcType="VARCHAR"/>
+    <result column="peonum" property="peonum" jdbcType="VARCHAR"/>
     <result column="STATUS" property="status" jdbcType="VARCHAR" />
     <result column="CREATEON" property="createon" jdbcType="TIMESTAMP" />
     <result column="CREATEBY" property="createby" jdbcType="VARCHAR" />
