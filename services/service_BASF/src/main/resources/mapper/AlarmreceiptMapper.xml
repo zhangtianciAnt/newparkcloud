@@ -52,6 +52,11 @@
 
     <select id="selectAlarmreceiptVoList" resultType="com.nt.dao_BASF.VO.AlarmreceiptVo">
         <include refid="selectAlarmreceiptVo"></include>
+        <where>
+            <if test="alarmreceipttype != null">
+                al.alarmreceipttype = #{alarmreceipttype}
+            </if>
+        </where>
     </select>
 
     <select id="selectAlarmreceiptVo" resultType="com.nt.dao_BASF.VO.AlarmreceiptVo">

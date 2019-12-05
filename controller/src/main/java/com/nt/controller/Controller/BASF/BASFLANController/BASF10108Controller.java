@@ -24,9 +24,12 @@ public class BASF10108Controller {
     private TokenService tokenService;
 
     @RequestMapping(value = "/getAlarmreceiptList", method = {RequestMethod.GET})
-    public ApiResult getAlarmreceiptList(HttpServletRequest request) throws Exception {
+    public ApiResult getAlarmreceiptList(String alarmreceipttype, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(alarmreceipttype)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(alarmreceiptServices.getList());
+        return ApiResult.success(alarmreceiptServices.getList(alarmreceipttype));
     }
 
     @RequestMapping(value = "/createAlarmreceipt", method = {RequestMethod.POST})

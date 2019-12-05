@@ -28,8 +28,8 @@ public class AlarmreceiptServicesImpl implements AlarmreceiptServices {
     private AlarmreceiptMapper alarmreceiptMapper;
 
     @Override
-    public List<AlarmreceiptVo> getList() throws Exception {
-        return alarmreceiptMapper.selectAlarmreceiptVoList();
+    public List<AlarmreceiptVo> getList(String alarmreceipttype) throws Exception {
+        return alarmreceiptMapper.selectAlarmreceiptVoList(alarmreceipttype);
     }
 
     @Override
