@@ -53,6 +53,7 @@ public class AlarmreceiptServicesImpl implements AlarmreceiptServices {
     }
 
     @Override
+    //
     public void update(Alarmreceipt alarmreceipt, TokenModel tokenModel) throws Exception {
         alarmreceipt.preUpdate(tokenModel);
         alarmreceiptMapper.updateByPrimaryKeySelective(alarmreceipt);
