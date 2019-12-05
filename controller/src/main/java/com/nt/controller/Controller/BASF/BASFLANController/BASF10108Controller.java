@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/BASF10108")
 public class BASF10108Controller {
-
+    //
     @Autowired
     private AlarmreceiptServices alarmreceiptServices;
 
