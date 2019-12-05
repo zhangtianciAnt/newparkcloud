@@ -96,13 +96,13 @@ public class Pfans1012Controller {
     /*
      * 暂借款申请编号
      * */
-    @RequestMapping(value="/getloanapplication" ,method = {RequestMethod.POST})
-    public ApiResult one(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
-        if (loanapplication == null) {
+    @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.POST})
+    public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+        if (loanapplication==null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(loanapplicationService.One(loanapplication.getLoanapplication_id()));
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
     }
 
 
