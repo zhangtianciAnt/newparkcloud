@@ -12,6 +12,7 @@
         <module>dao_VerificationCode</module>
         <module>dao_Workflow</module>
         <module>dao_Pfans</module>
+        <module>dao_Assets</module>
     </modules>
     <packaging>pom</packaging>
 

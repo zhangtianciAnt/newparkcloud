@@ -10,6 +10,7 @@
         <module>service_VerificationCode</module>
         <module>service_WorkFlow</module>
         <module>service_Pfans</module>
+        <module>service_Assets</module>
 
     </modules>
     <packaging>pom</packaging>
