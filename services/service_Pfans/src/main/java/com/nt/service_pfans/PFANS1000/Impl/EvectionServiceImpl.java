@@ -71,7 +71,7 @@ public class EvectionServiceImpl implements EvectionService {
         String evectionid = evection.getEvectionid();
 
         TrafficDetails traffic = new TrafficDetails();
-        traffic.setPublicexpenseid(evectionid);
+        traffic.setEvectionid(evectionid);
         trafficdetailsMapper.delete(traffic);
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
 

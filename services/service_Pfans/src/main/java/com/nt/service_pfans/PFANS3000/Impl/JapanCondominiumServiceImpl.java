@@ -73,11 +73,15 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 dictionary.preInsert(tokenModel);
                 dictionary.setCode(usecoupon.getCopuntype());
                 dictionary.setValue2(usecoupon.getCopunnumber());
+                dictionary.setCode(japancondominium.getCondominiumcompany());
+                dictionary.setValue2(japancondominium.getMoneys());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
         Dictionary dictionary = new Dictionary();
         dictionary.preInsert(tokenModel);
+        dictionary.setCode(japancondominium.getCondominiumcompany());
+        dictionary.setValue2(japancondominium.getMoneys());
         dictionary.setCode(japancondominium.getCondominiumcompany());
         dictionary.setValue2(japancondominium.getMoneys());
         dictionaryMapper.updateByPrimaryKeySelective(dictionary);
@@ -105,11 +109,15 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 dictionary.preUpdate(tokenModel);
                 dictionary.setCode(usecoupon.getCopuntype());
                 dictionary.setValue2(usecoupon.getCopunnumber());
+                dictionary.setCode(japancondominium.getCondominiumcompany());
+                dictionary.setValue2(japancondominium.getMoneys());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
         Dictionary dictionary = new Dictionary();
         dictionary.preUpdate(tokenModel);
+        dictionary.setCode(japancondominium.getCondominiumcompany());
+        dictionary.setValue2(japancondominium.getMoneys());
         dictionary.setCode(japancondominium.getCondominiumcompany());
         dictionary.setValue2(japancondominium.getMoneys());
         dictionaryMapper.updateByPrimaryKeySelective(dictionary);
