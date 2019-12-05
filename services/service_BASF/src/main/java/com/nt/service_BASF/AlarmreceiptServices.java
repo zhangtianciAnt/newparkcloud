@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public interface AlarmreceiptServices {
-
+    //
     //获取所有报警单信息
     List<AlarmreceiptVo> getList(String alarmreceipttype) throws Exception;
 
