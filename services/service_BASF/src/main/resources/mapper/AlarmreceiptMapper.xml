@@ -58,7 +58,7 @@
             </if>
         </where>
     </select>
-    //
+
     <select id="selectAlarmreceiptVo" resultType="com.nt.dao_BASF.VO.AlarmreceiptVo">
         <include refid="selectAlarmreceiptVo"></include>
         <where>
