@@ -86,6 +86,12 @@ public class Psdcd extends BaseModel {
     private String idtype;
 
     /**
+     * PSDCD ID申請明细
+     */
+    @Column(name = "PSDCDDETAIL_ID")
+    private String psdcddetail_id;
+
+    /**
      * 番号
      */
     @Column(name = "NUMBER")
