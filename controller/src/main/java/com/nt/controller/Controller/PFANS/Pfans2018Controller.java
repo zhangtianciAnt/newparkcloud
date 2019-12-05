@@ -30,7 +30,6 @@ public class Pfans2018Controller {
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         AttendanceSetting attendanceSetting = new AttendanceSetting();
-        attendanceSetting.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceSettingService.list(attendanceSetting));
     }
 

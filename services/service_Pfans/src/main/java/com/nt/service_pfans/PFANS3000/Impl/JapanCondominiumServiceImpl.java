@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class JapanCondominiumServiceImpl implements JapanCondominiumService {
@@ -72,8 +71,8 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 usecouponMapper.insertSelective(usecoupon);
                 Dictionary dictionary = new Dictionary();
                 dictionary.preInsert(tokenModel);
-                dictionary.setCode(usecoupon.getCoupontype());
-                dictionary.setValue2(usecoupon.getCouponnumber());
+                dictionary.setCode(usecoupon.getCopuntype());
+                dictionary.setValue2(usecoupon.getCopunnumber());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
@@ -104,8 +103,8 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 usecouponMapper.insertSelective(usecoupon);
                 Dictionary dictionary = new Dictionary();
                 dictionary.preUpdate(tokenModel);
-                dictionary.setCode(usecoupon.getCoupontype());
-                dictionary.setValue2(usecoupon.getCouponnumber());
+                dictionary.setCode(usecoupon.getCopuntype());
+                dictionary.setValue2(usecoupon.getCopunnumber());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
