@@ -48,23 +48,25 @@ public class RecordServicesImpl implements RecordServices {
     @Override
     public List<Record> list(Record record) throws Exception {
 //        Record record = new Record();
-        record.setStatus("0");
-        Program program = programMapper.selectByPrimaryKey(record.getProgramid());
-        int num = recordMapper.selectCount(record);
-        List<Record> list1=new ArrayList();
-        list1 = recordMapper.select(record);
-        int i = 0;
-        for(Record record1:list1){
-            if(record1.getIfmakeup() == "1"){
-                i = i+1;
+//        record.setStatus("0");
+        if (record.getProgramid() != null) {
+            Program program = programMapper.selectByPrimaryKey(record.getProgramid());
+            int num = recordMapper.selectCount(record);
+            List<Record> list1 = new ArrayList();
+            list1 = recordMapper.select(record);
+            int i = 0;
+            for (Record record1 : list1) {
+                if (record1.getIfmakeup() == "1") {
+                    i = i + 1;
+                }
             }
-        }
-        Double per =  Double.valueOf(i) /Double.valueOf(num)*100;
-        String a = per + "%";
-        program.setPassrate(a);
+            Double per = Double.valueOf(i) / Double.valueOf(num) * 100;
+            String a = per + "%";
+            program.setPassrate(a);
 
-        program.setActualpeo(num);
-        programMapper.updateByPrimaryKeySelective(program);
+            program.setActualpeo(num);
+            programMapper.updateByPrimaryKeySelective(program);
+        }
         return recordMapper.select(record);
     }
 
