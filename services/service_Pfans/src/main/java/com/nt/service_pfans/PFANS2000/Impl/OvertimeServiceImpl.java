@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,18 +83,35 @@ public class OvertimeServiceImpl implements OvertimeService {
                     closingtime_end = attendancesettinglist.get(0).getClosingtime_end();
                     lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start();
                     lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end();
-                }
-                //弹性工作制
-                String Flexibleworkshift_start = null;
-                FlexibleWork flexibleWork = new FlexibleWork();
-                flexibleWork.setUser_id(overtime.getUserid());
-                flexibleWork.setStatus("4");
-                List<FlexibleWork> flexibleWorklist = flexibleworkMapper.select(flexibleWork);
-                if(flexibleWorklist.size() > 0){
-                    Flexibleworkshift_start = flexibleWorklist.get(0).getWorktime();
+                    //弹性工作制
+                    String Flexibleworkshift_start = null;
+                    FlexibleWork flexibleWork = new FlexibleWork();
+                    flexibleWork.setUser_id(overtime.getUserid());
+                    flexibleWork.setStatus("4");
+                    List<FlexibleWork> flexibleWorklist = flexibleworkMapper.select(flexibleWork);
+                    if(flexibleWorklist.size() > 0){
+                        Flexibleworkshift_start = flexibleWorklist.get(0).getWorktime();
+                        String result = null;
+                        if(workshift_start != null){
+                            String start = workshift_start.replace(":","");
+                            String end = Flexibleworkshift_start.replace(":","");
+                            SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+                            SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+                            result = String.valueOf((sdf.parse(end).getTime() - sdf.parse(start).getTime())/(1000*60));
+                            //弹性工作实际上班时间
+                            workshift_start = Flexibleworkshift_start;
+                        }
+                        if(closingtime_start != null){
+                            SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+                            SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+                            long result1 = sdf.parse(closingtime_start.replace(":","")).getTime() + (Long.parseLong(result) * 60000);
+                            Date d1 = new Date(result1);
+                            //弹性工作实际下班时间
+                            closingtime_start = sdf1.format(d1).toString();
+                        }
+                    }
                 }
             }
-
         }
     }
 }
