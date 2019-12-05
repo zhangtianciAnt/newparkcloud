@@ -45,7 +45,7 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
     }
 
     /**
-     * @param driveridnum
+     * @param driverIdNo
      * @Method list
      * @Author Wxz
      * @Version 1.0
