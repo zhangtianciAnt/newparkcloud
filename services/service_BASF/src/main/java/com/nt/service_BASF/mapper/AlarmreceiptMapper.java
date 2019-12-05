@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface AlarmreceiptMapper extends MyMapper<Alarmreceipt> {
-
+    //
     List<AlarmreceiptVo> selectAlarmreceiptVoList(@Param("alarmreceipttype") String alarmreceipttype);
 
     AlarmreceiptVo selectAlarmreceiptVo(@Param("alarmreceiptid") String alarmreceiptid);
