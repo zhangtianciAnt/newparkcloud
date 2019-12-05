@@ -7,4 +7,35 @@
      and giving_id= #{givingid}
      group by user_id
     </select>
+
+    <select id="selectLackattendance" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lackattendance">
+     select user_id,sum(lastdiligence) as lastdiligence,
+      sum(lastshortdeficiency) as lastshortdeficiency,
+      sum(lastchronicdeficiency) as lastchronicdeficiency,
+      sum(thisdiligence) as thisdiligence,
+      sum(thisshortdeficiency) as thisshortdeficiency,
+      sum(thischronicdeficiency) as thischronicdeficiency  from lackattendance
+     where
+     giving_id= #{givingid}
+     group by user_id
+    </select>
+
+    <select id="selectResidual" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Residual">
+     select user_id,sum(lastweekdays) as lastweekdays,
+     sum(lastrestDay) as lastrestDay,
+      sum(lastlegal) as lastlegal,
+      sum(lastlatenight) as lastlatenight,
+      sum(lastrestlatenight) as lastrestlatenight,
+      sum(lastlegallatenight) as lastlegallatenight,
+      sum(thisweekdays) as thisweekdays,
+      sum(thisrestDay) as thisrestDay,
+      sum(thislegal) as thislegal,
+      sum(thislatenight) as thislatenight,
+      sum(thisrestlatenight) as thisrestlatenight,
+      sum(thislegallatenight) as thislegallatenight
+     from residual
+     where
+     giving_id= #{givingid}
+     group by user_id
+    </select>
 </mapper>
