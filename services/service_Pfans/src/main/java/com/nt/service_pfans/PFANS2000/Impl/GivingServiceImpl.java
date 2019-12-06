@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,12 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private BaseMapper baseMapper;
+
+    @Autowired
+    private AttendanceMapper attendanceMapper;
+
+    @Autowired
+    private RetireMapper retireMapper;
 
     @Autowired
     private WagesMapper wagesMapper;
@@ -131,11 +138,15 @@ public class GivingServiceImpl implements GivingService {
         additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
         givingVo.setAddiTional(additionallist);
 
-        List<Lackattendance> lackattendancellist = givingMapper.selectLackattendance(giving_id);
+        Lackattendance lackattendance = new Lackattendance();
+        lackattendance.setGiving_id(giving_id);
+        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
         lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
         givingVo.setLackattendance(lackattendancellist);
 
-        List<Residual> residualllist = givingMapper.selectResidual(giving_id);
+        Residual residua = new Residual();
+        residua.setGiving_id(giving_id);
+        List<Residual> residualllist = residualMapper.select(residua);
         residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
         givingVo.setResidual(residualllist);
 
@@ -170,10 +181,8 @@ public class GivingServiceImpl implements GivingService {
     }
 
     @Override
-    public void insertOtherOne(String oldgivingid, String givingid, TokenModel tokenModel) throws Exception {
+    public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
         OtherOne otherOne = new OtherOne();
-        otherOne.setGiving_id(oldgivingid);
-        otherOneMapper.delete(otherOne);
         AbNormal abNormal = new AbNormal();
         abNormal.setStatus("4");
         List<AbNormal> abNormalinfo = abNormalMapper.select(abNormal);
@@ -231,7 +240,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
     @Override
-    public void insertBase(String oldgivingid, String givingid, TokenModel tokenModel) throws Exception {
+    public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
 
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
@@ -249,8 +258,6 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         Base base = new Base();
-        base.setGiving_id(oldgivingid);
-        baseMapper.delete(base);
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             int rowindex = 0;
@@ -317,12 +324,749 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertResidual(String givingid, TokenModel tokenModel) throws Exception {
+        Residual residual = new Residual();
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        List<Base> baselist = baseMapper.select(base);
+        for (Base b : baselist) {
+            Calendar cal = Calendar.getInstance();
+            String years = String.valueOf(cal.get(cal.YEAR));
+            String months = String.valueOf(cal.get(cal.MONTH));
+            String user_id = b.getUser_id();
+            List<Attendance> AttendanceList = givingMapper.selectAttendance(user_id, years, months);
+            int rowundex = 0;
+            for (Attendance attendance : AttendanceList) {
+                double one = 0d;
+                double two = 0d;
+                double three = 0d;
+                double four = 0d;
+                Double Lasttotaly = 0d;
+                Double Thistotaly = 0d;
+                rowundex = rowundex + 1;
+                DecimalFormat df = new DecimalFormat(".00");
+                residual.setRowindex(rowundex);
+                residual.setResidual_id(UUID.randomUUID().toString());
+                residual.setGiving_id(givingid);
+                residual.setUser_id(attendance.getUser_id());
+                residual.setRn(b.getRn());
+                Retire retire = new Retire();
+                retire.setUser_id(attendance.getUser_id());
+                List<Retire> retirelist = retireMapper.select(retire);
+                if (retirelist.size() != 0) {
+                    residual.setRemarks("退职");
+                    residual.setThisweekdays(attendance.getOrdinaryindustry());
+                    residual.setThisrestDay(attendance.getWeekendindustry());
+                    residual.setThislegal(attendance.getStatutoryresidue());
+                    residual.setThislatenight(attendance.getOrdinaryindustrynight());
+                    residual.setThisrestlatenight(attendance.getWeekendindustrynight());
+                    residual.setThislegallatenight(attendance.getStatutoryresiduenight());
+                    int i = 0;
+                    int o = 0;
+                    int m = 0;
+                    int n = 0;
+                    int z = 0;
+                    int k = 0;
+                    int Daixiu1 = 0;
+                    int Daixiu2 = 0;
+                    int Daixiu3 = 0;
+                    int Daixiu4 = 0;
+                    int Daixiu5 = 0;
+                    int Daixiu6 = 0;
+                    int Daixiu7 = 0;
+                    String months1 = String.valueOf(cal.get(cal.MONTH) - 4);
+                    Attendance atten = new Attendance();
+                    atten.setUser_id(attendance.getUser_id());
+                    atten.setYears(years);
+                    atten.setMonths(months1);
+                    List<Attendance> Attendancelist = attendanceMapper.select(atten);
+                    for (Attendance attendancelist : Attendancelist) {
+                        if (Integer.parseInt(attendancelist.getWeekendindustry()) >= 8) {
+                            i = i + 1;
+                        }
+                    }
+                    String months2 = String.valueOf(cal.get(cal.MONTH) - 1);
+                    Attendance a = new Attendance();
+                    a.setUser_id(attendance.getUser_id());
+                    a.setYears(years);
+                    a.setMonths(months2);
+                    List<Attendance> Attendancelist1 = attendanceMapper.select(a);
+                    for (Attendance attendancelist1 : Attendancelist1) {
+                        if (Integer.parseInt(attendancelist1.getWeekendindustry()) >= 8) {
+                            o = o + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years, months2);
+                    for (Attendance A : attendanceList) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu1 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu1 = 0;
+                        }
+                    }
+                    String months3 = String.valueOf(cal.get(cal.MONTH) - 2);
+                    Attendance a1 = new Attendance();
+                    a1.setUser_id(attendance.getUser_id());
+                    a1.setYears(years);
+                    a1.setMonths(months3);
+                    List<Attendance> Attendancelist2 = attendanceMapper.select(a1);
+                    for (Attendance attendancelist2 : Attendancelist2) {
+                        if (Integer.parseInt(attendancelist2.getWeekendindustry()) >= 8) {
+                            m = m + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList1 = givingMapper.selectAttendance(user_id, years, months2);
+                    for (Attendance A : attendanceList1) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu2 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu2 = 0;
+                        }
+                    }
+                    String months4 = String.valueOf(cal.get(cal.MONTH) - 3);
+                    Attendance a2 = new Attendance();
+                    a2.setUser_id(attendance.getUser_id());
+                    a2.setYears(years);
+                    a2.setMonths(months4);
+                    List<Attendance> Attendancelist3 = attendanceMapper.select(a2);
+                    for (Attendance attendancelist3 : Attendancelist3) {
+                        if (Integer.parseInt(attendancelist3.getWeekendindustry()) >= 8) {
+                            n = n + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList2 = givingMapper.selectAttendance(user_id, years, months2);
+                    for (Attendance A : attendanceList2) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu3 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu3 = 0;
+                        }
+                    }
+                    String months5 = String.valueOf(cal.get(cal.MONTH));
+                    Attendance a3 = new Attendance();
+                    a3.setUser_id(attendance.getUser_id());
+                    a3.setYears(years);
+                    a3.setMonths(months5);
+                    List<Attendance> Attendancelist4 = attendanceMapper.select(a3);
+                    for (Attendance attendancelist4 : Attendancelist4) {
+                        if (Integer.parseInt(attendancelist4.getWeekendindustry()) >= 8) {
+                            z = z + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList5 = givingMapper.selectAttendance(user_id, years, months5);
+                    for (Attendance A : attendanceList5) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu4 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu4 = 0;
+                        }
+                    }
+                    String months6 = String.valueOf(cal.get(cal.MONTH) + 1);
+                    Attendance a4 = new Attendance();
+                    a4.setUser_id(attendance.getUser_id());
+                    a4.setYears(years);
+                    a4.setMonths(months6);
+                    List<Attendance> Attendancelist5 = attendanceMapper.select(a4);
+                    for (Attendance attendancelist5 : Attendancelist5) {
+                        if (Integer.parseInt(attendancelist5.getWeekendindustry()) >= 8) {
+                            k = k + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList6 = givingMapper.selectAttendance(user_id, years, months5);
+                    for (Attendance A : attendanceList6) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu5 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu5 = 0;
+                        }
+                    }
+                    String months7 = String.valueOf(cal.get(cal.MONTH) + 2);
+                    List<Attendance> attendanceList7 = givingMapper.selectAttendance(user_id, years, months7);
+                    for (Attendance A : attendanceList7) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu6 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu6 = 0;
+                        }
+                    }
+                    String months8 = String.valueOf(cal.get(cal.MONTH) + 3);
+                    List<Attendance> attendanceList8 = givingMapper.selectAttendance(user_id, years, months8);
+                    for (Attendance A : attendanceList8) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu7 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu7 = 0;
+                        }
+                    }
+                    int Thisreplace3 = (z * 8 - (Daixiu6 + Daixiu5 + Daixiu7)) +
+                            (n * 8 - (Daixiu1 + Daixiu2 + Daixiu4)) +
+                            (m * 8 - (Daixiu1 + Daixiu5 + Daixiu4)) +
+                            (o * 8 - (Daixiu6 + Daixiu5 + Daixiu4));
+                    residual.setThisreplace(String.valueOf(i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)));
+                    residual.setThisreplace3(String.valueOf(Thisreplace3));
+                    int Ordinaryindustry = 0;
+                    int Weekendindustry = 0;
+                    int Statutoryresidue = 0;
+                    int Ordinaryindustrynight = 0;
+                    int Weekendindustrynight = 0;
+                    int Statutoryresiduenight = 0;
+                    if (attendance.getOrdinaryindustry() == null) {
+                        Ordinaryindustry = 0;
+                    } else {
+                        Ordinaryindustry = Integer.parseInt(attendance.getOrdinaryindustry());
+                    }
+                    if (attendance.getWeekendindustry() == null) {
+                        Weekendindustry = 0;
+                    } else {
+                        Weekendindustry = Integer.parseInt(attendance.getWeekendindustry());
+                    }
+                    if (attendance.getStatutoryresidue() == null) {
+                        Statutoryresidue = 0;
+                    } else {
+                        Statutoryresidue = Integer.parseInt(attendance.getStatutoryresidue());
+                    }
+                    if (attendance.getOrdinaryindustrynight() == null) {
+                        Ordinaryindustrynight = 0;
+                    } else {
+                        Ordinaryindustrynight = Integer.parseInt(attendance.getOrdinaryindustrynight());
+                    }
+                    if (attendance.getWeekendindustrynight() == null) {
+                        Weekendindustrynight = 0;
+                    } else {
+                        Weekendindustrynight = Integer.parseInt(attendance.getWeekendindustrynight());
+                    }
+                    if (attendance.getStatutoryresiduenight() == null) {
+                        Statutoryresiduenight = 0;
+                    } else {
+                        Statutoryresiduenight = Integer.parseInt(attendance.getStatutoryresiduenight());
+                    }
+                    int Thistotalh = Ordinaryindustry + Weekendindustry + Statutoryresidue + Ordinaryindustrynight + Weekendindustrynight + Statutoryresiduenight + (i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) + Thisreplace3;
+                    residual.setThistotalh(String.valueOf(Thistotalh));
+                    if (b.getRn() != null && b.getRn().length() > 0) {
+                        String strRank = b.getRn().substring(2);
+                        int rank = Integer.parseInt(strRank);
+                        one = Double.valueOf(Ordinaryindustry * 1.5 + Ordinaryindustrynight * 1.5 * 1.25);
+                        two = Double.valueOf(Weekendindustry * 2 + Weekendindustrynight * 2 * 1.25);
+                        three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25);
+                        four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2);
+                        if (rank >= 21008) {
+                            Thistotaly = three + four;
+                            residual.setThistotaly(df.format(Thistotaly));
+                        } else {
+                            Thistotaly = one + two + three + four;
+                            residual.setThistotaly(df.format(Thistotaly));
+                        }
+                    }
 
+                    String months10 = String.valueOf(cal.get(cal.MONTH) - 1);
+                    List<Attendance> AttendanceList1 = givingMapper.selectAttendance(user_id, years, months10);
+                    for (Attendance Attendance1 : AttendanceList1) {
+                        residual.setLastweekdays(Attendance1.getOrdinaryindustry());
+                        residual.setLastrestDay(Attendance1.getWeekendindustry());
+                        residual.setLastlegal(Attendance1.getStatutoryresidue());
+                        residual.setLastlatenight(Attendance1.getOrdinaryindustrynight());
+                        residual.setLastrestlatenight(Attendance1.getWeekendindustrynight());
+                        residual.setLastlegallatenight(Attendance1.getStatutoryresiduenight());
+                        int Xi = 0;
+                        int Xo = 0;
+                        int Xm = 0;
+                        int Xn = 0;
+                        int XDaixiu1 = 0;
+                        int XDaixiu2 = 0;
+                        int XDaixiu3 = 0;
+                        String Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
+                        Attendance atten1 = new Attendance();
+                        atten1.setUser_id(Attendance1.getUser_id());
+                        atten1.setYears(years);
+                        atten1.setMonths(Xmonths1);
+                        List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
+                        for (Attendance attendancelist : Attendancelist11) {
+                            if (Integer.parseInt(attendancelist.getWeekendindustry()) >= 8) {
+                                Xi = Xi + 1;
+                            }
+                        }
+                        String Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
+                        Attendance Xa = new Attendance();
+                        Xa.setUser_id(Attendance1.getUser_id());
+                        Xa.setYears(years);
+                        Xa.setMonths(Xmonths2);
+                        List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
+                        for (Attendance attendancelist1 : XAttendancelist1) {
+                            if (Integer.parseInt(attendancelist1.getWeekendindustry()) >= 8) {
+                                Xo = Xo + 1;
+                            }
+                        }
+                        List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, years, Xmonths2);
+                        for (Attendance A : XattendanceList) {
+                            if (A.getDaixiu() != null) {
+                                XDaixiu1 = Integer.parseInt(A.getDaixiu());
+                            } else {
+                                XDaixiu1 = 0;
+                            }
+                        }
+                        String Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
+                        Attendance Xa1 = new Attendance();
+                        Xa1.setUser_id(Attendance1.getUser_id());
+                        Xa1.setYears(years);
+                        Xa1.setMonths(Xmonths3);
+                        List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
+                        for (Attendance attendancelist2 : XAttendancelist2) {
+                            if (Integer.parseInt(attendancelist2.getWeekendindustry()) >= 8) {
+                                Xm = Xm + 1;
+                            }
+                        }
+                        List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, years, Xmonths3);
+                        for (Attendance A : XattendanceList1) {
+                            if (A.getDaixiu() != null) {
+                                XDaixiu2 = Integer.parseInt(A.getDaixiu());
+                            } else {
+                                XDaixiu2 = 0;
+                            }
+                        }
+                        String Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
+                        Attendance Xa2 = new Attendance();
+                        Xa2.setUser_id(Attendance1.getUser_id());
+                        Xa2.setYears(years);
+                        Xa2.setMonths(Xmonths4);
+                        List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
+                        for (Attendance attendancelist3 : XAttendancelist3) {
+                            if (Integer.parseInt(attendancelist3.getWeekendindustry()) >= 8) {
+                                Xn = Xn + 1;
+                            }
+                        }
+                        List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, years, Xmonths4);
+                        for (Attendance A : XattendanceList2) {
+                            if (A.getDaixiu() != null) {
+                                XDaixiu3 = Integer.parseInt(A.getDaixiu());
+                            } else {
+                                XDaixiu3 = 0;
+                            }
+                        }
+                        residual.setLastreplace(String.valueOf(i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
+                        int XOrdinaryindustry = 0;
+                        int XWeekendindustry = 0;
+                        int XStatutoryresidue = 0;
+                        int XOrdinaryindustrynight = 0;
+                        int XWeekendindustrynight = 0;
+                        int XStatutoryresiduenight = 0;
+                        if (Attendance1.getOrdinaryindustry() == null) {
+                            XOrdinaryindustry = 0;
+                        } else {
+                            XOrdinaryindustry = Integer.parseInt(Attendance1.getOrdinaryindustry());
+                        }
+                        if (Attendance1.getWeekendindustry() == null) {
+                            XWeekendindustry = 0;
+                        } else {
+                            XWeekendindustry = Integer.parseInt(Attendance1.getWeekendindustry());
+                        }
+                        if (Attendance1.getStatutoryresidue() == null) {
+                            XStatutoryresidue = 0;
+                        } else {
+                            XStatutoryresidue = Integer.parseInt(Attendance1.getStatutoryresidue());
+                        }
+                        if (Attendance1.getOrdinaryindustrynight() == null) {
+                            XOrdinaryindustrynight = 0;
+                        } else {
+                            XOrdinaryindustrynight = Integer.parseInt(Attendance1.getOrdinaryindustrynight());
+                        }
+                        if (Attendance1.getWeekendindustrynight() == null) {
+                            XWeekendindustrynight = 0;
+                        } else {
+                            XWeekendindustrynight = Integer.parseInt(Attendance1.getWeekendindustrynight());
+                        }
+                        if (Attendance1.getStatutoryresiduenight() == null) {
+                            XStatutoryresiduenight = 0;
+                        } else {
+                            XStatutoryresiduenight = Integer.parseInt(Attendance1.getStatutoryresiduenight());
+                        }
+                        int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
+                        residual.setLasttotalh(String.valueOf(XLasttotalh));
+                        if (b.getRn() != null && b.getRn().length() > 0) {
+                            String strRank = b.getRn().substring(2);
+                            int rank = Integer.parseInt(strRank);
+                            one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
+                            two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
+                            three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
+                            four = Double.valueOf((i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
+                            if (rank >= 21008) {
+                                Lasttotaly = three + four;
+                                residual.setLasttotaly(df.format(Lasttotaly));
+                            } else {
+                                Lasttotaly = one + two + three + four;
+                                residual.setLasttotaly(df.format(Lasttotaly));
+                            }
+                        }
+                    }
+                    if(Lasttotaly + Thistotaly==0.0){
+                        residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
+                    }else{
+                        residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
+                    }
+                } else {
+                    residual.setRemarks("-");
+                    residual.setThisweekdays(attendance.getOrdinaryindustry());
+                    residual.setThisrestDay(attendance.getWeekendindustry());
+                    residual.setThislegal(attendance.getStatutoryresidue());
+                    residual.setThislatenight(attendance.getOrdinaryindustrynight());
+                    residual.setThisrestlatenight(attendance.getWeekendindustrynight());
+                    residual.setThislegallatenight(attendance.getStatutoryresiduenight());
+                    int i = 0;
+                    int o = 0;
+                    int m = 0;
+                    int n = 0;
+                    int z = 0;
+                    int k = 0;
+                    int Daixiu1 = 0;
+                    int Daixiu2 = 0;
+                    int Daixiu3 = 0;
+                    int Daixiu4 = 0;
+                    int Daixiu5 = 0;
+                    int Daixiu6 = 0;
+                    int Daixiu7 = 0;
+                    String months1 = String.valueOf(cal.get(cal.MONTH) - 4);
+                    Attendance atten = new Attendance();
+                    atten.setUser_id(attendance.getUser_id());
+                    atten.setYears(years);
+                    atten.setMonths(months1);
+                    List<Attendance> Attendancelist = attendanceMapper.select(atten);
+                    for (Attendance attendancelist : Attendancelist) {
+                        if (Integer.parseInt(attendancelist.getWeekendindustry()) >= 8) {
+                            i = i + 1;
+                        }
+                    }
+                    String months2 = String.valueOf(cal.get(cal.MONTH) - 1);
+                    Attendance a = new Attendance();
+                    a.setUser_id(attendance.getUser_id());
+                    a.setYears(years);
+                    a.setMonths(months2);
+                    List<Attendance> Attendancelist1 = attendanceMapper.select(a);
+                    for (Attendance attendancelist1 : Attendancelist1) {
+                        if (Integer.parseInt(attendancelist1.getWeekendindustry()) >= 8) {
+                            o = o + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years, months2);
+                    for (Attendance A : attendanceList) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu1 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu1 = 0;
+                        }
+                    }
+                    String months3 = String.valueOf(cal.get(cal.MONTH) - 2);
+                    Attendance a1 = new Attendance();
+                    a1.setUser_id(attendance.getUser_id());
+                    a1.setYears(years);
+                    a1.setMonths(months3);
+                    List<Attendance> Attendancelist2 = attendanceMapper.select(a1);
+                    for (Attendance attendancelist2 : Attendancelist2) {
+                        if (Integer.parseInt(attendancelist2.getWeekendindustry()) >= 8) {
+                            m = m + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList1 = givingMapper.selectAttendance(user_id, years, months2);
+                    for (Attendance A : attendanceList1) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu2 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu2 = 0;
+                        }
+                    }
+                    String months4 = String.valueOf(cal.get(cal.MONTH) - 3);
+                    Attendance a2 = new Attendance();
+                    a2.setUser_id(attendance.getUser_id());
+                    a2.setYears(years);
+                    a2.setMonths(months4);
+                    List<Attendance> Attendancelist3 = attendanceMapper.select(a2);
+                    for (Attendance attendancelist3 : Attendancelist3) {
+                        if (Integer.parseInt(attendancelist3.getWeekendindustry()) >= 8) {
+                            n = n + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList2 = givingMapper.selectAttendance(user_id, years, months2);
+                    for (Attendance A : attendanceList2) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu3 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu3 = 0;
+                        }
+                    }
+                    String months5 = String.valueOf(cal.get(cal.MONTH));
+                    Attendance a3 = new Attendance();
+                    a3.setUser_id(attendance.getUser_id());
+                    a3.setYears(years);
+                    a3.setMonths(months5);
+                    List<Attendance> Attendancelist4 = attendanceMapper.select(a3);
+                    for (Attendance attendancelist4 : Attendancelist4) {
+                        if (Integer.parseInt(attendancelist4.getWeekendindustry()) >= 8) {
+                            z = z + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList5 = givingMapper.selectAttendance(user_id, years, months5);
+                    for (Attendance A : attendanceList5) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu4 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu4 = 0;
+                        }
+                    }
+
+                    String months6 = String.valueOf(cal.get(cal.MONTH) + 1);
+                    Attendance a4 = new Attendance();
+                    a4.setUser_id(attendance.getUser_id());
+                    a4.setYears(years);
+                    a4.setMonths(months6);
+                    List<Attendance> Attendancelist5 = attendanceMapper.select(a4);
+                    for (Attendance attendancelist5 : Attendancelist5) {
+                        if (Integer.parseInt(attendancelist5.getWeekendindustry()) >= 8) {
+                            k = k + 1;
+                        }
+                    }
+                    List<Attendance> attendanceList6 = givingMapper.selectAttendance(user_id, years, months5);
+                    for (Attendance A : attendanceList6) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu5 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu5 = 0;
+                        }
+                    }
+                    String months7 = String.valueOf(cal.get(cal.MONTH) + 2);
+                    List<Attendance> attendanceList7 = givingMapper.selectAttendance(user_id, years, months7);
+                    for (Attendance A : attendanceList7) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu6 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu6 = 0;
+                        }
+                    }
+                    String months8 = String.valueOf(cal.get(cal.MONTH) + 3);
+                    List<Attendance> attendanceList8 = givingMapper.selectAttendance(user_id, years, months8);
+                    for (Attendance A : attendanceList8) {
+                        if (A.getDaixiu() != null) {
+                            Daixiu7 = Integer.parseInt(A.getDaixiu());
+                        } else {
+                            Daixiu7 = 0;
+                        }
+                    }
+                    int Thisreplace3 = (z * 8 - (Daixiu6 + Daixiu5 + Daixiu7)) +
+                            (n * 8 - (Daixiu1 + Daixiu2 + Daixiu4)) +
+                            (m * 8 - (Daixiu1 + Daixiu5 + Daixiu4)) +
+                            (o * 8 - (Daixiu6 + Daixiu5 + Daixiu4));
+
+                    residual.setThisreplace(String.valueOf(i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)));
+                    residual.setThisreplace3(String.valueOf(Thisreplace3));
+                    int Ordinaryindustry = 0;
+                    int Weekendindustry = 0;
+                    int Statutoryresidue = 0;
+                    int Ordinaryindustrynight = 0;
+                    int Weekendindustrynight = 0;
+                    int Statutoryresiduenight = 0;
+                    if (attendance.getOrdinaryindustry() == null) {
+                        Ordinaryindustry = 0;
+                    } else {
+                        Ordinaryindustry = Integer.parseInt(attendance.getOrdinaryindustry());
+                    }
+                    if (attendance.getWeekendindustry() == null) {
+                        Weekendindustry = 0;
+                    } else {
+                        Weekendindustry = Integer.parseInt(attendance.getWeekendindustry());
+                    }
+                    if (attendance.getStatutoryresidue() == null) {
+                        Statutoryresidue = 0;
+                    } else {
+                        Statutoryresidue = Integer.parseInt(attendance.getStatutoryresidue());
+                    }
+                    if (attendance.getOrdinaryindustrynight() == null) {
+                        Ordinaryindustrynight = 0;
+                    } else {
+                        Ordinaryindustrynight = Integer.parseInt(attendance.getOrdinaryindustrynight());
+                    }
+                    if (attendance.getWeekendindustrynight() == null) {
+                        Weekendindustrynight = 0;
+                    } else {
+                        Weekendindustrynight = Integer.parseInt(attendance.getWeekendindustrynight());
+                    }
+                    if (attendance.getStatutoryresiduenight() == null) {
+                        Statutoryresiduenight = 0;
+                    } else {
+                        Statutoryresiduenight = Integer.parseInt(attendance.getStatutoryresiduenight());
+                    }
+                    int Thistotalh = Ordinaryindustry + Weekendindustry + Statutoryresidue + Ordinaryindustrynight + Weekendindustrynight + Statutoryresiduenight + (i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) + Thisreplace3;
+                    residual.setThistotalh(String.valueOf(Thistotalh));
+                    if (b.getRn() != null && b.getRn().length() > 0) {
+                        String strRank = b.getRn().substring(2);
+                        int rank = Integer.parseInt(strRank);
+                        one = Double.valueOf(Ordinaryindustry * 1.5 + Ordinaryindustrynight * 1.5 * 1.25);
+                        two = Double.valueOf(Weekendindustry * 2 + Weekendindustrynight * 2 * 1.25);
+                        three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25);
+                        four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2);
+                        if (rank >= 21008) {
+                            Thistotaly = three + four;
+                            residual.setThistotaly(df.format(Thistotaly));
+                        } else {
+                            Thistotaly = one + two + three + four;
+                            residual.setThistotaly(df.format(Thistotaly));
+                        }
+                    }
+                    if(Lasttotaly + Thistotaly==0.0){
+                        residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
+                    }else{
+                        residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
+                    }
+                }
+                residual.preInsert(tokenModel);
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(user_id));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    residual.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+                }
+                residualMapper.insert(residual);
+            }
+        }
     }
 
     @Override
-    public void insertLackattendance(String givingid, TokenModel tokenModel) throws Exception {
+    public void insertAttendance(String givingid, TokenModel tokenModel) throws Exception {
+        Lackattendance lackattendance = new Lackattendance();
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        List<Base> baselist = baseMapper.select(base);
+        for (Base b : baselist) {
+            Calendar cal = Calendar.getInstance();
+            String years = String.valueOf(cal.get(cal.YEAR));
+            String months = String.valueOf(cal.get(cal.MONTH));
+            String user_id = b.getUser_id();
+            List<Attendance> AttendanceList = givingMapper.selectAttendance(user_id, years, months);
+            int rowundex = 0;
+            double one = 0d;
+            double two = 0d;
+            double three = 0d;
+            double Lasttotal = 0d;
+            double thistotal = 0d;
+            for (Attendance attendance : AttendanceList) {
+                rowundex = rowundex + 1;
+                lackattendance.setRowindex(rowundex);
+                lackattendance.setLackattendance_id(UUID.randomUUID().toString());
+                lackattendance.setGiving_id(givingid);
+                lackattendance.setUser_id(attendance.getUser_id());
+                Retire retire = new Retire();
+                retire.setUser_id(attendance.getUser_id());
+                List<Retire> retirelist = retireMapper.select(retire);
+                DecimalFormat df = new DecimalFormat(".00");
+                if (retirelist.size() != 0) {
+                    lackattendance.setRemarks("退职");
+                    lackattendance.setThisshortdeficiency(attendance.getShortsickleave());
+                    lackattendance.setThischronicdeficiency(attendance.getLongsickleave());
+                    Base ba = new Base();
+                    ba.setUser_id(attendance.getUser_id());
+                    List<Base> Baselist = baseMapper.select(ba);
+                    for (Base B : Baselist) {
+                        int Late = 0;
+                        int Leaveearly = 0;
+                        int Absenteeism = 0;
+                        int Thismonth = 0;
+                        if (B.getThismonth() == null) {
+                            Thismonth = 0;
+                        } else {
+                            Thismonth = Integer.parseInt(B.getThismonth());
+                        }
+                        if (attendance.getLate() == null) {
+                            Late = 0;
+                        } else {
+                            Late = Integer.parseInt(attendance.getLate());
+                        }
+                        if (attendance.getLeaveearly() == null) {
+                            Leaveearly = 0;
+                        } else {
+                            Leaveearly = Integer.parseInt(attendance.getLeaveearly());
+                        }
+                        if (attendance.getAbsenteeism() == null) {
+                            Absenteeism = 0;
+                        } else {
+                            Absenteeism = Integer.parseInt(attendance.getAbsenteeism());
+                        }
+                        if (attendance.getShortsickleave() == null) {
+                            two = 0;
+                        } else {
+                            two = Double.valueOf(Thismonth / 21.75 / 8 * 0.4 * Integer.parseInt(attendance.getShortsickleave()));
+                        }
+                        if (attendance.getLongsickleave() == null) {
+                            three = 0;
+                        } else {
+                            three = Double.valueOf(1620 / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
+                        }
 
+                        int Thisdiligence = Late + Leaveearly + Absenteeism;
+                        lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
+                        one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
+                        thistotal = one - two - three;
+                        lackattendance.setThistotal(df.format(thistotal));
+                    }
+                } else {
+                    lackattendance.setRemarks("-");
+                    lackattendance.setLastshortdeficiency(attendance.getShortsickleave());
+                    lackattendance.setLastchronicdeficiency(attendance.getLongsickleave());
+                    Base ba = new Base();
+                    ba.setUser_id(attendance.getUser_id());
+                    List<Base> Baselist = baseMapper.select(ba);
+                    for (Base B : Baselist) {
+                        int Late = 0;
+                        int Leaveearly = 0;
+                        int Absenteeism = 0;
+                        int Thismonth = 0;
+                        if (B.getThismonth() == null) {
+                            Thismonth = 0;
+                        } else {
+                            Thismonth = Integer.parseInt(B.getThismonth());
+                        }
+                        if (attendance.getLate() == null) {
+                            Late = 0;
+                        } else {
+                            Late = Integer.parseInt(attendance.getLate());
+                        }
+                        if (attendance.getLeaveearly() == null) {
+                            Leaveearly = 0;
+                        } else {
+                            Leaveearly = Integer.parseInt(attendance.getLeaveearly());
+                        }
+                        if (attendance.getAbsenteeism() == null) {
+                            Absenteeism = 0;
+                        } else {
+                            Absenteeism = Integer.parseInt(attendance.getAbsenteeism());
+                        }
+                        if (attendance.getShortsickleave() == null) {
+                            two = 0;
+                        } else {
+                            two = Double.valueOf(Thismonth / 21.75 / 8 * 0.4 * Integer.parseInt(attendance.getShortsickleave()));
+                        }
+                        if (attendance.getLongsickleave() == null) {
+                            three = 0;
+                        } else {
+                            three = Double.valueOf(1620 / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
+                        }
+
+                        int Lastdiligence = Late + Leaveearly + Absenteeism;
+                        lackattendance.setLastdiligence(String.valueOf(Lastdiligence));
+                        one = Double.valueOf(Lastdiligence * Thismonth / 21.75 / 8);
+                        Lasttotal = one - two - three;
+                        lackattendance.setLasttotal(df.format(Lasttotal));
+                    }
+                }
+                if(thistotal + Lasttotal==0.0){
+                    lackattendance.setGive(String.valueOf(thistotal + Lasttotal));
+                }else{
+                    lackattendance.setGive(df.format(thistotal + Lasttotal));
+                }
+                lackattendance.preInsert(tokenModel);
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(user_id));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    lackattendance.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+                }
+                lackattendanceMapper.insert(lackattendance);
+            }
+        }
     }
 
     @Override
@@ -370,10 +1114,8 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      */
     @Override
-    public void insertContrast(String oldgivingid, String givingid, TokenModel tokenModel) throws Exception {
+    public void insertContrast(String givingid, TokenModel tokenModel) throws Exception {
         Contrast contrast = new Contrast();
-        contrast.setGiving_id(oldgivingid);
-        contrastMapper.delete(contrast);
         Base base = new Base();
         base.setGiving_id(givingid);
         List<Base> baselist = baseMapper.select(base);
@@ -428,6 +1170,18 @@ public class GivingServiceImpl implements GivingService {
         String strTemp = sf1.format(new Date());
         giving.setMonths(strTemp);
         List<Giving> givinglist = givingMapper.select(giving);
+        Base base = new Base();
+        Contrast contrast = new Contrast();
+        OtherOne otherOne = new OtherOne();
+        if (givinglist.size() != 0) {
+            base.setGiving_id(givinglist.get(0).getGiving_id());
+            baseMapper.delete(base);
+            contrast.setGiving_id(givinglist.get(0).getGiving_id());
+            contrastMapper.delete(contrast);
+
+            otherOne.setGiving_id(givinglist.get(0).getGiving_id());
+            otherOneMapper.delete(otherOne);
+        }
         giving = new Giving();
         giving.setMonths(strTemp);
         givingMapper.delete(giving);
@@ -441,10 +1195,12 @@ public class GivingServiceImpl implements GivingService {
         giving.setMonths(sf1.format(new Date()));
 
         givingMapper.insert(giving);
-        insertBase(givinglist.get(0).getGiving_id(), givingid, tokenModel);
-        insertContrast(givinglist.get(0).getGiving_id(), givingid, tokenModel);
+        insertBase(givingid, tokenModel);
+        insertContrast(givingid, tokenModel);
         insertOtherTwo(givingid, tokenModel);
-        insertOtherOne(givinglist.get(0).getGiving_id(), givingid, tokenModel);
+        insertOtherOne(givingid, tokenModel);
+        insertAttendance(givingid, tokenModel);
+        insertResidual(givingid, tokenModel);
     }
 
     @Override
@@ -469,22 +1225,6 @@ public class GivingServiceImpl implements GivingService {
                 for (OtherOne otherOne : otheronelist) {
                     otherOne.preUpdate(tokenModel);
                     otherOneMapper.updateByPrimaryKeySelective(otherOne);
-                }
-            }
-        } else if (givingvo.getStrFlg().equals("8")) {
-            List<Lackattendance> lackattendancelist = givingvo.getLackattendance();
-            if (lackattendancelist != null) {
-                for (Lackattendance lackattendance : lackattendancelist) {
-                    lackattendance.preUpdate(tokenModel);
-                    lackattendanceMapper.updateByPrimaryKeySelective(lackattendance);
-                }
-            }
-        } else if (givingvo.getStrFlg().equals("9")) {
-            List<Residual> residuallist = givingvo.getResidual();
-            if (residuallist != null) {
-                for (Residual residual : residuallist) {
-                    residual.preUpdate(tokenModel);
-                    residualMapper.updateByPrimaryKeySelective(residual);
                 }
             }
         } else if (givingvo.getStrFlg().equals("3")) {
