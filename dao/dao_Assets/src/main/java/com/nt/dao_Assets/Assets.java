@@ -24,6 +24,12 @@ public class Assets extends BaseModel {
     private String assets_id;
 
     /**
+     * 盘点计划ID
+     */
+    @Column(name = "INVENTORYPLAN_ID")
+    private String inventoryplan_id;
+
+    /**
      * 件名
      */
     @Column(name = "FILENAME")
@@ -82,5 +88,11 @@ public class Assets extends BaseModel {
      */
     @Column(name = "RESULT")
     private String result;
+
+    /**
+     * 索引
+     */
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 
 }

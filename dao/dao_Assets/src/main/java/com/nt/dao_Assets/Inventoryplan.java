@@ -24,12 +24,6 @@ public class Inventoryplan extends BaseModel {
     private String inventoryplan_id;
 
     /**
-     * 资产
-     */
-    @Column(name = "ASSETS_ID")
-    private String assets_id;
-
-    /**
      * 盘点周期
      */
     @Column(name = "INVENTORYCYCLE")
