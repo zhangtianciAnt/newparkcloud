@@ -77,17 +77,8 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     }
 
     @Override
-    public InventoryplanVo selectById(String inventoryplanid) throws Exception {
-        InventoryplanVo invetVo = new InventoryplanVo();
-        Assets assets = new Assets();
-        assets.setInventoryplan_id(inventoryplanid);
-        List<Assets> assetsList = assetsMapper.select(assets);
-        assetsList = assetsList.stream().sorted(Comparator.comparing(Assets::getRowindex)).collect(Collectors.toList());
-        Inventoryplan invet = inventoryplanMapper.selectByPrimaryKey(inventoryplanid);
-        invetVo.setInventoryplan(invet);
-        invetVo.setAssets(assetsList);
-        return invetVo;
-
+    public List<Assets> selectAll(Assets assets) throws Exception {
+        return assetsMapper.select(assets);
     }
 
 

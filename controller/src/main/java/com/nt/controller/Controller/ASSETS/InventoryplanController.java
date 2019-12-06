@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.ASSETS;
 
 import com.nt.dao_Assets.Inventoryplan;
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.Vo.InventoryplanVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.utils.ApiResult;
@@ -53,12 +54,12 @@ public class InventoryplanController {
     /**
      * 查看
      */
-    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult selectById(String inventoryplanid, HttpServletRequest request) throws Exception {
-        if (inventoryplanid == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        return ApiResult.success(inventoryplanService.selectById(inventoryplanid));
+    @RequestMapping(value = "/selectAll", method = {RequestMethod.GET})
+    public ApiResult selectAll(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        Assets assets = new Assets();
+//        assets.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(inventoryplanService.selectAll(null));
     }
 
     /**
