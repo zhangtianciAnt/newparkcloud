@@ -9,8 +9,4 @@ import java.util.List;
 
 public interface PunchcardRecordMapper extends MyMapper<PunchcardRecord> {
 
-
-    List<PunchcardRecord> getPunchCardRecord();
-
-
 }
