@@ -37,6 +37,11 @@ public class Emergencytemplate extends BaseModel {
 
     private String templatelevel;
 
+    /*
+     * 模板文件
+     */
+
+    private String templatefile;
 
     /*
      * 创建时间
