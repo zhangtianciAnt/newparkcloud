@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -45,7 +44,7 @@ public class Inventoryplan extends BaseModel {
      * 未盘点到数量
      */
     @Column(name = "UNQUANTITY")
-    private Date unquantity;
+    private String unquantity;
 
     /**
      * 负责人
