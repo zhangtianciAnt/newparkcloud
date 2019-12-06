@@ -42,7 +42,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     @Override
     public List<PunchcardRecord> list(PunchcardRecord punchcardrecord) throws Exception {
-        return  punchcardrecordMapper.getPunchCardRecord();
+        return punchcardrecordMapper.select(punchcardrecord);
     }
 
     @Override
@@ -118,6 +118,22 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecorddetail.preInsert(tokenModel);
                 punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                 punchcardrecorddetailmapper.insert(punchcardrecorddetail);
+                PunchcardRecord punchcardrecord = new PunchcardRecord();
+                List<PunchcardRecord> punchcardrecordlist = punchcardrecorddetailmapper.getPunchCardRecord();
+                for (PunchcardRecord punchcard : punchcardrecordlist) {
+                    punchcardrecord.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
+                    punchcardrecord.setTeamid(punchcard.getTeamid());
+                    punchcardrecord.setGroupid(punchcard.getGroupid());
+                    punchcardrecord.setCenterid(punchcard.getCenterid());
+                    punchcardrecord.setUser_id(punchcard.getUser_id());
+                    punchcardrecord.setJobnumber(punchcard.getJobnumber());
+                    punchcardrecord.setWorktime(punchcard.getWorktime());
+                    punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
+                    punchcardrecord.setTime_start(punchcard.getTime_start());
+                    punchcardrecord.setTime_end(punchcard.getTime_end());
+                    punchcardrecord.preInsert(tokenModel);
+                    punchcardrecordMapper.insert(punchcardrecord);
+                }
                 listVo.add(punchcardrecorddetail);
                 accesscount = accesscount + 1;
             }
