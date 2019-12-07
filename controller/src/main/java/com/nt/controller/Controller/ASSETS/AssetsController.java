@@ -2,10 +2,7 @@ package com.nt.controller.Controller.ASSETS;
 
 import com.nt.dao_Assets.Assets;
 import com.nt.service_Assets.AssetsService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +58,18 @@ public class AssetsController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(assetsService.One(assets.getAssets_id()));
+    }
+
+    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(assetsService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 
 
