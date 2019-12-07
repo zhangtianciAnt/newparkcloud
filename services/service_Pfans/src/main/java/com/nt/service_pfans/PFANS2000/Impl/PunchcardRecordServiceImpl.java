@@ -79,7 +79,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         continue;
                     }
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    if (value.size() > 1) {
+                    if (value.size() > 2) {
                         String date = value.get(2).toString();
                         String date1 = value.get(2).toString();
                         date = date.substring(5, 7);

@@ -514,7 +514,7 @@ public class GivingServiceImpl implements GivingService {
                     String years6 = new String();
                     if (cal.get(cal.MONTH) == 12) {
                         months6 = String.valueOf(cal.get(cal.MONTH) - 11);
-                        years6= String.valueOf(cal.get(cal.YEAR)-1);
+                        years6= String.valueOf(cal.get(cal.YEAR)+1);
                     } else {
                         months6 = String.valueOf(cal.get(cal.MONTH) + 1);
                         years6= String.valueOf(cal.get(cal.YEAR));
@@ -541,10 +541,10 @@ public class GivingServiceImpl implements GivingService {
                     String years7 = new String();
                     if (cal.get(cal.MONTH) == 12) {
                         months7 = String.valueOf(cal.get(cal.MONTH) - 10);
-                        years7= String.valueOf(cal.get(cal.YEAR)-1);
+                        years7= String.valueOf(cal.get(cal.YEAR)+1);
                     } else if (cal.get(cal.MONTH) == 11) {
                         months7 = String.valueOf(cal.get(cal.MONTH) - 10);
-                        years7= String.valueOf(cal.get(cal.YEAR)-1);
+                        years7= String.valueOf(cal.get(cal.YEAR)+1);
                     } else {
                         months7 = String.valueOf(cal.get(cal.MONTH) + 2);
                         years7= String.valueOf(cal.get(cal.YEAR));
@@ -561,13 +561,13 @@ public class GivingServiceImpl implements GivingService {
                     String years8 = new String();
                     if (cal.get(cal.MONTH) == 12) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8= String.valueOf(cal.get(cal.YEAR)-1);
+                        years8= String.valueOf(cal.get(cal.YEAR)+1);
                     } else if (cal.get(cal.MONTH) == 11) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8= String.valueOf(cal.get(cal.YEAR)-1);
+                        years8= String.valueOf(cal.get(cal.YEAR)+1);
                     } else if (cal.get(cal.MONTH) == 10) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8= String.valueOf(cal.get(cal.YEAR)-1);
+                        years8= String.valueOf(cal.get(cal.YEAR)+1);
                     } else {
                         months8 = String.valueOf(cal.get(cal.MONTH) + 3);
                         years8= String.valueOf(cal.get(cal.YEAR));
@@ -702,7 +702,7 @@ public class GivingServiceImpl implements GivingService {
                                 Xo = Xo + 1;
                             }
                         }
-                        List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, years, Xmonths2);
+                        List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
                         for (Attendance A : XattendanceList) {
                             if (A.getDaixiu() != null) {
                                 XDaixiu1 = Integer.parseInt(A.getDaixiu());
@@ -773,7 +773,7 @@ public class GivingServiceImpl implements GivingService {
                                 XDaixiu3 = 0;
                             }
                         }
-                        residual.setLastreplace(String.valueOf(i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
+                        residual.setLastreplace(String.valueOf(Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
                         int XOrdinaryindustry = 0;
                         int XWeekendindustry = 0;
                         int XStatutoryresidue = 0;
@@ -810,7 +810,7 @@ public class GivingServiceImpl implements GivingService {
                         } else {
                             XStatutoryresiduenight = Integer.parseInt(Attendance1.getStatutoryresiduenight());
                         }
-                        int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
+                        int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                         residual.setLasttotalh(String.valueOf(XLasttotalh));
                         if (b.getRn() != null && b.getRn().length() > 0) {
                             String strRank = b.getRn().substring(2);
@@ -818,7 +818,7 @@ public class GivingServiceImpl implements GivingService {
                             one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
                             two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
                             three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
-                            four = Double.valueOf((i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
+                            four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
                             if (rank >= 21008) {
                                 Lasttotaly = three + four;
                                 residual.setLasttotaly(df.format(Lasttotaly));
@@ -836,6 +836,16 @@ public class GivingServiceImpl implements GivingService {
                 }
                 else {
                     residual.setRemarks("-");
+                    residual.setThistotaly("");
+                    residual.setThistotalh("");
+                    residual.setThisreplace3("");
+                    residual.setThisreplace("");
+                    residual.setThislegallatenight("");
+                    residual.setThislegal("");
+                    residual.setThislatenight("");
+                    residual.setThisrestlatenight("");
+                    residual.setThisrestDay("");
+                    residual.setThisweekdays("");
                     residual.setLastweekdays(attendance.getOrdinaryindustry());
                     residual.setLastrestDay(attendance.getWeekendindustry());
                     residual.setLastlegal(attendance.getStatutoryresidue());
@@ -897,7 +907,7 @@ public class GivingServiceImpl implements GivingService {
                             Xo = Xo + 1;
                         }
                     }
-                    List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, years, Xmonths2);
+                    List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
                     for (Attendance A : XattendanceList) {
                         if (A.getDaixiu() != null) {
                             XDaixiu1 = Integer.parseInt(A.getDaixiu());
@@ -968,7 +978,7 @@ public class GivingServiceImpl implements GivingService {
                             XDaixiu3 = 0;
                         }
                     }
-                    residual.setLastreplace(String.valueOf(i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
+                    residual.setLastreplace(String.valueOf(Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
                     int XOrdinaryindustry = 0;
                     int XWeekendindustry = 0;
                     int XStatutoryresidue = 0;
@@ -1005,7 +1015,7 @@ public class GivingServiceImpl implements GivingService {
                     } else {
                         XStatutoryresiduenight = Integer.parseInt(attendance.getStatutoryresiduenight());
                     }
-                    int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
+                    int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                     residual.setLasttotalh(String.valueOf(XLasttotalh));
                     if (b.getRn() != null && b.getRn().length() > 0) {
                         String strRank = b.getRn().substring(2);
@@ -1013,7 +1023,7 @@ public class GivingServiceImpl implements GivingService {
                         one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
                         two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
                         three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
-                        four = Double.valueOf((i * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
+                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
                         if (rank >= 21008) {
                             Lasttotaly = three + four;
                             residual.setLasttotaly(df.format(Lasttotaly));
@@ -1120,6 +1130,10 @@ public class GivingServiceImpl implements GivingService {
                     }
                 } else {
                     lackattendance.setRemarks("-");
+                    lackattendance.setThistotal("");
+                    lackattendance.setThischronicdeficiency("");
+                    lackattendance.setThisshortdeficiency("");
+                    lackattendance.setThisdiligence("");
                     lackattendance.setLastshortdeficiency(attendance.getShortsickleave());
                     lackattendance.setLastchronicdeficiency(attendance.getLongsickleave());
                     Base ba = new Base();
