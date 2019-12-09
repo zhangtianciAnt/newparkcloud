@@ -12,10 +12,8 @@ public interface ConfidentialService {
 
     public Confidential One(String confidentialid) throws Exception;
 
-    public void updateConfidential(Confidential confidential, TokenModel tokenModel) throws Exception;
+    public void update(Confidential confidential, TokenModel tokenModel) throws Exception;
 
     public void insert(Confidential confidential, TokenModel tokenModel)throws Exception;
-
-    public List<Confidential> getConfidentialList(Confidential confidential, HttpServletRequest request) throws Exception;
 
 }

@@ -63,9 +63,4 @@ public class Pfans1016Controller {
         routingService.insert(routing,tokenModel);
         return ApiResult.success();
     }
-
-
-
-
-
 }

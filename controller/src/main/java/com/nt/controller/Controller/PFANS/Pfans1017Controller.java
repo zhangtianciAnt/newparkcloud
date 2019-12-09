@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/psdcd")
 public class Pfans1017Controller {
 
-//    psdcd_id
     @Autowired
     private PsdcdService psdcdService;
 

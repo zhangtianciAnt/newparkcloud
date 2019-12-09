@@ -44,12 +44,12 @@ public class Pfans1021Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateSecurity(@RequestBody SecurityVo securityVo, HttpServletRequest request) throws Exception{
+    public ApiResult update(@RequestBody SecurityVo securityVo, HttpServletRequest request) throws Exception{
         if (securityVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        securityService.updateSecurity(securityVo,tokenModel);
+        securityService.update(securityVo,tokenModel);
         return ApiResult.success();
     }
 

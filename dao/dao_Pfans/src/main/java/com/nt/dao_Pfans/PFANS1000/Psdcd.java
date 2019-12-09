@@ -175,6 +175,4 @@ public class Psdcd extends BaseModel {
     @Column(name = "PREPAREFOR")
     private String preparefor;
 
-
-
 }
