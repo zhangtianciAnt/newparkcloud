@@ -337,6 +337,7 @@ public class CustomerInfo extends BaseModel {
         private List<Personal> houseData;
         private List<Personal> oldageData;
 
+
     }
     // endregion
 
