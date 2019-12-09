@@ -43,30 +43,22 @@ public class Pfans1023Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateConfidential(@RequestBody Confidential confidential, HttpServletRequest request) throws Exception{
+    public ApiResult update(@RequestBody Confidential confidential, HttpServletRequest request) throws Exception{
         if (confidential == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        confidentialService.updateConfidential(confidential,tokenModel);
+        confidentialService.update(confidential,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Confidential confidential, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    public ApiResult insert(@RequestBody Confidential confidential, HttpServletRequest request) throws Exception {
         if (confidential == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         confidentialService.insert(confidential,tokenModel);
         return ApiResult.success();
-    }
-
-    @RequestMapping(value = "/getConfidentialList", method = {RequestMethod.POST})
-    public ApiResult getConfidentialList(@RequestBody Confidential confidential, HttpServletRequest request) throws Exception {
-        if (confidential == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        return ApiResult.success(confidentialService.getConfidentialList(confidential, request));
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +19,7 @@ public class ConfidentialServiceImpl implements ConfidentialService {
     private ConfidentialMapper confidentialMapper;
 
     @Override
-    public List<Confidential> getConfidential(Confidential confidential ) {
+    public List<Confidential> getConfidential(Confidential confidential) {
         return confidentialMapper.select(confidential);
     }
 
@@ -31,8 +30,9 @@ public class ConfidentialServiceImpl implements ConfidentialService {
     }
 
     @Override
-    public void updateConfidential(Confidential confidential, TokenModel tokenModel) throws Exception {
-        confidentialMapper.updateByPrimaryKeySelective(confidential);
+    public void update(Confidential confidential, TokenModel tokenModel) throws Exception {
+        confidential.preUpdate(tokenModel);
+        confidentialMapper.updateByPrimaryKey(confidential);
     }
 
     @Override
@@ -41,11 +41,5 @@ public class ConfidentialServiceImpl implements ConfidentialService {
         confidential.preInsert(tokenModel);
         confidential.setConfidentialid(UUID.randomUUID().toString());
         confidentialMapper.insert(confidential);
-    }
-
-    @Override
-    public List<Confidential> getConfidentialList(Confidential confidential, HttpServletRequest request) throws Exception {
-
-        return confidentialMapper.select(confidential) ;
     }
 }
