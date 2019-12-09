@@ -11,7 +11,8 @@
  punchcardrecord_date,
  time_start,
  time_end,
- ( worktime - weekdaysovertime ) AS worktime
+ ( worktime - weekdaysovertime -
+TIME_TO_SEC(timediff(TIME_FORMAT(lunchbreak_end,'%H:%i'),TIME_FORMAT(lunchbreak_start,'%H:%i')))  / 60 / 60) AS worktime
 FROM
  (
 SELECT
