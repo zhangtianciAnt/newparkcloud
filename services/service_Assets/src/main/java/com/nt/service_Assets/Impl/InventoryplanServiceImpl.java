@@ -6,16 +6,12 @@ import com.nt.dao_Assets.Vo.InventoryplanVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryplanMapper;
-import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -42,16 +38,22 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
         inventoryplan.preInsert(tokenModel);
         inventoryplan.setInventoryplan_id(inventoryplanid);
+        Assets aa = new Assets();
+        List<Assets> aalist = assetsMapper.select(aa);
+        inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
         List<Assets> assetsList = inventoryplanVo.getAssets();
+        inventoryplan.setInquantity(String.valueOf(assetsList.size()));
+        inventoryplan.setUnquantity(String.valueOf(aalist.size() - assetsList.size()));
+        inventoryplanMapper.insertSelective(inventoryplan);
         if (assetsList != null) {
             int rowindex = 0;
             for (Assets ass : assetsList) {
-                rowindex += rowindex;
+                rowindex = rowindex + 1;
                 ass.preInsert(tokenModel);
-                ass.setAssets_id(UUID.randomUUID().toString());
+//                ass.setAssets_id(UUID.randomUUID().toString());
                 ass.setInventoryplan_id(inventoryplanid);
                 ass.setRowindex(rowindex);
-                assetsMapper.insertSelective(ass);
+                assetsMapper.updateByPrimaryKeySelective(ass);
             }
         }
     }
@@ -66,16 +68,22 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         Assets assets = new Assets();
         assets.setInventoryplan_id(inventoryplanid);
         assetsMapper.delete(assets);
+        Assets aa = new Assets();
+        List<Assets> aalist = assetsMapper.select(aa);
+        inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
         List<Assets> assetsList = inventoryplanVo.getAssets();
+        inventoryplan.setInquantity(String.valueOf(assetsList.size()));
+        inventoryplan.setUnquantity(String.valueOf(aalist.size() - assetsList.size()));
+        inventoryplanMapper.insertSelective(inventoryplan);
         if (assetsList != null) {
             int rowindex = 0;
             for (Assets ass : assetsList) {
                 rowindex += rowindex;
                 ass.preInsert(tokenModel);
-                ass.setAssets_id(UUID.randomUUID().toString());
+//                ass.setAssets_id(UUID.randomUUID().toString());
                 ass.setInventoryplan_id(inventoryplanid);
                 ass.setRowindex(rowindex);
-                assetsMapper.insertSelective(ass);
+                assetsMapper.updateByPrimaryKeySelective(ass);
             }
         }
     }
@@ -85,5 +93,23 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         return assetsMapper.select(assets);
     }
 
+    @Override
+    public void isDelInventory(Inventoryplan inventoryplan) throws Exception {
+        inventoryplanMapper.delete(inventoryplan);
+    }
+
+    @Override
+    public InventoryplanVo selectById(String inventoryplanid) throws Exception {
+
+        InventoryplanVo inventoryplanVo = new InventoryplanVo();
+        Assets assets = new Assets();
+        assets.setInventoryplan_id(inventoryplanid);
+        List<Assets> assetsList = assetsMapper.select(assets);
+        assetsList = assetsList.stream().sorted(Comparator.comparing(Assets::getRowindex)).collect(Collectors.toList());
+        Inventoryplan inventoryplan = inventoryplanMapper.selectByPrimaryKey(inventoryplanid);
+        inventoryplanVo.setInventoryplan(inventoryplan);
+        inventoryplanVo.setAssets(assetsList);
+        return inventoryplanVo;
+    }
 
 }

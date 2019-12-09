@@ -1,7 +1,7 @@
 package com.nt.service_Assets;
 
-import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Assets.Vo.InventoryplanVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -17,5 +17,8 @@ public interface InventoryplanService {
 
     List<Assets> selectAll(Assets assets) throws Exception;
 
+    void isDelInventory(Inventoryplan inventoryplan) throws Exception;
+
+    InventoryplanVo selectById(String inventoryplanid) throws Exception;
 
 }

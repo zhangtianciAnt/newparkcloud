@@ -1,7 +1,6 @@
 package com.nt.controller.Controller.ASSETS;
 
 import com.nt.dao_Assets.Inventoryplan;
-import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.Vo.InventoryplanVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.utils.ApiResult;
@@ -75,4 +74,22 @@ public class InventoryplanController {
         return ApiResult.success();
 
     }
+
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody Inventoryplan inventoryplan, HttpServletRequest request) throws Exception {
+        if (inventoryplan == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        inventoryplanService.isDelInventory(inventoryplan);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String inventoryplanid, HttpServletRequest request) throws Exception {
+        if (inventoryplanid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(inventoryplanService.selectById(inventoryplanid));
+    }
+
 }
