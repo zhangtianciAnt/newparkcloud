@@ -377,19 +377,19 @@ public class GivingServiceImpl implements GivingService {
                     String years1 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1= String.valueOf(cal.get(cal.YEAR)-1);
+                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 2) {
                         months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1= String.valueOf(cal.get(cal.YEAR)-1);
+                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 3) {
                         months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1= String.valueOf(cal.get(cal.YEAR)-1);
+                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 4) {
                         months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1= String.valueOf(cal.get(cal.YEAR)-1);
+                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         months1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                        years1= String.valueOf(cal.get(cal.YEAR));
+                        years1 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance atten = new Attendance();
                     atten.setUser_id(attendance.getUser_id());
@@ -405,10 +405,10 @@ public class GivingServiceImpl implements GivingService {
                     String years2 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         months2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                        years2= String.valueOf(cal.get(cal.YEAR)-1);
+                        years2 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         months2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                        years2= String.valueOf(cal.get(cal.YEAR));
+                        years2 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance a = new Attendance();
                     a.setUser_id(attendance.getUser_id());
@@ -432,13 +432,13 @@ public class GivingServiceImpl implements GivingService {
                     String years3 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         months3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        years3= String.valueOf(cal.get(cal.YEAR)-1);
+                        years3 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 2) {
                         months3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        years3= String.valueOf(cal.get(cal.YEAR)-1);
+                        years3 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         months3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                        years3= String.valueOf(cal.get(cal.YEAR));
+                        years3 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance a1 = new Attendance();
                     a1.setUser_id(attendance.getUser_id());
@@ -462,16 +462,16 @@ public class GivingServiceImpl implements GivingService {
                     String years4 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         months4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        years4= String.valueOf(cal.get(cal.YEAR)-1);
+                        years4 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 2) {
                         months4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        years4= String.valueOf(cal.get(cal.YEAR)-1);
+                        years4 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 3) {
                         months4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        years4= String.valueOf(cal.get(cal.YEAR)-1);
+                        years4 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         months4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                        years4= String.valueOf(cal.get(cal.YEAR));
+                        years4 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance a2 = new Attendance();
                     a2.setUser_id(attendance.getUser_id());
@@ -514,10 +514,10 @@ public class GivingServiceImpl implements GivingService {
                     String years6 = new String();
                     if (cal.get(cal.MONTH) == 12) {
                         months6 = String.valueOf(cal.get(cal.MONTH) - 11);
-                        years6= String.valueOf(cal.get(cal.YEAR)+1);
+                        years6 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else {
                         months6 = String.valueOf(cal.get(cal.MONTH) + 1);
-                        years6= String.valueOf(cal.get(cal.YEAR));
+                        years6 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance a4 = new Attendance();
                     a4.setUser_id(attendance.getUser_id());
@@ -541,13 +541,13 @@ public class GivingServiceImpl implements GivingService {
                     String years7 = new String();
                     if (cal.get(cal.MONTH) == 12) {
                         months7 = String.valueOf(cal.get(cal.MONTH) - 10);
-                        years7= String.valueOf(cal.get(cal.YEAR)+1);
+                        years7 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else if (cal.get(cal.MONTH) == 11) {
                         months7 = String.valueOf(cal.get(cal.MONTH) - 10);
-                        years7= String.valueOf(cal.get(cal.YEAR)+1);
+                        years7 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else {
                         months7 = String.valueOf(cal.get(cal.MONTH) + 2);
-                        years7= String.valueOf(cal.get(cal.YEAR));
+                        years7 = String.valueOf(cal.get(cal.YEAR));
                     }
                     List<Attendance> attendanceList7 = givingMapper.selectAttendance(user_id, years7, months7);
                     for (Attendance A : attendanceList7) {
@@ -561,16 +561,16 @@ public class GivingServiceImpl implements GivingService {
                     String years8 = new String();
                     if (cal.get(cal.MONTH) == 12) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8= String.valueOf(cal.get(cal.YEAR)+1);
+                        years8 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else if (cal.get(cal.MONTH) == 11) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8= String.valueOf(cal.get(cal.YEAR)+1);
+                        years8 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else if (cal.get(cal.MONTH) == 10) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8= String.valueOf(cal.get(cal.YEAR)+1);
+                        years8 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else {
                         months8 = String.valueOf(cal.get(cal.MONTH) + 3);
-                        years8= String.valueOf(cal.get(cal.YEAR));
+                        years8 = String.valueOf(cal.get(cal.YEAR));
                     }
                     List<Attendance> attendanceList8 = givingMapper.selectAttendance(user_id, years8, months8);
                     for (Attendance A : attendanceList8) {
@@ -624,21 +624,12 @@ public class GivingServiceImpl implements GivingService {
                     }
                     int Thistotalh = Ordinaryindustry + Weekendindustry + Statutoryresidue + Ordinaryindustrynight + Weekendindustrynight + Statutoryresiduenight + (i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) + Thisreplace3;
                     residual.setThistotalh(String.valueOf(Thistotalh));
-                    if (b.getRn() != null && b.getRn().length() > 0) {
-                        String strRank = b.getRn().substring(2);
-                        int rank = Integer.parseInt(strRank);
-                        one = Double.valueOf(Ordinaryindustry * 1.5 + Ordinaryindustrynight * 1.5 * 1.25);
-                        two = Double.valueOf(Weekendindustry * 2 + Weekendindustrynight * 2 * 1.25);
-                        three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25);
-                        four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2);
-                        if (rank >= 21008) {
-                            Thistotaly = three + four;
-                            residual.setThistotaly(df.format(Thistotaly));
-                        } else {
-                            Thistotaly = one + two + three + four;
-                            residual.setThistotaly(df.format(Thistotaly));
-                        }
-                    }
+                    one = Double.valueOf(Ordinaryindustry * 1.5 + Ordinaryindustrynight * 1.5 * 1.25);
+                    two = Double.valueOf(Weekendindustry * 2 + Weekendindustrynight * 2 * 1.25);
+                    three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25);
+                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2);
+                    Thistotaly = one + two + three + four;
+                    residual.setThistotaly(df.format(Thistotaly));
                     String months10 = String.valueOf(cal.get(cal.MONTH) - 1);
                     List<Attendance> AttendanceList1 = givingMapper.selectAttendance(user_id, years, months10);
                     for (Attendance Attendance1 : AttendanceList1) {
@@ -659,19 +650,19 @@ public class GivingServiceImpl implements GivingService {
                         String Xyears1 = new String();
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else if (cal.get(cal.MONTH) == 2) {
                             Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else if (cal.get(cal.MONTH) == 3) {
                             Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else if (cal.get(cal.MONTH) == 4) {
                             Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
                             Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                            Xyears1= String.valueOf(cal.get(cal.YEAR));
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR));
                         }
                         Attendance atten1 = new Attendance();
                         atten1.setUser_id(Attendance1.getUser_id());
@@ -687,10 +678,10 @@ public class GivingServiceImpl implements GivingService {
                         String Xyears2 = new String();
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                            Xyears2= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
                             Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                            Xyears2= String.valueOf(cal.get(cal.YEAR));
+                            Xyears2 = String.valueOf(cal.get(cal.YEAR));
                         }
                         Attendance Xa = new Attendance();
                         Xa.setUser_id(Attendance1.getUser_id());
@@ -714,13 +705,13 @@ public class GivingServiceImpl implements GivingService {
                         String Xyears3 = new String();
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                            Xyears3= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else if (cal.get(cal.MONTH) == 2) {
                             Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                            Xyears3= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
                             Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                            Xyears3= String.valueOf(cal.get(cal.YEAR));
+                            Xyears3 = String.valueOf(cal.get(cal.YEAR));
                         }
                         Attendance Xa1 = new Attendance();
                         Xa1.setUser_id(Attendance1.getUser_id());
@@ -744,16 +735,16 @@ public class GivingServiceImpl implements GivingService {
                         String Xyears4 = new String();
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else if (cal.get(cal.MONTH) == 2) {
                             Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else if (cal.get(cal.MONTH) == 3) {
                             Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4= String.valueOf(cal.get(cal.YEAR)-1);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
                             Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                            Xyears4= String.valueOf(cal.get(cal.YEAR));
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR));
                         }
                         Attendance Xa2 = new Attendance();
                         Xa2.setUser_id(Attendance1.getUser_id());
@@ -812,29 +803,19 @@ public class GivingServiceImpl implements GivingService {
                         }
                         int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                         residual.setLasttotalh(String.valueOf(XLasttotalh));
-                        if (b.getRn() != null && b.getRn().length() > 0) {
-                            String strRank = b.getRn().substring(2);
-                            int rank = Integer.parseInt(strRank);
-                            one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
-                            two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
-                            three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
-                            four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
-                            if (rank >= 21008) {
-                                Lasttotaly = three + four;
-                                residual.setLasttotaly(df.format(Lasttotaly));
-                            } else {
-                                Lasttotaly = one + two + three + four;
-                                residual.setLasttotaly(df.format(Lasttotaly));
-                            }
-                        }
+                        one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
+                        two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
+                        three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
+                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
+                        Lasttotaly = one + two + three + four;
+                        residual.setLasttotaly(df.format(Lasttotaly));
                     }
                     if (Lasttotaly + Thistotaly == 0.0) {
                         residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
                     } else {
                         residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
                     }
-                }
-                else {
+                } else {
                     residual.setRemarks("-");
                     residual.setThistotaly("");
                     residual.setThistotalh("");
@@ -864,19 +845,19 @@ public class GivingServiceImpl implements GivingService {
                     String Xyears1 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 2) {
                         Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 3) {
                         Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 4) {
                         Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                        Xyears1= String.valueOf(cal.get(cal.YEAR));
+                        Xyears1 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance atten1 = new Attendance();
                     atten1.setUser_id(attendance.getUser_id());
@@ -892,10 +873,10 @@ public class GivingServiceImpl implements GivingService {
                     String Xyears2 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                        Xyears2= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                        Xyears2= String.valueOf(cal.get(cal.YEAR));
+                        Xyears2 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance Xa = new Attendance();
                     Xa.setUser_id(attendance.getUser_id());
@@ -919,13 +900,13 @@ public class GivingServiceImpl implements GivingService {
                     String Xyears3 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        Xyears3= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 2) {
                         Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        Xyears3= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                        Xyears3= String.valueOf(cal.get(cal.YEAR));
+                        Xyears3 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance Xa1 = new Attendance();
                     Xa1.setUser_id(attendance.getUser_id());
@@ -949,16 +930,16 @@ public class GivingServiceImpl implements GivingService {
                     String Xyears4 = new String();
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        Xyears4= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 2) {
                         Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        Xyears4= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else if (cal.get(cal.MONTH) == 3) {
                         Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        Xyears4= String.valueOf(cal.get(cal.YEAR)-1);
+                        Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
                     } else {
                         Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                        Xyears4= String.valueOf(cal.get(cal.YEAR));
+                        Xyears4 = String.valueOf(cal.get(cal.YEAR));
                     }
                     Attendance Xa2 = new Attendance();
                     Xa2.setUser_id(attendance.getUser_id());
@@ -1017,21 +998,12 @@ public class GivingServiceImpl implements GivingService {
                     }
                     int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                     residual.setLasttotalh(String.valueOf(XLasttotalh));
-                    if (b.getRn() != null && b.getRn().length() > 0) {
-                        String strRank = b.getRn().substring(2);
-                        int rank = Integer.parseInt(strRank);
-                        one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
-                        two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
-                        three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
-                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
-                        if (rank >= 21008) {
-                            Lasttotaly = three + four;
-                            residual.setLasttotaly(df.format(Lasttotaly));
-                        } else {
-                            Lasttotaly = one + two + three + four;
-                            residual.setLasttotaly(df.format(Lasttotaly));
-                        }
-                    }
+                    one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
+                    two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
+                    three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25);
+                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2);
+                    Lasttotaly = one + two + three + four;
+                    residual.setLasttotaly(df.format(Lasttotaly));
                     if (Lasttotaly + Thistotaly == 0.0) {
                         residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
                     } else {
