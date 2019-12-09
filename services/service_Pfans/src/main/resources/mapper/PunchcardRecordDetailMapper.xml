@@ -29,7 +29,7 @@ SELECT
  2
  ) AS worktime
 FROM
- punchcardrecord
+ punchcardrecorddetail
 GROUP BY
  user_id,
  center_id,
