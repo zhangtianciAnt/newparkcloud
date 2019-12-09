@@ -12,7 +12,7 @@ public interface SecurityService {
 
     public SecurityVo selectById(String securityid) throws Exception;
 
-    void updateSecurity(SecurityVo securityVo, TokenModel tokenModel) throws Exception;
+    void update(SecurityVo securityVo, TokenModel tokenModel) throws Exception;
 
     public void insert(SecurityVo securityVo, TokenModel tokenModel)throws Exception;
 

@@ -46,7 +46,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void updateSecurity(SecurityVo securityVo, TokenModel tokenModel) throws Exception {
+    public void update(SecurityVo securityVo, TokenModel tokenModel) throws Exception {
         Security security = new Security();
         BeanUtils.copyProperties(securityVo.getSecurity(), security);
         security.preUpdate(tokenModel);

@@ -12,13 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SecurityVo {
-    /**
-     * セキュリティカード申請
-     */
+
     private Security security;
 
-    /**
-     * セキュリティカード申請明细
-     */
     private List<Securitydetail> securitydetail;
 }
