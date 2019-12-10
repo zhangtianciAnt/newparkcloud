@@ -77,18 +77,13 @@ public class OutsideServiceImpl implements OutsideService {
         outside.setOutsideid(outsideid);
         outsideMapper.insertSelective(outside);
         List<Outsidedetail> outsidedetaillist = outsideVo.getOutsidedetail();
-        Outsidedetail outsidedetail = new Outsidedetail();
         if (outsidedetaillist != null) {
             int rowindex = 0;
-            for (Outsidedetail outsidedet : outsidedetaillist) {
+            for (Outsidedetail outsidedetail : outsidedetaillist) {
                 rowindex = rowindex + 1;
                 outsidedetail.preInsert(tokenModel);
                 outsidedetail.setOutsidedetailid(UUID.randomUUID().toString());
-                outsidedetail.setOutsideid(outsidedet.getOutsideid());
-                outsidedetail.setUsername(outsidedet.getUsername());
-                outsidedetail.setRank(outsidedet.getRank());
-                outsidedetail.setMailaddress(outsidedet.getMailaddress());
-                outsidedetail.setReason(outsidedet.getReason());
+                outsidedetail.setOutsideid(outsideid);
                 outsidedetail.setRowindex(rowindex);
                 outsidedetailMapper.insertSelective(outsidedetail);
             }
