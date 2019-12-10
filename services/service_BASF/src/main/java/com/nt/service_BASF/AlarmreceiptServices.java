@@ -8,9 +8,9 @@ import java.util.List;
 
 
 public interface AlarmreceiptServices {
-
+    //
     //获取所有报警单信息
-    List<AlarmreceiptVo> getList() throws Exception;
+    List<AlarmreceiptVo> getList(String alarmreceipttype) throws Exception;
 
     //创建报警单信息
     void insert(Alarmreceipt alarmreceipt, TokenModel tokenModel) throws Exception;

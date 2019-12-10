@@ -16,7 +16,7 @@ import java.util.Date;
 public class Alarmreceipt extends BaseModel {
     @Id
     private String alarmreceiptid;
-
+//
     /**
      * 接警单编号
      */

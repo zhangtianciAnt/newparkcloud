@@ -60,8 +60,8 @@ public class BASF10201Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        firealarmServices.insert(firealarm,tokenModel);
-        return ApiResult.success();
+
+        return ApiResult.success(firealarmServices.insert(firealarm,tokenModel));
     }
 
     /**

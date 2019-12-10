@@ -60,4 +60,9 @@ public class BASFUser extends BaseModel {
      * 承包商名称
      */
     private String contractorname;
+
+    /**
+     * 员工号
+     */
+    private String peonum;
 }

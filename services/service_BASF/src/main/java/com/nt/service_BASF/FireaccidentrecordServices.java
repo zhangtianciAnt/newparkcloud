@@ -1,12 +1,10 @@
 package com.nt.service_BASF;
 
-import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.Usergroup;
-import com.nt.dao_BASF.Usergroupdetailed;
-import com.nt.dao_BASF.Fireaccidentrecord;
+import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.UsergroupVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -31,4 +29,7 @@ public interface FireaccidentrecordServices {
 
     //update消防事故记录
     void update(TokenModel tokenModel, Fireaccidentrecord fireaccidentrecord) throws Exception;
+
+    //excel导出消防事故记录
+    void excelexport(Fireaccidentrecord fireaccidentrecord, Firealarm firealarm, Commandrecord commandrecord, HttpServletResponse response) throws Exception;
 }

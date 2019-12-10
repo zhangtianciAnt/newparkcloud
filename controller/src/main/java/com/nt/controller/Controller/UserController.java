@@ -152,7 +152,7 @@ public class UserController {
      * @创建日期：2018/12/06
      * @作者：ZHANGYING
      * @参数：[userVo, request]
-     * @返回值：com.nt.utils.ApiResult 
+     * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/addAccountCustomer", method = {RequestMethod.POST})
     public ApiResult addAccountCustomer(@RequestBody UserVo userVo, HttpServletRequest request) throws Exception {

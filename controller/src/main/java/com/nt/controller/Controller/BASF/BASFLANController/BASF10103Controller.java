@@ -60,4 +60,11 @@ public class BASF10103Controller {
         usergroupServices.update(tokenModel,usergroupVo);
         return ApiResult.success();
     }
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody Usergroup usergroup, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        usergroup.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        usergroupServices.delete(tokenModel, usergroup);
+        return ApiResult.success();
+    }
 }

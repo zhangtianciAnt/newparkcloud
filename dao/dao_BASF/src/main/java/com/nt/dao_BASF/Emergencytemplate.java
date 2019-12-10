@@ -56,5 +56,12 @@ public class Emergencytemplate extends BaseModel {
 
     private String remarks;
 
+    /*
+     * 附件
+     */
+
+    private String uploadfile;
+
+
 
 }

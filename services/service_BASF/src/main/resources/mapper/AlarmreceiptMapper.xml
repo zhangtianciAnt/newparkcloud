@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_BASF.mapper.AlarmreceiptMapper">
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Alarmreceipt">
+
         <!--
-          WARNING - @mbg.generated
-        -->
+  WARNING - @mbg.generated
+-->
         <id column="alarmreceiptid" property="alarmreceiptid" jdbcType="VARCHAR"/>
         <result column="alarmreceiptno" property="alarmreceiptno" jdbcType="VARCHAR"/>
         <result column="alarmreceipttype" property="alarmreceipttype" jdbcType="VARCHAR"/>
@@ -52,6 +53,11 @@
 
     <select id="selectAlarmreceiptVoList" resultType="com.nt.dao_BASF.VO.AlarmreceiptVo">
         <include refid="selectAlarmreceiptVo"></include>
+        <where>
+            <if test="alarmreceipttype != null">
+                al.alarmreceipttype = #{alarmreceipttype}
+            </if>
+        </where>
     </select>
 
     <select id="selectAlarmreceiptVo" resultType="com.nt.dao_BASF.VO.AlarmreceiptVo">

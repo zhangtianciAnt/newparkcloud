@@ -47,7 +47,7 @@ public class BASF10702Controller {
     }
 
     /**
-     * @param driveridnum
+     * @param driverIdNo
      * @Method list
      * @Author Wxz
      * @Version 1.0
