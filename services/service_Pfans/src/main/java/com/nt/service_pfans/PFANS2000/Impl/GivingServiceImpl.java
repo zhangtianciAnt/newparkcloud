@@ -653,23 +653,34 @@ public class GivingServiceImpl implements GivingService {
                         XYears  = String.valueOf(cal.get(cal.YEAR));
                         XDate  = String.valueOf(cal.get(cal.DATE));
                     }
-                    String XData = XYears + "-0" + XMonths + "-0" + XDate;
+                    String XData= new String();
+                    if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
+                        XData = XYears + "-0" + XMonths + "-0" + XDate;
+                    }else if(Integer.parseInt(XMonths)<10){
+                        XData = XYears + "-0" + XMonths + "-" + XDate;
+                    }else if(Integer.parseInt(XDate)<10){
+                        XData = XYears + "-" + XMonths + "-0" + XDate;
+                    }else{
+                        XData = XYears + "-" + XMonths + "-" + XDate;
+                    }
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
                     String Date = sf.format(new Date());
                     query.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(Date.replace("-",""))) {
-                                after = personal.getAfter();
-                                break;
+                        if(customerInfo.getUserinfo().getGridData()!=null){
+                            List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                            for (CustomerInfo.Personal personal : customerInfo1) {
+                                if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(Date.replace("-",""))) {
+                                    after = personal.getAfter();
+                                    break;
+                                }
                             }
-                        }
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(XData.replace("-",""))) {
-                                after3 = personal.getAfter();
-                                break;
+                            for (CustomerInfo.Personal personal : customerInfo1) {
+                                if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(XData.replace("-",""))) {
+                                    after3 = personal.getAfter();
+                                    break;
+                                }
                             }
                         }
                     }
@@ -881,23 +892,34 @@ public class GivingServiceImpl implements GivingService {
                             XYears1  = String.valueOf(cal.get(cal.YEAR));
                             XDate1  = String.valueOf(cal.get(cal.DATE));
                         }
-                        String XData1 = XYears + "-0" + XMonths + "-0" + XDate;
+                        String XData1= new String();
+                        if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
+                            XData1 = XYears + "-0" + XMonths + "-0" + XDate;
+                        }else if(Integer.parseInt(XMonths)<10){
+                            XData1 = XYears + "-0" + XMonths + "-" + XDate;
+                        }else if(Integer.parseInt(XDate)<10){
+                            XData1 = XYears + "-" + XMonths + "-0" + XDate;
+                        }else{
+                            XData1 = XYears + "-" + XMonths + "-" + XDate;
+                        }
                         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
                         String Date1 = sf1.format(new Date());
                         query1.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
                         CustomerInfo customerInfo1 = mongoTemplate.findOne(query1, CustomerInfo.class);
                         if (customerInfo1 != null) {
-                            List<CustomerInfo.Personal> customerInfoList = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                            for (CustomerInfo.Personal personal : customerInfoList) {
-                                if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(Date1.replace("-",""))) {
-                                    After = personal.getAfter();
-                                    break;
+                            if(customerInfo.getUserinfo().getGridData()!=null) {
+                                List<CustomerInfo.Personal> customerInfoList = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                                for (CustomerInfo.Personal personal : customerInfoList) {
+                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date1.replace("-", ""))) {
+                                        After = personal.getAfter();
+                                        break;
+                                    }
                                 }
-                            }
-                            for (CustomerInfo.Personal personal : customerInfoList) {
-                                if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(XData1.replace("-",""))) {
-                                    After3 = personal.getAfter();
-                                    break;
+                                for (CustomerInfo.Personal personal : customerInfoList) {
+                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData1.replace("-", ""))) {
+                                        After3 = personal.getAfter();
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -1124,23 +1146,34 @@ public class GivingServiceImpl implements GivingService {
                         XYears  = String.valueOf(cal.get(cal.YEAR));
                         XDate  = String.valueOf(cal.get(cal.DATE));
                     }
-                    String XData = XYears + "-0" + XMonths + "-0" + XDate;
+                    String XData= new String();
+                    if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
+                        XData = XYears + "-0" + XMonths + "-0" + XDate;
+                    }else if(Integer.parseInt(XMonths)<10){
+                        XData = XYears + "-0" + XMonths + "-" + XDate;
+                    }else if(Integer.parseInt(XDate)<10){
+                        XData = XYears + "-" + XMonths + "-0" + XDate;
+                    }else{
+                        XData = XYears + "-" + XMonths + "-" + XDate;
+                    }
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
                     String Date = sf.format(new Date());
                     query.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(Date.replace("-",""))) {
-                                after = personal.getAfter();
-                                break;
+                        if(customerInfo.getUserinfo().getGridData()!=null) {
+                            List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                            for (CustomerInfo.Personal personal : customerInfo1) {
+                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
+                                    after = personal.getAfter();
+                                    break;
+                                }
                             }
-                        }
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(XData.replace("-",""))) {
-                                after3 = personal.getAfter();
-                                break;
+                            for (CustomerInfo.Personal personal : customerInfo1) {
+                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
+                                    after3 = personal.getAfter();
+                                    break;
+                                }
                             }
                         }
                     }
