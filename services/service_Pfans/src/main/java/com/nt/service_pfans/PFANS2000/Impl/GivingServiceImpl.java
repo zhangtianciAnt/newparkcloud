@@ -373,8 +373,8 @@ public class GivingServiceImpl implements GivingService {
                     int Daixiu5 = 0;
                     int Daixiu6 = 0;
                     int Daixiu7 = 0;
-                    String months1 = new String();
-                    String years1 = new String();
+                    String months1;
+                    String years1;
                     if (cal.get(cal.MONTH) == 1) {
                         months1 = String.valueOf(cal.get(cal.MONTH) + 8);
                         years1 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -401,8 +401,8 @@ public class GivingServiceImpl implements GivingService {
                             i = i + 1;
                         }
                     }
-                    String months2 = new String();
-                    String years2 = new String();
+                    String months2;
+                    String years2;
                     if (cal.get(cal.MONTH) == 1) {
                         months2 = String.valueOf(cal.get(cal.MONTH) + 11);
                         years2 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -428,8 +428,8 @@ public class GivingServiceImpl implements GivingService {
                             Daixiu1 = 0;
                         }
                     }
-                    String months3 = new String();
-                    String years3 = new String();
+                    String months3;
+                    String years3;
                     if (cal.get(cal.MONTH) == 1) {
                         months3 = String.valueOf(cal.get(cal.MONTH) + 10);
                         years3 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -458,8 +458,8 @@ public class GivingServiceImpl implements GivingService {
                             Daixiu2 = 0;
                         }
                     }
-                    String months4 = new String();
-                    String years4 = new String();
+                    String months4;
+                    String years4;
                     if (cal.get(cal.MONTH) == 1) {
                         months4 = String.valueOf(cal.get(cal.MONTH) + 9);
                         years4 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -510,8 +510,8 @@ public class GivingServiceImpl implements GivingService {
                             Daixiu4 = 0;
                         }
                     }
-                    String months6 = new String();
-                    String years6 = new String();
+                    String months6;
+                    String years6;
                     if (cal.get(cal.MONTH) == 12) {
                         months6 = String.valueOf(cal.get(cal.MONTH) - 11);
                         years6 = String.valueOf(cal.get(cal.YEAR) + 1);
@@ -537,8 +537,8 @@ public class GivingServiceImpl implements GivingService {
                             Daixiu5 = 0;
                         }
                     }
-                    String months7 = new String();
-                    String years7 = new String();
+                    String months7;
+                    String years7;
                     if (cal.get(cal.MONTH) == 12) {
                         months7 = String.valueOf(cal.get(cal.MONTH) - 10);
                         years7 = String.valueOf(cal.get(cal.YEAR) + 1);
@@ -557,8 +557,8 @@ public class GivingServiceImpl implements GivingService {
                             Daixiu6 = 0;
                         }
                     }
-                    String months8 = new String();
-                    String years8 = new String();
+                    String months8;
+                    String years8;
                     if (cal.get(cal.MONTH) == 12) {
                         months8 = String.valueOf(cal.get(cal.MONTH) - 9);
                         years8 = String.valueOf(cal.get(cal.YEAR) + 1);
@@ -624,14 +624,12 @@ public class GivingServiceImpl implements GivingService {
                     }
                     int Thistotalh = Ordinaryindustry + Weekendindustry + Statutoryresidue + Ordinaryindustrynight + Weekendindustrynight + Statutoryresiduenight + (i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) + Thisreplace3;
                     residual.setThistotalh(String.valueOf(Thistotalh));
-
-
-                    String after = new String();
-                    String after3 = new String();
+                    int after = 0;
+                    int after3 = 0;
                     Query query = new Query();
-                    String XDate = new String();
-                    String XMonths = new String();
-                    String XYears = new String();
+                    String XDate;
+                    String XMonths;
+                    String XYears;
                     if (cal.get(cal.MONTH) == 1) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -653,7 +651,7 @@ public class GivingServiceImpl implements GivingService {
                         XYears  = String.valueOf(cal.get(cal.YEAR));
                         XDate  = String.valueOf(cal.get(cal.DATE));
                     }
-                    String XData= new String();
+                    String XData;
                     if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
                         XData = XYears + "-0" + XMonths + "-0" + XDate;
                     }else if(Integer.parseInt(XMonths)<10){
@@ -672,22 +670,25 @@ public class GivingServiceImpl implements GivingService {
                             List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                             for (CustomerInfo.Personal personal : customerInfo1) {
                                 if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(Date.replace("-",""))) {
-                                    after = personal.getAfter();
+                                    after = Integer.parseInt(personal.getAfter());
                                     break;
                                 }
                             }
                             for (CustomerInfo.Personal personal : customerInfo1) {
                                 if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(XData.replace("-",""))) {
-                                    after3 = personal.getAfter();
+                                    after3 = Integer.parseInt(personal.getAfter());
                                     break;
                                 }
                             }
+                        }else{
+                            after = 0;
+                            after3= 0;
                         }
                     }
                     one = Double.valueOf(Ordinaryindustry * 1.5 + Ordinaryindustrynight * 1.5 * 1.25);
                     two = Double.valueOf(Weekendindustry * 2 + Weekendindustrynight * 2 * 1.25);
-                    three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25)*(Integer.parseInt(after)/21.75/8);
-                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2)*(Integer.parseInt(after3)/21.75/8);
+                    three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25)*(after/21.75/8);
+                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2)*(after3/21.75/8);
                     Thistotaly = one + two + three + four;
                     residual.setThistotaly(df.format(Thistotaly));
                     String months10 = String.valueOf(cal.get(cal.MONTH) - 1);
@@ -706,8 +707,8 @@ public class GivingServiceImpl implements GivingService {
                         int XDaixiu1 = 0;
                         int XDaixiu2 = 0;
                         int XDaixiu3 = 0;
-                        String Xmonths1 = new String();
-                        String Xyears1 = new String();
+                        String Xmonths1;
+                        String Xyears1;
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                             Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -734,8 +735,8 @@ public class GivingServiceImpl implements GivingService {
                                 Xi = Xi + 1;
                             }
                         }
-                        String Xmonths2 = new String();
-                        String Xyears2 = new String();
+                        String Xmonths2;
+                        String Xyears2;
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
                             Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -761,8 +762,8 @@ public class GivingServiceImpl implements GivingService {
                                 XDaixiu1 = 0;
                             }
                         }
-                        String Xmonths3 = new String();
-                        String Xyears3 = new String();
+                        String Xmonths3;
+                        String Xyears3;
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
                             Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -791,8 +792,8 @@ public class GivingServiceImpl implements GivingService {
                                 XDaixiu2 = 0;
                             }
                         }
-                        String Xmonths4 = new String();
-                        String Xyears4 = new String();
+                        String Xmonths4;
+                        String Xyears4;
                         if (cal.get(cal.MONTH) == 1) {
                             Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
                             Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -865,12 +866,12 @@ public class GivingServiceImpl implements GivingService {
                         residual.setLasttotalh(String.valueOf(XLasttotalh));
 
 
-                        String After = new String();
-                        String After3 = new String();
+                        int After = 0;
+                        int After3 = 0;
                         Query query1 = new Query();
-                        String XDate1= new String();
-                        String XMonths1 = new String();
-                        String XYears1 = new String();
+                        String XDate1;
+                        String XMonths1;
+                        String XYears1;
                         if (cal.get(cal.MONTH) == 1) {
                             XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                             XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -892,7 +893,7 @@ public class GivingServiceImpl implements GivingService {
                             XYears1  = String.valueOf(cal.get(cal.YEAR));
                             XDate1  = String.valueOf(cal.get(cal.DATE));
                         }
-                        String XData1= new String();
+                        String XData1;
                         if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
                             XData1 = XYears + "-0" + XMonths + "-0" + XDate;
                         }else if(Integer.parseInt(XMonths)<10){
@@ -911,22 +912,25 @@ public class GivingServiceImpl implements GivingService {
                                 List<CustomerInfo.Personal> customerInfoList = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                                 for (CustomerInfo.Personal personal : customerInfoList) {
                                     if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date1.replace("-", ""))) {
-                                        After = personal.getAfter();
+                                        After = Integer.parseInt(personal.getAfter());
                                         break;
                                     }
                                 }
                                 for (CustomerInfo.Personal personal : customerInfoList) {
                                     if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData1.replace("-", ""))) {
-                                        After3 = personal.getAfter();
+                                        After3 = Integer.parseInt(personal.getAfter());
                                         break;
                                     }
                                 }
+                            }else{
+                                After = 0;
+                                After3= 0;
                             }
                         }
                         one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
                         two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
-                        three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25)*(Integer.parseInt(After)/21.75/8);;
-                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2)*(Integer.parseInt(After3)/21.75/8);
+                        three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25)*(After/21.75/8);;
+                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2)*(After3/21.75/8);
                         Lasttotaly = one + two + three + four;
                         residual.setLasttotaly(df.format(Lasttotaly));
                     }
@@ -961,8 +965,8 @@ public class GivingServiceImpl implements GivingService {
                     int XDaixiu1 = 0;
                     int XDaixiu2 = 0;
                     int XDaixiu3 = 0;
-                    String Xmonths1 = new String();
-                    String Xyears1 = new String();
+                    String Xmonths1;
+                    String Xyears1;
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                         Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -989,8 +993,8 @@ public class GivingServiceImpl implements GivingService {
                             Xi = Xi + 1;
                         }
                     }
-                    String Xmonths2 = new String();
-                    String Xyears2 = new String();
+                    String Xmonths2 ;
+                    String Xyears2 ;
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
                         Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -1016,8 +1020,8 @@ public class GivingServiceImpl implements GivingService {
                             XDaixiu1 = 0;
                         }
                     }
-                    String Xmonths3 = new String();
-                    String Xyears3 = new String();
+                    String Xmonths3;
+                    String Xyears3;
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
                         Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -1046,8 +1050,8 @@ public class GivingServiceImpl implements GivingService {
                             XDaixiu2 = 0;
                         }
                     }
-                    String Xmonths4 = new String();
-                    String Xyears4 = new String();
+                    String Xmonths4;
+                    String Xyears4;
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
                         Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -1119,12 +1123,12 @@ public class GivingServiceImpl implements GivingService {
                     int XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                     residual.setLasttotalh(String.valueOf(XLasttotalh));
 
-                    String after = new String();
-                    String after3 = new String();
+                    int after = 0;
+                    int after3 = 0;
                     Query query = new Query();
-                    String XDate = new String();
-                    String XMonths = new String();
-                    String XYears = new String();
+                    String XDate;
+                    String XMonths;
+                    String XYears;
                     if (cal.get(cal.MONTH) == 1) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -1146,7 +1150,7 @@ public class GivingServiceImpl implements GivingService {
                         XYears  = String.valueOf(cal.get(cal.YEAR));
                         XDate  = String.valueOf(cal.get(cal.DATE));
                     }
-                    String XData= new String();
+                    String XData;
                     if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
                         XData = XYears + "-0" + XMonths + "-0" + XDate;
                     }else if(Integer.parseInt(XMonths)<10){
@@ -1165,22 +1169,25 @@ public class GivingServiceImpl implements GivingService {
                             List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                             for (CustomerInfo.Personal personal : customerInfo1) {
                                 if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
-                                    after = personal.getAfter();
+                                    after = Integer.parseInt(personal.getAfter());
                                     break;
                                 }
                             }
                             for (CustomerInfo.Personal personal : customerInfo1) {
                                 if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
-                                    after3 = personal.getAfter();
+                                    after3 = Integer.parseInt(personal.getAfter());
                                     break;
                                 }
                             }
+                        }else{
+                            after = 0 ;
+                            after3 = 0;
                         }
                     }
                     one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
                     two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
-                    three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25)*(Integer.parseInt(after)/21.75/8);
-                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2)*(Integer.parseInt(after3)/21.75/8);
+                    three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25)*(after/21.75/8);
+                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2)*(after3/21.75/8);
                     Lasttotaly = one + two + three + four;
                     residual.setLasttotaly(df.format(Lasttotaly));
                     if (Lasttotaly + Thistotaly == 0.0) {
