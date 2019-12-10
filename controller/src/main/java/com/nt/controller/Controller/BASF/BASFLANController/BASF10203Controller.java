@@ -3,9 +3,13 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.nt.dao_BASF.Commandrecord;
 import com.nt.dao_BASF.Fireaccidentrecord;
+import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.VO.UsergroupVo;
+import com.nt.service_BASF.CommandrecordServices;
 import com.nt.service_BASF.FireaccidentrecordServices;
+import com.nt.service_BASF.FirealarmServices;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @ProjectName: BASF应急平台
@@ -35,6 +40,12 @@ public class BASF10203Controller {
 
     @Autowired
     private FireaccidentrecordServices fireaccidentrecordServices;
+
+    @Autowired
+    private FirealarmServices firealarmServices;
+
+    @Autowired
+    private CommandrecordServices commandrecordService;
 
     @Autowired
     private TokenService tokenService;
@@ -64,5 +75,32 @@ public class BASF10203Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         fireaccidentrecordServices.update(tokenModel,fireaccidentrecord);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/excelout", method = {RequestMethod.GET})
+    public void excelout(String fireaccidentrecordid, HttpServletRequest request, HttpServletResponse response) throws Exception {
+//        判断传来的参数是否存在
+        if (StrUtil.isEmpty(fireaccidentrecordid)) {
+            //不存在，返回错误提示
+            return;
+        } else {
+            Fireaccidentrecord fireaccidentrecord = new Fireaccidentrecord();
+            Firealarm firealarm = new Firealarm();
+            Commandrecord commandrecord = new Commandrecord();
+            //获取消防事故记录
+            fireaccidentrecord = fireaccidentrecordServices.selectById(fireaccidentrecordid);
+            //获取消防报警单
+            if (fireaccidentrecord.getFirealarmid() != null) {
+                String firealarmid = fireaccidentrecord.getFirealarmid();
+                firealarm = firealarmServices.one(firealarmid);
+            }
+            //获取消防接警单
+            if (fireaccidentrecord.getCommandrecordid() != null) {
+                String commandrecordid = fireaccidentrecord.getCommandrecordid();
+                commandrecord = commandrecordService.get(commandrecordid);
+            }
+            fireaccidentrecordServices.excelexport(fireaccidentrecord, firealarm, commandrecord, response);
+
+        }
     }
 }
