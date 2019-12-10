@@ -12,7 +12,7 @@ public interface HolidayService {
 
     public HolidayVo selectById(String holidayid) throws Exception;
 
-    void updateHoliday(HolidayVo holidayVo, TokenModel tokenModel) throws Exception;
+    void update(HolidayVo holidayVo, TokenModel tokenModel) throws Exception;
 
     public void insert(HolidayVo holidayVo, TokenModel tokenModel)throws Exception;
 

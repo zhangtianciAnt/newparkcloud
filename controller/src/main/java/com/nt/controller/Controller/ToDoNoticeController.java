@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/ToDoNotice")
@@ -31,13 +32,16 @@ public class ToDoNoticeController {
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         ToDoNotice todonotice = new ToDoNotice();
-        todonotice.setOwners(tokenModel.getOwnerList());
+        todonotice.setOwner(tokenModel.getUserId());
         return ApiResult.success(toDoNoticeService.list(todonotice));
     }
 
     @RequestMapping(value = "/getList", method = {RequestMethod.GET})
     public ApiResult getList(String status,HttpServletRequest request) throws Exception {
-        return ApiResult.success(toDoNoticeService.getDataList(status));
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<ToDoNotice> rst = toDoNoticeService.getDataList(status);
+        rst = rst.stream().filter(item -> (item.getOwner().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+        return ApiResult.success(rst);
     }
 
     /**

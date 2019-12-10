@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,21 +114,23 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     punchcardrecorddetail.setTeam_id(customerInfo.getUserinfo().getTeamname());
                     String Punchcardrecord_date = value.get(2).toString();
                     punchcardrecorddetail.setPunchcardrecord_date(sf.parse(Punchcardrecord_date));
-
                 }
                 punchcardrecorddetail.preInsert(tokenModel);
                 punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                 punchcardrecorddetailmapper.insert(punchcardrecorddetail);
                 PunchcardRecord punchcardrecord = new PunchcardRecord();
+                Double Worktime =0d;
+                DecimalFormat df = new DecimalFormat(".00");
                 List<PunchcardRecord> punchcardrecordlist = punchcardrecorddetailmapper.getPunchCardRecord();
                 for (PunchcardRecord punchcard : punchcardrecordlist) {
+                    Worktime=Double.valueOf(punchcard.getWorktime());
                     punchcardrecord.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
-                    punchcardrecord.setTeamid(punchcard.getTeamid());
-                    punchcardrecord.setGroupid(punchcard.getGroupid());
-                    punchcardrecord.setCenterid(punchcard.getCenterid());
+                    punchcardrecord.setTeam_id(punchcard.getTeam_id());
+                    punchcardrecord.setGroup_id(punchcard.getGroup_id());
+                    punchcardrecord.setCenter_id(punchcard.getCenter_id());
                     punchcardrecord.setUser_id(punchcard.getUser_id());
                     punchcardrecord.setJobnumber(punchcard.getJobnumber());
-                    punchcardrecord.setWorktime(punchcard.getWorktime());
+                    punchcardrecord.setWorktime(df.format(Worktime));
                     punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                     punchcardrecord.setTime_start(punchcard.getTime_start());
                     punchcardrecord.setTime_end(punchcard.getTime_end());
