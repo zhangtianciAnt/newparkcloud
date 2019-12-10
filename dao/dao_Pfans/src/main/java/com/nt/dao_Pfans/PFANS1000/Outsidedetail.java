@@ -37,7 +37,7 @@ public class Outsidedetail extends BaseModel {
     private String mailaddress;
 
     @Column(name = "REASON")
-    private Date reason;
+    private String reason;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;

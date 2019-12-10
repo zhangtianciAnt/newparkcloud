@@ -31,7 +31,7 @@ public class Pfans1020Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Outside outside =new Outside();
         outside.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(outsideService.get(outside));
+        return ApiResult.success(outsideService.getOutside(outside));
     }
 
     @RequestMapping(value = "insert", method = {RequestMethod.POST})

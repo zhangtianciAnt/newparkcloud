@@ -28,7 +28,7 @@ public class OutsideServiceImpl implements OutsideService {
     private OutsidedetailMapper outsidedetailMapper;
 
     @Override
-    public List<Outside> get(Outside outside)  throws Exception{
+    public List<Outside> getOutside(Outside outside)  throws Exception{
         return outsideMapper.select(outside);
     }
 
@@ -77,13 +77,18 @@ public class OutsideServiceImpl implements OutsideService {
         outside.setOutsideid(outsideid);
         outsideMapper.insertSelective(outside);
         List<Outsidedetail> outsidedetaillist = outsideVo.getOutsidedetail();
+        Outsidedetail outsidedetail = new Outsidedetail();
         if (outsidedetaillist != null) {
             int rowindex = 0;
-            for (Outsidedetail outsidedetail : outsidedetaillist) {
+            for (Outsidedetail outsidedet : outsidedetaillist) {
                 rowindex = rowindex + 1;
                 outsidedetail.preInsert(tokenModel);
                 outsidedetail.setOutsidedetailid(UUID.randomUUID().toString());
-                outsidedetail.setOutsideid(outsideid);
+                outsidedetail.setOutsideid(outsidedet.getOutsideid());
+                outsidedetail.setUsername(outsidedet.getUsername());
+                outsidedetail.setRank(outsidedet.getRank());
+                outsidedetail.setMailaddress(outsidedet.getMailaddress());
+                outsidedetail.setReason(outsidedet.getReason());
                 outsidedetail.setRowindex(rowindex);
                 outsidedetailMapper.insertSelective(outsidedetail);
             }

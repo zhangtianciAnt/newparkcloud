@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OutsideService {
 
-    List<Outside> get(Outside outside) throws Exception;
+    List<Outside> getOutside(Outside outside) throws Exception;
 
     public OutsideVo selectById(String outsideid) throws Exception;
 
