@@ -67,16 +67,19 @@ public class FirealarmServicesImpl implements FirealarmServices {
         int a = firealarmMapper.selectCount(firealarm1);
         String countno =new DecimalFormat("00").format(a+1);
         String typec = null;
-        switch (firealarm.getTypacc()){
-            case "BC013001": typec = "FAS";//火灾事故
-                break;
-            case "BC013002": typec = "PDA";//生产事故
-                break;
-            case "BC013003": typec = "EPA";//爆炸事故
-                break;
-            case "BC013004": typec = "OTA";//其他事故
-                break;
-        }
+//        switch (firealarm.getTypacc()){
+//            case "BC013001": typec = "FAS";//火灾事故
+//                break;
+//            case "BC013002": typec = "PDA";//生产事故
+//                break;
+//            case "BC013003": typec = "EPA";//爆炸事故
+//                break;
+//            case "BC013004": typec = "OTA";//其他事故
+//                break;
+//        }
+
+            typec = "FAS";
+
         firealarm.setFirealarmno(yyMMdd+typec+countno);
 
         firealarm.preInsert(tokenModel);
