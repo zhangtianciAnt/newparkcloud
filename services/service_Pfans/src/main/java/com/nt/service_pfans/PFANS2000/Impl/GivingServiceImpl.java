@@ -241,7 +241,6 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
-
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
