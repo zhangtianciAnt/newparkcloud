@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "additional")
+@Table(name = "attendance")
 public class Attendance extends BaseModel {
     private static final long serialVersionUID = 1L;
     /**
@@ -34,7 +34,7 @@ public class Attendance extends BaseModel {
      * 月份
      */
     @Column(name = "MONTHS")
-    private Date months;
+    private String months;
 
     /**
      * 姓名
@@ -47,7 +47,7 @@ public class Attendance extends BaseModel {
      */
     @Id
     @Column(name = "DATES")
-    private String dates;
+    private Date dates;
 
     /**
      * 正常
