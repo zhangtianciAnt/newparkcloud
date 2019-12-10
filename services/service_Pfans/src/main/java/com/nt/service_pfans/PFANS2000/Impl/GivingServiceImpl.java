@@ -685,10 +685,30 @@ public class GivingServiceImpl implements GivingService {
                             after3= 0;
                         }
                     }
-                    one = Double.valueOf(Ordinaryindustry * 1.5 + Ordinaryindustrynight * 1.5 * 1.25);
-                    two = Double.valueOf(Weekendindustry * 2 + Weekendindustrynight * 2 * 1.25);
-                    three = Double.valueOf(Statutoryresidue * 3 + Statutoryresiduenight * 3 * 1.25)*(after/21.75/8);
-                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * 2)*(after3/21.75/8);
+                    double weekendindustry =0d;
+                    double ordinaryindustry = 0d;
+                    double statutoryresidue = 0d;
+                    double SYJB = 0d;
+                    Dictionary dictionary = new Dictionary();
+                    List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+                    for(Dictionary diction :dictionarylist){
+                        if (diction.getCode().equals("PR049006")) {
+                            ordinaryindustry = Double.valueOf(diction.getValue2());
+                        }
+                        if (diction.getCode().equals("PR049007")) {
+                            weekendindustry = Double.valueOf(diction.getValue2());
+                        }
+                        if (diction.getCode().equals("PR049008")) {
+                            statutoryresidue = Double.valueOf(diction.getValue2());
+                        }
+                        if (diction.getCode().equals("PR049009")) {
+                            SYJB = Double.valueOf(diction.getValue2());
+                        }
+                    }
+                    one = Double.valueOf(Ordinaryindustry * ordinaryindustry + Ordinaryindustrynight * ordinaryindustry * SYJB);
+                    two = Double.valueOf(Weekendindustry * weekendindustry + Weekendindustrynight * weekendindustry * SYJB);
+                    three = Double.valueOf(Statutoryresidue * statutoryresidue + Statutoryresiduenight * statutoryresidue * SYJB)*(after/21.75/8);
+                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * weekendindustry)*(after3/21.75/8);
                     Thistotaly = one + two + three + four;
                     residual.setThistotaly(df.format(Thistotaly));
                     String months10 = String.valueOf(cal.get(cal.MONTH) - 1);
@@ -927,10 +947,30 @@ public class GivingServiceImpl implements GivingService {
                                 After3= 0;
                             }
                         }
-                        one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
-                        two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
-                        three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25)*(After/21.75/8);;
-                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2)*(After3/21.75/8);
+                        double xweekendindustry =0d;
+                        double xordinaryindustry = 0d;
+                        double xstatutoryresidue = 0d;
+                        double xSYJB = 0d;
+                        Dictionary xdictionary = new Dictionary();
+                        List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
+                        for(Dictionary diction :xdictionarylist){
+                            if (diction.getCode().equals("PR049006")) {
+                                xordinaryindustry = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049007")) {
+                                xweekendindustry = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049008")) {
+                                xstatutoryresidue = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049009")) {
+                                xSYJB = Double.valueOf(diction.getValue2());
+                            }
+                        }
+                        one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
+                        two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
+                        three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB)*(After/21.75/8);;
+                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry)*(After3/21.75/8);
                         Lasttotaly = one + two + three + four;
                         residual.setLasttotaly(df.format(Lasttotaly));
                     }
@@ -1184,10 +1224,30 @@ public class GivingServiceImpl implements GivingService {
                             after3 = 0;
                         }
                     }
-                    one = Double.valueOf(XOrdinaryindustry * 1.5 + XOrdinaryindustrynight * 1.5 * 1.25);
-                    two = Double.valueOf(XWeekendindustry * 2 + XWeekendindustrynight * 2 * 1.25);
-                    three = Double.valueOf(XStatutoryresidue * 3 + XStatutoryresiduenight * 3 * 1.25)*(after/21.75/8);
-                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * 2)*(after3/21.75/8);
+                    double xweekendindustry =0d;
+                    double xordinaryindustry = 0d;
+                    double xstatutoryresidue = 0d;
+                    double xSYJB = 0d;
+                    Dictionary xdictionary = new Dictionary();
+                    List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
+                    for(Dictionary diction :xdictionarylist){
+                        if (diction.getCode().equals("PR049006")) {
+                            xordinaryindustry = Double.valueOf(diction.getValue2());
+                        }
+                        if (diction.getCode().equals("PR049007")) {
+                            xweekendindustry = Double.valueOf(diction.getValue2());
+                        }
+                        if (diction.getCode().equals("PR049008")) {
+                            xstatutoryresidue = Double.valueOf(diction.getValue2());
+                        }
+                        if (diction.getCode().equals("PR049009")) {
+                            xSYJB = Double.valueOf(diction.getValue2());
+                        }
+                    }
+                    one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
+                    two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
+                    three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB)*(after/21.75/8);
+                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry)*(after3/21.75/8);
                     Lasttotaly = one + two + three + four;
                     residual.setLasttotaly(df.format(Lasttotaly));
                     if (Lasttotaly + Thistotaly == 0.0) {
@@ -1245,6 +1305,18 @@ public class GivingServiceImpl implements GivingService {
                     ba.setUser_id(attendance.getUser_id());
                     List<Base> Baselist = baseMapper.select(ba);
                     for (Base B : Baselist) {
+                        double Shortsickleave =0d;
+                        double DLZD = 0d;
+                        Dictionary dictionary = new Dictionary();
+                        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+                        for(Dictionary diction :dictionarylist){
+                            if (diction.getCode().equals("PR047001")) {
+                                DLZD = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049005")) {
+                                Shortsickleave = Double.valueOf(diction.getValue2());
+                            }
+                        }
                         int Late = 0;
                         int Leaveearly = 0;
                         int Absenteeism = 0;
@@ -1272,12 +1344,12 @@ public class GivingServiceImpl implements GivingService {
                         if (attendance.getShortsickleave() == null) {
                             two = 0;
                         } else {
-                            two = Double.valueOf(Thismonth / 21.75 / 8 * 0.4 * Integer.parseInt(attendance.getShortsickleave()));
+                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendance.getShortsickleave()));
                         }
                         if (attendance.getLongsickleave() == null) {
                             three = 0;
                         } else {
-                            three = Double.valueOf(1620 / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
+                            three = Double.valueOf(DLZD/ 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
                         }
 
                         int Thisdiligence = Late + Leaveearly + Absenteeism;
@@ -1298,6 +1370,18 @@ public class GivingServiceImpl implements GivingService {
                     ba.setUser_id(attendance.getUser_id());
                     List<Base> Baselist = baseMapper.select(ba);
                     for (Base B : Baselist) {
+                        double Shortsickleave =0d;
+                        double DLZD = 0d;
+                        Dictionary dictionary = new Dictionary();
+                        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+                        for(Dictionary diction :dictionarylist){
+                            if (diction.getCode().equals("PR047001")) {
+                                DLZD = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049005")) {
+                                Shortsickleave = Double.valueOf(diction.getValue2());
+                            }
+                        }
                         int Late = 0;
                         int Leaveearly = 0;
                         int Absenteeism = 0;
@@ -1325,12 +1409,12 @@ public class GivingServiceImpl implements GivingService {
                         if (attendance.getShortsickleave() == null) {
                             two = 0;
                         } else {
-                            two = Double.valueOf(Thismonth / 21.75 / 8 * 0.4 * Integer.parseInt(attendance.getShortsickleave()));
+                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendance.getShortsickleave()));
                         }
                         if (attendance.getLongsickleave() == null) {
                             three = 0;
                         } else {
-                            three = Double.valueOf(1620 / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
+                            three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
                         }
 
                         int Lastdiligence = Late + Leaveearly + Absenteeism;
