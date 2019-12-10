@@ -340,8 +340,8 @@ public class GivingServiceImpl implements GivingService {
                 double two = 0d;
                 double three = 0d;
                 double four = 0d;
-                Double Lasttotaly = 0d;
-                Double Thistotaly = 0d;
+                double Lasttotaly = 0d;
+                double Thistotaly = 0d;
                 rowundex = rowundex + 1;
                 DecimalFormat df = new DecimalFormat(".00");
                 residual.setRowindex(rowundex);
