@@ -113,6 +113,6 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
 //        data.put("commandrecord",commandrecord);
         List<Commandrecord.EmergencyDisposal> emergencyDisposal = commandrecord.getEmergencyDisposal();
         data.put("emergencyDisposal", emergencyDisposal);
-        ExcelOutPutUtil.OutPut("bbb", "foreach.xlsx", data, response);
+        ExcelOutPutUtil.OutPut("bbba", "fireaccidentrecord.xlsx", data, response);
     }
 }
