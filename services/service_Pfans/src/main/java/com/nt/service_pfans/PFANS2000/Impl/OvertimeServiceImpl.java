@@ -1,13 +1,10 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.OvertimeService;
-import com.nt.service_pfans.PFANS2000.mapper.AttendanceSettingMapper;
-import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
-import com.nt.service_pfans.PFANS2000.mapper.IrregulartimingMapper;
-import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
-import com.nt.service_pfans.PFANS2000.mapper.FlexibleWorkMapper;
+import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -34,6 +28,9 @@ public class OvertimeServiceImpl implements OvertimeService {
     private AttendanceSettingMapper attendanceSettingMapper;
     @Autowired
     private PunchcardRecordMapper punchcardrecordMapper;
+    @Autowired
+    private AttendanceMapper attendanceMapper;
+
 
     @Override
     public List<Overtime> getOvertime(Overtime overtime) throws Exception {
@@ -58,6 +55,13 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
+        SimpleDateFormat sdfxx = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        Date dateStart = overtime.getReserveovertimedate();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateStart);
+        cal.add(Calendar.HOUR_OF_DAY, -8);
+        dateStart = cal.getTime();
+        overtime.setReserveovertimedate(dateStart);
         overtime.preUpdate(tokenModel);
         //overtimeMapper.updateByPrimaryKey(overtime);
         //if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")){
@@ -153,11 +157,12 @@ public class OvertimeServiceImpl implements OvertimeService {
                     //实际打卡记录
                     PunchcardRecord punchcardrecord = new PunchcardRecord();
                     punchcardrecord.setUser_id(overtime.getUserid());
-                    //punchcardrecord.setPunchcardrecord_date(overtime.getReserveovertimedate());
+                    punchcardrecord.setPunchcardrecord_date(overtime.getReserveovertimedate());
                     List<PunchcardRecord> punchcardRecordlist = punchcardrecordMapper.select(punchcardrecord);
                     if(punchcardRecordlist.size() > 0){
                         String time_start = sdf.format(punchcardRecordlist.get(0).getTime_start());
                         String time_end = sdf.format(punchcardRecordlist.get(0).getTime_end());
+                        String worktime = punchcardRecordlist.get(0).getWorktime();
                         if(!overtime_end.equals("")){
                             if(Integer.valueOf(overtime_end) <= Integer.valueOf(time_end)){
                                 //实际加班时间
@@ -176,34 +181,44 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 System.out.print(overtimeHours);
                             }
                         }
-//                        System.out.print((Double.valueOf(overtimeHours)) / 60 / 60 / 1000);
-                        double d = (Double.valueOf(overtimeHours)) / 60 / 60 / 1000;
-                        String result = String .format("%.2f");
-                        System.out.print(result);
-                        if(overtime.getOvertimetype().equals("PR001001")){
+                        String dovertimeHours = String.valueOf(Double.valueOf(overtimeHours) / 60 / 60 / 1000);
+                        Attendance attendance = new Attendance();
+                        if(overtime.getOvertimetype().equals("PR001001")){//平日加班
+                            attendance.setOrdinaryindustry(dovertimeHours);
+                            //attendance.setOrdinaryindustrynight(dovertimeHours);
+                        }
+                        else if(overtime.getOvertimetype().equals("PR001002")){//周末加班
+                            attendance.setWeekendindustry(dovertimeHours);
+                            //attendance.setWeekendindustrynight(dovertimeHours);
+                        }
+                        else if(overtime.getOvertimetype().equals("PR001003")){//法定日加班
+                            attendance.setStatutoryresidue(dovertimeHours);
+                            //attendance.setStatutoryresiduenight(dovertimeHours);
+                        }
+                        else if(overtime.getOvertimetype().equals("PR001004")){//一齐年休日加班
+                            attendance.setAnnualrestday(dovertimeHours);
 
                         }
-                        else if(overtime.getOvertimetype().equals("PR001002")){
+                        else if(overtime.getOvertimetype().equals("PR001005")){//会社特别休日加班
+                            attendance.setSpecialday(dovertimeHours);
+                        }
+                        else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
 
                         }
-                        else if(overtime.getOvertimetype().equals("PR001003")){
-
+                        else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
+                            attendance.setYouthday(dovertimeHours);
                         }
-                        else if(overtime.getOvertimetype().equals("PR001004")){
-
+                        else if(overtime.getOvertimetype().equals("PR001008")){//妇女节
+                            attendance.setWomensday(dovertimeHours);
                         }
-                        else if(overtime.getOvertimetype().equals("PR001005")){
-
-                        }
-                        else if(overtime.getOvertimetype().equals("PR001006")){
-
-                        }
-                        else if(overtime.getOvertimetype().equals("PR001007")){
-
-                        }
-                        else if(overtime.getOvertimetype().equals("PR001008")){
-
-                        }
+                        attendance.preInsert(tokenModel);
+                        attendance.setAttendanceid(UUID.randomUUID().toString());
+                        attendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
+                        attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
+                        attendance.setUser_id(overtime.getUserid());
+                        attendance.setDates(overtime.getReserveovertimedate());
+                        attendance.setActual(worktime);
+                        attendanceMapper.insert(attendance);
                     }
                 }
             }
