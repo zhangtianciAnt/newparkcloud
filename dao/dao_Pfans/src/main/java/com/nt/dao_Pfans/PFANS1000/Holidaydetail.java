@@ -42,6 +42,9 @@ public class Holidaydetail extends BaseModel {
     @Column(name = "WORKREASONS")
     private String workreasons;
 
+    @Column(name = "STARTDATE")
+    private String startdate;
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 

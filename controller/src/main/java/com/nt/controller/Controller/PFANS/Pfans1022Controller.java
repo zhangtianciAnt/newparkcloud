@@ -58,7 +58,7 @@ public class Pfans1022Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        holidayService.updateHoliday(holidayVo, tokenModel);
+        holidayService.update(holidayVo, tokenModel);
         return ApiResult.success();
 
     }
