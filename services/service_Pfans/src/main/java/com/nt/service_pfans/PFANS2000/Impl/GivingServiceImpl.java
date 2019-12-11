@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,6 +94,9 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private AdditionalMapper additionalMapper;
+
+    @Autowired
+    private InductionMapper inductionMapper;
 
     /**
      * 生成基数表
@@ -1724,5 +1728,115 @@ public class GivingServiceImpl implements GivingService {
                 }
             }
         }
+    }
+
+    public List<CustomerInfo> getInduction() {
+        Query query = new Query();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar now = Calendar.getInstance();
+        Calendar _now = Calendar.getInstance();
+        now.add(Calendar.MONTH, -2);
+        _now.add(Calendar.MONTH, -1); //this
+        now.set(Calendar.DAY_OF_MONTH,15);
+        _now.set(Calendar.DAY_OF_MONTH,16);
+
+        Calendar lastmon = Calendar.getInstance();
+        lastmon.add(Calendar.MONTH, -1);
+        Calendar thismon = Calendar.getInstance();
+        Criteria criteria = Criteria.where("userinfo.enterday")
+                .gte(sf.format(now.getTime()))
+                .lte(sf.format(_now.getTime()));
+        query.addCriteria(criteria);
+        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
+        if(customerInfo.size() > 0) {
+            List<String> list = new ArrayList<>();
+            customerInfo.forEach(customerInfo1 -> list.add(customerInfo1.getUserid()));
+            List<Induction> inductions = inductionMapper.selectInduction(list, thismon.get(Calendar.YEAR) + "" + getMouth(sf.format(_now.getTime())),
+                    lastmon.get(Calendar.YEAR) + "" + getMouth(sf.format(now.getTime())), getMouth(sf.format(_now.getTime())) + "", getMouth(sf.format(now.getTime())) + "");
+            if (inductions.size() > 0) {
+                inductions.forEach(induction -> {
+                    Optional<CustomerInfo> _customerInfo = customerInfo.stream().filter(a -> (induction.getUser_id()).equals(a.getUserid())).findAny();
+                    if (_customerInfo.isPresent()) {
+                        try {
+                            induction.setWorddate(sf.parse(_customerInfo.get().getUserinfo().getWorkday()));
+                            if (_customerInfo.get().getUserinfo().getEnddate() != null && !_customerInfo.get().getUserinfo().getEnddate().equals("")) {
+                                induction.setStartdate(sf.parse(_customerInfo.get().getUserinfo().getEnddate()));
+                            }
+                            if (_customerInfo.get().getUserinfo().getGridData() != null) {
+                                List<CustomerInfo.Personal> personals = _customerInfo.get().getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                                        .collect(Collectors.toList());
+                                String lastMouth = "";
+                                String thisMouth = "";
+                                for (CustomerInfo.Personal personal : personals) {
+                                    boolean _last = false;
+                                    boolean _this = false;
+
+                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((lastmon.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-01")).getTime() && !_last) {
+                                        lastMouth = personal.getAfter();
+                                        _last = true;
+                                    }
+                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((thismon.get(Calendar.YEAR) + "-" + getMouth(sf.format(_now.getTime())) + "-01")).getTime() && !_this) {
+                                        thisMouth = personal.getAfter();
+                                        _this = true;
+                                    }
+                                    if (_last && _this) {
+                                        break;
+                                    }
+                                }
+                                //IF(正社員開始日<>"",ROUND((当月基本工资 - （当月基本工资/21.75日*当月试用期间的出勤日数×试用期工资扣除比例),2),IF(先月出勤日数>0,ROUND((先月基本工资/21.75*先月
+                                //出勤日数+当月基本工资),2),IF(今月試用社員出勤日数>0,ROUND(当月基本工资/21.75*今月試用社員出勤日数,2),当月基本工资)))
+                                DecimalFormat df = new DecimalFormat("#.00");
+                                if (_customerInfo.get().getUserinfo().getWorkday().equals("")) {
+                                    induction.setGive(df.format(Double.valueOf(thisMouth) - (Double.valueOf(thisMouth) / 21.75 * Double.valueOf(induction.getThismouth()) * 0.1)));
+                                } else {
+                                    if (Integer.parseInt(induction.getLastmouth()) > 0) {
+                                        induction.setGive(df.format(Double.valueOf(lastMouth) / 21.75 * Integer.parseInt(induction.getLastmouth()) * 0.1 + Double.valueOf(thisMouth)));
+                                    } else {
+                                        if (Integer.parseInt(induction.getThismouth()) > 0) {
+                                            induction.setGive(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(induction.getThismouth())));
+                                        } else {
+                                            induction.setGive(thisMouth);
+                                        }
+                                    }
+                                }
+                                //IF(先月基本工资<>0,ROUND(纳付率.食堂手当+纳付率.食堂手当/21.75*先月出勤日数,2),ROUND(纳付率.食堂手当/21.75*今月試用社員出勤日数,2))
+                                if (Double.valueOf(lastMouth) > 0) {
+                                    induction.setLunch(df.format(105 + 105 / 21.75 * Integer.parseInt(induction.getLastmouth())));
+                                } else {
+                                    induction.setLunch(df.format(105 / 21.75 * Integer.parseInt(induction.getThismouth())));
+                                }
+                                //IF(先月基本工资<>0,ROUND(纳付率.交通手当+纳付率.交通手当/21.75*先月出勤日数,2),ROUND(纳付率.交通手当/21.75*今月試用社員出勤日数,2))
+                                if (Double.valueOf(lastMouth) > 0) {
+                                    induction.setLunch(df.format(84 + 84 / 21.75 * Integer.parseInt(induction.getLastmouth())));
+                                } else {
+                                    induction.setLunch(df.format(84 / 21.75 * Integer.parseInt(induction.getThismouth())));
+                                }
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }
+        return null;
+    }
+
+    public void getRetire(){
+        Query query = new Query();
+        Calendar now = Calendar.getInstance();
+        Criteria criteria = Criteria.where("userinfo.enterday").gte(now.get(Calendar.YEAR) + "-" + now.get(Calendar.MONTH + 1) + "-01");
+        query.addCriteria(criteria);
+        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
+
+
+    }
+
+    public  String  getMouth(String mouth){
+        String _mouth = mouth.substring(5,7);
+        if(_mouth.substring(0,1) == "0"){
+            return  _mouth.substring(1);
+        }
+        return  _mouth;
     }
 }
