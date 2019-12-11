@@ -65,7 +65,7 @@ public class Firealarm extends BaseModel {
     /**
      * 化学品数量
      */
-    private Integer chemno;
+    private String chemno;
 
     /**
      * 化学品名称
