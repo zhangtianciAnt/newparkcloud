@@ -95,6 +95,12 @@ public class Overtime extends BaseModel {
      */
     @Column(name = "CAUSE")
     private String cause;
+
+    /**
+     * 承认状态
+     */
+    @Column(name = "RECOGNITIONSTATE")
+    private String recognitionstate;
 }
 
 

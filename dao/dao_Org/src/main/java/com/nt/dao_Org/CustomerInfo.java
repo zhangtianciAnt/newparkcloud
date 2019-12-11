@@ -251,6 +251,11 @@ public class CustomerInfo extends BaseModel {
          */
         private String post;
         /**
+         * 类别
+         */
+        private String type;
+
+        /**
          * ランク
          */
         private String rank;
@@ -322,6 +327,16 @@ public class CustomerInfo extends BaseModel {
          * 医療保険基数
          */
         private String medicalinsurance;
+
+        /**
+         * 退职日
+         */
+        private String resignation_date;
+
+        /**
+         * 离职申请
+         */
+        private String staffexitprocedure;
 
 
         private List<TableInfo> educationTable;

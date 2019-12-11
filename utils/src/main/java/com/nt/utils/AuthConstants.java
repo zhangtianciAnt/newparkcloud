@@ -69,4 +69,10 @@ public class AuthConstants {
      */
     public static final String APPROVED_FLAG_NO = "0";
     public static final String APPROVED_FLAG_YES = "4";
+
+    /**
+     * 承认状态(0:未承认，1:承认)
+     */
+    public static final String RECOGNITION_FLAG_NO = "0";
+    public static final String RECOGNITION_FLAG_YES = "1";
 }

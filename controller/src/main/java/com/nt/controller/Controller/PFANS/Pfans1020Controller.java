@@ -1,8 +1,8 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Holiday;
-import com.nt.dao_Pfans.PFANS1000.Vo.HolidayVo;
-import com.nt.service_pfans.PFANS1000.HolidayService;
+import com.nt.dao_Pfans.PFANS1000.Outside;
+import com.nt.dao_Pfans.PFANS1000.Vo.OutsideVo;
+import com.nt.service_pfans.PFANS1000.OutsideService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -18,47 +18,47 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/holiday")
-public class Pfans1022Controller {
+@RequestMapping("/outside")
+public class Pfans1020Controller {
 
     @Autowired
-    private HolidayService holidayService;
+    private OutsideService outsideService;
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Holiday holiday =new Holiday();
-        holiday.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(holidayService.getHoliday(holiday));
+        Outside outside =new Outside();
+        outside.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(outsideService.getOutside(outside));
     }
 
     @RequestMapping(value = "insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody HolidayVo holidayVo, HttpServletRequest request) throws Exception {
-        if (holidayVo == null) {
+    public ApiResult insert(@RequestBody OutsideVo outsideVo, HttpServletRequest request) throws Exception {
+        if (outsideVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        holidayService.insert(holidayVo, tokenModel);
+        outsideService.insert(outsideVo, tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult selectById(String holidayid, HttpServletRequest request) throws Exception {
-        if (holidayid == null) {
+    public ApiResult selectById(String outsideid, HttpServletRequest request) throws Exception {
+        if (outsideid == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(holidayService.selectById(holidayid));
+        return ApiResult.success(outsideService.selectById(outsideid));
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody HolidayVo holidayVo, HttpServletRequest request) throws Exception {
-        if (holidayVo == null) {
+    public ApiResult update(@RequestBody OutsideVo outsideVo, HttpServletRequest request) throws Exception {
+        if (outsideVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        holidayService.update(holidayVo, tokenModel);
+        outsideService.update(outsideVo, tokenModel);
         return ApiResult.success();
 
     }

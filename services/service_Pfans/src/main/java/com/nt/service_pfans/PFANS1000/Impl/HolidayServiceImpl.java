@@ -46,7 +46,7 @@ public class HolidayServiceImpl implements HolidayService {
     }
 
     @Override
-    public void updateHoliday(HolidayVo holidayVo, TokenModel tokenModel) throws Exception {
+    public void update(HolidayVo holidayVo, TokenModel tokenModel) throws Exception {
         Holiday holiday = new Holiday();
         BeanUtils.copyProperties(holidayVo.getHoliday(), holiday);
         holiday.preUpdate(tokenModel);
