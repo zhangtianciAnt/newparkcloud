@@ -617,9 +617,15 @@ public class GivingServiceImpl implements GivingService {
                             Daixiu4 = 0;
                         }
                     }
-
-                    String  months6 = String.valueOf(cal.get(cal.MONTH) + 1);
-                    String  years6 = String.valueOf(cal.get(cal.YEAR));
+                    String months6;
+                    String years6;
+                    if (cal.get(cal.MONTH) == 12) {
+                        months6 = String.valueOf(cal.get(cal.MONTH) - 11);
+                        years6 = String.valueOf(cal.get(cal.YEAR) + 1);
+                    } else {
+                        months6 = String.valueOf(cal.get(cal.MONTH) + 1);
+                        years6 = String.valueOf(cal.get(cal.YEAR));
+                    }
                     Attendance a4 = new Attendance();
                     a4.setUser_id(attendance.getUser_id());
                     a4.setYears(years6);
@@ -640,7 +646,10 @@ public class GivingServiceImpl implements GivingService {
                     }
                     String months7;
                     String years7;
-                    if (cal.get(cal.MONTH) == 11) {
+                    if (cal.get(cal.MONTH) == 12) {
+                        months7 = String.valueOf(cal.get(cal.MONTH) - 10);
+                        years7 = String.valueOf(cal.get(cal.YEAR) + 1);
+                    } else if (cal.get(cal.MONTH) == 11) {
                         months7 = String.valueOf(cal.get(cal.MONTH) - 10);
                         years7 = String.valueOf(cal.get(cal.YEAR) + 1);
                     } else {
