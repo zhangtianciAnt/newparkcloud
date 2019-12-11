@@ -15,6 +15,7 @@ import java.util.List;
  * @Version: 1.0
  */
 public interface BASFImageService {
+    //list
     List<BASFImage> get(BASFImage image) throws Exception;
 
     void insert(TokenModel tokenModel, BASFImage image) throws Exception;

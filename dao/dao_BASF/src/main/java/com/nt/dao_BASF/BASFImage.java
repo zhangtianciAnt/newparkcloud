@@ -27,7 +27,7 @@ public class BASFImage extends BaseModel {
     /**
      * 用户名称
      */
-    private String imageurl;
+    private String uploadfile;
 
     /**
      * 电话号码

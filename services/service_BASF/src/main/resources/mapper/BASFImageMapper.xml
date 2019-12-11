@@ -6,7 +6,7 @@
           WARNING - @mbg.generated
         -->
         <id column="imageid" property="imageid" jdbcType="VARCHAR"/>
-        <result column="imageurl" property="imageurl" jdbcType="VARCHAR"/>
+        <result column="uploadfile" property="uploadfile" jdbcType="VARCHAR"/>
         <result column="imagetext" property="imagetext" jdbcType="VARCHAR"/>
         <result column="url" property="url" jdbcType="VARCHAR"/>
     </resultMap>

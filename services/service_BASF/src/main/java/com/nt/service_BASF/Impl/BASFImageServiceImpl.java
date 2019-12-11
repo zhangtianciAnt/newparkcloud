@@ -29,6 +29,7 @@ public class BASFImageServiceImpl implements BASFImageService {
         return imageMapper.select(image);
     }
 
+    //insert
     @Override
     public void insert(TokenModel tokenModel, BASFImage image) throws Exception {
         image.preInsert(tokenModel);
