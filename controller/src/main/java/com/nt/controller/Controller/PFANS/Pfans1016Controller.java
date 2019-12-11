@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Routing;
+import com.nt.dao_Pfans.PFANS1000.Vo.RoutingVo;
 import com.nt.service_pfans.PFANS1000.RoutingService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -35,32 +36,31 @@ public class Pfans1016Controller {
 
     }
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Routing routing, HttpServletRequest request) throws Exception {
-        if (routing == null) {
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String routing_id, HttpServletRequest request) throws Exception {
+        if (routing_id == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(routingService.One(routing.getRouting_id()));
+        return ApiResult.success(routingService.selectById(routing_id));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateFlexibleWork(@RequestBody Routing routing, HttpServletRequest request) throws Exception{
-        if (routing == null) {
+    public ApiResult update(@RequestBody RoutingVo routingVo, HttpServletRequest request) throws Exception{
+        if (routingVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        routingService.updateRouting(routing,tokenModel);
+        routingService.update(routingVo,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Routing routing, HttpServletRequest request) throws Exception {
-        if (routing == null) {
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    public ApiResult insert(@RequestBody RoutingVo routingVo, HttpServletRequest request) throws Exception {
+        if (routingVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        routingService.insert(routing,tokenModel);
+        routingService.insert(routingVo,tokenModel);
         return ApiResult.success();
     }
 }

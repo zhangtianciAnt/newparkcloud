@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -86,16 +87,10 @@ public class Routing extends BaseModel {
     private String email;
 
     /**
-     * 开始期間
+     * 期間
      */
     @Column(name = "DURINGDATE")
     private String duringdate;
-
-    /**
-     * 结束期間
-     */
-    @Column(name = "ENDDATE")
-    private String enddate;
 
     /**
      * グループ責任者
@@ -108,47 +103,5 @@ public class Routing extends BaseModel {
      */
     @Column(name = "REASON")
     private String reason;
-
-    /**
-     * ルーティング申請明细
-     */
-    @Column(name = "ROUTINGDETAIL_ID")
-    private String routingdetail_id;
-
-    /**
-     * 通信方向
-     */
-    @Column(name = "COMMUNICATION")
-    private String communication;
-
-    /**
-     * 接続元IPグループ
-     */
-    @Column(name = "SOURCEIPGROUP")
-    private String sourceipgroup;
-
-    /**
-     * 接続元IPアドレス（PSDCD内）
-     */
-    @Column(name = "SOURCEIPADDRESS")
-    private String sourceipaddress;
-
-    /**
-     * 接続先IPグループ
-     */
-    @Column(name = "DESTINATIONIPGROUP")
-    private String destinationipgroup;
-
-    /**
-     * 接続先IPアドレス（PSDCD内）
-     */
-    @Column(name = "DESTINATIONIPADDRESS")
-    private String destinationipaddress;
-
-    /**
-     * プロトコル又はポート番号
-     */
-    @Column(name = "PROTOCOL")
-    private String protocol;
 
 }
