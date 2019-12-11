@@ -2,10 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +37,8 @@ public class Pfans2016Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        //未承认
+        abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
         abNormalService.insert(abNormal, tokenModel);
         return ApiResult.success();
     }

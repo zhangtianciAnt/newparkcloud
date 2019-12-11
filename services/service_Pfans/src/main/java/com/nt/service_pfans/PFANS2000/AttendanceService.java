@@ -7,9 +7,5 @@ import java.util.List;
 
 public interface AttendanceService {
 
-    void insert(Attendance attendance, TokenModel tokenModel) throws Exception;
-
-    List<Attendance> list(Attendance attendance) throws Exception;
-
-    void upd(Attendance attendance, TokenModel tokenModel) throws Exception;
+    List<Attendance> getAttendancelist(Attendance attendance) throws Exception;
 }
