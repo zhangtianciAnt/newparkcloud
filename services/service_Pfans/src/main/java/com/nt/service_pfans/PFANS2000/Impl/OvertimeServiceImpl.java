@@ -33,7 +33,6 @@ public class OvertimeServiceImpl implements OvertimeService {
     @Autowired
     private AttendanceMapper attendanceMapper;
 
-
     @Override
     public List<Overtime> getOvertime(Overtime overtime) throws Exception {
         return overtimeMapper.select(overtime);
@@ -203,65 +202,69 @@ public class OvertimeServiceImpl implements OvertimeService {
                         attendance.setUser_id(overtime.getUserid());
                         attendance.setDates(overtime.getReserveovertimedate());
                         List<Attendance> attendancelist = attendanceMapper.select(attendance);
-                        attendance = new Attendance();
-                        attendance.setUser_id(overtime.getUserid());
-                        attendance.setDates(overtime.getReserveovertimedate());
-                        attendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
-                        attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
-                        attendance.setAttendanceid(UUID.randomUUID().toString());
-                        attendance.setDates(overtime.getReserveovertimedate());
-                        attendance.setActual(worktime);
-                        attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                         DecimalFormat  df = new DecimalFormat("######0.00");
                         if(attendancelist.size() > 0){
-                            if(attendancelist.get(0).getOrdinaryindustry() != null && !attendancelist.get(0).getOrdinaryindustry().isEmpty()){
-                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getOrdinaryindustry())));
-                            }
-                            if(overtime.getOvertimetype().equals("PR001001")){//平日加班
-                                attendance.setOrdinaryindustry(overtimeHours);
-                                if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
-                                    if(attendancelist.get(0).getOrdinaryindustrynight() != null && !attendancelist.get(0).getOrdinaryindustrynight().isEmpty()){
-                                        overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attendancelist.get(0).getOrdinaryindustrynight())));
+                            for (Attendance attend : attendancelist) {
+                                if(attend.getOrdinaryindustry() != null && !attend.getOrdinaryindustry().isEmpty()){
+                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getOrdinaryindustry())));
+                                }
+                                if(overtime.getOvertimetype().equals("PR001001")){//平日加班
+                                    attend.setOrdinaryindustry(overtimeHours);
+                                    if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
+                                        if(attend.getOrdinaryindustrynight() != null && !attend.getOrdinaryindustrynight().isEmpty()){
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attendancelist.get(0).getOrdinaryindustrynight())));
+                                        }
+                                        attend.setOrdinaryindustrynight(overtimeHoursNight);
                                     }
-                                    attendance.setOrdinaryindustrynight(overtimeHoursNight);
                                 }
+//                                else if(overtime.getOvertimetype().equals("PR001002")){//周末加班
+//                                    attend.setWeekendindustry(overtimeHours);
+//                                    if(overtimeHoursNight != "" || overtimeHoursNight != null){
+//                                        //attend.setWeekendindustrynight(overtimeHoursNight);
+//                                    }
+//                                }
+//                                else if(overtime.getOvertimetype().equals("PR001003")){//法定日加班
+//                                    attend.setStatutoryresidue(overtimeHours);
+//                                    if(overtimeHoursNight != "" || overtimeHoursNight != null){
+//                                        attend.setStatutoryresiduenight(overtimeHoursNight);
+//                                    }
+//                                }
+//                                else if(overtime.getOvertimetype().equals("PR001004")){//一齐年休日加班
+//                                    attend.setAnnualrestday(overtimeHours);
+//
+//                                }
+//                                else if(overtime.getOvertimetype().equals("PR001005")){//会社特别休日加班
+//                                    attend.setSpecialday(overtimeHours);
+//                                }
+//                                else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
+//
+//                                }
+//                                else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
+//                                    attend.setYouthday(overtimeHours);
+//                                }
+//                                else if(overtime.getOvertimetype().equals("PR001008")){//妇女节
+//                                    attend.setWomensday(overtimeHours);
+//                                }
+                                attend.preUpdate(tokenModel);
+                                attendance.setAttendanceid(attend.getAttendanceid());
+                                attendanceMapper.updateByPrimaryKey(attend);
                             }
-                            else if(overtime.getOvertimetype().equals("PR001002")){//周末加班
-                                attendance.setWeekendindustry(overtimeHours);
-                                if(overtimeHoursNight != "" || overtimeHoursNight != null){
-                                    //attendance.setWeekendindustrynight(overtimeHoursNight);
-                                }
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001003")){//法定日加班
-                                attendance.setStatutoryresidue(overtimeHours);
-                                if(overtimeHoursNight != "" || overtimeHoursNight != null){
-                                    attendance.setStatutoryresiduenight(overtimeHoursNight);
-                                }
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001004")){//一齐年休日加班
-                                attendance.setAnnualrestday(overtimeHours);
-
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001005")){//会社特别休日加班
-                                attendance.setSpecialday(overtimeHours);
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
-
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
-                                attendance.setYouthday(overtimeHours);
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001008")){//妇女节
-                                attendance.setWomensday(overtimeHours);
-                            }
-                            attendance.preUpdate(tokenModel);
-                            attendanceMapper.updateByPrimaryKey(attendance);
                         }
                         else{
+                            attendance.setUser_id(overtime.getUserid());
+                            attendance.setDates(overtime.getReserveovertimedate());
+                            attendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
+                            attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
+                            attendance.setAttendanceid(UUID.randomUUID().toString());
+                            attendance.setDates(overtime.getReserveovertimedate());
+                            attendance.setActual(worktime);
+                            attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                             attendance.preInsert(tokenModel);
                             if(overtime.getOvertimetype().equals("PR001001")){//平日加班
                                 attendance.setOrdinaryindustry(overtimeHours);
-                                //attendance.setOrdinaryindustrynight(overtimeHours);
+                                if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
+                                    attendance.setOrdinaryindustrynight(overtimeHoursNight);
+                                }
                             }
                             else if(overtime.getOvertimetype().equals("PR001002")){//周末加班
                                 attendance.setWeekendindustry(overtimeHours);
