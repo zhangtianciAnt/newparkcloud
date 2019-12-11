@@ -279,7 +279,8 @@ public class GivingServiceImpl implements GivingService {
                 }
                 if (customer.getUserinfo().getEnddate() == null) {
                     base.setType("0");
-                } else if (customer.getUserinfo().getEnddate() != null && customer.getUserinfo().getEnddate().length() > 0) {
+                }
+                if (customer.getUserinfo().getEnddate() != null) {
                     String date = customer.getUserinfo().getEnddate().substring(5, 7);
                     Calendar cal = Calendar.getInstance();
                     String months = String.valueOf(cal.get(cal.MONTH));
