@@ -56,6 +56,8 @@ public class Pfans2011Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        //未承认
+        overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
         overtimeService.insertOvertime(overtime, tokenModel);
         return ApiResult.success();
     }

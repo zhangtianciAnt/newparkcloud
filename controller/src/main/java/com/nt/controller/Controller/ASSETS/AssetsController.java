@@ -1,7 +1,7 @@
-package com.nt.controller.Controller.PFANS;
+package com.nt.controller.Controller.ASSETS;
 
-import com.nt.dao_Pfans.PFANS2000.AbNormal;
-import com.nt.service_pfans.PFANS2000.AbNormalService;
+import com.nt.dao_Assets.Assets;
+import com.nt.service_Assets.AssetsService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/abNormal")
-public class Pfans2016Controller {
+@RequestMapping("/assets")
+public class AssetsController {
 
     @Autowired
-    private AbNormalService abNormalService;
+    private AssetsService assetsService;
 
     @Autowired
     private TokenService tokenService;
@@ -26,40 +26,51 @@ public class Pfans2016Controller {
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        AbNormal abNormal = new AbNormal();
-        abNormal.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(abNormalService.list(abNormal));
+        Assets assets = new Assets();
+        assets.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(assetsService.list(assets));
     }
 
     @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
-        if (abNormal == null) {
+    public ApiResult create(@RequestBody Assets assets, HttpServletRequest request) throws Exception {
+        if (assets == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        //未承认
-        abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-        abNormalService.insert(abNormal, tokenModel);
+        assetsService.insert(assets, tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/updateInfo", method = {RequestMethod.POST})
-    public ApiResult updateInformation(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
-        if (abNormal == null) {
+    public ApiResult updateInformation(@RequestBody Assets assets, HttpServletRequest request) throws Exception {
+        if (assets == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        abNormalService.upd(abNormal, tokenModel);
+        assetsService.update(assets, tokenModel);
         return ApiResult.success();
     }
 
+
     @RequestMapping(value = "/oneInfo", method = {RequestMethod.POST})
-    public ApiResult one(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
-        if (abNormal == null) {
+    public ApiResult one(@RequestBody Assets assets, HttpServletRequest request) throws Exception {
+        if (assets == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(abNormalService.One(abNormal.getAbnormalid()));
+        return ApiResult.success(assetsService.One(assets.getAssets_id()));
     }
+
+    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(assetsService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
 
 }
