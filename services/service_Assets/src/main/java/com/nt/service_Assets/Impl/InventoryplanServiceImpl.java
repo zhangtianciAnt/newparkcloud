@@ -64,25 +64,10 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
         inventoryplan.preUpdate(tokenModel);
         inventoryplanMapper.updateByPrimaryKey(inventoryplan);
-        String inventoryplanid = UUID.randomUUID().toString();
-        Assets assets = new Assets();
-        assets.setInventoryplan_id(inventoryplanid);
-        assetsMapper.delete(assets);
-        Assets aa = new Assets();
-        List<Assets> aalist = assetsMapper.select(aa);
-        inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
         List<Assets> assetsList = inventoryplanVo.getAssets();
-        inventoryplan.setInquantity(String.valueOf(assetsList.size()));
-        inventoryplan.setUnquantity(String.valueOf(aalist.size() - assetsList.size()));
-        inventoryplanMapper.insertSelective(inventoryplan);
         if (assetsList != null) {
-            int rowindex = 0;
             for (Assets ass : assetsList) {
-                rowindex += rowindex;
                 ass.preInsert(tokenModel);
-//                ass.setAssets_id(UUID.randomUUID().toString());
-                ass.setInventoryplan_id(inventoryplanid);
-                ass.setRowindex(rowindex);
                 assetsMapper.updateByPrimaryKeySelective(ass);
             }
         }
