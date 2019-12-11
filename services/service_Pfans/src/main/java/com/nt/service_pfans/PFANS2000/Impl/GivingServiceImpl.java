@@ -277,21 +277,20 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     base.setOnlychild("2");  //独生子女
                 }
-
-                if (customer.getUserinfo().getEnterday() != null && customer.getUserinfo().getEnterday().length() > 0) {
-                    String date = customer.getUserinfo().getEnterday().substring(5, 7);
+                if (customer.getUserinfo().getEnddate() == null) {
+                    base.setType("0");
+                } else if (customer.getUserinfo().getEnddate() != null && customer.getUserinfo().getEnddate().length() > 0) {
+                    String date = customer.getUserinfo().getEnddate().substring(5, 7);
                     Calendar cal = Calendar.getInstance();
-                    String months = String.valueOf(cal.get(cal.MONTH) + 1);
-                    if (Integer.parseInt(date) == Integer.parseInt(months)) {
+                    String months = String.valueOf(cal.get(cal.MONTH));
+                    if (Integer.parseInt(date) >= Integer.parseInt(months)) {
                         base.setType("0");
                     }
                 }
-
-
                 if (customer.getUserinfo().getResignation_date() != null && customer.getUserinfo().getResignation_date().length() > 0) {
                     String date = customer.getUserinfo().getResignation_date().substring(5, 7);
                     Calendar cal = Calendar.getInstance();
-                    String months = String.valueOf(cal.get(cal.MONTH) + 1);
+                    String months = String.valueOf(cal.get(cal.MONTH));
                     if (Integer.parseInt(date) == Integer.parseInt(months)) {
                         base.setType("1");
                     }
@@ -1495,7 +1494,7 @@ public class GivingServiceImpl implements GivingService {
                         double Absenteeism = 0d;
                         double Thismonth = 0d;
                         double Lastdiligence = 0d;
-                        if (B.getThismonth() == null ||  Double.valueOf(B.getThismonth()) == 0.0) {
+                        if (B.getThismonth() == null || Double.valueOf(B.getThismonth()) == 0.0) {
                             Thismonth = 0;
                         } else {
                             Thismonth = Double.valueOf(B.getThismonth());
