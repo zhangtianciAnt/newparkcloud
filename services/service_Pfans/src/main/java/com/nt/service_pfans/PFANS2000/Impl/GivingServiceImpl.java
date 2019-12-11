@@ -277,7 +277,61 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     base.setOnlychild("2");  //独生子女
                 }
-                //入/退職/産休
+
+                if (customer.getUserinfo().getEnterday() != null && customer.getUserinfo().getEnterday().length() > 0) {
+                    String date = customer.getUserinfo().getEnterday().substring(5, 7);
+                    Calendar cal = Calendar.getInstance();
+                    String months = String.valueOf(cal.get(cal.MONTH) + 1);
+                    if (Integer.parseInt(date) == Integer.parseInt(months)) {
+                        base.setType("0");
+                    }
+                }
+
+
+                if (customer.getUserinfo().getResignation_date() != null && customer.getUserinfo().getResignation_date().length() > 0) {
+                    String date = customer.getUserinfo().getResignation_date().substring(5, 7);
+                    Calendar cal = Calendar.getInstance();
+                    String months = String.valueOf(cal.get(cal.MONTH) + 1);
+                    if (Integer.parseInt(date) == Integer.parseInt(months)) {
+                        base.setType("1");
+                    }
+                }
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal = Calendar.getInstance();
+                String months = String.valueOf(cal.get(cal.MONTH));
+                String years = String.valueOf(cal.get(cal.YEAR));
+                String date = String.valueOf(cal.get(cal.DATE));
+                String Data;
+                if (Integer.parseInt(months) < 10 && Integer.parseInt(date) < 10) {
+                    Data = years + "-0" + months + "-0" + date;
+                } else if (Integer.parseInt(months) < 10) {
+                    Data = years + "-0" + months + "-" + date;
+                } else if (Integer.parseInt(date) < 10) {
+                    Data = years + "-" + months + "-0" + date;
+                } else {
+                    Data = years + "-" + months + "-" + date;
+                }
+
+                AbNormal abNormal = new AbNormal();
+                abNormal.setStatus("4");
+                List<AbNormal> abNormalinfo = abNormalMapper.select(abNormal);
+                if (abNormalinfo != null) {
+                    for (AbNormal abNor : abNormalinfo) {
+                        if (abNor.getErrortype().equals("PR013012")) {
+                            String Occurrencedate = sf.format(abNor.getOccurrencedate());
+                            String Finisheddate = sf.format(abNor.getFinisheddate());
+                            if (Integer.parseInt(Occurrencedate.replace("-", "")) <= Integer.parseInt(Data.replace("-", "")) && Integer.parseInt(Data.replace("-", "")) <= Integer.parseInt(Finisheddate.replace("-", ""))) {
+                                base.setType("2");
+                            }
+                        } else if (abNor.getErrortype().equals("PR013013")) {
+                            String occurrencedate = sf.format(abNor.getOccurrencedate());
+                            String finisheddate = sf.format(abNor.getFinisheddate());
+                            if (Integer.parseInt(occurrencedate.replace("-", "")) <= Integer.parseInt(Data.replace("-", "")) && Integer.parseInt(Data.replace("-", "")) <= Integer.parseInt(finisheddate.replace("-", ""))) {
+                                base.setType("3");
+                            }
+                        }
+                    }
+                }
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
                 //1999年前社会人
@@ -295,8 +349,60 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     base.setRegistered("2");
                 }
+
+
                 //2019年6月
                 //2019年7月
+                String Months;
+                String Years;
+                String Date;
+                if (cal.get(cal.MONTH) == 1) {
+                    Months = String.valueOf(cal.get(cal.MONTH) + 11);
+                    Years = String.valueOf(cal.get(cal.YEAR) - 1);
+                    Date = String.valueOf(cal.get(cal.DATE));
+                } else {
+                    Months = String.valueOf(cal.get(cal.MONTH) - 1);
+                    Years = String.valueOf(cal.get(cal.YEAR));
+                    Date = String.valueOf(cal.get(cal.DATE));
+                }
+
+                String Dat;
+                if (Integer.parseInt(Months) < 10 && Integer.parseInt(Date) < 10) {
+                    Dat = Years + "-0" + Months + "-0" + Date;
+                } else if (Integer.parseInt(Months) < 10) {
+                    Dat = Years + "-0" + Months + "-" + Date;
+                } else if (Integer.parseInt(Date) < 10) {
+                    Dat = Years + "-" + Months + "-0" + Date;
+                } else {
+                    Dat = Years + "-" + Months + "-" + Date;
+                }
+                double after6 = 0d;
+                double after7 = 0d;
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(customer.getUserid()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    if (customerInfo.getUserinfo().getGridData() != null) {
+                        List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                        for (CustomerInfo.Personal personal : customerInfo1) {
+                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Dat.replace("-", ""))) {
+                                after6 = Integer.parseInt(personal.getAfter());
+                                break;
+                            }
+                        }
+                        for (CustomerInfo.Personal personal : customerInfo1) {
+                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Data.replace("-", ""))) {
+                                after7 = Integer.parseInt(personal.getAfter());
+                                break;
+                            }
+                        }
+                    } else {
+                        after6 = 0;
+                        after7 = 0;
+                    }
+                }
+                base.setLastmonth(String.valueOf(after6));
+                base.setThismonth(String.valueOf(after7));
                 base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
                 base.setMedical(customer.getUserinfo().getMedicalinsurance()); //医療・生育基数
 
@@ -316,10 +422,11 @@ public class GivingServiceImpl implements GivingService {
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
-                baseMapper.insertSelective(base);
+                baseMapper.insert(base);
             }
         }
     }
+
 
     @Override
     public void insertResidual(String givingid, TokenModel tokenModel) throws Exception {
@@ -397,7 +504,7 @@ public class GivingServiceImpl implements GivingService {
                     atten.setMonths(months1);
                     List<Attendance> Attendancelist = attendanceMapper.select(atten);
                     for (Attendance attendancelist : Attendancelist) {
-                        if (Integer.parseInt(attendancelist.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
                             i = i + 1;
                         }
                     }
@@ -416,14 +523,14 @@ public class GivingServiceImpl implements GivingService {
                     a.setMonths(months2);
                     List<Attendance> Attendancelist1 = attendanceMapper.select(a);
                     for (Attendance attendancelist1 : Attendancelist1) {
-                        if (Integer.parseInt(attendancelist1.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
                             o = o + 1;
                         }
                     }
                     List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years, months2);
                     for (Attendance A : attendanceList) {
                         if (A.getDaixiu() != null) {
-                            Daixiu1 = Integer.parseInt(A.getDaixiu());
+                            Daixiu1 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu1 = 0;
                         }
@@ -446,14 +553,14 @@ public class GivingServiceImpl implements GivingService {
                     a1.setMonths(months3);
                     List<Attendance> Attendancelist2 = attendanceMapper.select(a1);
                     for (Attendance attendancelist2 : Attendancelist2) {
-                        if (Integer.parseInt(attendancelist2.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
                             m = m + 1;
                         }
                     }
                     List<Attendance> attendanceList1 = givingMapper.selectAttendance(user_id, years3, months3);
                     for (Attendance A : attendanceList1) {
                         if (A.getDaixiu() != null) {
-                            Daixiu2 = Integer.parseInt(A.getDaixiu());
+                            Daixiu2 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu2 = 0;
                         }
@@ -479,14 +586,14 @@ public class GivingServiceImpl implements GivingService {
                     a2.setMonths(months4);
                     List<Attendance> Attendancelist3 = attendanceMapper.select(a2);
                     for (Attendance attendancelist3 : Attendancelist3) {
-                        if (Integer.parseInt(attendancelist3.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
                             n = n + 1;
                         }
                     }
                     List<Attendance> attendanceList2 = givingMapper.selectAttendance(user_id, years4, months4);
                     for (Attendance A : attendanceList2) {
                         if (A.getDaixiu() != null) {
-                            Daixiu3 = Integer.parseInt(A.getDaixiu());
+                            Daixiu3 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu3 = 0;
                         }
@@ -498,14 +605,14 @@ public class GivingServiceImpl implements GivingService {
                     a3.setMonths(months5);
                     List<Attendance> Attendancelist4 = attendanceMapper.select(a3);
                     for (Attendance attendancelist4 : Attendancelist4) {
-                        if (Integer.parseInt(attendancelist4.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist4.getWeekendindustry()) >= 8.0) {
                             z = z + 1;
                         }
                     }
                     List<Attendance> attendanceList5 = givingMapper.selectAttendance(user_id, years, months5);
                     for (Attendance A : attendanceList5) {
                         if (A.getDaixiu() != null) {
-                            Daixiu4 = Integer.parseInt(A.getDaixiu());
+                            Daixiu4 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu4 = 0;
                         }
@@ -525,14 +632,14 @@ public class GivingServiceImpl implements GivingService {
                     a4.setMonths(months6);
                     List<Attendance> Attendancelist5 = attendanceMapper.select(a4);
                     for (Attendance attendancelist5 : Attendancelist5) {
-                        if (Integer.parseInt(attendancelist5.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist5.getWeekendindustry()) >= 8.0) {
                             k = k + 1;
                         }
                     }
                     List<Attendance> attendanceList6 = givingMapper.selectAttendance(user_id, years6, months6);
                     for (Attendance A : attendanceList6) {
                         if (A.getDaixiu() != null) {
-                            Daixiu5 = Integer.parseInt(A.getDaixiu());
+                            Daixiu5 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu5 = 0;
                         }
@@ -552,7 +659,7 @@ public class GivingServiceImpl implements GivingService {
                     List<Attendance> attendanceList7 = givingMapper.selectAttendance(user_id, years7, months7);
                     for (Attendance A : attendanceList7) {
                         if (A.getDaixiu() != null) {
-                            Daixiu6 = Integer.parseInt(A.getDaixiu());
+                            Daixiu6 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu6 = 0;
                         }
@@ -575,7 +682,7 @@ public class GivingServiceImpl implements GivingService {
                     List<Attendance> attendanceList8 = givingMapper.selectAttendance(user_id, years8, months8);
                     for (Attendance A : attendanceList8) {
                         if (A.getDaixiu() != null) {
-                            Daixiu7 = Integer.parseInt(A.getDaixiu());
+                            Daixiu7 = Double.valueOf(A.getDaixiu());
                         } else {
                             Daixiu7 = 0;
                         }
@@ -596,32 +703,32 @@ public class GivingServiceImpl implements GivingService {
                     if (attendance.getOrdinaryindustry() == null) {
                         Ordinaryindustry = 0;
                     } else {
-                        Ordinaryindustry = Integer.parseInt(attendance.getOrdinaryindustry());
+                        Ordinaryindustry = Double.valueOf(attendance.getOrdinaryindustry());
                     }
                     if (attendance.getWeekendindustry() == null) {
                         Weekendindustry = 0;
                     } else {
-                        Weekendindustry = Integer.parseInt(attendance.getWeekendindustry());
+                        Weekendindustry = Double.valueOf(attendance.getWeekendindustry());
                     }
                     if (attendance.getStatutoryresidue() == null) {
                         Statutoryresidue = 0;
                     } else {
-                        Statutoryresidue = Integer.parseInt(attendance.getStatutoryresidue());
+                        Statutoryresidue = Double.valueOf(attendance.getStatutoryresidue());
                     }
                     if (attendance.getOrdinaryindustrynight() == null) {
                         Ordinaryindustrynight = 0;
                     } else {
-                        Ordinaryindustrynight = Integer.parseInt(attendance.getOrdinaryindustrynight());
+                        Ordinaryindustrynight = Double.valueOf(attendance.getOrdinaryindustrynight());
                     }
                     if (attendance.getWeekendindustrynight() == null) {
                         Weekendindustrynight = 0;
                     } else {
-                        Weekendindustrynight = Integer.parseInt(attendance.getWeekendindustrynight());
+                        Weekendindustrynight = Double.valueOf(attendance.getWeekendindustrynight());
                     }
                     if (attendance.getStatutoryresiduenight() == null) {
                         Statutoryresiduenight = 0;
                     } else {
-                        Statutoryresiduenight = Integer.parseInt(attendance.getStatutoryresiduenight());
+                        Statutoryresiduenight = Double.valueOf(attendance.getStatutoryresiduenight());
                     }
                     Thistotalh = Ordinaryindustry + Weekendindustry + Statutoryresidue + Ordinaryindustrynight + Weekendindustrynight + Statutoryresiduenight + (i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) + Thisreplace3;
                     residual.setThistotalh(String.valueOf(Thistotalh));
@@ -634,32 +741,32 @@ public class GivingServiceImpl implements GivingService {
                     if (cal.get(cal.MONTH) == 1) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else if (cal.get(cal.MONTH) == 2) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else if (cal.get(cal.MONTH) == 3) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else if (cal.get(cal.MONTH) == 4) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else {
                         XMonths = String.valueOf(cal.get(cal.MONTH) - 4);
-                        XYears  = String.valueOf(cal.get(cal.YEAR));
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XYears = String.valueOf(cal.get(cal.YEAR));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     }
                     String XData;
-                    if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
+                    if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
                         XData = XYears + "-0" + XMonths + "-0" + XDate;
-                    }else if(Integer.parseInt(XMonths)<10){
+                    } else if (Integer.parseInt(XMonths) < 10) {
                         XData = XYears + "-0" + XMonths + "-" + XDate;
-                    }else if(Integer.parseInt(XDate)<10){
+                    } else if (Integer.parseInt(XDate) < 10) {
                         XData = XYears + "-" + XMonths + "-0" + XDate;
-                    }else{
+                    } else {
                         XData = XYears + "-" + XMonths + "-" + XDate;
                     }
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
@@ -667,32 +774,32 @@ public class GivingServiceImpl implements GivingService {
                     query.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        if(customerInfo.getUserinfo().getGridData()!=null){
+                        if (customerInfo.getUserinfo().getGridData() != null) {
                             List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                             for (CustomerInfo.Personal personal : customerInfo1) {
-                                if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(Date.replace("-",""))) {
-                                    after = Integer.parseInt(personal.getAfter());
+                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
+                                    after = Double.valueOf(personal.getAfter());
                                     break;
                                 }
                             }
                             for (CustomerInfo.Personal personal : customerInfo1) {
-                                if (Integer.parseInt(personal.getDate().replace("-","")) <= Integer.parseInt(XData.replace("-",""))) {
-                                    after3 = Integer.parseInt(personal.getAfter());
+                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
+                                    after3 = Double.valueOf(personal.getAfter());
                                     break;
                                 }
                             }
-                        }else{
+                        } else {
                             after = 0;
-                            after3= 0;
+                            after3 = 0;
                         }
                     }
-                    double weekendindustry =0d;
+                    double weekendindustry = 0d;
                     double ordinaryindustry = 0d;
                     double statutoryresidue = 0d;
                     double SYJB = 0d;
                     Dictionary dictionary = new Dictionary();
                     List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                    for(Dictionary diction :dictionarylist){
+                    for (Dictionary diction : dictionarylist) {
                         if (diction.getCode().equals("PR049006")) {
                             ordinaryindustry = Double.valueOf(diction.getValue2());
                         }
@@ -708,8 +815,8 @@ public class GivingServiceImpl implements GivingService {
                     }
                     one = Double.valueOf(Ordinaryindustry * ordinaryindustry + Ordinaryindustrynight * ordinaryindustry * SYJB);
                     two = Double.valueOf(Weekendindustry * weekendindustry + Weekendindustrynight * weekendindustry * SYJB);
-                    three = Double.valueOf(Statutoryresidue * statutoryresidue + Statutoryresiduenight * statutoryresidue * SYJB)*(after/21.75/8);
-                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * weekendindustry)*(after3/21.75/8);
+                    three = Double.valueOf(Statutoryresidue * statutoryresidue + Statutoryresiduenight * statutoryresidue * SYJB) * (after / 21.75 / 8);
+                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * weekendindustry) * (after3 / 21.75 / 8);
                     Thistotaly = one + two + three + four;
                     residual.setThistotaly(df.format(Thistotaly));
                     String months10 = String.valueOf(cal.get(cal.MONTH) - 1);
@@ -752,7 +859,7 @@ public class GivingServiceImpl implements GivingService {
                         atten1.setMonths(Xmonths1);
                         List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
                         for (Attendance attendancelist : Attendancelist11) {
-                            if (Integer.parseInt(attendancelist.getWeekendindustry()) >= 8) {
+                            if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
                                 Xi = Xi + 1;
                             }
                         }
@@ -771,14 +878,14 @@ public class GivingServiceImpl implements GivingService {
                         Xa.setMonths(Xmonths2);
                         List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
                         for (Attendance attendancelist1 : XAttendancelist1) {
-                            if (Integer.parseInt(attendancelist1.getWeekendindustry()) >= 8) {
+                            if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
                                 Xo = Xo + 1;
                             }
                         }
                         List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
                         for (Attendance A : XattendanceList) {
                             if (A.getDaixiu() != null) {
-                                XDaixiu1 = Integer.parseInt(A.getDaixiu());
+                                XDaixiu1 = Double.valueOf(A.getDaixiu());
                             } else {
                                 XDaixiu1 = 0;
                             }
@@ -801,14 +908,14 @@ public class GivingServiceImpl implements GivingService {
                         Xa1.setMonths(Xmonths3);
                         List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
                         for (Attendance attendancelist2 : XAttendancelist2) {
-                            if (Integer.parseInt(attendancelist2.getWeekendindustry()) >= 8) {
+                            if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
                                 Xm = Xm + 1;
                             }
                         }
                         List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, Xyears3, Xmonths3);
                         for (Attendance A : XattendanceList1) {
                             if (A.getDaixiu() != null) {
-                                XDaixiu2 = Integer.parseInt(A.getDaixiu());
+                                XDaixiu2 = Double.valueOf(A.getDaixiu());
                             } else {
                                 XDaixiu2 = 0;
                             }
@@ -834,14 +941,14 @@ public class GivingServiceImpl implements GivingService {
                         Xa2.setMonths(Xmonths4);
                         List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
                         for (Attendance attendancelist3 : XAttendancelist3) {
-                            if (Integer.parseInt(attendancelist3.getWeekendindustry()) >= 8) {
+                            if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
                                 Xn = Xn + 1;
                             }
                         }
                         List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, Xyears4, Xmonths4);
                         for (Attendance A : XattendanceList2) {
                             if (A.getDaixiu() != null) {
-                                XDaixiu3 = Integer.parseInt(A.getDaixiu());
+                                XDaixiu3 = Double.valueOf(A.getDaixiu());
                             } else {
                                 XDaixiu3 = 0;
                             }
@@ -857,32 +964,32 @@ public class GivingServiceImpl implements GivingService {
                         if (Attendance1.getOrdinaryindustry() == null) {
                             XOrdinaryindustry = 0;
                         } else {
-                            XOrdinaryindustry = Integer.parseInt(Attendance1.getOrdinaryindustry());
+                            XOrdinaryindustry = Double.valueOf(Attendance1.getOrdinaryindustry());
                         }
                         if (Attendance1.getWeekendindustry() == null) {
                             XWeekendindustry = 0;
                         } else {
-                            XWeekendindustry = Integer.parseInt(Attendance1.getWeekendindustry());
+                            XWeekendindustry = Double.valueOf(Attendance1.getWeekendindustry());
                         }
                         if (Attendance1.getStatutoryresidue() == null) {
                             XStatutoryresidue = 0;
                         } else {
-                            XStatutoryresidue = Integer.parseInt(Attendance1.getStatutoryresidue());
+                            XStatutoryresidue = Double.valueOf(Attendance1.getStatutoryresidue());
                         }
                         if (Attendance1.getOrdinaryindustrynight() == null) {
                             XOrdinaryindustrynight = 0;
                         } else {
-                            XOrdinaryindustrynight = Integer.parseInt(Attendance1.getOrdinaryindustrynight());
+                            XOrdinaryindustrynight = Double.valueOf(Attendance1.getOrdinaryindustrynight());
                         }
                         if (Attendance1.getWeekendindustrynight() == null) {
                             XWeekendindustrynight = 0;
                         } else {
-                            XWeekendindustrynight = Integer.parseInt(Attendance1.getWeekendindustrynight());
+                            XWeekendindustrynight = Double.valueOf(Attendance1.getWeekendindustrynight());
                         }
                         if (Attendance1.getStatutoryresiduenight() == null) {
                             XStatutoryresiduenight = 0;
                         } else {
-                            XStatutoryresiduenight = Integer.parseInt(Attendance1.getStatutoryresiduenight());
+                            XStatutoryresiduenight = Double.valueOf(Attendance1.getStatutoryresiduenight());
                         }
                         XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                         residual.setLasttotalh(String.valueOf(XLasttotalh));
@@ -895,31 +1002,31 @@ public class GivingServiceImpl implements GivingService {
                         if (cal.get(cal.MONTH) == 1) {
                             XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                             XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1  = String.valueOf(cal.get(cal.DATE));
+                            XDate1 = String.valueOf(cal.get(cal.DATE));
                         } else if (cal.get(cal.MONTH) == 2) {
                             XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                             XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1  = String.valueOf(cal.get(cal.DATE));
+                            XDate1 = String.valueOf(cal.get(cal.DATE));
                         } else if (cal.get(cal.MONTH) == 3) {
                             XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                             XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1  = String.valueOf(cal.get(cal.DATE));
+                            XDate1 = String.valueOf(cal.get(cal.DATE));
                         } else if (cal.get(cal.MONTH) == 4) {
                             XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
                             XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1  = String.valueOf(cal.get(cal.DATE));
+                            XDate1 = String.valueOf(cal.get(cal.DATE));
                         } else {
                             XMonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                            XYears1  = String.valueOf(cal.get(cal.YEAR));
-                            XDate1  = String.valueOf(cal.get(cal.DATE));
+                            XYears1 = String.valueOf(cal.get(cal.YEAR));
+                            XDate1 = String.valueOf(cal.get(cal.DATE));
                         }
-                        if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
+                        if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
                             XData1 = XYears + "-0" + XMonths + "-0" + XDate;
-                        }else if(Integer.parseInt(XMonths)<10){
+                        } else if (Integer.parseInt(XMonths) < 10) {
                             XData1 = XYears + "-0" + XMonths + "-" + XDate;
-                        }else if(Integer.parseInt(XDate)<10){
+                        } else if (Integer.parseInt(XDate) < 10) {
                             XData1 = XYears + "-" + XMonths + "-0" + XDate;
-                        }else{
+                        } else {
                             XData1 = XYears + "-" + XMonths + "-" + XDate;
                         }
                         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -928,32 +1035,32 @@ public class GivingServiceImpl implements GivingService {
                         query1.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
                         CustomerInfo customerInfo1 = mongoTemplate.findOne(query1, CustomerInfo.class);
                         if (customerInfo1 != null) {
-                            if(customerInfo.getUserinfo().getGridData()!=null) {
+                            if (customerInfo.getUserinfo().getGridData() != null) {
                                 List<CustomerInfo.Personal> customerInfoList = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                                 for (CustomerInfo.Personal personal : customerInfoList) {
                                     if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date1.replace("-", ""))) {
-                                        After = Integer.parseInt(personal.getAfter());
+                                        After = Double.valueOf(personal.getAfter());
                                         break;
                                     }
                                 }
                                 for (CustomerInfo.Personal personal : customerInfoList) {
                                     if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData1.replace("-", ""))) {
-                                        After3 = Integer.parseInt(personal.getAfter());
+                                        After3 = Double.valueOf(personal.getAfter());
                                         break;
                                     }
                                 }
-                            }else{
+                            } else {
                                 After = 0;
-                                After3= 0;
+                                After3 = 0;
                             }
                         }
-                        double xweekendindustry =0d;
+                        double xweekendindustry = 0d;
                         double xordinaryindustry = 0d;
                         double xstatutoryresidue = 0d;
                         double xSYJB = 0d;
                         Dictionary xdictionary = new Dictionary();
                         List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
-                        for(Dictionary diction :xdictionarylist){
+                        for (Dictionary diction : xdictionarylist) {
                             if (diction.getCode().equals("PR049006")) {
                                 xordinaryindustry = Double.valueOf(diction.getValue2());
                             }
@@ -969,8 +1076,9 @@ public class GivingServiceImpl implements GivingService {
                         }
                         one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
                         two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
-                        three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB)*(After/21.75/8);;
-                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry)*(After3/21.75/8);
+                        three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB) * (After / 21.75 / 8);
+                        ;
+                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry) * (After3 / 21.75 / 8);
                         Lasttotaly = one + two + three + four;
                         residual.setLasttotaly(df.format(Lasttotaly));
                     }
@@ -1028,12 +1136,12 @@ public class GivingServiceImpl implements GivingService {
                     atten1.setMonths(Xmonths1);
                     List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
                     for (Attendance attendancelist : Attendancelist11) {
-                        if (Integer.parseInt(attendancelist.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
                             Xi = Xi + 1;
                         }
                     }
-                    String Xmonths2 ;
-                    String Xyears2 ;
+                    String Xmonths2;
+                    String Xyears2;
                     if (cal.get(cal.MONTH) == 1) {
                         Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
                         Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
@@ -1047,14 +1155,14 @@ public class GivingServiceImpl implements GivingService {
                     Xa.setMonths(Xmonths2);
                     List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
                     for (Attendance attendancelist1 : XAttendancelist1) {
-                        if (Integer.parseInt(attendancelist1.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
                             Xo = Xo + 1;
                         }
                     }
                     List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
                     for (Attendance A : XattendanceList) {
                         if (A.getDaixiu() != null) {
-                            XDaixiu1 = Integer.parseInt(A.getDaixiu());
+                            XDaixiu1 = Double.valueOf(A.getDaixiu());
                         } else {
                             XDaixiu1 = 0;
                         }
@@ -1077,14 +1185,14 @@ public class GivingServiceImpl implements GivingService {
                     Xa1.setMonths(Xmonths3);
                     List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
                     for (Attendance attendancelist2 : XAttendancelist2) {
-                        if (Integer.parseInt(attendancelist2.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
                             Xm = Xm + 1;
                         }
                     }
                     List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, Xyears3, Xmonths3);
                     for (Attendance A : XattendanceList1) {
                         if (A.getDaixiu() != null) {
-                            XDaixiu2 = Integer.parseInt(A.getDaixiu());
+                            XDaixiu2 = Double.valueOf(A.getDaixiu());
                         } else {
                             XDaixiu2 = 0;
                         }
@@ -1110,14 +1218,14 @@ public class GivingServiceImpl implements GivingService {
                     Xa2.setMonths(Xmonths4);
                     List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
                     for (Attendance attendancelist3 : XAttendancelist3) {
-                        if (Integer.parseInt(attendancelist3.getWeekendindustry()) >= 8) {
+                        if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
                             Xn = Xn + 1;
                         }
                     }
                     List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, Xyears4, Xmonths4);
                     for (Attendance A : XattendanceList2) {
                         if (A.getDaixiu() != null) {
-                            XDaixiu3 = Integer.parseInt(A.getDaixiu());
+                            XDaixiu3 = Double.valueOf(A.getDaixiu());
                         } else {
                             XDaixiu3 = 0;
                         }
@@ -1133,32 +1241,32 @@ public class GivingServiceImpl implements GivingService {
                     if (attendance.getOrdinaryindustry() == null) {
                         XOrdinaryindustry = 0;
                     } else {
-                        XOrdinaryindustry = Integer.parseInt(attendance.getOrdinaryindustry());
+                        XOrdinaryindustry = Double.valueOf(attendance.getOrdinaryindustry());
                     }
                     if (attendance.getWeekendindustry() == null) {
                         XWeekendindustry = 0;
                     } else {
-                        XWeekendindustry = Integer.parseInt(attendance.getWeekendindustry());
+                        XWeekendindustry = Double.valueOf(attendance.getWeekendindustry());
                     }
                     if (attendance.getStatutoryresidue() == null) {
                         XStatutoryresidue = 0;
                     } else {
-                        XStatutoryresidue = Integer.parseInt(attendance.getStatutoryresidue());
+                        XStatutoryresidue = Double.valueOf(attendance.getStatutoryresidue());
                     }
                     if (attendance.getOrdinaryindustrynight() == null) {
                         XOrdinaryindustrynight = 0;
                     } else {
-                        XOrdinaryindustrynight = Integer.parseInt(attendance.getOrdinaryindustrynight());
+                        XOrdinaryindustrynight = Double.valueOf(attendance.getOrdinaryindustrynight());
                     }
                     if (attendance.getWeekendindustrynight() == null) {
                         XWeekendindustrynight = 0;
                     } else {
-                        XWeekendindustrynight = Integer.parseInt(attendance.getWeekendindustrynight());
+                        XWeekendindustrynight = Double.valueOf(attendance.getWeekendindustrynight());
                     }
                     if (attendance.getStatutoryresiduenight() == null) {
                         XStatutoryresiduenight = 0;
                     } else {
-                        XStatutoryresiduenight = Integer.parseInt(attendance.getStatutoryresiduenight());
+                        XStatutoryresiduenight = Double.valueOf(attendance.getStatutoryresiduenight());
                     }
                     XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
                     residual.setLasttotalh(String.valueOf(XLasttotalh));
@@ -1172,32 +1280,32 @@ public class GivingServiceImpl implements GivingService {
                     if (cal.get(cal.MONTH) == 1) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else if (cal.get(cal.MONTH) == 2) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else if (cal.get(cal.MONTH) == 3) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else if (cal.get(cal.MONTH) == 4) {
                         XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
                         XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     } else {
                         XMonths = String.valueOf(cal.get(cal.MONTH) - 4);
-                        XYears  = String.valueOf(cal.get(cal.YEAR));
-                        XDate  = String.valueOf(cal.get(cal.DATE));
+                        XYears = String.valueOf(cal.get(cal.YEAR));
+                        XDate = String.valueOf(cal.get(cal.DATE));
                     }
                     String XData;
-                    if(Integer.parseInt(XMonths)<10 && Integer.parseInt(XDate)<10 ){
+                    if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
                         XData = XYears + "-0" + XMonths + "-0" + XDate;
-                    }else if(Integer.parseInt(XMonths)<10){
+                    } else if (Integer.parseInt(XMonths) < 10) {
                         XData = XYears + "-0" + XMonths + "-" + XDate;
-                    }else if(Integer.parseInt(XDate)<10){
+                    } else if (Integer.parseInt(XDate) < 10) {
                         XData = XYears + "-" + XMonths + "-0" + XDate;
-                    }else{
+                    } else {
                         XData = XYears + "-" + XMonths + "-" + XDate;
                     }
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1205,32 +1313,32 @@ public class GivingServiceImpl implements GivingService {
                     query.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        if(customerInfo.getUserinfo().getGridData()!=null) {
+                        if (customerInfo.getUserinfo().getGridData() != null) {
                             List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                             for (CustomerInfo.Personal personal : customerInfo1) {
                                 if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
-                                    after = Integer.parseInt(personal.getAfter());
+                                    after = Double.valueOf(personal.getAfter());
                                     break;
                                 }
                             }
                             for (CustomerInfo.Personal personal : customerInfo1) {
                                 if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
-                                    after3 = Integer.parseInt(personal.getAfter());
+                                    after3 = Double.valueOf(personal.getAfter());
                                     break;
                                 }
                             }
-                        }else{
-                            after = 0 ;
+                        } else {
+                            after = 0;
                             after3 = 0;
                         }
                     }
-                    double xweekendindustry =0d;
+                    double xweekendindustry = 0d;
                     double xordinaryindustry = 0d;
                     double xstatutoryresidue = 0d;
                     double xSYJB = 0d;
                     Dictionary xdictionary = new Dictionary();
                     List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
-                    for(Dictionary diction :xdictionarylist){
+                    for (Dictionary diction : xdictionarylist) {
                         if (diction.getCode().equals("PR049006")) {
                             xordinaryindustry = Double.valueOf(diction.getValue2());
                         }
@@ -1246,8 +1354,8 @@ public class GivingServiceImpl implements GivingService {
                     }
                     one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
                     two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
-                    three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB)*(after/21.75/8);
-                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry)*(after3/21.75/8);
+                    three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB) * (after / 21.75 / 8);
+                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry) * (after3 / 21.75 / 8);
                     Lasttotaly = one + two + three + four;
                     residual.setLasttotaly(df.format(Lasttotaly));
                     if (Lasttotaly + Thistotaly == 0.0) {
@@ -1305,11 +1413,11 @@ public class GivingServiceImpl implements GivingService {
                     ba.setUser_id(attendance.getUser_id());
                     List<Base> Baselist = baseMapper.select(ba);
                     for (Base B : Baselist) {
-                        double Shortsickleave =0d;
+                        double Shortsickleave = 0d;
                         double DLZD = 0d;
                         Dictionary dictionary = new Dictionary();
                         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                        for(Dictionary diction :dictionarylist){
+                        for (Dictionary diction : dictionarylist) {
                             if (diction.getCode().equals("PR047001")) {
                                 DLZD = Double.valueOf(diction.getValue2());
                             }
@@ -1322,73 +1430,7 @@ public class GivingServiceImpl implements GivingService {
                         double Absenteeism = 0d;
                         double Thismonth = 0d;
                         double Thisdiligence = 0d;
-                        if (B.getThismonth() == null) {
-                            Thismonth = 0;
-                        } else {
-                            Thismonth = Integer.parseInt(B.getThismonth());
-                        }
-                        if (attendance.getLate() == null) {
-                            Late = 0;
-                        } else {
-                            Late = Integer.parseInt(attendance.getLate());
-                        }
-                        if (attendance.getLeaveearly() == null) {
-                            Leaveearly = 0;
-                        } else {
-                            Leaveearly = Integer.parseInt(attendance.getLeaveearly());
-                        }
-                        if (attendance.getAbsenteeism() == null) {
-                            Absenteeism = 0;
-                        } else {
-                            Absenteeism = Integer.parseInt(attendance.getAbsenteeism());
-                        }
-                        if (attendance.getShortsickleave() == null) {
-                            two = 0;
-                        } else {
-                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendance.getShortsickleave()));
-                        }
-                        if (attendance.getLongsickleave() == null) {
-                            three = 0;
-                        } else {
-                            three = Double.valueOf(DLZD/ 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
-                        }
-
-                        Thisdiligence = Late + Leaveearly + Absenteeism;
-                        lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
-                        one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
-                        thistotal = one - two - three;
-                        lackattendance.setThistotal(df.format(thistotal));
-                    }
-                } else {
-                    lackattendance.setRemarks("-");
-                    lackattendance.setThistotal("");
-                    lackattendance.setThischronicdeficiency("");
-                    lackattendance.setThisshortdeficiency("");
-                    lackattendance.setThisdiligence("");
-                    lackattendance.setLastshortdeficiency(attendance.getShortsickleave());
-                    lackattendance.setLastchronicdeficiency(attendance.getLongsickleave());
-                    Base ba = new Base();
-                    ba.setUser_id(attendance.getUser_id());
-                    List<Base> Baselist = baseMapper.select(ba);
-                    for (Base B : Baselist) {
-                        double Shortsickleave =0d;
-                        double DLZD = 0d;
-                        Dictionary dictionary = new Dictionary();
-                        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                        for(Dictionary diction :dictionarylist){
-                            if (diction.getCode().equals("PR047001")) {
-                                DLZD = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049005")) {
-                                Shortsickleave = Double.valueOf(diction.getValue2());
-                            }
-                        }
-                        double Late = 0d;
-                        double Leaveearly = 0d;
-                        double Absenteeism = 0d;
-                        double Thismonth = 0d;
-                        double Lastdiligence = 0d;
-                        if (B.getThismonth() == null) {
+                        if (B.getThismonth() == null || Double.valueOf(B.getThismonth()) == 0.0) {
                             Thismonth = 0;
                         } else {
                             Thismonth = Integer.parseInt(B.getThismonth());
@@ -1417,6 +1459,72 @@ public class GivingServiceImpl implements GivingService {
                             three = 0;
                         } else {
                             three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
+                        }
+
+                        Thisdiligence = Late + Leaveearly + Absenteeism;
+                        lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
+                        one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
+                        thistotal = one - two - three;
+                        lackattendance.setThistotal(df.format(thistotal));
+                    }
+                } else {
+                    lackattendance.setRemarks("-");
+                    lackattendance.setThistotal("");
+                    lackattendance.setThischronicdeficiency("");
+                    lackattendance.setThisshortdeficiency("");
+                    lackattendance.setThisdiligence("");
+                    lackattendance.setLastshortdeficiency(attendance.getShortsickleave());
+                    lackattendance.setLastchronicdeficiency(attendance.getLongsickleave());
+                    Base ba = new Base();
+                    ba.setUser_id(attendance.getUser_id());
+                    List<Base> Baselist = baseMapper.select(ba);
+                    for (Base B : Baselist) {
+                        double Shortsickleave = 0d;
+                        double DLZD = 0d;
+                        Dictionary dictionary = new Dictionary();
+                        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+                        for (Dictionary diction : dictionarylist) {
+                            if (diction.getCode().equals("PR047001")) {
+                                DLZD = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049005")) {
+                                Shortsickleave = Double.valueOf(diction.getValue2());
+                            }
+                        }
+                        double Late = 0d;
+                        double Leaveearly = 0d;
+                        double Absenteeism = 0d;
+                        double Thismonth = 0d;
+                        double Lastdiligence = 0d;
+                        if (B.getThismonth() == null ||  Double.valueOf(B.getThismonth()) == 0.0) {
+                            Thismonth = 0;
+                        } else {
+                            Thismonth = Double.valueOf(B.getThismonth());
+                        }
+                        if (attendance.getLate() == null) {
+                            Late = 0;
+                        } else {
+                            Late = Double.valueOf(attendance.getLate());
+                        }
+                        if (attendance.getLeaveearly() == null) {
+                            Leaveearly = 0;
+                        } else {
+                            Leaveearly = Double.valueOf(attendance.getLeaveearly());
+                        }
+                        if (attendance.getAbsenteeism() == null) {
+                            Absenteeism = 0;
+                        } else {
+                            Absenteeism = Double.valueOf(attendance.getAbsenteeism());
+                        }
+                        if (attendance.getShortsickleave() == null) {
+                            two = 0;
+                        } else {
+                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Double.valueOf(attendance.getShortsickleave()));
+                        }
+                        if (attendance.getLongsickleave() == null) {
+                            three = 0;
+                        } else {
+                            three = Double.valueOf(DLZD / 21.75 / 8 * Double.valueOf(attendance.getLongsickleave()));
                         }
 
                         Lastdiligence = Late + Leaveearly + Absenteeism;
