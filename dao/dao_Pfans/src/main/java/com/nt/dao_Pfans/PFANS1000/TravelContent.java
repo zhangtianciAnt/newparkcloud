@@ -30,10 +30,11 @@ public class TravelContent extends BaseModel {
     private String businessid;
 
     /**
-     * 出張詳細時間（出差详细时间（移動記載必要））
+     * 申请日期
      */
-    @Column(name = "TIME")
-    private Date time;
+    @Column(name = "TRAVELCONTENTDATE")
+    private Date travelcontentdate;
+
 
     /**
      * 訪問先（出差详细地点）

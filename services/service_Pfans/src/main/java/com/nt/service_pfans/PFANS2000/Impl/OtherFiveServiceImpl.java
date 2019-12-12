@@ -69,7 +69,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
             model.add("合計");
             model.add("备注");
             List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
+            for (int i = 0; i < key.size()-1; i++) {
                 if (!key.get(i).toString().trim().replace("\n","").equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
@@ -171,10 +171,17 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     String jobnumber = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    otherfive.setUser_id(customerInfo.getUserid());
+                    if (customerInfo != null) {
+                        otherfive.setUser_id(customerInfo.getUserid());
+                        otherfive.setJobnumber(value.get(2).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     otherfive.setGiving_id(Givingid);
                     otherfive.setDepartment_id(value.get(1).toString());
-                    otherfive.setJobnumber(value.get(2).toString());
                     otherfive.setMedicalinsurance(value.get(4).toString());
                     otherfive.setAccident(value.get(5).toString());
                     otherfive.setPhysical(value.get(6).toString());

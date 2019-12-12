@@ -10,10 +10,10 @@ public interface EvectionService {
 
     List<Evection> get(Evection evection) throws Exception;
 
-    public EvectionVo selectById(String evectionid) throws Exception;
+     EvectionVo selectById(String evectionid) throws Exception;
 
-    public void insertEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
+    void insertEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
 
-    public void updateEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
+    void updateEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
 
 }

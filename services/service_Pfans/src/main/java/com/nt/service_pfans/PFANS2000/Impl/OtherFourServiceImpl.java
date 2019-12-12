@@ -36,10 +36,6 @@ public class OtherFourServiceImpl implements OtherFourService {
     @Autowired
     private OtherFourMapper otherFourMapper;
 
-    @Override
-    public List<OtherFour> listotherfour(OtherFour otherFour) throws Exception {
-        return otherFourMapper.select(otherFour);
-    }
 
     @Override
     public void deleteotherfour(OtherFour otherFour, TokenModel tokenModel) throws Exception {
@@ -62,12 +58,12 @@ public class OtherFourServiceImpl implements OtherFourService {
             model.add("No.");
             model.add("部門");
             model.add("工号");
-            model.add("名字");
+            model.add("姓名");
             model.add("社保大病险");
             model.add("合計");
             model.add("备注");
             List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
+            for (int i = 0; i < key.size()-1; i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
@@ -75,7 +71,7 @@ public class OtherFourServiceImpl implements OtherFourService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
-            for (int i = 1; i < list.size() - 1; i++) {
+            for (int i = 1; i <= list.size() - 1; i++) {
                 OtherFour otherFour = new OtherFour();
                 List<Object> value = list.get(k);
                 k++;
@@ -100,9 +96,16 @@ public class OtherFourServiceImpl implements OtherFourService {
                     String jobnumber = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        otherFour.setUser_id(customerInfo.getUserid());
+                        otherFour.setJobnumber(value.get(2).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     otherFour.setGiving_id(Givingid);
-                    otherFour.setJobnumber(value.get(2).toString());
-                    otherFour.setUser_id(customerInfo.getUserid());
                     otherFour.setDepartment_id(value.get(1).toString());
                     otherFour.setSocialsecurity(value.get(4).toString());
                     otherFour.setTotal(value.get(5).toString());

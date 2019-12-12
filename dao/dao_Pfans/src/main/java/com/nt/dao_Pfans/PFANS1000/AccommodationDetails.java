@@ -51,7 +51,7 @@ public class AccommodationDetails extends BaseModel {
      * 移动时间
      */
     @Column(name = "MOVEMENTTIME")
-    private Date movementtime;
+    private String movementtime;
 
     /**
      * 城市
@@ -113,11 +113,18 @@ public class AccommodationDetails extends BaseModel {
     @Column(name = "PLANE")
     private String plane;
 
+    /*
+     * 出張地域
+     * */
+    @Column(name = "REGION")
+    private String region;
+
+
     /**
      * 附件号
      */
-    @Column(name = "ANNEX")
-    private String annex;
+    @Column(name = "ANNEXNO")
+    private String annexno;
 
     /**
      * 顺序

@@ -53,7 +53,7 @@ public class Notification extends BaseModel {
      * 移転後責任者
      */
     @Column(name = "EAFTER")
-    private Date eafter;
+    private String eafter;
 
     /**
      * 移転原因

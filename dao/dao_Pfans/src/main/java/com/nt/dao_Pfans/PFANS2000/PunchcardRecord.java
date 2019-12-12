@@ -29,13 +29,13 @@ public class PunchcardRecord extends BaseModel {
     private String user_id;
 
     @Column(name = "CENTER_ID")
-    private String centerid;
+    private String center_id;
 
     @Column(name = "GROUP_ID")
-    private String groupid;
+    private String group_id;
 
     @Column(name = "TEAM_ID")
-    private String teamid;
+    private String team_id;
 
     @Column(name = "PUNCHCARDRECORD_DATE")
     private Date punchcardrecord_date;
@@ -47,5 +47,6 @@ public class PunchcardRecord extends BaseModel {
     @Column(name = "TIME_END")
     private Date time_end;
 
-
+    @Column(name = "WORKTIME ")
+    private String worktime ;
 }

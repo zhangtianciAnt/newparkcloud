@@ -66,7 +66,7 @@ public class AppreciationServiceImpl implements AppreciationService {
             model.add("扩展4");
             model.add("扩展5");
             List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
+            for (int i = 0; i < key.size()-1; i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
@@ -99,8 +99,15 @@ public class AppreciationServiceImpl implements AppreciationService {
                     String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    appreciation.setJobnumber(value.get(1).toString());
-                    appreciation.setUser_id(customerInfo.getUserid());
+                    if (customerInfo != null) {
+                        appreciation.setUser_id(customerInfo.getUserid());
+                        appreciation.setJobnumber(value.get(1).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     appreciation.setGiving_id(Givingid);
                     appreciation.setCommentary(value.get(3).toString());
                     appreciation.setAmount(value.get(4).toString());

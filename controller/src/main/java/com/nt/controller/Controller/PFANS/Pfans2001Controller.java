@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/recruit")
 public class Pfans2001Controller {
-    //查找信息发布
+
     @Autowired
     private RecruitService recruitService;
     @Autowired

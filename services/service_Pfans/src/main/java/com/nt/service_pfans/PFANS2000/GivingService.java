@@ -13,11 +13,19 @@ public interface GivingService {
 
     void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
 
+    void insertOtherOne(String  givingid,TokenModel tokenModel)throws Exception;
+
     void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertAttendance(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertResidual(String  givingid,TokenModel tokenModel)throws Exception;
 
     void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
 
     List<Giving> getDataList(Giving giving) throws Exception;
+
+    void save(GivingVo givingvo, TokenModel tokenModel)throws Exception;
 
 }
 

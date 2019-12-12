@@ -251,6 +251,11 @@ public class CustomerInfo extends BaseModel {
          */
         private String post;
         /**
+         * 类别
+         */
+        private String type;
+
+        /**
          * ランク
          */
         private String rank;
@@ -323,6 +328,16 @@ public class CustomerInfo extends BaseModel {
          */
         private String medicalinsurance;
 
+        /**
+         * 退职日
+         */
+        private String resignation_date;
+
+        /**
+         * 离职申请
+         */
+        private String staffexitprocedure;
+
 
         private List<TableInfo> educationTable;
         private List<TableInfo> skillTable;
@@ -332,6 +347,10 @@ public class CustomerInfo extends BaseModel {
         private List<TableInfo> trainTable;
         private List<TableInfo> rewardTable;
 
+        private List<Personal> gridData;
+        private List<Personal> medicalData;
+        private List<Personal> houseData;
+        private List<Personal> oldageData;
 
     }
     // endregion
@@ -591,6 +610,15 @@ public class CustomerInfo extends BaseModel {
         private String level;
         private String _time;
     }
+
+    @Data
+    public static class Personal{
+        private String date;
+        private String before;
+        private String after;
+        private String remark;
+    }
+
     // endregion
     // endregion
 

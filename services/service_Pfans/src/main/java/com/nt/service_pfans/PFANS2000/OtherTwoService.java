@@ -10,11 +10,8 @@ public interface OtherTwoService {
 
 
 
-
-
     void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel)throws Exception;
 
     List<String> importUserothertwo(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
-
 
 }

@@ -27,25 +27,25 @@ public class Business extends BaseModel {
      * 申请人ID
      */
     @Column(name = "USER_ID")
-    private String userid;
+    private String user_id;
 
     /**
      * 所属グループID
      */
     @Column(name = "CENTER_ID")
-    private String centerid;
+    private String center_id;
 
     /**
      * 所属チームID
      */
     @Column(name = "GROUP_ID")
-    private String groupid;
+    private String group_id;
 
     /**
      * 所属センターID
      */
     @Column(name = "TEAM_ID")
-    private String teamid;
+    private String team_id;
 
     /**
      * 申请日期

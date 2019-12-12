@@ -35,6 +35,16 @@
         </dependency>
         <dependency>
             <groupId>com.nt</groupId>
+            <artifactId>dao_Assets</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_Assets</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
             <artifactId>service_Org</artifactId>
             <version>1.0.0</version>
         </dependency>

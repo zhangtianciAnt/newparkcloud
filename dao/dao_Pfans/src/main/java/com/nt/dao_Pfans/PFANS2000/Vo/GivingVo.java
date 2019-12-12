@@ -14,11 +14,19 @@ public class GivingVo {
 
     private Giving giving;
 
+    private List<OtherOne> otherOne;
+
     private List<OtherTwo> otherTwo;
 
     private List<OtherFive> otherFive;
 
+    private List<OtherFour> otherFour;
+
     private List<Appreciation> appreciation;
+
+    private List<Lackattendance> lackattendance;
+
+    private List<Residual> residual;
 
     private List<Base> base;
 
@@ -29,4 +37,10 @@ public class GivingVo {
     private List<DisciplinaryVo> DisciplinaryVo;
 
     private List<DutyfreeVo> dutyfreeVo;
+
+    private List<ComprehensiveVo> comprehensiveVo;
+
+    private List<Additional> addiTional;
+
+    private String strFlg;
 }

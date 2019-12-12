@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.ComprehensiveMapper">
+	<select id="getcomprehensive" parameterType="com.nt.dao_Pfans.PFANS2000.Base" resultType="com.nt.dao_Pfans.PFANS2000.Vo.ComprehensiveVo">
+
+		SELECT USER_ID, month1wages, month1appreciation,month2wages,month2appreciation,month3wages,month3appreciation,month4wages,month4appreciation,month5wages,month5appreciation,month6wages,month6appreciation,month7wages,month7appreciation,month8wages,month8appreciation,month9wages,month9appreciation,month10wages,month10appreciation,month11wages,month11appreciation,month12wages,month12appreciation,
+ month1wages + month1appreciation + month2wages + month2appreciation + month3wages+ month3appreciation + month4wages +month4appreciation+ month5wages +month5appreciation+month6wages+month6appreciation + month7wages +month7appreciation + month8wages+month8appreciation + month9wages +month9appreciation + month10wages +month10appreciation + month11wages +month11appreciation + month12wages + month12appreciation AS total
+FROM
+ (
+SELECT
+ base.USER_ID,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '01' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month1wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '01' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month1appreciation,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '02' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month2wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '02' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month2appreciation,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '03' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month3wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '03' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month3appreciation,
+
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '04' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month4wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '04' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month4appreciation,
+
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '05' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month5wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '05' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month5appreciation,
+
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '06' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month6wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '06' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month6appreciation,
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '07' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month7wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '07' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month7appreciation,
+
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '08' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month8wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '08' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month8appreciation,
+
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '09' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month9wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '09' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month9appreciation,
+
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '10' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month10wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '10' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month10appreciation,
+
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '11' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month11wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '11' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month11appreciation,
+
+ MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '12' ) THEN
+ SHOULDWAGES ELSE 0
+END
+ ) month12wages,
+MAX(
+CASE
+ DATE_FORMAT( wages.CREATEON, '%Y%m' )
+ WHEN CONCAT( YEAR ( SYSDATE( ) ), '12' ) THEN
+ APPRECIATION ELSE 0
+END
+ ) month12appreciation
+
+FROM
+ base
+ LEFT JOIN wages ON base.USER_ID = wages.USER_ID
+ AND wages.STATUS = '0'
+WHERE
+ base.STATUS = '0'
+GROUP BY
+ USER_ID
+ ) tablewages
+	</select>
+</mapper>

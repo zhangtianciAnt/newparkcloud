@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/assetinformation")
 public class Pfans1007Controller {
-    //查找信息发布
+
     @Autowired
     private AssetinformationService assetinformationService;
     @Autowired

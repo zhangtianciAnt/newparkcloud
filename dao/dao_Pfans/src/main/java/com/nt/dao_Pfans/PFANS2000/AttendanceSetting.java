@@ -61,6 +61,18 @@ public class AttendanceSetting extends BaseModel {
     private String lunchbreak_end;
 
     /**
+     * 深夜加班开始
+     */
+    @Column(name = "NIGHTSHIFT_START")
+    private String nightshift_start;
+
+    /**
+     * 深夜加班结束
+     */
+    @Column(name = "NIGHTSHIFT_END")
+    private String nightshift_end;
+
+    /**
      * 事假
      */
     @Column(name = "COMPASSIONATELEAVE")

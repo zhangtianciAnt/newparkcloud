@@ -4,7 +4,10 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
+import com.nt.dao_Pfans.PFANS2000.OtherTwo2;
 import com.nt.service_pfans.PFANS2000.OtherTwoService;
+import com.nt.service_pfans.PFANS2000.mapper.GivingMapper;
+import com.nt.service_pfans.PFANS2000.mapper.OtherTwo2Mapper;
 import com.nt.service_pfans.PFANS2000.mapper.OtherTwoMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -36,6 +39,11 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Autowired
     private OtherTwoMapper othertwoMapper;
 
+    @Autowired
+    private GivingMapper givingMapper;
+
+    @Autowired
+    private OtherTwo2Mapper othertwo2Mapper;
 
     @Override
     public void deleteteothertwo(OtherTwo othertwo, TokenModel tokenModel) throws Exception {
@@ -61,7 +69,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             model.add("金額");
             model.add("根拠");
             List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
+            for (int i = 0; i <= key.size()-1; i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
                 }
@@ -101,9 +109,16 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                     String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    othertwo.setJobnumber(value.get(1).toString());
+                    if (customerInfo != null) {
+                        othertwo.setUser_id(customerInfo.getUserid());
+                        othertwo.setJobnumber(value.get(1).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     othertwo.setGiving_id(Givingid);
-                    othertwo.setUser_id(customerInfo.getUserid());
                     othertwo.setMoneys(value.get(3).toString());
                     othertwo.setRootknot(value.get(4).toString());
                 }
@@ -113,20 +128,14 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 othertwo.preInsert(tokenModel);
                 othertwo.setOthertwo_id(UUID.randomUUID().toString());
                 othertwoMapper.insert(othertwo);
-                OtherTwo Othertwo = new OtherTwo();
-                List<OtherTwo> otherTwolist = othertwoMapper.select(Othertwo);
-                for (OtherTwo other : otherTwolist) {
-                    if (Integer.parseInt(value.get(1).toString()) == Integer.parseInt(other.getJobnumber()) && Integer.parseInt(other.getType()) == 0) {
-                        other.setMoneys1(value.get(3).toString());
-                        other.setRootknot1(value.get(4).toString());
-                        othertwoMapper.updateByPrimaryKey(other);
-                        List<OtherTwo> othertwolist = othertwoMapper.select(Othertwo);
-                        for (OtherTwo Other : othertwolist) {
-                            if (Other.getOthertwo_id().replace("-", "").equals(othertwo.getOthertwo_id().replace("-", ""))) {
-                                othertwoMapper.delete(Other);
-                                accesscount = accesscount - 1;
-                            }
-                        }
+                List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(Givingid);
+                if(otherTwo2List.size()>0){
+                    for(OtherTwo2 otherTwo2 :otherTwo2List){
+                        otherTwo2.preInsert(tokenModel);
+                        otherTwo2.setUser_id(otherTwo2.getUser_id());
+                        otherTwo2.setMoneys(otherTwo2.getMoneys());
+                        otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+                        othertwo2Mapper.insert(otherTwo2);
                     }
                 }
                 listVo.add(othertwo);
