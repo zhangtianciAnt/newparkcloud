@@ -72,7 +72,7 @@ public class Routing extends BaseModel {
      * 申請日付
      */
     @Column(name = "payment")
-    private String payment;
+    private Date payment;
 
     /**
      * 内線番号
@@ -90,7 +90,7 @@ public class Routing extends BaseModel {
      * 期間
      */
     @Column(name = "DURINGDATE")
-    private String duringdate;
+    private Date duringdate;
 
     /**
      * グループ責任者

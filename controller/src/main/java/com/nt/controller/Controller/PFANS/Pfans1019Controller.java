@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 
 import com.nt.dao_Pfans.PFANS1000.Trialsoft;
+import com.nt.dao_Pfans.PFANS1000.Vo.TrialsoftVo;
 import com.nt.service_pfans.PFANS1000.TrialsoftService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -36,32 +37,31 @@ public class Pfans1019Controller {
 
     }
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Trialsoft trialsoft, HttpServletRequest request) throws Exception {
-        if (trialsoft == null) {
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String trialsoft_id, HttpServletRequest request) throws Exception {
+        if (trialsoft_id == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(trialsoftService.One(trialsoft.getTrialsoft_id()));
+        return ApiResult.success(trialsoftService.selectById(trialsoft_id));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateFlexibleWork(@RequestBody Trialsoft trialsoft, HttpServletRequest request) throws Exception{
-        if (trialsoft == null) {
+    public ApiResult update(@RequestBody TrialsoftVo trialsoftVo, HttpServletRequest request) throws Exception{
+        if (trialsoftVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        trialsoftService.updateTrialsoft(trialsoft,tokenModel);
+        trialsoftService.update(trialsoftVo,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Trialsoft trialsoft, HttpServletRequest request) throws Exception {
-        if (trialsoft == null) {
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    public ApiResult insert(@RequestBody TrialsoftVo trialsoftVo, HttpServletRequest request) throws Exception {
+        if (trialsoftVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        trialsoftService.insert(trialsoft,tokenModel);
+        trialsoftService.insert(trialsoftVo,tokenModel);
         return ApiResult.success();
     }
 

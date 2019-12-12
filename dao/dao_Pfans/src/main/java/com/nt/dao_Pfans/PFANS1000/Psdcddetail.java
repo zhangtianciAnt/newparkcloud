@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -68,7 +69,7 @@ public class Psdcddetail extends BaseModel {
      * 期待時間
      */
     @Column(name = "WAITFORTIME")
-    private String waitfortime;
+    private Date waitfortime;
 
     /**
      * 预算单位
@@ -86,7 +87,7 @@ public class Psdcddetail extends BaseModel {
      * A期待時間
      */
     @Column(name = "EXPECTTIME")
-    private String expecttime;
+    private Date expecttime;
 
     /**
      * Domain Account
@@ -98,7 +99,7 @@ public class Psdcddetail extends BaseModel {
      * D期待時間
      */
     @Column(name = "FORWARDTIME")
-    private String forwardtime;
+    private Date forwardtime;
 
     /**
      * 備考
