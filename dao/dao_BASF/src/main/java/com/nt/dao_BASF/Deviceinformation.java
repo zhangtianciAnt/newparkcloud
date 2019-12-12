@@ -19,19 +19,24 @@ public class Deviceinformation extends BaseModel {
 
     private String mapid;
     /**
+     * 地图信息主键
+     */
+    private String mapid;
+
+    /**
      * 设备编号
      */
     private String deviceno;
 
     /**
-     * 设备大分类
-     */
-    private String devicetype;
-
-    /**
      * 设备小分类
      */
     private String devicetypesmall;
+
+    /**
+     * 设备大分类
+     */
+    private String devicetype;
 
     /**
      * 设备名称
@@ -84,6 +89,9 @@ public class Deviceinformation extends BaseModel {
     @Column(name = "GIS")
     private String gis;
 
+    /**
+     * 备注
+     */
     private String remark;
 
 

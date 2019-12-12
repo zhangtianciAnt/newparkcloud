@@ -124,4 +124,27 @@ public class BASF10105Controller {
         deviceinFormationServices.update(deviceinformation, tokenModel);
         return ApiResult.success();
     }
+
+    /**
+     * @Method update
+     * @Author 王哲
+     * @Version 1.0
+     * @Description 查询设备列表（GIS专用）
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/12/12 14:47
+     */
+    @RequestMapping(value = "/deviceList", method = {RequestMethod.GET})
+    public ApiResult deviceList(String mapid, String devicetype, String devicename, Integer pageindex, Integer pagesize, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(mapid) || StrUtil.isEmpty(devicetype) || pageindex == null || pagesize == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        String[] devicetypeList = devicetype.split("-");
+        if (!StrUtil.isEmpty(devicename)) {
+            devicename = "%" + devicename + "%";
+        }
+        pageindex = pagesize * (pageindex - 1);
+        return ApiResult.success(
+                deviceinFormationServices.deviceList(mapid, devicetypeList, devicename, pageindex, pagesize)
+        );
+    }
 }

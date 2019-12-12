@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,7 +81,7 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     }
 
     /**
-     * @param deviceId
+     * @param deviceid
      * @Method one
      * @Author SKAIXX
      * @Version 1.0
@@ -107,5 +108,18 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preUpdate(tokenModel);
         deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+    }
+
+    /**
+     * @Method deviceList
+     * @Author 王哲
+     * @Version 1.0
+     * @Description 查询设备列表（GIS专用）
+     * @Return Deviceinformation
+     * @Date 2019/12/12 14:36
+     */
+    @Override
+    public List<Deviceinformation> deviceList(String mapid, String[] devicetype, String devicename, Integer pageindex, Integer pagesize) throws Exception {
+        return deviceinformationMapper.selectDeviceList(mapid, devicetype, devicename, pageindex, pagesize);
     }
 }
