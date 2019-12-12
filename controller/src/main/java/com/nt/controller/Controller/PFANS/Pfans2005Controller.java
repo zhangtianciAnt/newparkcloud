@@ -37,6 +37,9 @@ public class Pfans2005Controller {
     @Autowired
     private OtherFiveService otherfiveService;
 
+    @Autowired
+    private WagesService wagesService;
+
 
     @RequestMapping(value = "/creategiving", method = {RequestMethod.GET})
     public ApiResult creategiving(String generation, HttpServletRequest request) throws Exception {
@@ -186,5 +189,15 @@ public class Pfans2005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         givingService.save(givingvo,tokenModel);
         return ApiResult.success();
+    }
+
+    /**
+     * 保存
+     */
+    @RequestMapping(value = "selectWage", method = { RequestMethod.GET })
+    public ApiResult selectWage(HttpServletRequest request) throws Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        wagesService.select(tokenModel);
+        return ApiResult.success(wagesService.select(tokenModel));
     }
 }
