@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Psdcd;
+import com.nt.dao_Pfans.PFANS1000.Vo.PsdcdVo;
 import com.nt.service_pfans.PFANS1000.PsdcdService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -35,32 +36,32 @@ public class Pfans1017Controller {
 
     }
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Psdcd psdcd, HttpServletRequest request) throws Exception {
-        if (psdcd == null) {
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String psdcd_id, HttpServletRequest request) throws Exception {
+        if (psdcd_id == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(psdcdService.One(psdcd.getPsdcd_id()));
+        return ApiResult.success(psdcdService.selectById(psdcd_id));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateFlexibleWork(@RequestBody Psdcd psdcd, HttpServletRequest request) throws Exception{
-        if (psdcd == null) {
+    public ApiResult update(@RequestBody PsdcdVo psdcdVo, HttpServletRequest request) throws Exception{
+        if (psdcdVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        psdcdService.updatePsdcd(psdcd,tokenModel);
+        psdcdService.update(psdcdVo,tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Psdcd psdcd, HttpServletRequest request) throws Exception {
-        if (psdcd == null) {
+
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    public ApiResult insert(@RequestBody PsdcdVo psdcdVo, HttpServletRequest request) throws Exception {
+        if (psdcdVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        psdcdService.insert(psdcd,tokenModel);
+        psdcdService.insert(psdcdVo,tokenModel);
         return ApiResult.success();
     }
 }

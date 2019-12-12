@@ -68,7 +68,7 @@ public class Psdcd extends BaseModel {
     private String application;
 
     /**
-     * 联系邮箱
+     * E－Mail
      */
     @Column(name = "EMAIL")
     private String email;

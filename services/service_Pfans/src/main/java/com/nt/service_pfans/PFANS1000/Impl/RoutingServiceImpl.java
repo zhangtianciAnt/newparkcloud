@@ -64,9 +64,6 @@ public class RoutingServiceImpl implements RoutingService {
                 routingdetail.setRoutingdetail_id(UUID.randomUUID().toString());
                 routingdetail.setRouting_id(routing_id);
                 routingdetail.setRowindex(rowindex);
-                routingdetail.setSourceipaddress(routingdetail.getSourceipaddress());
-                routingdetail.setDestinationipaddress(routingdetail.getDestinationipaddress());
-                routingdetail.setProtocol(routingdetail.getProtocol());
                 routingdetailMapper.insertSelective(routingdetail);
             }
         }
@@ -91,6 +88,9 @@ public class RoutingServiceImpl implements RoutingService {
                 routingdetail.setSourceipaddress(routingdetail.getSourceipaddress());
                 routingdetail.setDestinationipaddress(routingdetail.getDestinationipaddress());
                 routingdetail.setProtocol(routingdetail.getProtocol());
+                routingdetail.setSourceipgroup(routingdetail.getSourceipgroup());
+                routingdetail.setCommunication(routingdetail.getCommunication());
+                routingdetail.setDestinationipgroup(routingdetail.getDestinationipgroup());
                 routingdetailMapper.insertSelective(routingdetail);
             }
         }
