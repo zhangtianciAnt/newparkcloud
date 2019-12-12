@@ -22,6 +22,16 @@ public class Pfans2010Controller {
     @Autowired
     private TokenService tokenService;
 
+    @RequestMapping(value = "/getlist", method = {RequestMethod.POST})
+    public ApiResult getlist(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendance.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(attendanceService.getlist(attendance));
+    }
+
     @RequestMapping(value = "/getAttendancelist", method = {RequestMethod.POST})
     public ApiResult getAttendancelist(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
         if (attendance == null) {
