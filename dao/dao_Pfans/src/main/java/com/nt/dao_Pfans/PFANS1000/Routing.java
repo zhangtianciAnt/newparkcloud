@@ -90,7 +90,7 @@ public class Routing extends BaseModel {
      * 期間
      */
     @Column(name = "DURINGDATE")
-    private Date duringdate;
+    private String duringdate;
 
     /**
      * グループ責任者
