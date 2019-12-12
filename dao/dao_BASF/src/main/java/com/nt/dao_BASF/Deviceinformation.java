@@ -17,6 +17,7 @@ public class Deviceinformation extends BaseModel {
     @Id
     private String deviceinformationid;
 
+    private String mapid;
     /**
      * 设备编号
      */

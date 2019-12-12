@@ -6,6 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR" />
+    <result column="mapid" property="mapid" jdbcType="VARCHAR"/>
     <result column="deviceno" property="deviceno" jdbcType="VARCHAR" />
     <result column="devicetype" property="devicetype" jdbcType="VARCHAR" />
     <result column="devicetypesmall" property="devicetypesmall" jdbcType="VARCHAR"/>
