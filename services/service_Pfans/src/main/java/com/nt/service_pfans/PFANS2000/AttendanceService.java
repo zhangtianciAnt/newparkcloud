@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface AttendanceService {
 
+    List<Attendance> getlist(Attendance attendance) throws Exception;
+
     List<Attendance> getAttendancelist(Attendance attendance) throws Exception;
 }

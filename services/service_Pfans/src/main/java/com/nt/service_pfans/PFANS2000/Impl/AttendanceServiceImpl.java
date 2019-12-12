@@ -17,6 +17,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceMapper attendanceMapper;
 
     @Override
+    public List<Attendance> getlist(Attendance attendance) throws Exception {
+        return attendanceMapper.getAttendance(attendance);
+    }
+
+    @Override
     public List<Attendance> getAttendancelist(Attendance attendance) throws Exception {
         return attendanceMapper.select(attendance);
     }
