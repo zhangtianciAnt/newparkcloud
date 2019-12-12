@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface AssetsService {
 
+    void connection(String address, TokenModel tokenModel) throws Exception;
+
     List<Assets> list(Assets assets) throws Exception;
 
     void insert(Assets assets, TokenModel tokenModel) throws Exception;
