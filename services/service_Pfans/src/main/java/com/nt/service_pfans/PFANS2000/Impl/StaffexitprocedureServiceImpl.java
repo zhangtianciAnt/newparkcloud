@@ -1,18 +1,22 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Citation;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
-import com.nt.service_pfans.PFANS2000.mapper.StaffexitprocedureMapper;
 import com.nt.service_pfans.PFANS2000.mapper.CitationMapper;
+import com.nt.service_pfans.PFANS2000.mapper.StaffexitprocedureMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +30,8 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     private StaffexitprocedureMapper staffexitprocedureMapper;
     @Autowired
     private CitationMapper citationMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     //列表查询
     @Override
@@ -51,6 +57,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     @Override
     public void update(StaffexitprocedureVo staffexitprocedureVo, TokenModel tokenModel) throws Exception {
         Staffexitprocedure staffexitprocedure = new Staffexitprocedure();
+        updateRetireDate(staffexitprocedureVo);
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitprocedure(), staffexitprocedure);
         staffexitprocedure.preUpdate(tokenModel);
         staffexitprocedureMapper.updateByPrimaryKey(staffexitprocedure);
@@ -91,6 +98,15 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 citation.setRowindex(rowundex);
                 citationMapper.insertSelective(citation);
             }
+        }
+    }
+
+    public void  updateRetireDate(StaffexitprocedureVo staffexitprocedureVo){
+        if(staffexitprocedureVo.getStaffexitprocedure().getStage() == "3" && staffexitprocedureVo.getStaffexitprocedure().getStatus() == "4"){
+            Query query = new Query(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitprocedure().getUser_id()));
+            Update update = new Update();
+            update.set("resignation_date",staffexitprocedureVo.getStaffexitprocedure().getEntry_time());
+            mongoTemplate.updateFirst(query, update, CustomerInfo.class);
         }
     }
 }
