@@ -31,6 +31,11 @@ public class AssetsServiceImpl implements AssetsService {
     private AssetsMapper assetsMapper;
 
     @Override
+    public void connection(String address, TokenModel tokenModel) throws Exception {
+
+    }
+
+    @Override
     public List<Assets> list(Assets assets) throws Exception {
         return assetsMapper.select(assets);
     }
