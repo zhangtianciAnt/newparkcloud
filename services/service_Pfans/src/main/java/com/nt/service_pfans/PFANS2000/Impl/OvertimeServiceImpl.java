@@ -205,10 +205,10 @@ public class OvertimeServiceImpl implements OvertimeService {
                         DecimalFormat  df = new DecimalFormat("######0.00");
                         if(attendancelist.size() > 0){
                             for (Attendance attend : attendancelist) {
-                                if(attend.getOrdinaryindustry() != null && !attend.getOrdinaryindustry().isEmpty()){
-                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getOrdinaryindustry())));
-                                }
                                 if(overtime.getOvertimetype().equals("PR001001")){//平日加班
+                                    if(attend.getOrdinaryindustry() != null && !attend.getOrdinaryindustry().isEmpty()){
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getOrdinaryindustry())));
+                                    }
                                     attend.setOrdinaryindustry(overtimeHours);
                                     if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
                                         if(attend.getOrdinaryindustrynight() != null && !attend.getOrdinaryindustrynight().isEmpty()){
