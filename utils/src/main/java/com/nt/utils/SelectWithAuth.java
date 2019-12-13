@@ -83,6 +83,7 @@ public class SelectWithAuth extends MapperTemplate{
         sql.append(SqlHelper.orderByDefault(entityClass));
         return sql.toString();
     }
+    
 
     /**
      * 根据主键进行查询
