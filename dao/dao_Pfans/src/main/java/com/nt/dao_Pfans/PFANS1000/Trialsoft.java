@@ -61,14 +61,4 @@ public class Trialsoft extends BaseModel {
     @Column(name = "DAILYPAYMENT")
     private Date dailypayment;
 
-    /**
-     * フリー・試用ソフト使用申請明细
-     */
-    @Column(name = "TRIALSOFTDETAIL_ID")
-    private String trialsoftdetail_id;
-
-
-
-
-
 }
