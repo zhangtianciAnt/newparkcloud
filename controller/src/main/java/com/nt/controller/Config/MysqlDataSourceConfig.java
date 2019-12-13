@@ -1,5 +1,6 @@
 package com.nt.controller.Config;
 
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -15,40 +16,36 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
-
 /**
- * 配置sqlServer数据源
+ * 配置mysql数据源
  */
 @Configuration
-@MapperScan(basePackages = {"com.nt.**.sqlMapper"}, sqlSessionFactoryRef = "sqlServerSqlSessionFactory")
-public class SqlServerDataSourceConfig {
+@MapperScan(basePackages = {"com.nt.**.mapper"}, sqlSessionFactoryRef = "mySqlSqlSessionFactory")
+public class MysqlDataSourceConfig {
 
-    @Bean(name = "sqlServerDataSource")
+    @Primary
+    @Bean(name = "mySqlDataSource")
     //下面的注解作用就是从application.properties中读取以这个字符串开头的那些配置，设置为数据源的配置
-    @ConfigurationProperties(prefix = "spring.datasource.sqlserver")
+    @ConfigurationProperties(prefix = "spring.datasource.mysql")
     public DataSource testDataSource() {
         return DataSourceBuilder.create().build();
     }
-
-
-    @Bean(name = "sqlServerSqlSessionFactory")
-    public SqlSessionFactory testSqlSessionFactory(@Qualifier("sqlServerDataSource") DataSource dataSource) throws Exception {
+    @Primary
+    @Bean(name = "mySqlSqlSessionFactory")
+    public SqlSessionFactory testSqlSessionFactory(@Qualifier("mySqlDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
-        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:sqlMapper/*.xml"));
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
         return bean.getObject();
     }
-
-
-    @Bean(name = "sqlServerTransactionManager")
-    public DataSourceTransactionManager testTransactionManager(@Qualifier("sqlServerDataSource") DataSource dataSource) {
+    @Primary
+    @Bean(name = "mySqlTransactionManager")
+    public DataSourceTransactionManager testTransactionManager(@Qualifier("mySqlDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
-
-
-    @Bean(name = "sqlServerSqlSessionTemplate")
-    public SqlSessionTemplate testSqlSessionTemplate(@Qualifier("sqlServerSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+    @Primary
+    @Bean(name = "mySqlSqlSessionTemplate")
+    public SqlSessionTemplate testSqlSessionTemplate(@Qualifier("mySqlSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 }
-

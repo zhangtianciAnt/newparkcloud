@@ -1,12 +1,11 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 
-import com.nt.dao_BASFSQL.AccessLevel;
-import com.nt.service_BASFSQL.AccessLevelServices;
+
+import com.nt.service_SQL.AccessLevelServices;
 import com.nt.utils.ApiResult;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;

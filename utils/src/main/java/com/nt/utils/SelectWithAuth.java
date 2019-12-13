@@ -25,25 +25,25 @@ public class SelectWithAuth extends MapperTemplate{
         StringBuilder sql = new StringBuilder();
         sql.append(SqlHelper.selectAllColumns(entityClass));
         sql.append(SqlHelper.fromTable(entityClass, tableName(entityClass)));
-        sql.append("<where> 1=1");
-        //获取全部列
-        Set<EntityColumn> columnList = EntityHelper.getColumns(entityClass);
-        //当某个列有主键策略时，不需要考虑他的属性是否为空，因为如果为空，一定会根据主键策略给他生成一个值
-
-        for (EntityColumn column : columnList) {
-            sql.append(SqlHelper.getIfNotNull(column, " AND " + column.getColumnEqualsHolder(), isNotEmpty()));
-        }
-        Set<EntityColumn> ids = EntityHelper.getPKColumns(entityClass);
-        String id = "";
-        for(EntityColumn column : ids){
-            id = column.getColumn();
-        }
-        sql.append("<if test=\"owners != null and owners.size() > 0\"> and (owner in <foreach item=\"item\" index=\"index\" collection=\"owners\" open=\"(\" separator=\",\" close=\")\"> "
-                + " #{item}</foreach> </if>");
-        sql.append("<if test=\"ids != null and ids.size() > 0\"> or " + id + " in <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> "
-                + " #{item}</foreach> ) </if>");
-        sql.append("<if test=\"owners != null and owners.size() > 0 and (ids == null or ids.size() == 0)\"> ) </if>");
-        sql.append("</where>");
+//        sql.append("<where> 1=1");
+//        //获取全部列
+//        Set<EntityColumn> columnList = EntityHelper.getColumns(entityClass);
+//        //当某个列有主键策略时，不需要考虑他的属性是否为空，因为如果为空，一定会根据主键策略给他生成一个值
+//
+//        for (EntityColumn column : columnList) {
+//            sql.append(SqlHelper.getIfNotNull(column, " AND " + column.getColumnEqualsHolder(), isNotEmpty()));
+//        }
+//        Set<EntityColumn> ids = EntityHelper.getPKColumns(entityClass);
+//        String id = "";
+//        for(EntityColumn column : ids){
+//            id = column.getColumn();
+//        }
+//        sql.append("<if test=\"owners != null and owners.size() > 0\"> and (owner in <foreach item=\"item\" index=\"index\" collection=\"owners\" open=\"(\" separator=\",\" close=\")\"> "
+//                + " #{item}</foreach> </if>");
+//        sql.append("<if test=\"ids != null and ids.size() > 0\"> or " + id + " in <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> "
+//                + " #{item}</foreach> ) </if>");
+//        sql.append("<if test=\"owners != null and owners.size() > 0 and (ids == null or ids.size() == 0)\"> ) </if>");
+//        sql.append("</where>");
         sql.append(SqlHelper.orderByDefault(entityClass));
         return sql.toString();
     }
@@ -62,27 +62,28 @@ public class SelectWithAuth extends MapperTemplate{
         sql.append(SqlHelper.selectAllColumns(entityClass));
         sql.append(SqlHelper.fromTable(entityClass, tableName(entityClass)));
         sql.append("<where> 1=1");
-        //获取全部列
-        Set<EntityColumn> columnList = EntityHelper.getColumns(entityClass);
-        //当某个列有主键策略时，不需要考虑他的属性是否为空，因为如果为空，一定会根据主键策略给他生成一个值
-        Set<EntityColumn> ids = EntityHelper.getPKColumns(entityClass);
-        String id = StringUtils.EMPTY;
-        for(EntityColumn column : ids){
-            id = column.getColumn();
-        }
-        for (EntityColumn column : columnList) {
-            sql.append(SqlHelper.getIfNotNull(column, " AND " + column.getColumnEqualsHolder(), isNotEmpty()));
-        }
+//        //获取全部列
+//        Set<EntityColumn> columnList = EntityHelper.getColumns(entityClass);
+//        //当某个列有主键策略时，不需要考虑他的属性是否为空，因为如果为空，一定会根据主键策略给他生成一个值
+//        Set<EntityColumn> ids = EntityHelper.getPKColumns(entityClass);
+//        String id = StringUtils.EMPTY;
+//        for(EntityColumn column : ids){
+//            id = column.getColumn();
+//        }
+//        for (EntityColumn column : columnList) {
+//            sql.append(SqlHelper.getIfNotNull(column, " AND " + column.getColumnEqualsHolder(), isNotEmpty()));
+//        }
         sql.append(" and <![CDATA[ifnull(STATUS,'') <> '1' ]]>");
-        sql.append("<if test=\"owners != null and owners.size() > 0\"> and (owner in <foreach item=\"item\" index=\"index\" collection=\"owners\" open=\"(\" separator=\",\" close=\")\"> "
-                + " #{item}</foreach> </if>");
-        sql.append("<if test=\"ids != null and ids.size() > 0\"> or " + id + " in <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> "
-                + " #{item}</foreach> ) </if>");
-        sql.append("<if test=\"owners != null and owners.size() > 0 and (ids == null or ids.size() == 0)\"> ) </if>");
+//        sql.append("<if test=\"owners != null and owners.size() > 0\"> and (owner in <foreach item=\"item\" index=\"index\" collection=\"owners\" open=\"(\" separator=\",\" close=\")\"> "
+//                + " #{item}</foreach> </if>");
+//        sql.append("<if test=\"ids != null and ids.size() > 0\"> or " + id + " in <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\"> "
+//                + " #{item}</foreach> ) </if>");
+//        sql.append("<if test=\"owners != null and owners.size() > 0 and (ids == null or ids.size() == 0)\"> ) </if>");
         sql.append("</where>");
         sql.append(SqlHelper.orderByDefault(entityClass));
         return sql.toString();
     }
+    
 
     /**
      * 根据主键进行查询
