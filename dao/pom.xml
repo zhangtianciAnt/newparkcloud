@@ -12,7 +12,6 @@
         <module>dao_VerificationCode</module>
         <module>dao_Workflow</module>
         <module>dao_BASF</module>
-        <module>dao_BASFSQL</module>
     </modules>
     <packaging>pom</packaging>
 
