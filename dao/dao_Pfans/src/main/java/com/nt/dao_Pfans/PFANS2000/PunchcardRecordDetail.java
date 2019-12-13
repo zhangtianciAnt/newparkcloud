@@ -40,5 +40,6 @@ public class PunchcardRecordDetail extends BaseModel {
     @Column(name = "PUNCHCARDRECORD_DATE")
     private Date punchcardrecord_date;
 
-
+    @Column(name = "REGION ")
+    private String region ;
 }

@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
+import com.nt.dao_Pfans.PFANS5000.Vo.PersonalProjectsVo;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.PersonalProjectsService;
@@ -83,15 +84,22 @@ public class Pfans5008Controller {
     }
 
     @RequestMapping(value = "/createProject", method = {RequestMethod.POST})
-    public ApiResult createProject(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
+    public ApiResult createProject(@RequestBody PersonalProjectsVo personalprojectsvo, HttpServletRequest request) throws Exception {
+        if (personalprojectsvo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        personalprojectsService.insert(personalprojectsvo, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult deleteadditional(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
         if (personalprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        PersonalProjects personal = new PersonalProjects();
-        personal.setUser_id(personalprojects.getUser_id());
-        personalprojectsService.delete(personal, tokenModel);
-        personalprojectsService.insert(personalprojects, tokenModel);
+        personalprojectsService.delete(personalprojects, tokenModel);
         return ApiResult.success();
     }
 

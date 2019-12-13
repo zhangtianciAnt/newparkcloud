@@ -49,4 +49,9 @@ public class PunchcardRecord extends BaseModel {
 
     @Column(name = "WORKTIME ")
     private String worktime ;
+
+    @Column(name = "REGION ")
+    private String region ;
+
+
 }
