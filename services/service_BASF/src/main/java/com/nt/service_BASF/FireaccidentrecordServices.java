@@ -15,6 +15,7 @@ import java.util.List;
  * @Description: BASF消防事故记录模块接口
  * @Date: 2019/11/4 16:09
  * @Version: 1.0
+ * //
  */
 public interface FireaccidentrecordServices {
 
