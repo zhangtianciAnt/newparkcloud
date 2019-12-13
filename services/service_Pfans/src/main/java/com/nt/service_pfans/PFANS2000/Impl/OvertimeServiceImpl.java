@@ -63,8 +63,8 @@ public class OvertimeServiceImpl implements OvertimeService {
         cal.add(Calendar.HOUR_OF_DAY, -8);
         dateStart = cal.getTime();
         overtime.setReserveovertimedate(dateStart);
-        //if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")){
-        if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")|| overtime.getStatus().equals("0")){
+        if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")){
+        //if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")|| overtime.getStatus().equals("0")){
             //上班时间开始
             String workshift_start = null;
             //上班时间结束
