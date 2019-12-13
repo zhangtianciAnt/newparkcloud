@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Assets.Assets;
 import com.nt.service_Assets.AssetsService;
 import com.nt.service_Assets.mapper.AssetsMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public List<Assets> list(Assets assets) throws Exception {
+        assets.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return assetsMapper.select(assets);
     }
 
