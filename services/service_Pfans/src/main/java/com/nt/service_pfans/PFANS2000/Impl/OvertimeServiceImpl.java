@@ -184,14 +184,23 @@ public class OvertimeServiceImpl implements OvertimeService {
                         //深夜加班時間
                         String overtimeHoursNight = null;
                         if(overtime.getOvertimetype().equals("PR001002") || overtime.getOvertimetype().equals("PR001003")){//周末加班/法定日加班
+                            //打卡开始-结束时间
                             long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
+                            //午休时间
                             long result2 = sdf.parse(lunchbreak_end).getTime() - sdf.parse(lunchbreak_start).getTime();
-                            Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000 - (Long.parseLong(lunchbreak_start)) - sdf.parse(closingtime_start).getTime();
+                            //打卡结束时间-公司考勤下班时间（判断周末晚餐时间）
+                            //long result3 = sdf.parse(time_end).getTime() - sdf.parse(closingtime_start).getTime();
+                            Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000;
                             if(Double.valueOf(overtimeHours) < Double.valueOf(result3)){
+                                BigDecimal dovertimeHours = new BigDecimal(overtimeHours).multiply(new BigDecimal(60 * 60 * 1000));
+                                long result5 = sdf.parse(workshift_start).getTime() + result2 + (Long.parseLong(String.valueOf(dovertimeHours.intValue())));
+                                Date d1 = new Date(result1);
+                                //加班后应该下班的时间
+                                overtime_end = sdf.format(d1).toString();
                                 //判斷是否是深夜加班并計算深夜加班的時常
                                 if(Integer.valueOf(overtime_end) > Integer.valueOf(nightshift_start)){//考虑深夜*00
                                     long result4 = sdf.parse(overtime_end).getTime() - sdf.parse(nightshift_start).getTime();
-                                    overtimeHoursNight = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+                                    overtimeHoursNight = String.valueOf(Double.valueOf(String.valueOf(result4)) / 60 / 60 / 1000);
                                     overtimeHours = String.valueOf(Double.valueOf(overtimeHours) - Double.valueOf(overtimeHoursNight));
                                 }
                             }
