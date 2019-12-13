@@ -62,6 +62,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             model.add("工号");
             model.add("姓名");
             model.add("打卡时间");
+            model.add("区域");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -96,6 +97,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             continue;
                         }
                     }
+                    if (value.size() > 3) {
+                        if (value.get(3).toString().length() > 2) {
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的区域字段过长，请输入正确的区域，导入失败");
+                            continue;
+                        }
+                    }
                     Query query = new Query();
                     String jobnumber = value.get(0).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
@@ -114,6 +122,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     punchcardrecorddetail.setTeam_id(customerInfo.getUserinfo().getTeamname());
                     String Punchcardrecord_date = value.get(2).toString();
                     punchcardrecorddetail.setPunchcardrecord_date(sf.parse(Punchcardrecord_date));
+                    punchcardrecorddetail.setRegion(value.get(3).toString());
                 }
                 punchcardrecorddetail.preInsert(tokenModel);
                 punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
@@ -135,6 +144,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     punchcardrecord.setTime_start(punchcard.getTime_start());
                     punchcardrecord.setTime_end(punchcard.getTime_end());
                     punchcardrecord.preInsert(tokenModel);
+                    punchcardrecord.setRegion(punchcard.getRegion());
                     punchcardrecordMapper.insert(punchcardrecord);
                 }
                 listVo.add(punchcardrecorddetail);

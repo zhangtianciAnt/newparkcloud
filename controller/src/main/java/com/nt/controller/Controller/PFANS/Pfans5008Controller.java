@@ -93,9 +93,6 @@ public class Pfans5008Controller {
         return ApiResult.success();
     }
 
-
-
-
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})
     public ApiResult deleteadditional(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
         if (personalprojects == null) {
@@ -105,10 +102,6 @@ public class Pfans5008Controller {
         personalprojectsService.delete(personalprojects, tokenModel);
         return ApiResult.success();
     }
-
-
-
-
 
     @RequestMapping(value = "/getDataList", method = {RequestMethod.POST})
     public ApiResult getDataList(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
