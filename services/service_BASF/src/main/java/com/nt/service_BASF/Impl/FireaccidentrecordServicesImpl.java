@@ -108,11 +108,16 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
                 }
             }
         }
-//        data.put("firealarm",firealarm);
-//        data.put("fireaccidentrecord",fireaccidentrecord);
-//        data.put("commandrecord",commandrecord);
+        data.put("firealarm", firealarm);
+        data.put("fireaccidentrecord", fireaccidentrecord);
+        data.put("commandrecord", commandrecord);
         List<Commandrecord.EmergencyDisposal> emergencyDisposal = commandrecord.getEmergencyDisposal();
+        List<Commandrecord.AccidentCommand> accidentCommands = commandrecord.getAccidentCommand();
+        List<Commandrecord.Command> command = commandrecord.getCommand();
         data.put("emergencyDisposal", emergencyDisposal);
+        data.put("accidentCommands", accidentCommands);
+        data.put("command", command);
+        data.put("casualties", commandrecord.getCasualties().getNumber());
         ExcelOutPutUtil.OutPut("bbba", "fireaccidentrecord.xlsx", data, response);
     }
 }
