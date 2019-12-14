@@ -28,7 +28,7 @@ public class Pfans2017Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         PunchcardRecord punchcardrecord = new PunchcardRecord();
         punchcardrecord.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(punchcardrecordService.list(punchcardrecord));
+        return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
     }
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request){
