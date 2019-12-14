@@ -8,16 +8,11 @@ import java.util.List;
 
 
 public interface PublicExpenseService {
-    //列表查询
     List<PublicExpense> get(PublicExpense publicExpense) throws Exception;
 
-    //新建
     void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception;
 
-    //编辑
     void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception;
 
-    //按id查询
     PublicExpenseVo selectById(String publicexpenseid) throws Exception;
-
 }
