@@ -56,7 +56,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     @Override
     public List<PunchcardRecord> list(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception {
-        methodAttendance(tokenModel);
+//        methodAttendance(tokenModel);
         return punchcardrecordMapper.select(punchcardrecord);
     }
 
@@ -164,6 +164,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 listVo.add(punchcardrecorddetail);
                 accesscount = accesscount + 1;
             }
+            methodAttendance(tokenModel);
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
@@ -238,6 +239,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     String time_start = sdf.format(PR.getTime_start());
                     String time_end = sdf.format(PR.getTime_end());
                     String worktime = PR.getWorktime();
+                    String strCenter_id = PR.getCenter_id();
+                    String strGroup_id = PR.getGroup_id();
+                    String strTeam_id = PR.getTeam_id();
                     //---------不定时考勤人员(非不定时考勤人员才计算)start-------
                     Irregulartiming irregulartiming = new Irregulartiming();
                     irregulartiming.setUser_id(strUserid);
@@ -491,34 +495,47 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 //---------处理昨日审批通过的加班申请end-------
                                 else{
                                     Attendance attendance = new Attendance();
-                                    attendance.setCenter_id(PR.getCenter_id());
-                                    attendance.setGroup_id(PR.getGroup_id());
-                                    attendance.setTeam_id(PR.getTeam_id());
-                                    attendance.setYears(DateUtil.format(dateStart,"YYYY").toString());
-                                    attendance.setMonths(DateUtil.format(dateStart,"MM").toString());
                                     attendance.setUser_id(strUserid);
                                     attendance.setDates(dateStart);
-                                    attendance.setNormal(strNormal);
-                                    attendance.setActual(worktime);
-                                    saveAttendance(attendance,"1",tokenModel);
+                                    List<Attendance> attendancelist = attendanceMapper.select(attendance);
+                                    if(attendancelist.size() == 0){
+                                        attendance.setCenter_id(PR.getCenter_id());
+                                        attendance.setGroup_id(PR.getGroup_id());
+                                        attendance.setTeam_id(PR.getTeam_id());
+                                        attendance.setYears(DateUtil.format(dateStart,"YYYY").toString());
+                                        attendance.setMonths(DateUtil.format(dateStart,"MM").toString());
+                                        attendance.setUser_id(strUserid);
+                                        attendance.setDates(dateStart);
+                                        attendance.setNormal(strNormal);
+                                        attendance.setActual(worktime);
+                                        saveAttendance(attendance,"1",tokenModel);
+                                    }
                                 }
                         }
                         else
                         {
+                            Attendance attendance = new Attendance();
+                            attendance.setUser_id(strUserid);
+                            attendance.setDates(dateStart);
+                            List<Attendance> attendancelist = attendanceMapper.select(attendance);
                             //15分钟为基本计算单位
                             double unit = 15;
                             //迟到
                             if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()
                             && sdf.parse(closingtime_start).getTime() <= sdf.parse(time_end).getTime()){
                                 long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
+                                //迟到的时间
                                 Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
-                                if(unit > Dresult){
+                                //迟到的小时
+                                Double Dhourresult = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
+                                if(unit > Dresult){//迟到小于15分钟
                                     //迟到小于15分钟的处理
                                     AbNormal abnormal = new AbNormal();
                                     abnormal.setUser_id(strUserid);
+                                    //迟到
                                     abnormal.setErrortype("PR013002");
                                     abnormal.setOccurrencedate(dateStart);
-                                    abnormal.setFinisheddate(dateStart);
+//                                    abnormal.setFinisheddate(dateStart);
                                     abnormal.setStatus("4");
                                     List<AbNormal> abNormallist = abNormalMapper.select(abnormal);
                                     if(abNormallist.size() > 0){
@@ -526,31 +543,86 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         String strPeriodend = sdf.format(abNormallist.get(0).getPeriodend());
                                         long result1 = sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime();
                                         Double Dresult1 = Double.valueOf(String.valueOf(result1)) / 60 / 1000;
-                                        //迟到申请时间
+                                        //迟到申请时间大于等于15分钟（按迟到15分钟算）
                                         if(Dresult1 >= unit){
-                                            String a = null;
+                                            attendance.setLate(String.valueOf(unit / 60));
                                         }
-                                    }//111
+                                        else{
+                                            //迟到时间小于15分钟（按没有申请处理，旷工半天）
+                                            attendance.setAbsenteeism("4");
+                                        }
+                                    }
                                     else{
                                         //迟到小于15分钟没有申请的处理（算旷工半天）
+                                        attendance.setAbsenteeism("4");
                                     }
                                 }
-                                else{
-                                    //迟到大于15分钟算旷工
+                                else{//迟到大于15分钟算旷工
+                                    if(Dhourresult <= 4){//迟到半天
+                                        attendance.setAbsenteeism("4");
+                                    }
+                                    else{//迟到大于半天
+                                        attendance.setAbsenteeism("8");
+                                    }
                                 }
-
                             }
                             //早退
-                            if(sdf.parse(time_start).getTime() <= sdf.parse(workshift_start).getTime()
+                            else if(sdf.parse(time_start).getTime() <= sdf.parse(workshift_start).getTime()
                                     && sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
                                 long result = sdf.parse(closingtime_start).getTime() - sdf.parse(time_end).getTime();
+                                //早退的时间
                                 Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
-                                if(Dresult > unit){
-                                    String a = null;
+                                //早退的小时
+                                Double Dhourresult = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
+                                if(unit > Dresult){//早退小于15分钟
+                                    //早退小于15分钟的处理
+                                    AbNormal abnormal = new AbNormal();
+                                    abnormal.setUser_id(strUserid);
+                                    //早退申请
+                                    abnormal.setErrortype("PR013003");
+                                    abnormal.setOccurrencedate(dateStart);
+                                    abnormal.setStatus("4");
+                                    List<AbNormal> abNormallist = abNormalMapper.select(abnormal);
+                                    if(abNormallist.size() > 0){
+                                        String strPeriodstart = sdf.format(abNormallist.get(0).getPeriodstart());
+                                        String strPeriodend = sdf.format(abNormallist.get(0).getPeriodend());
+                                        long result1 = sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime();
+                                        Double Dresult1 = Double.valueOf(String.valueOf(result1)) / 60 / 1000;
+                                        //早退申请时间大于等于15分钟（按早退15分钟算）
+                                        if(Dresult1 >= unit){
+                                            attendance.setLeaveearly(String.valueOf(unit / 60));
+                                        }
+                                        else{
+                                            //早退申请时间小于15分钟（按没有申请处理，旷工半天）
+                                            attendance.setAbsenteeism("4");
+                                        }
+                                    }
+                                    else{
+                                        //早退小于15分钟没有申请的处理（算旷工半天）
+                                        attendance.setAbsenteeism("4");
+                                    }
                                 }
-                                else{
-                                    String a = null;
+                                else{//早退大于15分钟算旷工
+                                    if(Dhourresult <= 4){//早退半天
+                                        attendance.setAbsenteeism("4");
+                                    }
+                                    else{//迟到大于半天
+                                        attendance.setAbsenteeism("8");
+                                    }
                                 }
+                            }
+                            if(attendancelist.size() > 0){
+                                saveAttendance(attendance,"0",tokenModel);
+                            }
+                            else{
+                                attendance.setCenter_id(strCenter_id);
+                                attendance.setGroup_id(strGroup_id);
+                                attendance.setTeam_id(strTeam_id);
+                                attendance.setYears(DateUtil.format(dateStart,"YYYY").toString());
+                                attendance.setMonths(DateUtil.format(dateStart,"MM").toString());
+//                                attendance.setNormal(strNormal);
+                                attendance.setActual(worktime);
+                                saveAttendance(attendance,"1",tokenModel);
                             }
                         }
                     }
