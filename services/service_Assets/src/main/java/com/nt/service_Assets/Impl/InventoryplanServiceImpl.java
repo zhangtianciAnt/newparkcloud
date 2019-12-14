@@ -41,7 +41,7 @@ public class InventoryplanServiceImpl implements InventoryplanService {
             for(Inventoryplan inv : inventList){
                 String getinvent = inv.getInventorycycle();
                 String getsta = inv.getStatus();
-                if(inventoryplanVo.getInventoryplan().getInventorycycle().equals(getinvent) && getsta.equals("2")){
+                if(inventoryplanVo.getInventoryplan().getInventorycycle().equals(getinvent) && !getsta.equals("2")){
                     inventoryplanMapper.delete(inv);
                 }
             }
