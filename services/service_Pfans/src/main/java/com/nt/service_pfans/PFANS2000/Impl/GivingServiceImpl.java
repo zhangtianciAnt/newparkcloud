@@ -528,7 +528,7 @@ public class GivingServiceImpl implements GivingService {
                             o = o + 1;
                         }
                     }
-                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years, months2);
+                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years2, months2);
                     for (Attendance A : attendanceList) {
                         if (A.getDaixiu() != null) {
                             Daixiu1 = Double.valueOf(A.getDaixiu());
