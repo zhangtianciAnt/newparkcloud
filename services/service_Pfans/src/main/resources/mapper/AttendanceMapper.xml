@@ -11,9 +11,9 @@
 	months,
 CASE
 	WHEN min( recognitionstate ) - max( recognitionstate ) = -1 THEN
-	'1'
+	'0'
 	WHEN min( recognitionstate ) + max( recognitionstate ) = 0 THEN
-	'1' ELSE '0'
+	'0' ELSE '1'
 	END AS recognitionstate
 FROM
 	attendance
