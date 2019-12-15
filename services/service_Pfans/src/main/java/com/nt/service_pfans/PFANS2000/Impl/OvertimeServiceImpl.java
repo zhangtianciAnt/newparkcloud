@@ -338,6 +338,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 attendance.setWomensday(overtimeHours);
                                 //进代休表
                             }
+                            attendance.setOwner(overtime.getUserid());
                             attendanceMapper.insert(attendance);
                         }
                         //承认

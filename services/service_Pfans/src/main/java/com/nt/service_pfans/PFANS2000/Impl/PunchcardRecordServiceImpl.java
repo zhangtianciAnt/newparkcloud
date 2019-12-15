@@ -641,6 +641,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         else{//新建
             attendance.setAttendanceid(UUID.randomUUID().toString());
             attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+            attendance.setOwner(attendance.getUser_id());
             attendance.preInsert(tokenModel);
             attendanceMapper.insert(attendance);
         }
