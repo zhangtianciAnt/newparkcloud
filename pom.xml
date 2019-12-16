@@ -11,8 +11,8 @@
         <module>dao</module>
         <module>services</module>
         <module>utils</module>
-        <module>dao_BASFSQL</module>
-        <module>service_BASFSQL</module>
+        <module>dao_SQL</module>
+        <module>service_SQL</module>
     </modules>
     <packaging>pom</packaging>
 
