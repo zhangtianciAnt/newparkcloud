@@ -54,8 +54,8 @@ public class Pfans2022Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
+    public ApiResult insert(@RequestBody CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
         if (casgiftapply == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
