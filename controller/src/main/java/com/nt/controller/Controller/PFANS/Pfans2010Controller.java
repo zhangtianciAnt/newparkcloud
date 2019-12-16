@@ -42,4 +42,14 @@ public class Pfans2010Controller {
         attendance.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.getAttendancelist(attendance));
     }
+
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendanceService.update(attendance, tokenModel);
+        return ApiResult.success();
+    }
 }

@@ -10,4 +10,6 @@ public interface AttendanceService {
     List<Attendance> getlist(Attendance attendance) throws Exception;
 
     List<Attendance> getAttendancelist(Attendance attendance) throws Exception;
+
+    void update(Attendance attendance, TokenModel tokenModel) throws Exception;
 }
