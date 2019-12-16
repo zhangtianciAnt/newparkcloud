@@ -53,6 +53,10 @@
 FROM
 	dictionary AS d
 WHERE
+	(
+	d.`STATUS` <![CDATA[ <> ]]> '1' OR
+    d.`STATUS` IS NULL)
+    AND
 	d.PCODE LIKE #{code}
     </select>
 </mapper>

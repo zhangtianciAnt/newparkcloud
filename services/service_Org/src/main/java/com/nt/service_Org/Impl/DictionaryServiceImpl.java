@@ -68,6 +68,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     public void deleteCodes(List<Dictionary> dictionaries, TokenModel tokenModel) throws Exception {
         for (Dictionary d : dictionaries) {
             d.preUpdate(tokenModel);
+            d.setStatus("1");
             dictionaryMapper.updateByPrimaryKeySelective(d);
         }
     }
