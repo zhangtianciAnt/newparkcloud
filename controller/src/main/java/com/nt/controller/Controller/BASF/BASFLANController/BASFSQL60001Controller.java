@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping("/BASF10103test")
+@RequestMapping("/BASFSQL60001")
 public class BASFSQL60001Controller {
 
     @Autowired
