@@ -104,6 +104,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     }
 
     public void  updateRetireDate(StaffexitprocedureVo staffexitprocedureVo){
+
         if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("3") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")){
             Query query = new Query(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitprocedure().getUser_id()));
             Update update = new Update();
