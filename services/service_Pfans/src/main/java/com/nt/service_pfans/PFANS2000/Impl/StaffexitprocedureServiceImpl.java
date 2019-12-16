@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import com.mongodb.client.result.UpdateResult;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Citation;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -102,11 +104,15 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     }
 
     public void  updateRetireDate(StaffexitprocedureVo staffexitprocedureVo){
-        if(staffexitprocedureVo.getStaffexitprocedure().getStage() == "3" && staffexitprocedureVo.getStaffexitprocedure().getStatus() == "4"){
+        if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("3") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")){
             Query query = new Query(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitprocedure().getUser_id()));
             Update update = new Update();
-            update.set("resignation_date",staffexitprocedureVo.getStaffexitprocedure().getEntry_time());
-            mongoTemplate.updateFirst(query, update, CustomerInfo.class);
+            if(staffexitprocedureVo.getStaffexitprocedure().getResignation_date()!=null){
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                update.set("userinfo.resignation_date", formatter.format(staffexitprocedureVo.getStaffexitprocedure().getResignation_date()));
+            }
+            update.set("userinfo.staffexitprocedure",staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
+            UpdateResult user =  mongoTemplate.updateFirst(query, update, CustomerInfo.class);
         }
     }
 }
