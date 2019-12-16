@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.ASSETS;
 
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.InventoryResults;
 import com.nt.service_Assets.AssetsService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -23,20 +24,28 @@ public class AssetsController {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/connection", method = {RequestMethod.GET})
-    public ApiResult connection(String address, HttpServletRequest request) throws Exception {
-        if (address == null) {
+    @RequestMapping(value = "/connection", method = {RequestMethod.POST})
+    public ApiResult connection(HttpServletRequest request) throws Exception {
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/scanOne", method = {RequestMethod.POST})
+    public ApiResult scanOne(@RequestBody InventoryResults assetsResult, HttpServletRequest request) throws Exception {
+        if (assetsResult == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        int count = 0;
-        Boolean str = false;
-        while (!str) {
-            Thread.sleep(5 * 1000);
-            count++;
-            TokenModel tokenModel = tokenService.getToken(request);
-            assetsService.connection(address, tokenModel);
-            return ApiResult.success();
+        TokenModel tokenModel = tokenService.getToken(request);
+        assetsService.scanOne(assetsResult, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/scanList", method = {RequestMethod.POST})
+    public ApiResult scanList(@RequestBody InventoryResults assetsResult, HttpServletRequest request) throws Exception {
+        if (assetsResult == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        TokenModel tokenModel = tokenService.getToken(request);
+        assetsService.scanList(assetsResult, tokenModel);
         return ApiResult.success();
     }
 
