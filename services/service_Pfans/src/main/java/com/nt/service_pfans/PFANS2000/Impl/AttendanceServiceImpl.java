@@ -5,6 +5,7 @@ import com.nt.service_pfans.PFANS2000.AttendanceService;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -27,5 +28,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public List<Attendance> getAttendancelist(Attendance attendance) throws Exception {
         return attendanceMapper.select(attendance);
+    }
+
+    @Override
+    public void update(Attendance attendance, TokenModel tokenModel) throws Exception {
+        attendance.preUpdate(tokenModel);
+        attendanceMapper.updateByPrimaryKeySelective(attendance);
     }
 }
