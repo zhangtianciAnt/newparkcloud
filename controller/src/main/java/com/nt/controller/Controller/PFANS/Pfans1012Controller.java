@@ -38,8 +38,6 @@ public class Pfans1012Controller {
     @Autowired
     private LoanApplicationService loanapplicationService;
 
-
-
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
@@ -47,8 +45,6 @@ public class Pfans1012Controller {
         publicExpense.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(publicExpenseService.get(publicExpense));
     }
-
-
     @RequestMapping(value = "/selectById",method = {RequestMethod.GET})
     public ApiResult selectById(String publicexpenseid, HttpServletRequest request) throws Exception {
         if (publicexpenseid == null) {
@@ -57,8 +53,6 @@ public class Pfans1012Controller {
         TokenModel tokenMode1 = tokenService.getToken(request);
         return ApiResult.success(publicExpenseService.selectById(publicexpenseid));
     }
-
-
     @RequestMapping(value = "/insert",method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {
@@ -68,8 +62,6 @@ public class Pfans1012Controller {
         publicExpenseService.insert(publicExpenseVo,tokenModel);
         return ApiResult.success();
     }
-
-
     @RequestMapping(value = "/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {
@@ -79,12 +71,6 @@ public class Pfans1012Controller {
         publicExpenseService.update(publicExpenseVo,tokenModel);
         return ApiResult.success();
     }
-
-
-    /*
-    * 裁决号
-    * */
-
     @RequestMapping(value="/getJudgement" ,method = {RequestMethod.POST})
     public ApiResult getJudgement(@RequestBody Judgement judgement,HttpServletRequest request) throws Exception{
     if(judgement==null){
@@ -93,9 +79,6 @@ public class Pfans1012Controller {
     TokenModel tokenModel=tokenService.getToken(request);
     return ApiResult.success(judgementService.getJudgement(judgement));
     }
-    /*
-     * 暂借款申请编号
-     * */
     @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.POST})
     public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication==null) {

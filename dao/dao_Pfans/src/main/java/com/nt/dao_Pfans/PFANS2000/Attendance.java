@@ -24,6 +24,24 @@ public class Attendance extends BaseModel {
     private String attendanceid;
 
     /**
+     * センター
+     */
+    @Column(name = "CENTER_ID")
+    private String center_id;
+
+    /**
+     * グループ
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    /**
+     * チーム
+     */
+    @Column(name = "TEAM_ID")
+    private String team_id;
+
+    /**
      * 年份
      */
     @Column(name = "YEARS")

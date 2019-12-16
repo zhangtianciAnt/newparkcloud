@@ -10,10 +10,13 @@
 	years,
 	months,
 CASE
-	WHEN min( recognitionstate ) - max( recognitionstate ) = - 1 THEN
-	'???'
+	WHEN min( recognitionstate ) - max( recognitionstate ) = -1 THEN
+	'0'
 	WHEN min( recognitionstate ) + max( recognitionstate ) = 0 THEN
-	'???' ELSE '??'
+	'0'
+	WHEN max( recognitionstate ) is null or max( recognitionstate ) is  null THEN
+	'0'
+	ELSE '1'
 	END AS recognitionstate
 FROM
 	attendance
@@ -31,5 +34,6 @@ GROUP BY
 	team_id,
 	years,
 	months
+	order by CAST(years as SIGNED) desc ,CAST(months as SIGNED) desc
 	</select>
 </mapper>

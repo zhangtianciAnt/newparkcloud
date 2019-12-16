@@ -528,7 +528,7 @@ public class GivingServiceImpl implements GivingService {
                             o = o + 1;
                         }
                     }
-                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years, months2);
+                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years2, months2);
                     for (Attendance A : attendanceList) {
                         if (A.getDaixiu() != null) {
                             Daixiu1 = Double.valueOf(A.getDaixiu());
@@ -1021,14 +1021,14 @@ public class GivingServiceImpl implements GivingService {
                             XYears1 = String.valueOf(cal.get(cal.YEAR));
                             XDate1 = String.valueOf(cal.get(cal.DATE));
                         }
-                        if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
-                            XData1 = XYears + "-0" + XMonths + "-0" + XDate;
-                        } else if (Integer.parseInt(XMonths) < 10) {
-                            XData1 = XYears + "-0" + XMonths + "-" + XDate;
-                        } else if (Integer.parseInt(XDate) < 10) {
-                            XData1 = XYears + "-" + XMonths + "-0" + XDate;
+                        if (Integer.parseInt(XMonths1) < 10 && Integer.parseInt(XDate1) < 10) {
+                            XData1 = XYears1 + "-0" + XMonths1 + "-0" + XDate1;
+                        } else if (Integer.parseInt(XMonths1) < 10) {
+                            XData1 = XYears1 + "-0" + XMonths + "-" + XDate1;
+                        } else if (Integer.parseInt(XDate1) < 10) {
+                            XData1 = XYears1 + "-" + XMonths1 + "-0" + XDate1;
                         } else {
-                            XData1 = XYears + "-" + XMonths + "-" + XDate;
+                            XData1 = XYears1 + "-" + XMonths1 + "-" + XDate1;
                         }
                         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
                         String Date1 = sf1.format(new Date());

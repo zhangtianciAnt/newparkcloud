@@ -41,7 +41,6 @@ public class Pfans1013Controller {
         evection.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(evectionService.get(evection));
     }
-
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String evectionid, HttpServletRequest request) throws Exception {
         if (evectionid == null) {
@@ -49,7 +48,6 @@ public class Pfans1013Controller {
         }
         return ApiResult.success(evectionService.selectById(evectionid));
     }
-
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody EvectionVo evectionVo, HttpServletRequest request) throws Exception {
         if (evectionVo == null) {
@@ -59,7 +57,6 @@ public class Pfans1013Controller {
         evectionService.insertEvectionVo(evectionVo, tokenModel);
         return ApiResult.success();
     }
-
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody EvectionVo evectionVo, HttpServletRequest request) throws Exception {
         if (evectionVo == null) {
@@ -69,7 +66,6 @@ public class Pfans1013Controller {
         evectionService.updateEvectionVo(evectionVo, tokenModel);
         return ApiResult.success();
     }
-
     @RequestMapping(value="/getBusiness" ,method = {RequestMethod.POST})
     public ApiResult getBusiness(@RequestBody Business business, HttpServletRequest request) throws Exception{
         if(business==null){
@@ -78,7 +74,6 @@ public class Pfans1013Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(businessService.get(business));
     }
-
     @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.POST})
     public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication==null) {
@@ -87,6 +82,5 @@ public class Pfans1013Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
     }
-
 
 }

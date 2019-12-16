@@ -1,12 +1,10 @@
 package com.nt.controller.Controller.ASSETS;
 
 import com.nt.dao_Assets.Inventoryplan;
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.Vo.InventoryplanVo;
 import com.nt.service_Assets.InventoryplanService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +53,9 @@ public class InventoryplanController {
      */
     @RequestMapping(value = "/selectAll", method = {RequestMethod.GET})
     public ApiResult selectAll(HttpServletRequest request) throws Exception {
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        Assets assets = new Assets();
-//        assets.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(inventoryplanService.selectAll(null));
+        Assets assets = new Assets();
+        assets.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        return ApiResult.success(inventoryplanService.selectAll(assets));
     }
 
     /**

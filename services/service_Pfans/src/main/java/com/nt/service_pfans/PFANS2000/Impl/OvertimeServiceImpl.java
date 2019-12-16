@@ -63,8 +63,8 @@ public class OvertimeServiceImpl implements OvertimeService {
         cal.add(Calendar.HOUR_OF_DAY, -8);
         dateStart = cal.getTime();
         overtime.setReserveovertimedate(dateStart);
-        if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")){
-        //if(overtime.getStatus().equals("4") || overtime.getStatus().equals("7")|| overtime.getStatus().equals("0")){
+        if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")){
+        //if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")|| overtime.getStatus().equals("0")){
             //上班时间开始
             String workshift_start = null;
             //上班时间结束
@@ -90,7 +90,7 @@ public class OvertimeServiceImpl implements OvertimeService {
             //不定时考勤人员(非不定时考勤人员才计算)
             Irregulartiming irregulartiming = new Irregulartiming();
             irregulartiming.setUser_id(overtime.getUserid());
-            irregulartiming.setStatus("4");
+            irregulartiming.setStatus(AuthConstants.APPROVED_FLAG_YES);
             List<Irregulartiming> irregulartiminglist = irregulartimingMapper.select(irregulartiming);
             if(irregulartiminglist.size() == 0){
                 //考勤设定
@@ -126,7 +126,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                     String Flexibleworkshift_start = null;
                     FlexibleWork flexibleWork = new FlexibleWork();
                     flexibleWork.setUser_id(overtime.getUserid());
-                    flexibleWork.setStatus("4");
+                    flexibleWork.setStatus(AuthConstants.APPROVED_FLAG_YES);
                     List<FlexibleWork> flexibleWorklist = flexibleworkMapper.select(flexibleWork);
                     if(flexibleWorklist.size() > 0){
                         String strImplement_date = flexibleWorklist.get(0).getImplement_date().substring(0,10);
@@ -289,16 +289,14 @@ public class OvertimeServiceImpl implements OvertimeService {
                                     //进代休表
                                 }
                                 attend.preUpdate(tokenModel);
-                                attendance.setAttendanceid(attend.getAttendanceid());
                                 attendanceMapper.updateByPrimaryKey(attend);
                             }
                         }
                         else{
-                            attendance.setUser_id(overtime.getUserid());
-                            attendance.setDates(overtime.getReserveovertimedate());
+                            attendance.setAttendanceid(UUID.randomUUID().toString());
                             attendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
                             attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
-                            attendance.setAttendanceid(UUID.randomUUID().toString());
+                            attendance.setUser_id(overtime.getUserid());
                             attendance.setDates(overtime.getReserveovertimedate());
                             attendance.setActual(worktime);
                             attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
@@ -340,6 +338,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 attendance.setWomensday(overtimeHours);
                                 //进代休表
                             }
+                            attendance.setOwner(overtime.getUserid());
                             attendanceMapper.insert(attendance);
                         }
                         //承认
@@ -351,4 +350,8 @@ public class OvertimeServiceImpl implements OvertimeService {
         overtime.preUpdate(tokenModel);
         overtimeMapper.updateByPrimaryKey(overtime);
     }
+
+//    public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
+//
+//    }
 }
