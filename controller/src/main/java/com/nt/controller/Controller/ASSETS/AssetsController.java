@@ -23,6 +23,23 @@ public class AssetsController {
     @Autowired
     private TokenService tokenService;
 
+    @RequestMapping(value = "/connection", method = {RequestMethod.GET})
+    public ApiResult connection(String address, HttpServletRequest request) throws Exception {
+        if (address == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        int count = 0;
+        Boolean str = false;
+        while (!str) {
+            Thread.sleep(5 * 1000);
+            count++;
+            TokenModel tokenModel = tokenService.getToken(request);
+            assetsService.connection(address, tokenModel);
+            return ApiResult.success();
+        }
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);

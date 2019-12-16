@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,6 +94,9 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private AdditionalMapper additionalMapper;
+
+    @Autowired
+    private InductionMapper inductionMapper;
 
     /**
      * 生成基数表
@@ -350,22 +354,18 @@ public class GivingServiceImpl implements GivingService {
                     base.setRegistered("2");
                 }
 
-
-                //2019年6月
-                //2019年7月
                 String Months;
                 String Years;
                 String Date;
-                if (cal.get(cal.MONTH) == 1) {
-                    Months = String.valueOf(cal.get(cal.MONTH) + 11);
-                    Years = String.valueOf(cal.get(cal.YEAR) - 1);
+                if (cal.get(cal.MONTH) == 12) {
+                    Months = String.valueOf(cal.get(cal.MONTH) - 11);
+                    Years = String.valueOf(cal.get(cal.YEAR) + 1);
                     Date = String.valueOf(cal.get(cal.DATE));
                 } else {
-                    Months = String.valueOf(cal.get(cal.MONTH) - 1);
+                    Months = String.valueOf(cal.get(cal.MONTH) + 1);
                     Years = String.valueOf(cal.get(cal.YEAR));
                     Date = String.valueOf(cal.get(cal.DATE));
                 }
-
                 String Dat;
                 if (Integer.parseInt(Months) < 10 && Integer.parseInt(Date) < 10) {
                     Dat = Years + "-0" + Months + "-0" + Date;
@@ -376,6 +376,7 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     Dat = Years + "-" + Months + "-" + Date;
                 }
+
                 double after6 = 0d;
                 double after7 = 0d;
                 Query query = new Query();
@@ -385,14 +386,14 @@ public class GivingServiceImpl implements GivingService {
                     if (customerInfo.getUserinfo().getGridData() != null) {
                         List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Dat.replace("-", ""))) {
-                                after6 = Integer.parseInt(personal.getAfter());
+                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Data.replace("-", ""))) {
+                                after6 = Double.valueOf(personal.getAfter());
                                 break;
                             }
                         }
                         for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Data.replace("-", ""))) {
-                                after7 = Integer.parseInt(personal.getAfter());
+                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Dat.replace("-", ""))) {
+                                after7 = Double.valueOf(personal.getAfter());
                                 break;
                             }
                         }
@@ -437,7 +438,7 @@ public class GivingServiceImpl implements GivingService {
         for (Base b : baselist) {
             Calendar cal = Calendar.getInstance();
             String years = String.valueOf(cal.get(cal.YEAR));
-            String months = String.valueOf(cal.get(cal.MONTH));
+            String months = String.valueOf(cal.get(cal.MONTH) + 1);
             String user_id = b.getUser_id();
             List<Attendance> AttendanceList = givingMapper.selectAttendance(user_id, years, months);
             int rowundex = 0;
@@ -527,7 +528,7 @@ public class GivingServiceImpl implements GivingService {
                             o = o + 1;
                         }
                     }
-                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years, months2);
+                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years2, months2);
                     for (Attendance A : attendanceList) {
                         if (A.getDaixiu() != null) {
                             Daixiu1 = Double.valueOf(A.getDaixiu());
@@ -819,7 +820,7 @@ public class GivingServiceImpl implements GivingService {
                     four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * weekendindustry) * (after3 / 21.75 / 8);
                     Thistotaly = one + two + three + four;
                     residual.setThistotaly(df.format(Thistotaly));
-                    String months10 = String.valueOf(cal.get(cal.MONTH) - 1);
+                    String months10 = String.valueOf(cal.get(cal.MONTH));
                     List<Attendance> AttendanceList1 = givingMapper.selectAttendance(user_id, years, months10);
                     for (Attendance Attendance1 : AttendanceList1) {
                         residual.setLastweekdays(Attendance1.getOrdinaryindustry());
@@ -1020,14 +1021,14 @@ public class GivingServiceImpl implements GivingService {
                             XYears1 = String.valueOf(cal.get(cal.YEAR));
                             XDate1 = String.valueOf(cal.get(cal.DATE));
                         }
-                        if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
-                            XData1 = XYears + "-0" + XMonths + "-0" + XDate;
-                        } else if (Integer.parseInt(XMonths) < 10) {
-                            XData1 = XYears + "-0" + XMonths + "-" + XDate;
-                        } else if (Integer.parseInt(XDate) < 10) {
-                            XData1 = XYears + "-" + XMonths + "-0" + XDate;
+                        if (Integer.parseInt(XMonths1) < 10 && Integer.parseInt(XDate1) < 10) {
+                            XData1 = XYears1 + "-0" + XMonths1 + "-0" + XDate1;
+                        } else if (Integer.parseInt(XMonths1) < 10) {
+                            XData1 = XYears1 + "-0" + XMonths + "-" + XDate1;
+                        } else if (Integer.parseInt(XDate1) < 10) {
+                            XData1 = XYears1 + "-" + XMonths1 + "-0" + XDate1;
                         } else {
-                            XData1 = XYears + "-" + XMonths + "-" + XDate;
+                            XData1 = XYears1 + "-" + XMonths1 + "-" + XDate1;
                         }
                         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
                         String Date1 = sf1.format(new Date());
@@ -1087,290 +1088,285 @@ public class GivingServiceImpl implements GivingService {
                         residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
                     }
                 } else {
-                    residual.setRemarks("-");
-                    residual.setThistotaly("");
-                    residual.setThistotalh("");
-                    residual.setThisreplace3("");
-                    residual.setThisreplace("");
-                    residual.setThislegallatenight("");
-                    residual.setThislegal("");
-                    residual.setThislatenight("");
-                    residual.setThisrestlatenight("");
-                    residual.setThisrestDay("");
-                    residual.setThisweekdays("");
-                    residual.setLastweekdays(attendance.getOrdinaryindustry());
-                    residual.setLastrestDay(attendance.getWeekendindustry());
-                    residual.setLastlegal(attendance.getStatutoryresidue());
-                    residual.setLastlatenight(attendance.getOrdinaryindustrynight());
-                    residual.setLastrestlatenight(attendance.getWeekendindustrynight());
-                    residual.setLastlegallatenight(attendance.getStatutoryresiduenight());
-                    int Xi = 0;
-                    int Xo = 0;
-                    int Xm = 0;
-                    int Xn = 0;
-                    double XDaixiu1 = 0d;
-                    double XDaixiu2 = 0d;
-                    double XDaixiu3 = 0d;
-                    String Xmonths1;
-                    String Xyears1;
-                    if (cal.get(cal.MONTH) == 1) {
-                        Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 3) {
-                        Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 4) {
-                        Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                        Xyears1 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance atten1 = new Attendance();
-                    atten1.setUser_id(attendance.getUser_id());
-                    atten1.setYears(Xyears1);
-                    atten1.setMonths(Xmonths1);
-                    List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
-                    for (Attendance attendancelist : Attendancelist11) {
-                        if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
-                            Xi = Xi + 1;
-                        }
-                    }
-                    String Xmonths2;
-                    String Xyears2;
-                    if (cal.get(cal.MONTH) == 1) {
-                        Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                        Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                        Xyears2 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance Xa = new Attendance();
-                    Xa.setUser_id(attendance.getUser_id());
-                    Xa.setYears(Xyears2);
-                    Xa.setMonths(Xmonths2);
-                    List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
-                    for (Attendance attendancelist1 : XAttendancelist1) {
-                        if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
-                            Xo = Xo + 1;
-                        }
-                    }
-                    List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
-                    for (Attendance A : XattendanceList) {
-                        if (A.getDaixiu() != null) {
-                            XDaixiu1 = Double.valueOf(A.getDaixiu());
+                    String months10 = String.valueOf(cal.get(cal.MONTH));
+                    List<Attendance> AttendanceList1 = givingMapper.selectAttendance(user_id, years, months10);
+                    for (Attendance attendance1 : AttendanceList1) {
+                        residual.setRemarks("-");
+                        residual.setLastweekdays(attendance1.getOrdinaryindustry());
+                        residual.setLastrestDay(attendance1.getWeekendindustry());
+                        residual.setLastlegal(attendance1.getStatutoryresidue());
+                        residual.setLastlatenight(attendance1.getOrdinaryindustrynight());
+                        residual.setLastrestlatenight(attendance1.getWeekendindustrynight());
+                        residual.setLastlegallatenight(attendance1.getStatutoryresiduenight());
+                        int Xi = 0;
+                        int Xo = 0;
+                        int Xm = 0;
+                        int Xn = 0;
+                        double XDaixiu1 = 0d;
+                        double XDaixiu2 = 0d;
+                        double XDaixiu3 = 0d;
+                        String Xmonths1;
+                        String Xyears1;
+                        if (cal.get(cal.MONTH) == 1) {
+                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else if (cal.get(cal.MONTH) == 2) {
+                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else if (cal.get(cal.MONTH) == 3) {
+                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else if (cal.get(cal.MONTH) == 4) {
+                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
-                            XDaixiu1 = 0;
+                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
+                            Xyears1 = String.valueOf(cal.get(cal.YEAR));
                         }
-                    }
-                    String Xmonths3;
-                    String Xyears3;
-                    if (cal.get(cal.MONTH) == 1) {
-                        Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                        Xyears3 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance Xa1 = new Attendance();
-                    Xa1.setUser_id(attendance.getUser_id());
-                    Xa1.setYears(Xyears3);
-                    Xa1.setMonths(Xmonths3);
-                    List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
-                    for (Attendance attendancelist2 : XAttendancelist2) {
-                        if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
-                            Xm = Xm + 1;
+                        Attendance atten1 = new Attendance();
+                        atten1.setUser_id(attendance1.getUser_id());
+                        atten1.setYears(Xyears1);
+                        atten1.setMonths(Xmonths1);
+                        List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
+                        for (Attendance attendancelist : Attendancelist11) {
+                            if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
+                                Xi = Xi + 1;
+                            }
                         }
-                    }
-                    List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, Xyears3, Xmonths3);
-                    for (Attendance A : XattendanceList1) {
-                        if (A.getDaixiu() != null) {
-                            XDaixiu2 = Double.valueOf(A.getDaixiu());
+                        String Xmonths2;
+                        String Xyears2;
+                        if (cal.get(cal.MONTH) == 1) {
+                            Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
+                            Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
-                            XDaixiu2 = 0;
+                            Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
+                            Xyears2 = String.valueOf(cal.get(cal.YEAR));
                         }
-                    }
-                    String Xmonths4;
-                    String Xyears4;
-                    if (cal.get(cal.MONTH) == 1) {
-                        Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 3) {
-                        Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                        Xyears4 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance Xa2 = new Attendance();
-                    Xa2.setUser_id(attendance.getUser_id());
-                    Xa2.setYears(Xyears4);
-                    Xa2.setMonths(Xmonths4);
-                    List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
-                    for (Attendance attendancelist3 : XAttendancelist3) {
-                        if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
-                            Xn = Xn + 1;
+                        Attendance Xa = new Attendance();
+                        Xa.setUser_id(attendance1.getUser_id());
+                        Xa.setYears(Xyears2);
+                        Xa.setMonths(Xmonths2);
+                        List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
+                        for (Attendance attendancelist1 : XAttendancelist1) {
+                            if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
+                                Xo = Xo + 1;
+                            }
                         }
-                    }
-                    List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, Xyears4, Xmonths4);
-                    for (Attendance A : XattendanceList2) {
-                        if (A.getDaixiu() != null) {
-                            XDaixiu3 = Double.valueOf(A.getDaixiu());
+                        List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
+                        for (Attendance A : XattendanceList) {
+                            if (A.getDaixiu() != null) {
+                                XDaixiu1 = Double.valueOf(A.getDaixiu());
+                            } else {
+                                XDaixiu1 = 0;
+                            }
+                        }
+                        String Xmonths3;
+                        String Xyears3;
+                        if (cal.get(cal.MONTH) == 1) {
+                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
+                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else if (cal.get(cal.MONTH) == 2) {
+                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
+                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
                         } else {
-                            XDaixiu3 = 0;
+                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
+                            Xyears3 = String.valueOf(cal.get(cal.YEAR));
                         }
-                    }
-                    residual.setLastreplace(String.valueOf(Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
-                    double XOrdinaryindustry = 0d;
-                    double XWeekendindustry = 0d;
-                    double XStatutoryresidue = 0d;
-                    double XOrdinaryindustrynight = 0d;
-                    double XWeekendindustrynight = 0d;
-                    double XStatutoryresiduenight = 0d;
-                    double XLasttotalh = 0d;
-                    if (attendance.getOrdinaryindustry() == null) {
-                        XOrdinaryindustry = 0;
-                    } else {
-                        XOrdinaryindustry = Double.valueOf(attendance.getOrdinaryindustry());
-                    }
-                    if (attendance.getWeekendindustry() == null) {
-                        XWeekendindustry = 0;
-                    } else {
-                        XWeekendindustry = Double.valueOf(attendance.getWeekendindustry());
-                    }
-                    if (attendance.getStatutoryresidue() == null) {
-                        XStatutoryresidue = 0;
-                    } else {
-                        XStatutoryresidue = Double.valueOf(attendance.getStatutoryresidue());
-                    }
-                    if (attendance.getOrdinaryindustrynight() == null) {
-                        XOrdinaryindustrynight = 0;
-                    } else {
-                        XOrdinaryindustrynight = Double.valueOf(attendance.getOrdinaryindustrynight());
-                    }
-                    if (attendance.getWeekendindustrynight() == null) {
-                        XWeekendindustrynight = 0;
-                    } else {
-                        XWeekendindustrynight = Double.valueOf(attendance.getWeekendindustrynight());
-                    }
-                    if (attendance.getStatutoryresiduenight() == null) {
-                        XStatutoryresiduenight = 0;
-                    } else {
-                        XStatutoryresiduenight = Double.valueOf(attendance.getStatutoryresiduenight());
-                    }
-                    XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
-                    residual.setLasttotalh(String.valueOf(XLasttotalh));
+                        Attendance Xa1 = new Attendance();
+                        Xa1.setUser_id(attendance1.getUser_id());
+                        Xa1.setYears(Xyears3);
+                        Xa1.setMonths(Xmonths3);
+                        List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
+                        for (Attendance attendancelist2 : XAttendancelist2) {
+                            if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
+                                Xm = Xm + 1;
+                            }
+                        }
+                        List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, Xyears3, Xmonths3);
+                        for (Attendance A : XattendanceList1) {
+                            if (A.getDaixiu() != null) {
+                                XDaixiu2 = Double.valueOf(A.getDaixiu());
+                            } else {
+                                XDaixiu2 = 0;
+                            }
+                        }
+                        String Xmonths4;
+                        String Xyears4;
+                        if (cal.get(cal.MONTH) == 1) {
+                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else if (cal.get(cal.MONTH) == 2) {
+                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else if (cal.get(cal.MONTH) == 3) {
+                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
+                        } else {
+                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
+                            Xyears4 = String.valueOf(cal.get(cal.YEAR));
+                        }
+                        Attendance Xa2 = new Attendance();
+                        Xa2.setUser_id(attendance1.getUser_id());
+                        Xa2.setYears(Xyears4);
+                        Xa2.setMonths(Xmonths4);
+                        List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
+                        for (Attendance attendancelist3 : XAttendancelist3) {
+                            if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
+                                Xn = Xn + 1;
+                            }
+                        }
+                        List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, Xyears4, Xmonths4);
+                        for (Attendance A : XattendanceList2) {
+                            if (A.getDaixiu() != null) {
+                                XDaixiu3 = Double.valueOf(A.getDaixiu());
+                            } else {
+                                XDaixiu3 = 0;
+                            }
+                        }
+                        residual.setLastreplace(String.valueOf(Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
+                        double XOrdinaryindustry = 0d;
+                        double XWeekendindustry = 0d;
+                        double XStatutoryresidue = 0d;
+                        double XOrdinaryindustrynight = 0d;
+                        double XWeekendindustrynight = 0d;
+                        double XStatutoryresiduenight = 0d;
+                        double XLasttotalh = 0d;
+                        if (attendance1.getOrdinaryindustry() == null) {
+                            XOrdinaryindustry = 0;
+                        } else {
+                            XOrdinaryindustry = Double.valueOf(attendance1.getOrdinaryindustry());
+                        }
+                        if (attendance1.getWeekendindustry() == null) {
+                            XWeekendindustry = 0;
+                        } else {
+                            XWeekendindustry = Double.valueOf(attendance1.getWeekendindustry());
+                        }
+                        if (attendance1.getStatutoryresidue() == null) {
+                            XStatutoryresidue = 0;
+                        } else {
+                            XStatutoryresidue = Double.valueOf(attendance1.getStatutoryresidue());
+                        }
+                        if (attendance1.getOrdinaryindustrynight() == null) {
+                            XOrdinaryindustrynight = 0;
+                        } else {
+                            XOrdinaryindustrynight = Double.valueOf(attendance1.getOrdinaryindustrynight());
+                        }
+                        if (attendance1.getWeekendindustrynight() == null) {
+                            XWeekendindustrynight = 0;
+                        } else {
+                            XWeekendindustrynight = Double.valueOf(attendance1.getWeekendindustrynight());
+                        }
+                        if (attendance1.getStatutoryresiduenight() == null) {
+                            XStatutoryresiduenight = 0;
+                        } else {
+                            XStatutoryresiduenight = Double.valueOf(attendance1.getStatutoryresiduenight());
+                        }
+                        XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
+                        residual.setLasttotalh(String.valueOf(XLasttotalh));
 
-                    double after = 0d;
-                    double after3 = 0d;
+                        double after = 0d;
+                        double after3 = 0d;
+                        Query query = new Query();
+                        String XDate;
+                        String XMonths;
+                        String XYears;
+                        if (cal.get(cal.MONTH) == 1) {
+                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
+                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
+                            XDate = String.valueOf(cal.get(cal.DATE));
+                        } else if (cal.get(cal.MONTH) == 2) {
+                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
+                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
+                            XDate = String.valueOf(cal.get(cal.DATE));
+                        } else if (cal.get(cal.MONTH) == 3) {
+                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
+                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
+                            XDate = String.valueOf(cal.get(cal.DATE));
+                        } else if (cal.get(cal.MONTH) == 4) {
+                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
+                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
+                            XDate = String.valueOf(cal.get(cal.DATE));
+                        } else {
+                            XMonths = String.valueOf(cal.get(cal.MONTH) - 4);
+                            XYears = String.valueOf(cal.get(cal.YEAR));
+                            XDate = String.valueOf(cal.get(cal.DATE));
+                        }
+                        String XData;
+                        if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
+                            XData = XYears + "-0" + XMonths + "-0" + XDate;
+                        } else if (Integer.parseInt(XMonths) < 10) {
+                            XData = XYears + "-0" + XMonths + "-" + XDate;
+                        } else if (Integer.parseInt(XDate) < 10) {
+                            XData = XYears + "-" + XMonths + "-0" + XDate;
+                        } else {
+                            XData = XYears + "-" + XMonths + "-" + XDate;
+                        }
+                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                        String Date = sf.format(new Date());
+                        query.addCriteria(Criteria.where("userid").is(attendance1.getUser_id()));
+                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            if (customerInfo.getUserinfo().getGridData() != null) {
+                                List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                                for (CustomerInfo.Personal personal : customerInfo1) {
+                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
+                                        after = Double.valueOf(personal.getAfter());
+                                        break;
+                                    }
+                                }
+                                for (CustomerInfo.Personal personal : customerInfo1) {
+                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
+                                        after3 = Double.valueOf(personal.getAfter());
+                                        break;
+                                    }
+                                }
+                            } else {
+                                after = 0;
+                                after3 = 0;
+                            }
+                        }
+                        double xweekendindustry = 0d;
+                        double xordinaryindustry = 0d;
+                        double xstatutoryresidue = 0d;
+                        double xSYJB = 0d;
+                        Dictionary xdictionary = new Dictionary();
+                        List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
+                        for (Dictionary diction : xdictionarylist) {
+                            if (diction.getCode().equals("PR049006")) {
+                                xordinaryindustry = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049007")) {
+                                xweekendindustry = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049008")) {
+                                xstatutoryresidue = Double.valueOf(diction.getValue2());
+                            }
+                            if (diction.getCode().equals("PR049009")) {
+                                xSYJB = Double.valueOf(diction.getValue2());
+                            }
+                        }
+                        one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
+                        two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
+                        three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB) * (after / 21.75 / 8);
+                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry) * (after3 / 21.75 / 8);
+                        Lasttotaly = one + two + three + four;
+                        residual.setLasttotaly(df.format(Lasttotaly));
+                        if (Lasttotaly + Thistotaly == 0.0) {
+                            residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
+                        } else {
+                            residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
+                        }
+                    }
+                    residual.preInsert(tokenModel);
                     Query query = new Query();
-                    String XDate;
-                    String XMonths;
-                    String XYears;
-                    if (cal.get(cal.MONTH) == 1) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else if (cal.get(cal.MONTH) == 3) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else if (cal.get(cal.MONTH) == 4) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) - 4);
-                        XYears = String.valueOf(cal.get(cal.YEAR));
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    }
-                    String XData;
-                    if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
-                        XData = XYears + "-0" + XMonths + "-0" + XDate;
-                    } else if (Integer.parseInt(XMonths) < 10) {
-                        XData = XYears + "-0" + XMonths + "-" + XDate;
-                    } else if (Integer.parseInt(XDate) < 10) {
-                        XData = XYears + "-" + XMonths + "-0" + XDate;
-                    } else {
-                        XData = XYears + "-" + XMonths + "-" + XDate;
-                    }
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                    String Date = sf.format(new Date());
-                    query.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
+                    query.addCriteria(Criteria.where("userid").is(user_id));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        if (customerInfo.getUserinfo().getGridData() != null) {
-                            List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                            for (CustomerInfo.Personal personal : customerInfo1) {
-                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
-                                    after = Double.valueOf(personal.getAfter());
-                                    break;
-                                }
-                            }
-                            for (CustomerInfo.Personal personal : customerInfo1) {
-                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
-                                    after3 = Double.valueOf(personal.getAfter());
-                                    break;
-                                }
-                            }
-                        } else {
-                            after = 0;
-                            after3 = 0;
-                        }
+                        residual.setJobnumber(customerInfo.getUserinfo().getJobnumber());
                     }
-                    double xweekendindustry = 0d;
-                    double xordinaryindustry = 0d;
-                    double xstatutoryresidue = 0d;
-                    double xSYJB = 0d;
-                    Dictionary xdictionary = new Dictionary();
-                    List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
-                    for (Dictionary diction : xdictionarylist) {
-                        if (diction.getCode().equals("PR049006")) {
-                            xordinaryindustry = Double.valueOf(diction.getValue2());
-                        }
-                        if (diction.getCode().equals("PR049007")) {
-                            xweekendindustry = Double.valueOf(diction.getValue2());
-                        }
-                        if (diction.getCode().equals("PR049008")) {
-                            xstatutoryresidue = Double.valueOf(diction.getValue2());
-                        }
-                        if (diction.getCode().equals("PR049009")) {
-                            xSYJB = Double.valueOf(diction.getValue2());
-                        }
-                    }
-                    one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
-                    two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
-                    three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB) * (after / 21.75 / 8);
-                    four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry) * (after3 / 21.75 / 8);
-                    Lasttotaly = one + two + three + four;
-                    residual.setLasttotaly(df.format(Lasttotaly));
-                    if (Lasttotaly + Thistotaly == 0.0) {
-                        residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
-                    } else {
-                        residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
-                    }
-                }
-                residual.preInsert(tokenModel);
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userid").is(user_id));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    residual.setJobnumber(customerInfo.getUserinfo().getJobnumber());
                 }
                 residualMapper.insert(residual);
+
             }
         }
 
@@ -1385,7 +1381,7 @@ public class GivingServiceImpl implements GivingService {
         for (Base b : baselist) {
             Calendar cal = Calendar.getInstance();
             String years = String.valueOf(cal.get(cal.YEAR));
-            String months = String.valueOf(cal.get(cal.MONTH));
+            String months = String.valueOf(cal.get(cal.MONTH) + 1);
             String user_id = b.getUser_id();
             List<Attendance> AttendanceList = givingMapper.selectAttendance(user_id, years, months);
             int rowundex = 0;
@@ -1395,6 +1391,18 @@ public class GivingServiceImpl implements GivingService {
             double Lasttotal = 0d;
             double thistotal = 0d;
             for (Attendance attendance : AttendanceList) {
+                double Shortsickleave = 0d;
+                double DLZD = 0d;
+                Dictionary dictionary = new Dictionary();
+                List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+                for (Dictionary diction : dictionarylist) {
+                    if (diction.getCode().equals("PR047001")) {
+                        DLZD = Double.valueOf(diction.getValue2());
+                    }
+                    if (diction.getCode().equals("PR049005")) {
+                        Shortsickleave = Double.valueOf(diction.getValue2());
+                    }
+                }
                 rowundex = rowundex + 1;
                 lackattendance.setRowindex(rowundex);
                 lackattendance.setLackattendance_id(UUID.randomUUID().toString());
@@ -1412,18 +1420,6 @@ public class GivingServiceImpl implements GivingService {
                     ba.setUser_id(attendance.getUser_id());
                     List<Base> Baselist = baseMapper.select(ba);
                     for (Base B : Baselist) {
-                        double Shortsickleave = 0d;
-                        double DLZD = 0d;
-                        Dictionary dictionary = new Dictionary();
-                        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                        for (Dictionary diction : dictionarylist) {
-                            if (diction.getCode().equals("PR047001")) {
-                                DLZD = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049005")) {
-                                Shortsickleave = Double.valueOf(diction.getValue2());
-                            }
-                        }
                         double Late = 0d;
                         double Leaveearly = 0d;
                         double Absenteeism = 0d;
@@ -1464,73 +1460,180 @@ public class GivingServiceImpl implements GivingService {
                         lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
                         one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
                         thistotal = one - two - three;
-                        lackattendance.setThistotal(df.format(thistotal));
+
+                        if (thistotal == 0.0) {
+                            lackattendance.setThistotal(String.valueOf(thistotal));
+                        } else {
+                            lackattendance.setThistotal(df.format(thistotal));
+                        }
+
+                        String Years = String.valueOf(cal.get(cal.YEAR));
+                        String Months = String.valueOf(cal.get(cal.MONTH));
+                        String User_id = b.getUser_id();
+                        List<Attendance> Attendancelist = givingMapper.selectAttendance(User_id, Years, Months);
+                        for (Attendance attendan : Attendancelist) {
+                            lackattendance.setLastshortdeficiency(attendan.getShortsickleave());
+                            lackattendance.setLastchronicdeficiency(attendan.getLongsickleave());
+                            Base bas = new Base();
+                            bas.setUser_id(attendan.getUser_id());
+                            List<Base> BaseList = baseMapper.select(bas);
+                            for (Base Ba : BaseList) {
+                                double late = 0d;
+                                double leaveearly = 0d;
+                                double absenteeism = 0d;
+                                double Lastmonth = 0d;
+                                double Lastdiligence = 0d;
+                                if (Ba.getLastmonth() == null || Double.valueOf(Ba.getLastmonth()) == 0.0) {
+                                    Lastmonth = 0;
+                                } else {
+                                    Lastmonth = Integer.parseInt(Ba.getLastmonth());
+                                }
+                                if (attendan.getLate() == null) {
+                                    late = 0;
+                                } else {
+                                    late = Integer.parseInt(attendan.getLate());
+                                }
+                                if (attendan.getLeaveearly() == null) {
+                                    leaveearly = 0;
+                                } else {
+                                    leaveearly = Integer.parseInt(attendan.getLeaveearly());
+                                }
+                                if (attendan.getAbsenteeism() == null) {
+                                    absenteeism = 0;
+                                } else {
+                                    absenteeism = Integer.parseInt(attendan.getAbsenteeism());
+                                }
+                                if (attendan.getShortsickleave() == null) {
+                                    two = 0;
+                                } else {
+                                    two = Double.valueOf(Lastmonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendan.getShortsickleave()));
+                                }
+                                if (attendan.getLongsickleave() == null) {
+                                    three = 0;
+                                } else {
+                                    three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendan.getLongsickleave()));
+                                }
+                                Lastdiligence = late + leaveearly + absenteeism;
+                                lackattendance.setLastdiligence(String.valueOf(Lastdiligence));
+                                one = Double.valueOf(Lastdiligence * Lastmonth / 21.75 / 8);
+                                Lasttotal = one - two - three;
+                                if (Lasttotal == 0.0) {
+                                    lackattendance.setLasttotal(String.valueOf(Lasttotal));
+                                } else {
+                                    lackattendance.setLasttotal(df.format(Lasttotal));
+                                }
+                            }
+                        }
                     }
                 } else {
                     lackattendance.setRemarks("-");
-                    lackattendance.setThistotal("");
-                    lackattendance.setThischronicdeficiency("");
-                    lackattendance.setThisshortdeficiency("");
-                    lackattendance.setThisdiligence("");
-                    lackattendance.setLastshortdeficiency(attendance.getShortsickleave());
-                    lackattendance.setLastchronicdeficiency(attendance.getLongsickleave());
+                    lackattendance.setThisshortdeficiency(attendance.getShortsickleave());
+                    lackattendance.setThischronicdeficiency(attendance.getLongsickleave());
                     Base ba = new Base();
                     ba.setUser_id(attendance.getUser_id());
                     List<Base> Baselist = baseMapper.select(ba);
                     for (Base B : Baselist) {
-                        double Shortsickleave = 0d;
-                        double DLZD = 0d;
-                        Dictionary dictionary = new Dictionary();
-                        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                        for (Dictionary diction : dictionarylist) {
-                            if (diction.getCode().equals("PR047001")) {
-                                DLZD = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049005")) {
-                                Shortsickleave = Double.valueOf(diction.getValue2());
-                            }
-                        }
                         double Late = 0d;
                         double Leaveearly = 0d;
                         double Absenteeism = 0d;
                         double Thismonth = 0d;
-                        double Lastdiligence = 0d;
+                        double Thisdiligence = 0d;
                         if (B.getThismonth() == null || Double.valueOf(B.getThismonth()) == 0.0) {
                             Thismonth = 0;
                         } else {
-                            Thismonth = Double.valueOf(B.getThismonth());
+                            Thismonth = Integer.parseInt(B.getThismonth());
                         }
                         if (attendance.getLate() == null) {
                             Late = 0;
                         } else {
-                            Late = Double.valueOf(attendance.getLate());
+                            Late = Integer.parseInt(attendance.getLate());
                         }
                         if (attendance.getLeaveearly() == null) {
                             Leaveearly = 0;
                         } else {
-                            Leaveearly = Double.valueOf(attendance.getLeaveearly());
+                            Leaveearly = Integer.parseInt(attendance.getLeaveearly());
                         }
                         if (attendance.getAbsenteeism() == null) {
                             Absenteeism = 0;
                         } else {
-                            Absenteeism = Double.valueOf(attendance.getAbsenteeism());
+                            Absenteeism = Integer.parseInt(attendance.getAbsenteeism());
                         }
                         if (attendance.getShortsickleave() == null) {
                             two = 0;
                         } else {
-                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Double.valueOf(attendance.getShortsickleave()));
+                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendance.getShortsickleave()));
                         }
                         if (attendance.getLongsickleave() == null) {
                             three = 0;
                         } else {
-                            three = Double.valueOf(DLZD / 21.75 / 8 * Double.valueOf(attendance.getLongsickleave()));
+                            three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
                         }
-
-                        Lastdiligence = Late + Leaveearly + Absenteeism;
-                        lackattendance.setLastdiligence(String.valueOf(Lastdiligence));
-                        one = Double.valueOf(Lastdiligence * Thismonth / 21.75 / 8);
-                        Lasttotal = one - two - three;
-                        lackattendance.setLasttotal(df.format(Lasttotal));
+                        Thisdiligence = Late + Leaveearly + Absenteeism;
+                        lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
+                        one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
+                        thistotal = one - two - three;
+                        if (thistotal == 0.0) {
+                            lackattendance.setThistotal(String.valueOf(thistotal));
+                        } else {
+                            lackattendance.setThistotal(df.format(thistotal));
+                        }
+                        String Years = String.valueOf(cal.get(cal.YEAR));
+                        String Months = String.valueOf(cal.get(cal.MONTH));
+                        String User_id = b.getUser_id();
+                        List<Attendance> Attendancelist = givingMapper.selectAttendance(User_id, Years, Months);
+                        for (Attendance attendan : Attendancelist) {
+                            lackattendance.setLastshortdeficiency(attendan.getShortsickleave());
+                            lackattendance.setLastchronicdeficiency(attendan.getLongsickleave());
+                            Base bas = new Base();
+                            bas.setUser_id(attendan.getUser_id());
+                            List<Base> BaseList = baseMapper.select(bas);
+                            for (Base Ba : BaseList) {
+                                double late = 0d;
+                                double leaveearly = 0d;
+                                double absenteeism = 0d;
+                                double Lastmonth = 0d;
+                                double Lastdiligence = 0d;
+                                if (Ba.getLastmonth() == null || Double.valueOf(Ba.getLastmonth()) == 0.0) {
+                                    Lastmonth = 0;
+                                } else {
+                                    Lastmonth = Integer.parseInt(Ba.getLastmonth());
+                                }
+                                if (attendan.getLate() == null) {
+                                    late = 0;
+                                } else {
+                                    late = Integer.parseInt(attendan.getLate());
+                                }
+                                if (attendan.getLeaveearly() == null) {
+                                    leaveearly = 0;
+                                } else {
+                                    leaveearly = Integer.parseInt(attendan.getLeaveearly());
+                                }
+                                if (attendan.getAbsenteeism() == null) {
+                                    absenteeism = 0;
+                                } else {
+                                    absenteeism = Integer.parseInt(attendan.getAbsenteeism());
+                                }
+                                if (attendan.getShortsickleave() == null) {
+                                    two = 0;
+                                } else {
+                                    two = Double.valueOf(Lastmonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendan.getShortsickleave()));
+                                }
+                                if (attendan.getLongsickleave() == null) {
+                                    three = 0;
+                                } else {
+                                    three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendan.getLongsickleave()));
+                                }
+                                Lastdiligence = late + leaveearly + absenteeism;
+                                lackattendance.setLastdiligence(String.valueOf(Lastdiligence));
+                                one = Double.valueOf(Lastdiligence * Lastmonth / 21.75 / 8);
+                                Lasttotal = one - two - three;
+                                if (Lasttotal == 0.0) {
+                                    lackattendance.setLasttotal(String.valueOf(Lasttotal));
+                                } else {
+                                    lackattendance.setLasttotal(df.format(Lasttotal));
+                                }
+                            }
+                        }
                     }
                 }
                 if (thistotal + Lasttotal == 0.0) {
@@ -1724,5 +1827,202 @@ public class GivingServiceImpl implements GivingService {
                 }
             }
         }
+    }
+
+    //入职
+    public List<CustomerInfo> getInduction(String givingId) {
+        Query query = new Query();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar now = Calendar.getInstance();
+        Calendar _now = Calendar.getInstance();
+        now.add(Calendar.MONTH, -2);
+        _now.add(Calendar.MONTH, -1); //this
+        now.set(Calendar.DAY_OF_MONTH, 15);
+        _now.set(Calendar.DAY_OF_MONTH, 16);
+
+        Calendar lastmon = Calendar.getInstance();
+        lastmon.add(Calendar.MONTH, -1);
+        Calendar thismon = Calendar.getInstance();
+        Criteria criteria = Criteria.where("userinfo.enterday")
+                .gte(sf.format(now.getTime()))
+                .lte(sf.format(_now.getTime()));
+        query.addCriteria(criteria);
+        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
+        if (customerInfo.size() > 0) {
+            List<String> list = new ArrayList<>();
+            customerInfo.forEach(customerInfo1 -> list.add(customerInfo1.getUserid()));
+            List<Induction> inductions = inductionMapper.selectInduction(list, thismon.get(Calendar.YEAR) + "" + getMouth(sf.format(_now.getTime())),
+                    lastmon.get(Calendar.YEAR) + "" + getMouth(sf.format(now.getTime())), getMouth(sf.format(_now.getTime())) + "", getMouth(sf.format(now.getTime())) + "");
+            if (inductions.size() > 0) {
+                inductions.forEach(induction -> {
+                    Optional<CustomerInfo> _customerInfo = customerInfo.stream().filter(a -> (induction.getUser_id()).equals(a.getUserid())).findFirst();
+                    if (_customerInfo.isPresent()) {
+                        if(givingId!=null&&givingId!=""){
+                            induction.setGiving_id(givingId);
+                        }
+                        try {
+                            induction.setWorddate(sf.parse(_customerInfo.get().getUserinfo().getWorkday()));
+                            if (_customerInfo.get().getUserinfo().getEnddate() != null && !_customerInfo.get().getUserinfo().getEnddate().equals("")) {
+                                induction.setStartdate(sf.parse(_customerInfo.get().getUserinfo().getEnddate()));
+                            }
+                            if (_customerInfo.get().getUserinfo().getGridData() != null) {
+                                List<CustomerInfo.Personal> personals = _customerInfo.get().getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                                        .collect(Collectors.toList());
+                                String lastMouth = "0";
+                                String thisMouth = "0";
+                                for (CustomerInfo.Personal personal : personals) {
+                                    boolean _last = false;
+                                    boolean _this = false;
+
+                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((lastmon.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-01")).getTime() && !_last) {
+                                        lastMouth = personal.getAfter();
+                                        _last = true;
+                                    }
+                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((thismon.get(Calendar.YEAR) + "-" + getMouth(sf.format(_now.getTime())) + "-01")).getTime() && !_this) {
+                                        thisMouth = personal.getAfter();
+                                        _this = true;
+                                    }
+                                    if (_last && _this) {
+                                        break;
+                                    }
+                                }
+                                //IF(正社員開始日<>"",ROUND((当月基本工资 - （当月基本工资/21.75日*当月试用期间的出勤日数×试用期工资扣除比例),2),IF(先月出勤日数>0,ROUND((先月基本工资/21.75*先月
+                                //出勤日数+当月基本工资),2),IF(今月試用社員出勤日数>0,ROUND(当月基本工资/21.75*今月試用社員出勤日数,2),当月基本工资)))
+                                DecimalFormat df = new DecimalFormat("#.00");
+                                if (_customerInfo.get().getUserinfo().getWorkday().equals("")) {
+                                    induction.setGive(df.format(Double.valueOf(thisMouth) - (Double.valueOf(thisMouth) / 21.75 * Double.valueOf(induction.getThismouth()) * 0.1)));
+                                } else {
+                                    if (Integer.parseInt(induction.getLastmouth()) > 0) {
+                                        induction.setGive(df.format(Double.valueOf(lastMouth) / 21.75 * Integer.parseInt(induction.getLastmouth()) * 0.1 + Double.valueOf(thisMouth)));
+                                    } else {
+                                        if (Integer.parseInt(induction.getThismouth()) > 0) {
+                                            induction.setGive(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(induction.getThismouth())));
+                                        } else {
+                                            induction.setGive(thisMouth);
+                                        }
+                                    }
+                                }
+                                //IF(先月基本工资<>0,ROUND(纳付率.食堂手当+纳付率.食堂手当/21.75*先月出勤日数,2),ROUND(纳付率.食堂手当/21.75*今月試用社員出勤日数,2))
+                                if (Double.valueOf(lastMouth) > 0) {
+                                    induction.setLunch(df.format(105 + 105 / 21.75 * Integer.parseInt(induction.getLastmouth())));
+                                } else {
+                                    induction.setLunch(df.format(105 / 21.75 * Integer.parseInt(induction.getThismouth())));
+                                }
+                                //IF(先月基本工资<>0,ROUND(纳付率.交通手当+纳付率.交通手当/21.75*先月出勤日数,2),ROUND(纳付率.交通手当/21.75*今月試用社員出勤日数,2))
+                                if (Double.valueOf(lastMouth) > 0) {
+                                    induction.setLunch(df.format(84 + 84 / 21.75 * Integer.parseInt(induction.getLastmouth())));
+                                } else {
+                                    induction.setLunch(df.format(84 / 21.75 * Integer.parseInt(induction.getThismouth())));
+                                }
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }
+        return null;
+    }
+
+
+    //退职
+    public void getRetire(String givingId) {
+        Query query = new Query();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar now = Calendar.getInstance();
+        Calendar last = Calendar.getInstance();
+        last.add(Calendar.MONTH, -1);
+        now.add(Calendar.MONTH, -2);
+        now.set(Calendar.YEAR, now.get(Calendar.YEAR));
+        now.set(Calendar.MONTH, now.get(Calendar.MONTH));
+        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        Calendar cal = Calendar.getInstance();
+        Criteria criteria = Criteria.where("userinfo.resignation_date")
+                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)
+                .lte(cal.get(Calendar.YEAR) + "-" + getMouth(sf.format(cal.getTime())) + "-01");
+        query.addCriteria(criteria);
+        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
+        if (customerInfo.size() > 0) {
+            List<String> list = new ArrayList<>();
+            customerInfo.forEach(customerInfo1 -> list.add(customerInfo1.getUserid()));
+            List<Retire> retires = retireMapper.selectRetire(list, last.get(Calendar.YEAR) + "" + getMouth(sf.format(last.getTime())), getMouth(sf.format(last.getTime())) + "");
+            if (retires.size() > 0) {
+                retires.forEach(retire -> {
+                    Optional<CustomerInfo> _customerInfo = customerInfo.stream().filter(a -> (retire.getUser_id()).equals(a.getUserid())).findFirst();
+                    if (_customerInfo.isPresent()) {
+                        if(givingId!=null&&givingId!=""){
+                            retire.setGiving_id(givingId);
+                        }
+                        String thisMouth = "0";
+                        try {
+                            if (_customerInfo.get().getUserinfo().getResignation_date() != null && !_customerInfo.get().getUserinfo().getResignation_date().equals("")) {
+                                retire.setRetiredate(sf.parse(_customerInfo.get().getUserinfo().getResignation_date()));
+                            }
+                            if (_customerInfo.get().getUserinfo().getGridData() != null) {
+                                List<CustomerInfo.Personal> personals = _customerInfo.get().getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                                        .collect(Collectors.toList());
+
+                                for (CustomerInfo.Personal personal : personals) {
+                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")).getTime()) {
+                                        thisMouth = personal.getAfter();
+                                        return;
+                                    }
+                                }
+                            }
+                            DecimalFormat df = new DecimalFormat("#.00");
+                            //IF(今月出勤日数="全月",ROUND(基数.当月基本工资,2),IF(今月出勤日数<>"",ROUND(基数.当月基本工资/21.75*今月出勤日数,2),0))
+                            if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
+                                retire.setGive(df.format(Double.valueOf(thisMouth)));
+                            } else if (Integer.parseInt(retire.getAttendance()) != 0) {
+                                retire.setGive(df.format(Double.valueOf(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(retire.getAttendance())))));
+                            } else {
+                                retire.setGive("0");
+                            }
+                            //IF(今月出勤日数="全月",纳付率.食堂手当,ROUND(纳付率.食堂手当/21.75*今月出勤日数,2)
+                            if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
+                                retire.setLunch("105");
+                            } else {
+                                retire.setLunch(df.format(105 / 21.75 * Integer.parseInt(retire.getAttendance())));
+                            }
+                            //IF(今月出勤日数="全月",纳付率.交通手当,ROUND(纳付率.交通手当/21.75*今月出勤日数,2))
+                            if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
+                                retire.setLunch("84");
+                            } else {
+                                retire.setLunch(df.format(84 / 21.75 * Integer.parseInt(retire.getAttendance())));
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }
+
+    }
+
+    public String getMouth(String mouth) {
+        String _mouth = mouth.substring(5, 7);
+        if (_mouth.substring(0, 1) == "0") {
+            return _mouth.substring(1);
+        }
+        return _mouth;
+    }
+
+
+
+    private static int getWorkDays(int theYear, int theMonth) {
+        int workDays = 0;
+        Calendar cal = Calendar.getInstance();
+        cal.set(theYear, theMonth - 1, 1);
+        int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        for (int i = 0; i < days; i++) {
+            int day = cal.get(Calendar.DAY_OF_WEEK);
+            if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+                workDays++;
+            }
+            cal.add(Calendar.DATE, 1);
+        }
+        return workDays;
     }
 }

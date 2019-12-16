@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -65,10 +66,10 @@ public class Psdcd extends BaseModel {
      * 申請日付
      */
     @Column(name = "APPLICATION")
-    private String application;
+    private Date application;
 
     /**
-     * 联系邮箱
+     * E－Mail
      */
     @Column(name = "EMAIL")
     private String email;

@@ -6,6 +6,7 @@ import com.nt.dao_Assets.Vo.InventoryplanVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryplanMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,21 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     public void insert(InventoryplanVo inventoryplanVo, TokenModel tokenModel) throws Exception {
         String inventoryplanid = UUID.randomUUID().toString();
         Inventoryplan inventoryplan = new Inventoryplan();
+        List<Inventoryplan> inventList = inventoryplanMapper.select(inventoryplan);
+        if(inventList != null){
+            for(Inventoryplan inv : inventList){
+                String getinvent = inv.getInventorycycle();
+                String getsta = inv.getStatus();
+                if(inventoryplanVo.getInventoryplan().getInventorycycle().equals(getinvent) && !getsta.equals("2")){
+                    inventoryplanMapper.delete(inv);
+                }
+            }
+        }
         BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
         inventoryplan.preInsert(tokenModel);
         inventoryplan.setInventoryplan_id(inventoryplanid);
         Assets aa = new Assets();
+        aa.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Assets> aalist = assetsMapper.select(aa);
         inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
         List<Assets> assetsList = inventoryplanVo.getAssets();
@@ -50,10 +62,11 @@ public class InventoryplanServiceImpl implements InventoryplanService {
             for (Assets ass : assetsList) {
                 rowindex = rowindex + 1;
                 ass.preInsert(tokenModel);
-//                ass.setAssets_id(UUID.randomUUID().toString());
+                ass.setAssets_id(UUID.randomUUID().toString());
                 ass.setInventoryplan_id(inventoryplanid);
+                ass.setStatus("4");
                 ass.setRowindex(rowindex);
-                assetsMapper.updateByPrimaryKeySelective(ass);
+                assetsMapper.insertSelective(ass);
             }
         }
     }
@@ -64,11 +77,33 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
         inventoryplan.preUpdate(tokenModel);
         inventoryplanMapper.updateByPrimaryKey(inventoryplan);
+        String inventoryplanid = inventoryplan.getInventoryplan_id();
+        Assets asp = new Assets();
+        asp.setInventoryplan_id(inventoryplanid);
+        List<Assets> alist = assetsMapper.select(asp);
+        if(alist != null){
+            int account = 0;
+            for(Assets as : alist){
+                if(!as.getResult().equals("")){
+                    account ++;
+                }
+            }
+            if(account == alist.size()) {
+                inventoryplan.setStatus("2");
+                inventoryplan.setInventoryplan_id(inventoryplanid);
+                inventoryplanMapper.updateByPrimaryKeySelective(inventoryplan);
+            }
+        }
         List<Assets> assetsList = inventoryplanVo.getAssets();
+        int rowindex = 0;
         if (assetsList != null) {
             for (Assets ass : assetsList) {
+                rowindex = rowindex + 1;
                 ass.preInsert(tokenModel);
-                assetsMapper.updateByPrimaryKeySelective(ass);
+                ass.setInventoryplan_id(inventoryplanid);
+                ass.setRowindex(rowindex);
+                ass.setStatus("4");
+                assetsMapper.updateByPrimaryKey(ass);
             }
         }
     }
@@ -89,6 +124,7 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         InventoryplanVo inventoryplanVo = new InventoryplanVo();
         Assets assets = new Assets();
         assets.setInventoryplan_id(inventoryplanid);
+        assets.setStatus("4");
         List<Assets> assetsList = assetsMapper.select(assets);
         assetsList = assetsList.stream().sorted(Comparator.comparing(Assets::getRowindex)).collect(Collectors.toList());
         Inventoryplan inventoryplan = inventoryplanMapper.selectByPrimaryKey(inventoryplanid);

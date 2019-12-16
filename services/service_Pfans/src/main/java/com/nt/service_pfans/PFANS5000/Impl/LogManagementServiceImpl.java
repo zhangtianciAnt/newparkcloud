@@ -90,7 +90,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             model.add("姓名");
             model.add("项目");
             model.add("日志日期");
-            model.add("时差");
+            model.add("时长");
             model.add("工作备注");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {

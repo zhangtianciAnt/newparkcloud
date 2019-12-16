@@ -1,31 +1,33 @@
 package com.nt.dao_Pfans.PFANS1000;
 
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "psdcddetail")
-public class Psdcddetail {
+public class Psdcddetail extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * PSDCD ID申請明细
+     * PSDCD ID申請明细副表
      */
     @Column(name = "PSDCDDETAIL_ID")
     private String psdcddetail_id;
 
     /**
-     * 番号
+     * PSDCD ID申請
      */
-    @Column(name = "NUMBER")
-    private String number;
+    @Column(name = "PSDCD_ID")
+    private String psdcd_id;
 
     /**
      * ユーザ種類
@@ -67,7 +69,7 @@ public class Psdcddetail {
      * 期待時間
      */
     @Column(name = "WAITFORTIME")
-    private String waitfortime;
+    private Date waitfortime;
 
     /**
      * 预算单位
@@ -85,7 +87,7 @@ public class Psdcddetail {
      * A期待時間
      */
     @Column(name = "EXPECTTIME")
-    private String expecttime;
+    private Date expecttime;
 
     /**
      * Domain Account
@@ -97,7 +99,7 @@ public class Psdcddetail {
      * D期待時間
      */
     @Column(name = "FORWARDTIME")
-    private String forwardtime;
+    private Date forwardtime;
 
     /**
      * 備考
@@ -105,6 +107,9 @@ public class Psdcddetail {
     @Column(name = "PREPAREFOR")
     private String preparefor;
 
+    /**
+     * 顺序
+     */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 

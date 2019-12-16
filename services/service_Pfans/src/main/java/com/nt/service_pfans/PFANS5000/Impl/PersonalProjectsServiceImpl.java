@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS5000.Impl;
 
 
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
+import com.nt.dao_Pfans.PFANS5000.Vo.PersonalProjectsVo;
 import com.nt.service_pfans.PFANS5000.PersonalProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +25,25 @@ public class PersonalProjectsServiceImpl implements PersonalProjectsService {
 
         return personalprojectsMapper.select(personalprojects) ;
     }
+
     @Override
-    public void insert(PersonalProjects personalprojects, TokenModel tokenModel) throws Exception {
-        personalprojects.preInsert(tokenModel);
-        personalprojects.setPersonalprojects_id(UUID.randomUUID().toString());
-        personalprojectsMapper.insert(personalprojects);
+    public void delete(PersonalProjects personalprojects, TokenModel tokenModel) throws Exception {
+        personalprojectsMapper.delete(personalprojects);
     }
 
     @Override
-    public void delete(PersonalProjects personal, TokenModel tokenModel) throws Exception{
-
-        personalprojectsMapper.delete(personal);
+    public void insert(PersonalProjectsVo personalprojectsvo, TokenModel tokenModel) throws Exception {
+        PersonalProjects personalprojects = new PersonalProjects();
+        List<PersonalProjects> PersonalProjectslist = personalprojectsvo.getPersonalprojects();
+        for(PersonalProjects personal:PersonalProjectslist){
+            personalprojects.setProject_name(personal.getProject_name());
+            personalprojects.setUser_id(personal.getUser_id());
+            personalprojects.setProject_id(personal.getProject_id());
+            personalprojects.setPersonalprojects_id(UUID.randomUUID().toString());
+            personalprojects.preInsert(tokenModel);
+            personalprojectsMapper.insert(personalprojects);
+        }
     }
+
 }
 
