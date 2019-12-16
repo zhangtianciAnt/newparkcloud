@@ -20,11 +20,11 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "driverinformation")
-public class DriverInformation extends BaseModel {
+@Table(name = "blacklist")
+public class BlackList extends BaseModel {
 
     @Id
-    private String driverid;
+    private String blacklistid;
 
     /**
      * 驾驶员姓名
@@ -40,7 +40,7 @@ public class DriverInformation extends BaseModel {
     /**
      * 违规时间
      */
-    private String drivertime;
+    private String violationstime;
 
     /**
      * 违规类型

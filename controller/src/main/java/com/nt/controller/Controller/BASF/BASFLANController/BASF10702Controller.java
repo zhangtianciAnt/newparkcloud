@@ -1,9 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
-import com.nt.dao_BASF.DriverInformation;
-import com.nt.service_BASF.DriverInformationServices;
+import com.nt.dao_BASF.BlackList;
+import com.nt.service_BASF.BlackListServices;
 import com.nt.utils.*;
-import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,23 +26,23 @@ import javax.servlet.http.HttpServletRequest;
 public class BASF10702Controller {
 
     @Autowired
-    private DriverInformationServices driverInformationServices;
+    private BlackListServices blackListServices;
 
     @Autowired
     private TokenService tokenService;
 
     /**
-     * @param driverInformation
+     * @param blackList
      * @Method list
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取驾驶员列表
+     * @Description 获取黑名单列表
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/22 15：22
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(@RequestBody(required = false) DriverInformation driverInformation) throws Exception {
-        return ApiResult.success(driverInformationServices.list(driverInformation));
+    public ApiResult list(@RequestBody(required = false) BlackList blackList) throws Exception {
+        return ApiResult.success(blackListServices.list(blackList));
     }
 
     /**
@@ -57,11 +56,11 @@ public class BASF10702Controller {
      */
     @RequestMapping(value = "/checkblack", method = {RequestMethod.POST})
     public ApiResult checkblack(String driverIdNo) throws Exception {
-        return ApiResult.success(driverInformationServices.checkblack(driverIdNo));
+        return ApiResult.success(blackListServices.checkblack(driverIdNo));
     }
 
     /**
-     * @param driverInformation
+     * @param blackList
      * @param request
      * @Method delete
      * @Author Wxz
@@ -71,12 +70,12 @@ public class BASF10702Controller {
      * @Date 2019/11/29 10：15
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})
-    public ApiResult delete(@RequestBody DriverInformation driverInformation, HttpServletRequest request) throws Exception {
-        if (driverInformation == null) {
+    public ApiResult delete(@RequestBody BlackList blackList, HttpServletRequest request) throws Exception {
+        if (blackList == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        driverInformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
-        driverInformationServices.delete(driverInformation);
+        blackList.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        blackListServices.delete(blackList);
         return ApiResult.success();
     }
 }

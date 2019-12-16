@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_BASF.mapper.DriverInformationMapper.xml">
-    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.DriverInformation">
-        <id column="driverid" property="driverid" jdbcType="VARCHAR"/>
+<mapper namespace="com.nt.service_BASF.mapper.BlackListMapper.xml">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.BlackList">
+        <id column="blacklistid" property="blacklistid" jdbcType="VARCHAR"/>
         <result column="drivername" property="drivername" jdbcType="VARCHAR"/>
         <result column="driveridnumber" property="driveridnumber" jdbcType="VARCHAR"/>
-        <result column="drivertime" property="drivertime" jdbcType="TIMESTAMP"/>
+        <result column="violationstime" property="violationstime" jdbcType="TIMESTAMP"/>
         <result column="violationtype" property="violationtype" jdbcType="VARCHAR"/>
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>

@@ -32,33 +32,28 @@ public class Vehicletrajectory extends BaseModel {
     private String vehicleinformationid;
 
     /**
-     *轨迹开始时间
+     *经度
      */
-    private String vehiclestarttime;
+    private String longitude;
 
     /**
-     *轨迹结束时间
+     *纬度
      */
-    private String vehicleendtime;
+    private String latitude;
 
     /**
-     *车辆违规状态
+     *方向
+     */
+    private String direction;
+
+    /**
+     * 速度
+     */
+    private String speed;
+
+    /**
+     * 违规类型
      */
     private String vehicleviolationtype;
-
-    /**
-     * 车牌号
-     */
-    private String vehiclenumber;
-
-    /**
-     * 驾驶员姓名
-     */
-    private String drivername;
-
-    /**
-     * 车辆所属公司
-     */
-    private String vehiclecompany;
 
 }

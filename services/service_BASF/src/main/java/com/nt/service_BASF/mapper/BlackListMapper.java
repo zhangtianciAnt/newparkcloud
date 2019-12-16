@@ -1,6 +1,6 @@
 package com.nt.service_BASF.mapper;
 
-import com.nt.dao_BASF.DriverInformation;
+import com.nt.dao_BASF.BlackList;
 import com.nt.utils.MyMapper;
 
 /**
@@ -12,5 +12,5 @@ import com.nt.utils.MyMapper;
  * @Date: 2019/11/22 15:04
  * @Version: 1.0
  */
-public interface DriverInformationMapper extends MyMapper<DriverInformation> {
+public interface BlackListMapper extends MyMapper<BlackList> {
 }

@@ -4,10 +4,20 @@
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Vehicleinformation">
         <id column="vehicleinformationid" property="vehicleinformationid" jdbcType="VARCHAR"/>
         <result column="vehiclenumber" property="vehiclenumber" jdbcType="VARCHAR"/>
-        <result column="vehiclecompany" property="vehiclecompany" jdbcType="VARCHAR"/>
+        <result column="driver" property="driver" jdbcType="VARCHAR"/>
+        <result column="driverid" property="driverid" jdbcType="VARCHAR"/>
+        <result column="escortname" property="escortname" jdbcType="VARCHAR"/>
+        <result column="escortid" property="escortid" jdbcType="VARCHAR"/>
         <result column="vehicletype" property="vehicletype" jdbcType="VARCHAR"/>
-        <result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
-        <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP"/>
+        <result column="supplier" property="supplier" jdbcType="VARCHAR"/>
+        <result column="transporter" property="transporter" jdbcType="VARCHAR"/>
+        <result column="transtype" property="transtype" jdbcType="VARCHAR"/>
+        <result column="linkdepartment" property="linkdepartment" jdbcType="VARCHAR"/>
+        <result column="goodsname" property="goodsname" jdbcType="VARCHAR"/>
+        <result column="weight" property="weight" jdbcType="VARCHAR"/>
+        <result column="intime" property="intime" jdbcType="VARCHAR"/>
+        <result column="outtime" property="outtime" jdbcType="VARCHAR"/>
+        <result column="destination" property="destination" jdbcType="VARCHAR"/>
 
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>

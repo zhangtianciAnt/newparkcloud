@@ -1,8 +1,8 @@
 package com.nt.service_BASF.Impl;
 
-import com.nt.dao_BASF.DriverInformation;
-import com.nt.service_BASF.DriverInformationServices;
-import com.nt.service_BASF.mapper.DriverInformationMapper;
+import com.nt.dao_BASF.BlackList;
+import com.nt.service_BASF.BlackListServices;
+import com.nt.service_BASF.mapper.BlackListMapper;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,25 +23,25 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class DriverInformationServicesImpl implements DriverInformationServices {
+public class BlackListServicesImpl implements BlackListServices {
 
     private static Logger log = LoggerFactory.getLogger(DeviceInformationServicesImpl.class);
 
     @Autowired
-    private DriverInformationMapper driverInformationMapper;
+    private BlackListMapper blackListMapper;
 
     /**
-     * @param driverInformation
+     * @param blackList
      * @Method list
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取驾驶员列表
+     * @Description 获取黑名单列表
      * @Return java.util.List<driverInformation>
      * @Date 2019/11/22 15:05
      */
     @Override
-    public List<DriverInformation> list(DriverInformation driverInformation) throws Exception {
-        return driverInformationMapper.select(driverInformation);
+    public List<BlackList> list(BlackList blackList) throws Exception {
+        return blackListMapper.select(blackList);
     }
 
     /**
@@ -55,14 +55,14 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
      */
     @Override
     public boolean checkblack(String driverIdNo) throws Exception {
-        DriverInformation driverInformation = new DriverInformation();
-        driverInformation.setDriveridnumber(driverIdNo);
-        return driverInformationMapper.select(driverInformation).size() != 0;
+        BlackList blackList = new BlackList();
+        blackList.setDriveridnumber(driverIdNo);
+        return blackListMapper.select(blackList).size() != 0;
     }
 
 
     /**
-     * @param driverInformation
+     * @param blackList
      * @Method Delete
      * @Author Wxz
      * @Version 1.0
@@ -71,8 +71,8 @@ public class DriverInformationServicesImpl implements DriverInformationServices 
      * @Date 2019/11/29 10：13
      */
     @Override
-    public void delete(DriverInformation driverInformation) throws Exception {
+    public void delete(BlackList blackList) throws Exception {
         //逻辑删除（status -> "1"）
-        driverInformationMapper.updateByPrimaryKeySelective(driverInformation);
+        blackListMapper.updateByPrimaryKeySelective(blackList);
     }
 }

@@ -1,6 +1,6 @@
 package com.nt.service_BASF;
 
-import com.nt.dao_BASF.DriverInformation;
+import com.nt.dao_BASF.BlackList;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -14,14 +14,14 @@ import java.util.List;
  * @Date: 2019/11/22 15:00
  * @Version: 1.0
  */
-public interface DriverInformationServices {
+public interface BlackListServices {
 
-    //获取驾驶员列表
-    List<DriverInformation> list(DriverInformation driverInformation) throws Exception;
+    //获取黑名单列表
+    List<BlackList> list(BlackList blackList) throws Exception;
 
     //查询是否为黑名单
     boolean checkblack(String driveridnum) throws Exception;
 
     //删除驾驶员黑名单信息
-    void delete(DriverInformation driverInformation) throws Exception;
+    void delete(BlackList blackList) throws Exception;
 }

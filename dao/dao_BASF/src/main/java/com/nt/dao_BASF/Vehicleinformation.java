@@ -31,9 +31,24 @@ public class Vehicleinformation extends BaseModel {
     private String vehiclenumber;
 
     /**
-     *车辆所属公司
+     *驾驶员
      */
-    private String vehiclecompany;
+    private String driver;
+
+    /**
+     *驾驶员身份证
+     */
+    private String driverid;
+
+    /**
+     *押运员
+     */
+    private String escortname;
+
+    /**
+     * 押运员身份证
+     */
+    private String escortid;
 
     /**
      *车辆类型
@@ -41,15 +56,48 @@ public class Vehicleinformation extends BaseModel {
     private String vehicletype;
 
     /**
-     *创建时间
+     *物流服务商
      */
-    private String createtime;
+    private String supplier;
 
     /**
-     * 更新时间
+     *运输公司名称
      */
-    private String updatetime;
+    private String transporter;
 
+    /**
+     *进场目的
+     */
+    private String transtype;
 
+    /**
+     *联系部门
+     */
+    private String linkdepartment;
+
+    /**
+     *物料名称
+     */
+    private String goodsname;
+
+    /**
+     *车辆（挂车）核定载重量
+     */
+    private String weight;
+
+    /**
+     *入厂时间
+     */
+    private String intime;
+
+    /**
+     *出厂时间
+     */
+    private String outtime;
+
+    /**
+     *目的地
+     */
+    private String destination;
 
 }

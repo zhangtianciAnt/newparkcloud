@@ -4,12 +4,11 @@
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Vehicletrajectory">
         <id column="vehicletrajectoryid" property="vehicletrajectoryid" jdbcType="VARCHAR" />
         <result column="vehicleinformationid" property="vehicleinformationid" jdbcType="VARCHAR"/>
-        <result column="vehiclestarttime" property="vehiclestarttime" jdbcType="TIMESTAMP"/>
-        <result column="vehicleendtime" property="vehicleendtime" jdbcType="TIMESTAMP"/>
+        <result column="longitude" property="longitude" jdbcType="TIMESTAMP"/>
+        <result column="latitude" property="latitude" jdbcType="TIMESTAMP"/>
+        <result column="direction" property="direction" jdbcType="VARCHAR"/>
+        <result column="speed" property="speed" jdbcType="VARCHAR"/>
         <result column="vehicleviolationtype" property="vehicleviolationtype" jdbcType="VARCHAR"/>
-        <result column="vehiclenumber" property="vehiclenumber" jdbcType="VARCHAR"/>
-        <result column="drivername" property="drivername" jdbcType="VARCHAR"/>
-        <result column="vehiclecompany" property="vehiclecompany" jdbcType="VARCHAR"/>
 
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
