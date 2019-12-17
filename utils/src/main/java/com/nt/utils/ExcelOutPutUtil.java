@@ -18,9 +18,9 @@ public class ExcelOutPutUtil {
         ClassPathResource resource = new ClassPathResource("jxls_templates");
 
         String imgRoot = resource.getPath();
-
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setHeader("Content-Disposition","attachment;filename="+fileName+".xlsx");
+//        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
+//        response.setHeader("Content-Disposition","attachment;filename="+fileName+".xlsx");
         ServletOutputStream out=response.getOutputStream();
 
         JxlsBuilder jxlsBuilder = JxlsBuilder
