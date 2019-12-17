@@ -118,6 +118,6 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         data.put("accidentCommands", accidentCommands);
         data.put("command", command);
         data.put("casualties", commandrecord.getCasualties().getNumber());
-        ExcelOutPutUtil.OutPut("bbba", "fireaccidentrecord.xlsx", data, response);
+        ExcelOutPutUtil.OutPut(fireaccidentrecord.getFireaccidentno(), "fireaccidentrecord.xlsx", data, response);
     }
 }

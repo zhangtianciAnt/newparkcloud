@@ -127,7 +127,7 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
      * @Method update
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新题库详情
+     * @Description 导入导出题库
      * @Return void
      * @Date 2019/12/9 10:21
      */
