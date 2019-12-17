@@ -1,5 +1,6 @@
 package com.nt.service_BASF;
 
+import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.utils.dao.TokenModel;
 
@@ -21,4 +22,13 @@ public interface VehicleinformationServices {
 
     //更新车辆信息
     void update(Vehicleinformation vehicleinformation, TokenModel tokenModel)throws Exception;
+
+    //获取在场车辆信息一览
+    List<Vehicleinformation> getInsideList() throws Exception;
+
+    //获取车辆出入统计
+    List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception;
+
+    //获取当日入场车辆信息
+    List<Vehicleinformation> getDailyVehicleInfo() throws Exception;
 }
