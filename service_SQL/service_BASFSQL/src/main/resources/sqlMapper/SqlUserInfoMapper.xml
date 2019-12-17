@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_SQL.sqlMapper.SqlUserInfoMapper">
+
+
+    <select id="userinfolist" resultType="com.nt.dao_SQL.SqlUserInfo">
+select top 200
+uif.UserID,
+uif.PersonNO,
+uif.UserName,
+dl.departmentID,
+dep.ALLname,
+uif.PetName,
+uif.Title,Sex,
+uif.Telephone,
+uif.MobileTelephone,
+uif.Fax,
+uif.Email,
+uif.WebAddr,
+uif.Activity
+from UserInfo uif
+left join DepartUserList dl
+on uif.UserID = dl.UserID
+left join Department dep
+on dl.departmentID = dep.RecNum
+where
+uif.Activity = 1
+    </select>
+</mapper>
+
