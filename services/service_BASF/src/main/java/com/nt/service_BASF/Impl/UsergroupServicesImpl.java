@@ -83,16 +83,15 @@ public class UsergroupServicesImpl implements UsergroupServices {
         usergroup.setUsergroupname(usergroupVo.getUsergroupname());
         usergroupMapper.insert(usergroup);
 
-        String[] strArray = null;
-        if (usergroupVo.getTeammember() != "") {
-            strArray = usergroupVo.getTeammember().split(",");
-
-            for (int i = 0; i < strArray.length; i++) {
-                Usergroupdetailed usergroupdetailed = new Usergroupdetailed();
+        if(usergroupVo.getTeammember().size()>0)
+        {
+            for(int i=0;i<usergroupVo.getTeammember().size();i++)
+            {
+                Usergroupdetailed usergroupdetailed = usergroupVo.getTeammember().get(i);
                 usergroupdetailed.preInsert(tokenModel);
                 usergroupdetailed.setUsergroupdetailedid(UUID.randomUUID().toString());
                 usergroupdetailed.setUsergroupid(id);
-                usergroupdetailed.setTeammember(strArray[i]);
+                usergroupdetailed.setTeammember(usergroupVo.getTeammember().get(i).getUserid());
                 usergroupdetailedMapper.insert(usergroupdetailed);
             }
         }
@@ -120,17 +119,17 @@ public class UsergroupServicesImpl implements UsergroupServices {
         usergroupdetailed.setUsergroupid(usergroupVo.getUsergroupid());
         usergroupdetailedMapper.delete(usergroupdetailed);
 
-        String[] strArray = null;
-        if (usergroupVo.getTeammember() != "") {
-            strArray = usergroupVo.getTeammember().split(",");
 
-            for (int i = 0; i < strArray.length; i++) {
-                Usergroupdetailed usergroupdetailednew = new Usergroupdetailed();
-                usergroupdetailednew.preInsert(tokenModel);
-                usergroupdetailednew.setUsergroupdetailedid(UUID.randomUUID().toString());
-                usergroupdetailednew.setUsergroupid(usergroupVo.getUsergroupid());
-                usergroupdetailednew.setTeammember(strArray[i]);
-                usergroupdetailedMapper.insert(usergroupdetailednew);
+        if(usergroupVo.getTeammember().size()>0)
+        {
+            for(int i=0;i<usergroupVo.getTeammember().size();i++)
+            {
+                Usergroupdetailed usergroupdetailedup = usergroupVo.getTeammember().get(i);
+                usergroupdetailedup.preInsert(tokenModel);
+                usergroupdetailedup.setUsergroupdetailedid(UUID.randomUUID().toString());
+                usergroupdetailedup.setUsergroupid(usergroupVo.getUsergroupid());
+                usergroupdetailedup.setTeammember(usergroupVo.getTeammember().get(i).getUserid());
+                usergroupdetailedMapper.insert(usergroupdetailedup);
             }
         }
     }
