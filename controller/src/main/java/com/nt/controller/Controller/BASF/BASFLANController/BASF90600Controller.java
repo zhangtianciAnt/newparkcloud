@@ -1,6 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.utils.ApiResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/BASF90600")
 public class BASF90600Controller {
 
+    @Autowired
+    private VehicleinformationServices vehicleinformationServices;
+
     /**
      * @Method getInsideList
      * @Author SKAIXX
@@ -28,8 +33,8 @@ public class BASF90600Controller {
      */
     @RequestMapping(value = "/getInsideList", method = {RequestMethod.GET})
     public ApiResult getInsideList() throws Exception {
-        // TODO 获取在场车辆信息一览
-        return ApiResult.success();
+        //  获取在场车辆信息一览
+        return ApiResult.success(vehicleinformationServices.getInsideList());
     }
 
     /**
@@ -43,8 +48,8 @@ public class BASF90600Controller {
      */
     @RequestMapping(value = "/getAccessStatistics", method = {RequestMethod.GET})
     public ApiResult getAccessStatistics(String period) throws Exception {
-        // TODO 车辆出入统计
-        return ApiResult.success();
+        //  车辆出入统计
+        return ApiResult.success(vehicleinformationServices.getAccessStatistics());
     }
 
     /**
@@ -57,7 +62,7 @@ public class BASF90600Controller {
      */
     @RequestMapping(value = "/getDailyVehicleInfo", method = {RequestMethod.GET})
     public ApiResult getDailyVehicleInfo() throws Exception {
-        // TODO 获取当日入场车辆信息
-        return ApiResult.success();
+        //  获取当日入场车辆信息
+        return ApiResult.success(vehicleinformationServices.getDailyVehicleInfo());
     }
 }

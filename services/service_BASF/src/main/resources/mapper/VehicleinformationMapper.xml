@@ -27,4 +27,25 @@
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
+    <!--    获取在场车辆信息一览-->
+    <select id="getInsideList" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select *
+        from vehicleinformation
+        where ifnull(outtime,'') = ''
+    </select>
+
+    <!--    获取车辆出入统计-->
+    <select id="getAccessStatistics" resultType="com.nt.dao_BASF.VO.VehicleAccessStatisticsVo">
+        select count(*) as cnt,date_format(intime,'%Y-%m-%d') as date
+        from vehicleinformation
+        where outtime is not NULL
+        group by date_format(intime,'%Y-%m-%d')
+    </select>
+
+    <!--    获取当日入场车辆信息-->
+    <select id="getDailyVehicleInfo" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select *
+        from vehicleinformation
+        where date_format(intime,'%Y-%m-%d') = curdate()
+    </select>
 </mapper>

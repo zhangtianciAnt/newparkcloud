@@ -1,5 +1,6 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_BASF.mapper.VehicleinformationMapper;
@@ -60,5 +61,47 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     public void update(Vehicleinformation vehicleinformation, TokenModel tokenModel) throws Exception {
         vehicleinformation.preUpdate(tokenModel);
         vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
+    }
+
+    /**
+     * @Method getInsideList
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 获取在场车辆信息一览
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.Vehicleinformation>
+     * @Date 2019/12/17 11:35
+     */
+    @Override
+    public List<Vehicleinformation> getInsideList() throws Exception {
+        return vehicleinformationMapper.getInsideList();
+    }
+
+    /**
+     * @Method getAccessStatistics
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 获取车辆出入统计
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
+     * @Date 2019/12/17 11:35
+     */
+    @Override
+    public List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception {
+        return vehicleinformationMapper.getAccessStatistics();
+    }
+
+    /**
+     * @Method getDailyVehicleInfo
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 获取当日入场车辆信息
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.Vehicleinformation>
+     * @Date 2019/12/17 11:35
+     */
+    @Override
+    public List<Vehicleinformation> getDailyVehicleInfo() throws Exception {
+        return vehicleinformationMapper.getDailyVehicleInfo();
     }
 }
