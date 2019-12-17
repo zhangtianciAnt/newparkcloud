@@ -17,19 +17,19 @@ import java.util.List;
  */
 public interface QuestionManageServices {
 
-    //获取报警单列表
+    //获取题库列表
     List<QuestionManage> list() throws Exception;
 
-    //创建报警单
+    //创建试题
     String insert(QuestionManage questionManage, TokenModel tokenModel) throws Exception;
 
-    //删除报警单
+    //删除试题
     void delete(QuestionManage questionManage) throws Exception;
 
-    //获取报警单详情
+    //获取试题详情
     QuestionManage one(String questionid) throws Exception;
 
-    //更新报警单
+    //更新试题
     void update(QuestionManage questionManage, TokenModel tokenModel) throws Exception;
 
     //execl导入
