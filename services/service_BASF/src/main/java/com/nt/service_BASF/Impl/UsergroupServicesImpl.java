@@ -114,7 +114,6 @@ public class UsergroupServicesImpl implements UsergroupServices {
         usergroup.setRemark(usergroupVo.getRemark());
         usergroup.setUsergroupname(usergroupVo.getUsergroupname());
         usergroupMapper.updateByPrimaryKeySelective(usergroup);
-
         Usergroupdetailed usergroupdetailed = new Usergroupdetailed();
         usergroupdetailed.setUsergroupid(usergroupVo.getUsergroupid());
         usergroupdetailedMapper.delete(usergroupdetailed);
