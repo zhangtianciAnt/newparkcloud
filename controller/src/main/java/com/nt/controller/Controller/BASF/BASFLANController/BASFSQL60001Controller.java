@@ -36,8 +36,6 @@ public class BASFSQL60001Controller {
     public ApiResult sqluserinfolist( HttpServletRequest request) throws Exception {
         return ApiResult.success(sqluserInfoServices.list());
     }
-
-
 }
 
 
