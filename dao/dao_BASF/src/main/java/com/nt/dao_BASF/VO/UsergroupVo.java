@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsergroupVo extends BaseModel {
-    
+
     @Id
     private String usergroupid;
 

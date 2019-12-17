@@ -28,7 +28,7 @@ public class SelectWithAuth extends MapperTemplate{
         sql.append("<where> 1=1");
         //获取全部列
         Set<EntityColumn> columnList = EntityHelper.getColumns(entityClass);
-        //当某个列有主键策略时，不需要考虑他的属性是否为空，因为如果为空，一定会根据主键策略给他生成一个值 
+        //当某个列有主键策略时，不需要考虑他的属性是否为空，因为如果为空，一定会根据主键策略给他生成一个值
 
         for (EntityColumn column : columnList) {
             sql.append(SqlHelper.getIfNotNull(column, " AND " + column.getColumnEqualsHolder(), isNotEmpty()));
