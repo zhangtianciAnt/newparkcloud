@@ -1,5 +1,6 @@
 package com.nt.service_BASF.mapper;
 
+import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.utils.MyMapper;
@@ -18,7 +19,7 @@ import java.util.List;
 public interface VehicleinformationMapper extends MyMapper<Vehicleinformation> {
 
     //获取在场车辆信息一览
-    List<Vehicleinformation> getInsideList();
+    List<InsideVehicleinformationVo> getInsideList();
 
     //获取车辆出入统计
     List<VehicleAccessStatisticsVo> getAccessStatistics();

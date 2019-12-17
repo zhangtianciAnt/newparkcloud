@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_BASF.mapper.VehicleinformationMapper.xml">
+<mapper namespace="com.nt.service_BASF.mapper.VehicleinformationMapper">
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Vehicleinformation">
         <id column="vehicleinformationid" property="vehicleinformationid" jdbcType="VARCHAR"/>
         <result column="vehiclenumber" property="vehiclenumber" jdbcType="VARCHAR"/>
@@ -28,9 +28,11 @@
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
     <!--    获取在场车辆信息一览-->
-    <select id="getInsideList" resultType="com.nt.dao_BASF.Vehicleinformation">
-        select *
-        from vehicleinformation
+    <select id="getInsideList" resultType="com.nt.dao_BASF.VO.InsideVehicleinformationVo">
+        select a.vehiclenumber,a.transporter,a.intime,a.goodsname, a.destination,b.speed
+        from vehicleinformation a
+				INNER JOIN vehicletrajectory b
+				on a.vehicleinformationid = b.vehicleinformationid
         where ifnull(outtime,'') = ''
     </select>
 
@@ -40,6 +42,8 @@
         from vehicleinformation
         where outtime is not NULL
         group by date_format(intime,'%Y-%m-%d')
+        order by date desc
+        limit 30
     </select>
 
     <!--    获取当日入场车辆信息-->

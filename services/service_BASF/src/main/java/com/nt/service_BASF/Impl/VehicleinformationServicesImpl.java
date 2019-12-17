@@ -1,5 +1,6 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
@@ -73,7 +74,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2019/12/17 11:35
      */
     @Override
-    public List<Vehicleinformation> getInsideList() throws Exception {
+    public List<InsideVehicleinformationVo> getInsideList() throws Exception {
         return vehicleinformationMapper.getInsideList();
     }
 
