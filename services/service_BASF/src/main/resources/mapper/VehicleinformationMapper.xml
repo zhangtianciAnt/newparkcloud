@@ -46,6 +46,14 @@
         limit 30
     </select>
 
+    <!--    获取在场车辆类别统计-->
+    <select id="getInsideVehicleType" resultType="com.nt.dao_BASF.VO.InsideVehicleTypeVo">
+        select count(*) as cnt,vehicletype
+        from vehicleinformation
+        where ifnull(outtime,'') = ''
+        group by vehicletype
+    </select>
+
     <!--    获取当日入场车辆信息-->
     <select id="getDailyVehicleInfo" resultType="com.nt.dao_BASF.Vehicleinformation">
         select *
