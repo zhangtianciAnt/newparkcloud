@@ -1,6 +1,5 @@
 package com.nt.dao_BASF.VO;
 
-import com.nt.dao_BASF.Usergroupdetailed;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -29,7 +27,8 @@ public class UsergroupVo extends BaseModel {
     private String remark;
 
     /**
-     * 用户组成员list
+     * 用户组成员
      */
-    private List<Usergroupdetailed> teammember;
+    private String teammember;
+
 }

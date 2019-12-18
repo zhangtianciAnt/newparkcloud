@@ -25,18 +25,5 @@ public class Usergroupdetailed extends BaseModel {
      * 用户组组员
      */
     private String teammember;
-    private String personno;
-    private String username;
-    private String petname;
-    private String title;
-    private String sex;
-    private String telephone;
-    private String mobiletelephone;
-    private String fax;
-    private String email;
-    private String webaddr;
-    private String activity;
-    private String userid;
-    private String departmentid;
-    private String allname;
+    
 }
