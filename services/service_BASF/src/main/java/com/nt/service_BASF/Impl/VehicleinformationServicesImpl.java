@@ -1,5 +1,6 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
 import com.nt.dao_BASF.Vehicleinformation;
@@ -104,5 +105,19 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public List<Vehicleinformation> getDailyVehicleInfo() throws Exception {
         return vehicleinformationMapper.getDailyVehicleInfo();
+    }
+
+    /**
+     * @Method getInsideVehicleType
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 获取在场车辆类别统计
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.VO.InsideVehicleTypeVo>
+     * @Date 2019/12/17 11:35
+     */
+    @Override
+    public List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception {
+        return vehicleinformationMapper.getInsideVehicleType();
     }
 }

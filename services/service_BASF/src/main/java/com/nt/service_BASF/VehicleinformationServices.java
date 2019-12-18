@@ -1,5 +1,6 @@
 package com.nt.service_BASF;
 
+import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
 import com.nt.dao_BASF.Vehicleinformation;
@@ -32,4 +33,7 @@ public interface VehicleinformationServices {
 
     //获取当日入场车辆信息
     List<Vehicleinformation> getDailyVehicleInfo() throws Exception;
+
+    //获取在场车辆类别统计
+    List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception;
 }

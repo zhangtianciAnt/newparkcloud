@@ -67,4 +67,18 @@ public class BASF90600Controller {
         //  获取当日入场车辆信息
         return ApiResult.success(vehicleinformationServices.getDailyVehicleInfo());
     }
+
+    /**
+     * @Method getInsideVehicleType
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 在场车辆类别统计
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/12/16 14:18
+     */
+    @RequestMapping(value = "/getInsideVehicleType", method = {RequestMethod.GET})
+    public ApiResult getInsideVehicleType() throws Exception {
+        //  在场车辆类别统计
+        return ApiResult.success(vehicleinformationServices.getInsideVehicleType());
+    }
 }
