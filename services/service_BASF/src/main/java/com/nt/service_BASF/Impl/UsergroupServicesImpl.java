@@ -84,6 +84,7 @@ public class UsergroupServicesImpl implements UsergroupServices {
         usergroupMapper.insert(usergroup);
 
         String[] strArray = null;
+
         if (usergroupVo.getTeammember() != "") {
             strArray = usergroupVo.getTeammember().split(",");
 

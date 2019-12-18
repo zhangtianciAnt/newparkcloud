@@ -25,4 +25,5 @@ public class Usergroupdetailed extends BaseModel {
      * 用户组组员
      */
     private String teammember;
+    
 }

@@ -30,4 +30,5 @@ public class UsergroupVo extends BaseModel {
      * 用户组成员
      */
     private String teammember;
+
 }
