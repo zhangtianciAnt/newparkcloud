@@ -59,8 +59,8 @@ public class RoleController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        role.setOwners(tokenModel.getOwnerList());
-        role.setTenantid(tokenModel.getTenantId());
+//        role.setOwners(tokenModel.getOwnerList());
+//        role.setTenantid(tokenModel.getTenantId());
         role.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return ApiResult.success(roleService.getRoleList(role));
     }

@@ -37,7 +37,7 @@ public class OrgTreeController {
         OrgTree orgTree = new OrgTree();
         TokenModel tokenModel = tokenService.getToken(request);
         //orgTree.setTenantid(tokenModel.getTenantId());
-        orgTree.setOwners(tokenModel.getOwnerList());
+        //orgTree.setOwners(tokenModel.getOwnerList());
         //orgTree.setIds(tokenModel.getIdList());
 //        orgTree.setTenantid(RequestUtils.CurrentTenantId(request));
 //        orgTree = RequestUtils.CurrentPageOwnerList(request, orgTree);
