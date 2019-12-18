@@ -63,6 +63,11 @@ public class Emergencyplan extends BaseModel {
     private String planlevel;
 
     /*
+     * 预案类型
+     */
+    private String plantype;
+
+    /*
      * 附件
      */
     private String uploadfile;
