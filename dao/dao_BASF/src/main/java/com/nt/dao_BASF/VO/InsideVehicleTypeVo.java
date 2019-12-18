@@ -8,17 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VehicleAccessStatisticsVo extends BaseModel {
+public class InsideVehicleTypeVo extends BaseModel {
+    /**
+     * 车辆类别
+     */
+    private String vehicletype;
 
     /**
-     * 出入车辆数
+     * 数量
      */
     private Integer cnt;
-
-    /**
-     * 统计日期
-     */
-    private String date;
-
-
 }
