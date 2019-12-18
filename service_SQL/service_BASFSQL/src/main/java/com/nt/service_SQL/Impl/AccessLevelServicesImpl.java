@@ -1,4 +1,4 @@
-package com.nt.service_SQL.impl;
+package com.nt.service_SQL.Impl;
 
 
 import com.nt.dao_SQL.AccessLevel;
