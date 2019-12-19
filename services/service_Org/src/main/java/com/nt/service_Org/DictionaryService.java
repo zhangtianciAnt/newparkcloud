@@ -13,4 +13,8 @@ public interface DictionaryService {
 
     public void updateDictionary(Dictionary dictionary, TokenModel tokenModel)throws Exception;
 
+    List<Dictionary> getDictionary(Dictionary dictionary) throws Exception;
+
+    public void upDictionary(List<Dictionary> dictionarylist, TokenModel tokenModel)throws Exception;
+
 }
