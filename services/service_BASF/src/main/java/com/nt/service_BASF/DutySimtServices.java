@@ -18,6 +18,12 @@ public interface DutySimtServices {
 
     //获取值班人列表
     List<DutySimt> list() throws Exception;
+
     //更新值班人
     void update(DutySimt dutySimt, TokenModel tokenModel)throws Exception;
+
+    //查询某天值班人员
+   String selectByDay(DutySimt dutySimt)throws Exception;
+
+
 }

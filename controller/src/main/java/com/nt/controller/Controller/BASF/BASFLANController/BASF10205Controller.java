@@ -68,4 +68,19 @@ public class BASF10205Controller {
         dutySimtServices.update(dutySimt,tokenModel);
         return ApiResult.success();
     }
+
+    /**
+     * @param dutySimt
+     * @Method list
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 查询某天值班人
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/12/19 18:11
+     */
+    @RequestMapping(value = "/selectByDay", method = {RequestMethod.POST})
+    public ApiResult selectByDay(DutySimt dutySimt) throws Exception {
+        return ApiResult.success(dutySimtServices.selectByDay(dutySimt));
+    }
+
 }

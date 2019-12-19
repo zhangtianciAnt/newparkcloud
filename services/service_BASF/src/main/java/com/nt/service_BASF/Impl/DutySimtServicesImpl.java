@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +60,45 @@ public class DutySimtServicesImpl implements DutySimtServices {
     public void update(DutySimt dutySimt, TokenModel tokenModel) throws Exception {
         dutySimt.preUpdate(tokenModel);
         dutySimtMapper.updateByPrimaryKey(dutySimt);
+    }
+
+    /**
+     * @param dutySimt
+     * @Method selectByDay
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 查询某天值班人
+     * @Return void
+     * @Date 2019/12/19 17：25
+     */
+    @Override
+    public String selectByDay(DutySimt dutySimt) throws Exception {
+        //设置日期格式
+        SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+        // new Date()为获取当前系统时间为星期几
+        String currSun = dateFm.format(new Date());
+        if(currSun.equals("星期一")){
+           return dutySimt.getMon();
+        }
+        if(currSun.equals("星期二")){
+            return dutySimt.getTue();
+        }
+        if(currSun.equals("星期三")){
+            return dutySimt.getWeb();
+        }
+        if(currSun.equals("星期四")){
+            return dutySimt.getThu();
+        }
+        if(currSun.equals("星期五")){
+            return dutySimt.getFri();
+        }
+        if(currSun.equals("星期六")){
+            return dutySimt.getSat();
+        }
+        if(currSun.equals("星期日")){
+            return dutySimt.getSun();
+        }
+        return null;
     }
 
 }
