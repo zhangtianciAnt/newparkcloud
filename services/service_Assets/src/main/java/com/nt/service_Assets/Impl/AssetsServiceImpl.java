@@ -3,13 +3,13 @@ package com.nt.service_Assets.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.InventoryResults;
 import com.nt.service_Assets.AssetsService;
 import com.nt.service_Assets.mapper.AssetsMapper;
-import com.nt.utils.AuthConstants;
+import com.nt.service_Assets.mapper.InventoryResultsMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,14 +31,33 @@ public class AssetsServiceImpl implements AssetsService {
     @Autowired
     private AssetsMapper assetsMapper;
 
-    @Override
-    public void connection(String address, TokenModel tokenModel) throws Exception {
+    @Autowired
+    private InventoryResultsMapper assetsResultMapper;
 
+    @Override
+    public void scanOne(InventoryResults inventoryResults, TokenModel tokenModel) throws Exception {
+        inventoryResults.preInsert(tokenModel);
+        inventoryResults.setResult("2");
+        assetsResultMapper.updateByPrimaryKey(inventoryResults);
+    }
+
+    @Override
+    public void scanList(InventoryResults inventoryResults, TokenModel tokenModel) throws Exception {
+        List<InventoryResults> inventresList = assetsResultMapper.select(inventoryResults);
+        if(inventresList != null){
+            int rowindex = 0;
+            for(InventoryResults inv : inventresList){
+                rowindex = rowindex + 1;
+                inv.preInsert(tokenModel);
+                inv.setResult("2");
+                inv.setRowindex(rowindex);
+                assetsResultMapper.updateByPrimaryKey(inv);
+            }
+        }
     }
 
     @Override
     public List<Assets> list(Assets assets) throws Exception {
-        assets.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return assetsMapper.select(assets);
     }
 

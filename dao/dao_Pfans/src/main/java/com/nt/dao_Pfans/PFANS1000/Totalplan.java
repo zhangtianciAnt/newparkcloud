@@ -67,6 +67,12 @@ public class Totalplan extends BaseModel {
     @Column(name = "NUMBER10")
     private String number10;
 
+    @Column(name = "WORKINGHOURS10")
+    private String workinghours10;
+
+    @Column(name = "NUMBER11")
+    private String number11;
+
     @Column(name = "WORKINGHOURS11")
     private String workinghours11;
 

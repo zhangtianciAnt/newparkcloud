@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/dictionary")
@@ -56,6 +57,22 @@ public class DictionaryController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         dictionaryService.updateDictionary(dictionary, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getDictionary",method={RequestMethod.POST})
+    public ApiResult getDictionary(Dictionary dictionary, HttpServletRequest request) throws Exception {
+        if (dictionary == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(dictionaryService.getDictionary(dictionary));
+    }
+
+    @RequestMapping(value = "/upDictionary",method={RequestMethod.POST})
+    public ApiResult upDictionary(List<Dictionary> dictionarylisty, HttpServletRequest request) throws Exception {
+
+        TokenModel tokenModel = tokenService.getToken(request);
+        dictionaryService.upDictionary(dictionarylisty, tokenModel);
         return ApiResult.success();
     }
 }

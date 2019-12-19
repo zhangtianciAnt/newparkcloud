@@ -1,12 +1,15 @@
 package com.nt.service_Assets.Impl;
 
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.InventoryRange;
 import com.nt.dao_Assets.Inventoryplan;
-import com.nt.dao_Assets.Vo.InventoryplanVo;
+import com.nt.dao_Assets.InventoryResults;
+import com.nt.dao_Assets.Vo.InventoryRangeVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryplanMapper;
-import com.nt.utils.AuthConstants;
+import com.nt.service_Assets.mapper.InventoryRangeMapper;
+import com.nt.service_Assets.mapper.InventoryResultsMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,85 +30,73 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     @Autowired
     private AssetsMapper assetsMapper;
 
+    @Autowired
+    private InventoryRangeMapper inventoryRangeMapper;
+
+    @Autowired
+    private InventoryResultsMapper inventoryResultsMapper;
+
     @Override
     public List<Inventoryplan> get(Inventoryplan inventoryplan) throws Exception {
         return inventoryplanMapper.select(inventoryplan);
     }
 
     @Override
-    public void insert(InventoryplanVo inventoryplanVo, TokenModel tokenModel) throws Exception {
-        String inventoryplanid = UUID.randomUUID().toString();
+    public void insert(InventoryRangeVo inventoryRangeVo, TokenModel tokenModel) throws Exception {
+        String inventoryRangeid = UUID.randomUUID().toString();
         Inventoryplan inventoryplan = new Inventoryplan();
-        List<Inventoryplan> inventList = inventoryplanMapper.select(inventoryplan);
-        if(inventList != null){
-            for(Inventoryplan inv : inventList){
+        List<Inventoryplan> invtList = inventoryplanMapper.select(inventoryplan);
+        if(invtList != null){
+            for(Inventoryplan inv : invtList){
                 String getinvent = inv.getInventorycycle();
                 String getsta = inv.getStatus();
-                if(inventoryplanVo.getInventoryplan().getInventorycycle().equals(getinvent) && !getsta.equals("2")){
+                if(inventoryRangeVo.getInventoryplan().getInventorycycle().equals(getinvent) && getsta.equals("0")){
                     inventoryplanMapper.delete(inv);
                 }
             }
         }
-        BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
+        BeanUtils.copyProperties(inventoryRangeVo.getInventoryplan(), inventoryplan);
         inventoryplan.preInsert(tokenModel);
-        inventoryplan.setInventoryplan_id(inventoryplanid);
+        inventoryplan.setInventoryplan_id(inventoryRangeid);
         Assets aa = new Assets();
-        aa.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Assets> aalist = assetsMapper.select(aa);
         inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
-        List<Assets> assetsList = inventoryplanVo.getAssets();
-        inventoryplan.setInquantity(String.valueOf(assetsList.size()));
-        inventoryplan.setUnquantity(String.valueOf(aalist.size() - assetsList.size()));
+        List<InventoryRange> inventList = inventoryRangeVo.getInventoryRange();
+        inventoryplan.setInquantity(String.valueOf(inventList.size()));
+        inventoryplan.setUnquantity(String.valueOf(aalist.size() - inventList.size()));
         inventoryplanMapper.insertSelective(inventoryplan);
-        if (assetsList != null) {
+        if (inventList != null) {
             int rowindex = 0;
-            for (Assets ass : assetsList) {
+            for (InventoryRange inve : inventList) {
                 rowindex = rowindex + 1;
-                ass.preInsert(tokenModel);
-                ass.setAssets_id(UUID.randomUUID().toString());
-                ass.setInventoryplan_id(inventoryplanid);
-                ass.setStatus("4");
-                ass.setRowindex(rowindex);
-                assetsMapper.insertSelective(ass);
+                inve.preInsert(tokenModel);
+                inve.setInventoryrange_id(UUID.randomUUID().toString());
+                inve.setInventoryplan_id(inventoryRangeid);
+                inve.setRowindex(rowindex);
+                inventoryRangeMapper.insertSelective(inve);
+            }
+        }
+        List<InventoryResults> invresuList = inventoryRangeVo.getInventoryResults();
+        if (invresuList != null) {
+            int rowindex = 0;
+            for (InventoryResults invreu : invresuList) {
+                rowindex = rowindex + 1;
+                invreu.preInsert(tokenModel);
+                invreu.setInventoryresults_id(UUID.randomUUID().toString());
+                invreu.setInventoryplan_id(inventoryRangeid);
+                invreu.setResult("1");
+                invreu.setRowindex(rowindex);
+                inventoryResultsMapper.insertSelective(invreu);
             }
         }
     }
 
     @Override
-    public void update(InventoryplanVo inventoryplanVo, TokenModel tokenModel) throws Exception {
+    public void update(InventoryRangeVo inventoryRangeVo, TokenModel tokenModel) throws Exception {
         Inventoryplan inventoryplan = new Inventoryplan();
-        BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
+        BeanUtils.copyProperties(inventoryRangeVo.getInventoryplan(), inventoryplan);
         inventoryplan.preUpdate(tokenModel);
         inventoryplanMapper.updateByPrimaryKey(inventoryplan);
-        String inventoryplanid = inventoryplan.getInventoryplan_id();
-        Assets asp = new Assets();
-        asp.setInventoryplan_id(inventoryplanid);
-        List<Assets> alist = assetsMapper.select(asp);
-        if(alist != null){
-            int account = 0;
-            for(Assets as : alist){
-                if(!as.getResult().equals("")){
-                    account ++;
-                }
-            }
-            if(account == alist.size()) {
-                inventoryplan.setStatus("2");
-                inventoryplan.setInventoryplan_id(inventoryplanid);
-                inventoryplanMapper.updateByPrimaryKeySelective(inventoryplan);
-            }
-        }
-        List<Assets> assetsList = inventoryplanVo.getAssets();
-        int rowindex = 0;
-        if (assetsList != null) {
-            for (Assets ass : assetsList) {
-                rowindex = rowindex + 1;
-                ass.preInsert(tokenModel);
-                ass.setInventoryplan_id(inventoryplanid);
-                ass.setRowindex(rowindex);
-                ass.setStatus("4");
-                assetsMapper.updateByPrimaryKey(ass);
-            }
-        }
     }
 
     @Override
@@ -119,18 +110,24 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     }
 
     @Override
-    public InventoryplanVo selectById(String inventoryplanid) throws Exception {
+    public InventoryRangeVo selectById(String inventoryRangeid) throws Exception {
 
-        InventoryplanVo inventoryplanVo = new InventoryplanVo();
-        Assets assets = new Assets();
-        assets.setInventoryplan_id(inventoryplanid);
-        assets.setStatus("4");
-        List<Assets> assetsList = assetsMapper.select(assets);
-        assetsList = assetsList.stream().sorted(Comparator.comparing(Assets::getRowindex)).collect(Collectors.toList());
-        Inventoryplan inventoryplan = inventoryplanMapper.selectByPrimaryKey(inventoryplanid);
-        inventoryplanVo.setInventoryplan(inventoryplan);
-        inventoryplanVo.setAssets(assetsList);
-        return inventoryplanVo;
+        InventoryRangeVo inventoryRangeVo = new InventoryRangeVo();
+        InventoryRange inventoryRange = new InventoryRange();
+        inventoryRange.setInventoryplan_id(inventoryRangeid);
+        List<InventoryRange> inveList = inventoryRangeMapper.select(inventoryRange);
+        inveList = inveList.stream().sorted(Comparator.comparing(InventoryRange::getRowindex)).collect(Collectors.toList());
+        Inventoryplan inventoryplan = inventoryplanMapper.selectByPrimaryKey(inventoryRangeid);
+        inventoryRangeVo.setInventoryplan(inventoryplan);
+        inventoryRangeVo.setInventoryRange(inveList);
+        return inventoryRangeVo;
+    }
+
+    @Override
+    public List<InventoryResults> selectByResult(String inventoryresultsid) throws Exception {
+        InventoryResults inventoryResults = new InventoryResults();
+        inventoryResults.setInventoryplan_id(inventoryresultsid);
+        return inventoryResultsMapper.select(inventoryResults);
     }
 
 }
