@@ -60,7 +60,7 @@ public class DictionaryController {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/getDictionary",method={RequestMethod.GET})
+    @RequestMapping(value = "/getDictionary",method={RequestMethod.POST})
     public ApiResult getDictionary(Dictionary dictionary, HttpServletRequest request) throws Exception {
         if (dictionary == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
