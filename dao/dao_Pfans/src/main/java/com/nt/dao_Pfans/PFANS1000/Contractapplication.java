@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "contractapplication")
-public class ContractApplication extends BaseModel {
+public class Contractapplication extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     @Id
