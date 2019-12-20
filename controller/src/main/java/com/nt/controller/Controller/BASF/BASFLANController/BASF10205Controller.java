@@ -70,7 +70,7 @@ public class BASF10205Controller {
     }
 
     /**
-     * @param dutySimt
+     * @param
      * @Method list
      * @Author Wxz
      * @Version 1.0
@@ -79,8 +79,8 @@ public class BASF10205Controller {
      * @Date 2019/12/19 18:11
      */
     @RequestMapping(value = "/selectByDay", method = {RequestMethod.POST})
-    public ApiResult selectByDay(DutySimt dutySimt) throws Exception {
-        return ApiResult.success(dutySimtServices.selectByDay(dutySimt));
+    public ApiResult selectByDay() throws Exception {
+        return ApiResult.success(dutySimtServices.selectByDay());
     }
 
 }

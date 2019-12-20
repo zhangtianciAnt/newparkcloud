@@ -23,7 +23,7 @@ public interface DutySimtServices {
     void update(DutySimt dutySimt, TokenModel tokenModel)throws Exception;
 
     //查询某天值班人员
-   String selectByDay(DutySimt dutySimt)throws Exception;
+   String selectByDay()throws Exception;
 
 
 }
