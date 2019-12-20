@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.DutySimtMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.DutySimt">
+        <!--
+           WARNING - @mbg.generated
+         -->
+        <id column="dutysimtid" property="dutysimtid" jdbcType="VARCHAR"/>
+        <result column="mon" property="mon" jdbcType="VARCHAR"/>
+        <result column="tue" property="tue" jdbcType="VARCHAR"/>
+        <result column="web" property="web" jdbcType="VARCHAR"/>
+        <result column="thu" property="thu" jdbcType="VARCHAR"/>
+        <result column="fri" property="fri" jdbcType="VARCHAR"/>
+        <result column="sat" property="sat" jdbcType="VARCHAR"/>
+        <result column="sun" property="sun" jdbcType="VARCHAR"/>
+        <result column="monbackup" property="monbackup" jdbcType="VARCHAR"/>
+        <result column="tuebackup" property="tuebackup" jdbcType="VARCHAR"/>
+        <result column="webbackup" property="webbackup" jdbcType="VARCHAR"/>
+        <result column="thubackup" property="thubackup" jdbcType="VARCHAR"/>
+        <result column="firbackup" property="firbackup" jdbcType="VARCHAR"/>
+        <result column="satbackup" property="satbackup" jdbcType="VARCHAR"/>
+        <result column="sunbackup" property="sunbackup" jdbcType="VARCHAR"/>
+
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+
+    </resultMap>
+</mapper>
