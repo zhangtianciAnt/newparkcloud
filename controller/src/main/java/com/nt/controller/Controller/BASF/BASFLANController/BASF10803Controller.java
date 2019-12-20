@@ -3,10 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Responseinformation;
 import com.nt.service_BASF.ResponseinformationServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +72,7 @@ public class BASF10803Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        responseinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
         responseinformationServices.delete(tokenModel, responseinformation);
         return ApiResult.success();
     }
