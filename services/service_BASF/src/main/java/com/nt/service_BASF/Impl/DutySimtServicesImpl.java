@@ -80,6 +80,7 @@ public class DutySimtServicesImpl implements DutySimtServices {
         SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
         // new Date()为获取当前系统时间为星期几
         String currSun = dateFm.format(new Date());
+        if(list.size() == 1 && list.get(0) != null){
         if(currSun.equals("星期一")){
             a = list.get(0).getMon();
             return a;
@@ -107,6 +108,7 @@ public class DutySimtServicesImpl implements DutySimtServices {
         if(currSun.equals("星期日")){
             a = list.get(0).getSun();
             return a;
+        }
         }
         return null;
     }
