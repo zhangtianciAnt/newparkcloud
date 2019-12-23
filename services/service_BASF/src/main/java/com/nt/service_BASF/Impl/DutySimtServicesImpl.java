@@ -63,7 +63,7 @@ public class DutySimtServicesImpl implements DutySimtServices {
     }
 
     /**
-     * @param dutySimt
+     * @param
      * @Method selectByDay
      * @Author Wxz
      * @Version 1.0
@@ -72,31 +72,43 @@ public class DutySimtServicesImpl implements DutySimtServices {
      * @Date 2019/12/19 17：25
      */
     @Override
-    public String selectByDay(DutySimt dutySimt) throws Exception {
+    public String selectByDay() throws Exception {
+        DutySimt dutySimt = new DutySimt();
+        List<DutySimt> list = dutySimtMapper.select(dutySimt);
+        String a = null;
         //设置日期格式
         SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
         // new Date()为获取当前系统时间为星期几
         String currSun = dateFm.format(new Date());
+        if(list.size() == 1 && list.get(0) != null){
         if(currSun.equals("星期一")){
-           return dutySimt.getMon();
+            a = list.get(0).getMon();
+            return a;
         }
         if(currSun.equals("星期二")){
-            return dutySimt.getTue();
+            a = list.get(0).getTue();
+            return a;
         }
         if(currSun.equals("星期三")){
-            return dutySimt.getWeb();
+            a = list.get(0).getWeb();
+            return a;
         }
         if(currSun.equals("星期四")){
-            return dutySimt.getThu();
+            a = list.get(0).getThu();
+            return a;
         }
         if(currSun.equals("星期五")){
-            return dutySimt.getFri();
+            a = list.get(0).getFri();
+            return a;
         }
         if(currSun.equals("星期六")){
-            return dutySimt.getSat();
+            a = list.get(0).getSat();
+            return a;
         }
         if(currSun.equals("星期日")){
-            return dutySimt.getSun();
+            a = list.get(0).getSun();
+            return a;
+        }
         }
         return null;
     }
