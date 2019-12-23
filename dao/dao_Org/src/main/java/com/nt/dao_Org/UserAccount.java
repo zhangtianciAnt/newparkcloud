@@ -48,6 +48,10 @@ public class UserAccount extends BaseModel {
      */
     private String password;
     /**
+     * 能否登录（1能登录，0不能登录）
+     */
+    private String logintype;
+    /**
      * openid
      */
     private String openid;
