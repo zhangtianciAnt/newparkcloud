@@ -9,4 +9,16 @@ SELECT * FROM workingday
 			 WHERE #{THIS_YEAR} >= YEARS AND
 		YEARS >=#{LAST_YEAR}
 </select>
+	<select id="getHoliday" resultType="java.lang.String">
+		select IFNULL((sum(IFNULL(case when TYPE in (1,2,3,5,6) and DAYOFWEEK(WORKINGDATE) in (1,7) then 0
+		when TYPE in (1,2,3,5,6) and DAYOFWEEK(WORKINGDATE) in (2,3,4,5,6) then 1 end,0)) +
+		sum(IFNULL(case when TYPE=4 and DAYOFWEEK(WORKINGDATE) in (1,7) then -1
+		when TYPE=4 and DAYOFWEEK(WORKINGDATE) in (2,3,4,5,6) then 0 end,0))),0) as holi
+		from workingday
+		where YEAR(workingday.WORKINGDATE) = #{year}
+		and MONTH(workingday.WORKINGDATE) = #{mouth}
+		<if test="day!=0">
+			and DAY(workingday.WORKINGDATE) &lt;= #{day}
+		</if>
+</select>
 </mapper>
