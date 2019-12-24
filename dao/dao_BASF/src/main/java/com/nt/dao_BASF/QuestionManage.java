@@ -66,6 +66,11 @@ public class QuestionManage extends BaseModel {
     private String score;
 
     /**
+     * 培训类别
+     */
+    private String programtpe;
+
+    /**
      * 正确答案
      */
     private String questionanswers;
@@ -74,5 +79,6 @@ public class QuestionManage extends BaseModel {
      * 答案解析
      */
     private String answersanalysis;
+
 
 }
