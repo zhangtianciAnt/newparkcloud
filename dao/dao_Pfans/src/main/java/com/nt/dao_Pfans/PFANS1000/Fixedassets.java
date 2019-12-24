@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "fixedassets")
-public class    Fixedassets   extends BaseModel {
+public class Fixedassets extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -125,5 +125,12 @@ public class    Fixedassets   extends BaseModel {
      */
     @Column(name = "ANCILLARYEQUIPMENT")
     private String ancillaryequipment;
+
+    /**
+     * 免税輸入設備
+     */
+    @Column(name = "DUTYFREEINPUT")
+    private String dutyfreeinput;
+
 
 }

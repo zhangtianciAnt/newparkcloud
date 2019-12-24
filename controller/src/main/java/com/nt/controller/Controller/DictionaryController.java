@@ -61,7 +61,7 @@ public class DictionaryController {
     }
 
     @RequestMapping(value = "/getDictionary",method={RequestMethod.POST})
-    public ApiResult getDictionary(Dictionary dictionary, HttpServletRequest request) throws Exception {
+    public ApiResult getDictionary(@RequestBody Dictionary dictionary, HttpServletRequest request) throws Exception {
         if (dictionary == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -69,10 +69,9 @@ public class DictionaryController {
     }
 
     @RequestMapping(value = "/upDictionary",method={RequestMethod.POST})
-    public ApiResult upDictionary(List<Dictionary> dictionarylisty, HttpServletRequest request) throws Exception {
-
+    public ApiResult upDictionary(@RequestBody List<Dictionary> dictionarylist, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        dictionaryService.upDictionary(dictionarylisty, tokenModel);
+        dictionaryService.upDictionary(dictionarylist, tokenModel);
         return ApiResult.success();
     }
 }
