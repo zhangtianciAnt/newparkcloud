@@ -202,8 +202,11 @@ public class UserServiceImpl implements UserService {
      * @返回值：List<CustomerInfo>
      */
     @Override
-    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype, String logintype) throws Exception {
         Query query = new Query();
+        if (StringUtils.isNotBlank(logintype)) {
+            query.addCriteria(Criteria.where("logintype").is(logintype));
+        }
         if ("1".equals(orgtype)) {
             if(StrUtil.isNotBlank(orgid)){
                 query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));

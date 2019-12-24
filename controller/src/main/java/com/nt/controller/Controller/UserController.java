@@ -180,9 +180,9 @@ public class UserController {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getAccountCustomer", method = {RequestMethod.GET})
-    public ApiResult getAccountCustomer(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+    public ApiResult getAccountCustomer(String orgid, String orgtype, String logintype, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype));
+        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype, logintype));
     }
 
     /**
