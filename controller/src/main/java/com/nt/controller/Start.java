@@ -15,15 +15,17 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 @SpringBootApplication
-@ComponentScan(basePackages={"com.nt.*"})
+@ComponentScan(basePackages = {"com.nt.*"})
 //@MapperScan(basePackages = "com.nt.**.mapper")
 @EnableTransactionManagement
 @ServletComponentScan("com.nt.*")
 public class Start {
 
     private static Logger log = LoggerFactory.getLogger(Start.class);
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Start.class, args);
         log.info("服务已启动！！！");
@@ -31,22 +33,22 @@ public class Start {
 
     @Bean
     public FilterRegistrationBean corsFilter() {
-      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      CorsConfiguration config = new CorsConfiguration();
-      config.setAllowCredentials(true);
-      config.addAllowedOrigin("*");
-      config.addAllowedHeader("*");
-      config.addAllowedMethod("*");
-      source.registerCorsConfiguration("/**", config);
-      FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-      bean.setOrder(0);
-      return bean;
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        bean.setOrder(0);
+        return bean;
     }
+
     @Bean
     RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
 
     @Bean
     public MongoClientOptions mongoOptions() {
