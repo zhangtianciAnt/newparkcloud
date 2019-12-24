@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/cooperinterview")
+@RequestMapping("/expatriatesinfor")
 public class Pfans6004Controller {
 
     @Autowired
