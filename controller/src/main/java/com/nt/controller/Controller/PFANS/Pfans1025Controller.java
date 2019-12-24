@@ -34,6 +34,14 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.get(award));
     }
 
+    @RequestMapping(value = "/selectById",method = {RequestMethod.GET})
+    public ApiResult selectById(String award_id,HttpServletRequest request) throws Exception{
+        if(award_id==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(awardService.selectById(award_id));
+    }
+
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody AwardVo awardVo,HttpServletRequest request)throws Exception{
         if(awardVo==null){

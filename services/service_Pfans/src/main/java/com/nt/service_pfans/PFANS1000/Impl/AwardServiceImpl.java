@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -32,9 +34,16 @@ public class AwardServiceImpl implements AwardService {
 
     @Override
     public AwardVo selectById(String award_id) throws Exception {
-        return null;
+       AwardVo awavo=new AwardVo();
+       AwardDetail awadetail=new AwardDetail();
+       awadetail.setAward_id(award_id);
+       List<AwardDetail> awalist=awardDetailMapper.select(awadetail);
+       awalist=awalist.stream().sorted(Comparator.comparing(AwardDetail::getRowindex)).collect(Collectors.toList());
+       Award awa=awardMapper.selectByPrimaryKey(award_id);
+       awavo.setAward(awa);
+       awavo.setAwardDetail(awalist);
+       return awavo;
     }
-
     @Override
     public void insertAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
 
