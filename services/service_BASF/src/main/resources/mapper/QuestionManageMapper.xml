@@ -14,6 +14,7 @@
         <result column="option4" property="option4" jdbcType="VARCHAR"/>
         <result column="option5" property="option5" jdbcType="VARCHAR"/>
         <result column="score" property="score" jdbcType="VARCHAR"/>
+        <result column="programtpe" property="programtpe" jdbcType="VARCHAR"/>
         <result column="questionanswers" property="questionanswers" jdbcType="VARCHAR"/>
         <result column="answersanalysis" property="answersanalysis" jdbcType="VARCHAR"/>
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>

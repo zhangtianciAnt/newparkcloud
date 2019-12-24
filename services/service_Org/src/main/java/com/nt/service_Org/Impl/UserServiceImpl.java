@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<UserAccount> getUserAccount(UserAccount userAccount) throws Exception {
+        userAccount.setLogintype("1");
         Query query = CustmizeQuery(userAccount);
         return mongoTemplate.find(query, UserAccount.class);
     }
@@ -98,6 +99,7 @@ public class UserServiceImpl implements UserService {
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+        query.addCriteria(Criteria.where("logintype").is("1"));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
         //数据不存在时
@@ -200,8 +202,11 @@ public class UserServiceImpl implements UserService {
      * @返回值：List<CustomerInfo>
      */
     @Override
-    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype, String logintype) throws Exception {
         Query query = new Query();
+        if (StringUtils.isNotBlank(logintype)) {
+            query.addCriteria(Criteria.where("logintype").is(logintype));
+        }
         if ("1".equals(orgtype)) {
             if(StrUtil.isNotBlank(orgid)){
                 query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));

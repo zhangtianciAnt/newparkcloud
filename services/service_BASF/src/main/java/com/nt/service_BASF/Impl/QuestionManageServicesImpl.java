@@ -151,12 +151,13 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
             model.add("选项四");
             model.add("选项五");
             model.add("分值");
+            model.add("所属培训类型");
             model.add("正确答案");
             model.add("答案解析");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
-                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString() + "导入失败");
                 }
             }
             int k = 1;
@@ -207,8 +208,9 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
                 if (value != null && !value.isEmpty()) {
                     questionManage.setQuestiontopic(value.get(1).toString());
                     questionManage.setScore(value.get(7).toString());
-                    questionManage.setQuestionanswers(value.get(8).toString());
-                    questionManage.setAnswersanalysis(value.get(9).toString());
+                    questionManage.setProgramtpe(value.get(8).toString());
+                    questionManage.setQuestionanswers(value.get(9).toString());
+                    questionManage.setAnswersanalysis(value.get(10).toString());
                 }
                 questionManage.preInsert(tokenModel);
                 questionManage.setQuestionid(UUID.randomUUID().toString());
