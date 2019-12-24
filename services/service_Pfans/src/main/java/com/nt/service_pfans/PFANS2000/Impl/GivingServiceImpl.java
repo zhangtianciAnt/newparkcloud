@@ -168,7 +168,7 @@ public class GivingServiceImpl implements GivingService {
         Base base = new Base();
         base.setGiving_id(giving_id);
         List<Base> baselist = baseMapper.select(base);
-        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        //baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
 
         Contrast contrast = new Contrast();
@@ -250,7 +250,10 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
+        List<Base> bases = new ArrayList<>();
         Dictionary dictionary = new Dictionary();
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
         String R9 = null;
@@ -265,18 +268,17 @@ public class GivingServiceImpl implements GivingService {
                 R7 = diction.getValue2();
             }
         }
-        Base base = new Base();
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             int rowindex = 0;
             for (CustomerInfo customer : customerinfo) {
+                Base base = new Base();
                 rowindex = rowindex + 1;
                 String baseid = UUID.randomUUID().toString();
                 base.preInsert(tokenModel);
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
-//                base.setOwner(customer.getUserid());
                 base.setDepartment_id(customer.getUserinfo().getCenterid());
                 base.setJobnumber(customer.getUserinfo().getJobnumber());  //工号
                 base.setRn(customer.getUserinfo().getRank());  //RN
@@ -285,61 +287,6 @@ public class GivingServiceImpl implements GivingService {
                     base.setOnlychild("1");  //独生子女
                 } else {
                     base.setOnlychild("2");  //独生子女
-                }
-                if (customer.getUserinfo().getEnddate() == null) {
-                    base.setType("0");
-                }
-                if (customer.getUserinfo().getEnddate() != null) {
-                    String date = customer.getUserinfo().getEnddate().substring(5, 7);
-                    Calendar cal = Calendar.getInstance();
-                    String months = String.valueOf(cal.get(cal.MONTH));
-                    if (Integer.parseInt(date) >= Integer.parseInt(months)) {
-                        base.setType("0");
-                    }
-                }
-                if (customer.getUserinfo().getResignation_date() != null && customer.getUserinfo().getResignation_date().length() > 0) {
-                    String date = customer.getUserinfo().getResignation_date().substring(5, 7);
-                    Calendar cal = Calendar.getInstance();
-                    String months = String.valueOf(cal.get(cal.MONTH));
-                    if (Integer.parseInt(date) == Integer.parseInt(months)) {
-                        base.setType("1");
-                    }
-                }
-                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar cal = Calendar.getInstance();
-                String months = String.valueOf(cal.get(cal.MONTH));
-                String years = String.valueOf(cal.get(cal.YEAR));
-                String date = String.valueOf(cal.get(cal.DATE));
-                String Data;
-                if (Integer.parseInt(months) < 10 && Integer.parseInt(date) < 10) {
-                    Data = years + "-0" + months + "-0" + date;
-                } else if (Integer.parseInt(months) < 10) {
-                    Data = years + "-0" + months + "-" + date;
-                } else if (Integer.parseInt(date) < 10) {
-                    Data = years + "-" + months + "-0" + date;
-                } else {
-                    Data = years + "-" + months + "-" + date;
-                }
-
-                AbNormal abNormal = new AbNormal();
-                abNormal.setStatus("4");
-                List<AbNormal> abNormalinfo = abNormalMapper.select(abNormal);
-                if (abNormalinfo != null) {
-                    for (AbNormal abNor : abNormalinfo) {
-                        if (abNor.getErrortype().equals("PR013012")) {
-                            String Occurrencedate = sf.format(abNor.getOccurrencedate());
-                            String Finisheddate = sf.format(abNor.getFinisheddate());
-                            if (Integer.parseInt(Occurrencedate.replace("-", "")) <= Integer.parseInt(Data.replace("-", "")) && Integer.parseInt(Data.replace("-", "")) <= Integer.parseInt(Finisheddate.replace("-", ""))) {
-                                base.setType("2");
-                            }
-                        } else if (abNor.getErrortype().equals("PR013013")) {
-                            String occurrencedate = sf.format(abNor.getOccurrencedate());
-                            String finisheddate = sf.format(abNor.getFinisheddate());
-                            if (Integer.parseInt(occurrencedate.replace("-", "")) <= Integer.parseInt(Data.replace("-", "")) && Integer.parseInt(Data.replace("-", "")) <= Integer.parseInt(finisheddate.replace("-", ""))) {
-                                base.setType("3");
-                            }
-                        }
-                    }
                 }
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
@@ -358,57 +305,8 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     base.setRegistered("2");
                 }
-
-                String Months;
-                String Years;
-                String Date;
-                if (cal.get(cal.MONTH) == 12) {
-                    Months = String.valueOf(cal.get(cal.MONTH) - 11);
-                    Years = String.valueOf(cal.get(cal.YEAR) + 1);
-                    Date = String.valueOf(cal.get(cal.DATE));
-                } else {
-                    Months = String.valueOf(cal.get(cal.MONTH) + 1);
-                    Years = String.valueOf(cal.get(cal.YEAR));
-                    Date = String.valueOf(cal.get(cal.DATE));
-                }
-                String Dat;
-                if (Integer.parseInt(Months) < 10 && Integer.parseInt(Date) < 10) {
-                    Dat = Years + "-0" + Months + "-0" + Date;
-                } else if (Integer.parseInt(Months) < 10) {
-                    Dat = Years + "-0" + Months + "-" + Date;
-                } else if (Integer.parseInt(Date) < 10) {
-                    Dat = Years + "-" + Months + "-0" + Date;
-                } else {
-                    Dat = Years + "-" + Months + "-" + Date;
-                }
-
-                double after6 = 0d;
-                double after7 = 0d;
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userid").is(customer.getUserid()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    if (customerInfo.getUserinfo().getGridData() != null) {
-                        List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Data.replace("-", ""))) {
-                                after6 = Double.valueOf(personal.getAfter());
-                                break;
-                            }
-                        }
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Dat.replace("-", ""))) {
-                                after7 = Double.valueOf(personal.getAfter());
-                                break;
-                            }
-                        }
-                    } else {
-                        after6 = 0;
-                        after7 = 0;
-                    }
-                }
-                base.setLastmonth(String.valueOf(after6));
-                base.setThismonth(String.valueOf(after7));
+                base.setLastmonth(getSalary(customer,0)); //上月工资
+                base.setThismonth(getSalary(customer,1)); //本月工资
                 base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
                 base.setMedical(customer.getUserinfo().getMedicalinsurance()); //医療・生育基数
 
@@ -428,8 +326,9 @@ public class GivingServiceImpl implements GivingService {
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
-                baseMapper.insert(base);
+                bases.add(base);
             }
+            baseMapper.insertBase(bases);
         }
     }
 
@@ -1751,7 +1650,6 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
-
         Giving giving = new Giving();
         String strTemp = sf1.format(new Date());
         giving.setMonths(strTemp);
@@ -1782,11 +1680,11 @@ public class GivingServiceImpl implements GivingService {
 
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
-        insertContrast(givingid, tokenModel);
-        insertOtherTwo(givingid, tokenModel);
-        insertOtherOne(givingid, tokenModel);
-        insertAttendance(givingid, tokenModel);
-        insertResidual(givingid, tokenModel);
+//        insertContrast(givingid, tokenModel);
+//        insertOtherTwo(givingid, tokenModel);
+//        insertOtherOne(givingid, tokenModel);
+//        insertAttendance(givingid, tokenModel);
+//        insertResidual(givingid, tokenModel);
     }
 
     @Override
@@ -1989,7 +1887,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
 
-    public String getMouth(String mouth) {
+    public static String getMouth(String mouth) {
         String _mouth = mouth.substring(5, 7);
         return _mouth;
     }
@@ -2038,7 +1936,7 @@ public class GivingServiceImpl implements GivingService {
         return map;
     }
 
-    public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
+    public static String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
         String thisMouth = "0";
         Calendar time = Calendar.getInstance();
         time.add(Calendar.MONTH, addMouth);
