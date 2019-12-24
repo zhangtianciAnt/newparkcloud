@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<UserAccount> getUserAccount(UserAccount userAccount) throws Exception {
+        userAccount.setLogintype("1");
         Query query = CustmizeQuery(userAccount);
         return mongoTemplate.find(query, UserAccount.class);
     }
@@ -98,6 +99,7 @@ public class UserServiceImpl implements UserService {
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+        query.addCriteria(Criteria.where("logintype").is("1"));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
         //数据不存在时
