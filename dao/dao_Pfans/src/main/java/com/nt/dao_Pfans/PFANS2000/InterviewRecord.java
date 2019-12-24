@@ -149,7 +149,7 @@ public class InterviewRecord  extends BaseModel {
     /**
      * 社员推荐
      */
-    @Column(name = "MEMBER")
+    @Column(name = "MEMBERS")
     private String member;
 
     /**

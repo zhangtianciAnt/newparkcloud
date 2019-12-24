@@ -97,6 +97,18 @@ public class Pieceworktotal extends BaseModel {
     @Column(name = "SUBTOTAL9")
     private String subtotal9;
 
+    @Column(name = "SUBTOTALTHOUSAND9")
+    private String subtotalthousand9;
+
+    @Column(name = "PAY10")
+    private String pay10;
+
+    @Column(name = "OVERTIMEPAY10")
+    private String overtimepay10;
+
+    @Column(name = "SUBTOTAL10")
+    private String subtotal10;
+
     @Column(name = "SUBTOTALTHOUSAND10")
     private String subtotalthousand10;
 

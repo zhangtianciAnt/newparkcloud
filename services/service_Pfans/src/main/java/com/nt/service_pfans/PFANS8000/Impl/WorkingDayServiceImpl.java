@@ -33,9 +33,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         String this_year = String.valueOf(cal.get(cal.YEAR)+2);
         String last_year = String.valueOf(cal.get(cal.YEAR) - 3);
         List<WorkingDay> workingday = workingdayMapper.getDataList(this_year, last_year);
-        if (workingday.isEmpty()) {
-            return null;
-        }
         return workingday;
     }
 

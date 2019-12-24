@@ -46,5 +46,20 @@ public class DictionaryServiceImpl implements DictionaryService {
             dictionaryMapper.updateByPrimaryKeySelective(dictionary);
         }
     }
+
+    @Override
+    public List<Dictionary> getDictionary(Dictionary dictionary) throws Exception{
+        return dictionaryMapper.getDictionary(dictionary);
+    }
+
+    @Override
+    public void upDictionary(List<Dictionary> dictionarylist, TokenModel tokenModel) throws Exception {
+        if(dictionarylist.size() > 0){
+            for(Dictionary dictionary : dictionarylist){
+                dictionary.preUpdate(tokenModel);
+                dictionaryMapper.updateByPrimaryKeySelective(dictionary);
+            }
+        }
+    }
 }
 

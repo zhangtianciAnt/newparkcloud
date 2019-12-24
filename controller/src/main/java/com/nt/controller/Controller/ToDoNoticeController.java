@@ -37,10 +37,12 @@ public class ToDoNoticeController {
     }
 
     @RequestMapping(value = "/getList", method = {RequestMethod.GET})
-    public ApiResult getList(String status,HttpServletRequest request) throws Exception {
+    public ApiResult getList(String status, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         List<ToDoNotice> rst = toDoNoticeService.getDataList(status);
-        rst = rst.stream().filter(item -> (item.getOwner().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+        if (rst != null) {
+            rst = rst.stream().filter(item -> (item.getOwner().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+        }
         return ApiResult.success(rst);
     }
 
@@ -62,6 +64,7 @@ public class ToDoNoticeController {
         message.setOwner(tokenModel.getUserId());
         return ApiResult.success(toDoNoticeService.get(message));
     }
+
     /**
      * @方法名：updatenoticesstatus
      * @描述：更新已阅
@@ -76,7 +79,7 @@ public class ToDoNoticeController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        for(ToDoNotice toDoNotice:toDoNoticelist){
+        for (ToDoNotice toDoNotice : toDoNoticelist) {
             toDoNotice.preUpdate(tokenModel);
             toDoNoticeService.updateNoticesStatus(toDoNotice);
         }
