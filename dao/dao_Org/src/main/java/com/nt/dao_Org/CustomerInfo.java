@@ -35,6 +35,10 @@ public class CustomerInfo extends BaseModel {
      */
     private String _id;
     /**
+     * 能否登录（1能登录，0不能登录）
+     */
+    private String logintype;
+    /**
      * 客户ID
      */
     private String customerid;
