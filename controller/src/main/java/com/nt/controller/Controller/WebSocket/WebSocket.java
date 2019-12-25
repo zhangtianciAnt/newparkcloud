@@ -1,53 +1,86 @@
 package com.nt.controller.Controller.WebSocket;
 
-import org.apache.log4j.Logger;
+import org.springframework.web.socket.*;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import javax.websocket.*;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ServerEndpoint(value = "/BASFWebSocket/{token}")
-public class WebSocket {
-    private Logger logger = Logger.getLogger(WebSocket.class);
-    //  用来记录当前在线连接数
-    //  private static int onlineCount = 0;
-    //  记录每个用户与终端的连接 Map<token,webSocket实例>
-    private static Map<Long, Session> usersSocket = new HashMap<>();
+public class WebSocket implements WebSocketHandler {
 
-    @OnOpen
-    public void open(@PathParam("token") Long token, Session session) throws IOException {
-        if (!usersSocket.containsKey(token)) {
-            usersSocket.put(token, session);
+    //在线用户列表
+    private static final Map<String, WebSocketSession> users;
+
+    static {
+        users = new HashMap<>();
+    }
+
+    //建立新的socket连接后回调的方法
+    @Override
+    public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
+        System.out.println("websocket 成功建立连接");
+        String token = webSocketSession.getUri().toString().split("token=")[1];
+        System.out.println(token);
+        if (token != null && !"".equals(token)) {
+            users.put(token, webSocketSession);
+            webSocketSession.sendMessage(new TextMessage("websocket 成功建立连接"));
         }
-        logger.info("用户:" + token + ",已连接websocket");
-        logger.info("当前在线用户数为：" + usersSocket.size());
+        System.out.println("当前在线人数：" + users.size());
     }
 
-    @OnClose
-    public void close(@PathParam("token") Long token) {
-        if (usersSocket.size() > 0 && usersSocket.containsKey(token)) {
-            usersSocket.remove(token);
-        } else {
-            logger.info("未发现用户：" + token);
-        }
+    //接收客户端发送的Socket信息
+    @Override
+    public void handleMessage(WebSocketSession webSocketSession, WebSocketMessage<?> webSocketMessage) throws Exception {
+
     }
 
-    @OnMessage
-    public void receiveMessage(@PathParam("token") Long token, Session session, String message) throws IOException {
-        if (session == null) logger.debug("websocket session null");
-        logger.debug("收到来自用户：" + token + "的消息：" + message);
+    //连接出错时，回调的方法
+    @Override
+    public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) throws Exception {
+        System.out.println("websocket 连接出错");
+        if (webSocketSession.isOpen())
+            webSocketSession.close();
+        users.remove(getClientToken(webSocketSession));
     }
 
-    @OnError
-    public void error(Throwable throwable) {
+    //连接关闭时，回调的方法
+    @Override
+    public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
+        System.out.println("websocket 连接关闭:" + closeStatus);
+        users.remove(getClientToken(webSocketSession));
+    }
+
+    @Override
+    public boolean supportsPartialMessages() {
+        return false;
+    }
+
+    /**
+     * 获取用户标识token
+     */
+    private String getClientToken(WebSocketSession session) {
         try {
-            logger.error(throwable.getMessage());
-            throw throwable;
-        } catch (Throwable e) {
-            logger.error("websocket,未知错误");
+            return (String) session.getAttributes().get("WEBSOCKET_TOKEN");
+        } catch (Exception e) {
+            System.out.println("websocket 获取用户标识token出错");
+            return null;
         }
+    }
+
+    /**
+     * 发送信息给指定用户
+     */
+    public Boolean sendMessageToUser(String clientToken, TextMessage message) {
+        if (users.get(clientToken) == null) return false;
+        WebSocketSession webSocketSession = users.get(clientToken);
+        System.out.println("sendMessage:" + webSocketSession);
+        return true;
+    }
+
+    /**
+     * 发送信息给指定用户
+     */
+    public Boolean sendMessageToAll(TextMessage message) {
+        return true;
     }
 }
