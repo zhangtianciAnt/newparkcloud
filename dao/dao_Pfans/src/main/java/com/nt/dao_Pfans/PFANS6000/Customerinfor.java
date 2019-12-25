@@ -55,12 +55,6 @@ public class Customerinfor extends BaseModel {
     private String liableperson;
 
     /**
-     * 项目联络人
-     */
-    @Column(name = "PROJECTPERSON")
-    private String projectperson;
-
-    /**
      * 中文(项目联络人)
      */
     @Column(name = "PROCHINESE")
@@ -109,12 +103,6 @@ public class Customerinfor extends BaseModel {
     private String comnemail;
 
     /**
-     * 地址
-     */
-    @Column(name = "ADDRESS")
-    private String address;
-
-    /**
      * 中文(地址)
      */
     @Column(name = "ADDCHINESE")
@@ -150,4 +138,9 @@ public class Customerinfor extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
 }

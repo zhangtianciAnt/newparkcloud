@@ -25,7 +25,7 @@ public class CooperinterviewServiceImpl implements CooperinterviewService {
     }
 
     @Override
-    public Cooperinterview cooperinterviewApplyOne(String cooperinterview_id) throws Exception {
+    public Cooperinterview getcooperinterviewApplyOne(String cooperinterview_id) throws Exception {
         return cooperinterviewMapper.selectByPrimaryKey(cooperinterview_id);
     }
 

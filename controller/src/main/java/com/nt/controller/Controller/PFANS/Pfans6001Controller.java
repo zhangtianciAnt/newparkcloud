@@ -35,12 +35,12 @@ public class Pfans6001Controller {
     }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
-    public ApiResult cooperinterviewApplyOne(@RequestBody Cooperinterview cooperinterview, HttpServletRequest request) throws Exception {
+    public ApiResult getcooperinterviewApplyOne(@RequestBody Cooperinterview cooperinterview, HttpServletRequest request) throws Exception {
         if (cooperinterview == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(cooperinterviewService.cooperinterviewApplyOne(cooperinterview.getCooperinterview_id()));
+        return ApiResult.success(cooperinterviewService.getcooperinterviewApplyOne(cooperinterview.getCooperinterview_id()));
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
