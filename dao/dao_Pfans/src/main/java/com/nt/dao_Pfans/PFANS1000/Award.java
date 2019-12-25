@@ -81,6 +81,9 @@ public class Award extends BaseModel {
     @Column(name = "PLANNUMBER")
     private String plannumber;
 
+    @Column(name = "VALUATION")
+    private String valuation;
+
     @Column(name = "VALUATIONNUMBER")
     private String valuationnumber;
 
