@@ -6,14 +6,19 @@
           WARNING - @mbg.generated
         -->
         <id column="applicationid" property="applicationid" jdbcType="VARCHAR"/>
+        <result column="applicationtype" property="applicationtype" jdbcType="VARCHAR"/>
+        <result column="specificlocation" property="specificlocation" jdbcType="VARCHAR"/>
+        <result column="applicationdevice" property="applicationdevice" jdbcType="VARCHAR"/>
+        <result column="applicationtime" property="applicationtime" jdbcType="VARCHAR"/>
+        <result column="returntime" property="returntime" jdbcType="VARCHAR"/>
         <result column="customername" property="customername" jdbcType="VARCHAR"/>
         <result column="applicationstatus" property="applicationstatus" jdbcType="VARCHAR"/>
-        <result column="workcontent" property="workcontent" jdbcType="VARCHAR"/>
-        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>
-        <result column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>
-        <result column="region" property="region" jdbcType="VARCHAR"/>
-        <result column="device" property="device" jdbcType="VARCHAR"/>
-        <result column="floor" property="floor" jdbcType="VARCHAR"/>
+<!--        <result column="workcontent" property="workcontent" jdbcType="VARCHAR"/>-->
+<!--        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>-->
+<!--        <result column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>-->
+<!--        <result column="region" property="region" jdbcType="VARCHAR"/>-->
+<!--        <result column="device" property="device" jdbcType="VARCHAR"/>-->
+<!--        <result column="floor" property="floor" jdbcType="VARCHAR"/>-->
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
         <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>

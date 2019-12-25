@@ -89,7 +89,7 @@ public class UserController {
             log.getLogs().add(logs);
             log.preInsert(tokenModel);
             logService.save(log);
-            messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
+//            messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
             return ApiResult.success(tokenModel);
         } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());

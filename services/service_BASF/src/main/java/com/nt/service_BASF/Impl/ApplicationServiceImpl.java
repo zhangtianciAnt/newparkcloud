@@ -53,4 +53,9 @@ public class ApplicationServiceImpl implements ApplicationServices {
         application.preUpdate(tokenModel);
         applicationMapper.updateByPrimaryKeySelective(application);
     }
+
+    @Override
+    public Application one(String applicationid) throws Exception {
+        return applicationMapper.selectByPrimaryKey(applicationid);
+    }
 }

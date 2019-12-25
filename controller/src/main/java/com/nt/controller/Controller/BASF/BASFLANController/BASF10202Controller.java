@@ -1,9 +1,9 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Application;
 import com.nt.service_BASF.ApplicationServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +38,11 @@ public class BASF10202Controller {
         return ApiResult.success(applicationServices.get(application));
     }
 
-    @RequestMapping(value = "/getApplicationList", method = {RequestMethod.POST})
-    public ApiResult getApplicationList(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(applicationServices.getList());
-    }
+//    @RequestMapping(value = "/getApplicationList", method = {RequestMethod.POST})
+//    public ApiResult getApplicationList(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        return ApiResult.success(applicationServices.getList());
+//    }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody Application application, HttpServletRequest request) throws Exception {
@@ -64,5 +64,13 @@ public class BASF10202Controller {
         application.setStatus(AuthConstants.DEL_FLAG_DELETE);
         applicationServices.del(tokenModel, application);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String applicationid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(applicationid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(applicationServices.one(applicationid));
     }
 }

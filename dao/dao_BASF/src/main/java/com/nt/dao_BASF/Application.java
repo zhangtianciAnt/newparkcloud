@@ -25,6 +25,31 @@ public class Application extends BaseModel {
     private String applicationid;
 
     /**
+     *申请类别
+     */
+    private String applicationtype;
+
+    /**
+     *具体位置
+     */
+    private String specificlocation;
+
+    /**
+     *申请设备
+     */
+    private String applicationdevice;
+
+    /**
+     *申请时间
+     */
+    private String applicationtime;
+
+    /**
+     *复原/归还时间
+     */
+    private String returntime;
+
+    /**
      * 申请人
      */
     private String customername;
