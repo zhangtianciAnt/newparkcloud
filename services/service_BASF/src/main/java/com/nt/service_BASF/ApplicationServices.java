@@ -26,4 +26,7 @@ public interface ApplicationServices {
     void update(TokenModel tokenModel, Application application) throws Exception;
 
     void del(TokenModel tokenModel, Application application) throws Exception;
+    //获取详情
+    Application one(String applicationid) throws Exception;
+
 }
