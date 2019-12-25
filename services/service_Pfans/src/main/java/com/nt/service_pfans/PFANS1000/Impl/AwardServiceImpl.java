@@ -45,11 +45,6 @@ public class AwardServiceImpl implements AwardService {
        return awavo;
     }
     @Override
-    public void insertAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
-
-    }
-
-    @Override
     public void updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
         Award award=new Award();
         BeanUtils.copyProperties(awardVo.getAward(),award);

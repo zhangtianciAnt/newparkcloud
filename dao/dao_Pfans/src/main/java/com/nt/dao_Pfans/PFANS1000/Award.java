@@ -51,11 +51,11 @@ public class Award extends BaseModel {
     @Column(name = "DEVELOPDATE")
     private String developdate;
 
-    @Column(name = "CURRENCYFORMAT")
-    private Date currencyformat;
+    @Column(name = "DELIVERYDATE")
+    private Date deliverydate;
 
-    @Column(name = "CLAIMMONEY")
-    private String claimmoney;
+    @Column(name = "CURRENCYFORMAT")
+    private String currencyformat;
 
     @Column(name = "CLAIMAMOUNT")
     private String claimamount;

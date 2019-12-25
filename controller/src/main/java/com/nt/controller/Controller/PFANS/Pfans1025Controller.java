@@ -39,6 +39,7 @@ public class Pfans1025Controller {
         if(award_id==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(awardService.selectById(award_id));
     }
 
