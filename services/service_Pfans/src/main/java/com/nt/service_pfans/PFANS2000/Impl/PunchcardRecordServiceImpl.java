@@ -146,7 +146,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 DecimalFormat df = new DecimalFormat(".00");
                 List<PunchcardRecord> punchcardrecordlist = punchcardrecorddetailmapper.getPunchCardRecord();
                 for (PunchcardRecord punchcard : punchcardrecordlist) {
-                    Worktime=Double.valueOf(punchcard.getWorktime());
+                    if(punchcard.getWorktime() != null){
+                        Worktime=Double.valueOf(punchcard.getWorktime());
+                    }
                     punchcardrecord.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
                     punchcardrecord.setTeam_id(punchcard.getTeam_id());
                     punchcardrecord.setGroup_id(punchcard.getGroup_id());
