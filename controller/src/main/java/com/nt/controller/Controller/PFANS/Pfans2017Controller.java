@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.utils.ApiResult;
+import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.nt.utils.LogicalException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/punchcardrecord")
@@ -40,5 +44,11 @@ public class Pfans2017Controller {
         }catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
+    }
+
+    @RequestMapping(value = "/download", method = {RequestMethod.POST})
+    public void download(HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        ExcelOutPutUtil.OutPut("打卡记录","dakajilu.xlsx",data,response);
     }
 }
