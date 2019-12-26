@@ -62,6 +62,7 @@ public class BASF10202Controller {
         startWorkflowVo.setMenuUrl("/BASF10202View");
         startWorkflowVo.setDataUrl("/BASF10202FormView");
         startWorkflowVo.setWorkFlowId(workflowid);
+
         workflowServices.StartWorkflow(startWorkflowVo,tokenModel);
         return ApiResult.success();
     }

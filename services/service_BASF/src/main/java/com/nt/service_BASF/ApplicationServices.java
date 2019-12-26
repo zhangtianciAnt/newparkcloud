@@ -21,6 +21,7 @@ public interface ApplicationServices {
 
     List<ApplicationVo> getList() throws Exception;
 
+
     void insert(TokenModel tokenModel, Application application) throws Exception;
 
     void update(TokenModel tokenModel, Application application) throws Exception;
