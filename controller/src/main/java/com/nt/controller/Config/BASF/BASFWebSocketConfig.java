@@ -7,6 +7,10 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+/**
+ * basf websocket 配置
+ */
+
 @Configuration
 //开启注解接收和发送消息
 @EnableWebSocket

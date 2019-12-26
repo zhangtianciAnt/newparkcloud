@@ -8,6 +8,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.Map;
 
+/**
+ * basf websocket 握手
+ */
 public class WebSocketInterceptor implements HandshakeInterceptor {
 
     //在握手之前执行该方法, 继续握手返回true, 中断握手返回false. 通过attributes参数设置WebSocketSession的属性
