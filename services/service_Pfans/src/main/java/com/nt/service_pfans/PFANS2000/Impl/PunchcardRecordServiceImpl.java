@@ -141,31 +141,34 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecorddetail.preInsert(tokenModel);
                 punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                 punchcardrecorddetailmapper.insert(punchcardrecorddetail);
-                PunchcardRecord punchcardrecord = new PunchcardRecord();
-                Double Worktime =0d;
-                DecimalFormat df = new DecimalFormat(".00");
-                List<PunchcardRecord> punchcardrecordlist = punchcardrecorddetailmapper.getPunchCardRecord();
-                for (PunchcardRecord punchcard : punchcardrecordlist) {
-                    if(punchcard.getWorktime() != null){
-                        Worktime=Double.valueOf(punchcard.getWorktime());
-                    }
-                    punchcardrecord.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
-                    punchcardrecord.setTeam_id(punchcard.getTeam_id());
-                    punchcardrecord.setGroup_id(punchcard.getGroup_id());
-                    punchcardrecord.setCenter_id(punchcard.getCenter_id());
-                    punchcardrecord.setUser_id(punchcard.getUser_id());
-                    punchcardrecord.setJobnumber(punchcard.getJobnumber());
-                    punchcardrecord.setWorktime(df.format(Worktime));
-                    punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
-                    punchcardrecord.setTime_start(punchcard.getTime_start());
-                    punchcardrecord.setTime_end(punchcard.getTime_end());
-                    punchcardrecord.preInsert(tokenModel);
-                    punchcardrecord.setRegion(punchcard.getRegion());
-                    punchcardrecordMapper.insert(punchcardrecord);
-                }
+
                 listVo.add(punchcardrecorddetail);
                 accesscount = accesscount + 1;
             }
+
+            PunchcardRecord punchcardrecord = new PunchcardRecord();
+            Double Worktime =0d;
+            DecimalFormat df = new DecimalFormat(".00");
+            List<PunchcardRecord> punchcardrecordlist = punchcardrecorddetailmapper.getPunchCardRecord();
+            for (PunchcardRecord punchcard : punchcardrecordlist) {
+                if(punchcard.getWorktime() != null){
+                    Worktime=Double.valueOf(punchcard.getWorktime());
+                }
+                punchcardrecord.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
+                punchcardrecord.setTeam_id(punchcard.getTeam_id());
+                punchcardrecord.setGroup_id(punchcard.getGroup_id());
+                punchcardrecord.setCenter_id(punchcard.getCenter_id());
+                punchcardrecord.setUser_id(punchcard.getUser_id());
+                punchcardrecord.setJobnumber(punchcard.getJobnumber());
+                punchcardrecord.setWorktime(df.format(Worktime));
+                punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
+                punchcardrecord.setTime_start(punchcard.getTime_start());
+                punchcardrecord.setTime_end(punchcard.getTime_end());
+                punchcardrecord.preInsert(tokenModel);
+                punchcardrecord.setRegion(punchcard.getRegion());
+                punchcardrecordMapper.insert(punchcardrecord);
+            }
+
             methodAttendance(tokenModel);
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
