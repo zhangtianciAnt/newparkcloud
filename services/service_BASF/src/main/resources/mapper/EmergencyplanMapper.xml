@@ -3,7 +3,9 @@
 <mapper namespace="com.nt.service_BASF.mapper.EmergencyplanMapper">
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Emergencyplan">
         <id column="emergencyplanid" property="emergencyplanid" jdbcType="VARCHAR"/>
+        <result column="emergencyplannum" property="emergencyplannum" jdbcType="VARCHAR"/>
         <result column="emergencyplanname" property="emergencyplanname" jdbcType="VARCHAR"/>
+        <result column="keyword" property="keyword" jdbcType="VARCHAR"/>
         <result column="compilationunit" property="compilationunit" jdbcType="VARCHAR"/>
         <result column="filename" property="filename" jdbcType="VARCHAR"/>
         <result column="creationtime" property="creationtime" jdbcType="TIMESTAMP"/>

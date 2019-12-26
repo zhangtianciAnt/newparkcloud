@@ -27,9 +27,19 @@ public class Emergencyplan extends BaseModel {
     private String emergencyplanid;
 
     /**
+     *应急预案编号
+     */
+    private String emergencyplannum;
+
+    /**
      *应急预案名称
      */
     private String emergencyplanname;
+
+    /**
+     *关键词
+     */
+    private String keyword;
 
     /**
      *编制单位
