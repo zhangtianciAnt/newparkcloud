@@ -2,6 +2,8 @@ package com.nt.service_BASF;
 
 import com.nt.dao_BASF.MapBox_MapLevel;
 
+import java.util.List;
+
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF
@@ -15,4 +17,7 @@ public interface MapBox_MapLevelServices {
 
     //根据id获取详情
     MapBox_MapLevel one(String mapid) throws Exception;
+
+    List<MapBox_MapLevel> getall() throws  Exception;
+
 }
