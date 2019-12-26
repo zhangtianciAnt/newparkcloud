@@ -33,13 +33,13 @@ public class Pfans1032Controller {
         return ApiResult.success(petitionService.get(petition));
     }
 
-    @RequestMapping(value = "/selectById", method = {RequestMethod.POST})
-    public ApiResult selectById(@RequestBody Petition petition,HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody Petition petition,HttpServletRequest request) throws Exception{
         if(petition==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel=tokenService.getToken(request);
-        return ApiResult.success(petitionService.selectById(petition.getPetition_id()));
+        return ApiResult.success(petitionService.one(petition.getPetition_id()));
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})

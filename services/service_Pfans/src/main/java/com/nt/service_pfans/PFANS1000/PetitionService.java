@@ -10,8 +10,8 @@ public interface PetitionService {
 
     List<Petition> get(Petition petition) throws Exception;
 
-    public  Petition selectById(String petition_id) throws Exception;
+     Petition one(String petition_id) throws Exception;
 
-    public void update(Petition petition,TokenModel tokenModel) throws Exception;
+     void update(Petition petition,TokenModel tokenModel) throws Exception;
 
 }

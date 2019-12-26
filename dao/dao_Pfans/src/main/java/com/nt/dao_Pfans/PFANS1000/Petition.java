@@ -62,7 +62,7 @@ public class Petition extends BaseModel {
     @Column(name = "DEPOSITPHONE")
     private String depositphone;
 
-    @Column(name = "PETITION_ID")
+    @Column(name = "CLAIMNUMBER")
     private String claimnumber;
 
     @Column(name = "CLAIMTYPE")

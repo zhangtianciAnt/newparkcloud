@@ -24,7 +24,7 @@ public class PetitionServiceImpl implements PetitionService {
     }
 
     @Override
-    public Petition selectById(String petition_id) throws Exception {
+    public Petition one(String petition_id) throws Exception {
        if(petition_id.equals("")){
            return null;
        }
