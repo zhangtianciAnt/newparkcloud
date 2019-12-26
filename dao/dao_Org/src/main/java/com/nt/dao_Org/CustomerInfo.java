@@ -239,10 +239,6 @@ public class CustomerInfo extends BaseModel {
          */
         private String workday;
         /**
-         * 社員ID
-         */
-        private String memberid;
-        /**
          * 予算単位
          */
         private String budgetunit;
