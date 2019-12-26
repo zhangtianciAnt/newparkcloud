@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -65,5 +67,12 @@ public class MapBox_MapLevel extends BaseModel {
      *存放json
      */
     private String geojson;
+
+    private String cascname;
+
+    private String cascids;
+
+    @Transient
+    private List<MapBox_MapLevel> children;
 
 }

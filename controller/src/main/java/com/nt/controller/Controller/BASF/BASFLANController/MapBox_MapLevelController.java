@@ -46,4 +46,9 @@ public class MapBox_MapLevelController {
         }
         return ApiResult.success(mapBox_mapLevelServices.one(mapid));
     }
+
+    @RequestMapping(value = "/getall", method = {RequestMethod.GET})
+    public ApiResult getAll(HttpServletRequest request) throws Exception {
+        return ApiResult.success(mapBox_mapLevelServices.getall());
+    }
 }

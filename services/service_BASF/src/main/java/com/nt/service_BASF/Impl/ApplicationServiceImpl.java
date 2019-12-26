@@ -35,10 +35,11 @@ public class ApplicationServiceImpl implements ApplicationServices {
     }
 
     @Override
-
     public void insert(TokenModel tokenModel, Application application) throws Exception {
         application.preInsert(tokenModel);
         application.setApplicationid(UUID.randomUUID().toString());
+        application.setApplicationstatus("BC012005");
+
         applicationMapper.insert(application);
     }
 

@@ -64,23 +64,23 @@ public class Application extends BaseModel {
      */
     private String workcontent;
 
-    /**
-     * 所在区域
-     */
-    private String region;
-
-    /**
-     * 所在装置
-     */
-    private String device;
-
-    /**
-     * 所在楼层
-     */
-    private String floor;
-
-    /**
-     * 设备id
-     */
-    private String deviceinformationid;
+//    /**
+//     * 所在区域
+//     */
+//    private String region;
+//
+//    /**
+//     * 所在装置
+//     */
+//    private String device;
+//
+//    /**
+//     * 所在楼层
+//     */
+//    private String floor;
+//
+//    /**
+//     * 设备id
+//     */
+//    private String deviceinformationid;
 }

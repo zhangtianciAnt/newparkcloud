@@ -2,7 +2,12 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Application;
+import com.nt.dao_Workflow.Vo.StartWorkflowVo;
+import com.nt.dao_Workflow.Workflow;
+import com.nt.dao_Workflow.Workflownode;
 import com.nt.service_BASF.ApplicationServices;
+import com.nt.service_WorkFlow.WorkflowServices;
+import com.nt.service_WorkFlow.mapper.WorkflowMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -33,6 +38,9 @@ public class BASF10202Controller {
     @Autowired
     private ApplicationServices applicationServices;
 
+    @Autowired
+    private WorkflowServices workflowServices;
+
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
     public ApiResult get(@RequestBody Application application) throws Exception {
         return ApiResult.success(applicationServices.get(application));
@@ -45,9 +53,17 @@ public class BASF10202Controller {
 //    }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody Application application, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody Application application, String workflowid, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         applicationServices.insert(tokenModel, application);
+        String applicationid = application.getApplicationid();
+        StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+        startWorkflowVo.setDataId(applicationid);
+        startWorkflowVo.setMenuUrl("/BASF10202View");
+        startWorkflowVo.setDataUrl("/BASF10202FormView");
+        startWorkflowVo.setWorkFlowId(workflowid);
+
+        workflowServices.StartWorkflow(startWorkflowVo,tokenModel);
         return ApiResult.success();
     }
 
