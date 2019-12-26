@@ -108,7 +108,7 @@ public class DutyServicesImpl implements DutyServices {
                         dutyList.put(duty, String.valueOf(k));
                     } else {
                         errorCount += 1;
-                        result.add("表" + k + "行数据异常，导入系统失败！");
+                        result.add("值班表" + k + "行数据异常，导入系统失败！");
                     }
                 }
             }
@@ -128,7 +128,7 @@ public class DutyServicesImpl implements DutyServices {
                     }
                 } catch (Exception e) {
                     errorCount += 1;
-                    result.add("表" + duty.getValue() + "行导入系统失败！");
+                    result.add("值班表" + duty.getValue() + "行导入系统失败！");
 //            throw new LogicalException(e.getMessage());
                 }
 
