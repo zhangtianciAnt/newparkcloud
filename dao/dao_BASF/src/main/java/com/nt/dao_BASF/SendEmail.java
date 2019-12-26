@@ -25,11 +25,11 @@ public class SendEmail implements Serializable {
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.username = userName;
     }
 
     public String getPassword() {
@@ -41,19 +41,19 @@ public class SendEmail implements Serializable {
     }
 
     public String getFromAddress() {
-        return fromAddress;
+        return fromaddress;
     }
 
     public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
+        this.fromaddress = fromAddress;
     }
 
     public String getToAddress() {
-        return toAddress;
+        return toaddress;
     }
 
     public void setToAddress(String toAddress) {
-        this.toAddress = toAddress;
+        this.toaddress = toAddress;
     }
 
     public String getSubject() {
@@ -73,11 +73,11 @@ public class SendEmail implements Serializable {
     }
 
     public String getContextType() {
-        return contextType;
+        return contexttype;
     }
 
     public void setContextType(String contextType) {
-        this.contextType = contextType;
+        this.contexttype = contextType;
     }
 
     //邮箱服务器地址
@@ -85,17 +85,17 @@ public class SendEmail implements Serializable {
     //主机端口
     private Integer port;
     //发送者的邮箱账号
-    private String userName;
+    private String username;
     //发送者的密码
     private String password;
     //发送者的邮箱地址
-    private String fromAddress;
+    private String fromaddress;
     //接收者的邮箱地址
-    private String toAddress;
+    private String toaddress;
     //设置邮件主题
     private String subject;
     //设置邮件内容
     private String context;
     //设置邮件类型
-    private String contextType;
+    private String contexttype;
 }

@@ -1,7 +1,9 @@
 package com.nt.controller.Controller;
 
 
+import com.nt.dao_BASF.EmailConfig;
 import com.nt.dao_BASF.SendEmail;
+import com.nt.service_BASF.EmailConfigServices;
 import com.nt.service_BASF.SendEmailServices;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/SENDEMAIL")
@@ -22,22 +25,24 @@ public class SendEmailController {
     private SendEmailServices sendEmailServices;
 
     @Autowired
+    private EmailConfigServices emailConfigServices;
+
+    @Autowired
     private TokenService tokenService;
 
-    @Value("${mailUserName}")String mailUserName;
-    @Value("${mailPassword}")String mailPassword;
-    @Value("${mailHost}")String mailHost;
-    @Value("${mailPort}")Integer mailPort;
-    @Value("${mailFromAddress}")String mailFromAddress;
 
     @RequestMapping(value = "/sendemail",method={RequestMethod.POST})
     public ApiResult SendEmail(@RequestBody SendEmail sendemail, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        sendemail.setUserName(mailUserName);
-        sendemail.setPassword(mailPassword);
-        sendemail.setHost(mailHost);
-        sendemail.setPort(mailPort);
-        sendemail.setFromAddress(mailFromAddress);
+
+        List<EmailConfig> emailconfig =  emailConfigServices.get();
+
+        sendemail.setUserName(emailconfig.get(0).getUsername());
+        sendemail.setPassword(emailconfig.get(0).getPassword());
+        sendemail.setHost(emailconfig.get(0).getHost());
+        sendemail.setPort(emailconfig.get(0).getPort());
+        sendemail.setFromAddress(emailconfig.get(0).getFromaddress());
+        sendemail.setContextType(emailconfig.get(0).getContexttype());
         return ApiResult.success(sendEmailServices.sendmail(tokenModel,sendemail));
     }
 

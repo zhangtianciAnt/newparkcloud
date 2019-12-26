@@ -25,12 +25,12 @@ public class SendEmailServicesImpl implements SendEmailServices {
         email.setUserName(sendemail.getUserName());
         email.setPassword(sendemail.getPassword());
         email.setHost(sendemail.getHost());
-        email.setPort(465);
+        email.setPort(sendemail.getPort());
         email.setFromAddress(sendemail.getFromAddress());
         email.setToAddress(sendemail.getToAddress());
         email.setSubject(sendemail.getSubject());
         email.setContext(sendemail.getContext());
-        email.setContextType("text/html;charset=utf-8");
+        email.setContextType(sendemail.getContextType());
         boolean flag = EmailSendTest(email);
         return flag;
     }
