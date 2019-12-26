@@ -25,14 +25,13 @@ public class PetitionServiceImpl implements PetitionService {
 
     @Override
     public Petition one(String petition_id) throws Exception {
-       if(petition_id.equals("")){
-           return null;
-       }
+
        return petitionMapper.selectByPrimaryKey(petition_id);
     }
 
     @Override
     public void update(Petition petition, TokenModel tokenModel) throws Exception {
+        petition.preUpdate(tokenModel);
         petitionMapper.updateByPrimaryKeySelective(petition);
 
     }
