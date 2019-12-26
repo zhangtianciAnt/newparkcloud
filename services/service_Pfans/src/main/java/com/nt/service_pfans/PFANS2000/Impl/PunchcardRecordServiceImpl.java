@@ -74,9 +74,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("工号");
-            model.add("姓名");
+//            model.add("姓名");
             model.add("打卡时间");
-            model.add("区域");
+//            model.add("区域");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -95,9 +95,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         continue;
                     }
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    if (value.size() > 2) {
-                        String date = value.get(2).toString();
-                        String date1 = value.get(2).toString();
+                    if (value.size() > 1) {
+                        String date = value.get(1).toString();
+                        String date1 = value.get(1).toString();
                         date = date.substring(5, 7);
                         date1 = date1.substring(8, 10);
                         if (Integer.parseInt(date1) > 31) {
@@ -111,13 +111,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             continue;
                         }
                     }
-                    if (value.size() > 3) {
-                        if (value.get(3).toString().length() > 2) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的区域字段过长，请输入正确的区域，导入失败");
-                            continue;
-                        }
-                    }
+//                    if (value.size() > 3) {
+//                        if (value.get(3).toString().length() > 2) {
+//                            error = error + 1;
+//                            Result.add("模板第" + (k - 1) + "行的区域字段过长，请输入正确的区域，导入失败");
+//                            continue;
+//                        }
+//                    }
                     Query query = new Query();
                     String jobnumber = value.get(0).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
@@ -134,9 +134,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     punchcardrecorddetail.setCenter_id(customerInfo.getUserinfo().getCentername());
                     punchcardrecorddetail.setGroup_id(customerInfo.getUserinfo().getGroupname());
                     punchcardrecorddetail.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                    String Punchcardrecord_date = value.get(2).toString();
+                    String Punchcardrecord_date = value.get(1).toString();
                     punchcardrecorddetail.setPunchcardrecord_date(sf.parse(Punchcardrecord_date));
-                    punchcardrecorddetail.setRegion(value.get(3).toString());
+//                    punchcardrecorddetail.setRegion(value.get(3).toString());
                 }
                 punchcardrecorddetail.preInsert(tokenModel);
                 punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
