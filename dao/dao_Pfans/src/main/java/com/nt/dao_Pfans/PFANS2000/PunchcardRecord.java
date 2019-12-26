@@ -48,10 +48,10 @@ public class PunchcardRecord extends BaseModel {
     private Date time_end;
 
     @Column(name = "WORKTIME")
-    private String worktime ;
+    private String worktime;
 
     @Column(name = "REGION")
-    private String region ;
+    private String region;
 
 
 }
