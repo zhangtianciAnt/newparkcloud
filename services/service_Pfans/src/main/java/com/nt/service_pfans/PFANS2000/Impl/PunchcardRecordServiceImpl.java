@@ -154,6 +154,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 if(punchcard.getWorktime() != null){
                     Worktime=Double.valueOf(punchcard.getWorktime());
                 }
+                PunchcardRecord del = new PunchcardRecord();
+                del.setUser_id(punchcard.getUser_id());
+                del.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
+                punchcardrecordMapper.delete(del);
+
                 punchcardrecord.setPunchcardrecord_date(punchcard.getPunchcardrecord_date());
                 punchcardrecord.setTeam_id(punchcard.getTeam_id());
                 punchcardrecord.setGroup_id(punchcard.getGroup_id());
