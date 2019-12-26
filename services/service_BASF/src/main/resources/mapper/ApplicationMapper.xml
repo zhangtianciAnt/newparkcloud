@@ -13,7 +13,7 @@
         <result column="returntime" property="returntime" jdbcType="VARCHAR"/>
         <result column="customername" property="customername" jdbcType="VARCHAR"/>
         <result column="applicationstatus" property="applicationstatus" jdbcType="VARCHAR"/>
-<!--        <result column="workcontent" property="workcontent" jdbcType="VARCHAR"/>-->
+        <result column="workcontent" property="workcontent" jdbcType="VARCHAR"/>
 <!--        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>-->
 <!--        <result column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>-->
 <!--        <result column="region" property="region" jdbcType="VARCHAR"/>-->

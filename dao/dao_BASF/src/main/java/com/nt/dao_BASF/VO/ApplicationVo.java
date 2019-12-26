@@ -1,5 +1,7 @@
 package com.nt.dao_BASF.VO;
 
+import com.nt.dao_BASF.Application;
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -56,5 +58,11 @@ public class ApplicationVo extends BaseModel {
      * 设备id
      */
     private String deviceinformationid;
+
+    /**
+     * 设备状态
+     */
+    private String devicestatus;
+
 
 }
