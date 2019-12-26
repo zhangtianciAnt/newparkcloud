@@ -1,5 +1,7 @@
 package com.nt.controller.Config.BASF;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Controller.WebSocket.MessageVo;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +27,16 @@ public class MultiThreadScheduleTask {
     BasfUserInfoMapper basfUserInfoMapper;
 
     @Async
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 30000)
     public void selectUserCount() throws InterruptedException {
         System.out.println("执行 查询员工人数 定时任务: " + LocalDateTime.now().toLocalTime()
                 + "\r\n线程 : " + Thread.currentThread().getName());
+        // 查询数据库
         int i = basfUserInfoMapper.selectUserCount();
         // websocket消息推送
         WebSocket ws = new WebSocket();
-        ws.sendMessageToAll(new TextMessage(String.valueOf(i)));
+        MessageVo messageVo = new MessageVo();
+        messageVo.setUsersCount(i);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(messageVo)));
     }
 }
