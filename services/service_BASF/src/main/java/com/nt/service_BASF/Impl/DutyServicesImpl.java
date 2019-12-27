@@ -62,6 +62,8 @@ public class DutyServicesImpl implements DutyServices {
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
         } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
             result.add("系统在读取并存储为临时文件时发生未知异常！");
             return result;
 //            throw new LogicalException(e.getMessage());
@@ -72,6 +74,8 @@ public class DutyServicesImpl implements DutyServices {
             //读取到的excel集合
             list = reader.read();
         } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
             result.add("系统在读取Excel临时文件时发生未知异常！");
             return result;
 //            throw new LogicalException(e.getMessage());
@@ -79,17 +83,23 @@ public class DutyServicesImpl implements DutyServices {
         try {
             //判断是否是空文件
             if (list == null) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
                 result.add("空文件，请上传正确的值班文件");
                 return result;
             }
             //判断是否是正确格式的值班文件(方案一：检查行数是否足够)
             if (list.size() < 3) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
                 result.add("值班文件格式不正确！");
                 return result;
             }
             //校验值班人员信息是否正确
             List<Object> dutyname = list.get(1);
             if (!judgename(dutyname)) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
                 result.add("值班人员姓名信息不完整！");
                 return result;
             }
