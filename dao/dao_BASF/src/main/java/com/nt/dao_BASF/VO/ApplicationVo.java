@@ -10,59 +10,18 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "application")
 public class ApplicationVo extends BaseModel {
-    @Id
-    private String applicationid;
 
+    Application application;
     /**
-     * 申请人
+     * 流程ID
      */
-    private String customername;
-
-    /**
-     * 审查状态
-     */
-    private String applicationstatus;
-
-    /**
-     * 工作内容
-     */
-    private String workcontent;
-
-    /**
-     * 申请的设备名
-     */
-    private String devicename;
-
-    /**
-     * 所在区域
-     */
-    private String region;
-
-    /**
-     * 所在装置
-     */
-    private String device;
-
-    /**
-     * 所在楼层
-     */
-    private String floor;
-
-    /**
-     * 设备id
-     */
-    private String deviceinformationid;
-
-    /**
-     * 设备状态
-     */
-    private String devicestatus;
-
+    private String workflowid;
 
 }

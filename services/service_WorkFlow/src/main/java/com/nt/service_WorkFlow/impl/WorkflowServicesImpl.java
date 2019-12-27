@@ -361,7 +361,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowLogDetailVo.setSdata(item.getCreateon());
 					workflowLogDetailVo.setEdata(item.getCreateon());
 					workflowLogDetailVo.setIsvirtual("0");
-					rst.add(workflowLogDetailVo);
+					rst.add(0,workflowLogDetailVo);
 				}
 			}
 		}
