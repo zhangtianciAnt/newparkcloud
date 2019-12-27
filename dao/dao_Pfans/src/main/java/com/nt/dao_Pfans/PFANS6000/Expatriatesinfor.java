@@ -104,6 +104,12 @@ public class Expatriatesinfor extends BaseModel {
     private Date exitime;
 
     /**
+     * 退场理由
+     */
+    @Column(name = "EXITREASON")
+    private String exitreason;
+
+    /**
      * 所有技術
      */
     @Column(name = "ALLTECHNOLOGY")
