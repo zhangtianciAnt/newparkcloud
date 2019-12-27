@@ -1,12 +1,6 @@
 package com.nt.service_WorkFlow.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.bean.BeanUtil;
@@ -361,10 +355,29 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					workflowLogDetailVo.setSdata(item.getCreateon());
 					workflowLogDetailVo.setEdata(item.getCreateon());
 					workflowLogDetailVo.setIsvirtual("0");
-					rst.add(0,workflowLogDetailVo);
+					rst.add(workflowLogDetailVo);
 				}
 			}
 		}
+		Collections.sort(rst, new Comparator<WorkflowLogDetailVo>() {
+			@Override
+			public int compare(WorkflowLogDetailVo o1, WorkflowLogDetailVo o2) {
+				int flag;
+				flag = o1.getSdata().compareTo(o2.getSdata());
+				if(flag == 0)
+				{
+					if(o2.getEdata() == null)
+					{
+						flag = -1;
+					}
+					else
+					{
+						flag = o1.getEdata().compareTo(o2.getEdata());
+					}
+				}
+				return flag;
+			}
+		});
 		return rst;
 	}
 
