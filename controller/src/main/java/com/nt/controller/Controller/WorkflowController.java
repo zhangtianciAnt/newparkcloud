@@ -33,12 +33,10 @@ public class WorkflowController {
     private TokenService tokenService;
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception{
-
+    public ApiResult list(@RequestBody Workflow workflow,HttpServletRequest request) throws Exception{
         try {
-
             TokenModel tokenModel = tokenService.getToken(request);
-            Workflow workflow = new Workflow();
+//            Workflow workflow = new Workflow();
             workflow.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             workflow.setTenantid(tokenModel.getTenantId());
             workflow.setOwners(tokenModel.getOwnerList());
