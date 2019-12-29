@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS6000.Cooperinterview;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.CooperinterviewService;
+import com.nt.service_pfans.PFANS6000.SupplierinforService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -24,7 +26,14 @@ public class Pfans6001Controller {
     private CooperinterviewService cooperinterviewService;
 
     @Autowired
+    private SupplierinforService supplierinforService;
+
+    @Autowired
     private TokenService tokenService;
+
+    public Pfans6001Controller(SupplierinforService supplierinforService) {
+        this.supplierinforService = supplierinforService;
+    }
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult getcooperinterview(HttpServletRequest request) throws Exception {
@@ -61,5 +70,14 @@ public class Pfans6001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         cooperinterviewService.createcooperinterviewApply(cooperinterview, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getSupplierNameList", method = {RequestMethod.POST})
+    public ApiResult getSupplierNameList(@RequestBody Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
+        if (supplierinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(supplierinforService.getSupplierNameList(supplierinfor, request));
     }
 }

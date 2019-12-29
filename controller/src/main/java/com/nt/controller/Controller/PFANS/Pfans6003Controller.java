@@ -62,4 +62,5 @@ public class Pfans6003Controller {
         supplierinforService.createsupplierinforApply(supplierinfor, tokenModel);
         return ApiResult.success();
     }
+
 }
