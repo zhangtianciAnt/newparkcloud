@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class SupplierinforServiceImpl implements SupplierinforService {
@@ -45,5 +46,6 @@ public class SupplierinforServiceImpl implements SupplierinforService {
         supplierinfor.setSupplierinfor_id(UUID.randomUUID().toString());
         supplierinforMapper.insert(supplierinfor);
     }
+
 
 }
