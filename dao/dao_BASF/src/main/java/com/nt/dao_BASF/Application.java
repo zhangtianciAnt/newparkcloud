@@ -79,8 +79,8 @@ public class Application extends BaseModel {
 //     */
 //    private String floor;
 //
-//    /**
-//     * 设备id
-//     */
-//    private String deviceinformationid;
+    /**
+     * 设备id
+     */
+    private String deviceinformationid;
 }

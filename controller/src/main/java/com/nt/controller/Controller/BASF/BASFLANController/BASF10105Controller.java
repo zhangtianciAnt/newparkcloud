@@ -63,7 +63,7 @@ public class BASF10105Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        deviceinFormationServices.insert(deviceinformation, tokenModel);
+        deviceinFormationServices.insert(deviceinformation, tokenModel, "");
         return ApiResult.success();
     }
 

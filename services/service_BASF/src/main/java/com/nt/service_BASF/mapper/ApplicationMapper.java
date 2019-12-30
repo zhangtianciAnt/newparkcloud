@@ -10,4 +10,6 @@ import java.util.List;
 @Component(value = "ApplicationMapper")
 public interface ApplicationMapper extends MyMapper<Application> {
     List<ApplicationVo> selectApplicationVoList();
+
+    List<Application> selectBarricades();
 }

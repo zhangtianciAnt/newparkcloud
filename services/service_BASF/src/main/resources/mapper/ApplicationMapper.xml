@@ -53,5 +53,17 @@
     <select id="selectApplicationVoList" resultType="com.nt.dao_BASF.VO.ApplicationVo">
         <include refid="selectApplicationVo"></include>
     </select>
+
+    <select id="selectBarricades" resultType="com.nt.dao_BASF.Application">
+        SELECT
+        a.deviceinformationid
+        FROM
+        application AS a
+        WHERE
+        a.applicationtype = "03702" AND
+        a.applicationstatus = "BC012002" AND
+        a.applicationtime &lt;= CURDATE() AND
+        a.returntime &gt;= CURDATE()
+    </select>
 </mapper>
 
