@@ -1,18 +1,21 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.DeviceInformationServices;
+import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.NotWritablePropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Array;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -32,6 +35,9 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;
 
+    @Autowired
+    private ApplicationMapper applicationMapper;
+
     /**
      * @param deviceinformation
      * @Method list
@@ -45,7 +51,14 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     public List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception {
 //        Deviceinformation deviceinformation = new Deviceinformation();
 //        deviceinformation = new Deviceinformation();
-        return deviceinformationMapper.select(deviceinformation);
+        List<Deviceinformation> deviceinformationList = deviceinformationMapper.select(deviceinformation);
+        //移除虚拟路桩信息
+        for (Iterator<Deviceinformation> iterator = deviceinformationList.iterator(); iterator.hasNext(); ) {
+            if (iterator.next().getDevicetype().equals("BC004006")) {
+                iterator.remove();
+            }
+        }
+        return deviceinformationList;
     }
 
     /**
@@ -59,10 +72,16 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/11/4 18:48
      */
     @Override
-    public void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
-        deviceinformation.preInsert(tokenModel);
-        deviceinformation.setDeviceinformationid(UUID.randomUUID().toString());
-        deviceinformationMapper.insert(deviceinformation);
+    public void insert(Deviceinformation deviceinformation, TokenModel tokenModel, String type) throws Exception {
+        if (type.equals("Barricades")) {
+            deviceinformation.preInsert(tokenModel);
+            deviceinformation.setStatus("1");
+            deviceinformationMapper.insert(deviceinformation);
+        } else {
+            deviceinformation.preInsert(tokenModel);
+            deviceinformation.setDeviceinformationid(UUID.randomUUID().toString());
+            deviceinformationMapper.insert(deviceinformation);
+        }
     }
 
     /**
@@ -120,6 +139,26 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      */
     @Override
     public List<Deviceinformation> deviceList(String mapid, String[] devicetype, String devicename, Integer pageindex, Integer pagesize) throws Exception {
+        if (Arrays.asList(devicetype).contains("BC004006")) {
+            //查询更新路障信息
+            Deviceinformation deviceinformation0 = new Deviceinformation();
+            deviceinformation0.setDevicetype("BC004006");
+            deviceinformation0.setStatus("0");
+            for (Deviceinformation deviceinformation : deviceinformationMapper.select(deviceinformation0)) {
+                deviceinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
+                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+            }
+            //获取符合要求的虚拟路障的设备信息表的id
+            List<Application> applicationList = applicationMapper.selectBarricades();
+            //更新路障信息
+            for (Application application : applicationList) {
+                Deviceinformation deviceinformation = new Deviceinformation();
+                deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
+                deviceinformation.setStatus("0");
+                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+            }
+        }
         return deviceinformationMapper.selectDeviceList(mapid, devicetype, devicename, pageindex, pagesize);
+
     }
 }

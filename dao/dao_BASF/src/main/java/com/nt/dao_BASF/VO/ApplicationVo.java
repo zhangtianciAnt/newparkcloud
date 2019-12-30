@@ -19,9 +19,24 @@ import java.util.List;
 public class ApplicationVo extends BaseModel {
 
     Application application;
+
+    /**
+     * 申请类别（0为消防水，1为道路占用）
+     */
+    private String type;
     /**
      * 流程ID
      */
     private String workflowid;
+
+    /**
+     * GIS坐标
+     */
+    private String gis;
+
+    /**
+     * 地图信息主键
+     */
+    private String mapid;
 
 }

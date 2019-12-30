@@ -20,8 +20,8 @@ public interface DeviceInformationServices {
     //获取设备列表
     List<Deviceinformation> list(Deviceinformation deviceinformation) throws Exception;
 
-    //创建设备
-    void insert(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
+    //创建设备(type用于区分虚拟设备路障)
+    void insert(Deviceinformation deviceinformation, TokenModel tokenModel, String type) throws Exception;
 
     //删除设备
     void delete(Deviceinformation deviceinformation) throws Exception;

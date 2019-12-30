@@ -2,11 +2,13 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Application;
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.VO.ApplicationVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Workflow;
 import com.nt.dao_Workflow.Workflownode;
 import com.nt.service_BASF.ApplicationServices;
+import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowMapper;
 import com.nt.utils.*;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -42,6 +45,9 @@ public class BASF10202Controller {
     @Autowired
     private WorkflowServices workflowServices;
 
+    @Autowired
+    private DeviceInformationServices deviceinFormationServices;
+
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
     public ApiResult get(@RequestBody Application application) throws Exception {
         return ApiResult.success(applicationServices.get(application));
@@ -56,17 +62,49 @@ public class BASF10202Controller {
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody ApplicationVo applicationVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        applicationServices.insert(tokenModel, applicationVo.getApplication());
-        String applicationid = applicationVo.getApplication().getApplicationid();
+        tokenModel.setLocale("zh_CN");
+        //消防水
+        if (applicationVo.getType().equals("0")) {
+            applicationServices.insert(tokenModel, applicationVo.getApplication());
+            String applicationid = applicationVo.getApplication().getApplicationid();
 
-        StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
-        startWorkflowVo.setDataId(applicationid);
-        startWorkflowVo.setMenuUrl("/BASF10202View");
-        startWorkflowVo.setDataUrl("/BASF10202FormView");
-        startWorkflowVo.setWorkFlowId(applicationVo.getWorkflowid());
+            StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+            startWorkflowVo.setDataId(applicationid);
+            startWorkflowVo.setMenuUrl("/BASF10202View");
+            startWorkflowVo.setDataUrl("/BASF10202FormView");
+            startWorkflowVo.setWorkFlowId(applicationVo.getWorkflowid());
 
-        workflowServices.StartWorkflow(startWorkflowVo,tokenModel);
-        return ApiResult.success();
+            workflowServices.StartWorkflow(startWorkflowVo, tokenModel);
+            return ApiResult.success();
+        }
+        //道路占用
+        else if (applicationVo.getType().equals("1")) {
+            String uuid = UUID.randomUUID().toString();
+            //新增虚拟路障设备
+            Deviceinformation deviceinformation = new Deviceinformation();
+            deviceinformation.setDeviceinformationid(uuid);
+            deviceinformation.setGis(applicationVo.getGis());
+            deviceinformation.setMapid(applicationVo.getMapid());
+            deviceinformation.setDevicetype("BC004006");
+            deviceinformation.setDevicename("虚拟路桩");
+            deviceinFormationServices.insert(deviceinformation, tokenModel, "Barricades");
+
+            applicationVo.getApplication().setDeviceinformationid(uuid);
+            applicationServices.insert(tokenModel, applicationVo.getApplication());
+            String applicationid = applicationVo.getApplication().getApplicationid();
+
+            StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+            startWorkflowVo.setDataId(applicationid);
+            startWorkflowVo.setMenuUrl("/BASF10202View");
+            startWorkflowVo.setDataUrl("/BASF10202FormView");
+            startWorkflowVo.setWorkFlowId(applicationVo.getWorkflowid());
+
+            workflowServices.StartWorkflow(startWorkflowVo, tokenModel);
+            return ApiResult.success();
+        } else {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
