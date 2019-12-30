@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
+import com.nt.service_pfans.PFANS6000.SupplierinforService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -22,6 +24,9 @@ public class Pfans6004Controller {
 
     @Autowired
     private ExpatriatesinforService expatriatesinforService;
+
+    @Autowired
+    private SupplierinforService supplierinforService;
 
     @Autowired
     private TokenService tokenService;
@@ -61,5 +66,14 @@ public class Pfans6004Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         expatriatesinforService.createexpatriatesinforApply(expatriatesinfor, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getSupplierNameList", method = {RequestMethod.POST})
+    public ApiResult getSupplierNameList(@RequestBody Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
+        if (supplierinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(supplierinforService.getSupplierNameList(supplierinfor, request));
     }
 }
