@@ -62,6 +62,7 @@ public class BASF10202Controller {
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody ApplicationVo applicationVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+        tokenModel.setLocale("zh_CN");
         //消防水
         if (applicationVo.getType().equals("0")) {
             applicationServices.insert(tokenModel, applicationVo.getApplication());
