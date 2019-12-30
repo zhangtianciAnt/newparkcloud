@@ -1,7 +1,7 @@
 package com.nt.controller.Config.BASF;
 
 import com.alibaba.fastjson.JSONObject;
-import com.nt.controller.Controller.WebSocket.MessageVo;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class MultiThreadScheduleTask {
         int i = basfUserInfoMapper.selectUserCount();
         // websocket消息推送
         WebSocket ws = new WebSocket();
-        MessageVo messageVo = new MessageVo();
+        WebSocketVo messageVo = new WebSocketVo();
         messageVo.setUsersCount(i);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(messageVo)));
     }
