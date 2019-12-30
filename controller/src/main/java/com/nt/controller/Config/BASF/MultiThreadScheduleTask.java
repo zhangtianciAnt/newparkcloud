@@ -81,4 +81,20 @@ public class MultiThreadScheduleTask {
         webSocketVo.setInsideVehicleTypeVoList(vehicleinformationServices.getInsideVehicleType());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    /**
+     * @return
+     * @Method BASF90600_getAccessStatistics
+     * @Author SKAIXX
+     * @Description ERC大屏车辆定位模块车辆出入统计
+     * @Date 2019/12/30 19:09
+     * @Param
+     **/
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90600_getAccessStatistics() throws Exception {
+        // 车辆出入统计
+        webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
 }

@@ -38,12 +38,14 @@
 
     <!--    获取车辆出入统计-->
     <select id="getAccessStatistics" resultType="com.nt.dao_BASF.VO.VehicleAccessStatisticsVo">
+        select * from (
         select count(*) as cnt,date_format(intime,'%Y-%m-%d') as date
         from vehicleinformation
         where outtime is not NULL
         group by date_format(intime,'%Y-%m-%d')
         order by date desc
-        limit 30
+        limit 30) as tmp
+        order by tmp.date asc
     </select>
 
     <!--    获取在场车辆类别统计-->
