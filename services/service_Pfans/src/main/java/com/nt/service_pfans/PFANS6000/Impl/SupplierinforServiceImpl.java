@@ -20,10 +20,6 @@ public class SupplierinforServiceImpl implements SupplierinforService {
     @Autowired
     private SupplierinforMapper supplierinforMapper;
 
-    @Override
-    public List<Supplierinfor> getSupplierNameList(Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
-        return null;
-    }
 
     @Override
     public List<Supplierinfor> getsupplierinfor(Supplierinfor supplierinfor) throws Exception {
@@ -47,5 +43,9 @@ public class SupplierinforServiceImpl implements SupplierinforService {
         supplierinforMapper.insert(supplierinfor);
     }
 
+    @Override
+    public List<Supplierinfor> getSupplierNameList(Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
+        return supplierinforMapper.select(supplierinfor);
+    }
 
 }
