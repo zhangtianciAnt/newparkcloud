@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,10 @@ public class SupplierinforServiceImpl implements SupplierinforService {
     @Autowired
     private SupplierinforMapper supplierinforMapper;
 
+    @Override
+    public List<Supplierinfor> getSupplierNameList(Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
+        return null;
+    }
 
     @Override
     public List<Supplierinfor> getsupplierinfor(Supplierinfor supplierinfor) throws Exception {
