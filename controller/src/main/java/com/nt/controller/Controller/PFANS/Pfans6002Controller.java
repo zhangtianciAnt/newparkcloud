@@ -31,7 +31,7 @@ public class Pfans6002Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Customerinfor customerinfor = new Customerinfor();
         customerinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(customerinforService.getcustomerinfor(customerinfor));
+        return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
     }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})

@@ -43,7 +43,6 @@ public class PunchcardRecord extends BaseModel {
     @Column(name = "TIME_START")
     private Date time_start;
 
-
     @Column(name = "TIME_END")
     private Date time_end;
 
