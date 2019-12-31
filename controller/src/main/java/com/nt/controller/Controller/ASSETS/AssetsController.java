@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.ASSETS;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.InventoryResults;
 import com.nt.service_Assets.AssetsService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/assets")
@@ -30,23 +32,23 @@ public class AssetsController {
     }
 
     @RequestMapping(value = "/scanOne", method = {RequestMethod.POST})
-    public ApiResult scanOne(@RequestBody InventoryResults assetsResult, HttpServletRequest request) throws Exception {
-        if (assetsResult == null) {
+    public ApiResult scanOne(String code, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(code)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        assetsService.scanOne(assetsResult, tokenModel);
+        assetsService.scanOne(code, tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/scanList", method = {RequestMethod.POST})
-    public ApiResult scanList(@RequestBody InventoryResults assetsResult, HttpServletRequest request) throws Exception {
-        if (assetsResult == null) {
+    public ApiResult scanList(@RequestBody List<String> code, HttpServletRequest request) throws Exception {
+        if (code.size() == 0) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        assetsService.scanList(assetsResult, tokenModel);
-        return ApiResult.success();
+        int rst = assetsService.scanList(code, tokenModel);
+        return ApiResult.success(rst);
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})

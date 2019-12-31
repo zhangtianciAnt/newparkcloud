@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface AssetsService {
 
-    void scanOne(InventoryResults assetsResult, TokenModel tokenModel) throws Exception;
+    int scanOne(String code, TokenModel tokenModel) throws Exception;
 
-    void scanList(InventoryResults inventoryResults, TokenModel tokenModel) throws Exception;
+    int scanList(List<String> code, TokenModel tokenModel) throws Exception;
 
     List<Assets> list(Assets assets) throws Exception;
 

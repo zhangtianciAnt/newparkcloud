@@ -35,25 +35,27 @@ public class AssetsServiceImpl implements AssetsService {
     private InventoryResultsMapper assetsResultMapper;
 
     @Override
-    public void scanOne(InventoryResults inventoryResults, TokenModel tokenModel) throws Exception {
-        inventoryResults.preInsert(tokenModel);
-        inventoryResults.setResult("2");
-        assetsResultMapper.updateByPrimaryKey(inventoryResults);
+    public int scanOne(String code, TokenModel tokenModel) throws Exception {
+        InventoryResults condition = new InventoryResults();
+        condition.setBarcode(code);
+        List<InventoryResults> rst = assetsResultMapper.select(condition);
+        if(rst.size() > 0){
+            InventoryResults inventoryResults = rst.get(0);
+            inventoryResults.preUpdate(tokenModel);
+            inventoryResults.setResult("2");
+            assetsResultMapper.updateByPrimaryKey(inventoryResults);
+            return 1;
+        }
+        return 0;
     }
 
     @Override
-    public void scanList(InventoryResults inventoryResults, TokenModel tokenModel) throws Exception {
-        List<InventoryResults> inventresList = assetsResultMapper.select(inventoryResults);
-        if(inventresList != null){
-            int rowindex = 0;
-            for(InventoryResults inv : inventresList){
-                rowindex = rowindex + 1;
-                inv.preInsert(tokenModel);
-                inv.setResult("2");
-                inv.setRowindex(rowindex);
-                assetsResultMapper.updateByPrimaryKey(inv);
-            }
+    public int scanList(List<String> code, TokenModel tokenModel) throws Exception {
+        int rst = 0;
+        for(String item:code){
+            rst +=scanOne(item,tokenModel);
         }
+        return rst;
     }
 
     @Override
