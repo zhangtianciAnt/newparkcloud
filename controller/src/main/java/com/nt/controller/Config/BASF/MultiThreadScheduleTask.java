@@ -50,6 +50,7 @@ public class MultiThreadScheduleTask {
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
+    // region BASF90600 ERC-车辆定位
     /**
      * @return void
      * @Method BASF90600_GetInsideList
@@ -68,7 +69,7 @@ public class MultiThreadScheduleTask {
 
     /**
      * @return void
-     * @Method BASF90600_getInsideVehicleType
+     * @Method BASF90600_GetInsideVehicleType
      * @Author SKAIXX
      * @Description ERC大屏车辆定位模块在场车辆类别统计
      * @Date 2019/12/30 16:27
@@ -76,7 +77,7 @@ public class MultiThreadScheduleTask {
      **/
     @Async
     @Scheduled(fixedDelay = 30000)
-    public void BASF90600_getInsideVehicleType() throws Exception {
+    public void BASF90600_GetInsideVehicleType() throws Exception {
         // 在场车辆类别统计
         webSocketVo.setInsideVehicleTypeVoList(vehicleinformationServices.getInsideVehicleType());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
@@ -84,7 +85,7 @@ public class MultiThreadScheduleTask {
 
     /**
      * @return
-     * @Method BASF90600_getAccessStatistics
+     * @Method BASF90600_GetAccessStatistics
      * @Author SKAIXX
      * @Description ERC大屏车辆定位模块车辆出入统计
      * @Date 2019/12/30 19:09
@@ -92,9 +93,26 @@ public class MultiThreadScheduleTask {
      **/
     @Async
     @Scheduled(fixedDelay = 30000)
-    public void BASF90600_getAccessStatistics() throws Exception {
+    public void BASF90600_GetAccessStatistics() throws Exception {
         // 车辆出入统计
         webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    /**
+     * @return
+     * @Method BASF90600_GetDailyVehicleInfo
+     * @Author SKAIXX
+     * @Description ERC大屏车辆定位模块获取当日入场车辆信息
+     * @Date 2019/12/31 11:27
+     * @Param
+     **/
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90600_GetDailyVehicleInfo() throws Exception {
+        // 获取当日入场车辆信息
+        webSocketVo.setVehicleinformationList(vehicleinformationServices.getDailyVehicleInfo());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+    // endregion
 }

@@ -20,5 +20,4 @@ public class VehicleAccessStatisticsVo extends BaseModel {
      */
     private String date;
 
-
 }
