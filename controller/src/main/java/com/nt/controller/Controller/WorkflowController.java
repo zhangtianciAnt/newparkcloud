@@ -149,6 +149,7 @@ public class WorkflowController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        startWorkflowVo.setUserId(tokenModel.getUserId());
         return ApiResult.success(workflowServices.isDelWorkflow(startWorkflowVo));
     }
 
