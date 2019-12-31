@@ -96,4 +96,11 @@ public class InventoryplanController {
         return ApiResult.success(inventoryplanService.selectByResult(inventoryresultsid));
     }
 
+    @RequestMapping(value = "/check", method = {RequestMethod.POST})
+    public ApiResult check(@RequestBody Inventoryplan inventoryplan, HttpServletRequest request) throws Exception {
+        if (inventoryplan == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(inventoryplanService.check(inventoryplan));
+    }
 }

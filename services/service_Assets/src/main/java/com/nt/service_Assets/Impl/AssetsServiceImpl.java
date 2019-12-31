@@ -1,15 +1,23 @@
 package com.nt.service_Assets.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.mongodb.client.model.Collation;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.InventoryResults;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.service_Assets.AssetsService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryResultsMapper;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,9 +28,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -34,6 +42,11 @@ public class AssetsServiceImpl implements AssetsService {
     @Autowired
     private InventoryResultsMapper assetsResultMapper;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private DictionaryService dictionaryService;
     @Override
     public int scanOne(String code, TokenModel tokenModel) throws Exception {
         InventoryResults condition = new InventoryResults();
@@ -99,7 +112,7 @@ public class AssetsServiceImpl implements AssetsService {
             model.add("价格");
             model.add("购入时间");
             model.add("使用部门");
-            model.add("设备负责人");
+            model.add("工号");
             model.add("资产状态");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
@@ -136,13 +149,34 @@ public class AssetsServiceImpl implements AssetsService {
                         }
                     }
                     assets.setFilename(value.get(0).toString());
-                    assets.setTypeassets(value.get(1).toString());
+                    List<Dictionary> diclist = dictionaryService.getForSelect("PA001");
+                    List<Dictionary> dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
+                    if(dicIds.size() > 0){
+                        assets.setTypeassets(dicIds.get(0).getCode());
+                    }
                     assets.setPrice(value.get(2).toString());
                     assets.setPurchasetime(sf.parse(value.get(3).toString()));
                     assets.setUsedepartment(value.get(4).toString());
-                    assets.setPrincipal(value.get(5).toString());
-                    assets.setAssetstatus(value.get(6).toString());
+                    Query query = new Query();
+                    String jobnumber = value.get(5).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        assets.setPrincipal(customerInfo.getUserid());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
+
+                    diclist = dictionaryService.getForSelect("PA003");
+                    dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
+                    if(dicIds.size() > 0){
+                        assets.setAssetstatus(dicIds.get(0).getCode());
+                    }
                 }
+                assets.setBarcode("P"+ DateUtil.format(new Date(),"yyyyMMddHHmmssSSS"));
                 assets.preInsert(tokenModel);
                 assets.setAssets_id(UUID.randomUUID().toString());
                 assetsMapper.insert(assets);

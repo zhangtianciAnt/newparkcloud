@@ -24,4 +24,5 @@ public interface InventoryplanService {
 
     List<InventoryResults> selectByResult(String inventoryresultsid) throws Exception;
 
+    int check(Inventoryplan inventoryplan) throws Exception;
 }

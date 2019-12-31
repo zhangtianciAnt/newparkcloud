@@ -1,5 +1,8 @@
 package com.nt.service_Assets.Impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.InventoryRange;
 import com.nt.dao_Assets.Inventoryplan;
@@ -10,6 +13,7 @@ import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryplanMapper;
 import com.nt.service_Assets.mapper.InventoryRangeMapper;
 import com.nt.service_Assets.mapper.InventoryResultsMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +32,7 @@ public class InventoryplanServiceImpl implements InventoryplanService {
 
     @Autowired
     private InventoryplanMapper inventoryplanMapper;
+
     @Autowired
     private AssetsMapper assetsMapper;
 
@@ -38,7 +44,17 @@ public class InventoryplanServiceImpl implements InventoryplanService {
 
     @Override
     public List<Inventoryplan> get(Inventoryplan inventoryplan) throws Exception {
-        return inventoryplanMapper.select(inventoryplan);
+        List<Inventoryplan> rst = inventoryplanMapper.select(inventoryplan);
+        for(Inventoryplan item:rst){
+            InventoryResults r = new InventoryResults();
+            r.setInventoryplan_id(item.getInventoryplan_id());
+            List<InventoryResults> rs = inventoryResultsMapper.select(r);
+            item.setTotalnumber(String.valueOf(rs.size()));
+            item.setInquantity(String.valueOf(rs.stream().filter(i->(i.getResult().equals("2"))).count()));
+            item.setUnquantity(String.valueOf(rs.stream().filter(i->(i.getResult().equals("1"))).count()));
+        }
+
+        return rst;
     }
 
     @Override
@@ -58,12 +74,7 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         BeanUtils.copyProperties(inventoryRangeVo.getInventoryplan(), inventoryplan);
         inventoryplan.preInsert(tokenModel);
         inventoryplan.setInventoryplan_id(inventoryRangeid);
-        Assets aa = new Assets();
-        List<Assets> aalist = assetsMapper.select(aa);
-        inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
         List<InventoryRange> inventList = inventoryRangeVo.getInventoryRange();
-        inventoryplan.setInquantity(String.valueOf(inventList.size()));
-        inventoryplan.setUnquantity(String.valueOf(aalist.size() - inventList.size()));
         inventoryplanMapper.insertSelective(inventoryplan);
         if (inventList != null) {
             int rowindex = 0;
@@ -130,4 +141,29 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         return inventoryResultsMapper.select(inventoryResults);
     }
 
+    @Override
+    public int check(Inventoryplan inventoryplan) throws Exception {
+        Inventoryplan condition = new Inventoryplan();
+        condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        List<Inventoryplan> rst = inventoryplanMapper.select(condition);
+        int count = 0;
+        Date st = DateUtil.parse(inventoryplan.getInventorycycle().split("~")[0]);
+        Date ed = DateUtil.parse(inventoryplan.getInventorycycle().split("~")[1]);
+        for(Inventoryplan item:rst){
+            if(StrUtil.isNotBlank(inventoryplan.getInventoryplan_id())){
+                if(inventoryplan.getInventoryplan_id().equals(item.getInventoryplan_id())){
+                    continue;
+                }
+            }
+            String[] ts = item.getInventorycycle().split("~");
+            if(ts.length == 2){
+                Date st1 = DateUtil.parse(ts[0]);
+                Date ed1 = DateUtil.parse(ts[1]);
+                if(DateUtil.between(st, ed1, DateUnit.DAY,false) >= 0 && DateUtil.between(ed, st1, DateUnit.DAY,false) <= 0){
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
 }

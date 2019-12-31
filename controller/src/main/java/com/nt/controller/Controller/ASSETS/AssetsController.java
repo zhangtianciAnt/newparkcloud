@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/assets")
@@ -100,5 +103,9 @@ public class AssetsController {
         }
     }
 
-
+    @RequestMapping(value = "/download", method = {RequestMethod.POST})
+    public void download(HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        ExcelOutPutUtil.OutPut("资产","zichan.xlsx",data,response);
+    }
 }
