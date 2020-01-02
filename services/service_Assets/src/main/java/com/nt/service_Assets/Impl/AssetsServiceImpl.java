@@ -84,6 +84,7 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     public void insert(Assets assets, TokenModel tokenModel) throws Exception {
         assets.preInsert(tokenModel);
+        assets.setBarcode(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSS"));
         assets.setRfidcd(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSS"));
         assets.setAssets_id(UUID.randomUUID().toString());
         assetsMapper.insert(assets);
@@ -196,6 +197,7 @@ public class AssetsServiceImpl implements AssetsService {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);
                 }else{
+                    assets.setBarcode(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSS"));
                     assets.setRfidcd(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSS"));
                     assets.preInsert(tokenModel);
                     assets.setAssets_id(UUID.randomUUID().toString());
