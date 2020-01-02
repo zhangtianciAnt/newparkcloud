@@ -40,13 +40,12 @@ public class AssetsController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        assetsService.scanOne(code, tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(assetsService.scanOne(code, tokenModel).getBarcode());
     }
 
     @RequestMapping(value = "/scanList", method = {RequestMethod.POST})
-    public ApiResult scanList(@RequestBody List<String> code, HttpServletRequest request) throws Exception {
-        if (code.size() == 0) {
+    public ApiResult scanList(String code, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(code)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
@@ -91,11 +90,11 @@ public class AssetsController {
         return ApiResult.success(assetsService.One(assets.getAssets_id()));
     }
 
-    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    @RequestMapping(value = "/import",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(assetsService.importUser(request,tokenModel));
+            return ApiResult.success(assetsService.importDate(request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {

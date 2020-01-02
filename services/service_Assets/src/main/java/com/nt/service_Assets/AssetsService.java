@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface AssetsService {
 
-    int scanOne(String code, TokenModel tokenModel) throws Exception;
+    InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception;
 
-    int scanList(List<String> code, TokenModel tokenModel) throws Exception;
+    int scanList(String code, TokenModel tokenModel) throws Exception;
 
     List<Assets> list(Assets assets) throws Exception;
 
@@ -21,5 +21,5 @@ public interface AssetsService {
 
     Assets One(String assetsid) throws Exception;
 
-    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+    List<String> importDate(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 }
