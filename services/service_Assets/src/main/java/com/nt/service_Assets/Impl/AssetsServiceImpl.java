@@ -51,7 +51,7 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
         InventoryResults condition = new InventoryResults();
-        condition.setBarcode(code);
+        condition.setRfidcd(code);
         List<InventoryResults> rst = assetsResultMapper.select(condition);
         if(rst.size() > 0){
             InventoryResults inventoryResults = rst.get(0);

@@ -83,4 +83,10 @@ public class InventoryResults extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    /**
+     * RFIDCD
+     */
+    @Column(name = "RFIDCD")
+    private String rfidcd;
+
 }
