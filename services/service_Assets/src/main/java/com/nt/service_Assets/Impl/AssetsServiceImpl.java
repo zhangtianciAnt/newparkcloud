@@ -121,6 +121,7 @@ public class AssetsServiceImpl implements AssetsService {
             model.add("使用部门");
             model.add("工号");
             model.add("条形码");
+            model.add("条码类型");
             model.add("资产状态");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
@@ -188,9 +189,15 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     diclist = dictionaryService.getForSelect("PA003");
-                    dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
+                    dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(8).toString()))).collect(Collectors.toList());
                     if(dicIds.size() > 0){
                         assets.setAssetstatus(dicIds.get(0).getCode());
+                    }
+
+                    diclist = dictionaryService.getForSelect("PA004");
+                    dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(7).toString()))).collect(Collectors.toList());
+                    if(dicIds.size() > 0){
+                        assets.setBartype(dicIds.get(0).getCode());
                     }
                 }
                 if(StrUtil.isNotBlank(assets.getAssets_id())){
