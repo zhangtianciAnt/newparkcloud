@@ -33,3 +33,4 @@ services/service_VerificationCode/target/
 services/service_WorkFlow/target/
 logs/log.2019-12-30.log
 dao_SQL/dao_BASFSQL/target/classes/com/nt/dao_SQL/SqlUserInfo.class
+logs/
