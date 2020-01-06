@@ -64,11 +64,12 @@
             AND
             devicename like #{devicename}
         </if>
+        ORDER BY
+        d.CREATEON DESC
         <if test="pageindex!=null and pagesize!=null">
             LIMIT
             #{pageindex},#{pagesize}
         </if>
-        ORDER BY
-        d.CREATEON DESC
+
     </select>
 </mapper>

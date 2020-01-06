@@ -38,7 +38,7 @@ public class GlobalAop {
         log.info("IP : " + request.getRemoteAddr());
         log.info("类名 : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         log.info("参数 : " + Arrays.toString(joinPoint.getArgs()));
-        log.info("请求时间 : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
+        log.info("请求时间 : " + DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"));
         log.info("方法调用开始<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 
@@ -57,7 +57,7 @@ public class GlobalAop {
     @After("webLog()")
     public void after(JoinPoint joinPoint){
         log.info("方法调用结束>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        log.info("TIME : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
+        log.info("TIME : " + DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"));
         log.info("方法调用结束<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 }
