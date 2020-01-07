@@ -57,7 +57,7 @@ public class BASF10206Controller {
      * @Package: com.nt.controller.Controller.BASF.BASFLANController
      * @ClassName: BASF10206
      * @Author: 王哲
-     * @Description: EXECL导入
+     * @Description: 当天值班信息
      * @Date: 2019/12/25
      * @Version: 1.0
      */
