@@ -19,15 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.controller.Controller.BASF.BASFLANController
- * @ClassName: BASF21208Controller
+ * @ClassName: BASF21209Controller
  * @Author: 王哲
- * @Description: 培训申请
- * @Date: 2020/1/7 10:15
+ * @Description: 申请考核
+ * @Date: 2020/1/7 14:04
  * @Version: 1.0
  */
 @RestController
-@RequestMapping("/BASF21208")
-public class BASF21208Controller {
+@RequestMapping("/BASF21209")
+public class BASF21209Controller {
 
     @Autowired
     private TokenService tokenService;
@@ -35,16 +35,14 @@ public class BASF21208Controller {
     @Autowired
     private StartprogramServices startprogramServices;
 
-    //获取未开班培训列表
-    @RequestMapping(value = "/nostart", method = {RequestMethod.POST})
-    public ApiResult nostart(HttpServletRequest request) throws Exception {
-        return ApiResult.success(startprogramServices.nostart());
-    }
-
-    //添加培训参加名单
-    @RequestMapping(value = "/addjoinlist", method = {RequestMethod.POST})
-    public ApiResult addjoinlist(@RequestBody String personnelid, HttpServletRequest request) throws Exception {
-
+    //创建培训列表
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
+        if (startprogram == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        startprogramServices.insert(startprogram, tokenModel);
         return ApiResult.success();
     }
 
