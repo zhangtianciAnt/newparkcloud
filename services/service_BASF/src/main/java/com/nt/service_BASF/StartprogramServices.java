@@ -22,4 +22,7 @@ public interface StartprogramServices {
     //添加培训列表
     void insert(Startprogram startprogram, TokenModel tokenModel) throws Exception;
 
+    //查询培训
+    List<Startprogram> select(Startprogram startprogram) throws Exception;
+
 }

@@ -42,5 +42,10 @@ public class StartprogramServicesImpl implements StartprogramServices {
         startprogramMapper.insert(startprogram);
     }
 
+    //查询培训
+    @Override
+    public List<Startprogram> select(Startprogram startprogram) throws Exception {
+        return startprogramMapper.select(startprogram);
+    }
 
 }
