@@ -74,10 +74,10 @@ public class Startprogram extends BaseModel {
     private String isonline;
 
     //培训时长
-    private int thelength;
+    private Integer thelength;
 
     //培训有效期（月）
-    private int validity;
+    private Integer validity;
 
     //培训费用
     private String money;
