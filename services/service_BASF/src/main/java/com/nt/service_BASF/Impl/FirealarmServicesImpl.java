@@ -1,6 +1,8 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Firealarm;
+import com.nt.dao_BASF.VO.FireAlarmStatisticsVo;
+import com.nt.dao_BASF.VO.FireAlarmVo;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.mapper.FirealarmMapper;
 import com.nt.utils.dao.TokenModel;
@@ -153,4 +155,29 @@ public class FirealarmServicesImpl implements FirealarmServices {
         firealarmMapper.updateByPrimaryKeySelective(firealarm);
     }
 
+    /**
+     * @return 最近30日接警数据统计
+     * @Method getFireAlarmStatistics
+     * @Author SKAIXX
+     * @Description 获取最近30日平台接警数据统计结果
+     * @Date 2020/1/7 14:04
+     * @Param
+     **/
+    @Override
+    public List<FireAlarmStatisticsVo> getFireAlarmStatistics() throws Exception {
+        return firealarmMapper.getFireAlarmStatistics();
+    }
+
+    /**
+     * @return 接警事件记录
+     * @Method getFireAlarm
+     * @Author SKAIXX
+     * @Description 获取接警事件记录
+     * @Date 2020/1/7 16:08
+     * @Param
+     **/
+    @Override
+    public List<FireAlarmVo> getFireAlarm() throws Exception {
+        return firealarmMapper.getFireAlarm();
+    }
 }

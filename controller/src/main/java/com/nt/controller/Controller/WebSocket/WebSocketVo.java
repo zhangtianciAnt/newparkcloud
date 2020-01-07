@@ -1,8 +1,6 @@
 package com.nt.controller.Controller.WebSocket;
 
-import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
-import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
-import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
+import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +25,7 @@ public class WebSocketVo {
     // 员工人数
     private Integer usersCount;
 
+    // region BASF90600 ERC大屏-车辆定位模块
     // BASF90600 车辆定位模块 在场车辆信息一览Vo
     private List<InsideVehicleinformationVo> insideVehicleinformationVoList = new ArrayList<>();
 
@@ -38,4 +37,13 @@ public class WebSocketVo {
 
     // BASF90600 车辆定位模块 在场车辆类别统计Vo
     private List<InsideVehicleTypeVo> insideVehicleTypeVoList = new ArrayList<>();
+    // endregion
+
+    // region BASF90200 火灾消防模块
+    // BASF90200 火灾消防模块 当月接警数据分析Vo
+    private List<FireAlarmStatisticsVo> fireAlarmStatisticsVoList = new ArrayList<>();
+
+    // BASF90200 火灾消防模块 接警时间记录
+    private List<FireAlarmVo> fireAlarmList = new ArrayList<>();
+    // endregion
 }

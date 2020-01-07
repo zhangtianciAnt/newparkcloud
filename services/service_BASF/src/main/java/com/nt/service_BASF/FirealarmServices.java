@@ -1,6 +1,8 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Firealarm;
+import com.nt.dao_BASF.VO.FireAlarmStatisticsVo;
+import com.nt.dao_BASF.VO.FireAlarmVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -34,4 +36,9 @@ public interface FirealarmServices {
     //更新报警单状态
     void upcompletesta(Firealarm firealarm, TokenModel tokenModel) throws Exception;
 
+    //获取当月接警数据
+    List<FireAlarmStatisticsVo> getFireAlarmStatistics() throws Exception;
+
+    //获取接警事件记录
+    List<FireAlarmVo> getFireAlarm() throws Exception;
 }

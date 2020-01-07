@@ -36,4 +36,26 @@
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <!--    当月接警数据分析-->
+    <select id="getFireAlarmStatistics" resultType="com.nt.dao_BASF.VO.FireAlarmStatisticsVo">
+        select * from (
+        select count(*) as cnt,date_format(alarmtimes,'%Y-%m-%d') as date
+        from firealarm
+        where completesta = '1'
+        group by date_format(alarmtimes,'%Y-%m-%d')
+        order by date desc
+        limit 30) as tmp
+	    where date is not null
+        order by tmp.date asc
+    </select>
+
+    <!--    接警事件记录-->
+    <select id="getFireAlarm" resultType="com.nt.dao_BASF.VO.FireAlarmVo">
+        select firealarm.*,dictionary.value1 from
+        firealarm
+        inner join dictionary
+        on dictionary.code = firealarm.typacc
+        order by firealarm.alarmtimes desc
+    </select>
 </mapper>
