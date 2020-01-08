@@ -1,6 +1,7 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.DutySimt;
+import com.nt.dao_BASF.VO.DutySimtVo;
 import com.nt.service_BASF.DutySimtServices;
 import com.nt.service_BASF.mapper.DutySimtMapper;
 import com.nt.utils.dao.TokenModel;
@@ -72,7 +73,8 @@ public class DutySimtServicesImpl implements DutySimtServices {
      * @Date 2019/12/19 17：25
      */
     @Override
-    public String selectByDay() throws Exception {
+    public DutySimtVo selectByDay() throws Exception {
+        DutySimtVo dutySimtVo = new DutySimtVo();
         DutySimt dutySimt = new DutySimt();
         List<DutySimt> list = dutySimtMapper.select(dutySimt);
         String a = null;
@@ -82,32 +84,39 @@ public class DutySimtServicesImpl implements DutySimtServices {
         String currSun = dateFm.format(new Date());
         if(list.size() == 1 && list.get(0) != null){
         if(currSun.equals("星期一")){
-            a = list.get(0).getMon();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getMon());
+            dutySimtVo.setBackup(list.get(0).getMonbackup());
+            return dutySimtVo;
         }
         if(currSun.equals("星期二")){
-            a = list.get(0).getTue();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getTue());
+            dutySimtVo.setBackup(list.get(0).getTuebackup());
+            return dutySimtVo;
         }
         if(currSun.equals("星期三")){
-            a = list.get(0).getWeb();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getWeb());
+            dutySimtVo.setBackup(list.get(0).getWebbackup());
+            return dutySimtVo;
         }
         if(currSun.equals("星期四")){
-            a = list.get(0).getThu();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getThu());
+            dutySimtVo.setBackup(list.get(0).getThubackup());
+            return dutySimtVo;
         }
         if(currSun.equals("星期五")){
-            a = list.get(0).getFri();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getFri());
+            dutySimtVo.setBackup(list.get(0).getFirbackup());
+            return dutySimtVo;
         }
         if(currSun.equals("星期六")){
-            a = list.get(0).getSat();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getSat());
+            dutySimtVo.setBackup(list.get(0).getSatbackup());
+            return dutySimtVo;
         }
         if(currSun.equals("星期日")){
-            a = list.get(0).getSun();
-            return a;
+            dutySimtVo.setDuty(list.get(0).getSun());
+            dutySimtVo.setBackup(list.get(0).getSunbackup());
+            return dutySimtVo;
         }
         }
         return null;

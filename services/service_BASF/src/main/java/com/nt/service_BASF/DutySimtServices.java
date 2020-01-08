@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.DutySimt;
+import com.nt.dao_BASF.VO.DutySimtVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface DutySimtServices {
     void update(DutySimt dutySimt, TokenModel tokenModel)throws Exception;
 
     //查询某天值班人员
-   String selectByDay()throws Exception;
+    DutySimtVo selectByDay() throws Exception;
 
 
 }

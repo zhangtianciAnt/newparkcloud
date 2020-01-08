@@ -3,12 +3,12 @@ package com.nt.service_BASF.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Duty;
+import com.nt.dao_BASF.VO.DutyVo;
 import com.nt.service_BASF.DutyServices;
 import com.nt.service_BASF.mapper.DutyMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.VariableOperators;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.parser.Entity;
 import java.io.File;
 import java.util.*;
 
@@ -158,10 +157,8 @@ public class DutyServicesImpl implements DutyServices {
         }
         if (dutyname.get(2) == null || dutyname.get(3) == null || dutyname.get(4) == null || dutyname.get(5) == null || dutyname.get(6) == null || dutyname.get(7) == null) {
             return false;
-        } else if (String.valueOf(dutyname.get(2)).equals("") || String.valueOf(dutyname.get(3)).equals("") || String.valueOf(dutyname.get(4)).equals("") || String.valueOf(dutyname.get(5)).equals("") || String.valueOf(dutyname.get(6)).equals("") || String.valueOf(dutyname.get(7)).equals("")) {
-            return false;
         } else
-            return true;
+            return !String.valueOf(dutyname.get(2)).equals("") && !String.valueOf(dutyname.get(3)).equals("") && !String.valueOf(dutyname.get(4)).equals("") && !String.valueOf(dutyname.get(5)).equals("") && !String.valueOf(dutyname.get(6)).equals("") && !String.valueOf(dutyname.get(7)).equals("");
     }
 
     //判断是否是空值班信息,连带校验
@@ -228,13 +225,51 @@ public class DutyServicesImpl implements DutyServices {
 
     //当天值班人员查询
     @Override
-    public Duty selectDayDuty() throws Exception {
+    public DutyVo selectDayDuty() throws Exception {
+        DutyVo dutyVo = new DutyVo();
+//        获取当前小时数
+        Calendar calendar = Calendar.getInstance();
+        int curHour24 = calendar.get(Calendar.HOUR_OF_DAY);
         Duty duty = new Duty();
-        duty.setDutytime(new java.sql.Date(System.currentTimeMillis()));
-        List<Duty> dutyList = dutyMapper.select(duty);
-        if (dutyList != null && dutyList.size() > 0) {
-            return dutyList.get(0);
-        } else
-            return new Duty();
+        //今天的白天
+        if (curHour24 >= 8 && curHour24 < 20) {
+            duty.setDutytime(new java.sql.Date(System.currentTimeMillis()));
+            List<Duty> dutyList = dutyMapper.select(duty);
+            if (dutyList != null && dutyList.size() > 0) {
+                dutyVo.setDuty(dutyList.get(0).getDutydaytime());
+                dutyVo.setBackup(dutyList.get(0).getBackupdaytime());
+                dutyVo.setDutyother(dutyList.get(0).getDutyother());
+                dutyVo.setBackupother(dutyList.get(0).getBackupother());
+                return dutyVo;
+            }
+        }
+        //今天的晚上
+        else if (curHour24 >= 20 && curHour24 <= 23) {
+            duty.setDutytime(new java.sql.Date(System.currentTimeMillis()));
+            List<Duty> dutyList2 = dutyMapper.select(duty);
+            if (dutyList2 != null && dutyList2.size() > 0) {
+                dutyVo.setDuty(dutyList2.get(0).getDutynight());
+                dutyVo.setBackup(dutyList2.get(0).getBackupnight());
+                dutyVo.setDutyother(dutyList2.get(0).getDutyother());
+                dutyVo.setBackupother(dutyList2.get(0).getBackupother());
+                return dutyVo;
+            }
+        }
+        //昨天的晚上
+        else {
+            //获取前一天的日期
+            Date today = new Date();
+            long lon = today.getTime() - 86400000L;
+            duty.setDutytime(new java.sql.Date(lon));
+            List<Duty> dutyList2 = dutyMapper.select(duty);
+            if (dutyList2 != null && dutyList2.size() > 0) {
+                dutyVo.setDuty(dutyList2.get(0).getDutynight());
+                dutyVo.setBackup(dutyList2.get(0).getBackupnight());
+                dutyVo.setDutyother(dutyList2.get(0).getDutyother());
+                dutyVo.setBackupother(dutyList2.get(0).getBackupother());
+                return dutyVo;
+            }
+        }
+        return null;
     }
 }

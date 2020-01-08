@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Duty;
+import com.nt.dao_BASF.VO.DutyVo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,6 @@ public interface DutyServices {
     List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 
     //当天值班人员查询
-    Duty selectDayDuty() throws Exception;
+    DutyVo selectDayDuty() throws Exception;
 
 }
