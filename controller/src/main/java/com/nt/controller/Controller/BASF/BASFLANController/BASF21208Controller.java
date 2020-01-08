@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
@@ -54,7 +55,12 @@ public class BASF21208Controller {
 
     //添加培训参加人员名单
     @RequestMapping(value = "/addjoinlist", method = {RequestMethod.POST})
-    public ApiResult addjoinlist(@RequestBody String personnelid, HttpServletRequest request) throws Exception {
+    public ApiResult addjoinlist(@RequestBody TrainjoinlistVo trainjoinlistVo, HttpServletRequest request) throws Exception {
+        if (trainjoinlistVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        trainjoinlistServices.insert(trainjoinlistVo, tokenModel);
         return ApiResult.success();
     }
 

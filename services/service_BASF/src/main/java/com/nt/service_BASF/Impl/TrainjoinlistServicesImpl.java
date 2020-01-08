@@ -1,6 +1,7 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.StringUtils;
@@ -30,12 +31,23 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
 
     //添加培训人员名单
     @Override
-    public void insert(Trainjoinlist trainjoinlist, TokenModel tokenModel) throws Exception {
-        trainjoinlist.preInsert(tokenModel);
-        trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
-        trainjoinlistMapper.insert(trainjoinlist);
+    public void insert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
+        if (StringUtils.isNotBlank(trainjoinlistVo.getStartprogramid())) {
+            //添加之前先删除之前的
+            delete(trainjoinlistVo.getStartprogramid(), tokenModel);
+            //循环添加
+            for (String personnelid : trainjoinlistVo.getPersonnelid()) {
+                Trainjoinlist trainjoinlist = new Trainjoinlist();
+                if (StringUtils.isNotBlank(personnelid)) {
+                    trainjoinlist.setPersonnelid(personnelid);
+                    trainjoinlist.setStartprogramid(trainjoinlistVo.getStartprogramid());
+                    trainjoinlist.preInsert(tokenModel);
+                    trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
+                    trainjoinlistMapper.insert(trainjoinlist);
+                }
+            }
+        }
     }
-
     //根据培训列表删除参加名单
     @Override
     public void delete(String startprogramid, TokenModel tokenModel) throws Exception {

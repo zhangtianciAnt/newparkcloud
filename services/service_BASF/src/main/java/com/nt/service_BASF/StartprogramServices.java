@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -27,5 +28,11 @@ public interface StartprogramServices {
 
     //查询培训
     List<Startprogram> select(Startprogram startprogram) throws Exception;
+
+    //查询培训增强
+    List<StartprogramVo> selectEnhance(Startprogram startprogram) throws Exception;
+
+    //删除培训
+    void delete(Startprogram startprogram, TokenModel tokenModel) throws Exception;
 
 }

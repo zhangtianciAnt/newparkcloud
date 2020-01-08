@@ -2,10 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Startprogram;
 import com.nt.service_BASF.StartprogramServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +62,28 @@ public class BASF21209Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(startprogramServices.select(startprogram));
+    }
+
+    //查询培训增强
+    @RequestMapping(value = "/selectEnhance", method = {RequestMethod.POST})
+    public ApiResult selectEnhance(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
+        if (startprogram == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(startprogramServices.selectEnhance(startprogram));
+    }
+
+    //删除培训
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
+        if (startprogram == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        startprogram.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        startprogramServices.delete(startprogram, tokenModel);
+        return ApiResult.success();
     }
 
 }

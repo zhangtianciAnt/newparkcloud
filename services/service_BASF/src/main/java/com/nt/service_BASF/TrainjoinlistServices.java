@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 public interface TrainjoinlistServices {
 
     //添加培训人员名单
-    void insert(Trainjoinlist trainjoinlist, TokenModel tokenModel) throws Exception;
+    void insert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception;
 
     //根据培训列表删除参加名单
     void delete(String startprogramid, TokenModel tokenModel) throws Exception;
