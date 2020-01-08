@@ -7,6 +7,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.mongodb.client.model.Collation;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.InventoryResults;
+import com.nt.dao_Assets.Vo.AssetsVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Assets.AssetsService;
@@ -88,6 +89,16 @@ public class AssetsServiceImpl implements AssetsService {
         assets.setRfidcd(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSSSS"));
         assets.setAssets_id(UUID.randomUUID().toString());
         assetsMapper.insert(assets);
+    }
+
+    @Override
+    public void insertLosts(AssetsVo assetsVo, TokenModel tokenModel) throws Exception {
+
+        for(int i=0;i<assetsVo.getSum();i++){
+            Assets assets = new Assets();
+            assets.setBartype(assetsVo.getBartype());
+            insert(assets,tokenModel);
+        }
     }
 
     @Override

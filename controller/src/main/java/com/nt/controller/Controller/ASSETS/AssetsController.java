@@ -3,6 +3,7 @@ package com.nt.controller.Controller.ASSETS;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.InventoryResults;
+import com.nt.dao_Assets.Vo.AssetsVo;
 import com.nt.service_Assets.AssetsService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -68,6 +69,16 @@ public class AssetsController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         assetsService.insert(assets, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/insertlots", method = {RequestMethod.POST})
+    public ApiResult insertlots(@RequestBody AssetsVo assetsVo, HttpServletRequest request) throws Exception {
+        if (assetsVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        assetsService.insertLosts(assetsVo, tokenModel);
         return ApiResult.success();
     }
 
