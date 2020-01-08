@@ -3,7 +3,25 @@
 <mapper namespace="com.nt.service_SQL.sqlMapper.BasfUserInfoMapper">
 
 
-    <select id="selectUserCount" resultType="int">
+    <select id="selectUsersCount" resultType="int">
+        SELECT
+		count(PersonNo)
+		FROM
+		userinfo
+		where
+		Activity='1'
+    </select>
+
+	<select id="selectContractorsCount" resultType="int">
+        SELECT
+		count(PersonNo)
+		FROM
+		userinfo
+		where
+		Activity='1'
+    </select>
+
+	<select id="selectVisitorsCount" resultType="int">
         SELECT
 		count(PersonNo)
 		FROM

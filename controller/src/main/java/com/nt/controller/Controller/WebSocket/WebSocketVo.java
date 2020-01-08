@@ -22,8 +22,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WebSocketVo {
+
+    // 在厂总人数
+    private Integer allUsersCount;
+
     // 员工人数
     private Integer usersCount;
+
+    // 承包商人数
+    private Integer contractorsCount;
+
+    // 访客人数
+    private Integer visitorsCount;
 
     // region BASF90600 ERC大屏-车辆定位模块
     // BASF90600 车辆定位模块 在场车辆信息一览Vo

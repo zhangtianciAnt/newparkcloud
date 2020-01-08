@@ -46,9 +46,19 @@ public class MultiThreadScheduleTask {
     public void selectUserCount() throws Exception {
         System.out.println("执行 查询员工人数 定时任务: " + LocalDateTime.now().toLocalTime()
                 + "\r\n线程 : " + Thread.currentThread().getName());
-        // 查询数据库
-        int i = basfUserInfoMapper.selectUserCount();
-        webSocketVo.setUsersCount(i);
+        // 查询员工人数
+        int usersCount = basfUserInfoMapper.selectUsersCount();
+        // 查询承包商人数
+        int contractorsCount = basfUserInfoMapper.selectContractorsCount();
+        // 查询访客人数
+        int visitorsCount = basfUserInfoMapper.selectVisitorsCount();
+        // 在厂总人数
+        int allUsersCount = usersCount + contractorsCount + visitorsCount;
+
+        webSocketVo.setUsersCount(usersCount);
+        webSocketVo.setContractorsCount(contractorsCount);
+        webSocketVo.setVisitorsCount(visitorsCount);
+        webSocketVo.setAllUsersCount(allUsersCount);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
