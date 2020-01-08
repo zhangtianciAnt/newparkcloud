@@ -3,10 +3,13 @@ package com.nt.service_BASF.Impl;
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,11 +49,18 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
 
     //获取培训申请人员名单
     @Override
-    public List<Trainjoinlist> joinlist(String startprogramid) throws Exception {
+    public ArrayList<String> joinlist(String startprogramid) throws Exception {
         Trainjoinlist trainjoinlist = new Trainjoinlist();
         trainjoinlist.setStartprogramid(startprogramid);
         trainjoinlist.setStatus("0");
-        return trainjoinlistMapper.select(trainjoinlist);
+        List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
+        ArrayList<String> joinlist = new ArrayList<String>();
+        for (Trainjoinlist trainjoin : trainjoinlists) {
+            if (StringUtils.isNotBlank(trainjoin.getPersonnelid())) {
+                joinlist.add(trainjoin.getPersonnelid());
+            }
+        }
+        return joinlist;
     }
 
     //根据人员id获取培训列表id

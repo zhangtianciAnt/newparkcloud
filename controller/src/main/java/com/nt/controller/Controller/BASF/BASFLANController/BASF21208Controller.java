@@ -2,6 +2,8 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Startprogram;
 import com.nt.service_BASF.StartprogramServices;
+import com.nt.service_BASF.TrainjoinlistServices;
+import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -35,17 +37,26 @@ public class BASF21208Controller {
     @Autowired
     private StartprogramServices startprogramServices;
 
+    @Autowired
+    private TrainjoinlistServices trainjoinlistServices;
+
     //获取未开班培训列表
     @RequestMapping(value = "/nostart", method = {RequestMethod.POST})
     public ApiResult nostart(HttpServletRequest request) throws Exception {
         return ApiResult.success(startprogramServices.nostart());
     }
 
-    //添加培训参加名单
+    //获取获取未开班参加人员名单
+    @RequestMapping(value = "/getjoinlist", method = {RequestMethod.GET})
+    public ApiResult getjoinlist(String personnelid, HttpServletRequest request) throws Exception {
+        return ApiResult.success(trainjoinlistServices.joinlist(personnelid));
+    }
+
+    //添加培训参加人员名单
     @RequestMapping(value = "/addjoinlist", method = {RequestMethod.POST})
     public ApiResult addjoinlist(@RequestBody String personnelid, HttpServletRequest request) throws Exception {
-
         return ApiResult.success();
     }
+
 
 }
