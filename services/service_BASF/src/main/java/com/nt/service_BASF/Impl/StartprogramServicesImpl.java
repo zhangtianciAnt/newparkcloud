@@ -42,6 +42,13 @@ public class StartprogramServicesImpl implements StartprogramServices {
         startprogramMapper.insert(startprogram);
     }
 
+    //更新培训列表
+    @Override
+    public void update(Startprogram startprogram, TokenModel tokenModel) throws Exception {
+        startprogram.preUpdate(tokenModel);
+        startprogramMapper.updateByPrimaryKeySelective(startprogram);
+    }
+
     //查询培训
     @Override
     public List<Startprogram> select(Startprogram startprogram) throws Exception {

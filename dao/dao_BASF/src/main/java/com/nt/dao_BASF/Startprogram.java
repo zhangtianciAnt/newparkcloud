@@ -85,9 +85,11 @@ public class Startprogram extends BaseModel {
     //初训/复训
     private String isfirst;
 
-
     //报名资料
     private String applydata;
+
+    //报名资料url
+    private String applydataurl;
 
     //开班状态
     private String programtype;

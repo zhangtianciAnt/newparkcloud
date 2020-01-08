@@ -46,6 +46,17 @@ public class BASF21209Controller {
         return ApiResult.success();
     }
 
+    //更新培训列表
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
+        if (startprogram == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        startprogramServices.update(startprogram, tokenModel);
+        return ApiResult.success();
+    }
+
     //查询培训
     @RequestMapping(value = "/select", method = {RequestMethod.POST})
     public ApiResult select(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
@@ -53,8 +64,7 @@ public class BASF21209Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        startprogramServices.select(startprogram);
-        return ApiResult.success();
+        return ApiResult.success(startprogramServices.select(startprogram));
     }
 
 }
