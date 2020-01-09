@@ -65,7 +65,7 @@ public class BASF21209Controller {
         return ApiResult.success();
     }
 
-    //查询培训
+    //查询培训列表
     @RequestMapping(value = "/select", method = {RequestMethod.POST})
     public ApiResult select(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
         if (startprogram == null) {
@@ -75,7 +75,7 @@ public class BASF21209Controller {
         return ApiResult.success(startprogramServices.select(startprogram));
     }
 
-    //查询培训增强
+    //查询培训列表增强
     @RequestMapping(value = "/selectEnhance", method = {RequestMethod.POST})
     public ApiResult selectEnhance(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
         if (startprogram == null) {
@@ -83,6 +83,15 @@ public class BASF21209Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(startprogramServices.selectEnhance(startprogram));
+    }
+
+    //查询培训one
+    @RequestMapping(value = "/selectOne", method = {RequestMethod.GET})
+    public ApiResult selectOne(String startprogramid, HttpServletRequest request) throws Exception {
+        if (!StringUtils.isNotBlank(startprogramid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(startprogramServices.one(startprogramid));
     }
 
     //删除培训

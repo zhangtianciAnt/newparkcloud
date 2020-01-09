@@ -36,4 +36,5 @@ public interface TrainjoinlistServices {
     //根据培训列表主键获取实际参加人数
     int actualjoinnumber(String startprogramid) throws Exception;
 
+
 }
