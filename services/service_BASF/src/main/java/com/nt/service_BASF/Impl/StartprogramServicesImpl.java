@@ -36,7 +36,7 @@ public class StartprogramServicesImpl implements StartprogramServices {
     public List<Startprogram> nostart() throws Exception {
         Startprogram startprogram = new Startprogram();
         startprogram.setStatus("0");
-        startprogram.setProgramtype("0");
+        startprogram.setProgramtype("BC039001");
         return startprogramMapper.select(startprogram);
     }
 
@@ -79,7 +79,7 @@ public class StartprogramServicesImpl implements StartprogramServices {
     @Override
     public void delete(Startprogram startprogram, TokenModel tokenModel) throws Exception {
         startprogram.preUpdate(tokenModel);
-        startprogramMapper.updateByPrimaryKey(startprogram);
+        startprogramMapper.updateByPrimaryKeySelective(startprogram);
     }
 
 }
