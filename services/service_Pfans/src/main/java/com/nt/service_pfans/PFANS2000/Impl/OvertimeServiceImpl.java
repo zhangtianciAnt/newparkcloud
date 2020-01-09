@@ -321,7 +321,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                         }
                         else{
                             attendance.setAttendanceid(UUID.randomUUID().toString());
-                            aactualttendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
+                            attendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
                             attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
                             attendance.setUser_id(overtime.getUserid());
                             attendance.setDates(overtime.getReserveovertimedate());

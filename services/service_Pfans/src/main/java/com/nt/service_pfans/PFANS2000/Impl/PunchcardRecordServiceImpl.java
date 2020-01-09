@@ -566,8 +566,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             //15分钟为基本计算单位
                             double unit = 15;
                             //迟到
-                            if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()
-                            && sdf.parse(closingtime_start).getTime() <= sdf.parse(time_end).getTime()){
+                            if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()){
                                 long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
                                 //迟到的时间
                                 Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
@@ -600,6 +599,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     else{
                                         //迟到小于15分钟没有申请的处理（算旷工半天）
                                         attendance.setAbsenteeism("4");
+                                        attendance.setLatetime("4");
                                     }
                                 }
                                 else{//迟到大于15分钟算旷工
