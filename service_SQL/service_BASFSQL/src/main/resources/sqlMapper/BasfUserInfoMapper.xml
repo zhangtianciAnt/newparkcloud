@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_SQL.sqlMapper.BasfUserInfoMapper">
 
-
     <select id="selectUsersCount" resultType="int">
         SELECT
 		count(PersonNo)
@@ -28,6 +27,192 @@
 		userinfo
 		where
 		Activity='1'
+    </select>
+
+	<select id="selectDeviceUsersCount" resultType="int">
+		<!-- THF装置人数 -->
+		SELECT
+			a.pa6UsersCountIn - b.pa6UsersCountOut as usersCount
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pa6UsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 13343
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pa6UsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 13353
+			) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- PTHF装置人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 13954
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 13964
+		) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- 巴速耐装置人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14523
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14533
+		) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- PGM装置人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14523
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14533
+		) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- PA6装置人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14523
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14533
+		) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- 树脂装置人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14523
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14533
+		) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- 化学催化剂装置A人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14523
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14533
+		) b ON a.inTime = b.outTime
+		UNION ALL
+		<!-- 化学催化剂装置B人数 -->
+		SELECT
+			a.pthfUsersCountIn - b.pthfUsersCountOut
+		FROM
+		(
+			SELECT
+			count( CardID ) AS pthfUsersCountIn,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS inTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14523
+		) a
+		FULL JOIN (
+			SELECT
+			count( CardID ) AS pthfUsersCountOut,
+			CONVERT ( VARCHAR ( 100 ), GETDATE ( ), 112 ) AS outTime
+			FROM
+			VIEW_AccessEvents
+			WHERE
+			DeviceID = 14533
+		) b ON a.inTime = b.outTime
     </select>
 </mapper>
 
