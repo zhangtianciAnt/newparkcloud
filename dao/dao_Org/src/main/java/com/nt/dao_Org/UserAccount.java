@@ -67,5 +67,9 @@ public class UserAccount extends BaseModel {
      * 系统角色
      */
     private List<Role> roles;
+    /**
+     * 员工编号
+     */
+    private String userno;
 
 }
