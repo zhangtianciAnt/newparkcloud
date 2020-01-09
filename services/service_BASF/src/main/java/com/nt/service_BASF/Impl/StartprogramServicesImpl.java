@@ -1,11 +1,15 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.StartprogramVo;
+import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
+import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.utils.dao.TokenModel;
+import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,12 @@ public class StartprogramServicesImpl implements StartprogramServices {
     @Autowired
     private TrainjoinlistServices trainjoinlistServices;
 
+    @Autowired
+    private ProgramlistServices programlistroServices;
+
+    @Autowired
+    private ProgramlistMapper programlistMapper;
+
     //获取未开班培训列表
     @Override
     public List<Startprogram> nostart() throws Exception {
@@ -38,6 +48,11 @@ public class StartprogramServicesImpl implements StartprogramServices {
         startprogram.setStatus("0");
         startprogram.setProgramtype("BC039001");
         return startprogramMapper.select(startprogram);
+    }
+
+    @Override
+    public Startprogram one(String startprogramid) throws Exception {
+        return startprogramMapper.selectByPrimaryKey(startprogramid);
     }
 
     //添加培训列表
@@ -53,6 +68,20 @@ public class StartprogramServicesImpl implements StartprogramServices {
     public void update(Startprogram startprogram, TokenModel tokenModel) throws Exception {
         startprogram.preUpdate(tokenModel);
         startprogramMapper.updateByPrimaryKeySelective(startprogram);
+    }
+
+    //更新培训清单
+    @Override
+    public void updateprogramlist(String startprogramid, TokenModel tokenModel) throws Exception {
+        Startprogram startprogram = one(startprogramid);
+        Programlist programlist = programlistroServices.one(startprogram.getProgramlistid());
+        programlist.setLastdate(startprogram.getActualstartdate());
+        programlist.setThisdate(null);
+        programlist.setNumber(programlist.getNumber() + 1);
+        programlist.setNumberpeople(programlist.getNumberpeople() + trainjoinlistServices.actualjoinnumber(startprogramid));
+        programlist.setProgramtype("BC039001");
+        programlist.preUpdate(tokenModel);
+        programlistMapper.updateByPrimaryKey(programlist);
     }
 
     //查询培训
