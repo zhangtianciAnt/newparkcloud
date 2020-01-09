@@ -19,5 +19,7 @@ public class AssetsVo implements Serializable {
 
     private String bartype;
 
+    private String typeassets;
+
     private int sum;
 }

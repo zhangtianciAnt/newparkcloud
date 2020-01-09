@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.mongodb.client.model.Collation;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Assets.InventoryResults;
 import com.nt.dao_Assets.Vo.AssetsVo;
@@ -30,8 +29,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,12 +50,13 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Autowired
     private DictionaryService dictionaryService;
+
     @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
         InventoryResults condition = new InventoryResults();
         condition.setRfidcd(code);
         List<InventoryResults> rst = assetsResultMapper.select(condition);
-        if(rst.size() > 0){
+        if (rst.size() > 0) {
             InventoryResults inventoryResults = rst.get(0);
             inventoryResults.preUpdate(tokenModel);
             inventoryResults.setResult("2");
@@ -68,9 +70,9 @@ public class AssetsServiceImpl implements AssetsService {
     public int scanList(String code, TokenModel tokenModel) throws Exception {
         int rst = 0;
         String[] codes = code.split(";");
-        for(String item:codes){
-            InventoryResults inventoryResults = scanOne(item,tokenModel);
-            if( StrUtil.isNotBlank(inventoryResults.getInventoryresults_id())){
+        for (String item : codes) {
+            InventoryResults inventoryResults = scanOne(item, tokenModel);
+            if (StrUtil.isNotBlank(inventoryResults.getInventoryresults_id())) {
                 rst++;
             }
         }
@@ -85,8 +87,12 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     public void insert(Assets assets, TokenModel tokenModel) throws Exception {
         assets.preInsert(tokenModel);
-        assets.setBarcode(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSSSS"));
-        assets.setRfidcd(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSSSS"));
+        if (StrUtil.isNotBlank(assets.getBarcode())) {
+            assets.setBarcode(assets.getBarcode());
+        } else {
+            assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
+        }
+        assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         assets.setAssets_id(UUID.randomUUID().toString());
         assetsMapper.insert(assets);
     }
@@ -94,10 +100,11 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     public void insertLosts(AssetsVo assetsVo, TokenModel tokenModel) throws Exception {
 
-        for(int i=0;i<assetsVo.getSum();i++){
+        for (int i = 0; i < assetsVo.getSum(); i++) {
             Assets assets = new Assets();
             assets.setBartype(assetsVo.getBartype());
-            insert(assets,tokenModel);
+            assets.setTypeassets(assetsVo.getTypeassets());
+            insert(assets, tokenModel);
         }
     }
 
@@ -148,11 +155,11 @@ public class AssetsServiceImpl implements AssetsService {
                 List<Object> value = list.get(k);
                 k++;
 
-                if(StrUtil.isNotBlank(value.get(6).toString())){
+                if (StrUtil.isNotBlank(value.get(6).toString())) {
                     Assets condition = new Assets();
                     condition.setBarcode(value.get(6).toString());
                     List<Assets> ls = assetsMapper.select(condition);
-                    if(ls.size() > 0){
+                    if (ls.size() > 0) {
                         assets = ls.get(0);
                     }
                 }
@@ -179,8 +186,8 @@ public class AssetsServiceImpl implements AssetsService {
                     }
                     assets.setFilename(value.get(0).toString());
                     List<Dictionary> diclist = dictionaryService.getForSelect("PA001");
-                    List<Dictionary> dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
-                    if(dicIds.size() > 0){
+                    List<Dictionary> dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
+                    if (dicIds.size() > 0) {
                         assets.setTypeassets(dicIds.get(0).getCode());
                     }
                     assets.setPrice(value.get(2).toString());
@@ -200,23 +207,27 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     diclist = dictionaryService.getForSelect("PA003");
-                    dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(8).toString()))).collect(Collectors.toList());
-                    if(dicIds.size() > 0){
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(8).toString()))).collect(Collectors.toList());
+                    if (dicIds.size() > 0) {
                         assets.setAssetstatus(dicIds.get(0).getCode());
                     }
 
                     diclist = dictionaryService.getForSelect("PA004");
-                    dicIds = diclist.stream().filter(item->(item.getValue1().equals(value.get(7).toString()))).collect(Collectors.toList());
-                    if(dicIds.size() > 0){
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(7).toString()))).collect(Collectors.toList());
+                    if (dicIds.size() > 0) {
                         assets.setBartype(dicIds.get(0).getCode());
                     }
                 }
-                if(StrUtil.isNotBlank(assets.getAssets_id())){
+                if (StrUtil.isNotBlank(assets.getAssets_id())) {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);
-                }else{
-                    assets.setBarcode(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSSSS"));
-                    assets.setRfidcd(DateUtil.format(new Date(),"yyyyMMddHHmmssSSSSSS"));
+                } else {
+                    if (StrUtil.isNotBlank(value.get(6).toString())) {
+                        assets.setBarcode(value.get(6).toString());
+                    } else {
+                        assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
+                    }
+                    assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
                     assets.preInsert(tokenModel);
                     assets.setAssets_id(UUID.randomUUID().toString());
                     assetsMapper.insert(assets);
