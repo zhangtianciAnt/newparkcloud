@@ -14,10 +14,8 @@ import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -82,5 +80,4 @@ public class Pfans1013Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
     }
-
 }
