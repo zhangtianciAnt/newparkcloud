@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @Package: com.nt.dao_BASF.VO
  * @ClassName: TrainjoinlistVo
  * @Author: 王哲
- * @Description: 培训参加名单Vo
+ * @Description: 培训参加名单Vo，用于批量向数据库中加入参加人员
  * @Date: 2020/1/8 13:17
  * @Version: 1.0
  */

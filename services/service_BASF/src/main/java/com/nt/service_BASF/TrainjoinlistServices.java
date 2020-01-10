@@ -4,6 +4,7 @@ import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,5 +37,6 @@ public interface TrainjoinlistServices {
     //根据培训列表主键获取实际参加人数
     int actualjoinnumber(String startprogramid) throws Exception;
 
-
+    //excel文档导入
+    List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 }

@@ -5,10 +5,7 @@ import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +59,19 @@ public class BASF21208Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         trainjoinlistServices.insert(trainjoinlistVo, tokenModel);
         return ApiResult.success();
+    }
+
+    //excel导入，更新培训参加名单信息
+    @RequestMapping(value = "/importexcel", method = {RequestMethod.POST})
+    public ApiResult importexcel(HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(trainjoinlistServices.importexcel(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 
 
