@@ -4,6 +4,7 @@ import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         return mapBox_mapLevelMapper.selectByPrimaryKey(mapid);
     }
 
+    //查询树结构
     @Override
     public List<MapBox_MapLevel> getall() throws Exception {
         MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
@@ -50,6 +52,28 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         List<MapBox_MapLevel> result = getChildren(moduleList);
         return result;
     }
+
+    @Override
+    public List<MapBox_MapLevel> list(){
+        MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
+        return mapBox_mapLevelMapper.select(mapBox_mapLevel);
+    }
+    @Override
+    public void add(MapBox_MapLevel info, TokenModel tokenModel){
+        mapBox_mapLevelMapper.insert(info);
+    }
+    @Override
+    public void edit(MapBox_MapLevel info, TokenModel tokenModel){
+        mapBox_mapLevelMapper.updateByPrimaryKey(info);
+    }
+    @Override
+    public void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel){
+//        MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
+//        mapBox_mapLevel.setId(id);
+        mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel);
+    }
+
+
 
     /**
      * 获取跟节点
