@@ -41,4 +41,6 @@ public interface StartprogramServices {
     //删除培训
     void delete(Startprogram startprogram, TokenModel tokenModel) throws Exception;
 
+    //by人员id查询培训项目
+    List<Startprogram> selectbyuserid(String userid,String selecttype) throws Exception;
 }

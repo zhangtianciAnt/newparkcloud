@@ -111,4 +111,10 @@ public class StartprogramServicesImpl implements StartprogramServices {
         startprogramMapper.updateByPrimaryKeySelective(startprogram);
     }
 
+    //by人员id查询培训项目
+    @Override
+    public List<Startprogram>  selectbyuserid(String userid,String selecttype) throws Exception {
+        return startprogramMapper.selectbyuserid(userid,selecttype);
+    }
+
 }
