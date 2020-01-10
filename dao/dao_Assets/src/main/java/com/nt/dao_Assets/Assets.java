@@ -95,4 +95,15 @@ public class Assets extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    /**
+     * RFIDCD
+     */
+    @Column(name = "RFIDCD")
+    private String rfidcd;
+
+    /**
+     * 条码类型
+     */
+    @Column(name = "BARTYPE")
+    private String bartype;
 }
