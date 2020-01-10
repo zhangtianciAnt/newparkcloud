@@ -203,73 +203,73 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
 
-        List<OtherOne> otherOnes = new ArrayList<>();
-        DecimalFormat df = new DecimalFormat("#.00");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        long endMillisecond = format.parse("2012-08-31").getTime();
-        AbNormal abNormal = new AbNormal();
-        abNormal.setStatus("4");
-        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
-        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
-        if (abNormalinfo.size() > 0) {
-            int rowindex = 0;
-            for (AbNormal abNor : abNormalinfo) {
-                if (abNor.getError_type().equals("PR013012") || abNor.getError_type().equals("PR013013")) {
-                    boolean bool = true;
-                   for(OtherOne otherOne :otherOnes){
-                       if(otherOne.getUser_id().equals(abNor.getUser_id())){
-                          // otherOne.
-                            // otherOne.setOther1();
-                       }
-                   }
-
-                         OtherOne otherOne = new OtherOne();
-                        String beginTime = "";
-                        rowindex = rowindex + 1;
-                        String otherOneid = UUID.randomUUID().toString();
-                        // otherOne.preInsert(tokenModel);
-                        otherOne.setOtherone_id(otherOneid);
-                        otherOne.setGiving_id(givingid);
-                        otherOne.setUser_id(abNor.getUser_id());
-
-                        List<CustomerInfo> cust = customerInfos.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
-
-                        if (cust.size() > 0) {
-                            otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
-                            otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
-                            otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
-                            beginTime = cust.get(0).getUserinfo().getEnterday();
-                        }
-                        if (abNor.getError_type().equals("PR013012")) {
-                            otherOne.setReststart(abNor.getOccurrence_date());
-                            otherOne.setRestend(abNor.getFinished_date());
-                            otherOne.setAttendance("-1");
-                            otherOne.setOther1("-1");
-                            otherOne.setBasedata("2");
-                            otherOne.setType("1");
-                        } else if (abNor.getError_type().equals("PR013013")) {
-                            otherOne.setStartdate(abNor.getOccurrence_date());
-                            otherOne.setEnddate(abNor.getFinished_date());
-                            double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
-                            String strLengthtime = String.valueOf(intLengthtime);
-                            otherOne.setVacation(df.format(intLengthtime));
-                            long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime).getTime();
-                            if (beginMillisecond >= endMillisecond) {
-                                otherOne.setHandsupport(strLengthtime);
-                            } else {
-                                otherOne.setHandsupport("0");
-                            }
-                            otherOne.setType("2");
-                        }
-                        otherOne.setRowindex(rowindex);
-                        otherOnes.add(otherOne);
-                    }
-
-            }
-        }
-        if(otherOnes.size() > 0){
-            otherOneMapper.insertOtherOne(otherOnes);
-        }
+//        List<OtherOne> otherOnes = new ArrayList<>();
+//        DecimalFormat df = new DecimalFormat("#.00");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//        long endMillisecond = format.parse("2012-08-31").getTime();
+//        AbNormal abNormal = new AbNormal();
+//        abNormal.setStatus("4");
+//        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+//        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
+//        if (abNormalinfo.size() > 0) {
+//            int rowindex = 0;
+//            for (AbNormal abNor : abNormalinfo) {
+//                if (abNor.getError_type().equals("PR013012") || abNor.getError_type().equals("PR013013")) {
+//                    boolean bool = true;
+//                   for(OtherOne otherOne :otherOnes){
+//                       if(otherOne.getUser_id().equals(abNor.getUser_id())){
+//                          // otherOne.
+//                            // otherOne.setOther1();
+//                       }
+//                   }
+//
+//                         OtherOne otherOne = new OtherOne();
+//                        String beginTime = "";
+//                        rowindex = rowindex + 1;
+//                        String otherOneid = UUID.randomUUID().toString();
+//                        // otherOne.preInsert(tokenModel);
+//                        otherOne.setOtherone_id(otherOneid);
+//                        otherOne.setGiving_id(givingid);
+//                        otherOne.setUser_id(abNor.getUser_id());
+//
+//                        List<CustomerInfo> cust = customerInfos.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
+//
+//                        if (cust.size() > 0) {
+//                            otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
+//                            otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
+//                            otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
+//                            beginTime = cust.get(0).getUserinfo().getEnterday();
+//                        }
+//                        if (abNor.getError_type().equals("PR013012")) {
+//                            otherOne.setReststart(abNor.getOccurrence_date());
+//                            otherOne.setRestend(abNor.getFinished_date());
+//                            otherOne.setAttendance("-1");
+//                            otherOne.setOther1("-1");
+//                            otherOne.setBasedata("2");
+//                            otherOne.setType("1");
+//                        } else if (abNor.getError_type().equals("PR013013")) {
+//                            otherOne.setStartdate(abNor.getOccurrence_date());
+//                            otherOne.setEnddate(abNor.getFinished_date());
+//                            double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
+//                            String strLengthtime = String.valueOf(intLengthtime);
+//                            otherOne.setVacation(df.format(intLengthtime));
+//                            long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime).getTime();
+//                            if (beginMillisecond >= endMillisecond) {
+//                                otherOne.setHandsupport(strLengthtime);
+//                            } else {
+//                                otherOne.setHandsupport("0");
+//                            }
+//                            otherOne.setType("2");
+//                        }
+//                        otherOne.setRowindex(rowindex);
+//                        otherOnes.add(otherOne);
+//                    }
+//
+//            }
+//        }
+//        if(otherOnes.size() > 0){
+//            otherOneMapper.insertOtherOne(otherOnes);
+//        }
     }
 
     @Override
@@ -2005,28 +2005,28 @@ public class GivingServiceImpl implements GivingService {
 
     //根据产修算出当月产假日数
     public double getWorkDays(AbNormal abNormal,AttendanceSetting attendanceSetting){
-        double lengthTime = Double.valueOf(abNormal.getLengthtime());
-        DecimalFormat df = new DecimalFormat("#.00");
-        Map<String, Integer> start= getYMD(abNormal.getOccurrence_date());
-        Map<String, Integer> end= getYMD(abNormal.getFinished_date());
-        Map<String, Integer> now = getYMD(new Date());
-        if(start.get("yearMonth") == now.get("yearMonth")){
-            if(end.get("yearMonth") == now.get("yearMonth")){
-             return Double.valueOf(lengthTime/8) ;
-            }else if(end.get("yearMonth") > now.get("yearMonth")){
-                if(now.get("lastDay") == now.get("day")){
-                  //  attendanceSetting
-                 //   return  workDays -
-                }
-                return  0;
-            }
-        }else if(start.get("yearMonth") < now.get("yearMonth")){
-            if(end.get("yearMonth") == now.get("yearMonth")){
-               // return df.format(Double.valueOf(workDays) - lengthTime/8);
-            }else if(end.get("yearMonth") > now.get("yearMonth")){
-                return 0;
-            }
-        }
+//        double lengthTime = Double.valueOf(abNormal.getLengthtime());
+//        DecimalFormat df = new DecimalFormat("#.00");
+//        Map<String, Integer> start= getYMD(abNormal.getOccurrence_date());
+//        Map<String, Integer> end= getYMD(abNormal.getFinished_date());
+//        Map<String, Integer> now = getYMD(new Date());
+//        if(start.get("yearMonth") == now.get("yearMonth")){
+//            if(end.get("yearMonth") == now.get("yearMonth")){
+//             return Double.valueOf(lengthTime/8) ;
+//            }else if(end.get("yearMonth") > now.get("yearMonth")){
+//                if(now.get("lastDay") == now.get("day")){
+//                  //  attendanceSetting
+//                 //   return  workDays -
+//                }
+//                return  0;
+//            }
+//        }else if(start.get("yearMonth") < now.get("yearMonth")){
+//            if(end.get("yearMonth") == now.get("yearMonth")){
+//               // return df.format(Double.valueOf(workDays) - lengthTime/8);
+//            }else if(end.get("yearMonth") > now.get("yearMonth")){
+//                return 0;
+//            }
+//        }
         return  0;
     }
 
