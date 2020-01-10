@@ -154,6 +154,16 @@ public class CustomerInfo extends BaseModel {
          * 公司名称
          */
         private String companyname;
+        //职位名称
+        private String positionname;
+        //部门邮箱
+        private String departmentemail;
+        //装置经理邮箱
+        private String devicemanageremail;
+        //文化程度
+        private String degreeeducation;
+        //成本中心
+        private String costcenter;
     }
     // endregion
 

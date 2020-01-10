@@ -50,7 +50,7 @@ public class Startprogram extends BaseModel {
     private String operationsite;
 
     //报名截止日期
-    private java.sql.Date expirationdate;
+    private Date expirationdate;
 
     //培训材料上交截止日期
     private Date materialsexpirationdate;
@@ -93,4 +93,7 @@ public class Startprogram extends BaseModel {
 
     //开班状态
     private String programtype;
+
+    //实际开班日期（即：确认开班的时间）
+    private java.sql.Date actualstartdate;
 }
