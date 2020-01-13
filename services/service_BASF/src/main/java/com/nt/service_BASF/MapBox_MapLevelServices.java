@@ -21,8 +21,19 @@ public interface MapBox_MapLevelServices {
     //查询树结构
     List<MapBox_MapLevel> getall() throws  Exception;
 
-    List<MapBox_MapLevel> list();
-    void add(MapBox_MapLevel info, TokenModel tokenModel);
-    void edit(MapBox_MapLevel info, TokenModel tokenModel);
-    void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel);
+    List<MapBox_MapLevel> list() throws Exception;
+
+    ;
+
+    void add(MapBox_MapLevel info, TokenModel tokenModel) throws Exception;
+
+    ;
+
+    void edit(MapBox_MapLevel info, TokenModel tokenModel) throws Exception;
+
+    ;
+
+    void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel) throws Exception;
+
+    ;
 }

@@ -3,10 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.service_BASF.MapBox_MapLevelServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +54,7 @@ public class MapBox_MapLevelController {
     }
 
     @GetMapping("/list")
-    public ApiResult list(){
+    public ApiResult list() throws Exception {
         return  ApiResult.success(mapBox_mapLevelServices.list());
     }
     @PostMapping("/add")
@@ -84,6 +81,7 @@ public class MapBox_MapLevelController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        mapBox_mapLevel.setStatus(AuthConstants.DEL_FLAG_DELETE);
         mapBox_mapLevelServices.delete(mapBox_mapLevel,tokenModel);
         return ApiResult.success();
     }
