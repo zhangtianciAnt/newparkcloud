@@ -23,5 +23,5 @@ public interface AnnualLeaveService {
     /**
      * 数据做成
      */
-    void insert(TokenModel tokenModel) throws Exception;
+    void insert() throws Exception;
 }
