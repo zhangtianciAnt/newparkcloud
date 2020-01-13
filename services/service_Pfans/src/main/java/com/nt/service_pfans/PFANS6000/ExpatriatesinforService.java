@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS6000;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface ExpatriatesinforService {
@@ -15,4 +16,5 @@ public interface ExpatriatesinforService {
 
     public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
 
+    List<String> expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 }
