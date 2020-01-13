@@ -54,7 +54,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public void expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
 //            创建listVo集合方便存储导入信息
             List<Expatriatesinfor> listVo = new ArrayList<Expatriatesinfor>();
