@@ -140,7 +140,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             }
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
-            return;
+            return Result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
