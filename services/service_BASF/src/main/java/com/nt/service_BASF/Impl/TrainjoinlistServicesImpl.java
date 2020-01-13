@@ -11,6 +11,7 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,34 +41,36 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     //添加培训人员名单
     @Override
     public void insert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
-        if (StringUtils.isNotBlank(trainjoinlistVo.getStartprogramid())) {
+        if (StringUtils.isNotBlank(trainjoinlistVo.getStartprogramid()) && trainjoinlistVo.getTrainjoinlists() != null) {
             //添加之前先删除之前的
             delete(trainjoinlistVo.getStartprogramid(), tokenModel);
             //循环添加
-            for (String personnelid : trainjoinlistVo.getPersonnelid()) {
-                Trainjoinlist trainjoinlist = new Trainjoinlist();
-                if (StringUtils.isNotBlank(personnelid)) {
-                    trainjoinlist.setPersonnelid(personnelid);
+            for (Trainjoinlist trainjoinlist : trainjoinlistVo.getTrainjoinlists()) {
+                if (trainjoinlist.getPersonnelid() != null && trainjoinlist.getPersonnelid().trim() != "") {
                     trainjoinlist.setStartprogramid(trainjoinlistVo.getStartprogramid());
                     trainjoinlist.preInsert(tokenModel);
                     trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
+                    trainjoinlist.setJointype("正常");
                     trainjoinlistMapper.insert(trainjoinlist);
                 }
             }
         }
     }
-    //根据培训列表删除参加名单
+
+    //根据培训列表id删除参加名单
     @Override
     public void delete(String startprogramid, TokenModel tokenModel) throws Exception {
-        Trainjoinlist trainjoinlist = new Trainjoinlist();
-        trainjoinlist.setStartprogramid(startprogramid);
-        for (Trainjoinlist trainjoinlist1 : trainjoinlistMapper.select(trainjoinlist)) {
-            trainjoinlistMapper.delete(trainjoinlist1);
+        if (StringUtils.isNotBlank(startprogramid)) {
+            Trainjoinlist trainjoinlist = new Trainjoinlist();
+            trainjoinlist.setStartprogramid(startprogramid);
+            for (Trainjoinlist trainjoinlist1 : trainjoinlistMapper.select(trainjoinlist)) {
+                trainjoinlistMapper.delete(trainjoinlist1);
+            }
         }
     }
 
 
-    //获取培训申请人员名单
+    //获取培训申请人员id名单
     @Override
     public ArrayList<String> joinlist(String startprogramid) throws Exception {
         Trainjoinlist trainjoinlist = new Trainjoinlist();
@@ -81,6 +84,16 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             }
         }
         return joinlist;
+    }
+
+    //获取培训申请人员名单
+    @Override
+    public List<Trainjoinlist> joinlists(String startprogramid) throws Exception {
+        Trainjoinlist trainjoinlist = new Trainjoinlist();
+        trainjoinlist.setStartprogramid(startprogramid);
+        trainjoinlist.setStatus("0");
+        List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
+        return trainjoinlists;
     }
 
     //根据人员id获取培训列表id
@@ -106,18 +119,29 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     public int actualjoinnumber(String startprogramid) throws Exception {
         Trainjoinlist trainjoinlist = new Trainjoinlist();
         trainjoinlist.setStartprogramid(startprogramid);
-        trainjoinlist.setJointype("1");
+        trainjoinlist.setJointype("正常");
         trainjoinlist.setStatus("0");
         return trainjoinlistMapper.selectCount(trainjoinlist);
     }
 
-    //excel文档导入
+    //根据培训主键获取实际参加通过的人数
+    @Override
+    public int throughjoinnumber(String startprogramid) throws Exception {
+        Trainjoinlist trainjoinlist = new Trainjoinlist();
+        trainjoinlist.setStartprogramid(startprogramid);
+        trainjoinlist.setJointype("正常");
+        trainjoinlist.setStatus("0");
+        trainjoinlist.setThroughtype("通过");
+        return trainjoinlistMapper.selectCount(trainjoinlist);
+    }
+
+    //excel成绩文档导入
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         //存放消息
         List<String> result = new ArrayList<>();
-        //存放值班信息list
+        //存放成绩信息list
         HashMap<Trainjoinlist, String> trainHashMap = new HashMap<Trainjoinlist, String>();
         //临时文件
         File f = null;
@@ -167,7 +191,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                 return result;
             }
             //判断是否是正确格式的成绩文件（方案二：检查表头是否正确）
-            if (list.get(0).size() < 7) {
+            if (list.get(0).size() < 8) {
                 errorCount += 1;
                 result.add("失败数：" + errorCount);
                 result.add("成绩文件表头格式不正确！");
@@ -203,7 +227,12 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             Trainjoinlist trainjoinlist = trainjoinlistMapper.selectByPrimaryKey(olist.get(0).toString());
                             trainjoinlist.setTrainjoinlistid(olist.get(0).toString());
                             trainjoinlist.setJointype(olist.get(6).toString());
-                            trainjoinlist.setPerformance(olist.get(5).toString());
+                            try {
+                                trainjoinlist.setPerformance(olist.get(5).toString());
+                                trainjoinlist.setThroughtype(olist.get(7).toString());
+                            } catch (Exception e) {
+
+                            }
                             trainjoinlist.preUpdate(tokenModel);
                             trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
                             successCount += 1;

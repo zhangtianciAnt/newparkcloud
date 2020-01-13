@@ -27,12 +27,12 @@ public class StartprogramVo {
     /**
      * 实际参加人数
      */
-    private Integer actualjoinnumber;
+    private int actualjoinnumber;
 
     /**
-     * 考核情况
+     * 实际通过人数
      */
-
+    private int throughjoinnumber;
 
     /**
      * 培训列表

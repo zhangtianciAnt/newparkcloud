@@ -40,6 +40,26 @@ public class Trainjoinlist extends BaseModel {
     private String personnelid;
 
     /**
+     * 部门名称
+     */
+    private String departmentname;
+
+    /**
+     * 姓名
+     */
+    private String customername;
+
+    /**
+     * 员工号
+     */
+    private String documentnumber;
+
+    /**
+     * 身份证件号
+     */
+    private String idnumber;
+
+    /**
      * 参加状态
      */
     private String jointype;
@@ -48,4 +68,9 @@ public class Trainjoinlist extends BaseModel {
      * 成绩
      */
     private String performance;
+
+    /**
+     * 通过状态
+     */
+    private String throughtype;
 }

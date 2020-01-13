@@ -44,10 +44,16 @@ public class BASF21208Controller {
         return ApiResult.success(startprogramServices.nostart());
     }
 
-    //获取获取未开班参加人员名单
+    //获取获取未开班参加人员id名单
     @RequestMapping(value = "/getjoinlist", method = {RequestMethod.GET})
     public ApiResult getjoinlist(String personnelid, HttpServletRequest request) throws Exception {
         return ApiResult.success(trainjoinlistServices.joinlist(personnelid));
+    }
+
+    //获取获取参加人员名单
+    @RequestMapping(value = "/getjoinlists", method = {RequestMethod.GET})
+    public ApiResult getjoinlists(String personnelid, HttpServletRequest request) throws Exception {
+        return ApiResult.success(trainjoinlistServices.joinlists(personnelid));
     }
 
     //添加培训参加人员名单
@@ -61,7 +67,7 @@ public class BASF21208Controller {
         return ApiResult.success();
     }
 
-    //excel导入，更新培训参加名单信息
+    //excel成绩导入，更新培训参加名单成绩信息
     @RequestMapping(value = "/importexcel", method = {RequestMethod.POST})
     public ApiResult importexcel(HttpServletRequest request) {
         try {

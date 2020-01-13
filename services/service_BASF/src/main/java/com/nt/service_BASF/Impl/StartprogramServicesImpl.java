@@ -99,6 +99,7 @@ public class StartprogramServicesImpl implements StartprogramServices {
             startprogramVo.setStartprogram(startprogram1);
             startprogramVo.setJoinnumber(trainjoinlistServices.joinnumber(startprogram1.getStartprogramid()));
             startprogramVo.setActualjoinnumber(trainjoinlistServices.actualjoinnumber(startprogram1.getStartprogramid()));
+            startprogramVo.setThroughjoinnumber(trainjoinlistServices.throughjoinnumber(startprogram1.getStartprogramid()));
             startprogramVoList.add(startprogramVo);
         }
         return startprogramVoList;

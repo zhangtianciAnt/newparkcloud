@@ -1,10 +1,12 @@
 package com.nt.dao_BASF.VO;
 
+import com.nt.dao_BASF.Trainjoinlist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -27,5 +29,5 @@ public class TrainjoinlistVo {
     /**
      * 人员id
      */
-    private ArrayList<String> personnelid;
+    private List<Trainjoinlist> trainjoinlists;
 }
