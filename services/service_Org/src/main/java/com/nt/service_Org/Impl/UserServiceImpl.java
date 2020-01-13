@@ -223,6 +223,29 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    @Override
+    public List<CustomerInfo> getAccountCustomeraccumulatedhour(String orgid, String orgtype, String logintype) throws Exception {
+        Query query = new Query();
+        if (StringUtils.isNotBlank(logintype)) {
+            query.addCriteria(Criteria.where("logintype").is(logintype));
+        }
+        if ("1".equals(orgtype)) {
+            if(StrUtil.isNotBlank(orgid)){
+                query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+            }
+
+            List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+            return customerInfos;
+        } else {
+            if(StrUtil.isNotBlank(orgid)){
+                query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+            }
+            List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+            return customerInfos;
+        }
+    }
+
     /**
      * @方法名：getAccountCustomerById
      * @描述：根据用户id获取用户信息

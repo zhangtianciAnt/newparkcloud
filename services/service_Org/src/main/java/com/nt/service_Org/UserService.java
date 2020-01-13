@@ -54,6 +54,9 @@ public interface UserService {
     // 根据orgid获取用户及用户信息列表
     List<CustomerInfo> getAccountCustomer(String orgid, String orgtype, String logintype) throws Exception;
 
+
+    List<CustomerInfo> getAccountCustomeraccumulatedhour(String orgid, String orgtype, String logintype) throws Exception;
+
     // 根据用户id获取用户信息
     UserVo getAccountCustomerById(String userid) throws Exception;
 

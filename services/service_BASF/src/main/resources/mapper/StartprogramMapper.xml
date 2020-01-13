@@ -46,18 +46,21 @@
         personnelid = #{userid}
         and
         status = 0)
-        and
+
         <if test="selecttype == 'abouttoexpire'">
+            and
             programtype in ('BC039004')
             and
             DATEDIFF(date_add(actualstartdate,INTERVAL validity MONTH),CURRENT_DATE()) &lt;= 30
             and
             DATEDIFF(date_add(actualstartdate,INTERVAL validity MONTH),CURRENT_DATE() )>0
         </if>
-        <if test="selecttype == 'completed'">
+        <if test="selecttype == 'enrolment'">
+            and
             programtype in ('BC039001','BC039002')
         </if>
-        <if test="selecttype == 'enrolment'">
+        <if test="selecttype == 'completed'">
+            and
             programtype in ('BC039004')
         </if>
 

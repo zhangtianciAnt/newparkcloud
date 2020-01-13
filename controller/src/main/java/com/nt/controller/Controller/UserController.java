@@ -1,10 +1,12 @@
 package com.nt.controller.Controller;
 
 import cn.hutool.http.HttpUtil;
+import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
+import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ProjectName: newparkcloud
@@ -45,6 +48,9 @@ public class UserController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private StartprogramServices startprogramServices;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -183,6 +189,33 @@ public class UserController {
     public ApiResult getAccountCustomer(String orgid, String orgtype, String logintype, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(userService.getAccountCustomer(orgid, orgtype, logintype));
+    }
+
+
+    @RequestMapping(value = "/getAccountCustomeraccumulatedhour", method = {RequestMethod.GET})
+    public ApiResult getAccountCustomeraccumulatedhour(String orgid, String orgtype, String logintype, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<CustomerInfo> customerInfoList =  userService.getAccountCustomeraccumulatedhour(orgid, orgtype, logintype);
+        if(customerInfoList.size()>0)
+        {
+            for(int i = 0;i<customerInfoList.size();i++)
+            {
+                String userid = customerInfoList.get(i).getUserid();
+
+                List<Startprogram> startprogramList = startprogramServices.selectbyuserid(userid,"completed");
+                if(startprogramList.size()>0)
+                {
+                    int aa = 0;
+                    for(int j=0;j<startprogramList.size();j++)
+                    {
+                        aa += startprogramList.get(j).getThelength();
+                    }
+                    customerInfoList.get(i).getUserinfo().setAccumulated(String.valueOf(aa));
+                }
+            }
+        }
+
+        return ApiResult.success(customerInfoList);
     }
 
     /**

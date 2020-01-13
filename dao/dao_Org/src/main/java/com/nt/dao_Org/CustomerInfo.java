@@ -164,6 +164,8 @@ public class CustomerInfo extends BaseModel {
         private String degreeeducation;
         //成本中心
         private String costcenter;
+        //年度培训累计课时
+        private String accumulated;
     }
     // endregion
 
