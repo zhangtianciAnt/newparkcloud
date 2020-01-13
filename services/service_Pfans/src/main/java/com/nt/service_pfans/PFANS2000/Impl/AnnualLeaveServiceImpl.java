@@ -44,8 +44,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return annualLeaveMapper.select(annualLeave);
     }
 
-    //新建
-    @Override
+    //事业年度开始跑系统服务（4月1日）
     @Scheduled(cron="0 0 0 1 4 ?")
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
@@ -55,7 +54,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
     }
-
+    //新建
+    @Override
     public void insertannualLeave(CustomerInfo customer) throws Exception {
         AnnualLeave annualLeave = new AnnualLeave();
         Calendar calendar = Calendar.getInstance();
