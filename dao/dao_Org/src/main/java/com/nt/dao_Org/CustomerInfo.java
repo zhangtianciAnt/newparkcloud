@@ -166,6 +166,11 @@ public class CustomerInfo extends BaseModel {
         private String costcenter;
         //年度培训累计课时
         private String accumulated;
+        //身份证url
+        private String applydataurl;
+        //学历证明url
+        private String traindataurl;
+
     }
     // endregion
 

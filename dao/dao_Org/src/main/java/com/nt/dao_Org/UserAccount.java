@@ -81,5 +81,8 @@ public class UserAccount extends BaseModel {
     private String devicemanageremail;//装置经理邮箱
     private String degreeeducation;//文化程度
     private String costcenter;//成本中心
+    private String applydataurl;//身份证url
+    private String traindataurl;//学历证明url
+
 
 }
