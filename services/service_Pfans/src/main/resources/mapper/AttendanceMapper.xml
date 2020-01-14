@@ -27,6 +27,9 @@ WHERE status = '0'
 	<if test="months != null and months != ''" >
 	  AND months = #{months,jdbcType=VARCHAR}
 	</if>
+	<if test="owner != null and owner != ''" >
+		AND owner = #{owner,jdbcType=VARCHAR}
+	</if>
 GROUP BY
 	user_id,
 	center_id,

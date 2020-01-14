@@ -2,10 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.service_pfans.PFANS6000.CustomerinforService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/customerinfor")
@@ -61,5 +61,17 @@ public class Pfans6002Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         customerinforService.createcustomerinforApply(customerinfor, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/eximport", method = {RequestMethod.POST})
+    public ApiResult eximport(HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(customerinforService.eximport(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 }

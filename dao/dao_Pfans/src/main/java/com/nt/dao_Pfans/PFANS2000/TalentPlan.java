@@ -110,6 +110,12 @@ public class TalentPlan extends BaseModel {
     private String skillrankingfinished;
 
     /**
+     * 是否完成
+     */
+    @Column(name = "FUTUREFINISHED")
+    private String futurefinished;
+
+    /**
      * 次のスキルランク目安標準より1
      */
     @Column(name = "NEXTSKILLRANKING1")

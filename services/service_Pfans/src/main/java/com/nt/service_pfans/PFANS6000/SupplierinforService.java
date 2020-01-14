@@ -18,4 +18,5 @@ public interface SupplierinforService {
 
     public List<Supplierinfor> getSupplierNameList(Supplierinfor supplierinfor, HttpServletRequest request) throws Exception;
 
+    List<String> supimport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 }

@@ -138,4 +138,9 @@ public class Supplierinfor extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
 }

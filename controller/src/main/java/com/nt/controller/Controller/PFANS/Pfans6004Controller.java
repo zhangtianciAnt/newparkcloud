@@ -4,10 +4,7 @@ import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.SupplierinforService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +72,17 @@ public class Pfans6004Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(supplierinforService.getSupplierNameList(supplierinfor, request));
+    }
+
+    @RequestMapping(value = "/expimport", method = {RequestMethod.POST})
+    public ApiResult expimport(HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(expatriatesinforService.expimport(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 }

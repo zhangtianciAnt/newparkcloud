@@ -503,7 +503,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                 }
                                 //---------处理昨日审批通过的加班申请end-------
-                                else{
+                                else{//没有加班的情况
                                     Attendance attendance = new Attendance();
                                     attendance.setUser_id(strUserid);
                                     attendance.setDates(dateStart);
@@ -522,7 +522,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                 }
                         }
-                        else
+                        else //异常打卡的情况
                         {
                             Attendance attendance = new Attendance();
                             attendance.setUser_id(strUserid);

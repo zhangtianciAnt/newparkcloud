@@ -16,9 +16,6 @@ public interface CustomerinforService {
 
     public void createcustomerinforApply(Customerinfor customerinfor, TokenModel tokenModel) throws Exception;
 
-//    List<String> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
-//
-//    void methodAttendance(TokenModel tokenModel) throws Exception ;
-
+    List<String> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 
 }

@@ -35,22 +35,10 @@ public class Pfans2013Controller {
     public ApiResult getDataList(HttpServletRequest request) throws Exception{
         AnnualLeave annualLeave = new AnnualLeave();
         TokenModel tokenModel = tokenService.getToken(request);
-        annualLeave.setOwners(tokenModel.getOwnerList());
-
+        annualLeave.setOwner(tokenModel.getUserId());
         Calendar cal = Calendar.getInstance();
         String this_year = String.valueOf(cal.get(cal.YEAR));
         annualLeave.setYears(this_year);
-
         return ApiResult.success(annualLeaveService.getDataList(annualLeave));
-    }
-    /**
-     * 数据做成
-     */
-    @RequestMapping(value = "insert", method = {RequestMethod.GET})
-    public ApiResult insert(HttpServletRequest request) throws Exception {
-
-        TokenModel tokenModel = tokenService.getToken(request);
-        annualLeaveService.insert(tokenModel);
-        return ApiResult.success();
     }
 }
