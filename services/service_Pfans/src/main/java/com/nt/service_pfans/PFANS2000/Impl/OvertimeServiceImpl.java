@@ -87,6 +87,9 @@ public class OvertimeServiceImpl implements OvertimeService {
             String actualoverTime = null;
             //平日晚加班时间扣除
             String weekdaysovertime = null;
+            //加班基本计算单位
+            String strovertime = null;
+
             //不定时考勤人员(非不定时考勤人员才计算)
             Irregulartiming irregulartiming = new Irregulartiming();
             irregulartiming.setUser_id(overtime.getUserid());
@@ -122,6 +125,9 @@ public class OvertimeServiceImpl implements OvertimeService {
                     weekdaysovertime = attendancesettinglist.get(0).getWeekdaysovertime();
                     BigDecimal weekdaysovertimehour = new BigDecimal(weekdaysovertime).multiply(new BigDecimal(60 * 60 * 1000));
                     weekdaysovertime = String.valueOf(weekdaysovertimehour.intValue());
+                    strovertime = attendancesettinglist.get(0).getOvertime();
+                    BigDecimal strovertimehour = new BigDecimal(strovertime).multiply(new BigDecimal(60 * 60 * 1000));
+                    strovertime = String.valueOf(strovertimehour.intValue());
                     //弹性工作制
                     String Flexibleworkshift_start = null;
                     FlexibleWork flexibleWork = new FlexibleWork();
@@ -271,20 +277,24 @@ public class OvertimeServiceImpl implements OvertimeService {
                                     }
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001004")){//一齐年休日加班
+                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     attend.setAnnualrestday(overtimeHours);
 
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001005")){//会社特别休日加班
+                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     attend.setSpecialday(overtimeHours);
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
 
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
+                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     attend.setYouthday(overtimeHours);
                                     //进代休表
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001008")){//妇女节
+                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     attend.setWomensday(overtimeHours);
                                     //进代休表
                                 }
@@ -321,20 +331,24 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 }
                             }
                             else if(overtime.getOvertimetype().equals("PR001004")){//一齐年休日加班
+                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                 attendance.setAnnualrestday(overtimeHours);
 
                             }
                             else if(overtime.getOvertimetype().equals("PR001005")){//会社特别休日加班
+                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                 attendance.setSpecialday(overtimeHours);
                             }
                             else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
 
                             }
                             else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
+                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                 attendance.setYouthday(overtimeHours);
                                 //进代休表
                             }
                             else if(overtime.getOvertimetype().equals("PR001008")){//妇女节
+                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                 attendance.setWomensday(overtimeHours);
                                 //进代休表
                             }

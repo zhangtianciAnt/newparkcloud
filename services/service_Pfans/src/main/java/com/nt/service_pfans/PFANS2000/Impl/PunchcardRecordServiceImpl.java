@@ -426,20 +426,24 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     }
                                                 }
                                                 else if(Ot.getOvertimetype().equals("PR001004")){//一齐年休日加班
+                                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                     attend.setAnnualrestday(overtimeHours);
 
                                                 }
                                                 else if(Ot.getOvertimetype().equals("PR001005")){//会社特别休日加班
+                                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                     attend.setSpecialday(overtimeHours);
                                                 }
                                                 else if(Ot.getOvertimetype().equals("PR001006")){//振替休日加班
 
                                                 }
                                                 else if(Ot.getOvertimetype().equals("PR001007")){//五四青年节
+                                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                     attend.setYouthday(overtimeHours);
                                                     //进代休表
                                                 }
                                                 else if(Ot.getOvertimetype().equals("PR001008")){//妇女节
+                                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                     attend.setWomensday(overtimeHours);
                                                     //进代休表
                                                 }
@@ -476,20 +480,24 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                             }
                                             else if(Ot.getOvertimetype().equals("PR001004")){//一齐年休日加班
+                                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                 attendance.setAnnualrestday(overtimeHours);
 
                                             }
                                             else if(Ot.getOvertimetype().equals("PR001005")){//会社特别休日加班
+                                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                 attendance.setSpecialday(overtimeHours);
                                             }
                                             else if(Ot.getOvertimetype().equals("PR001006")){//振替休日加班
 
                                             }
                                             else if(Ot.getOvertimetype().equals("PR001007")){//五四青年节
+                                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                 attendance.setYouthday(overtimeHours);
                                                 //进代休表
                                             }
                                             else if(Ot.getOvertimetype().equals("PR001008")){//妇女节
+                                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                 attendance.setWomensday(overtimeHours);
                                                 //进代休表
                                             }
