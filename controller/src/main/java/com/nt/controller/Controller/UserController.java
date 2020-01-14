@@ -267,6 +267,20 @@ public class UserController {
     }
 
     /**
+     * @方法名：delUser
+     * @描述：删除用户状（逻辑）
+     * @创建日期：2020/01/14
+     * @作者：王哲
+     * @参数：[id]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/delUser", method = {RequestMethod.GET})
+    public ApiResult delUser(String id) throws Exception {
+        userService.delUser(id);
+        return ApiResult.success();
+    }
+
+    /**
      * @方法名：setRoleToUser
      * @描述：给用户赋角色
      * @创建日期：2018/12/07

@@ -2,6 +2,7 @@ package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.mongodb.client.result.DeleteResult;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
@@ -10,10 +11,12 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.NotWritablePropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -54,6 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserAccount> getUserAccount(UserAccount userAccount) throws Exception {
         userAccount.setLogintype("1");
+        userAccount.setStatus("0");
         Query query = CustmizeQuery(userAccount);
         return mongoTemplate.find(query, UserAccount.class);
     }
@@ -100,6 +104,7 @@ public class UserServiceImpl implements UserService {
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
         query.addCriteria(Criteria.where("logintype").is("1"));
+        query.addCriteria(Criteria.where("status").is("0"));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
         //数据不存在时
@@ -210,6 +215,7 @@ public class UserServiceImpl implements UserService {
         if ("1".equals(orgtype)) {
             if(StrUtil.isNotBlank(orgid)){
                 query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+                query.addCriteria(Criteria.where("status").is("0"));
             }
 
             List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
@@ -217,6 +223,7 @@ public class UserServiceImpl implements UserService {
         } else {
             if(StrUtil.isNotBlank(orgid)){
                 query.addCriteria(Criteria.where("userinfo.companyid").is(orgid));
+                query.addCriteria(Criteria.where("status").is("0"));
             }
             List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
             return customerInfos;
@@ -322,6 +329,33 @@ public class UserServiceImpl implements UserService {
         userAccount.setStatus(status);
         mongoTemplate.save(userAccount);
     }
+
+    /**
+     * @方法名：delUser
+     * @描述：删除用户（逻辑）
+     * @创建日期：2020/01/14
+     * @作者：王哲
+     * @参数：[userid]
+     * @返回值：void
+     */
+    @Override
+    public void delUser(String id) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+        Update update = new Update();
+        update.set("status", "1");
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        if (customerInfo != null && StringUtils.isNotBlank(customerInfo.getUserid())) {
+            Query query1 = new Query();
+            query1.addCriteria(Criteria.where("_id").is(customerInfo.getUserid()));
+            UserAccount userAccount = mongoTemplate.findOne(query1, UserAccount.class);
+            if (userAccount != null && StringUtils.isNotBlank(userAccount.get_id())) {
+                mongoTemplate.upsert(query1, update, UserAccount.class);
+                mongoTemplate.upsert(query, update, CustomerInfo.class);
+            }
+        }
+    }
+
 
     /**
      * @方法名：setRoleToUser

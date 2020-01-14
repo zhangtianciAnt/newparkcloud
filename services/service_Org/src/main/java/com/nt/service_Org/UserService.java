@@ -6,6 +6,7 @@ import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import org.opencv.tracking.TrackerBoosting;
 
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,9 @@ public interface UserService {
 
     // 更新用户状态
     void updUserStatus(String userid, String status) throws Exception;
+
+    //删除用户（逻辑）
+    void delUser(String id) throws Exception;
 
     // 给用户赋角色
     void setRoleToUser(UserAccount userAccount) throws Exception;
