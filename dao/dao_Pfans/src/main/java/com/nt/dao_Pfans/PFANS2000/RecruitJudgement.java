@@ -96,6 +96,5 @@ public class RecruitJudgement extends BaseModel {
 
     private String others;
 
-    private String educationinfo;
 
 }
