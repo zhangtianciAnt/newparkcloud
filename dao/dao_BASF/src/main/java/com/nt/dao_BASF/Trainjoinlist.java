@@ -52,7 +52,7 @@ public class Trainjoinlist extends BaseModel {
     /**
      * 员工号
      */
-    private String documentnumber;
+    private String jobnumber;
 
     /**
      * 身份证件号
