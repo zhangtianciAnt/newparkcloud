@@ -332,4 +332,23 @@ public class UserController {
     public ApiResult getAllCustomer() throws Exception {
         return ApiResult.success(userService.getAllCustomerInfo());
     }
+
+    /**
+     * BASF EXCEL批量导入用户
+     */
+    @RequestMapping(value = "/excelcustomer", method = {RequestMethod.POST})
+    public ApiResult excelCustomer(HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(userService.excelCustomer(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
+
+
+
 }

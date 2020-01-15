@@ -68,21 +68,7 @@ public class UserAccount extends BaseModel {
      */
     private List<Role> roles;
     /**
-     * 员工编号
+     * 员工号
      */
-    private String userno;
-    /**
-     * 职位名称
-     */
-    private String positionname;
-    private String driveridnumber;
-    private String usercode;//USE ID
-    private String departmentemail; //部门邮箱
-    private String devicemanageremail;//装置经理邮箱
-    private String degreeeducation;//文化程度
-    private String costcenter;//成本中心
-    private String applydataurl;//身份证url
-    private String traindataurl;//学历证明url
-
-
+    private String jobnumber;
 }

@@ -8,6 +8,7 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.opencv.tracking.TrackerBoosting;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -89,5 +90,8 @@ public interface UserService {
     Map<String, Object> getWxById(String userid) throws Exception;
 
     List<CustomerInfo> getAllCustomerInfo();
+
+    List<String> excelCustomer (HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
 
 }

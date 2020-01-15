@@ -2,8 +2,11 @@ package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.mongodb.client.result.DeleteResult;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
@@ -18,10 +21,15 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -529,5 +537,175 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getAllCustomerInfo() {
         return mongoTemplate.findAll(CustomerInfo.class);
+    }
+
+    /**
+     * @param request
+     * @param tokenModel
+     * @Method excelCustomer
+     * @Author
+     * @Version 1.0
+     * @Description BASF EXCEL批量导入用户
+     * @Return void
+     * @Date 2019/12/04
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public List<String> excelCustomer(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        try {
+            List<String> Result = new ArrayList<String>();
+            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+            File f = null;
+            f = File.createTempFile("tmp", null);
+            file.transferTo(f);
+            ExcelReader reader = ExcelUtil.getReader(f);
+            List<List<Object>> list = reader.read();
+            List<Object> model = new ArrayList<Object>();
+            model.add("部门");
+            model.add("姓名");
+            model.add("职位名称");
+            model.add("性别");
+            model.add("USE ID");
+            model.add("员工号");
+            model.add("部门联系邮箱");
+            model.add("装置经理邮箱");
+            model.add("身份证件号");
+            model.add("文化程度");
+            model.add("成本中心");
+            model.add("本人邮箱");
+            model.add("本人手机号");
+            List<Object> key = list.get(0);
+            for (int i = 0; i < key.size(); i++) {
+                if (!key.get(i).toString().trim().equals(model.get(i))) {
+                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+                }
+            }
+
+            int accesscount = 0;
+            int error = 0;
+
+            Query queryorgTrees = new Query();
+            List<OrgTree> orgTrees = mongoTemplate.find(queryorgTrees, OrgTree.class);
+            List<OrgTree> orgs =  orgTrees.get(0).getOrgs();
+
+            for (int i = 1; i < list.size(); i++) {
+
+                List<Object> value = list.get(i);
+                //部门
+                String departmentname = value.get(0).toString();
+                //姓名
+                String name = value.get(1).toString();
+                //职位名称
+                String  positionname= value.get(2).toString();
+                //性别
+                String sex = value.get(3).toString().equals("男")?"0":"1";
+                //USE ID
+                String usercode = value.get(4).toString();
+                //员工号
+                String jobnumber = value.get(5).toString();
+                //部门联系邮箱
+                String departmentemail = value.get(6).toString();
+                //装置经理邮箱
+                String devicemanageremail = value.get(7).toString();
+                //身份证件号
+                String idnumber = value.get(8).toString();
+                //文化程度
+                String degreeeducation = value.get(9).toString();
+                //成本中心
+                String costcenter = value.get(10).toString();
+                //本人邮箱
+                String email = value.get(11).toString();
+                //本人手机号
+                String mobilenumber =  value.get(12).toString();
+
+
+                UserAccount useraccount = new UserAccount();
+                CustomerInfo customerinfo = new CustomerInfo();
+                CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+                useraccount.setAccount(name);
+                useraccount.setPassword(name);
+                useraccount.setLogintype("0");
+                useraccount.setUsertype("0");
+                useraccount.setStatus("0");
+                useraccount.setJobnumber(jobnumber);
+
+                customerinfo.setLogintype("0");
+                customerinfo.setType("1");
+                customerinfo.setStatus("0");
+                userInfo.setEmail(email);
+                List<String> dep = new ArrayList<>();
+                List<String> com = new ArrayList<>();
+                for(int j = 0;j<orgs.size();j++)
+                {
+                    if(orgs.get(j).getDepartmentname().equals(departmentname))
+                    {
+                        dep.add(orgs.get(j).get_id());
+                        com.add(orgs.get(j).get_id());
+                    }
+                }
+
+                userInfo.setDepartmentid(dep);
+                userInfo.setCompanyid(com);
+                userInfo.setCustomername(name);
+                userInfo.setMobilenumber(mobilenumber);
+                userInfo.setJobnumber(jobnumber);
+                userInfo.setPositionname(positionname);
+                userInfo.setIdnumber(idnumber);
+                userInfo.setDocumentnumber(usercode);
+                userInfo.setDepartmentemail(departmentemail);
+                userInfo.setDevicemanageremail(devicemanageremail);
+                userInfo.setDegreeeducation(degreeeducation);
+                userInfo.setCostcenter(costcenter);
+//                userInfo.setApplydataurl();
+//                userInfo.setTraindataurl();
+                userInfo.setSex(sex);
+                customerinfo.setUserinfo(userInfo);
+
+                Query query = new Query();
+                query.addCriteria(Criteria.where("jobnumber").is(jobnumber));
+                List<UserAccount> useraccountselect = mongoTemplate.find(query, UserAccount.class);
+
+                if (useraccountselect.size() > 0) {
+                    useraccount.preUpdate(tokenModel);
+                    customerinfo.preUpdate(tokenModel);
+                    useraccount.set_id(useraccountselect.get(0).get_id());
+                    customerinfo.set_id(useraccountselect.get(0).get_id());
+
+                    mongoTemplate.save(useraccount);
+                    mongoTemplate.save(customerinfo);
+                }
+                else
+                {
+                    UserVo uservo = new UserVo();
+                    uservo.setUserAccount(useraccount);
+                    uservo.setCustomerInfo(customerinfo);
+                    UserAccount userAccount1 = new UserAccount();
+                    BeanUtils.copyProperties(uservo.getUserAccount(), userAccount1);
+                    userAccount1.preInsert(tokenModel);
+                    mongoTemplate.save(userAccount1);
+                    Query query1 = new Query();
+                    query1.addCriteria(Criteria.where("account").is(userAccount1.getAccount()));
+                    query1.addCriteria(Criteria.where("password").is(userAccount1.getPassword()));
+                    List<UserAccount> userAccountlist = mongoTemplate.find(query1, UserAccount.class);
+                    if (userAccountlist.size() > 0) {
+                        String _id = userAccountlist.get(0).get_id();
+                        CustomerInfo customerInfo = new CustomerInfo();
+                        BeanUtils.copyProperties(uservo.getCustomerInfo(), customerInfo);
+                        CustomerInfo.UserInfo userInfo1 = new CustomerInfo.UserInfo();
+                        BeanUtils.copyProperties(uservo.getCustomerInfo().getUserinfo(), userInfo1);
+                        customerInfo.setUserid(_id);
+                        customerInfo.setUserinfo(userInfo1);
+                        customerInfo.preInsert(tokenModel);
+                        mongoTemplate.save(customerInfo);
+                    }
+                    accesscount = accesscount + 1;
+                }
+            }
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
     }
 }
