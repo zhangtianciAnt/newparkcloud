@@ -109,12 +109,6 @@ public class Fixedassets extends BaseModel {
     private String repairkits;
 
     /**
-     * 固定資産番号
-     */
-    @Column(name = "ASSETNUMBER")
-    private String assetnumber;
-
-    /**
      * 固定資産名称
      */
     @Column(name = "ASSETNAME")

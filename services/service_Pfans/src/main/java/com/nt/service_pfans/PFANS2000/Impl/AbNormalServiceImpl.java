@@ -1,13 +1,17 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
+import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +21,8 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Autowired
     private AbNormalMapper abNormalMapper;
+    @Autowired
+    private AttendanceMapper attendanceMapper;
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
@@ -34,6 +40,52 @@ public class AbNormalServiceImpl implements AbNormalService {
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
         abNormalMapper.updateByPrimaryKey(abNormal);
+        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES)){
+            Attendance attendance = new Attendance();
+            attendance.setUser_id(abNormal.getUser_id());
+            attendance.setDates(abNormal.getOccurrencedate());
+            List<Attendance> attendancelist = attendanceMapper.select(attendance);
+            DecimalFormat df = new DecimalFormat("######0.00");
+            if(attendancelist.size() > 0){
+                for (Attendance attend : attendancelist) {
+                    if(abNormal.getErrortype().equals("PR013002")){//迟到
+                        attend.setLate(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013003")){//早退
+                        attend.setLeaveearly(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013005")){//年休
+                        attend.setAnnualrest(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013008")){//事休/事假
+                        attend.setCompassionateleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013009")){//短期病休
+                        attend.setShortsickleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013010")){//長期病休
+                        attend.setLongsickleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")){//産休（女）産休看護休暇（男）
+                        attend.setNursingleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013004")
+                            || abNormal.getErrortype().equals("PR013011")
+                            || abNormal.getErrortype().equals("PR013014")
+                            || abNormal.getErrortype().equals("PR013015")
+                            || abNormal.getErrortype().equals("PR013016")
+                            || abNormal.getErrortype().equals("PR013017")
+                            || abNormal.getErrortype().equals("PR013018")
+                            || abNormal.getErrortype().equals("PR013019")
+                            ){
+                        //女性三期、结婚休假、家长会假、葬儀休暇、妊娠檢查休暇、哺乳休暇、労災休暇、其他休暇
+                        attend.setWelfare(abNormal.getLengthtime());
+                    }
+                    attend.preUpdate(tokenModel);
+                    attendanceMapper.updateByPrimaryKey(attend);
+                }
+            }
+        }
     }
 
     @Override

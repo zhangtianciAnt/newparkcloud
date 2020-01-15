@@ -6,7 +6,6 @@ import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.apachecommons.CommonsLog;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -50,9 +49,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
-                if(customer.getUserid().equals("5e1c1760e52fa7236580adec")){
+//                if(customer.getUserid().equals("5e1c1760e52fa7236580adec")){
                     insertannualLeave(customer);
-                }
+//                }
             }
         }
     }
@@ -158,8 +157,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeave.setPaid_leave_thisyear(paid_leave_thisyear);
         annualLeave.setDeduct_paid_leave_thisyear(deduct_paid_leave_thisyear);
         annualLeave.setRemaining_paid_leave_thisyear(remaining_paid_leave_thisyear);
-
         annualLeaveMapper.insertSelective(annualLeave);
+
+        //更新人员信息
+        CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+        //今年年休数
+        userInfo.setAnnualyear(String.valueOf(anniversary));
+        //去年年休数(残)
+        //userInfo.setAnnuallastyear(String.valueOf(paid_leave_thisyear));
+        //今年福利年休数
+        userInfo.setWelfareyear(String.valueOf(paid_leave_thisyear));
+        //去年福利年休数(残)
+        userInfo.setWelfarelastyear(String.valueOf(remaining_paid_leave_lastyear));
+        //今年法定年休数
+        userInfo.setRestyear(String.valueOf(annual_leave_thisyear));
+        //去年法定年休数(残)
+        userInfo.setRestlastyear(String.valueOf(remaining_annual_leave_lastyear));
+        customer.setUserinfo(userInfo);
+        mongoTemplate.save(customer);
+
     }
 
     public int getYears(String startCal) throws Exception {
