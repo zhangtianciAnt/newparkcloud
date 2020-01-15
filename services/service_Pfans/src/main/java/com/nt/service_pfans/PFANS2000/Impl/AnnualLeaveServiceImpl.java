@@ -50,7 +50,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
-                insertannualLeave(customer);
+                if(customer.getUserid().equals("5e1c1760e52fa7236580adec")){
+                    insertannualLeave(customer);
+                }
             }
         }
     }
@@ -144,12 +146,14 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //本年度福利年休（期初）
         if(anniversary > 0){
             if (StringUtil.isNotEmpty(customer.getUserinfo().getRestyear())) {
-                int restyear = Integer.valueOf(customer.getUserinfo().getRestyear());
-                paid_leave_thisyear = paid_leave_thisyear.add(new BigDecimal(String.valueOf(anniversary - restyear)));
+                paid_leave_thisyear = paid_leave_thisyear.add(new BigDecimal(String.valueOf(anniversary))).subtract(annual_leave_thisyear);
             }
         }
+        //法定年假(本年度)
         annualLeave.setAnnual_leave_thisyear(annual_leave_thisyear);
+        //法定年假扣除(本年度)
         annualLeave.setDeduct_annual_leave_thisyear(deduct_annual_leave_thisyear);
+        //法定年假剩余(本年度)
         annualLeave.setRemaining_annual_leave_thisyear(remaining_annual_leave_thisyear);
         annualLeave.setPaid_leave_thisyear(paid_leave_thisyear);
         annualLeave.setDeduct_paid_leave_thisyear(deduct_paid_leave_thisyear);
