@@ -166,10 +166,20 @@ public class Attendance extends BaseModel {
     @Column(name = "LATE")
     private String late;
     /**
+     * 迟到时间
+     */
+    @Column(name = "LATETIME")
+    private String latetime;
+    /**
      * 早退
      */
     @Column(name = "LEAVEEARLY")
     private String leaveearly;
+    /**
+     * 早退时间
+     */
+    @Column(name = "LEAVEEARLYTIME")
+    private String leaveearlytime;
     /**
      * 无故旷工
      */

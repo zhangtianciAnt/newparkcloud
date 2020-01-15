@@ -211,6 +211,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         String actualoverTime = null;
         //平日晚加班时间扣除
         String weekdaysovertime = null;
+        //迟到/早退基本计算单位
+        String lateearlyleave = null;
+        //加班基本计算单位
+        String strovertime = null;
         //考勤设定
         AttendanceSetting attendancesetting = new AttendanceSetting();
         List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
@@ -226,6 +230,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":","");;
             nightshift_start = attendancesettinglist.get(0).getNightshift_start().replace(":","");
             nightshift_end = attendancesettinglist.get(0).getNightshift_end().replace(":","");
+            //迟加班基本计算单位
+            lateearlyleave = attendancesettinglist.get(0).getLateearlyleave();
+            BigDecimal lateearlyleavehour = new BigDecimal(lateearlyleave).multiply(new BigDecimal(60 * 60 * 1000));
+            lateearlyleave = String.valueOf(lateearlyleavehour.intValue());
+            //迟到/早退基本计算单位
+            strovertime = attendancesettinglist.get(0).getOvertime();
+            BigDecimal strovertimehour = new BigDecimal(strovertime).multiply(new BigDecimal(60 * 60 * 1000));
+            strovertime = String.valueOf(strovertimehour.intValue());
             //平时晚加班时间扣除
             weekdaysovertime = attendancesettinglist.get(0).getWeekdaysovertime();
             BigDecimal weekdaysovertimehour = new BigDecimal(weekdaysovertime).multiply(new BigDecimal(60 * 60 * 1000));
@@ -554,8 +566,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             //15分钟为基本计算单位
                             double unit = 15;
                             //迟到
-                            if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()
-                            && sdf.parse(closingtime_start).getTime() <= sdf.parse(time_end).getTime()){
+                            if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()){
                                 long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
                                 //迟到的时间
                                 Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
@@ -588,6 +599,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     else{
                                         //迟到小于15分钟没有申请的处理（算旷工半天）
                                         attendance.setAbsenteeism("4");
+                                        attendance.setLatetime("4");
                                     }
                                 }
                                 else{//迟到大于15分钟算旷工

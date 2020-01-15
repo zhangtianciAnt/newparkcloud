@@ -106,4 +106,88 @@ public class Assets extends BaseModel {
      */
     @Column(name = "BARTYPE")
     private String bartype;
+
+    /**
+     * PC管理号
+     */
+    @Column(name = "PCNO")
+    private String pcno;
+
+    /**
+     * 帐面净值
+     */
+    @Column(name = "REALPRICE")
+    private String realprice;
+
+    /**
+     * 型号
+     */
+    @Column(name = "MODEL")
+    private String model;
+
+    /**
+     * 备注
+     */
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    /**
+     * 序列号
+     */
+    @Column(name = "NO")
+    private String no;
+
+    /**
+     * 启用日期
+     */
+    @Column(name = "ACTIVITIONDATE")
+    private String activitiondate;
+
+    /**
+     * 地点
+     */
+    @Column(name = "ADDRESS")
+    private String address;
+
+    /**
+     * PSDCD_借还情况
+     */
+    @Column(name = "PSDCDDEBITSITUATION")
+    private String psdcddebitsituation;
+
+    /**
+     * PSDCD_带出理由
+     */
+    @Column(name = "PSDCDBRINGOUTREASON")
+    private String psdcdbringoutreason;
+
+    /**
+     * PSDCD_期间
+     */
+    @Column(name = "PSDCDPERIOD")
+    private String psdcdperiod;
+
+    /**
+     * PSDCD_对方单位
+     */
+    @Column(name = "PSDCDCOUNTERPARTY")
+    private String psdcdcounterparty;
+
+    /**
+     * PSDCD_责任人
+     */
+    @Column(name = "PSDCDRESPONSIBLE")
+    private String psdcdresponsible;
+
+    /**
+     * PSDCD_归还确认
+     */
+    @Column(name = "PSDCDRETURNCONFIRMATION")
+    private String psdcdreturnconfirmation;
+
+    /**
+     * 资产编号
+     */
+    @Column(name = "ASSETNUMBER")
+    private String assetnumber;
 }

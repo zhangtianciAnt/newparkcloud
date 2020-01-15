@@ -64,7 +64,6 @@ public class OvertimeServiceImpl implements OvertimeService {
         dateStart = cal.getTime();
         overtime.setReserveovertimedate(dateStart);
         if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")){
-        //if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")|| overtime.getStatus().equals("0")){
             //上班时间开始
             String workshift_start = null;
             //上班时间结束
@@ -326,6 +325,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                             attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
                             attendance.setUser_id(overtime.getUserid());
                             attendance.setDates(overtime.getReserveovertimedate());
+                            attendance.setNormal("8");
                             attendance.setActual(worktime);
                             attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                             attendance.preInsert(tokenModel);
