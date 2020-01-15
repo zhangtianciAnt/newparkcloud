@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -9,20 +10,18 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.util.StringUtil;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.math.BigDecimal;
-import cn.hutool.core.date.DateUtil;
-import tk.mybatis.mapper.util.StringUtil;
-
 import java.util.UUID;
 
 @Service
@@ -160,20 +159,19 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeaveMapper.insertSelective(annualLeave);
 
         //更新人员信息
-        CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+        //CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
         //今年年休数
-        userInfo.setAnnualyear(String.valueOf(anniversary));
+        customer.getUserinfo().setAnnualyear(String.valueOf(anniversary));
         //去年年休数(残)
         //userInfo.setAnnuallastyear(String.valueOf(paid_leave_thisyear));
         //今年福利年休数
-        userInfo.setWelfareyear(String.valueOf(paid_leave_thisyear));
+        customer.getUserinfo().setWelfareyear(String.valueOf(paid_leave_thisyear));
         //去年福利年休数(残)
-        userInfo.setWelfarelastyear(String.valueOf(remaining_paid_leave_lastyear));
+        customer.getUserinfo().setWelfarelastyear(String.valueOf(remaining_paid_leave_lastyear));
         //今年法定年休数
-        userInfo.setRestyear(String.valueOf(annual_leave_thisyear));
+        customer.getUserinfo().setRestyear(String.valueOf(annual_leave_thisyear));
         //去年法定年休数(残)
-        userInfo.setRestlastyear(String.valueOf(remaining_annual_leave_lastyear));
-        customer.setUserinfo(userInfo);
+        customer.getUserinfo().setRestlastyear(String.valueOf(remaining_annual_leave_lastyear));
         mongoTemplate.save(customer);
 
     }

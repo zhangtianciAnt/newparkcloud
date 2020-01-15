@@ -64,7 +64,6 @@ public class OvertimeServiceImpl implements OvertimeService {
         dateStart = cal.getTime();
         overtime.setReserveovertimedate(dateStart);
         if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")){
-        //if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")|| overtime.getStatus().equals("0")){
             //上班时间开始
             String workshift_start = null;
             //上班时间结束
@@ -241,24 +240,36 @@ public class OvertimeServiceImpl implements OvertimeService {
                             for (Attendance attend : attendancelist) {
                                 if(overtime.getOvertimetype().equals("PR001001")){//平日加班
                                     if(attend.getOrdinaryindustry() != null && !attend.getOrdinaryindustry().isEmpty()){
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getOrdinaryindustry())));
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attend.getOrdinaryindustry())));
+                                    }
+                                    else{
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     }
                                     attend.setOrdinaryindustry(overtimeHours);
                                     if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
                                         if(attend.getOrdinaryindustrynight() != null && !attend.getOrdinaryindustrynight().isEmpty()){
-                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attendancelist.get(0).getOrdinaryindustrynight())));
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attend.getOrdinaryindustrynight())));
+                                        }
+                                        else{
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight)));
                                         }
                                         attend.setOrdinaryindustrynight(overtimeHoursNight);
                                     }
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001002")){//周末加班
                                     if(attend.getWeekendindustry() != null && !attend.getWeekendindustry().isEmpty()){
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getWeekendindustry())));
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attend.getWeekendindustry())));
+                                    }
+                                    else{
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     }
                                     attend.setWeekendindustry(overtimeHours);
                                     if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
                                         if(attend.getWeekendindustrynight() != null && !attend.getWeekendindustrynight().isEmpty()){
-                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attendancelist.get(0).getWeekendindustrynight())));
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attend.getWeekendindustrynight())));
+                                        }
+                                        else{
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight)));
                                         }
                                         attend.setWeekendindustrynight(overtimeHoursNight);
                                     }
@@ -266,12 +277,18 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 }
                                 else if(overtime.getOvertimetype().equals("PR001003")){//法定日加班
                                     if(attend.getStatutoryresidue() != null && !attend.getStatutoryresidue().isEmpty()){
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendancelist.get(0).getStatutoryresidue())));
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attend.getStatutoryresidue())));
+                                    }
+                                    else{
+                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     }
                                     attend.setStatutoryresidue(overtimeHours);
                                     if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
                                         if(attend.getStatutoryresiduenight() != null && !attend.getStatutoryresiduenight().isEmpty()){
-                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attendancelist.get(0).getStatutoryresiduenight())));
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight) + Double.valueOf(attend.getStatutoryresiduenight())));
+                                        }
+                                        else{
+                                            overtimeHoursNight = String.valueOf(df.format(Double.valueOf(overtimeHoursNight)));
                                         }
                                         attend.setStatutoryresiduenight(overtimeHoursNight);
                                     }
@@ -304,10 +321,11 @@ public class OvertimeServiceImpl implements OvertimeService {
                         }
                         else{
                             attendance.setAttendanceid(UUID.randomUUID().toString());
-                            attendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
+                            aactualttendance.setYears(DateUtil.format(overtime.getReserveovertimedate(),"YYYY").toString());
                             attendance.setMonths(DateUtil.format(overtime.getReserveovertimedate(),"MM").toString());
                             attendance.setUser_id(overtime.getUserid());
                             attendance.setDates(overtime.getReserveovertimedate());
+                            attendance.setNormal("8");
                             attendance.setActual(worktime);
                             attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                             attendance.preInsert(tokenModel);

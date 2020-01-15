@@ -48,11 +48,38 @@ public class AbNormalServiceImpl implements AbNormalService {
             DecimalFormat df = new DecimalFormat("######0.00");
             if(attendancelist.size() > 0){
                 for (Attendance attend : attendancelist) {
-                    if(abNormal.getErrortype().equals("PR013005")){//年休
+                    if(abNormal.getErrortype().equals("PR013002")){//迟到
+                        attend.setLate(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013003")){//早退
+                        attend.setLeaveearly(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013005")){//年休
                         attend.setAnnualrest(abNormal.getLengthtime());
                     }
                     else if(abNormal.getErrortype().equals("PR013008")){//事休/事假
                         attend.setCompassionateleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013009")){//短期病休
+                        attend.setShortsickleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013010")){//長期病休
+                        attend.setLongsickleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")){//産休（女）産休看護休暇（男）
+                        attend.setNursingleave(abNormal.getLengthtime());
+                    }
+                    else if(abNormal.getErrortype().equals("PR013004")
+                            || abNormal.getErrortype().equals("PR013011")
+                            || abNormal.getErrortype().equals("PR013014")
+                            || abNormal.getErrortype().equals("PR013015")
+                            || abNormal.getErrortype().equals("PR013016")
+                            || abNormal.getErrortype().equals("PR013017")
+                            || abNormal.getErrortype().equals("PR013018")
+                            || abNormal.getErrortype().equals("PR013019")
+                            ){
+                        //女性三期、结婚休假、家长会假、葬儀休暇、妊娠檢查休暇、哺乳休暇、労災休暇、其他休暇
+                        attend.setWelfare(abNormal.getLengthtime());
                     }
                     attend.preUpdate(tokenModel);
                     attendanceMapper.updateByPrimaryKey(attend);

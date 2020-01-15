@@ -122,6 +122,20 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     supplierinfor.setAddenglish(value.get(15).toString());
                     supplierinfor.setPerscale(value.get(16).toString());
                 }
+                String person=value.get(16).toString();
+                if(value.size()>1 && ! person.isEmpty()){
+                    if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
+                        supplierinfor.setPerscale("<50");  //改数据
+                    }
+                    if(Integer.parseInt(person)>50 && Integer.parseInt(person)<100){
+                        supplierinfor.setPerscale(">50");  //改数据
+                    } if(Integer.parseInt(person)>100 && Integer.parseInt(person)<500){
+                        supplierinfor.setPerscale(">100");  //改数据
+                    }
+                    if(Integer.parseInt(person)>500){
+                        supplierinfor.setPerscale(">500");  //改数据
+                    }
+                }
                 supplierinfor.preInsert();
                 supplierinfor.setSupplierinfor_id(UUID.randomUUID().toString());
                 supplierinforMapper.insert(supplierinfor);

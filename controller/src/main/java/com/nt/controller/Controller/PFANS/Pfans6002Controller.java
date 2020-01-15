@@ -74,4 +74,13 @@ public class Pfans6002Controller {
             return ApiResult.fail("操作失败！");
         }
     }
+    @RequestMapping(value = "/download", method = {RequestMethod.POST})
+    public void download(HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        ExcelOutPutUtil.OutPut("客户信息","kehuxinxi.xlsx",data,response);
+    }
+
+
+
+
 }

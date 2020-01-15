@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/supplierinfor")
@@ -71,4 +74,11 @@ public class Pfans6003Controller {
             return ApiResult.fail("操作失败！");
         }
     }
+
+    @RequestMapping(value = "/download", method = {RequestMethod.POST})
+    public void download(HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        ExcelOutPutUtil.OutPut("供应商信息","gongyingshang.xlsx",data,response);
+    }
+
 }
