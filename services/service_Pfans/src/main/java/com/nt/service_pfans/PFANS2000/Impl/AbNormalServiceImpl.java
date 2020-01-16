@@ -2,9 +2,11 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
+import com.nt.dao_Pfans.PFANS2000.AttendanceSetting;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
+import com.nt.service_pfans.PFANS2000.mapper.AttendanceSettingMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class AbNormalServiceImpl implements AbNormalService {
     private AbNormalMapper abNormalMapper;
     @Autowired
     private AttendanceMapper attendanceMapper;
+    @Autowired
+    private AttendanceSettingMapper attendanceSettingMapper;
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
@@ -41,6 +45,15 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormal.preUpdate(tokenModel);
         abNormalMapper.updateByPrimaryKey(abNormal);
         if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES)){
+
+            //旷工基本计算单位
+            String absenteeism = null;
+            AttendanceSetting attendancesetting = new AttendanceSetting();
+            List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
+            if(attendancesettinglist.size() > 0){
+                //旷工基本计算单位
+                absenteeism = attendancesettinglist.get(0).getAbsenteeism();
+            }
             Attendance attendance = new Attendance();
             attendance.setUser_id(abNormal.getUser_id());
             attendance.setDates(abNormal.getOccurrencedate());
@@ -51,10 +64,22 @@ public class AbNormalServiceImpl implements AbNormalService {
                     if(abNormal.getErrortype().equals("PR013002")){//迟到
                         if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
                             attend.setLate(abNormal.getLengthtime());
+                            attend.setLatetime("");
+                            attend.setAbsenteeism(absenteeism);
+                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
+                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                            }
                         }
                     }
                     else if(abNormal.getErrortype().equals("PR013003")){//早退
-                        attend.setLeaveearly(abNormal.getLengthtime());
+                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLeaveearlytime())){
+                            attend.setLeaveearly(abNormal.getLengthtime());
+                            attend.setLeaveearlytime("");
+                            attend.setAbsenteeism(absenteeism);
+                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
+                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                            }
+                        }
                     }
                     else if(abNormal.getErrortype().equals("PR013005")){//年休
                         attend.setAnnualrest(abNormal.getLengthtime());

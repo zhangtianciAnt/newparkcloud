@@ -625,14 +625,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 }
                             }
                             //早退
-                            else if(sdf.parse(time_start).getTime() <= sdf.parse(workshift_start).getTime()
-                                    && sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
+                            if(sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
                                 long result = sdf.parse(closingtime_start).getTime() - sdf.parse(time_end).getTime();
-                                //早退的时间
-                                Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
+                                //应该补的时间
+                                Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
                                 //早退的小时
-                                Double Dhourresult = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                if(15 > Dresult){//早退小于15分钟
+                                Double Dhourresult = strunit / 60 / 60 / 1000;
+                                if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){//早退小于15分钟
                                     //早退小于15分钟的处理
                                     AbNormal abnormal = new AbNormal();
                                     abnormal.setUser_id(strUserid);
@@ -644,28 +643,36 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     if(abNormallist.size() > 0){
                                         String strPeriodstart = sdf.format(abNormallist.get(0).getPeriodstart());
                                         String strPeriodend = sdf.format(abNormallist.get(0).getPeriodend());
-                                        long result1 = sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime();
-                                        Double Dresult1 = Double.valueOf(String.valueOf(result1)) / 60 / 1000;
+                                        Double Dresult = Double.valueOf(String.valueOf(sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime()));
                                         //早退申请时间大于等于15分钟（按早退15分钟算）
-                                        if(Dresult1 >= 15){
-                                            attendance.setLeaveearly(String.valueOf(15 / 60));
-                                        }
-                                        else{
-                                            //早退申请时间小于15分钟（按没有申请处理，旷工半天）
-                                            attendance.setAbsenteeism("4");
+                                        if(Dresult >= strunit){
+                                            attendance.setLeaveearly(String.valueOf(Dresult / 60 / 60 / 1000));
+                                            attendance.setLeaveearlytime("");
+                                            if(attendancelist.size() > 0){
+                                                if(String.valueOf(Double.valueOf(absenteeism) - Double.valueOf(attendancelist.get(0).getAbsenteeism())).equals("0.0")){
+                                                    attendance.setAbsenteeism("");
+                                                    //attendance.setNormal(strNormal);
+                                                }
+                                                else{
+                                                    attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) - Double.valueOf(attendancelist.get(0).getAbsenteeism())));
+                                                }
+                                            }
                                         }
                                     }
                                     else{
                                         //早退小于15分钟没有申请的处理（算旷工半天）
-                                        attendance.setAbsenteeism("4");
+                                        attendance.setAbsenteeism(absenteeism);
+                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
                                 else{//早退大于15分钟算旷工
                                     if(Dhourresult <= Double.valueOf(absenteeism)){//早退半天
                                         attendance.setAbsenteeism(absenteeism);
+                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
-                                    else{//迟到大于半天
+                                    else{//早退大于半天
                                         attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
                             }
