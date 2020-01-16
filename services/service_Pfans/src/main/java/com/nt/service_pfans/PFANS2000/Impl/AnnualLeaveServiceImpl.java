@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
@@ -10,6 +11,8 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Component
@@ -34,6 +38,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Autowired
     private AnnualLeaveMapper annualLeaveMapper;
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -203,4 +208,49 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
         return year;
     }
+
+    public void insertNewAnnualRest(UserVo userVo,String id) throws Exception{
+        List<CustomerInfo> customerInfos =  mongoTemplate.find(new Query(Criteria.where("status").is("0")), CustomerInfo.class);
+        List<CustomerInfo> _customerInfos =  customerInfos.stream().filter( customerInfo -> customerInfo.getUserid().equals(userVo.getCustomerInfo().getUserid())).collect(Collectors.toList());
+        if((_customerInfos.size() == 0 || _customerInfos.get(0).getUserinfo().getEnterday() == "")&& (userVo.getCustomerInfo().getUserinfo().getEnterday()!="")){
+            int result = 0;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
+            Calendar min = Calendar.getInstance();
+            Calendar max = Calendar.getInstance();
+            min.setTime(sdf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday()));
+            min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 2);
+            int year = min.get(Calendar.MONTH) <=3 ? min.get(Calendar.YEAR) : max.get(Calendar.YEAR + 1);
+            max.setTime(sdf.parse(year + "-" + "03" +"-" +"01"));
+            while (min.before(max)) {
+                result++;
+                min.add(Calendar.MONTH, 1);
+            }
+            BigDecimal annualRest =  new BigDecimal((float)result / 12 * 15);
+            Double _annualRest =  Math.floor(annualRest.doubleValue());
+            AnnualLeave annualLeave = new AnnualLeave();
+            annualLeave.setAnnual_leave_thisyear(BigDecimal.valueOf(_annualRest));
+            annualLeave.setAnnual_leave_lastyear(BigDecimal.valueOf(0));
+            annualLeave.setPaid_leave_lastyear(BigDecimal.valueOf(0));
+            annualLeave.setDeduct_annual_leave_lastyear(BigDecimal.valueOf(0));
+            annualLeave.setDeduct_paid_leave_lastyear(BigDecimal.valueOf(0));
+            annualLeave.setRemaining_annual_leave_lastyear(BigDecimal.valueOf(0));
+            annualLeave.setRemaining_paid_leave_lastyear(BigDecimal.valueOf(0));
+            annualLeave.setPaid_leave_thisyear(BigDecimal.valueOf(0));
+            annualLeave.setDeduct_annual_leave_thisyear(BigDecimal.valueOf(0));
+            annualLeave.setDeduct_paid_leave_thisyear(BigDecimal.valueOf(0));
+            annualLeave.setRemaining_annual_leave_thisyear(BigDecimal.valueOf(0));
+            annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(0));
+            annualLeave.setUser_id(id);
+            annualLeave.setStatus("0");
+            annualLeave.setCreateon(userVo.getCustomerInfo().getCreateon());
+            annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
+            annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
+            annualLeave.setCenter_id(userVo.getCustomerInfo().getUserinfo().getCenterid());
+            annualLeave.setTeam_id(userVo.getCustomerInfo().getUserinfo().getTeamid());
+            annualLeave.setYears(Calendar.getInstance().get(Calendar.YEAR) + "");
+            annualLeave.setAnnualleave_id(UUID.randomUUID().toString());
+            annualLeaveMapper.insert(annualLeave);
+        }
+    }
+
 }
