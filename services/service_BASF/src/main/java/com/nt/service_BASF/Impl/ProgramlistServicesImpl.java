@@ -184,6 +184,8 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 //code分类
                 programlist.setProgramcode(code("BC038",value.get(1).toString()));
 
+                List<Programlist> pl =  programlistMapper.select(programlist);
+
                 Query query = new Query();
                 query.addCriteria(Criteria.where("userno").is(value.get(2).toString()));
                 List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
@@ -218,7 +220,16 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 programlist.setApplydataurl("");
                 programlist.setTraindata("");
                 programlist.setTraindataurl("");
-                programlistMapper.insert(programlist);
+                if(pl.size()>0)
+                {
+                    programlist.setProgramlistid(pl.get(0).getProgramlistid());
+                    programlistMapper.updateByPrimaryKeySelective(programlist);
+                }
+                else
+                {
+                    programlistMapper.insert(programlist);
+                }
+
                 accesscount = accesscount + 1;
             }
             Result.add("失败数：" + error);
