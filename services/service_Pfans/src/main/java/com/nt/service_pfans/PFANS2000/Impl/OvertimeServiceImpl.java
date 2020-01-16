@@ -306,9 +306,6 @@ public class OvertimeServiceImpl implements OvertimeService {
                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     attend.setSpecialday(overtimeHours);
                                 }
-                                else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
-
-                                }
                                 else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                     attend.setYouthday(overtimeHours);
@@ -360,9 +357,6 @@ public class OvertimeServiceImpl implements OvertimeService {
                             else if(overtime.getOvertimetype().equals("PR001005")){//会社特别休日加班
                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                 attendance.setSpecialday(overtimeHours);
-                            }
-                            else if(overtime.getOvertimetype().equals("PR001006")){//振替休日加班
-
                             }
                             else if(overtime.getOvertimetype().equals("PR001007")){//五四青年节
                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));

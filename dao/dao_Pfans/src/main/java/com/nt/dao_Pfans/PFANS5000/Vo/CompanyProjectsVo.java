@@ -3,6 +3,7 @@ package com.nt.dao_Pfans.PFANS5000.Vo;
 import com.nt.dao_Pfans.PFANS2000.Citation;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.OutSource;
 import com.nt.dao_Pfans.PFANS5000.ProjectPlan;
 import com.nt.dao_Pfans.PFANS5000.ProjectreSources;
 import lombok.AllArgsConstructor;
@@ -28,5 +29,7 @@ public class CompanyProjectsVo {
      */
     private List<ProjectreSources> projectresources;
 
+
+    private List<OutSource> outSources;
 
 }

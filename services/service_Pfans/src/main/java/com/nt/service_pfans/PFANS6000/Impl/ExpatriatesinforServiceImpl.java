@@ -124,7 +124,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     }
                     if (Integer.parseInt(date) > 12) {
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的月份，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的的日期格式错误，请输入正确的月份，导入失败");
                         continue;
                     }
                 }
