@@ -49,7 +49,9 @@ public class AbNormalServiceImpl implements AbNormalService {
             if(attendancelist.size() > 0){
                 for (Attendance attend : attendancelist) {
                     if(abNormal.getErrortype().equals("PR013002")){//迟到
-                        attend.setLate(abNormal.getLengthtime());
+                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
+                            attend.setLate(abNormal.getLengthtime());
+                        }
                     }
                     else if(abNormal.getErrortype().equals("PR013003")){//早退
                         attend.setLeaveearly(abNormal.getLengthtime());

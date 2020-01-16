@@ -615,11 +615,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 }
                                 else{//迟到大于15分钟算旷工
                                     if(Dhourresult <= Double.valueOf(absenteeism)){//迟到半天
-                                        attendance.setAbsenteeism("4");
+                                        attendance.setAbsenteeism(absenteeism);
                                         attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
                                     }
                                     else{//迟到大于半天
-                                        attendance.setAbsenteeism("8");
+                                        attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
                                         attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
@@ -662,10 +662,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 }
                                 else{//早退大于15分钟算旷工
                                     if(Dhourresult <= Double.valueOf(absenteeism)){//早退半天
-                                        attendance.setAbsenteeism(Double.valueOf(absenteeism));
+                                        attendance.setAbsenteeism(absenteeism);
                                     }
                                     else{//迟到大于半天
-                                        attendance.setAbsenteeism(Double.valueOf(absenteeism) * 2);
+                                        attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
                                     }
                                 }
                             }
