@@ -109,8 +109,8 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
                 dictionary.preUpdate(tokenModel);
                 dictionary.setCode(usecoupon.getCopuntype());
                 dictionary.setValue2(usecoupon.getCopunnumber());
-                dictionary.setCode(japancondominium.getCondominiumcompany());
-                dictionary.setValue2(japancondominium.getMoneys());
+//                dictionary.setCode(japancondominium.getCondominiumcompany());
+//                dictionary.setValue2(japancondominium.getMoneys());
                 dictionaryMapper.updateByPrimaryKeySelective(dictionary);
             }
         }
