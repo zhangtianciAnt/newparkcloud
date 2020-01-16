@@ -131,4 +131,10 @@ public class AttendanceSetting extends BaseModel {
      */
     @Column(name = "TRANSFINITEREMINDER")
     private String transfinitereminder;
+
+    /**
+     * 工作时间
+     */
+    @Column(name = "WORKINGHOURS")
+    private String workinghours;
 }

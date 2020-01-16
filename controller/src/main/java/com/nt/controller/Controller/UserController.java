@@ -6,6 +6,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
+import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -38,6 +39,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+     private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private TokenService tokenService;
@@ -165,7 +169,9 @@ public class UserController {
         } else {
             userVo.getCustomerInfo().preInsert(tokenModel);
         }
-        return ApiResult.success(userService.addAccountCustomer(userVo));
+        String id = userService.addAccountCustomer(userVo);
+        annualLeaveService.insertNewAnnualRest(userVo,id);
+        return ApiResult.success(id);
     }
 
     /**
