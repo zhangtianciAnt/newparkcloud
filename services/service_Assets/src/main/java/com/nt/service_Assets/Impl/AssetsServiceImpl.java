@@ -243,4 +243,11 @@ public class AssetsServiceImpl implements AssetsService {
             throw new LogicalException(e.getMessage());
         }
     }
+
+    @Override
+    public List<Assets> getAssetsnameList(Assets assets, HttpServletRequest request) throws Exception {
+        return assetsMapper.select(assets);
+    }
+
+
 }

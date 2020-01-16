@@ -189,6 +189,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdfxx = new SimpleDateFormat("EEE MMM dd 00:00:00 zzz yyyy", Locale.US);
+        DecimalFormat  df = new DecimalFormat("######0.00");
         //上班时间开始
         String workshift_start = null;
         //上班时间结束
@@ -211,6 +212,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         String actualoverTime = null;
         //平日晚加班时间扣除
         String weekdaysovertime = null;
+        //迟到/早退基本计算单位
+        String lateearlyleave = null;
+        //旷工基本计算单位
+        String absenteeism = null;
+        //加班基本计算单位
+        String strovertime = null;
         //考勤设定
         AttendanceSetting attendancesetting = new AttendanceSetting();
         List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
@@ -226,6 +233,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":","");;
             nightshift_start = attendancesettinglist.get(0).getNightshift_start().replace(":","");
             nightshift_end = attendancesettinglist.get(0).getNightshift_end().replace(":","");
+            //迟加班基本计算单位
+            lateearlyleave = attendancesettinglist.get(0).getLateearlyleave();
+            BigDecimal lateearlyleavehour = new BigDecimal(lateearlyleave).multiply(new BigDecimal(60 * 60 * 1000));
+            lateearlyleave = String.valueOf(lateearlyleavehour.intValue());
+            //旷工基本计算单位
+            absenteeism = attendancesettinglist.get(0).getAbsenteeism();
+            //加班基本计算单位
+            strovertime = attendancesettinglist.get(0).getOvertime();
+            BigDecimal strovertimehour = new BigDecimal(strovertime).multiply(new BigDecimal(60 * 60 * 1000));
+            strovertime = String.valueOf(strovertimehour.intValue());
             //平时晚加班时间扣除
             weekdaysovertime = attendancesettinglist.get(0).getWeekdaysovertime();
             BigDecimal weekdaysovertimehour = new BigDecimal(weekdaysovertime).multiply(new BigDecimal(60 * 60 * 1000));
@@ -385,7 +402,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         attendance.setUser_id(strUserid);
                                         attendance.setDates(dateStart);
                                         List<Attendance> attendancelist = attendanceMapper.select(attendance);
-                                        DecimalFormat  df = new DecimalFormat("######0.00");
                                         if(attendancelist.size() > 0){
                                             for (Attendance attend : attendancelist) {
                                                 if(Ot.getOvertimetype().equals("PR001001")){//平日加班
@@ -449,9 +465,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                     attend.setSpecialday(overtimeHours);
                                                 }
-                                                else if(Ot.getOvertimetype().equals("PR001006")){//振替休日加班
-
-                                                }
                                                 else if(Ot.getOvertimetype().equals("PR001007")){//五四青年节
                                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                     attend.setYouthday(overtimeHours);
@@ -503,9 +516,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                 attendance.setSpecialday(overtimeHours);
                                             }
-                                            else if(Ot.getOvertimetype().equals("PR001006")){//振替休日加班
-
-                                            }
                                             else if(Ot.getOvertimetype().equals("PR001007")){//五四青年节
                                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
                                                 attendance.setYouthday(overtimeHours);
@@ -551,17 +561,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             attendance.setUser_id(strUserid);
                             attendance.setDates(dateStart);
                             List<Attendance> attendancelist = attendanceMapper.select(attendance);
-                            //15分钟为基本计算单位
-                            double unit = 15;
+                            if(attendancelist.size() > 0){
+                                attendance = attendancelist.get(0);
+                            }
                             //迟到
-                            if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()
-                            && sdf.parse(closingtime_start).getTime() <= sdf.parse(time_end).getTime()){
-                                long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
+                            if(sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()){
                                 //迟到的时间
-                                Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
+                                long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
+                                //应该补的时间
+                                Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
                                 //迟到的小时
-                                Double Dhourresult = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                if(unit > Dresult){//迟到小于15分钟
+                                Double Dhourresult = strunit / 60 / 60 / 1000;
+                                if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){//迟到小于15分钟
                                     //迟到小于15分钟的处理
                                     AbNormal abnormal = new AbNormal();
                                     abnormal.setUser_id(strUserid);
@@ -574,40 +585,47 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     if(abNormallist.size() > 0){
                                         String strPeriodstart = sdf.format(abNormallist.get(0).getPeriodstart());
                                         String strPeriodend = sdf.format(abNormallist.get(0).getPeriodend());
-                                        long result1 = sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime();
-                                        Double Dresult1 = Double.valueOf(String.valueOf(result1)) / 60 / 1000;
+                                        Double Dresult = Double.valueOf(String.valueOf(sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime()));
                                         //迟到申请时间大于等于15分钟（按迟到15分钟算）
-                                        if(Dresult1 >= unit){
-                                            attendance.setLate(String.valueOf(unit / 60));
-                                        }
-                                        else{
-                                            //迟到时间小于15分钟（按没有申请处理，旷工半天）
-                                            attendance.setAbsenteeism("4");
+                                        if(Dresult >= strunit){
+                                            attendance.setLate(String.valueOf(Dresult / 60 / 60 / 1000));
+                                            attendance.setLatetime("");
+                                            if(attendancelist.size() > 0){
+                                                if(String.valueOf(Double.valueOf(absenteeism) - Double.valueOf(attendancelist.get(0).getAbsenteeism())).equals("0.0")){
+                                                    attendance.setAbsenteeism("");
+                                                    //attendance.setNormal(strNormal);
+                                                }
+                                                else{
+                                                    attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) - Double.valueOf(attendancelist.get(0).getAbsenteeism())));
+                                                }
+                                            }
                                         }
                                     }
                                     else{
                                         //迟到小于15分钟没有申请的处理（算旷工半天）
-                                        attendance.setAbsenteeism("4");
+                                        attendance.setAbsenteeism(absenteeism);
+                                        attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
                                 else{//迟到大于15分钟算旷工
-                                    if(Dhourresult <= 4){//迟到半天
-                                        attendance.setAbsenteeism("4");
+                                    if(Dhourresult <= Double.valueOf(absenteeism)){//迟到半天
+                                        attendance.setAbsenteeism(absenteeism);
+                                        attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
                                     }
                                     else{//迟到大于半天
-                                        attendance.setAbsenteeism("8");
+                                        attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                                        attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
                             }
                             //早退
-                            else if(sdf.parse(time_start).getTime() <= sdf.parse(workshift_start).getTime()
-                                    && sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
+                            if(sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
                                 long result = sdf.parse(closingtime_start).getTime() - sdf.parse(time_end).getTime();
-                                //早退的时间
-                                Double Dresult = Double.valueOf(String.valueOf(result)) / 60 / 1000;
+                                //应该补的时间
+                                Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
                                 //早退的小时
-                                Double Dhourresult = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                if(unit > Dresult){//早退小于15分钟
+                                Double Dhourresult = strunit / 60 / 60 / 1000;
+                                if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){//早退小于15分钟
                                     //早退小于15分钟的处理
                                     AbNormal abnormal = new AbNormal();
                                     abnormal.setUser_id(strUserid);
@@ -619,28 +637,36 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     if(abNormallist.size() > 0){
                                         String strPeriodstart = sdf.format(abNormallist.get(0).getPeriodstart());
                                         String strPeriodend = sdf.format(abNormallist.get(0).getPeriodend());
-                                        long result1 = sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime();
-                                        Double Dresult1 = Double.valueOf(String.valueOf(result1)) / 60 / 1000;
+                                        Double Dresult = Double.valueOf(String.valueOf(sdf.parse(strPeriodend).getTime() - sdf.parse(strPeriodstart).getTime()));
                                         //早退申请时间大于等于15分钟（按早退15分钟算）
-                                        if(Dresult1 >= unit){
-                                            attendance.setLeaveearly(String.valueOf(unit / 60));
-                                        }
-                                        else{
-                                            //早退申请时间小于15分钟（按没有申请处理，旷工半天）
-                                            attendance.setAbsenteeism("4");
+                                        if(Dresult >= strunit){
+                                            attendance.setLeaveearly(String.valueOf(Dresult / 60 / 60 / 1000));
+                                            attendance.setLeaveearlytime("");
+                                            if(attendancelist.size() > 0){
+                                                if(String.valueOf(Double.valueOf(absenteeism) - Double.valueOf(attendancelist.get(0).getAbsenteeism())).equals("0.0")){
+                                                    attendance.setAbsenteeism("");
+                                                    //attendance.setNormal(strNormal);
+                                                }
+                                                else{
+                                                    attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) - Double.valueOf(attendancelist.get(0).getAbsenteeism())));
+                                                }
+                                            }
                                         }
                                     }
                                     else{
                                         //早退小于15分钟没有申请的处理（算旷工半天）
-                                        attendance.setAbsenteeism("4");
+                                        attendance.setAbsenteeism(absenteeism);
+                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
                                 else{//早退大于15分钟算旷工
-                                    if(Dhourresult <= 4){//早退半天
-                                        attendance.setAbsenteeism("4");
+                                    if(Dhourresult <= Double.valueOf(absenteeism)){//早退半天
+                                        attendance.setAbsenteeism(absenteeism);
+                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
-                                    else{//迟到大于半天
-                                        attendance.setAbsenteeism("8");
+                                    else{//早退大于半天
+                                        attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
                                 }
                             }
@@ -678,5 +704,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             attendance.preInsert(tokenModel);
             attendanceMapper.insert(attendance);
         }
+    }
+
+    //获取基本计算单位
+    public Double getUnit(Double d1,Double d2) throws Exception {
+        Double d3 = d1 / d2;
+        return Double.valueOf((int) Math.ceil(d3)) * d2;
     }
 }
