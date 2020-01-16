@@ -33,6 +33,8 @@ public class OvertimeServiceImpl implements OvertimeService {
     @Autowired
     private AttendanceMapper attendanceMapper;
 
+    @Autowired
+    private ReplacerestMapper replacerestmapper;
     @Override
     public List<Overtime> getOvertime(Overtime overtime) throws Exception {
         return overtimeMapper.select(overtime);
@@ -384,8 +386,31 @@ public class OvertimeServiceImpl implements OvertimeService {
         overtime.preUpdate(tokenModel);
         overtimeMapper.updateByPrimaryKey(overtime);
     }
-    //代休
+    //代休添加
     public void insertReplacerest(Overtime overtime, TokenModel tokenModel) throws Exception {
-
+        //代休类型
+        String strtype = null;
+        if(Double.valueOf(overtime.getReserveovertime()) >= 8){
+            //周末加班
+            if(overtime.getOvertimetype().equals("PR001002")){
+                strtype = "1";
+            }
+            //会社特别休日加班
+            if(overtime.getOvertimetype().equals("PR001005")){
+                strtype = "2";
+            }
+        }
+        Replacerest replacerest = new Replacerest();
+        replacerest.setUser_id(overtime.getUserid());
+        replacerest.setCenter_id(overtime.getCenterid());
+        replacerest.setGroup_id(overtime.getGroupid());
+        replacerest.setTeam_id(overtime.getTeamid());
+        replacerest.setApplication_date(DateUtil.format(new Date(),"YYYY/MM/dd"));
+        replacerest.setType(strtype);
+        replacerest.setDuration("8");
+        replacerest.setRecognitionstate("0");
+        replacerest.preInsert(tokenModel);
+        replacerest.setReplacerest_id(UUID.randomUUID().toString());
+        replacerestmapper.insert(replacerest);
     }
 }
