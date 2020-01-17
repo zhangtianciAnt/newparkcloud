@@ -8,5 +8,11 @@
         or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
         and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
     </select>
+    <select id="selectAbNormal1"  resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        SELECT
+         SUM(lengthtime) AS lengthtime
+        FROM abnormal
+        WHERE error_type = 'PR013008'
+    </select>
 </mapper>
 

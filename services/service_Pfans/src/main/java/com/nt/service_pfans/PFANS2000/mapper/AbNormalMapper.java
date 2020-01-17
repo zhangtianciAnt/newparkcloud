@@ -10,5 +10,5 @@ import java.util.List;
 public interface AbNormalMapper extends MyMapper<AbNormal> {
     List<AbNormal> selectAbNormal(@Param("now") String now);
 
-
+//    List<AbNormal> selectAbNormal1(@Param("") List<String>  );
 }

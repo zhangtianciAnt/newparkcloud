@@ -1,12 +1,9 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import com.nt.dao_Pfans.PFANS2000.AbNormal;
-import com.nt.dao_Pfans.PFANS2000.Attendance;
-import com.nt.dao_Pfans.PFANS2000.AttendanceSetting;
+import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
-import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
-import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
-import com.nt.service_pfans.PFANS2000.mapper.AttendanceSettingMapper;
+import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +26,9 @@ public class AbNormalServiceImpl implements AbNormalService {
     private AttendanceMapper attendanceMapper;
     @Autowired
     private AttendanceSettingMapper attendanceSettingMapper;
+    @Autowired
+    private ReplacerestMapper replacerestMapper;
+
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
@@ -44,20 +46,20 @@ public class AbNormalServiceImpl implements AbNormalService {
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
         abNormalMapper.updateByPrimaryKey(abNormal);
-        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_NO)){
+        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES)){
+
+            if(abNormal.getErrortype().equals("PR013006")){//代休周末
+                //修改代休记录
+                updateReplacerest(abNormal,tokenModel);
+            }
             //旷工基本计算单位
             String absenteeism = null;
-            //工作时间
-            String workinghours = null;
             AttendanceSetting attendancesetting = new AttendanceSetting();
             List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
             if(attendancesettinglist.size() > 0){
                 //旷工基本计算单位
                 absenteeism = attendancesettinglist.get(0).getAbsenteeism();
-                //工作时间
-                workinghours = attendancesettinglist.get(0).getWorkinghours();
             }
-            //考勤管理
             Attendance attendance = new Attendance();
             attendance.setUser_id(abNormal.getUser_id());
             attendance.setDates(abNormal.getOccurrencedate());
@@ -68,27 +70,21 @@ public class AbNormalServiceImpl implements AbNormalService {
                     if(abNormal.getErrortype().equals("PR013002")){//迟到
                         if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
                             attend.setLate(abNormal.getLengthtime());
-                            if(Double.valueOf(attend.getLatetime()) > Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(absenteeism);
+                            attend.setLatetime("");
+                            attend.setAbsenteeism(absenteeism);
+                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
+                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
                             }
-                            else{
-                                attend.setAbsenteeism(null);
-                                attend.setNormal(workinghours);
-                            }
-                            attend.setLatetime(null);
                         }
                     }
                     else if(abNormal.getErrortype().equals("PR013003")){//早退
                         if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLeaveearlytime())){
                             attend.setLeaveearly(abNormal.getLengthtime());
-                            if(Double.valueOf(attend.getLeaveearlytime()) > Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(absenteeism);
+                            attend.setLeaveearlytime("");
+                            attend.setAbsenteeism(absenteeism);
+                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
+                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
                             }
-                            else{
-                                attend.setAbsenteeism(null);
-                                attend.setNormal(workinghours);
-                            }
-                            attend.setLeaveearlytime(null);
                         }
                     }
                     else if(abNormal.getErrortype().equals("PR013005")){//年休
@@ -128,5 +124,24 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public AbNormal One(String abnormalid) throws Exception {
         return abNormalMapper.selectByPrimaryKey(abnormalid);
+    }
+
+    //代休添加
+    public void updateReplacerest(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        Replacerest replacerest = new Replacerest();
+        replacerest.setUser_id(abNormal.getUser_id());
+        replacerest.setRecognitionstate("0");
+        List<Replacerest> recruitlist = replacerestMapper.select(replacerest);
+        for(Replacerest re : recruitlist){
+            String strDuration = String.valueOf(Double.valueOf(re.getDuration()) - Double.valueOf(abNormal.getLengthtime()));
+            replacerest.setDuration(strDuration);
+            if(strDuration.equals("0")){
+                replacerest.setDuration(null);
+                replacerest.setRecognitionstate("1");
+            }
+            replacerest.preUpdate(tokenModel);
+            replacerestMapper.updateByPrimaryKey(replacerest);
+        }
+
     }
 }
