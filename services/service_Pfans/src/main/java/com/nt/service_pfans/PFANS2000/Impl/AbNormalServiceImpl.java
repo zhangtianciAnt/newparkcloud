@@ -44,16 +44,20 @@ public class AbNormalServiceImpl implements AbNormalService {
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
         abNormalMapper.updateByPrimaryKey(abNormal);
-        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES)){
-
+        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_NO)){
             //旷工基本计算单位
             String absenteeism = null;
+            //工作时间
+            String workinghours = null;
             AttendanceSetting attendancesetting = new AttendanceSetting();
             List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
             if(attendancesettinglist.size() > 0){
                 //旷工基本计算单位
                 absenteeism = attendancesettinglist.get(0).getAbsenteeism();
+                //工作时间
+                workinghours = attendancesettinglist.get(0).getWorkinghours();
             }
+            //考勤管理
             Attendance attendance = new Attendance();
             attendance.setUser_id(abNormal.getUser_id());
             attendance.setDates(abNormal.getOccurrencedate());
@@ -64,21 +68,27 @@ public class AbNormalServiceImpl implements AbNormalService {
                     if(abNormal.getErrortype().equals("PR013002")){//迟到
                         if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
                             attend.setLate(abNormal.getLengthtime());
-                            attend.setLatetime("");
-                            attend.setAbsenteeism(absenteeism);
-                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                            if(Double.valueOf(attend.getLatetime()) > Double.valueOf(absenteeism)){
+                                attend.setAbsenteeism(absenteeism);
                             }
+                            else{
+                                attend.setAbsenteeism(null);
+                                attend.setNormal(workinghours);
+                            }
+                            attend.setLatetime(null);
                         }
                     }
                     else if(abNormal.getErrortype().equals("PR013003")){//早退
                         if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLeaveearlytime())){
                             attend.setLeaveearly(abNormal.getLengthtime());
-                            attend.setLeaveearlytime("");
-                            attend.setAbsenteeism(absenteeism);
-                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                            if(Double.valueOf(attend.getLeaveearlytime()) > Double.valueOf(absenteeism)){
+                                attend.setAbsenteeism(absenteeism);
                             }
+                            else{
+                                attend.setAbsenteeism(null);
+                                attend.setNormal(workinghours);
+                            }
+                            attend.setLeaveearlytime(null);
                         }
                     }
                     else if(abNormal.getErrortype().equals("PR013005")){//年休
