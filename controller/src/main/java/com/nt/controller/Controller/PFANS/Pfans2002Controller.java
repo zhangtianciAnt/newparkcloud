@@ -1,6 +1,8 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS2000.InterviewRecord;
 import com.nt.dao_Pfans.PFANS2000.RecruitJudgement;
+import com.nt.service_pfans.PFANS2000.InterviewRecordService;
 import com.nt.service_pfans.PFANS2000.RecruitJudgementService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -19,6 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 public class Pfans2002Controller {
     @Autowired
     private RecruitJudgementService recruitJudgementService;
+
+    @Autowired
+    private InterviewRecordService interviewrecordService;
+
     @Autowired
     private TokenService tokenService;
 
@@ -57,5 +63,15 @@ public class Pfans2002Controller {
         recruitJudgementService.update(recruitJudgement, tokenModel);
         return ApiResult.success();
     }
+
+    @RequestMapping(value = "/getNameList", method = {RequestMethod.POST})
+    public ApiResult getNameList(@RequestBody InterviewRecord interviewRecord, HttpServletRequest request) throws Exception {
+        if (interviewRecord == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(interviewrecordService.getInterviewRecord(interviewRecord));
+    }
+
 
 }

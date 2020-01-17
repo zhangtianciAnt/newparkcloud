@@ -1,11 +1,13 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import com.nt.dao_Pfans.PFANS5000.OutSource;
 import com.nt.dao_Pfans.PFANS5000.ProjectPlan;
 import com.nt.dao_Pfans.PFANS5000.ProjectreSources;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
+import com.nt.service_pfans.PFANS5000.mapper.OutSourceMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectplanMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectresourcesMapper;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +32,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ProjectplanMapper projectplanMapper;
     @Autowired
     private ProjectresourcesMapper projectresourcesMapper;
+
+    @Autowired
+    private OutSourceMapper outSourceMapper;
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects,HttpServletRequest request) throws Exception {
 
@@ -47,16 +52,21 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         CompanyProjectsVo staffVo = new CompanyProjectsVo();
         ProjectPlan projectPlan = new ProjectPlan();
         ProjectreSources projectreSources = new ProjectreSources();
+        OutSource outSource=new OutSource();
         projectPlan.setCompanyprojects_id(companyprojectsid);
         projectreSources.setCompanyprojects_id(companyprojectsid);
+        outSource.setCompanyprojects_id(companyprojectsid);
         List<ProjectPlan> projectPlanList = projectplanMapper.select(projectPlan);
         List<ProjectreSources> projectreSourcesList = projectresourcesMapper.select(projectreSources);
+        List<OutSource> outsourcesList=outSourceMapper.select(outSource);
         projectPlanList = projectPlanList.stream().sorted(Comparator.comparing(ProjectPlan::getRowindex)).collect(Collectors.toList());
         projectreSourcesList = projectreSourcesList.stream().sorted(Comparator.comparing(ProjectreSources::getRowindex)).collect(Collectors.toList());
+        outsourcesList=outsourcesList.stream().sorted(Comparator.comparing(OutSource::getRowindex)).collect(Collectors.toList());
         CompanyProjects Staff = companyprojectsMapper.selectByPrimaryKey(companyprojectsid);
         staffVo.setCompanyprojects(Staff);
         staffVo.setProjectplan(projectPlanList);
         staffVo.setProjectresources(projectreSourcesList);
+        staffVo.setOutSources(outsourcesList);
         return staffVo;
     }
 
@@ -70,11 +80,16 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         String companyprojectsid = companyProjects.getCompanyprojects_id();
         ProjectPlan pro = new ProjectPlan();
         ProjectreSources sou = new ProjectreSources();
+        OutSource out=new OutSource();
         pro.setCompanyprojects_id(companyprojectsid);
+        sou.setCompanyprojects_id(companyprojectsid);
+        out.setCompanyprojects_id(companyprojectsid);
         projectplanMapper.delete(pro);
         projectresourcesMapper.delete(sou);
+        outSourceMapper.delete(out);
         List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
         List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
+        List<OutSource> outSourceList=companyProjectsVo.getOutSources();
         if (projectPlanList != null) {
             int rowundex = 0;
             for (ProjectPlan projectPlan : projectPlanList) {
@@ -97,6 +112,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectresourcesMapper.insertSelective(projectreSources);
             }
         }
+        if(outSourceList !=null){
+            int rowindex=0;
+            for(OutSource outsource:outSourceList){
+                rowindex=rowindex+1;
+                outsource.preInsert(tokenModel);
+                outsource.setOutsource_id(UUID.randomUUID().toString());
+                outsource.setCompanyprojects_id(companyprojectsid);
+                outsource.setRowindex(rowindex);
+                outSourceMapper.insertSelective(outsource);
+            }
+        }
+
+
     }
     //新建
     @Override
@@ -109,6 +137,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyprojectsMapper.insertSelective(companyProjects);
         List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
         List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
+        List<OutSource> outSourceList=companyProjectsVo.getOutSources();
         if (projectPlanList != null) {
             int rowundex = 0;
             for (ProjectPlan projectPlan : projectPlanList) {
@@ -131,5 +160,17 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectresourcesMapper.insertSelective(projectreSources);
             }
         }
+        if(outSourceList!=null){
+            int rowindex=0;
+            for(OutSource outSource:outSourceList){
+              rowindex=rowindex+1;
+                outSource.preInsert(tokenModel);
+                outSource.setOutsource_id(UUID.randomUUID().toString());
+                outSource.setCompanyprojects_id(companyprojectsid);
+                outSource.setRowindex(rowindex);
+                outSourceMapper.insertSelective(outSource);
+            }
+        }
+
     }
 }

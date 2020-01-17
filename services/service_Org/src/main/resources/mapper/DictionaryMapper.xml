@@ -17,7 +17,7 @@
         pcode
         FROM
         dictionary
-        WHERE 1 = 1
+        WHERE STATUS = '0'
         <if test="code != null and code != ''" >
             AND  code like CONCAT(#{code},'%')
             AND (TYPE IS NULL OR TYPE = '')
