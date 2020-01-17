@@ -42,6 +42,10 @@ public class OrgTree extends BaseModel {
      */
     private String nodeid;
     /**
+     * 组织负责人	USER
+     */
+    private String user;
+    /**
      * 节点名称	TITLE
      */
     private String title;
