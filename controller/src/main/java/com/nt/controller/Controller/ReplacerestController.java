@@ -28,7 +28,6 @@ public class ReplacerestController {
     @RequestMapping(value="/getReplacerest",method = {RequestMethod.POST})
     public ApiResult getReplacerest(@RequestBody Replacerest replacerest, HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
-        replacerest.setOwner(tokenModel.getUserId());
         replacerest.setRecognitionstate("0");
         return ApiResult.success(replacerestService.getReplacerest(replacerest));
     }
