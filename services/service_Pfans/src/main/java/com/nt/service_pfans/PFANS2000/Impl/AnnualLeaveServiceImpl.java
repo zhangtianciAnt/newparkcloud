@@ -244,6 +244,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             annualLeave.setStatus("0");
             annualLeave.setCreateon(userVo.getCustomerInfo().getCreateon());
             annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
+            annualLeave.setOwner(id);
             annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
             annualLeave.setCenter_id(userVo.getCustomerInfo().getUserinfo().getCenterid());
             annualLeave.setTeam_id(userVo.getCustomerInfo().getUserinfo().getTeamid());
