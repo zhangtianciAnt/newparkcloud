@@ -74,36 +74,35 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                 if (annualLeave.getRemaining_annual_leave_lastyear().intValue() > 0) {
                     annualLeave.setRemaining_annual_leave_lastyear(new BigDecimal(annualLeave.getRemaining_annual_leave_lastyear().intValue() - day));
                     annualLeave.setDeduct_annual_leave_lastyear(new BigDecimal(annualLeave.getDeduct_annual_leave_lastyear().intValue() + day));
-                }else if(annualLeave.getRemaining_annual_leave_lastyear().intValue() == 0 && annualLeave.getAnnual_leave_thisyear().intValue() == annualLeave.getRemaining_annual_leave_thisyear().intValue() && day<0){
+                }else if(annualLeave.getRemaining_annual_leave_lastyear().intValue() == 0 && annualLeave.getAnnual_leave_thisyear().intValue() == annualLeave.getRemaining_annual_leave_thisyear().intValue() &&
+                !(annualLeave.getAnnual_leave_thisyear().intValue() == 0 && annualLeave.getRemaining_annual_leave_thisyear().intValue() == 0)&& day<0){
                     annualLeave.setRemaining_annual_leave_lastyear(new BigDecimal(annualLeave.getRemaining_annual_leave_lastyear().intValue() - day));
                      annualLeave.setDeduct_annual_leave_lastyear(new BigDecimal(annualLeave.getDeduct_annual_leave_lastyear().intValue() + day));
                 }
                  else if (annualLeave.getRemaining_annual_leave_thisyear().intValue() > 0) {
                     annualLeave.setRemaining_annual_leave_thisyear(new BigDecimal(annualLeave.getRemaining_annual_leave_thisyear().intValue() - day));
                     annualLeave.setDeduct_annual_leave_thisyear(new BigDecimal(annualLeave.getDeduct_annual_leave_thisyear().intValue() + day));
-                }else if(annualLeave.getRemaining_annual_leave_thisyear().intValue() == 0 && annualLeave.getPaid_leave_lastyear().intValue() == annualLeave.getRemaining_paid_leave_lastyear().intValue() && day<0){
+                }else if(annualLeave.getRemaining_annual_leave_thisyear().intValue() == 0 && annualLeave.getPaid_leave_lastyear().intValue() == annualLeave.getRemaining_paid_leave_lastyear().intValue()
+                        &&!(annualLeave.getPaid_leave_lastyear().intValue() == 0 && annualLeave.getRemaining_paid_leave_lastyear().intValue() == 0)&& day<0){
                     annualLeave.setRemaining_annual_leave_thisyear(new BigDecimal(annualLeave.getRemaining_annual_leave_thisyear().intValue() - day));
                     annualLeave.setDeduct_annual_leave_thisyear(new BigDecimal(annualLeave.getDeduct_annual_leave_thisyear().intValue() + day));
                 }
                  else if(annualLeave.getRemaining_paid_leave_lastyear().intValue() > 0){
                     annualLeave.setRemaining_paid_leave_lastyear(new BigDecimal(annualLeave.getRemaining_paid_leave_lastyear().intValue() - day));
                     annualLeave.setDeduct_paid_leave_lastyear(new BigDecimal(annualLeave.getDeduct_paid_leave_lastyear().intValue() + day));
-                }else if(annualLeave.getRemaining_paid_leave_lastyear().intValue() == 0 && annualLeave.getPaid_leave_thisyear().intValue() == annualLeave.getRemaining_paid_leave_thisyear().intValue() && day<0){
+                }else if(annualLeave.getRemaining_paid_leave_lastyear().intValue() == 0 && annualLeave.getPaid_leave_thisyear().intValue() == annualLeave.getRemaining_paid_leave_thisyear().intValue()
+                        &&!(annualLeave.getPaid_leave_thisyear().intValue() == 0 && annualLeave.getRemaining_paid_leave_thisyear().intValue() == 0)&& day<0){
                     annualLeave.setRemaining_paid_leave_lastyear(new BigDecimal(annualLeave.getRemaining_paid_leave_lastyear().intValue() - day));
                     annualLeave.setDeduct_paid_leave_lastyear(new BigDecimal(annualLeave.getDeduct_paid_leave_lastyear().intValue() + day));
                 }
-                 else if(annualLeave.getRemaining_paid_leave_thisyear().intValue() > 0){
+                 else if(annualLeave.getRemaining_paid_leave_thisyear().intValue() >= 0){
                     annualLeave.setRemaining_paid_leave_thisyear(new BigDecimal(annualLeave.getRemaining_paid_leave_thisyear().intValue() - day));
                     annualLeave.setDeduct_paid_leave_thisyear(new BigDecimal(annualLeave.getDeduct_paid_leave_thisyear().intValue() + day));
-                }else if(annualLeave.getRemaining_paid_leave_thisyear().intValue() == 0 && day< 0){
-                    annualLeave.setRemaining_paid_leave_thisyear(new BigDecimal(annualLeave.getRemaining_paid_leave_thisyear().intValue() - day));
-                    annualLeave.setDeduct_paid_leave_thisyear(new BigDecimal(annualLeave.getDeduct_paid_leave_thisyear().intValue() + day));
-                }
-                 else {
-                    return false;
                 }
             }
-            annualLeaveMapper.updateAnnualYear(annualLeaves);
+            if(annualLeaves.size()>0){
+                annualLeaveMapper.updateAnnualYear(annualLeaves);
+            }
         return true;
     }
 
