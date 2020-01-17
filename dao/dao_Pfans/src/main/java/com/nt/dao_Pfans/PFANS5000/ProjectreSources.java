@@ -31,12 +31,12 @@ public class ProjectreSources extends BaseModel {
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
-    /**
-     * 编号
-     */
-    @Column(name = "NUMBERS")
-    private String numbers;
 
+    @Column(name = "ADMISSIONTIME")
+    private Date admissiontime;
+
+    @Column(name = "EXITTIME")
+    private Date exittime;
     /**
      * 姓名
      */

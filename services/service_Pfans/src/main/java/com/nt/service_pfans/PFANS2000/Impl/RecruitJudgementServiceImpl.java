@@ -47,4 +47,10 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
         recruitJudgement.preUpdate(tokenModel);
         recruitJudgementMapper.updateByPrimaryKeySelective(recruitJudgement);
     }
+
+     public void userinsert(RecruitJudgement recruitJudgement){
+        if(recruitJudgement.getStatus().equals("4")){
+
+        }
+     }
 }

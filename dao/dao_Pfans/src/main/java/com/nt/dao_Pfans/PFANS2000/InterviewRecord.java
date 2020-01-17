@@ -38,6 +38,9 @@ public class InterviewRecord  extends BaseModel {
     @Column(name = "SEX")
     private String sex;
 
+    @Column(name = "BIRTHDAY")
+    private Date birthday;
+
     /**
      * 联系邮箱ID
      */
