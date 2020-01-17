@@ -1,12 +1,9 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import com.nt.dao_Pfans.PFANS2000.AbNormal;
-import com.nt.dao_Pfans.PFANS2000.Attendance;
-import com.nt.dao_Pfans.PFANS2000.AttendanceSetting;
+import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
-import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
-import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
-import com.nt.service_pfans.PFANS2000.mapper.AttendanceSettingMapper;
+import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +26,9 @@ public class AbNormalServiceImpl implements AbNormalService {
     private AttendanceMapper attendanceMapper;
     @Autowired
     private AttendanceSettingMapper attendanceSettingMapper;
+    @Autowired
+    private ReplacerestMapper replacerestMapper;
+
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
@@ -46,6 +48,10 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormalMapper.updateByPrimaryKey(abNormal);
         if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES)){
 
+            if(abNormal.getErrortype().equals("PR013006")){//代休周末
+                //修改代休记录
+                updateReplacerest(abNormal,tokenModel);
+            }
             //旷工基本计算单位
             String absenteeism = null;
             AttendanceSetting attendancesetting = new AttendanceSetting();
@@ -118,5 +124,24 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public AbNormal One(String abnormalid) throws Exception {
         return abNormalMapper.selectByPrimaryKey(abnormalid);
+    }
+
+    //代休添加
+    public void updateReplacerest(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        Replacerest replacerest = new Replacerest();
+        replacerest.setUser_id(abNormal.getUser_id());
+        replacerest.setRecognitionstate("0");
+        List<Replacerest> recruitlist = replacerestMapper.select(replacerest);
+        for(Replacerest re : recruitlist){
+            String strDuration = String.valueOf(Double.valueOf(re.getDuration()) - Double.valueOf(abNormal.getLengthtime()));
+            replacerest.setDuration(strDuration);
+            if(strDuration.equals("0")){
+                replacerest.setDuration(null);
+                replacerest.setRecognitionstate("1");
+            }
+            replacerest.preUpdate(tokenModel);
+            replacerestMapper.updateByPrimaryKey(replacerest);
+        }
+
     }
 }
