@@ -47,6 +47,7 @@ public class StartprogramServicesImpl implements StartprogramServices {
         Startprogram startprogram = new Startprogram();
         startprogram.setStatus("0");
         startprogram.setProgramtype("BC039001");
+        startprogram.setIsonline("BC032002");
         return startprogramMapper.select(startprogram);
     }
 
