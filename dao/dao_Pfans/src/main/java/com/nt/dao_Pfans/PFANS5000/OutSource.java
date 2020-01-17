@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -31,6 +32,12 @@ public class OutSource extends BaseModel {
 
     @Column(name = "RN")
     private String rn;
+
+    @Column(name = "ADMISSIONTIME")
+    private Date admissiontime;
+
+    @Column(name = "EXITTIME")
+    private Date exittime;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
