@@ -38,8 +38,8 @@ public class ReplacerestServiceImpl implements ReplacerestService {
         String data = sf1ymd.format(sdfxx.parse(sdfxx.format(cal.getTime())));
         List<Replacerest> replacerestlist = replacerestMapper.select(new Replacerest());
             for (Replacerest replacerest : replacerestlist) {
-                replacerest.setRecognitionstate("1");
-                if(replacerest.equals(data)){
+                if(replacerest.getApplication_date().equals(data)){
+                    replacerest.setRecognitionstate("1");
                     replacerestMapper.updateByPrimaryKey(replacerest);
                 }
             }
