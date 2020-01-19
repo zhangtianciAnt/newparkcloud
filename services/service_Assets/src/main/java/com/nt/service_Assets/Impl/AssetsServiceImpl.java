@@ -13,6 +13,7 @@ import com.nt.service_Assets.AssetsService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryResultsMapper;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
@@ -90,6 +94,7 @@ public class AssetsServiceImpl implements AssetsService {
         if (StrUtil.isNotBlank(assets.getBarcode())) {
             assets.setBarcode(assets.getBarcode());
         } else {
+//            assets.setBarcode(getBarCode(assets));
             assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         }
         assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
@@ -97,6 +102,15 @@ public class AssetsServiceImpl implements AssetsService {
         assetsMapper.insert(assets);
     }
 
+    private String getBarCode(Assets assets){
+        String barCode = "";
+        switch (assets.getTypeassets()){
+            case "PA001002":
+                barCode = "DL4_102763";
+
+        }
+        return barCode;
+    }
     @Override
     public void insertLosts(AssetsVo assetsVo, TokenModel tokenModel) throws Exception {
 

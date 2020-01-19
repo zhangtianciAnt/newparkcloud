@@ -71,4 +71,16 @@ public class InventoryRange extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    /**
+     * 条形码
+     */
+    @Column(name = "BARCODE")
+    private String barcode;
+
+    /**
+     * 条码类型
+     */
+    @Column(name = "BARTYPE")
+    private String bartype;
+
 }
