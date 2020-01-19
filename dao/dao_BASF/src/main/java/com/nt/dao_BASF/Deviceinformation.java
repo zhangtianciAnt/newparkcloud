@@ -93,5 +93,10 @@ public class Deviceinformation extends BaseModel {
      */
     private String remark;
 
+    /**
+     * 设备地址
+     */
+    private String ip;
+
 
 }
