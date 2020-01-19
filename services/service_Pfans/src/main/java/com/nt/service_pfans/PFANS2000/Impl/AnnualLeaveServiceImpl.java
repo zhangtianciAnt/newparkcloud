@@ -4,8 +4,10 @@ import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
+import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
+import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,7 @@ import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +39,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private WorkingDayMapper workingDayMapper;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public List<AnnualLeave> getDataList(AnnualLeave annualLeave) {
@@ -211,47 +215,87 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     public void insertNewAnnualRest(UserVo userVo,String id) throws Exception{
         List<CustomerInfo> customerInfos =  mongoTemplate.find(new Query(Criteria.where("status").is("0")), CustomerInfo.class);
         List<CustomerInfo> _customerInfos =  customerInfos.stream().filter( customerInfo -> customerInfo.getUserid().equals(userVo.getCustomerInfo().getUserid())).collect(Collectors.toList());
-       // if((_customerInfos.size() == 0 || _customerInfos.get(0).getUserinfo().getEnterday() == "")&& (userVo.getCustomerInfo().getUserinfo().getEnterday()!="")){
-            int result = 0;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//格式化为年月
-            Calendar min = Calendar.getInstance();
-            Calendar max = Calendar.getInstance();
-            min.setTime(sdf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday()));
-            min.add(Calendar.DATE,1);
-            int year = min.get(Calendar.MONTH) <3 ? min.get(Calendar.YEAR) : min.get(Calendar.YEAR) + 1;
-            Date date = sdf.parse(year + "-" + "03" +"-"+ "31");
-            max.setTime(date);
-            while (min.before(max)) {
-                result++;
-                min.add(Calendar.MONTH, 1);
+        String enterDay = _customerInfos.size() > 0 ? _customerInfos.get(0).getUserinfo().getEnterday() : "";
+        String userEnterDay = userVo.getCustomerInfo().getUserinfo().getEnterday();
+        Calendar now = Calendar.getInstance();
+        Date _now = sdf.parse(sdf.format(new Date()));
+        now.setTime(_now);
+        int year = now.get(Calendar.MONTH) <3 ? now.get(Calendar.YEAR) - 1 : now.get(Calendar.YEAR);
+        if(((_customerInfos.size() == 0 || enterDay == "") && userEnterDay!="")){
+            Iterator<Map.Entry<Double,Integer>> entry = getAunnalDays(userVo).entrySet().iterator();
+            while (entry.hasNext()){
+                AnnualLeave annualLeave = new AnnualLeave();
+                Map.Entry<Double,Integer> _entry = entry.next();
+                double deduct_paid_leave_thisyear = Double.valueOf(_entry.getValue());
+                annualLeave.setAnnual_leave_thisyear(BigDecimal.valueOf(0));
+                annualLeave.setAnnual_leave_lastyear(BigDecimal.valueOf(0));
+                annualLeave.setPaid_leave_lastyear(BigDecimal.valueOf(0));
+                annualLeave.setDeduct_annual_leave_lastyear(BigDecimal.valueOf(0));
+                annualLeave.setDeduct_paid_leave_lastyear(BigDecimal.valueOf(0));
+                annualLeave.setRemaining_annual_leave_lastyear(BigDecimal.valueOf(0));
+                annualLeave.setRemaining_paid_leave_lastyear(BigDecimal.valueOf(0));
+                annualLeave.setPaid_leave_thisyear(BigDecimal.valueOf(_entry.getKey()));
+                annualLeave.setDeduct_annual_leave_thisyear(BigDecimal.valueOf(0));
+                annualLeave.setDeduct_paid_leave_thisyear(BigDecimal.valueOf(deduct_paid_leave_thisyear));
+                annualLeave.setRemaining_annual_leave_thisyear(BigDecimal.valueOf(0));
+                annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_entry.getValue() - deduct_paid_leave_thisyear));
+                annualLeave.setUser_id(id);
+                annualLeave.setStatus("0");
+                annualLeave.setCreateon(sdf.parse(sdf.format(new Date())));
+                annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
+                annualLeave.setOwner(id);
+                annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
+                annualLeave.setCenter_id(userVo.getCustomerInfo().getUserinfo().getCenterid());
+                annualLeave.setTeam_id(userVo.getCustomerInfo().getUserinfo().getTeamid());
+                annualLeave.setYears(year + "");
+                annualLeave.setAnnualleave_id(UUID.randomUUID().toString());
+                annualLeaveMapper.insert(annualLeave);
             }
-            BigDecimal annualRest =  new BigDecimal((float)result / 12 * 15);
-            Double _annualRest =  Math.floor(annualRest.doubleValue());
+        }else if((userEnterDay!="" && !sdf.parse(userEnterDay).equals(sdf.parse(enterDay)))){
             AnnualLeave annualLeave = new AnnualLeave();
-            annualLeave.setAnnual_leave_thisyear(BigDecimal.valueOf(0));
-            annualLeave.setAnnual_leave_lastyear(BigDecimal.valueOf(0));
-            annualLeave.setPaid_leave_lastyear(BigDecimal.valueOf(0));
-            annualLeave.setDeduct_annual_leave_lastyear(BigDecimal.valueOf(0));
-            annualLeave.setDeduct_paid_leave_lastyear(BigDecimal.valueOf(0));
-            annualLeave.setRemaining_annual_leave_lastyear(BigDecimal.valueOf(0));
-            annualLeave.setRemaining_paid_leave_lastyear(BigDecimal.valueOf(0));
-            annualLeave.setPaid_leave_thisyear(BigDecimal.valueOf(_annualRest));
-            annualLeave.setDeduct_annual_leave_thisyear(BigDecimal.valueOf(0));
-            annualLeave.setDeduct_paid_leave_thisyear(BigDecimal.valueOf(0));
-            annualLeave.setRemaining_annual_leave_thisyear(BigDecimal.valueOf(0));
-            annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_annualRest));
-            annualLeave.setUser_id(id);
-            annualLeave.setStatus("0");
-            annualLeave.setCreateon(sdf.parse(sdf.format(new Date())));
-            annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
-            annualLeave.setOwner(id);
-            annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
-            annualLeave.setCenter_id(userVo.getCustomerInfo().getUserinfo().getCenterid());
-            annualLeave.setTeam_id(userVo.getCustomerInfo().getUserinfo().getTeamid());
-            annualLeave.setYears(Calendar.getInstance().get(Calendar.YEAR) + "");
-            annualLeave.setAnnualleave_id(UUID.randomUUID().toString());
-            annualLeaveMapper.insert(annualLeave);
+            annualLeave.setYears(year + "");
+            annualLeave.setUser_id(userVo.getCustomerInfo().getUserid());
+            AnnualLeave _annualLeave = annualLeaveMapper.selectOne(annualLeave);
+            if(_annualLeave!=null){
+                Iterator<Map.Entry<Double,Integer>> entry = getAunnalDays(userVo).entrySet().iterator();
+                while (entry.hasNext()){
+                    Map.Entry<Double,Integer> _entry = entry.next();
+                    double deduct_paid_leave_thisyear = Double.valueOf(_entry.getValue());
+                    _annualLeave.setPaid_leave_thisyear(BigDecimal.valueOf(_entry.getKey()));
+                    _annualLeave.setDeduct_paid_leave_thisyear(BigDecimal.valueOf(deduct_paid_leave_thisyear));
+                    _annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_entry.getKey() - deduct_paid_leave_thisyear));
+                    _annualLeave.setModifyon(_now);
+                    _annualLeave.setModifyby(userVo.getCustomerInfo().getModifyby());
+                    annualLeaveMapper.updateByPrimaryKey(_annualLeave);
+                }
+            }
         }
-    //}
+    }
+
+    private Map<Double,Integer> getAunnalDays(UserVo userVo) throws Exception{
+        int result = 0;
+        Map<Double,Integer> map = new HashMap<>();
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+        WorkingDay workingDay = new WorkingDay();
+        Date _userEntryDay = sdf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday());
+        min.setTime(sdf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday()));
+        min.add(Calendar.DATE,1);
+        int year = min.get(Calendar.MONTH) <3 ? min.get(Calendar.YEAR) : min.get(Calendar.YEAR) + 1;
+        workingDay.setType("6");
+        workingDay.setYears((year-1) + "");
+        List<WorkingDay> workingDays = workingDayMapper.select(workingDay);
+        List<WorkingDay> annualDays =  workingDays.stream().filter(workingday -> workingday.getWorkingdate().getTime() >= _userEntryDay.getTime()).collect(Collectors.toList());;
+        Date date = sdf.parse(year + "-" + "04" +"-"+ "01");
+        max.setTime(date);
+        while (min.before(max)) {
+            result++;
+            min.add(Calendar.MONTH, 1);
+        }
+        BigDecimal annualRest =  new BigDecimal((float)result / 12 * 15 );
+        Double _annualRest = Math.floor(annualRest.doubleValue());
+        map.put(_annualRest,annualDays.size());
+        return map;
+    }
 
 }

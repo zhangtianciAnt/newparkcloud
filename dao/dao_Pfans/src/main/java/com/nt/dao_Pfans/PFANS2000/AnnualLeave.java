@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 
@@ -19,6 +20,7 @@ public class AnnualLeave extends BaseModel {
     /**
      * 年度休假ID
      */
+    @Id
     private String annualleave_id;
 
     /**
