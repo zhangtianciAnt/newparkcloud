@@ -32,11 +32,9 @@ public class ProjectreSources extends BaseModel {
     private String companyprojects_id;
 
 
-    @Column(name = "ADMISSIONTIME")
-    private Date admissiontime;
+    @Column(name = "ADMISSION")
+    private String admission;
 
-    @Column(name = "EXITTIME")
-    private Date exittime;
     /**
      * 姓名
      */

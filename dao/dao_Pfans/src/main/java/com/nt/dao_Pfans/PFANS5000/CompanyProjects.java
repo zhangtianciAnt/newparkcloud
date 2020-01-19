@@ -83,13 +83,7 @@ public class CompanyProjects extends BaseModel {
      * 开始时间
      */
     @Column(name = "STARTDATE")
-    private Date startdate;
-
-    /**
-     * 预计完成时间
-     */
-    @Column(name = "ENDDATE")
-    private Date enddate;
+    private String startdate;
 
     /**
      * 预计人月
