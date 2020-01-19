@@ -136,11 +136,12 @@ public class AssetsServiceImpl implements AssetsService {
             model.add("类型");
             model.add("价格");
             model.add("购入时间");
-            model.add("使用部门");
+//            model.add("使用部门");
             model.add("工号");
             model.add("条形码");
             model.add("条码类型");
             model.add("资产状态");
+            model.add("在库状态");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -155,9 +156,9 @@ public class AssetsServiceImpl implements AssetsService {
                 List<Object> value = list.get(k);
                 k++;
 
-                if (StrUtil.isNotBlank(value.get(6).toString())) {
+                if (StrUtil.isNotBlank(value.get(5).toString())) {
                     Assets condition = new Assets();
-                    condition.setBarcode(value.get(6).toString());
+                    condition.setBarcode(value.get(5).toString());
                     List<Assets> ls = assetsMapper.select(condition);
                     if (ls.size() > 0) {
                         assets = ls.get(0);
@@ -192,9 +193,9 @@ public class AssetsServiceImpl implements AssetsService {
                     }
                     assets.setPrice(value.get(2).toString());
                     assets.setPurchasetime(sf.parse(value.get(3).toString()));
-                    assets.setUsedepartment(value.get(4).toString());
+//                    assets.setUsedepartment(value.get(4).toString());
                     Query query = new Query();
-                    String jobnumber = value.get(5).toString();
+                    String jobnumber = value.get(4).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
@@ -207,23 +208,29 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     diclist = dictionaryService.getForSelect("PA003");
-                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(8).toString()))).collect(Collectors.toList());
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(7).toString()))).collect(Collectors.toList());
                     if (dicIds.size() > 0) {
                         assets.setAssetstatus(dicIds.get(0).getCode());
                     }
 
                     diclist = dictionaryService.getForSelect("PA004");
-                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(7).toString()))).collect(Collectors.toList());
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
                     if (dicIds.size() > 0) {
                         assets.setBartype(dicIds.get(0).getCode());
+                    }
+
+                    diclist = dictionaryService.getForSelect("PA002");
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(8).toString()))).collect(Collectors.toList());
+                    if (dicIds.size() > 0) {
+                        assets.setStockstatus(dicIds.get(0).getCode());
                     }
                 }
                 if (StrUtil.isNotBlank(assets.getAssets_id())) {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);
                 } else {
-                    if (StrUtil.isNotBlank(value.get(6).toString())) {
-                        assets.setBarcode(value.get(6).toString());
+                    if (StrUtil.isNotBlank(value.get(5).toString())) {
+                        assets.setBarcode(value.get(5).toString());
                     } else {
                         assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
                     }
