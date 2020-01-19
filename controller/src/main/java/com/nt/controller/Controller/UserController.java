@@ -158,19 +158,18 @@ public class UserController {
     @RequestMapping(value = "/addAccountCustomer", method = {RequestMethod.POST})
     public ApiResult addAccountCustomer(@RequestBody UserVo userVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+        String id = "";
         if (userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
             userVo.getUserAccount().preUpdate(tokenModel);
+            annualLeaveService.insertNewAnnualRest(userVo,id);
+            userService.addAccountCustomer(userVo);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
+            id = userService.addAccountCustomer(userVo);
+            annualLeaveService.insertNewAnnualRest(userVo,id);
         }
 
-        if (userVo.getCustomerInfo().getCreateon() != null && userVo.getCustomerInfo().getCreateby() != null) {
-            userVo.getCustomerInfo().preUpdate(tokenModel);
-        } else {
-            userVo.getCustomerInfo().preInsert(tokenModel);
-        }
-        String id = userService.addAccountCustomer(userVo);
-        annualLeaveService.insertNewAnnualRest(userVo,id);
+
         return ApiResult.success(id);
     }
 
