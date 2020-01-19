@@ -80,13 +80,13 @@ public class Expatriatesinfor extends BaseModel {
     private String rn;
 
     /**
-     * 作业形态
+     * 作業形態
      */
     @Column(name = "OPERATIONFORM")
     private String operationform;
 
     /**
-     * 作业分类
+     * 作業分類
      */
     @Column(name = "JOBCLASSIFICATION")
     private String jobclassification;

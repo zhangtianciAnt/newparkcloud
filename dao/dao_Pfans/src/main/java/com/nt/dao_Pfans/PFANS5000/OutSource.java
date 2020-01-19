@@ -39,6 +39,14 @@ public class OutSource extends BaseModel {
     @Column(name = "EXITTIME")
     private Date exittime;
 
+
+    @Column(name = "PROJECT_NAME")
+    private Date project_name;
+
+    @Column(name = "MANAGERID")
+    private Date managerid;
+
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 }

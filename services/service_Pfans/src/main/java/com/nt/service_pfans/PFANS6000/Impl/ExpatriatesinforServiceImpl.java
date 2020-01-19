@@ -86,14 +86,12 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             model.add("姓名");
             model.add("性别");
             model.add("供应商名称");
-            model.add("出生日期");
             model.add("毕业院校");
             model.add("学历");
             model.add("技术分类");
             model.add("Rn");
             model.add("作業形態");
             model.add("作業分類");
-            model.add("入场时间");
             List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
             for (int i = 0; i < key.size(); i++) {
@@ -112,34 +110,34 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     expatriatesinfor.setExpname(value.get(0).toString());
                     expatriatesinfor.setSex(value.get(1).toString());
                     expatriatesinfor.setSuppliername(value.get(2).toString());
-                    expatriatesinfor.setGraduateschool(value.get(4).toString());
-                    expatriatesinfor.setEducation(value.get(5).toString());
-                    expatriatesinfor.setTechnology(value.get(6).toString());
-                    expatriatesinfor.setRn(value.get(7).toString());
-                    expatriatesinfor.setOperationform(value.get(8).toString());
-                    expatriatesinfor.setJobclassification(value.get(9).toString());
+                    expatriatesinfor.setGraduateschool(value.get(3).toString());
+                    expatriatesinfor.setEducation(value.get(4).toString());
+                    expatriatesinfor.setTechnology(value.get(5).toString());
+                    expatriatesinfor.setRn(value.get(6).toString());
+                    expatriatesinfor.setOperationform(value.get(7).toString());
+                    expatriatesinfor.setJobclassification(value.get(8).toString());
                 }
-                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                if (value.size() > 1) {
-                    String date = value.get(1).toString();
-                    String date1 = value.get(1).toString();
-                    date = date.substring(5, 7);
-                    date1 = date1.substring(8, 10);
-                    if (Integer.parseInt(date1) > 31) {
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的日子 ，导入失败");
-                        continue;
-                    }
-                    if (Integer.parseInt(date) > 12) {
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的的日期格式错误，请输入正确的月份，导入失败");
-                        continue;
-                    }
-                }
-                String Birth = value.get(3).toString();
-                expatriatesinfor.setBirth(sf.parse(Birth));
-                String Admissiontime = value.get(10).toString();
-                expatriatesinfor.setAdmissiontime(sf.parse(Admissiontime));
+//                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                if (value.size() > 1) {
+//                    String date = value.get(1).toString();
+//                    String date1 = value.get(1).toString();
+//                    date = date.substring(5, 7);
+//                    date1 = date1.substring(8, 10);
+//                    if (Integer.parseInt(date1) > 31) {
+//                        error = error + 1;
+//                        Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的日子 ，导入失败");
+//                        continue;
+//                    }
+//                    if (Integer.parseInt(date) > 12) {
+//                        error = error + 1;
+//                        Result.add("模板第" + (k - 1) + "行的的日期格式错误，请输入正确的月份，导入失败");
+//                        continue;
+//                    }
+//                }
+//                String Birth = value.get(3).toString();
+//                expatriatesinfor.setBirth(sf.parse(Birth));
+//                String Admissiontime = value.get(10).toString();
+//                expatriatesinfor.setAdmissiontime(sf.parse(Admissiontime));
                 expatriatesinfor.preInsert();
                 expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
                 expatriatesinforMapper.insert(expatriatesinfor);

@@ -13,6 +13,7 @@ import com.nt.service_Assets.AssetsService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryResultsMapper;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
@@ -90,6 +94,7 @@ public class AssetsServiceImpl implements AssetsService {
         if (StrUtil.isNotBlank(assets.getBarcode())) {
             assets.setBarcode(assets.getBarcode());
         } else {
+//            assets.setBarcode(getBarCode(assets));
             assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         }
         assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
@@ -97,6 +102,15 @@ public class AssetsServiceImpl implements AssetsService {
         assetsMapper.insert(assets);
     }
 
+    private String getBarCode(Assets assets){
+        String barCode = "";
+        switch (assets.getTypeassets()){
+            case "PA001002":
+                barCode = "DL4_102763";
+
+        }
+        return barCode;
+    }
     @Override
     public void insertLosts(AssetsVo assetsVo, TokenModel tokenModel) throws Exception {
 
@@ -132,15 +146,16 @@ public class AssetsServiceImpl implements AssetsService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
-            model.add("件名");
-            model.add("类型");
-            model.add("价格");
-            model.add("购入时间");
-            model.add("使用部门");
+            model.add("名称");
+            model.add("资产类型");
+//            model.add("价格");
+//            model.add("购入时间");
+//            model.add("使用部门");
             model.add("工号");
-            model.add("条形码");
+            model.add("资产编号");
             model.add("条码类型");
             model.add("资产状态");
+            model.add("在库状态");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -155,9 +170,9 @@ public class AssetsServiceImpl implements AssetsService {
                 List<Object> value = list.get(k);
                 k++;
 
-                if (StrUtil.isNotBlank(value.get(6).toString())) {
+                if (StrUtil.isNotBlank(value.get(3).toString())) {
                     Assets condition = new Assets();
-                    condition.setBarcode(value.get(6).toString());
+                    condition.setBarcode(value.get(3).toString());
                     List<Assets> ls = assetsMapper.select(condition);
                     if (ls.size() > 0) {
                         assets = ls.get(0);
@@ -167,34 +182,34 @@ public class AssetsServiceImpl implements AssetsService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                    if (value.size() > 1) {
-                        String date = value.get(3).toString();
-                        String date1 = value.get(3).toString();
-                        date = date.substring(5, 7);
-                        date1 = date1.substring(8, 10);
-                        if (Integer.parseInt(date1) > 31) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的日子，导入失败");
-                            continue;
-                        }
-                        if (Integer.parseInt(date) > 12) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的月份，导入失败");
-                            continue;
-                        }
-                    }
+//                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+//                    if (value.size() > 1) {
+//                        String date = value.get(3).toString();
+//                        String date1 = value.get(3).toString();
+//                        date = date.substring(5, 7);
+//                        date1 = date1.substring(8, 10);
+//                        if (Integer.parseInt(date1) > 31) {
+//                            error = error + 1;
+//                            Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的日子，导入失败");
+//                            continue;
+//                        }
+//                        if (Integer.parseInt(date) > 12) {
+//                            error = error + 1;
+//                            Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的月份，导入失败");
+//                            continue;
+//                        }
+//                    }
                     assets.setFilename(value.get(0).toString());
                     List<Dictionary> diclist = dictionaryService.getForSelect("PA001");
                     List<Dictionary> dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
                     if (dicIds.size() > 0) {
                         assets.setTypeassets(dicIds.get(0).getCode());
                     }
-                    assets.setPrice(value.get(2).toString());
-                    assets.setPurchasetime(sf.parse(value.get(3).toString()));
-                    assets.setUsedepartment(value.get(4).toString());
+//                    assets.setPrice(value.get(2).toString());
+//                    assets.setPurchasetime(sf.parse(value.get(3).toString()));
+//                    assets.setUsedepartment(value.get(4).toString());
                     Query query = new Query();
-                    String jobnumber = value.get(5).toString();
+                    String jobnumber = value.get(2).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
@@ -207,23 +222,29 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     diclist = dictionaryService.getForSelect("PA003");
-                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(8).toString()))).collect(Collectors.toList());
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(5).toString()))).collect(Collectors.toList());
                     if (dicIds.size() > 0) {
                         assets.setAssetstatus(dicIds.get(0).getCode());
                     }
 
                     diclist = dictionaryService.getForSelect("PA004");
-                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(7).toString()))).collect(Collectors.toList());
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(4).toString()))).collect(Collectors.toList());
                     if (dicIds.size() > 0) {
                         assets.setBartype(dicIds.get(0).getCode());
+                    }
+
+                    diclist = dictionaryService.getForSelect("PA002");
+                    dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
+                    if (dicIds.size() > 0) {
+                        assets.setStockstatus(dicIds.get(0).getCode());
                     }
                 }
                 if (StrUtil.isNotBlank(assets.getAssets_id())) {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);
                 } else {
-                    if (StrUtil.isNotBlank(value.get(6).toString())) {
-                        assets.setBarcode(value.get(6).toString());
+                    if (StrUtil.isNotBlank(value.get(3).toString())) {
+                        assets.setBarcode(value.get(3).toString());
                     } else {
                         assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
                     }
