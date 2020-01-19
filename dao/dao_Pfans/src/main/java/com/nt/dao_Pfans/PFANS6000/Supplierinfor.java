@@ -143,4 +143,5 @@ public class Supplierinfor extends BaseModel {
      */
     @Column(name = "UPLOADFILE")
     private String uploadfile;
+
 }

@@ -219,7 +219,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             min.setTime(sdf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday()));
             min.add(Calendar.DATE,1);
             int year = min.get(Calendar.MONTH) <3 ? min.get(Calendar.YEAR) : min.get(Calendar.YEAR) + 1;
-            Date date = sdf.parse(year + "-" + "04" +"-"+ "01");
+            Date date = sdf.parse(year + "-" + "03" +"-"+ "31");
             max.setTime(date);
             while (min.before(max)) {
                 result++;
@@ -242,7 +242,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_annualRest));
             annualLeave.setUser_id(id);
             annualLeave.setStatus("0");
-            annualLeave.setCreateon(userVo.getCustomerInfo().getCreateon());
+            annualLeave.setCreateon(sdf.parse(sdf.format(new Date())));
             annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
             annualLeave.setOwner(id);
             annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
