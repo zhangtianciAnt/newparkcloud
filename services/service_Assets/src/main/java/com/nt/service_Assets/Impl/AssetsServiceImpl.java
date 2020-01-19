@@ -52,9 +52,6 @@ public class AssetsServiceImpl implements AssetsService {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @Autowired
-    private DictionaryMapper dictionaryMapper;
-
     @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
         InventoryResults condition = new InventoryResults();
@@ -94,8 +91,8 @@ public class AssetsServiceImpl implements AssetsService {
         if (StrUtil.isNotBlank(assets.getBarcode())) {
             assets.setBarcode(assets.getBarcode());
         } else {
-//            assets.setBarcode(getBarCode(assets));
-            assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
+            assets.setBarcode(getBarCode(assets));
+//            assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         }
         assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         assets.setAssets_id(UUID.randomUUID().toString());
@@ -103,12 +100,7 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     private String getBarCode(Assets assets){
-        String barCode = "";
-        switch (assets.getTypeassets()){
-            case "PA001002":
-                barCode = "DL4_102763";
-
-        }
+        String barCode = assetsMapper.getMaxCode(assets.getTypeassets(),assets.getBartype());
         return barCode;
     }
     @Override
