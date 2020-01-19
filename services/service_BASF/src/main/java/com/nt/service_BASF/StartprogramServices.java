@@ -20,11 +20,17 @@ public interface StartprogramServices {
     //获取未开班培训列表
     List<Startprogram> nostart() throws Exception;
 
+    //获取one
+    Startprogram one(String startprogramid) throws Exception;
+
     //添加培训列表
     void insert(Startprogram startprogram, TokenModel tokenModel) throws Exception;
 
     //更新培训列表
     void update(Startprogram startprogram, TokenModel tokenModel) throws Exception;
+
+    //更新培训清单
+    void updateprogramlist(String startprogramid, TokenModel tokenModel) throws Exception;
 
     //查询培训
     List<Startprogram> select(Startprogram startprogram) throws Exception;
@@ -35,4 +41,6 @@ public interface StartprogramServices {
     //删除培训
     void delete(Startprogram startprogram, TokenModel tokenModel) throws Exception;
 
+    //by人员id查询培训项目
+    List<Startprogram> selectbyuserid(String userid,String selecttype) throws Exception;
 }

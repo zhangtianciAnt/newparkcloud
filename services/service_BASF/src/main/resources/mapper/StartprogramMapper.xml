@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.StartprogramMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Startprogram">
+        <id column="startprogramid" property="startprogramid" jdbcType="VARCHAR"/>
+        <result column="programlistid" property="programlistid" jdbcType="VARCHAR"/>
+        <result column="programname" property="programname" jdbcType="VARCHAR"/>
+        <result column="informpeople" property="informpeople" jdbcType="VARCHAR"/>
+        <result column="starttheorydate" property="starttheorydate" jdbcType="TIMESTAMP"/>
+        <result column="theorysite" property="theorysite" jdbcType="VARCHAR"/>
+        <result column="startoperationdate" property="startoperationdate" jdbcType="TIMESTAMP"/>
+        <result column="operationsite" property="operationsite" jdbcType="VARCHAR"/>
+        <result column="expirationdate" property="expirationdate" jdbcType="TIMESTAMP"/>
+        <result column="materialsexpirationdate" property="materialsexpirationdate" jdbcType="TIMESTAMP"/>
+        <result column="informperson" property="informperson" jdbcType="VARCHAR"/>
+        <result column="programcode" property="programcode" jdbcType="VARCHAR"/>
+        <result column="programhard" property="programhard" jdbcType="VARCHAR"/>
+        <result column="insideoutside" property="insideoutside" jdbcType="VARCHAR"/>
+        <result column="mandatory" property="mandatory" jdbcType="VARCHAR"/>
+        <result column="isonline" property="isonline" jdbcType="VARCHAR"/>
+        <result column="thelength" property="thelength" jdbcType="VARCHAR"/>
+        <result column="validity" property="validity" jdbcType="VARCHAR"/>
+        <result column="money" property="money" jdbcType="VARCHAR"/>
+        <result column="isfirst" property="isfirst" jdbcType="VARCHAR"/>
+        <result column="applydata" property="applydata" jdbcType="VARCHAR"/>
+        <result column="applydataurl" property="applydataurl" jdbcType="VARCHAR"/>
+        <result column="programtype" property="programtype" jdbcType="VARCHAR"/>
+        <result column="actualstartdate" property="actualstartdate" jdbcType="VARCHAR"/>
+
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectbyuserid" resultType="com.nt.dao_BASF.Startprogram">
+
+        select * from startprogram
+        where
+        startprogramid in (
+        select startprogramid from  trainjoinlist
+        where
+        personnelid = #{userid}
+        and
+        status = 0)
+
+        <if test="selecttype == 'abouttoexpire'">
+            and
+            programtype in ('BC039004')
+            and
+            DATEDIFF(date_add(actualstartdate,INTERVAL validity MONTH),CURRENT_DATE()) &lt;= 30
+            and
+            DATEDIFF(date_add(actualstartdate,INTERVAL validity MONTH),CURRENT_DATE() )>0
+        </if>
+        <if test="selecttype == 'enrolment'">
+            and
+            programtype in ('BC039001','BC039002')
+        </if>
+        <if test="selecttype == 'completed'">
+            and
+            programtype in ('BC039004')
+        </if>
+
+
+
+
+    </select>
+
+
+</mapper>

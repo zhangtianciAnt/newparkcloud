@@ -8,6 +8,7 @@ import com.nt.dao_BASF.Usergroup;
 import com.nt.dao_BASF.Usergroupdetailed;
 import com.nt.dao_BASF.VO.UsergroupVo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.UserAccount;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.UsergroupServices;
 import com.nt.service_BASF.mapper.BASFUserMapper;
@@ -20,6 +21,8 @@ import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.io.File;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * @ProjectName: BASF应急平台
@@ -52,6 +56,8 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
     private ProgramlistMapper programlistMapper;
     @Autowired
     private DictionaryMapper dictionaryMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     /**
      * @param programlist
@@ -177,12 +183,19 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 programlist.setProgramname(value.get(0).toString());
                 //code分类
                 programlist.setProgramcode(code("BC038",value.get(1).toString()));
-                //负责人工号
-                programlist.setProgramhard(value.get(2).toString());
 
+                List<Programlist> pl =  programlistMapper.select(programlist);
 
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userno").is(value.get(2).toString()));
+                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                if (userAccountlist.size() > 0) {
+                    String _id = userAccountlist.get(0).get_id();
+                    //负责人工号
+                    programlist.setProgramhard(_id);
+                }
                 //内部/外部
-                programlist.setInsideoutside(code("BC032",value.get(3).toString()));
+                programlist.setInsideoutside(code("BC041",value.get(3).toString()));
                 //强制/非强制
                 programlist.setMandatory(code("BC033",value.get(4).toString()));
                 //培训形式（线上/线下）
@@ -203,7 +216,20 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 programlist.setProgramtype("BC039001");
                 programlist.preInsert(tokenModel);
                 programlist.setProgramlistid(UUID.randomUUID().toString());
-                programlistMapper.insert(programlist);
+                programlist.setApplydata("");
+                programlist.setApplydataurl("");
+                programlist.setTraindata("");
+                programlist.setTraindataurl("");
+                if(pl.size()>0)
+                {
+                    programlist.setProgramlistid(pl.get(0).getProgramlistid());
+                    programlistMapper.updateByPrimaryKeySelective(programlist);
+                }
+                else
+                {
+                    programlistMapper.insert(programlist);
+                }
+
                 accesscount = accesscount + 1;
             }
             Result.add("失败数：" + error);

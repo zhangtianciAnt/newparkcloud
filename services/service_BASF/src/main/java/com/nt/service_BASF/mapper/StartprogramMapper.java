@@ -3,7 +3,10 @@ package com.nt.service_BASF.mapper;
 import com.nt.dao_BASF.Emergencytemplate;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.utils.MyMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -16,4 +19,8 @@ import org.springframework.stereotype.Component;
  */
 @Component(value = "StartprogramMapper")
 public interface StartprogramMapper extends MyMapper<Startprogram> {
+
+    List<Startprogram> selectbyuserid(@Param("userid") String userid, @Param("selecttype") String selecttype);
+
+
 }

@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.MapBox_MapLevel;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -17,7 +18,22 @@ public interface MapBox_MapLevelServices {
 
     //根据id获取详情
     MapBox_MapLevel one(String mapid) throws Exception;
-
+    //查询树结构
     List<MapBox_MapLevel> getall() throws  Exception;
 
+    List<MapBox_MapLevel> list() throws Exception;
+
+    ;
+
+    void add(MapBox_MapLevel info, TokenModel tokenModel) throws Exception;
+
+    ;
+
+    void edit(MapBox_MapLevel info, TokenModel tokenModel) throws Exception;
+
+    ;
+
+    void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel) throws Exception;
+
+    ;
 }

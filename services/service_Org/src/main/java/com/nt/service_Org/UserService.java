@@ -6,7 +6,9 @@ import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import org.opencv.tracking.TrackerBoosting;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,9 @@ public interface UserService {
     // 根据orgid获取用户及用户信息列表
     List<CustomerInfo> getAccountCustomer(String orgid, String orgtype, String logintype) throws Exception;
 
+
+    List<CustomerInfo> getAccountCustomeraccumulatedhour(String orgid, String orgtype, String logintype) throws Exception;
+
     // 根据用户id获取用户信息
     UserVo getAccountCustomerById(String userid) throws Exception;
 
@@ -62,6 +67,9 @@ public interface UserService {
 
     // 更新用户状态
     void updUserStatus(String userid, String status) throws Exception;
+
+    //删除用户（逻辑）
+    void delUser(String id) throws Exception;
 
     // 给用户赋角色
     void setRoleToUser(UserAccount userAccount) throws Exception;
@@ -82,5 +90,8 @@ public interface UserService {
     Map<String, Object> getWxById(String userid) throws Exception;
 
     List<CustomerInfo> getAllCustomerInfo();
+
+    List<String> excelCustomer (HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
 
 }

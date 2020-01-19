@@ -4,12 +4,14 @@ import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -41,6 +43,7 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         return mapBox_mapLevelMapper.selectByPrimaryKey(mapid);
     }
 
+    //查询树结构
     @Override
     public List<MapBox_MapLevel> getall() throws Exception {
         MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
@@ -51,12 +54,38 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         return result;
     }
 
+    @Override
+    public List<MapBox_MapLevel> list() throws Exception {
+        MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
+        return mapBox_mapLevelMapper.select(mapBox_mapLevel);
+    }
+    @Override
+    public void add(MapBox_MapLevel info, TokenModel tokenModel) throws Exception {
+        info.setId((UUID.randomUUID().toString()));
+        info.preInsert(tokenModel);
+        mapBox_mapLevelMapper.insert(info);
+    }
+    @Override
+    public void edit(MapBox_MapLevel info, TokenModel tokenModel) throws Exception {
+        info.preUpdate(tokenModel);
+        mapBox_mapLevelMapper.updateByPrimaryKeySelective(info);
+    }
+    @Override
+    public void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel) throws Exception {
+//        MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
+//        mapBox_mapLevel.setId(id);
+        mapBox_mapLevel.preUpdate(tokenModel);
+        mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel);
+    }
+
+
+
     /**
      * 获取跟节点
      * @param list
      * @return
      */
-    private List<MapBox_MapLevel> getChildren(List<MapBox_MapLevel> list) {
+    private List<MapBox_MapLevel> getChildren(List<MapBox_MapLevel> list) throws Exception {
         List<MapBox_MapLevel> result = new ArrayList<>();
         for (MapBox_MapLevel adModule : list) {
             // 根节点
@@ -73,7 +102,7 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
      * @param list
      * @return
      */
-    private MapBox_MapLevel getChildrens(MapBox_MapLevel module, List<MapBox_MapLevel> list) {
+    private MapBox_MapLevel getChildrens(MapBox_MapLevel module, List<MapBox_MapLevel> list) throws Exception {
         List<MapBox_MapLevel> childNodes = new ArrayList<>();
         for (MapBox_MapLevel node : list) {
             if (node.getParentid().equals(module.getId())) {

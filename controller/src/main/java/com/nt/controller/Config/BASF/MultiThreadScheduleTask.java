@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * basf多线程定时任务
@@ -41,9 +43,17 @@ public class MultiThreadScheduleTask {
     // WebSocketVow
     private WebSocketVo webSocketVo = new WebSocketVo();
 
+    /**
+     * @return void
+     * @Method selectUsersCount
+     * @Author MYT
+     * @Description ERC大屏在厂人数统计
+     * @Date 2020/1/8 14:39
+     * @Param
+     **/
     @Async
     @Scheduled(fixedDelay = 30000)
-    public void selectUserCount() throws Exception {
+    public void selectUsersCount() throws Exception {
         System.out.println("执行 查询员工人数 定时任务: " + LocalDateTime.now().toLocalTime()
                 + "\r\n线程 : " + Thread.currentThread().getName());
         // 查询员工人数
@@ -54,11 +64,26 @@ public class MultiThreadScheduleTask {
         int visitorsCount = basfUserInfoMapper.selectVisitorsCount();
         // 在厂总人数
         int allUsersCount = usersCount + contractorsCount + visitorsCount;
-
         webSocketVo.setUsersCount(usersCount);
         webSocketVo.setContractorsCount(contractorsCount);
         webSocketVo.setVisitorsCount(visitorsCount);
         webSocketVo.setAllUsersCount(allUsersCount);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    /**
+     * @return void
+     * @Method selectDeviceUsersCount
+     * @Author MYT
+     * @Description ERC大屏8个装置人数统计
+     * @Date 2020/1/8 14:39
+     * @Param
+     **/
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void selectDeviceUsersCount() throws Exception {
+        // 8个装置人数统计
+        webSocketVo.setDeviceUsersCountList(basfUserInfoMapper.selectDeviceUsersCount());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

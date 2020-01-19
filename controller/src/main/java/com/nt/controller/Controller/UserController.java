@@ -1,10 +1,12 @@
 package com.nt.controller.Controller;
 
 import cn.hutool.http.HttpUtil;
+import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
+import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ProjectName: newparkcloud
@@ -45,6 +48,9 @@ public class UserController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private StartprogramServices startprogramServices;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -185,6 +191,33 @@ public class UserController {
         return ApiResult.success(userService.getAccountCustomer(orgid, orgtype, logintype));
     }
 
+
+    @RequestMapping(value = "/getAccountCustomeraccumulatedhour", method = {RequestMethod.GET})
+    public ApiResult getAccountCustomeraccumulatedhour(String orgid, String orgtype, String logintype, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<CustomerInfo> customerInfoList =  userService.getAccountCustomeraccumulatedhour(orgid, orgtype, logintype);
+        if(customerInfoList.size()>0)
+        {
+            for(int i = 0;i<customerInfoList.size();i++)
+            {
+                String userid = customerInfoList.get(i).getUserid();
+
+                List<Startprogram> startprogramList = startprogramServices.selectbyuserid(userid,"completed");
+                if(startprogramList.size()>0)
+                {
+                    int aa = 0;
+                    for(int j=0;j<startprogramList.size();j++)
+                    {
+                        aa += startprogramList.get(j).getThelength();
+                    }
+                    customerInfoList.get(i).getUserinfo().setAccumulated(String.valueOf(aa));
+                }
+            }
+        }
+
+        return ApiResult.success(customerInfoList);
+    }
+
     /**
      * @方法名：getAccountCustomerById
      * @描述：根据用户id获取用户账号及用户信息
@@ -230,6 +263,20 @@ public class UserController {
     public ApiResult updUserStatus(String userid, String status, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         userService.updUserStatus(userid, status);
+        return ApiResult.success();
+    }
+
+    /**
+     * @方法名：delUser
+     * @描述：删除用户状（逻辑）
+     * @创建日期：2020/01/14
+     * @作者：王哲
+     * @参数：[id]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/delUser", method = {RequestMethod.GET})
+    public ApiResult delUser(String id) throws Exception {
+        userService.delUser(id);
         return ApiResult.success();
     }
 
@@ -285,4 +332,23 @@ public class UserController {
     public ApiResult getAllCustomer() throws Exception {
         return ApiResult.success(userService.getAllCustomerInfo());
     }
+
+    /**
+     * BASF EXCEL批量导入用户
+     */
+    @RequestMapping(value = "/excelcustomer", method = {RequestMethod.POST})
+    public ApiResult excelCustomer(HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(userService.excelCustomer(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
+
+
+
 }
