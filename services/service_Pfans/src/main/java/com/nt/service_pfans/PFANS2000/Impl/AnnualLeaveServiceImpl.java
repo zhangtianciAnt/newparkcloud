@@ -7,6 +7,7 @@ import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
+import com.nt.service_pfans.PFANS2000.mapper.ReplacerestMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.apachecommons.CommonsLog;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
 @CommonsLog
 @Transactional(rollbackFor=Exception.class)
 public class AnnualLeaveServiceImpl implements AnnualLeaveService {
+    @Autowired
+    private ReplacerestMapper replacerestMapper;
 
     @Autowired
     private AnnualLeaveMapper annualLeaveMapper;
@@ -51,7 +55,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //事业年度开始跑系统服务（4月1日）
-   // @Scheduled(cron="59 * * * * ?")
+    //@Scheduled(cron="59 * * * * ?")
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
@@ -61,6 +65,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                }
             }
         }
+        //会社特别休日加班
+        int count = replacerestMapper.updateDateList();
     }
     //新建
     @Override
@@ -241,7 +247,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_entry.getValue() - deduct_paid_leave_thisyear));
                 annualLeave.setUser_id(id);
                 annualLeave.setStatus("0");
-                annualLeave.setCreateon(sdf.parse(sdf.format(new Date())));
+                annualLeave.setCreateon(new Date());
                 annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
                 annualLeave.setOwner(id);
                 annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
@@ -264,7 +270,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     _annualLeave.setPaid_leave_thisyear(BigDecimal.valueOf(_entry.getKey()));
                     _annualLeave.setDeduct_paid_leave_thisyear(BigDecimal.valueOf(deduct_paid_leave_thisyear));
                     _annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_entry.getKey() - deduct_paid_leave_thisyear));
-                    _annualLeave.setModifyon(_now);
+                    _annualLeave.setModifyon(new Date());
                     _annualLeave.setModifyby(userVo.getCustomerInfo().getModifyby());
                     annualLeaveMapper.updateByPrimaryKey(_annualLeave);
                 }

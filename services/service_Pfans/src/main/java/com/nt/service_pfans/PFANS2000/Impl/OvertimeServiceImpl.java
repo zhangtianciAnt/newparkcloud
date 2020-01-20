@@ -66,6 +66,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         dateStart = cal.getTime();
         overtime.setReserveovertimedate(dateStart);
         if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")){
+
             //添加代休记录
             insertReplacerest(overtime,tokenModel);
             //上班时间开始
@@ -382,9 +383,10 @@ public class OvertimeServiceImpl implements OvertimeService {
     }
     //代休添加
     public void insertReplacerest(Overtime overtime, TokenModel tokenModel) throws Exception {
-        //代休类型
-        String strtype = null;
+        //加班满8小时的情况
         if(Double.valueOf(overtime.getReserveovertime()) >= 8){
+            //代休类型
+            String strtype = null;
             //周末加班
             if(overtime.getOvertimetype().equals("PR001002")){
                 strtype = "1";
@@ -393,18 +395,22 @@ public class OvertimeServiceImpl implements OvertimeService {
             if(overtime.getOvertimetype().equals("PR001005")){
                 strtype = "2";
             }
+            Replacerest replacerest = new Replacerest();
+            replacerest.setUser_id(overtime.getUserid());
+            replacerest.setCenter_id(overtime.getCenterid());
+            replacerest.setGroup_id(overtime.getGroupid());
+            replacerest.setTeam_id(overtime.getTeamid());
+            replacerest.setApplication_date(DateUtil.format(new Date(),"YYYY/MM/dd"));
+            replacerest.setType(strtype);
+            replacerest.setDuration("8");
+            replacerest.setRecognitionstate("0");
+            replacerest.preInsert(tokenModel);
+            replacerest.setReplacerest_id(UUID.randomUUID().toString());
+            replacerestmapper.insert(replacerest);
+            //一齐年休日加班
+            if(overtime.getOvertimetype().equals("PR001004")){
+
+            }
         }
-        Replacerest replacerest = new Replacerest();
-        replacerest.setUser_id(overtime.getUserid());
-        replacerest.setCenter_id(overtime.getCenterid());
-        replacerest.setGroup_id(overtime.getGroupid());
-        replacerest.setTeam_id(overtime.getTeamid());
-        replacerest.setApplication_date(DateUtil.format(new Date(),"YYYY/MM/dd"));
-        replacerest.setType(strtype);
-        replacerest.setDuration("8");
-        replacerest.setRecognitionstate("0");
-        replacerest.preInsert(tokenModel);
-        replacerest.setReplacerest_id(UUID.randomUUID().toString());
-        replacerestmapper.insert(replacerest);
     }
 }
