@@ -36,12 +36,14 @@ public class ReplacerestServiceImpl implements ReplacerestService {
         cal.setTime(dateStart);
         cal.add(Calendar.DAY_OF_MONTH, -1);
         String data = sf1ymd.format(sdfxx.parse(sdfxx.format(cal.getTime())));
-        List<Replacerest> replacerestlist = replacerestMapper.select(new Replacerest());
+        Replacerest rep = new Replacerest();
+        rep.setType("0");
+        rep.setRecognitionstate("0");
+        rep.setApplication_date(data);
+        List<Replacerest> replacerestlist = replacerestMapper.select(rep);
             for (Replacerest replacerest : replacerestlist) {
-                if(replacerest.getApplication_date().equals(data)){
-                    replacerest.setRecognitionstate("1");
-                    replacerestMapper.updateByPrimaryKey(replacerest);
-                }
+                replacerest.setRecognitionstate("1");
+                replacerestMapper.updateByPrimaryKey(replacerest);
             }
     }
 }
