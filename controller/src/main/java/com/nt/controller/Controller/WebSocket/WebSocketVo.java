@@ -58,5 +58,10 @@ public class WebSocketVo {
 
     // BASF90200 火灾消防模块 接警时间记录
     private List<FireAlarmVo> fireAlarmList = new ArrayList<>();
+
+    //培训教育 培训强制通过率
+    private List<PassingRateVo> passingRateList = new ArrayList<>();
+    //培训教育 培训非强制通过率
+    private List<PassingRateVo> passingIsRateList = new ArrayList<>();
     // endregion
 }

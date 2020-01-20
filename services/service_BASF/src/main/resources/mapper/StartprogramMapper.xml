@@ -63,10 +63,36 @@
             and
             programtype in ('BC039004')
         </if>
+    </select>
 
+    <!--    获取强制的通过/未通过-->
+    <select id="getMandatoryInfo" resultType="com.nt.dao_BASF.VO.PassingRateVo">
+       select
+count(tl.throughtype) as cnt,
+tl.throughtype as vehicletype
+from startprogram sp
+left join trainjoinlist tl
+on sp.startprogramid = tl.startprogramid
+where
+sp.programtype = 'BC039004'
+and
+sp.mandatory = 'BC033001'
+group by tl.throughtype
+    </select>
 
-
-
+    <!--    获取非强制的通过/未通过-->
+    <select id="getIsMandatoryInfo" resultType="com.nt.dao_BASF.VO.PassingRateVo">
+        select
+count(tl.throughtype) as cnt,
+tl.throughtype as vehicletype
+from startprogram sp
+left join trainjoinlist tl
+on sp.startprogramid = tl.startprogramid
+where
+sp.programtype = 'BC039004'
+and
+sp.mandatory = 'BC033002'
+group by tl.throughtype
     </select>
 
 

@@ -2,6 +2,7 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
@@ -117,6 +118,16 @@ public class StartprogramServicesImpl implements StartprogramServices {
     @Override
     public List<Startprogram>  selectbyuserid(String userid,String selecttype) throws Exception {
         return startprogramMapper.selectbyuserid(userid,selecttype);
+    }
+
+    @Override
+    public List<PassingRateVo> getMandatoryInfo() throws Exception {
+        return startprogramMapper.getMandatoryInfo();
+    }
+
+    @Override
+    public List<PassingRateVo> getIsMandatoryInfo() throws Exception {
+        return startprogramMapper.getIsMandatoryInfo();
     }
 
 }

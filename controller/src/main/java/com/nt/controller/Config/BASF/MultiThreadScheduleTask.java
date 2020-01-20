@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.service_BASF.FirealarmServices;
+import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class MultiThreadScheduleTask {
     @Autowired
     @SuppressWarnings("all")
     FirealarmServices firealarmServices;
+
+    @Autowired
+    @SuppressWarnings("all")
+    StartprogramServices startprogramServices;
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
@@ -177,6 +182,22 @@ public class MultiThreadScheduleTask {
     public void BASF90200_GetFireAlarmList() throws Exception {
         // 获取接警事件记录
         webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetMandatoryInfo() throws Exception {
+        // 获取强制的通过/未通过
+        webSocketVo.setPassingRateList(startprogramServices.getMandatoryInfo());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetIsMandatoryInfo() throws Exception {
+        // 获取非强制的通过/未通过
+        webSocketVo.setPassingIsRateList(startprogramServices.getIsMandatoryInfo());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion

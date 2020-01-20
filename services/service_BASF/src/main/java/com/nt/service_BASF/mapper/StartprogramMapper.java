@@ -2,6 +2,7 @@ package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.Emergencytemplate;
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -22,5 +23,9 @@ public interface StartprogramMapper extends MyMapper<Startprogram> {
 
     List<Startprogram> selectbyuserid(@Param("userid") String userid, @Param("selecttype") String selecttype);
 
+    //获取强制的通过/未通过
+    List<PassingRateVo> getMandatoryInfo();
+    //获取非强制的通过/未通过
+    List<PassingRateVo> getIsMandatoryInfo();
 
 }

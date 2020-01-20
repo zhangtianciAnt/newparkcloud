@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -43,4 +44,9 @@ public interface StartprogramServices {
 
     //by人员id查询培训项目
     List<Startprogram> selectbyuserid(String userid,String selecttype) throws Exception;
+
+    //获取强制的通过/未通过
+    List<PassingRateVo>getMandatoryInfo() throws Exception;
+    //获取非强制的通过/未通过
+    List<PassingRateVo>getIsMandatoryInfo() throws Exception;
 }
