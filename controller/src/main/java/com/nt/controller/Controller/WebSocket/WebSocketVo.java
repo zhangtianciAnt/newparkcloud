@@ -63,5 +63,7 @@ public class WebSocketVo {
     private List<PassingRateVo> passingRateList = new ArrayList<>();
     //培训教育 培训非强制通过率
     private List<PassingRateVo> passingIsRateList = new ArrayList<>();
+    //获取培训教育人员详细
+    private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();
     // endregion
 }

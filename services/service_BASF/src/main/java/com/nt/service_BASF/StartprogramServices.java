@@ -3,6 +3,7 @@ package com.nt.service_BASF;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
+import com.nt.dao_BASF.VO.TrainEducationPerVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -49,4 +50,7 @@ public interface StartprogramServices {
     List<PassingRateVo>getMandatoryInfo() throws Exception;
     //获取非强制的通过/未通过
     List<PassingRateVo>getIsMandatoryInfo() throws Exception;
+    //获取培训教育人员详细
+    List<TrainEducationPerVo>getTrainEducationPerInfo() throws Exception;
+
 }

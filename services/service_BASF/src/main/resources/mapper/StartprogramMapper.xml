@@ -95,5 +95,17 @@ sp.mandatory = 'BC033002'
 group by tl.throughtype
     </select>
 
+    <!--    获取培训教育人员详细-->
+    <select id="getTrainEducationPerInfo" resultType="com.nt.dao_BASF.VO.TrainEducationPerVo">
+        select
+tj.personnelid,
+sp.programname,
+sp.actualstartdate,
+tj.throughtype
+from trainjoinlist tj
+left join startprogram sp
+on tj.startprogramid = sp.startprogramid
+    </select>
+
 
 </mapper>

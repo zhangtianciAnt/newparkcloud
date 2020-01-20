@@ -4,6 +4,10 @@ import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
+import com.nt.dao_BASF.VO.TrainEducationPerVo;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
@@ -12,6 +16,9 @@ import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.utils.dao.TokenModel;
 import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,6 +48,8 @@ public class StartprogramServicesImpl implements StartprogramServices {
 
     @Autowired
     private ProgramlistMapper programlistMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     //获取未开班培训列表
     @Override
@@ -128,6 +137,25 @@ public class StartprogramServicesImpl implements StartprogramServices {
     @Override
     public List<PassingRateVo> getIsMandatoryInfo() throws Exception {
         return startprogramMapper.getIsMandatoryInfo();
+    }
+
+    @Override
+    public List<TrainEducationPerVo> getTrainEducationPerInfo() throws Exception {
+
+        List<TrainEducationPerVo> tdpvo = startprogramMapper.getTrainEducationPerInfo();
+
+        for(int i = 0;i<tdpvo.size();i++)
+        {
+            String userid = tdpvo.get(i).getPersonnelid();
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(userid));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+
+            tdpvo.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+            tdpvo.get(i).setDocumentnumber(customerInfo.getUserinfo().getDocumentnumber());
+            tdpvo.get(i).setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        }
+        return tdpvo;
     }
 
 }

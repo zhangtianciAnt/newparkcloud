@@ -188,7 +188,7 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASF90800_GetMandatoryInfo() throws Exception {
-        // 获取强制的通过/未通过
+        // 获取培训教育强制的通过/未通过
         webSocketVo.setPassingRateList(startprogramServices.getMandatoryInfo());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
@@ -196,8 +196,16 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASF90800_GetIsMandatoryInfo() throws Exception {
-        // 获取非强制的通过/未通过
+        // 获取培训教育非强制的通过/未通过
         webSocketVo.setPassingIsRateList(startprogramServices.getIsMandatoryInfo());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetTrainEducationPerInfo() throws Exception {
+        // 获取培训教育人员详细
+        webSocketVo.setTrainEducationPerList(startprogramServices.getTrainEducationPerInfo());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion
