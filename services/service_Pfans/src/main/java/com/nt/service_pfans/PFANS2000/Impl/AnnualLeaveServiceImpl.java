@@ -241,7 +241,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_entry.getValue() - deduct_paid_leave_thisyear));
                 annualLeave.setUser_id(id);
                 annualLeave.setStatus("0");
-                annualLeave.setCreateon(sdf.parse(sdf.format(new Date())));
+                annualLeave.setCreateon(new Date());
                 annualLeave.setCreateby(userVo.getCustomerInfo().getCreateby());
                 annualLeave.setOwner(id);
                 annualLeave.setGroup_id(userVo.getCustomerInfo().getUserinfo().getGroupid());
@@ -264,7 +264,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     _annualLeave.setPaid_leave_thisyear(BigDecimal.valueOf(_entry.getKey()));
                     _annualLeave.setDeduct_paid_leave_thisyear(BigDecimal.valueOf(deduct_paid_leave_thisyear));
                     _annualLeave.setRemaining_paid_leave_thisyear(BigDecimal.valueOf(_entry.getKey() - deduct_paid_leave_thisyear));
-                    _annualLeave.setModifyon(_now);
+                    _annualLeave.setModifyon(new Date());
                     _annualLeave.setModifyby(userVo.getCustomerInfo().getModifyby());
                     annualLeaveMapper.updateByPrimaryKey(_annualLeave);
                 }
