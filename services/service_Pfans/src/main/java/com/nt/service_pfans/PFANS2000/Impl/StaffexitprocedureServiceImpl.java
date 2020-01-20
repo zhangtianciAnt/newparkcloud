@@ -67,7 +67,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         Staffexitprocedure staffexitprocedure = new Staffexitprocedure();
         if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("3") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")) {
             updateRetireDate(staffexitprocedureVo);
-            updateAnnualDays();
+            updateAnnualDays(staffexitprocedureVo);
         }
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitprocedure(), staffexitprocedure);
         staffexitprocedure.preUpdate(tokenModel);
