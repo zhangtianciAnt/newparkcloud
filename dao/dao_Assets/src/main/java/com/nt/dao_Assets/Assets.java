@@ -141,7 +141,7 @@ public class Assets extends BaseModel {
      * 启用日期
      */
     @Column(name = "ACTIVITIONDATE")
-    private String activitiondate;
+    private Date activitiondate;
 
     /**
      * 地点
