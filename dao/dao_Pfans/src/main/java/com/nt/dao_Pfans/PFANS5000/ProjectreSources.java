@@ -31,10 +31,6 @@ public class ProjectreSources extends BaseModel {
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
-
-    @Column(name = "ADMISSION")
-    private String admission;
-
     /**
      * 姓名
      */

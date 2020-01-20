@@ -46,9 +46,6 @@ public class OutSource extends BaseModel {
     @Column(name = "MANAGERID")
     private Date managerid;
 
-    @Column(name = "ADMISSIONDATE")
-    private String admissiondate;
-
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 }
