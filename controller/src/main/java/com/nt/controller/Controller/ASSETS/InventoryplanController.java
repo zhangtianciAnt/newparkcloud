@@ -2,7 +2,7 @@ package com.nt.controller.Controller.ASSETS;
 
 import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Assets.Assets;
-import com.nt.dao_Assets.Vo.InventoryplanVo;
+import com.nt.dao_Assets.Vo.InventoryRangeVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -39,12 +39,12 @@ public class InventoryplanController {
      * 新建
      */
     @RequestMapping(value = "insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody InventoryplanVo inventoryplanVo, HttpServletRequest request) throws Exception {
-        if (inventoryplanVo == null) {
+    public ApiResult insert(@RequestBody InventoryRangeVo inventoryRangeVo, HttpServletRequest request) throws Exception {
+        if (inventoryRangeVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        inventoryplanService.insert(inventoryplanVo, tokenModel);
+        inventoryplanService.insert(inventoryRangeVo, tokenModel);
         return ApiResult.success();
     }
 
@@ -54,7 +54,6 @@ public class InventoryplanController {
     @RequestMapping(value = "/selectAll", method = {RequestMethod.GET})
     public ApiResult selectAll(HttpServletRequest request) throws Exception {
         Assets assets = new Assets();
-        assets.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         return ApiResult.success(inventoryplanService.selectAll(assets));
     }
 
@@ -62,12 +61,12 @@ public class InventoryplanController {
      * 修改
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody InventoryplanVo inventoryplanVo, HttpServletRequest request) throws Exception {
-        if (inventoryplanVo == null) {
+    public ApiResult update(@RequestBody InventoryRangeVo inventoryRangeVo, HttpServletRequest request) throws Exception {
+        if (inventoryRangeVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        inventoryplanService.update(inventoryplanVo, tokenModel);
+        inventoryplanService.update(inventoryRangeVo, tokenModel);
         return ApiResult.success();
 
     }
@@ -82,11 +81,26 @@ public class InventoryplanController {
     }
 
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult selectById(String inventoryplanid, HttpServletRequest request) throws Exception {
-        if (inventoryplanid == null) {
+    public ApiResult selectById(String inventoryRangeid, HttpServletRequest request) throws Exception {
+        if (inventoryRangeid == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(inventoryplanService.selectById(inventoryplanid));
+        return ApiResult.success(inventoryplanService.selectById(inventoryRangeid));
     }
 
+    @RequestMapping(value = "/selectByResult", method = {RequestMethod.GET})
+    public ApiResult selectByResult(String inventoryresultsid, HttpServletRequest request) throws Exception {
+        if (inventoryresultsid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(inventoryplanService.selectByResult(inventoryresultsid));
+    }
+
+    @RequestMapping(value = "/check", method = {RequestMethod.POST})
+    public ApiResult check(@RequestBody Inventoryplan inventoryplan, HttpServletRequest request) throws Exception {
+        if (inventoryplan == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(inventoryplanService.check(inventoryplan));
+    }
 }

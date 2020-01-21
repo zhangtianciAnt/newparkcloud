@@ -76,6 +76,6 @@ public class Pfans3006Controller {
     @RequestMapping(value = "/download", method = {RequestMethod.POST})
     public void download(HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
-        ExcelOutPutUtil.OutPut("jiejipai","jiejipai.xlsx",data,response);
+        ExcelOutPutUtil.OutPut("接机牌","jiejipai.xlsx",data,response);
     }
 }

@@ -32,12 +32,6 @@ public class ProjectreSources extends BaseModel {
     private String companyprojects_id;
 
     /**
-     * 编号
-     */
-    @Column(name = "NUMBERS")
-    private String numbers;
-
-    /**
      * 姓名
      */
     @Column(name = "USER_ID")

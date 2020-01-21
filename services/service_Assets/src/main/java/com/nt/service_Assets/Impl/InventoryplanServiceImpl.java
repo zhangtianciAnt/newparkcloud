@@ -1,11 +1,18 @@
 package com.nt.service_Assets.Impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.InventoryRange;
 import com.nt.dao_Assets.Inventoryplan;
-import com.nt.dao_Assets.Vo.InventoryplanVo;
+import com.nt.dao_Assets.InventoryResults;
+import com.nt.dao_Assets.Vo.InventoryRangeVo;
 import com.nt.service_Assets.InventoryplanService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryplanMapper;
+import com.nt.service_Assets.mapper.InventoryRangeMapper;
+import com.nt.service_Assets.mapper.InventoryResultsMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -14,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,88 +32,82 @@ public class InventoryplanServiceImpl implements InventoryplanService {
 
     @Autowired
     private InventoryplanMapper inventoryplanMapper;
+
     @Autowired
     private AssetsMapper assetsMapper;
 
+    @Autowired
+    private InventoryRangeMapper inventoryRangeMapper;
+
+    @Autowired
+    private InventoryResultsMapper inventoryResultsMapper;
+
     @Override
     public List<Inventoryplan> get(Inventoryplan inventoryplan) throws Exception {
-        return inventoryplanMapper.select(inventoryplan);
+        List<Inventoryplan> rst = inventoryplanMapper.select(inventoryplan);
+        for(Inventoryplan item:rst){
+            InventoryResults r = new InventoryResults();
+            r.setInventoryplan_id(item.getInventoryplan_id());
+            List<InventoryResults> rs = inventoryResultsMapper.select(r);
+            item.setTotalnumber(String.valueOf(rs.size()));
+            item.setInquantity(String.valueOf(rs.stream().filter(i->(i.getResult().equals("2"))).count()));
+            item.setUnquantity(String.valueOf(rs.stream().filter(i->(i.getResult().equals("1"))).count()));
+        }
+
+        return rst;
     }
 
     @Override
-    public void insert(InventoryplanVo inventoryplanVo, TokenModel tokenModel) throws Exception {
-        String inventoryplanid = UUID.randomUUID().toString();
+    public void insert(InventoryRangeVo inventoryRangeVo, TokenModel tokenModel) throws Exception {
+        String inventoryRangeid = UUID.randomUUID().toString();
         Inventoryplan inventoryplan = new Inventoryplan();
-        List<Inventoryplan> inventList = inventoryplanMapper.select(inventoryplan);
-        if(inventList != null){
-            for(Inventoryplan inv : inventList){
+        List<Inventoryplan> invtList = inventoryplanMapper.select(inventoryplan);
+        if(invtList != null){
+            for(Inventoryplan inv : invtList){
                 String getinvent = inv.getInventorycycle();
                 String getsta = inv.getStatus();
-                if(inventoryplanVo.getInventoryplan().getInventorycycle().equals(getinvent) && !getsta.equals("2")){
+                if(inventoryRangeVo.getInventoryplan().getInventorycycle().equals(getinvent) && getsta.equals("0")){
                     inventoryplanMapper.delete(inv);
                 }
             }
         }
-        BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
+        BeanUtils.copyProperties(inventoryRangeVo.getInventoryplan(), inventoryplan);
         inventoryplan.preInsert(tokenModel);
-        inventoryplan.setInventoryplan_id(inventoryplanid);
-        Assets aa = new Assets();
-        aa.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-        List<Assets> aalist = assetsMapper.select(aa);
-        inventoryplan.setTotalnumber(String.valueOf(aalist.size()));
-        List<Assets> assetsList = inventoryplanVo.getAssets();
-        inventoryplan.setInquantity(String.valueOf(assetsList.size()));
-        inventoryplan.setUnquantity(String.valueOf(aalist.size() - assetsList.size()));
+        inventoryplan.setInventoryplan_id(inventoryRangeid);
+        List<InventoryRange> inventList = inventoryRangeVo.getInventoryRange();
         inventoryplanMapper.insertSelective(inventoryplan);
-        if (assetsList != null) {
+        if (inventList != null) {
             int rowindex = 0;
-            for (Assets ass : assetsList) {
+            for (InventoryRange inve : inventList) {
                 rowindex = rowindex + 1;
-                ass.preInsert(tokenModel);
-                ass.setAssets_id(UUID.randomUUID().toString());
-                ass.setInventoryplan_id(inventoryplanid);
-                ass.setStatus("4");
-                ass.setRowindex(rowindex);
-                assetsMapper.insertSelective(ass);
+                inve.preInsert(tokenModel);
+                inve.setInventoryrange_id(UUID.randomUUID().toString());
+                inve.setInventoryplan_id(inventoryRangeid);
+                inve.setRowindex(rowindex);
+                inventoryRangeMapper.insertSelective(inve);
+            }
+        }
+        List<InventoryResults> invresuList = inventoryRangeVo.getInventoryResults();
+        if (invresuList != null) {
+            int rowindex = 0;
+            for (InventoryResults invreu : invresuList) {
+                rowindex = rowindex + 1;
+                invreu.preInsert(tokenModel);
+                invreu.setInventoryresults_id(UUID.randomUUID().toString());
+                invreu.setInventoryplan_id(inventoryRangeid);
+                invreu.setResult("1");
+                invreu.setRowindex(rowindex);
+                inventoryResultsMapper.insertSelective(invreu);
             }
         }
     }
 
     @Override
-    public void update(InventoryplanVo inventoryplanVo, TokenModel tokenModel) throws Exception {
+    public void update(InventoryRangeVo inventoryRangeVo, TokenModel tokenModel) throws Exception {
         Inventoryplan inventoryplan = new Inventoryplan();
-        BeanUtils.copyProperties(inventoryplanVo.getInventoryplan(), inventoryplan);
+        BeanUtils.copyProperties(inventoryRangeVo.getInventoryplan(), inventoryplan);
         inventoryplan.preUpdate(tokenModel);
         inventoryplanMapper.updateByPrimaryKey(inventoryplan);
-        String inventoryplanid = inventoryplan.getInventoryplan_id();
-        Assets asp = new Assets();
-        asp.setInventoryplan_id(inventoryplanid);
-        List<Assets> alist = assetsMapper.select(asp);
-        if(alist != null){
-            int account = 0;
-            for(Assets as : alist){
-                if(!as.getResult().equals("")){
-                    account ++;
-                }
-            }
-            if(account == alist.size()) {
-                inventoryplan.setStatus("2");
-                inventoryplan.setInventoryplan_id(inventoryplanid);
-                inventoryplanMapper.updateByPrimaryKeySelective(inventoryplan);
-            }
-        }
-        List<Assets> assetsList = inventoryplanVo.getAssets();
-        int rowindex = 0;
-        if (assetsList != null) {
-            for (Assets ass : assetsList) {
-                rowindex = rowindex + 1;
-                ass.preInsert(tokenModel);
-                ass.setInventoryplan_id(inventoryplanid);
-                ass.setRowindex(rowindex);
-                ass.setStatus("4");
-                assetsMapper.updateByPrimaryKey(ass);
-            }
-        }
     }
 
     @Override
@@ -119,18 +121,49 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     }
 
     @Override
-    public InventoryplanVo selectById(String inventoryplanid) throws Exception {
+    public InventoryRangeVo selectById(String inventoryRangeid) throws Exception {
 
-        InventoryplanVo inventoryplanVo = new InventoryplanVo();
-        Assets assets = new Assets();
-        assets.setInventoryplan_id(inventoryplanid);
-        assets.setStatus("4");
-        List<Assets> assetsList = assetsMapper.select(assets);
-        assetsList = assetsList.stream().sorted(Comparator.comparing(Assets::getRowindex)).collect(Collectors.toList());
-        Inventoryplan inventoryplan = inventoryplanMapper.selectByPrimaryKey(inventoryplanid);
-        inventoryplanVo.setInventoryplan(inventoryplan);
-        inventoryplanVo.setAssets(assetsList);
-        return inventoryplanVo;
+        InventoryRangeVo inventoryRangeVo = new InventoryRangeVo();
+        InventoryRange inventoryRange = new InventoryRange();
+        inventoryRange.setInventoryplan_id(inventoryRangeid);
+        List<InventoryRange> inveList = inventoryRangeMapper.select(inventoryRange);
+        inveList = inveList.stream().sorted(Comparator.comparing(InventoryRange::getRowindex)).collect(Collectors.toList());
+        Inventoryplan inventoryplan = inventoryplanMapper.selectByPrimaryKey(inventoryRangeid);
+        inventoryRangeVo.setInventoryplan(inventoryplan);
+        inventoryRangeVo.setInventoryRange(inveList);
+        return inventoryRangeVo;
     }
 
+    @Override
+    public List<InventoryResults> selectByResult(String inventoryresultsid) throws Exception {
+        InventoryResults inventoryResults = new InventoryResults();
+        inventoryResults.setInventoryplan_id(inventoryresultsid);
+        return inventoryResultsMapper.select(inventoryResults);
+    }
+
+    @Override
+    public int check(Inventoryplan inventoryplan) throws Exception {
+        Inventoryplan condition = new Inventoryplan();
+        condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        List<Inventoryplan> rst = inventoryplanMapper.select(condition);
+        int count = 0;
+        Date st = DateUtil.parse(inventoryplan.getInventorycycle().split("~")[0]);
+        Date ed = DateUtil.parse(inventoryplan.getInventorycycle().split("~")[1]);
+        for(Inventoryplan item:rst){
+            if(StrUtil.isNotBlank(inventoryplan.getInventoryplan_id())){
+                if(inventoryplan.getInventoryplan_id().equals(item.getInventoryplan_id())){
+                    continue;
+                }
+            }
+            String[] ts = item.getInventorycycle().split("~");
+            if(ts.length == 2){
+                Date st1 = DateUtil.parse(ts[0]);
+                Date ed1 = DateUtil.parse(ts[1]);
+                if(DateUtil.between(st, ed1, DateUnit.DAY,false) >= 0 && DateUtil.between(ed, st1, DateUnit.DAY,false) <= 0){
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
 }

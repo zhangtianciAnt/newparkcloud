@@ -2,7 +2,13 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
+import com.nt.dao_Pfans.PFANS6000.Customerinfor;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
+import com.nt.service_pfans.PFANS6000.CustomerinforService;
+import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
+import com.nt.service_pfans.PFANS6000.SupplierinforService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -23,6 +29,13 @@ public class Pfans5001Controller {
 
     @Autowired
     private CompanyProjectsService companyProjectsService;
+
+    @Autowired
+    private CustomerinforService customerinforService;
+
+    @Autowired
+    private ExpatriatesinforService expatriatesinforService;
+
 
     @Autowired
     private TokenService tokenService;
@@ -76,5 +89,23 @@ public class Pfans5001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         companyProjectsService.insert(companyProjectsVo,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getcustomer", method = { RequestMethod.POST })
+    public ApiResult getcustomer(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception{
+        if (customerinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
+    }
+
+    @RequestMapping(value = "/getexpat", method = { RequestMethod.POST })
+    public ApiResult getexpat(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception{
+        if (expatriatesinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 }

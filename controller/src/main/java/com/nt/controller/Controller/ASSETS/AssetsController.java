@@ -1,6 +1,9 @@
 package com.nt.controller.Controller.ASSETS;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.InventoryResults;
+import com.nt.dao_Assets.Vo.AssetsVo;
 import com.nt.service_Assets.AssetsService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -12,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/assets")
@@ -23,21 +30,28 @@ public class AssetsController {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/connection", method = {RequestMethod.GET})
-    public ApiResult connection(String address, HttpServletRequest request) throws Exception {
-        if (address == null) {
+    @RequestMapping(value = "/connection", method = {RequestMethod.POST})
+    public ApiResult connection(HttpServletRequest request) throws Exception {
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/scanOne", method = {RequestMethod.POST})
+    public ApiResult scanOne(String code, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(code)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        int count = 0;
-        Boolean str = false;
-        while (!str) {
-            Thread.sleep(5 * 1000);
-            count++;
-            TokenModel tokenModel = tokenService.getToken(request);
-            assetsService.connection(address, tokenModel);
-            return ApiResult.success();
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(assetsService.scanOne(code, tokenModel).getBarcode());
+    }
+
+    @RequestMapping(value = "/scanList", method = {RequestMethod.POST})
+    public ApiResult scanList(String code, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(code)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success();
+        TokenModel tokenModel = tokenService.getToken(request);
+        int rst = assetsService.scanList(code, tokenModel);
+        return ApiResult.success(rst);
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
@@ -55,6 +69,16 @@ public class AssetsController {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         assetsService.insert(assets, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/insertlots", method = {RequestMethod.POST})
+    public ApiResult insertlots(@RequestBody AssetsVo assetsVo, HttpServletRequest request) throws Exception {
+        if (assetsVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        assetsService.insertLosts(assetsVo, tokenModel);
         return ApiResult.success();
     }
 
@@ -77,11 +101,11 @@ public class AssetsController {
         return ApiResult.success(assetsService.One(assets.getAssets_id()));
     }
 
-    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    @RequestMapping(value = "/import",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request){
         try{
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(assetsService.importUser(request,tokenModel));
+            return ApiResult.success(assetsService.importDate(request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
@@ -89,5 +113,9 @@ public class AssetsController {
         }
     }
 
-
+    @RequestMapping(value = "/download", method = {RequestMethod.POST})
+    public void download(HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        ExcelOutPutUtil.OutPut("资产","zichan.xlsx",data,response);
+    }
 }

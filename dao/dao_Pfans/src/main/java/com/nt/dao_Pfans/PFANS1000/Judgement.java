@@ -161,7 +161,7 @@ public class Judgement extends BaseModel {
      * 附件
      */
     @Column(name = "UPLOADFILE")
-    private Date uploadfile;
+    private String uploadfile;
 
     /**
      * 無償设备
@@ -181,7 +181,7 @@ public class Judgement extends BaseModel {
     @Column(name = "DECISIVE")
     private String decisive;
 
-    /**EQUIPMENT
+    /*
      * 折旧期限
      */
     @Column(name = "PERIOD")

@@ -169,4 +169,8 @@ public class CompanyProjects extends BaseModel {
     @Column(name = "REQUIREMENT")
     private String requirement;
 
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
+
+
 }

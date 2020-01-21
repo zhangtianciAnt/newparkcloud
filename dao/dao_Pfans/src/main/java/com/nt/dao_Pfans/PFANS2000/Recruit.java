@@ -110,13 +110,13 @@ public class Recruit extends BaseModel {
     private String suggestedsalary;
 
     /**
-     * 转正日
+     * 建议岗位薪资
      */
     @Column(name = "TURNINGDAY")
     private String turningday;
 
     /**
-     * 转正后薪资
+     * 技能等级级别
      */
     @Column(name = "AFTERTURNINGPOSITIV")
     private String afterturningpositiv;

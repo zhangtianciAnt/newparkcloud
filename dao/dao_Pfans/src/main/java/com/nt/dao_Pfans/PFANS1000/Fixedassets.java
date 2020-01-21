@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "fixedassets")
-public class    Fixedassets   extends BaseModel {
+public class Fixedassets extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -49,16 +49,10 @@ public class    Fixedassets   extends BaseModel {
     private String user_id;
 
     /**
-     * 起案日
+     * 申请日期
      */
     @Column(name = "CASEDATE")
     private Date casedate;
-
-    /**
-     * 決裁日
-     */
-    @Column(name = "JUDGEMENTDAY")
-    private Date judgementday;
 
     /**
      * 资产类型
@@ -113,5 +107,24 @@ public class    Fixedassets   extends BaseModel {
      */
     @Column(name = "REPAIRKITS")
     private String repairkits;
+
+    /**
+     * 固定資産名称
+     */
+    @Column(name = "ASSETNAME")
+    private String assetname;
+
+    /**
+     * 'び付属設備
+     */
+    @Column(name = "ANCILLARYEQUIPMENT")
+    private String ancillaryequipment;
+
+    /**
+     * 免税輸入設備
+     */
+    @Column(name = "DUTYFREEINPUT")
+    private String dutyfreeinput;
+
 
 }

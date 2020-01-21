@@ -136,7 +136,7 @@ public class CasgiftApply extends BaseModel {
     /**
      * 附件
      */
-        @Column(name = "UPLOADFILE")
+    @Column(name = "UPLOADFILE")
     private String uploadfile;
 
     @Column(name = "PAYMENT")

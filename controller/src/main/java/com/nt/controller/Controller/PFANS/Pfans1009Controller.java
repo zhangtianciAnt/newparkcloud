@@ -1,6 +1,8 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Fixedassets;
+import com.nt.service_Assets.AssetsService;
 import com.nt.service_pfans.PFANS1000.FixedassetsService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -25,6 +27,9 @@ public class Pfans1009Controller {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private AssetsService assetsService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getFixedassets(HttpServletRequest request)throws  Exception{
@@ -64,5 +69,14 @@ public class Pfans1009Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getAssetsnameList", method = {RequestMethod.POST})
+    public ApiResult getAssetsnameList(@RequestBody Assets assets, HttpServletRequest request) throws Exception {
+        if (assets == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(assetsService.getAssetsnameList(assets, request));
+
+    }
 }
 

@@ -33,6 +33,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<Role> getRoleList(Role role) throws Exception {
         Query query = CustmizeQuery(role);
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         return mongoTemplate.find(query, Role.class);
     }
 

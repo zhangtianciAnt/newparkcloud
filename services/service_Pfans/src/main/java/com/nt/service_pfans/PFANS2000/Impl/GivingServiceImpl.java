@@ -3,10 +3,11 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
-import com.nt.dao_Pfans.PFANS2000.Vo.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
+import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,9 +50,6 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private ComprehensiveMapper comprehensiveMapper;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     @Autowired
     private ContrastMapper contrastMapper;
@@ -91,12 +90,27 @@ public class GivingServiceImpl implements GivingService {
     @Autowired
     private DisciplinaryMapper disciplinaryMapper;
 
-
     @Autowired
     private AdditionalMapper additionalMapper;
 
     @Autowired
     private InductionMapper inductionMapper;
+
+    @Autowired
+    private WorkingDayMapper workingDayMapper;
+
+    @Autowired
+    private AttendanceSettingMapper attendanceSettingMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    private static List<CustomerInfo> customerInfos;
+
+    @PostConstruct
+    public void init(){
+        customerInfos = mongoTemplate.find(new Query(Criteria.where("status").is("0")), CustomerInfo.class);
+    }
 
     /**
      * 生成基数表
@@ -104,148 +118,166 @@ public class GivingServiceImpl implements GivingService {
      */
     @Override
     public GivingVo List(String giving_id) throws Exception {
-        GivingVo givingVo = new GivingVo();
+        insertOtherOne(null,null);
         Giving giving = new Giving();
-        giving.setGiving_id(giving_id);
-        givingVo.setGiving(giving);
+        return null;
+//        GivingVo givingVo = new GivingVo();
 
-        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
-        givingVo.setDisciplinaryVo(disciplinary);
-
-        OtherOne otherOne = new OtherOne();
-        otherOne.setGiving_id(giving_id);
-        List<OtherOne> otherOnelist = otherOneMapper.select(otherOne);
-        otherOnelist = otherOnelist.stream().sorted(Comparator.comparing(OtherOne::getRowindex)).collect(Collectors.toList());
-        givingVo.setOtherOne(otherOnelist);
-
-        OtherTwo othertwo = new OtherTwo();
-        othertwo.setGiving_id(giving_id);
-        List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
-        othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
-        givingVo.setOtherTwo(othertwolist);
-
-        Appreciation appreciation = new Appreciation();
-        appreciation.setGiving_id(giving_id);
-        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
-        givingVo.setAppreciation(appreciationlist);
-
-        OtherFive otherfive = new OtherFive();
-        otherfive.setGiving_id(giving_id);
-        List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
-        otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
-        givingVo.setOtherFive(otherfivelist);
-
-        Additional additional = new Additional();
-        additional.setGiving_id(giving_id);
-        List<Additional> additionallist = additionalMapper.select(additional);
-        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
-        givingVo.setAddiTional(additionallist);
-
-        Lackattendance lackattendance = new Lackattendance();
-        lackattendance.setGiving_id(giving_id);
-        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
-        lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
-        givingVo.setLackattendance(lackattendancellist);
-
-        Residual residua = new Residual();
-        residua.setGiving_id(giving_id);
-        List<Residual> residualllist = residualMapper.select(residua);
-        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
-        givingVo.setResidual(residualllist);
-
-        OtherFour otherfour = new OtherFour();
-        otherfour.setGiving_id(giving_id);
-        List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
-        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
-        givingVo.setOtherFour(otherfourlist);
-
-        Base base = new Base();
-        base.setGiving_id(giving_id);
-        List<Base> baselist = baseMapper.select(base);
-        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
-        givingVo.setBase(baselist);
-
-        Contrast contrast = new Contrast();
-        contrast.setGiving_id(giving_id);
-        List<Contrast> contrastList = contrastMapper.select(contrast);
-        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
-        givingVo.setContrast(contrastList);
-
-        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
-        givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
-
-        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
-        givingVo.setDutyfreeVo(dutyfreeVolist);
-
-        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
-        givingVo.setComprehensiveVo(comprehensiveVolist);
-
-        return givingVo;
+//        giving.setGiving_id(giving_id);
+//        givingVo.setGiving(giving);
+//
+//        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
+//        givingVo.setDisciplinaryVo(disciplinary);
+//
+//        OtherOne otherOne = new OtherOne();
+//        otherOne.setGiving_id(giving_id);
+//        List<OtherOne> otherOnelist = otherOneMapper.select(otherOne);
+//        otherOnelist = otherOnelist.stream().sorted(Comparator.comparing(OtherOne::getRowindex)).collect(Collectors.toList());
+//        givingVo.setOtherOne(otherOnelist);
+//
+//        OtherTwo othertwo = new OtherTwo();
+//        othertwo.setGiving_id(giving_id);
+//        List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
+//        othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
+//        givingVo.setOtherTwo(othertwolist);
+//
+//        Appreciation appreciation = new Appreciation();
+//        appreciation.setGiving_id(giving_id);
+//        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+//        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+//        givingVo.setAppreciation(appreciationlist);
+//
+//        OtherFive otherfive = new OtherFive();
+//        otherfive.setGiving_id(giving_id);
+//        List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
+//        otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
+//        givingVo.setOtherFive(otherfivelist);
+//
+//        Additional additional = new Additional();
+//        additional.setGiving_id(giving_id);
+//        List<Additional> additionallist = additionalMapper.select(additional);
+//        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
+//        givingVo.setAddiTional(additionallist);
+//
+//        Lackattendance lackattendance = new Lackattendance();
+//        lackattendance.setGiving_id(giving_id);
+//        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
+//        lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
+//        givingVo.setLackattendance(lackattendancellist);
+//
+//        Residual residua = new Residual();
+//        residua.setGiving_id(giving_id);
+//        List<Residual> residualllist = residualMapper.select(residua);
+//        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
+//        givingVo.setResidual(residualllist);
+//
+//        OtherFour otherfour = new OtherFour();
+//        otherfour.setGiving_id(giving_id);
+//        List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
+//        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
+//        givingVo.setOtherFour(otherfourlist);
+//
+//        Base base = new Base();
+//        base.setGiving_id(giving_id);
+//        List<Base> baselist = baseMapper.select(base);
+//        //baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+//        givingVo.setBase(baselist);
+//
+//        Contrast contrast = new Contrast();
+//        contrast.setGiving_id(giving_id);
+//        List<Contrast> contrastList = contrastMapper.select(contrast);
+//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+//        givingVo.setContrast(contrastList);
+//
+//        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
+//        givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
+//
+//        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
+//        givingVo.setDutyfreeVo(dutyfreeVolist);
+//
+//        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
+//        givingVo.setComprehensiveVo(comprehensiveVolist);
+//
+//        return givingVo;
     }
-
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
-        OtherOne otherOne = new OtherOne();
-        AbNormal abNormal = new AbNormal();
-        abNormal.setStatus("4");
-        List<AbNormal> abNormalinfo = abNormalMapper.select(abNormal);
-        if (abNormalinfo != null) {
-            int rowindex = 0;
-            for (AbNormal abNor : abNormalinfo) {
-                if (abNor.getErrortype().equals("PR013012") || abNor.getErrortype().equals("PR013013")) {
-                    rowindex = rowindex + 1;
-                    String otherOneid = UUID.randomUUID().toString();
-                    otherOne.preInsert(tokenModel);
-                    otherOne.setOtherone_id(otherOneid);
-                    otherOne.setGiving_id(givingid);
-                    otherOne.setUser_id(abNor.getUser_id());
-                    Query query = new Query();
-                    String User_id = abNor.getUser_id();
-                    query.addCriteria(Criteria.where("userid").is(User_id));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        otherOne.setDepartment_id(customerInfo.getUserinfo().getCenterid());
-                        otherOne.setSex(customerInfo.getUserinfo().getSex());
-                        otherOne.setWorkdate(customerInfo.getUserinfo().getEnterday());
-                    }
-                    if (abNor.getErrortype().equals("PR013012")) {
-                        otherOne.setReststart(abNor.getOccurrencedate());
-                        otherOne.setRestend(abNor.getFinisheddate());
-                        otherOne.setAttendance("-1");
-                        otherOne.setOther1("-1");
-                        otherOne.setBasedata("2");
-                        otherOne.setType("1");
-                    } else if (abNor.getErrortype().equals("PR013013")) {
-                        otherOne.setStartdate(abNor.getOccurrencedate());
-                        otherOne.setEnddate(abNor.getFinisheddate());
-                        int intLengthtime = Integer.parseInt(abNor.getLengthtime()) / 8;
-                        String strLengthtime = String.valueOf(intLengthtime);
-                        otherOne.setVacation(strLengthtime);
 
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        String beginTime = customerInfo.getUserinfo().getEnterday();
-                        Date date1 = format.parse(beginTime);
-                        Date date2 = format.parse("2012-08-31");
-                        long beginMillisecond = date1.getTime();
-                        long endMillisecond = date2.getTime();
-                        if (beginMillisecond >= endMillisecond) {
-                            otherOne.setHandsupport(strLengthtime);
-                        } else {
-                            otherOne.setHandsupport("0");
-                        }
-                        otherOne.setType("2");
-                    }
-                    otherOne.setRowindex(rowindex);
-                    otherOneMapper.insertSelective(otherOne);
-                }
-            }
-        }
+//        List<OtherOne> otherOnes = new ArrayList<>();
+//        DecimalFormat df = new DecimalFormat("#.00");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//        long endMillisecond = format.parse("2012-08-31").getTime();
+//        AbNormal abNormal = new AbNormal();
+//        abNormal.setStatus("4");
+//        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+//        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
+//        if (abNormalinfo.size() > 0) {
+//            int rowindex = 0;
+//            for (AbNormal abNor : abNormalinfo) {
+//                if (abNor.getError_type().equals("PR013012") || abNor.getError_type().equals("PR013013")) {
+//                    boolean bool = true;
+//                   for(OtherOne otherOne :otherOnes){
+//                       if(otherOne.getUser_id().equals(abNor.getUser_id())){
+//                          // otherOne.
+//                            // otherOne.setOther1();
+//                       }
+//                   }
+//
+//                         OtherOne otherOne = new OtherOne();
+//                        String beginTime = "";
+//                        rowindex = rowindex + 1;
+//                        String otherOneid = UUID.randomUUID().toString();
+//                        // otherOne.preInsert(tokenModel);
+//                        otherOne.setOtherone_id(otherOneid);
+//                        otherOne.setGiving_id(givingid);
+//                        otherOne.setUser_id(abNor.getUser_id());
+//
+//                        List<CustomerInfo> cust = customerInfos.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
+//
+//                        if (cust.size() > 0) {
+//                            otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
+//                            otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
+//                            otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
+//                            beginTime = cust.get(0).getUserinfo().getEnterday();
+//                        }
+//                        if (abNor.getError_type().equals("PR013012")) {
+//                            otherOne.setReststart(abNor.getOccurrence_date());
+//                            otherOne.setRestend(abNor.getFinished_date());
+//                            otherOne.setAttendance("-1");
+//                            otherOne.setOther1("-1");
+//                            otherOne.setBasedata("2");
+//                            otherOne.setType("1");
+//                        } else if (abNor.getError_type().equals("PR013013")) {
+//                            otherOne.setStartdate(abNor.getOccurrence_date());
+//                            otherOne.setEnddate(abNor.getFinished_date());
+//                            double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
+//                            String strLengthtime = String.valueOf(intLengthtime);
+//                            otherOne.setVacation(df.format(intLengthtime));
+//                            long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime).getTime();
+//                            if (beginMillisecond >= endMillisecond) {
+//                                otherOne.setHandsupport(strLengthtime);
+//                            } else {
+//                                otherOne.setHandsupport("0");
+//                            }
+//                            otherOne.setType("2");
+//                        }
+//                        otherOne.setRowindex(rowindex);
+//                        otherOnes.add(otherOne);
+//                    }
+//
+//            }
+//        }
+//        if(otherOnes.size() > 0){
+//            otherOneMapper.insertOtherOne(otherOnes);
+//        }
     }
 
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
+        List<Base> bases = new ArrayList<>();
         Dictionary dictionary = new Dictionary();
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
         String R9 = null;
@@ -260,18 +292,16 @@ public class GivingServiceImpl implements GivingService {
                 R7 = diction.getValue2();
             }
         }
-        Base base = new Base();
-        List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
-        if (customerinfo != null) {
+        if (customerInfos.size() > 0) {
             int rowindex = 0;
-            for (CustomerInfo customer : customerinfo) {
+            for (CustomerInfo customer : customerInfos) {
+                Base base = new Base();
                 rowindex = rowindex + 1;
                 String baseid = UUID.randomUUID().toString();
                 base.preInsert(tokenModel);
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
-//                base.setOwner(customer.getUserid());
                 base.setDepartment_id(customer.getUserinfo().getCenterid());
                 base.setJobnumber(customer.getUserinfo().getJobnumber());  //工号
                 base.setRn(customer.getUserinfo().getRank());  //RN
@@ -280,61 +310,6 @@ public class GivingServiceImpl implements GivingService {
                     base.setOnlychild("1");  //独生子女
                 } else {
                     base.setOnlychild("2");  //独生子女
-                }
-                if (customer.getUserinfo().getEnddate() == null) {
-                    base.setType("0");
-                }
-                if (customer.getUserinfo().getEnddate() != null) {
-                    String date = customer.getUserinfo().getEnddate().substring(5, 7);
-                    Calendar cal = Calendar.getInstance();
-                    String months = String.valueOf(cal.get(cal.MONTH));
-                    if (Integer.parseInt(date) >= Integer.parseInt(months)) {
-                        base.setType("0");
-                    }
-                }
-                if (customer.getUserinfo().getResignation_date() != null && customer.getUserinfo().getResignation_date().length() > 0) {
-                    String date = customer.getUserinfo().getResignation_date().substring(5, 7);
-                    Calendar cal = Calendar.getInstance();
-                    String months = String.valueOf(cal.get(cal.MONTH));
-                    if (Integer.parseInt(date) == Integer.parseInt(months)) {
-                        base.setType("1");
-                    }
-                }
-                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar cal = Calendar.getInstance();
-                String months = String.valueOf(cal.get(cal.MONTH));
-                String years = String.valueOf(cal.get(cal.YEAR));
-                String date = String.valueOf(cal.get(cal.DATE));
-                String Data;
-                if (Integer.parseInt(months) < 10 && Integer.parseInt(date) < 10) {
-                    Data = years + "-0" + months + "-0" + date;
-                } else if (Integer.parseInt(months) < 10) {
-                    Data = years + "-0" + months + "-" + date;
-                } else if (Integer.parseInt(date) < 10) {
-                    Data = years + "-" + months + "-0" + date;
-                } else {
-                    Data = years + "-" + months + "-" + date;
-                }
-
-                AbNormal abNormal = new AbNormal();
-                abNormal.setStatus("4");
-                List<AbNormal> abNormalinfo = abNormalMapper.select(abNormal);
-                if (abNormalinfo != null) {
-                    for (AbNormal abNor : abNormalinfo) {
-                        if (abNor.getErrortype().equals("PR013012")) {
-                            String Occurrencedate = sf.format(abNor.getOccurrencedate());
-                            String Finisheddate = sf.format(abNor.getFinisheddate());
-                            if (Integer.parseInt(Occurrencedate.replace("-", "")) <= Integer.parseInt(Data.replace("-", "")) && Integer.parseInt(Data.replace("-", "")) <= Integer.parseInt(Finisheddate.replace("-", ""))) {
-                                base.setType("2");
-                            }
-                        } else if (abNor.getErrortype().equals("PR013013")) {
-                            String occurrencedate = sf.format(abNor.getOccurrencedate());
-                            String finisheddate = sf.format(abNor.getFinisheddate());
-                            if (Integer.parseInt(occurrencedate.replace("-", "")) <= Integer.parseInt(Data.replace("-", "")) && Integer.parseInt(Data.replace("-", "")) <= Integer.parseInt(finisheddate.replace("-", ""))) {
-                                base.setType("3");
-                            }
-                        }
-                    }
                 }
                 //奨金計上
                 base.setBonus(customer.getUserinfo().getDifference());
@@ -353,61 +328,11 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     base.setRegistered("2");
                 }
-
-                String Months;
-                String Years;
-                String Date;
-                if (cal.get(cal.MONTH) == 12) {
-                    Months = String.valueOf(cal.get(cal.MONTH) - 11);
-                    Years = String.valueOf(cal.get(cal.YEAR) + 1);
-                    Date = String.valueOf(cal.get(cal.DATE));
-                } else {
-                    Months = String.valueOf(cal.get(cal.MONTH) + 1);
-                    Years = String.valueOf(cal.get(cal.YEAR));
-                    Date = String.valueOf(cal.get(cal.DATE));
-                }
-                String Dat;
-                if (Integer.parseInt(Months) < 10 && Integer.parseInt(Date) < 10) {
-                    Dat = Years + "-0" + Months + "-0" + Date;
-                } else if (Integer.parseInt(Months) < 10) {
-                    Dat = Years + "-0" + Months + "-" + Date;
-                } else if (Integer.parseInt(Date) < 10) {
-                    Dat = Years + "-" + Months + "-0" + Date;
-                } else {
-                    Dat = Years + "-" + Months + "-" + Date;
-                }
-
-                double after6 = 0d;
-                double after7 = 0d;
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userid").is(customer.getUserid()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    if (customerInfo.getUserinfo().getGridData() != null) {
-                        List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Data.replace("-", ""))) {
-                                after6 = Double.valueOf(personal.getAfter());
-                                break;
-                            }
-                        }
-                        for (CustomerInfo.Personal personal : customerInfo1) {
-                            if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Dat.replace("-", ""))) {
-                                after7 = Double.valueOf(personal.getAfter());
-                                break;
-                            }
-                        }
-                    } else {
-                        after6 = 0;
-                        after7 = 0;
-                    }
-                }
-                base.setLastmonth(String.valueOf(after6));
-                base.setThismonth(String.valueOf(after7));
-                base.setPension(customer.getUserinfo().getOldageinsurance()); //養老・失業・工傷基数
-                base.setMedical(customer.getUserinfo().getMedicalinsurance()); //医療・生育基数
-
-                base.setAccumulation(customer.getUserinfo().getHousefund());  //公积金基数
+                base.setLastmonth(getSalary(customer,0)); //上月工资
+                base.setThismonth(getSalary(customer,1)); //本月工资
+                base.setPension(notNull(customer.getUserinfo().getOldageinsurance())); //養老・失業・工傷基数
+                base.setMedical(notNull(customer.getUserinfo().getMedicalinsurance())); //医療・生育基数
+                base.setAccumulation(notNull(customer.getUserinfo().getHouseinsurance()));  //公积金基数
                 //采暖费
                 if (customer.getUserinfo().getRank() != null && customer.getUserinfo().getRank().length() > 0) {
                     String strRank = customer.getUserinfo().getRank().substring(2);
@@ -423,8 +348,11 @@ public class GivingServiceImpl implements GivingService {
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
-                baseMapper.insert(base);
+                bases.add(base);
             }
+        }
+        if(bases.size() > 0){
+            baseMapper.insertBase(bases);
         }
     }
 
@@ -1746,7 +1674,6 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
-
         Giving giving = new Giving();
         String strTemp = sf1.format(new Date());
         giving.setMonths(strTemp);
@@ -1777,11 +1704,11 @@ public class GivingServiceImpl implements GivingService {
 
         givingMapper.insert(giving);
         insertBase(givingid, tokenModel);
-        insertContrast(givingid, tokenModel);
-        insertOtherTwo(givingid, tokenModel);
-        insertOtherOne(givingid, tokenModel);
-        insertAttendance(givingid, tokenModel);
-        insertResidual(givingid, tokenModel);
+//        insertContrast(givingid, tokenModel);
+//        insertOtherTwo(givingid, tokenModel);
+//        insertOtherOne(givingid, tokenModel);
+//        insertAttendance(givingid, tokenModel);
+//        insertResidual(givingid, tokenModel);
     }
 
     @Override
@@ -1830,189 +1757,184 @@ public class GivingServiceImpl implements GivingService {
     }
 
     //入职
-    public List<CustomerInfo> getInduction(String givingId) {
-        Query query = new Query();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+    public List<CustomerInfo> getInduction(String givingId) throws ParseException {
+        List<Induction> inductions = new ArrayList<>();
         Calendar now = Calendar.getInstance();
         Calendar _now = Calendar.getInstance();
-        now.add(Calendar.MONTH, -2);
-        _now.add(Calendar.MONTH, -1); //this
-        now.set(Calendar.DAY_OF_MONTH, 15);
-        _now.set(Calendar.DAY_OF_MONTH, 16);
-
-        Calendar lastmon = Calendar.getInstance();
-        lastmon.add(Calendar.MONTH, -1);
-        Calendar thismon = Calendar.getInstance();
-        Criteria criteria = Criteria.where("userinfo.enterday")
-                .gte(sf.format(now.getTime()))
-                .lte(sf.format(_now.getTime()));
-        query.addCriteria(criteria);
-        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
-        if (customerInfo.size() > 0) {
-            List<String> list = new ArrayList<>();
-            customerInfo.forEach(customerInfo1 -> list.add(customerInfo1.getUserid()));
-            List<Induction> inductions = inductionMapper.selectInduction(list, thismon.get(Calendar.YEAR) + "" + getMouth(sf.format(_now.getTime())),
-                    lastmon.get(Calendar.YEAR) + "" + getMouth(sf.format(now.getTime())), getMouth(sf.format(_now.getTime())) + "", getMouth(sf.format(now.getTime())) + "");
-            if (inductions.size() > 0) {
-                inductions.forEach(induction -> {
-                    Optional<CustomerInfo> _customerInfo = customerInfo.stream().filter(a -> (induction.getUser_id()).equals(a.getUserid())).findFirst();
-                    if (_customerInfo.isPresent()) {
-                        if(givingId!=null&&givingId!=""){
-                            induction.setGiving_id(givingId);
+        Query query = new Query();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        DecimalFormat df = new DecimalFormat("#.00");
+        _now.add(Calendar.MONTH,-1);
+        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        long mouthStart = sf.parse((now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-01")).getTime();
+        long mouthEnd = sf.parse((now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)).getTime();
+        List<String> userids = wagesMapper.lastMonthWage(now.get(Calendar.YEAR),Integer.parseInt(getMouth(sf.format(_now.getTime()))));
+        if (customerInfos.size() > 0) {
+            customerInfos.forEach(customerInfo -> {
+                Induction induction = new Induction();
+                induction.setGiving_id(givingId);
+                try {
+                     if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
+                        //3.上月工资结算时点过后入职没发工资的人
+                        Date enterDay = sf.parse(customerInfo.getUserinfo().getEnterday());
+                        induction.setThismouth(getSalary(customerInfo, 1));  //本月基本工资
+                        induction.setLastmouth(getSalary(customerInfo, 0)); //上月基本工资
+                        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));//入社日
+                        //正社员工開始日(无)
+                        Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnterday());
+                        int lastDays = getIndutionDays(map.get("year"), map.get("mouth"), map.get("day"));
+                        induction.setTrial(lastDays + "");//先月出勤日数
+                        int thisDay = getWorkDays(now.get(Calendar.YEAR),Integer.parseInt(getMouth(sf.format(now.getTime()))),0);
+                        induction.setTrial(thisDay + "");//今月試用社員出勤日数
+                        //給料
+                        induction.setLunch(df.format(105/21.5*thisDay + 105));//午餐补助
+                        induction.setTraffic(df.format(84/21.5*thisDay + 84));//交通补助
+                        inductions.add(induction);
+                    }
+                     else if (customerInfo.getUserinfo().getEnterday() != "" && customerInfo.getUserinfo().getEnterday() != null) {
+                        Date enterDay = sf.parse(customerInfo.getUserinfo().getEnterday());
+                        //1.抓取本月入职(入社日判断)
+                        if (enterDay.getTime() >= mouthStart && enterDay.getTime() <= mouthEnd) {
+                            induction.setThismouth(getSalary(customerInfo, 1));  //本月基本工资
+                            induction.setLastmouth("0"); //上月基本工资
+                            induction.setWorddate(enterDay);//入社日
+                            //正社员工開始日(无)
+                            induction.setAttendance("0");//先月出勤日数
+                            Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnterday());
+                            int days = getIndutionDays(map.get("year"), map.get("mouth"), map.get("day"));
+                            induction.setTrial(days + "");//今月試用社員出勤日数
+                            induction.setGive(df.format(Double.valueOf(getSalary(customerInfo, 1)) - Double.valueOf(getSalary(customerInfo, 1)) / 21.75 * days * 0.1));//給料
+                            induction.setLunch(df.format(105 / 21.75 * days));//午餐补助
+                            induction.setTraffic(df.format(84 / 21.75 * days));//交通补助
+                            inductions.add(induction);
                         }
-                        try {
-                            induction.setWorddate(sf.parse(_customerInfo.get().getUserinfo().getWorkday()));
-                            if (_customerInfo.get().getUserinfo().getEnddate() != null && !_customerInfo.get().getUserinfo().getEnddate().equals("")) {
-                                induction.setStartdate(sf.parse(_customerInfo.get().getUserinfo().getEnddate()));
+                    } else if (customerInfo.getUserinfo().getEnddate() != "" && customerInfo.getUserinfo().getEnddate() != null) {
+                        //2.本月转正或未转正的人
+                        Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
+                        if ( endDate.getTime() >= mouthStart ) {
+                            Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnddate());
+                            int days = getWorkDays(map.get("year"), map.get("mouth"), map.get("day"));
+                            induction.setThismouth(getSalary(customerInfo, 1));  //本月基本工资
+                            induction.setLastmouth(getSalary(customerInfo, 0)); //上月基本工资
+                            induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));//入社日
+                            induction.setLunch(df.format(105));//午餐补助
+                            induction.setTraffic(df.format(84));//交通补助
+                            induction.setAttendance("0");//先月出勤日数
+                            if ( endDate.getTime() <= mouthEnd ) { //本月转正
+                                induction.setStartdate(endDate);//正社员工開始日
+                                induction.setTrial(days + "");//今月試用社員出勤日数
+                                induction.setGive(df.format(Double.valueOf(getSalary(customerInfo, 1)) / 21.75 * days * 0.1));//給料
+                            } else {  //本月未转正
+                                induction.setTrial(getWorkDays(map.get("year"), map.get("mouth"),0) + "");//今月試用社員出勤日数
+                                induction.setGive(getSalary(customerInfo, 1));//給料
                             }
-                            if (_customerInfo.get().getUserinfo().getGridData() != null) {
-                                List<CustomerInfo.Personal> personals = _customerInfo.get().getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                                        .collect(Collectors.toList());
-                                String lastMouth = "0";
-                                String thisMouth = "0";
-                                for (CustomerInfo.Personal personal : personals) {
-                                    boolean _last = false;
-                                    boolean _this = false;
-
-                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((lastmon.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-01")).getTime() && !_last) {
-                                        lastMouth = personal.getAfter();
-                                        _last = true;
-                                    }
-                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((thismon.get(Calendar.YEAR) + "-" + getMouth(sf.format(_now.getTime())) + "-01")).getTime() && !_this) {
-                                        thisMouth = personal.getAfter();
-                                        _this = true;
-                                    }
-                                    if (_last && _this) {
-                                        break;
-                                    }
-                                }
-                                //IF(正社員開始日<>"",ROUND((当月基本工资 - （当月基本工资/21.75日*当月试用期间的出勤日数×试用期工资扣除比例),2),IF(先月出勤日数>0,ROUND((先月基本工资/21.75*先月
-                                //出勤日数+当月基本工资),2),IF(今月試用社員出勤日数>0,ROUND(当月基本工资/21.75*今月試用社員出勤日数,2),当月基本工资)))
-                                DecimalFormat df = new DecimalFormat("#.00");
-                                if (_customerInfo.get().getUserinfo().getWorkday().equals("")) {
-                                    induction.setGive(df.format(Double.valueOf(thisMouth) - (Double.valueOf(thisMouth) / 21.75 * Double.valueOf(induction.getThismouth()) * 0.1)));
-                                } else {
-                                    if (Integer.parseInt(induction.getLastmouth()) > 0) {
-                                        induction.setGive(df.format(Double.valueOf(lastMouth) / 21.75 * Integer.parseInt(induction.getLastmouth()) * 0.1 + Double.valueOf(thisMouth)));
-                                    } else {
-                                        if (Integer.parseInt(induction.getThismouth()) > 0) {
-                                            induction.setGive(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(induction.getThismouth())));
-                                        } else {
-                                            induction.setGive(thisMouth);
-                                        }
-                                    }
-                                }
-                                //IF(先月基本工资<>0,ROUND(纳付率.食堂手当+纳付率.食堂手当/21.75*先月出勤日数,2),ROUND(纳付率.食堂手当/21.75*今月試用社員出勤日数,2))
-                                if (Double.valueOf(lastMouth) > 0) {
-                                    induction.setLunch(df.format(105 + 105 / 21.75 * Integer.parseInt(induction.getLastmouth())));
-                                } else {
-                                    induction.setLunch(df.format(105 / 21.75 * Integer.parseInt(induction.getThismouth())));
-                                }
-                                //IF(先月基本工资<>0,ROUND(纳付率.交通手当+纳付率.交通手当/21.75*先月出勤日数,2),ROUND(纳付率.交通手当/21.75*今月試用社員出勤日数,2))
-                                if (Double.valueOf(lastMouth) > 0) {
-                                    induction.setLunch(df.format(84 + 84 / 21.75 * Integer.parseInt(induction.getLastmouth())));
-                                } else {
-                                    induction.setLunch(df.format(84 / 21.75 * Integer.parseInt(induction.getThismouth())));
-                                }
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                            inductions.add(induction);
                         }
                     }
-                });
-            }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            });
         }
+
+
         return null;
     }
 
 
     //退职
     public void getRetire(String givingId) {
+        List<Retire> retires = new ArrayList<>();
         Query query = new Query();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        DecimalFormat df = new DecimalFormat("#.00");
         Calendar now = Calendar.getInstance();
         Calendar last = Calendar.getInstance();
-        last.add(Calendar.MONTH, -1);
-        now.add(Calendar.MONTH, -2);
-        now.set(Calendar.YEAR, now.get(Calendar.YEAR));
-        now.set(Calendar.MONTH, now.get(Calendar.MONTH));
+        last.add(Calendar.MONTH, 1);
+        now.add(Calendar.MONTH, -1);
         int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Calendar cal = Calendar.getInstance();
         Criteria criteria = Criteria.where("userinfo.resignation_date")
                 .gte(now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)
-                .lte(cal.get(Calendar.YEAR) + "-" + getMouth(sf.format(cal.getTime())) + "-01");
+                .lte(last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")
+                .and("status").is("0");
         query.addCriteria(criteria);
-        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
-        if (customerInfo.size() > 0) {
-            List<String> list = new ArrayList<>();
-            customerInfo.forEach(customerInfo1 -> list.add(customerInfo1.getUserid()));
-            List<Retire> retires = retireMapper.selectRetire(list, last.get(Calendar.YEAR) + "" + getMouth(sf.format(last.getTime())), getMouth(sf.format(last.getTime())) + "");
-            if (retires.size() > 0) {
-                retires.forEach(retire -> {
-                    Optional<CustomerInfo> _customerInfo = customerInfo.stream().filter(a -> (retire.getUser_id()).equals(a.getUserid())).findFirst();
-                    if (_customerInfo.isPresent()) {
-                        if(givingId!=null&&givingId!=""){
-                            retire.setGiving_id(givingId);
-                        }
-                        String thisMouth = "0";
-                        try {
-                            if (_customerInfo.get().getUserinfo().getResignation_date() != null && !_customerInfo.get().getUserinfo().getResignation_date().equals("")) {
-                                retire.setRetiredate(sf.parse(_customerInfo.get().getUserinfo().getResignation_date()));
-                            }
-                            if (_customerInfo.get().getUserinfo().getGridData() != null) {
-                                List<CustomerInfo.Personal> personals = _customerInfo.get().getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                                        .collect(Collectors.toList());
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        if (customerInfos.size() > 0) {
+            customerInfos.forEach(customerInfo -> {
+                String thisMouth = "0";
+                Retire retire = new Retire();
+                retire.setGiving_id(givingId);
+                retire.setRetire_id(customerInfo.getUserid());
+                Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getResignation_date());
+                retire.setAttendance(getWorkDays(map.get("year"), map.get("mouth"), map.get("day")) + "");
+                try {
+                    if (customerInfo.getUserinfo().getResignation_date() != null && !customerInfo.getUserinfo().getResignation_date().equals("")) {
+                        retire.setRetiredate(sf.parse(customerInfo.getUserinfo().getResignation_date()));
+                    }
+                    if (customerInfo.getUserinfo().getGridData() != null) {
+                        List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                                .collect(Collectors.toList());
 
-                                for (CustomerInfo.Personal personal : personals) {
-                                    if (sf.parse(personal.getDate()).getTime() <= sf.parse((last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")).getTime()) {
-                                        thisMouth = personal.getAfter();
-                                        return;
-                                    }
-                                }
+                        for (CustomerInfo.Personal personal : personals) {
+                            if (sf.parse(personal.getDate()).getTime() < sf.parse((last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")).getTime()) {
+                                thisMouth = personal.getAfter();
+                                break;
                             }
-                            DecimalFormat df = new DecimalFormat("#.00");
-                            //IF(今月出勤日数="全月",ROUND(基数.当月基本工资,2),IF(今月出勤日数<>"",ROUND(基数.当月基本工资/21.75*今月出勤日数,2),0))
-                            if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
-                                retire.setGive(df.format(Double.valueOf(thisMouth)));
-                            } else if (Integer.parseInt(retire.getAttendance()) != 0) {
-                                retire.setGive(df.format(Double.valueOf(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(retire.getAttendance())))));
-                            } else {
-                                retire.setGive("0");
-                            }
-                            //IF(今月出勤日数="全月",纳付率.食堂手当,ROUND(纳付率.食堂手当/21.75*今月出勤日数,2)
-                            if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
-                                retire.setLunch("105");
-                            } else {
-                                retire.setLunch(df.format(105 / 21.75 * Integer.parseInt(retire.getAttendance())));
-                            }
-                            //IF(今月出勤日数="全月",纳付率.交通手当,ROUND(纳付率.交通手当/21.75*今月出勤日数,2))
-                            if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
-                                retire.setLunch("84");
-                            } else {
-                                retire.setLunch(df.format(84 / 21.75 * Integer.parseInt(retire.getAttendance())));
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
                         }
                     }
-                });
-            }
+                    int day = getWorkDays(map.get("year"), map.get("mouth"), map.get("day"));
+                    int allDay = getWorkDays(map.get("year"), map.get("mouth"), 0);
+                    //IF(今月出勤日数="全月",ROUND(基数.当月基本工资,2),IF(今月出勤日数<>"",ROUND(基数.当月基本工资/21.75*今月出勤日数,2),0))
+                    if (day == allDay) {
+                        retire.setGive(df.format(Double.valueOf(thisMouth)));
+                    } else if (Integer.parseInt(retire.getAttendance()) != 0) {
+                        retire.setGive(df.format(Double.valueOf(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(retire.getAttendance())))));
+                    }
+                    //IF(今月出勤日数="全月",纳付率.食堂手当,ROUND(纳付率.食堂手当/21.75*今月出勤日数,2)
+                    if (day == allDay) {
+                        retire.setLunch("105");
+                    } else {
+                        retire.setLunch(df.format(105 / 21.75 * Integer.parseInt(retire.getAttendance())));
+                    }
+                    //IF(今月出勤日数="全月",纳付率.交通手当,ROUND(纳付率.交通手当/21.75*今月出勤日数,2))
+                    if (day == allDay) {
+                        retire.setLunch("84");
+                    } else {
+                        retire.setLunch(df.format(84 / 21.75 * Integer.parseInt(retire.getAttendance())));
+                    }
+                    retires.add(retire);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            });
         }
-
     }
+
 
     public String getMouth(String mouth) {
         String _mouth = mouth.substring(5, 7);
-        if (_mouth.substring(0, 1) == "0") {
-            return _mouth.substring(1);
-        }
         return _mouth;
     }
-
-
-
-    private static int getWorkDays(int theYear, int theMonth) {
+   //从1-day
+    public int getWorkDays(int theYear, int theMonth, int theDay) {
         int workDays = 0;
+        String holi = workingDayMapper.getHoliday(theYear, theMonth, theDay);
+        Calendar cal = Calendar.getInstance();
+        cal.set(theYear, theMonth - 1, 1);
+        int days = theDay == 0 ? cal.getActualMaximum(Calendar.DAY_OF_MONTH) : theDay;
+        for (int i = 0; i < days; i++) {
+            int day = cal.get(Calendar.DAY_OF_WEEK);
+            if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+                workDays++;
+            }
+            cal.add(Calendar.DATE, 1);
+        }
+        return (workDays - Integer.parseInt(holi));
+    }
+    //day-月末
+    public int getIndutionDays(int theYear, int theMonth, int theDay) {
+        int workDays = 0;
+        int holi = theDay == 1 ? 0 : Integer.parseInt(workingDayMapper.getHoliday(theYear, theMonth, theDay - 1));
         Calendar cal = Calendar.getInstance();
         cal.set(theYear, theMonth - 1, 1);
         int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -2023,6 +1945,92 @@ public class GivingServiceImpl implements GivingService {
             }
             cal.add(Calendar.DATE, 1);
         }
-        return workDays;
+        return (workDays - holi);
     }
+
+    public Map<String, Integer> getYMD(String date) {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        map.put("year", Integer.parseInt(date.substring(0, 4)));
+        map.put("mouth", Integer.parseInt(date.substring(5, 7)));
+        if (date.length() > 10) {
+            map.put("day", Integer.parseInt(date.substring(8, 10)));
+        } else {
+            map.put("day", Integer.parseInt(date.substring(8)));
+        }
+        return map;
+    }
+
+    public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
+        String thisMouth = "0";
+        Calendar time = Calendar.getInstance();
+        time.add(Calendar.MONTH, addMouth);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        if (customerInfo.getUserinfo().getGridData() != null) {
+            List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                    .collect(Collectors.toList());
+
+            for (CustomerInfo.Personal personal : personals) {
+                if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+                    thisMouth = personal.getAfter();
+                    break;
+                }
+            }
+        }
+        return thisMouth;
+    }
+
+    public String notNull(String data){
+        if(data==null||data.equals("")){
+            return  "0";
+        }
+        return  data;
+    }
+
+    public  Map<String, Integer> getYMD(Date date){
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        Calendar calder = Calendar.getInstance();
+        calder.setTime(date);
+        int year = calder.get(Calendar.YEAR);
+        int month=calder.get(Calendar.MONTH);
+        int day = calder.get(Calendar.DAY_OF_MONTH);
+        int yearMonth = year*100 + month;
+        int lastDay = calder.getActualMaximum(Calendar.DAY_OF_MONTH);
+        map.put("day", day);
+        map.put("year", year);
+        map.put("month", month);
+        map.put("yearMonth", yearMonth);
+        map.put("lastDay", lastDay);
+        return  map;
+    }
+
+    //根据产修算出当月产假日数
+    public double getWorkDays(AbNormal abNormal,AttendanceSetting attendanceSetting){
+//        double lengthTime = Double.valueOf(abNormal.getLengthtime());
+//        DecimalFormat df = new DecimalFormat("#.00");
+//        Map<String, Integer> start= getYMD(abNormal.getOccurrence_date());
+//        Map<String, Integer> end= getYMD(abNormal.getFinished_date());
+//        Map<String, Integer> now = getYMD(new Date());
+//        if(start.get("yearMonth") == now.get("yearMonth")){
+//            if(end.get("yearMonth") == now.get("yearMonth")){
+//             return Double.valueOf(lengthTime/8) ;
+//            }else if(end.get("yearMonth") > now.get("yearMonth")){
+//                if(now.get("lastDay") == now.get("day")){
+//                  //  attendanceSetting
+//                 //   return  workDays -
+//                }
+//                return  0;
+//            }
+//        }else if(start.get("yearMonth") < now.get("yearMonth")){
+//            if(end.get("yearMonth") == now.get("yearMonth")){
+//               // return df.format(Double.valueOf(workDays) - lengthTime/8);
+//            }else if(end.get("yearMonth") > now.get("yearMonth")){
+//                return 0;
+//            }
+//        }
+        return  0;
+    }
+
+//    public double getAttend(AttendanceSetting attendanceSetting){
+//
+//    }
 }
