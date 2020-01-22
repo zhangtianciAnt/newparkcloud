@@ -270,7 +270,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             overduePersonnelListVoList.get(i).setDueDate(new java.sql.Date(overduePersonnelListVoList.get(i).getActualstartdate().getTime() + 86400000L * 30 * (Integer.valueOf(overduePersonnelListVoList.get(i).getValidity()).intValue())));
             //填充姓名
             Query query = new Query();
-            query.addCriteria(Criteria.where("userid").is(overduePersonnelListVoList.get(i).getCustomername()));
+            query.addCriteria(Criteria.where("userid").is(overduePersonnelListVoList.get(i).getPersonnelid()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
         }
