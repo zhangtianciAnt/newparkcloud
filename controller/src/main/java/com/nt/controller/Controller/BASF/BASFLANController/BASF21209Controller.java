@@ -115,4 +115,9 @@ public class BASF21209Controller {
         return ApiResult.success(startprogramServices.selectbyuserid(userid,selecttype));
     }
 
+    //未来三个月培训信息
+    @RequestMapping(value = "/getFutureProgram", method = {RequestMethod.POST})
+    public ApiResult getFutureProgram(HttpServletRequest request) throws Exception {
+        return ApiResult.success(startprogramServices.getFutureProgram());
+    }
 }

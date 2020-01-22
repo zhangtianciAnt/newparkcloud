@@ -158,4 +158,12 @@ public class StartprogramServicesImpl implements StartprogramServices {
         return tdpvo;
     }
 
+    //未来三个月培训信息
+    @Override
+    public List<Startprogram> getFutureProgram() throws Exception {
+        return startprogramMapper.getFutureProgram();
+    }
+
+
+
 }

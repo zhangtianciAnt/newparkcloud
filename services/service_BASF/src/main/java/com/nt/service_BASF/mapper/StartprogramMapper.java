@@ -31,4 +31,7 @@ public interface StartprogramMapper extends MyMapper<Startprogram> {
     //获取培训教育人员详细
     List<TrainEducationPerVo>getTrainEducationPerInfo();
 
+    //获取未来三个月培训信息
+    List<Startprogram> getFutureProgram();
+
 }

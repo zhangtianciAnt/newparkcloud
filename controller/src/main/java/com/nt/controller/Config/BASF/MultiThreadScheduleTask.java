@@ -221,5 +221,13 @@ public class MultiThreadScheduleTask {
         webSocketVo.setOverduePersonnelListVoList(trainjoinlistServices.overduepersonnellist());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetFutureProgram() throws Exception {
+        //获取未来三个月培训信息
+        webSocketVo.setFutureProgramList(startprogramServices.getFutureProgram());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
     // endregion
 }

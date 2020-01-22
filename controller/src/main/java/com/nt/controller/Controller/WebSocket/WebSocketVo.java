@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.WebSocket;
 
+import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import lombok.AllArgsConstructor;
@@ -67,5 +68,7 @@ public class WebSocketVo {
     private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();
     //获取培训即将到期人员列表
     private List<OverduePersonnelListVo> overduePersonnelListVoList = new ArrayList<>();
+    //获取未来三个月培训信息
+    private List<Startprogram> futureProgramList = new ArrayList<>();
     // endregion
 }

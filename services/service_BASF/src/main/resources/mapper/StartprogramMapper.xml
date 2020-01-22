@@ -41,7 +41,7 @@
         select * from startprogram
         where
         startprogramid in (
-        select startprogramid from  trainjoinlist
+        select startprogramid from trainjoinlist
         where
         personnelid = #{userid}
         and
@@ -107,5 +107,21 @@ left join startprogram sp
 on tj.startprogramid = sp.startprogramid
     </select>
 
-
+    <!--    未来三个月培训信息-->
+    <select id="getFutureProgram" resultType="com.nt.dao_BASF.Startprogram">
+        SELECT
+        s.programname,
+        s.expirationdate,
+        s.insideoutside,
+        s.isonline
+        FROM
+        startprogram AS s
+        WHERE
+        s.`STATUS` = '0'
+        AND s.programtype = 'BC039001'
+        AND DATEDIFF(
+        s.expirationdate,
+        CURRENT_DATE ()) >= 0
+        AND DATEDIFF( s.expirationdate, date_add( CURRENT_DATE (), INTERVAL 3 MONTH ) )&lt;= 0
+    </select>
 </mapper>
