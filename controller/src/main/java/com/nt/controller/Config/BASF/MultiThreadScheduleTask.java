@@ -5,6 +5,7 @@ import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.StartprogramServices;
+import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,10 @@ public class MultiThreadScheduleTask {
     @Autowired
     @SuppressWarnings("all")
     StartprogramServices startprogramServices;
+
+    @Autowired
+    @SuppressWarnings("all")
+    TrainjoinlistServices trainjoinlistServices;
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
@@ -206,6 +211,14 @@ public class MultiThreadScheduleTask {
     public void BASF90800_GetTrainEducationPerInfo() throws Exception {
         // 获取培训教育人员详细
         webSocketVo.setTrainEducationPerList(startprogramServices.getTrainEducationPerInfo());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetOverduePersonnelList() throws Exception {
+        //获取培训到期人员列表
+        webSocketVo.setOverduePersonnelListVoList(trainjoinlistServices.overduepersonnellist());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion

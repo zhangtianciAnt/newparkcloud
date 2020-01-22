@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -45,4 +46,7 @@ public interface TrainjoinlistServices {
 
     //excel文档导入
     List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
+    //复训/到期人员列表（前端培训教育大屏用）
+    List<OverduePersonnelListVo> overduepersonnellist() throws Exception;
 }

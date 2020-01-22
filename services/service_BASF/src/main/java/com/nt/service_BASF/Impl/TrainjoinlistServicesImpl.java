@@ -3,7 +3,9 @@ package com.nt.service_BASF.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.LogicalException;
@@ -11,6 +13,9 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -37,6 +42,9 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
 
     @Autowired
     private TrainjoinlistMapper trainjoinlistMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     //添加培训人员名单
     @Override
@@ -253,5 +261,20 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         }
     }
 
+    //复训/到期人员列表（前端培训教育大屏用）
+    @Override
+    public List<OverduePersonnelListVo> overduepersonnellist() throws Exception {
+        List<OverduePersonnelListVo> overduePersonnelListVoList = trainjoinlistMapper.OverduePersonnelList();
+        for (int i = 0; i < overduePersonnelListVoList.size(); i++) {
+            //填充过期日期
+            overduePersonnelListVoList.get(i).setDueDate(new java.sql.Date(overduePersonnelListVoList.get(i).getActualstartdate().getTime() + 86400000L * 30 * (Integer.valueOf(overduePersonnelListVoList.get(i).getValidity()).intValue())));
+            //填充姓名
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(overduePersonnelListVoList.get(i).getCustomername()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+        }
+        return overduePersonnelListVoList;
+    }
 
 }

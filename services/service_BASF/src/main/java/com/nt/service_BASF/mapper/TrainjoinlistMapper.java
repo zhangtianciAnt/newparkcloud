@@ -2,8 +2,11 @@ package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.Emergencytemplate;
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.utils.MyMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -16,4 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Component(value = "TrainjoinlistMapper")
 public interface TrainjoinlistMapper extends MyMapper<Trainjoinlist> {
+
+    List<OverduePersonnelListVo> OverduePersonnelList();
+
 }

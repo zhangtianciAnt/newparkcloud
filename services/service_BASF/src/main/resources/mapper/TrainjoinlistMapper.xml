@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.TrainjoinlistMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Trainjoinlist">
+        <id column="trainjoinlistid" property="trainjoinlistid" jdbcType="VARCHAR"/>
+        <result column="startprogramid" property="startprogramid" jdbcType="VARCHAR"/>
+        <result column="personnelid" property="personnelid" jdbcType="VARCHAR"/>
+        <result column="departmentname" property="departmentname" jdbcType="VARCHAR"/>
+        <result column="customername" property="customername" jdbcType="VARCHAR"/>
+        <result column="documentnumber" property="documentnumber" jdbcType="VARCHAR"/>
+        <result column="idnumber" property="idnumber" jdbcType="VARCHAR"/>
+        <result column="jointype" property="jointype" jdbcType="VARCHAR"/>
+        <result column="performance" property="performance" jdbcType="VARCHAR"/>
+        <result column="throughtype" property="throughtype" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
+        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="OverduePersonnelList" resultType="com.nt.dao_BASF.VO.OverduePersonnelListVo">
+        SELECT
+        t.trainjoinlistid,
+        t.personnelid,
+        t.customername,
+        s.programname,
+        s.actualstartdate,
+        s.validity
+        FROM
+        trainjoinlist AS t
+        INNER JOIN startprogram AS s ON t.startprogramid = s.startprogramid
+        WHERE
+        t.startprogramid IN (
+        SELECT
+        s.startprogramid
+        FROM
+        startprogram AS s
+        WHERE
+        DATEDIFF(
+        date_add( s.actualstartdate, INTERVAL validity MONTH ),
+        CURRENT_DATE ()) &lt;= 30
+        AND DATEDIFF( date_add( s.actualstartdate, INTERVAL validity MONTH ), CURRENT_DATE () )> 0
+        )
+        AND s.validity &lt;> '0'
+        AND t.`STATUS` = '0'
+        AND s.programtype = 'BC039004'
+        ORDER BY
+        t.personnelid ASC
+    </select>
+</mapper>
