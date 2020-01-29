@@ -25,4 +25,26 @@
                  TYPEASSETS = #{Asstype}
             ) TMP
     </select>
+
+    <select id="selectList4Show" parameterType="com.nt.dao_Assets.Assets" resultType="com.nt.dao_Assets.Vo.Assets4ShowVo">
+        SELECT
+          assets_id,
+          filename,
+          typeassets,
+          principal,
+          barcode,
+          bartype,
+          assetstatus,
+          stockstatus
+        FROM
+          assets
+        where
+          1=1
+        <if test="owners != null and owners.size() > 0 ">
+            AND OWNER in
+            <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
+        　　　　#{item}
+        　　</foreach>
+        </if>
+    </select>
 </mapper>
