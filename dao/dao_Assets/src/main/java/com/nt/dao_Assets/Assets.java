@@ -321,4 +321,10 @@ public class Assets extends BaseModel {
      */
     @Column(name = "OUTPARAMS14")
     private String outparams14;
+
+    /**
+     * 客户
+     */
+    @Column(name = "customer")
+    private String customer;
 }
