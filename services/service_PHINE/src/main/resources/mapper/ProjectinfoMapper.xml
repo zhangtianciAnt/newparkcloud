@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_PHINE.mapper.ProjectinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Projectinfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="companyid" property="companyid" jdbcType="VARCHAR" />
+    <result column="projectid" property="projectid" jdbcType="VARCHAR" />
+    <result column="projectname" property="projectname" jdbcType="VARCHAR" />
+    <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="createon" property="createon" jdbcType="TIMESTAMP" />
+    <result column="createby" property="createby" jdbcType="VARCHAR" />
+    <result column="modifyon" property="modifyon" jdbcType="TIMESTAMP" />
+    <result column="modifyby" property="modifyby" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
+    <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
+    <result column="projectdescription" property="projectdescription" jdbcType="LONGVARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
+  </resultMap>
+</mapper>

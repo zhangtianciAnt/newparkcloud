@@ -11,5 +11,43 @@
 
     <artifactId>service_PHINE</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>dao_PHINE</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <configuration>
+                    <configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <verbose>true</verbose>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.44</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>tk.mybatis</groupId>
+                        <artifactId>mapper-spring-boot-starter</artifactId>
+                        <version>1.1.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.nt</groupId>
+                        <artifactId>utils</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 </project>
