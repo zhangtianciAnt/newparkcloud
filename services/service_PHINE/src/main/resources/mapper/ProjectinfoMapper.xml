@@ -21,4 +21,33 @@
     <result column="projectdescription" property="projectdescription" jdbcType="LONGVARCHAR" />
     <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
   </resultMap>
+  <select id="getProjectInfoList" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
+    SELECT
+      a.id,
+      a.projectname,
+      a.createby,
+      COUNT(b.id) as usercnt,
+      COUNT(c.id) as devicecnt,
+      COUNT(DISTINCT(d.deviceid)) as errorcnt
+    FROM
+      projectinfo a
+    LEFT JOIN
+      project2user b
+    ON
+      a.id = b.projectid
+    LEFT JOIN
+      project2device c
+    ON
+      a.id = c.projectid
+    LEFT JOIN
+      devicestatus d
+    ON
+      c.deviceid = d.deviceid
+    AND
+      d.status = '0'
+    GROUP BY
+      a.id,
+      a.projectname,
+      a.createby
+  </select>
 </mapper>
