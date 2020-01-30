@@ -71,7 +71,10 @@ public abstract class BaseModel implements Serializable{
 	    if(StrUtil.isEmpty(this.owner)){
 			this.owner = tokenModel.getUserId();
 		}
-	    this.tenantid = tokenModel.getTenantId();
+	    if(StrUtil.isNotBlank(tokenModel.getTenantId())){
+
+			this.tenantid = tokenModel.getTenantId();
+		}
         this.status = AuthConstants.DEL_FLAG_NORMAL;
     }
 

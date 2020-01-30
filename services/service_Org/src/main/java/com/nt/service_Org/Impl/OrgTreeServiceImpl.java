@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -29,10 +30,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
      * @返回值：java.util.List<com.nt.dao_Org.OrgTree>
      */
     @Override
-    public OrgTree get(OrgTree orgTree) throws Exception {
+    public List<OrgTree> get(OrgTree orgTree) throws Exception {
         Query query = CustmizeQuery(orgTree);
-        orgTree = mongoTemplate.findOne(query, OrgTree.class);
-        return orgTree;
+        return mongoTemplate.find(query, OrgTree.class);
     }
 
     /**
@@ -46,6 +46,8 @@ public class OrgTreeServiceImpl implements OrgTreeService {
     @Override
     public void save(OrgTree orgTree) throws Exception {
         // 执行更新操作
+        orgTree.preInsert();
+        orgTree.setTenantid(UUID.randomUUID().toString());
         mongoTemplate.save(orgTree);
     }
 

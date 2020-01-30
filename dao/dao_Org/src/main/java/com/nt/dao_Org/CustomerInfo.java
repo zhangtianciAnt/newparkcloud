@@ -100,7 +100,7 @@ public class CustomerInfo extends BaseModel {
         /**
          * 公司
          */
-        private List<String> companyid;
+        private String companyid;
         /**
          * 部门
          */

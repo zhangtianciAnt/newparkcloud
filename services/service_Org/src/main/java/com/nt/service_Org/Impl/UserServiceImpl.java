@@ -204,8 +204,7 @@ public class UserServiceImpl implements UserService {
     public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
         Query query = new Query();
         if(StrUtil.isNotBlank(orgid)){
-            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
-                    Criteria.where("userinfo.groupid").is(orgid),Criteria.where("userinfo.teamid").is(orgid)));
+            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.companyid").is(orgid)));
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfos;
