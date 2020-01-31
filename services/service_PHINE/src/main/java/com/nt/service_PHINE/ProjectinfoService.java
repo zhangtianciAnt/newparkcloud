@@ -15,7 +15,6 @@ import java.util.List;
  * @CreateDate: 2020/1/30
  * @Version: 1.0
  */
-@Service
 public interface ProjectinfoService {
 
     // 平台项目画面获取项目列表

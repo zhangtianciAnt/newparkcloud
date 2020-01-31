@@ -5,6 +5,7 @@ import com.nt.dao_PHINE.Vo.ProjectListVo;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.service_PHINE.mapper.ProjectinfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * @CreateDate: 2020/1/30
  * @Version: 1.0
  */
+@Service
 public class ProjectinfoServiceImpl implements ProjectinfoService {
 
     @Autowired
