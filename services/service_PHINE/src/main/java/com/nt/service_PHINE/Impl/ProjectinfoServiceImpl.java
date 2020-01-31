@@ -34,4 +34,16 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     public List<ProjectListVo> getProjectInfoList(String ownerId) {
         return projectinfoMapper.getProjectInfoList();
     }
+
+    /**
+     * @Method saveProjectInfo
+     * @Author MYT
+     * @Description 创建项目模块
+     * @Date 2020/1/31 15:27
+     * @Param TODO:芯片类型未封装
+     **/
+    @Override
+    public void saveProjectInfo(Projectinfo projectinfo) {
+        projectinfoMapper.insert(projectinfo);
+    }
 }
