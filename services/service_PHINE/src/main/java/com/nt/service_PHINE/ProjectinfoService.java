@@ -1,8 +1,8 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Projectinfo;
+import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -22,4 +22,10 @@ public interface ProjectinfoService {
 
     // 创建项目信息
     void saveProjectInfo(Projectinfo projectinfo);
+
+    // 删除用户权限及管理设备信息
+    void delUserAuth(Projectinfo projectinfo);
+
+    // 获取设备信息列表
+    List<DeviceListVo> getDeviceList();
 }

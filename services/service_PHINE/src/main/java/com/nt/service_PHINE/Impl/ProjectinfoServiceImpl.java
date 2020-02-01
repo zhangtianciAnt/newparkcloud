@@ -1,8 +1,10 @@
 package com.nt.service_PHINE.Impl;
 
 import com.nt.dao_PHINE.Projectinfo;
+import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
 import com.nt.service_PHINE.ProjectinfoService;
+import com.nt.service_PHINE.mapper.DeviceinfoMapper;
 import com.nt.service_PHINE.mapper.ProjectinfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
 
     @Autowired
     private ProjectinfoMapper projectinfoMapper;
+
+    @Autowired
+    private DeviceinfoMapper deviceinfoMapper;
 
     /**
      * @return List<ProjectListVo>平台项目信息列表
@@ -47,5 +52,29 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     @Override
     public void saveProjectInfo(Projectinfo projectinfo) {
         projectinfoMapper.insert(projectinfo);
+    }
+
+    /**
+     * @Method delUserAuth
+     * @Author MYT
+     * @Description 删除用户权限及设备信息
+     * @Date 2020/1/31 15:27
+     * @Param TODO:
+     **/
+    @Override
+    public void delUserAuth(Projectinfo projectinfo) {
+
+    }
+
+    /**
+     * @Method getDeviceList
+     * @Author MYT
+     * @Description 获取设备列表信息
+     * @Date 2020/1/31 15:27
+     * @Param TODO:未传递登录用户的企业ID参数
+     **/
+    @Override
+    public List<DeviceListVo> getDeviceList() {
+        return deviceinfoMapper.getDeviceList();
     }
 }

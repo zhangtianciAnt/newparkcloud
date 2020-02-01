@@ -71,16 +71,15 @@ public class PHINE30000Controller {
     }
 
     /**
-     * @方法名：delUserAuth
-     * @描述：删除用户权限信息
+     * @方法名：getDeviceList
+     * @描述：获取设备列表信息
      * @创建日期：2020/1/31
      * @作者：MYT
-     * @参数：[projectinfo]
+     * @参数：[登录用户的企业ID]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/delUserAuth", method = {RequestMethod.POST})
-    public ApiResult delUserAuth(@RequestBody Projectinfo projectinfo) throws Exception {
-        projectinfoService.saveProjectInfo(projectinfo);
-        return ApiResult.success();
+    @RequestMapping(value = "/getDeviceList", method = {RequestMethod.GET})
+    public ApiResult getDeviceList() throws Exception {
+        return ApiResult.success(projectinfoService.getDeviceList());
     }
 }
