@@ -20,4 +20,7 @@
     <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
   </resultMap>
+  <select id="getDeviceInfoList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+    -- TODO : 查询设备列表
+  </select>
 </mapper>

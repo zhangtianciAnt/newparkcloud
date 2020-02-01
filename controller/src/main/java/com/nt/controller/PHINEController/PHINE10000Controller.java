@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Version: 1.0
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/PHINE10000")
 public class PHINE10000Controller {
 
     @Autowired
