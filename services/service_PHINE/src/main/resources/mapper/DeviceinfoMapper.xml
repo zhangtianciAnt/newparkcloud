@@ -20,19 +20,4 @@
     <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
   </resultMap>
-  <select id="getDeviceList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
-    SELECT
-      a.deviceid,
-      b.machineroomaddress,
-      count( c.boardid ) AS boardcnt
-    FROM
-      deviceinfo a
-    INNER JOIN
-      machineroominfo b ON a.machineroomid = b.machineroomid
-    LEFT JOIN
-      boardinfo c ON a.deviceid = c.deviceid
-    GROUP BY
-      a.deviceid,
-      b.machineroomaddress
-  </select>
 </mapper>

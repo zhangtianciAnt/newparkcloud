@@ -15,7 +15,7 @@ import java.util.List;
  * @ProjectName: newparkcloud
  * @Package: com.nt.service_PHINE.Impl
  * @ClassName: ProjectinfoServiceImpl
- * @Description: java类作用描述
+ * @Description: 项目信息实现类
  * @Author: SKAIXX
  * @CreateDate: 2020/1/30
  * @Version: 1.0
