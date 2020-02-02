@@ -4,6 +4,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.service_Org.UserService;
+import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.RequestUtils;
@@ -40,6 +41,10 @@ public class PHINE30000Controller {
 
     @Autowired
     private ProjectinfoService projectinfoService;
+
+    @Autowired
+    private DeviceinfoService deviceinfoService;
+
 
     /**
      * @方法名：saveProjectInfo
@@ -81,8 +86,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/getDeviceList", method = {RequestMethod.GET})
     public ApiResult getDeviceList(String companyid) throws Exception {
-        System.out.println(companyid);
-        return ApiResult.success(projectinfoService.getDeviceList());
+        return ApiResult.success(deviceinfoService.getDeviceList());
     }
 
     /**
@@ -94,8 +98,8 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/delUserAuth", method = {RequestMethod.POST})
-    public ApiResult delUserAuth(String companyid) throws Exception {
-        System.out.println(companyid);
-        return ApiResult.success(projectinfoService.getDeviceList());
+    public ApiResult delUserAuth(String userid) throws Exception {
+        projectinfoService.delUserAuth(userid);
+        return ApiResult.success();
     }
 }

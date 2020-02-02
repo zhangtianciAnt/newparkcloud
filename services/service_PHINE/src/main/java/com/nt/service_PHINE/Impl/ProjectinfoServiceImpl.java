@@ -62,19 +62,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Param TODO:
      **/
     @Override
-    public void delUserAuth(Projectinfo projectinfo) {
+    public void delUserAuth(String userid) {
 
-    }
-
-    /**
-     * @Method getDeviceList
-     * @Author MYT
-     * @Description 获取设备列表信息
-     * @Date 2020/1/31 15:27
-     * @Param TODO:未传递登录用户的企业ID参数
-     **/
-    @Override
-    public List<DeviceListVo> getDeviceList() {
-        return deviceinfoMapper.getDeviceInfoList();
     }
 }

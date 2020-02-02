@@ -52,4 +52,14 @@ public class DeviceListVo {
      * 设备状态
      */
     private String devicestatus;
+
+    /**
+     * 设备位置
+     */
+    private String machineroomaddress;
+
+    /**
+     * 资源单板数量
+     */
+    private int boardcnt;
 }

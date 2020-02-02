@@ -14,9 +14,11 @@ import java.util.List;
  * @CreateDate: 2020/1/30
  * @Version: 1.0
  */
-@Service
 public interface DeviceinfoService {
 
     // 设备一览画面获取设备列表
     List<DeviceListVo> getDeviceInfoList();
+
+    // 项目创建页面获取设备信息列表
+    List<DeviceListVo> getDeviceList();
 }

@@ -24,8 +24,5 @@ public interface ProjectinfoService {
     void saveProjectInfo(Projectinfo projectinfo);
 
     // 删除用户权限及管理设备信息
-    void delUserAuth(Projectinfo projectinfo);
-
-    // 获取设备信息列表
-    List<DeviceListVo> getDeviceList();
+    void delUserAuth(String userid);
 }
