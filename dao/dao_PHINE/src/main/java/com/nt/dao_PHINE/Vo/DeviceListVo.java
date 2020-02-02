@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_PHINE.Vo
  * @ClassName: DeviceListVo
- * @Description: 资源列表Vo
- * @Author: MYT
- * @CreateDate: 2020/1/31
+ * @Description: 设备列表Vo
+ * @Author: SKAIXX
+ * @CreateDate: 2020/2/1
  * @Version: 1.0
  */
 @Data
@@ -19,18 +19,37 @@ import lombok.NoArgsConstructor;
 public class DeviceListVo {
 
     /**
-     * 设备id
+     * 项目id
+     */
+    private String id;
+
+    /**
+     * 机房编号&机柜编号
+     */
+    private String machineroomid;
+
+    /**
+     * 机房名
+     */
+    private String machineroomname;
+
+    /**
+     * 设备编号
      */
     private String deviceid;
 
     /**
-     * 设备位置
+     * 设备类型
      */
-    private String machineroomaddress;
+    private String devicetype;
 
     /**
-     * 资源单板数量
+     * 所属公司
      */
-    private int boardcnt;
+    private String companyid;
 
+    /**
+     * 设备状态
+     */
+    private String devicestatus;
 }

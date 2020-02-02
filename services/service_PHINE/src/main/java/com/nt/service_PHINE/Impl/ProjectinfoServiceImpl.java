@@ -75,6 +75,6 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      **/
     @Override
     public List<DeviceListVo> getDeviceList() {
-        return deviceinfoMapper.getDeviceList();
+        return deviceinfoMapper.getDeviceInfoList();
     }
 }
