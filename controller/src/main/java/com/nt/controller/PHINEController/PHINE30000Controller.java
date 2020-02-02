@@ -64,7 +64,8 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getUserAuthList", method = {RequestMethod.GET})
-    public ApiResult getUserAuth(HttpServletRequest request) throws Exception {
+    public ApiResult getUserAuth(String companyid, HttpServletRequest request) throws Exception {
+        System.out.println(companyid);
         TokenModel tokenModel = tokenService.getToken(request);
         UserVo userVo = userService.getAccountCustomerById(tokenModel.getUserId());
         return ApiResult.success();
@@ -79,7 +80,22 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getDeviceList", method = {RequestMethod.GET})
-    public ApiResult getDeviceList() throws Exception {
+    public ApiResult getDeviceList(String companyid) throws Exception {
+        System.out.println(companyid);
+        return ApiResult.success(projectinfoService.getDeviceList());
+    }
+
+    /**
+     * @方法名：delUserAuth
+     * @描述：删除用户权限及设备信息
+     * @创建日期：2020/1/31
+     * @作者：MYT
+     * @参数：[登录用户的企业ID]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/delUserAuth", method = {RequestMethod.POST})
+    public ApiResult delUserAuth(String companyid) throws Exception {
+        System.out.println(companyid);
         return ApiResult.success(projectinfoService.getDeviceList());
     }
 }
