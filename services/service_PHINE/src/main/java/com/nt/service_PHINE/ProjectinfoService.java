@@ -25,4 +25,7 @@ public interface ProjectinfoService {
 
     // 删除用户权限及管理设备信息
     void delUserAuth(String userid);
+
+    // 查询projectid是否存在
+    boolean selectProjectIdExist(String projectid);
 }

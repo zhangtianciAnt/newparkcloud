@@ -1,10 +1,8 @@
 package com.nt.service_PHINE.Impl;
 
 import com.nt.dao_PHINE.Projectinfo;
-import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
 import com.nt.service_PHINE.ProjectinfoService;
-import com.nt.service_PHINE.mapper.DeviceinfoMapper;
 import com.nt.service_PHINE.mapper.ProjectinfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +24,6 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     @Autowired
     private ProjectinfoMapper projectinfoMapper;
 
-    @Autowired
-    private DeviceinfoMapper deviceinfoMapper;
-
     /**
      * @return List<ProjectListVo>平台项目信息列表
      * @Method getProjectInfoList
@@ -47,7 +42,8 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Author MYT
      * @Description 创建项目模块
      * @Date 2020/1/31 15:27
-     * @Param TODO:芯片类型未封装
+     * @Param projectinfo 页面输入信息
+     * TODO:芯片类型未封装
      **/
     @Override
     public void saveProjectInfo(Projectinfo projectinfo) {
@@ -59,10 +55,31 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Author MYT
      * @Description 删除用户权限及设备信息
      * @Date 2020/1/31 15:27
-     * @Param TODO:
+     * @Param userid 用户ID
+     * TODO:
      **/
     @Override
     public void delUserAuth(String userid) {
 
+    }
+
+    /**
+     * @return false:不存在;true:存在
+     * @Method selectProjectIdExist
+     * @Author MYT
+     * @Description 查询projectid是否存在
+     * @Date 2020/1/31 15:27
+     * @Param projectid 项目ID
+     **/
+    @Override
+    public boolean selectProjectIdExist(String projectid) {
+        Projectinfo projectinfo = new Projectinfo();
+        projectinfo.setProjectid(projectid);
+        List<Projectinfo> projectList = projectinfoMapper.select(projectinfo);
+        if(projectList == null || projectList.size() == 0){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
