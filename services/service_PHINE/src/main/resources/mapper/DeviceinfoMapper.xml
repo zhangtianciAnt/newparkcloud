@@ -35,4 +35,25 @@
       a.deviceid,
       b.machineroomaddress
   </select>
+
+  <select id="getDeviceInfoList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+    SELECT
+      a.id,
+      b.machineroomid,
+      b.machineroomname,
+      a.deviceid,
+      a.companyid,
+      c.devicestatus
+    FROM
+      deviceinfo a
+    INNER JOIN
+      machineroominfo b
+    ON
+      a.machineroomid = b.id
+    LEFT JOIN
+      devicestatus c
+    ON
+      c.deviceid = a.id
+  </select>
+
 </mapper>
