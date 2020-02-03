@@ -1,7 +1,6 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Vo.DeviceListVo;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

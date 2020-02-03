@@ -1,7 +1,6 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Projectinfo;
-import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
 
 import java.util.List;

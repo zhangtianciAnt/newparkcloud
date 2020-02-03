@@ -18,8 +18,8 @@ public class PHINE20000Controller {
     @Autowired
     private TokenService tokenService;
 
-    @Autowired
-    private OperationrecordService operationrecordService;
+//    @Autowired
+//    private OperationrecordService operationrecordService;
 
     @RequestMapping(value = "/getFileByVersion", method = {RequestMethod.GET})
     public ApiResult getFileByVersion(HttpServletRequest request, @RequestParam String version) throws Exception {
@@ -40,6 +40,7 @@ public class PHINE20000Controller {
         if (StringUtils.isEmpty(projectId)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(operationrecordService.getOperationrecordList(projectId));
+        return ApiResult.success(null);
+//        return ApiResult.success(operationrecordService.getOperationrecordList(projectId));
     }
 }
