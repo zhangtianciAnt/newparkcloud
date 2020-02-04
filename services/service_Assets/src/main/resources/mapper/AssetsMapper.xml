@@ -26,16 +26,9 @@
             ) TMP
     </select>
 
-    <select id="selectList4Show" parameterType="com.nt.dao_Assets.Assets" resultType="com.nt.dao_Assets.Vo.Assets4ShowVo">
+    <select id="selectList4Show" parameterType="com.nt.dao_Assets.Assets" resultType="com.nt.dao_Assets.Assets">
         SELECT
-          assets_id,
-          filename,
-          typeassets,
-          principal,
-          barcode,
-          bartype,
-          assetstatus,
-          stockstatus
+          *
         FROM
           assets
         where
