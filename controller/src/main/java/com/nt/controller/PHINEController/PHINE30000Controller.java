@@ -120,16 +120,32 @@ public class PHINE30000Controller {
     }
 
     /**
-     * @方法名：getDeviceList
-     * @描述：获取设备列表信息
+     * @方法名：getDeviceListByCompanyId
+     * @描述：根据企业ID获取设备列表信息
      * @创建日期：2020/1/31
      * @作者：MYT
-     * @参数：[登录用户的企业ID]
+     * @参数：[项目ID]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getDeviceList", method = {RequestMethod.GET})
-    public ApiResult getDeviceList(String companyid) throws Exception {
-        return ApiResult.success(deviceinfoService.getDeviceList());
+    @RequestMapping(value = "/getDeviceListByCompanyId", method = {RequestMethod.GET})
+    public ApiResult getDeviceListByCompanyId(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        UserVo userVo = userService.getAccountCustomerById(tokenModel.getUserId());
+        String companyid = userVo.getCustomerInfo().getUserinfo().getCompanyid();
+        return ApiResult.success(deviceinfoService.getDeviceListByCompanyId(companyid));
+    }
+
+    /**
+     * @方法名：getDeviceListByProjectId
+     * @描述：根据项目ID获取设备列表信息
+     * @创建日期：2020/1/31
+     * @作者：MYT
+     * @参数：[项目ID]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getDeviceListByProjectId", method = {RequestMethod.GET})
+    public ApiResult getDeviceListByProjectId(String projectid) throws Exception {
+        return ApiResult.success(deviceinfoService.getDeviceListByProjectId(projectid));
     }
 
     /**

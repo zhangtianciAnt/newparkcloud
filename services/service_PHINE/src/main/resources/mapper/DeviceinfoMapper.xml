@@ -20,22 +20,50 @@
     <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
   </resultMap>
-  <select id="getDeviceList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+  <select id="getDeviceListByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
     SELECT
       a.deviceid,
-      b.machineroomaddress,
-      count( c.boardid ) AS boardcnt
+      c.machineroomaddress,
+      d.boardid
     FROM
       deviceinfo a
     INNER JOIN
-      machineroominfo b ON a.machineroomid = b.machineroomid
+      project2device b
+    ON
+      a.deviceid = b.deviceid and b.projectid = #{projectid}
+    INNER JOIN
+      machineroominfo c
+    ON
+      a.machineroomid = c.machineroomid
     LEFT JOIN
-      boardinfo c ON a.deviceid = c.deviceid
+      boardinfo d
+    ON
+      a.deviceid = d.deviceid
+    ORDER BY
+      a.deviceid,
+      c.machineroomaddress,
+      d.boardid
+  </select>
+  <select id="getDeviceListByCompanyId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+    SELECT
+      a.deviceid,
+      c.machineroomaddress,
+      count( d.boardid ) AS boardcnt
+    FROM
+      deviceinfo a
+    INNER JOIN
+      machineroominfo c
+    ON
+      a.machineroomid = c.machineroomid
+    LEFT JOIN
+      boardinfo d
+    ON
+      a.deviceid = d.deviceid
+    WHERE a.companyid = #{companyid}
     GROUP BY
       a.deviceid,
-      b.machineroomaddress
+      c.machineroomaddress
   </select>
-
   <select id="getDeviceInfoList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
     SELECT
       a.id,

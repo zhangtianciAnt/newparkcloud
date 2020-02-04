@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_PHINE.Vo
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeviceListVo {
+public class DeviceListVo implements Comparable<DeviceListVo>{
 
     /**
      * 项目id
@@ -59,7 +61,24 @@ public class DeviceListVo {
     private String machineroomaddress;
 
     /**
+     * 资源单板ID
+     */
+    private String boardid;
+
+    /**
      * 资源单板数量
      */
-    private int boardcnt;
+    private String boardcnt;
+
+    /**
+     * 资源单板信息列表
+     */
+    private List<String> boardList;
+
+    @Override
+    public int compareTo(DeviceListVo deviceListVo) {
+        String deviceid1 = this.getDeviceid();
+        String deviceid2 = deviceListVo.getDeviceid();
+        return deviceid1.compareTo(deviceid2);
+    }
 }
