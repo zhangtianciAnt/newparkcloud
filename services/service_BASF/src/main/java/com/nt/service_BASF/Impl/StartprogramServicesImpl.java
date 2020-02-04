@@ -151,9 +151,12 @@ public class StartprogramServicesImpl implements StartprogramServices {
             query.addCriteria(Criteria.where("_id").is(userid));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
 
-            tdpvo.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
-            tdpvo.get(i).setDocumentnumber(customerInfo.getUserinfo().getDocumentnumber());
-            tdpvo.get(i).setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            if(customerInfo!=null)
+            {
+                tdpvo.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+                tdpvo.get(i).setDocumentnumber(customerInfo.getUserinfo().getDocumentnumber());
+                tdpvo.get(i).setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            }
         }
         return tdpvo;
     }
