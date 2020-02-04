@@ -138,8 +138,8 @@ public class AssetsServiceImpl implements AssetsService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             String[] qitazican = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,通関資料管理番号,型号,价格,HSコード,輸入日付,延期返却期限,備考,客户,管理番号,機材名称,INVOICEと一致性,設備写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考".split(",");
-            String[] gudingzichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,PC管理号,使用部门,购入时间,价格,帐面净值,型号,备注".split(",");
-            String[] buwaizichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,资产说明,序列号,启用日期,成本,标签号,型号,地点,PSDCD_借还情况,PSDCD_带出理由,PSDCD_期间,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认".split(",");
+            String[] gudingzichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,PC管理号,使用部门,部门代码,购入时间,价格,帐面净值,型号,备注".split(",");
+            String[] buwaizichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,资产说明,序列号,启用日期,成本,标签号,型号,地点,使用部门,部门代码,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认".split(",");
 
             List<Object> header = list.get(0);
             int typeLength = header.size();
@@ -212,16 +212,18 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     // 工号
+                    // todo 用户信息未导入，此段先注掉
                     if(!StringUtils.isEmpty(trim(value.get(2)))){
-                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(2).toString());
-                        if (customerInfo != null) {
-                            assets.setPrincipal(customerInfo.getUserid());
-                        }
-                        if (customerInfo == null) {
-                            error = error + 1;
-                            Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
-                            continue;
-                        }
+//                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(2).toString());
+//                        if (customerInfo != null) {
+//                            assets.setPrincipal(customerInfo.getUserid());
+//                        }
+//                        if (customerInfo == null) {
+//                            error = error + 1;
+//                            Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
+//                            continue;
+//                        }
+                        assets.setPrincipal(trim(value.get(2)));
                     }
 
                     // 条码类型
@@ -270,15 +272,15 @@ public class AssetsServiceImpl implements AssetsService {
                     // start by zy
                     if ("固定资产".equals(value.get(1).toString())) {
                         if (value.size() > 1) {
-                            int dateCheck = isDate(trim(value.get(9)));
+                            int dateCheck = isDate(trim(value.get(10)));
                             if ( dateCheck != 0 ) {
                                 Result.add(getDateErrMsg(dateCheck, lineNo));
                                 error = error + 1;
                                 continue;
                             }
                         }
-                        //PC管理号， 使用部门，购入时间，价格，帐面净值，型号，备注
-                        String[] gudingCols = "pcno,usedepartment,purchasetime,price,realprice,model,remarks".split(",");
+                        //PC管理号， 使用部门，部门代码，购入时间，价格，帐面净值，型号，备注
+                        String[] gudingCols = "pcno,usedepartment,departmentcode,purchasetime,price,realprice,model,remarks".split(",");
                         int start = 7;
                         setOrderedValues(start, assets, gudingCols, value);
                     }
@@ -293,10 +295,10 @@ public class AssetsServiceImpl implements AssetsService {
                                 continue;
                             }
                         }
-                        // 资产说明，序列号，启用日期，成本，标签号，型号，地点，
-                        // PSDCD_借还情况，PSDCD_带出理由，PSDCD_期间，PSDCD_对方单位，PSDCD_责任人，PSDCD_归还确认
-                        String[] buwaiCols = ("remarks,no,activitiondate,price,assetnumber,model,address," +
-                                "psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation").split(",");
+                        // 资产说明，序列号，启用日期，成本，标签号，型号，地点，使用部门，部门代码，
+                        // PSDCD_借还情况，PSDCD_带出理由，PSDCD_带出开始日，PSDCD_预计归还日，PSDCD_是否逾期，PSDCD_对方单位，PSDCD_责任人，PSDCD_归还确认
+                        String[] buwaiCols = ("remarks,no,activitiondate,price,assetnumber,model,address,usedepartment,departmentcode," +
+                                "psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation").split(",");
                         int start = 7;
                         setOrderedValues(start, assets, buwaiCols, value);
                     }
@@ -323,24 +325,25 @@ public class AssetsServiceImpl implements AssetsService {
 
 
                         // 輸出部門担当者, 現場担当者, 現場実施者, 現場担当者, 輸出部門担当者, 現場TL, 輸出部門TL
-                        int[] customerCols = {19, 22, 26, 31, 32, 35, 36};
-                        for ( int customerCol : customerCols ) {
-                            String val = trim(value.get(customerCol));
-                            if ( StringUtils.hasText(val) ) {
-                                CustomerInfo info = this.getCustomerInfo(val);
-                                if (info == null) {
-                                    error = error + 1;
-                                    Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
-                                    hasErr = true;
-                                    break;
-                                } else {
-                                    value.set(customerCol, info.getUserid());
-                                }
-                            }
-                        }
-                        if ( hasErr ) {
-                            continue;
-                        }
+                        // todo 用户信息未导入，此段先注掉
+//                        int[] customerCols = {19, 22, 26, 31, 32, 35, 36};
+//                        for ( int customerCol : customerCols ) {
+//                            String val = trim(value.get(customerCol));
+//                            if ( StringUtils.hasText(val) ) {
+//                                CustomerInfo info = this.getCustomerInfo(val);
+//                                if (info == null) {
+//                                    error = error + 1;
+//                                    Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
+//                                    hasErr = true;
+//                                    break;
+//                                } else {
+//                                    value.set(customerCol, info.getUserid());
+//                                }
+//                            }
+//                        }
+//                        if ( hasErr ) {
+//                            continue;
+//                        }
 
                         /**
                          * （7列 - 16列）通関資料管理番号,型号, 价格， HSコード，輸入日付，延期返却期限，备注，客户，管理番号，機材名称，
