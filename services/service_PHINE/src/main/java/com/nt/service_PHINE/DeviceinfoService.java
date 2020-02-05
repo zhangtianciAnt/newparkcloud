@@ -18,6 +18,9 @@ public interface DeviceinfoService {
     // 设备一览画面获取设备列表
     List<DeviceListVo> getDeviceInfoList();
 
-    // 项目创建页面获取设备信息列表
-    List<DeviceListVo> getDeviceList();
+    // 项目创建页面根据项目ID获取设备信息列表
+    List<DeviceListVo> getDeviceListByProjectId(String projectid);
+
+    // 项目创建页面根据企业ID获取设备信息列表
+    List<DeviceListVo> getDeviceListByCompanyId(String companyid);
 }
