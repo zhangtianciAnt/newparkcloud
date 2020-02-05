@@ -5,6 +5,7 @@ import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.service_Org.UserService;
+import com.nt.service_PHINE.ChipinfoService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.utils.ApiResult;
@@ -46,6 +47,21 @@ public class PHINE30000Controller {
     @Autowired
     private DeviceinfoService deviceinfoService;
 
+    @Autowired
+    private ChipinfoService chipinfoService;
+
+
+    /**
+     * @方法名：getChipTypeList
+     * @描述：获取芯片信息列表
+     * @创建日期：2020/2/4
+     * @作者：MYT
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getChipTypeList", method = {RequestMethod.GET})
+    public ApiResult getChipTypeList() throws Exception {
+        return ApiResult.success(chipinfoService.getChipTypeList());
+    }
 
     /**
      * @方法名：saveProjectInfo

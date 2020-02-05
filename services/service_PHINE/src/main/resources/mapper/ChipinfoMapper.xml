@@ -18,4 +18,11 @@
     <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
   </resultMap>
+  <select id="selectChipTypeList" resultType="com.nt.dao_PHINE.Vo.ChipinfoListVo">
+    SELECT
+      chipid,
+      chiptype
+    FROM
+      chipinfo
+  </select>
 </mapper>
