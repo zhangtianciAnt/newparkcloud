@@ -1,21 +1,37 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_PHINE.mapper.FilemarkMapper" >
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Filemark" >
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nt.service_PHINE.mapper.FilemarkMapper">
+  <resultMap id="BaseResultMap" type="com.nt.service_PHINE.model.Filemark">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="createon" property="createon" jdbcType="TIMESTAMP" />
-    <result column="createby" property="createby" jdbcType="VARCHAR" />
-    <result column="modifyon" property="modifyon" jdbcType="TIMESTAMP" />
-    <result column="modifyby" property="modifyby" jdbcType="VARCHAR" />
-    <result column="owner" property="owner" jdbcType="VARCHAR" />
-    <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
-    <result column="versiondescribtion" property="versiondescribtion" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="VARCHAR" />
-    <result column="fileid" property="fileid" jdbcType="VARCHAR" />
-    <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
+    <result column="createby" jdbcType="VARCHAR" property="createby" />
+    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
+    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
+    <result column="versiondescribtion" jdbcType="VARCHAR" property="versiondescribtion" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
+  </resultMap>
+  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Filemark">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
+    <result column="createby" jdbcType="VARCHAR" property="createby" />
+    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
+    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
+    <result column="versiondescribtion" jdbcType="VARCHAR" property="versiondescribtion" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="fileid" jdbcType="VARCHAR" property="fileid" />
+    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
   </resultMap>
 </mapper>
