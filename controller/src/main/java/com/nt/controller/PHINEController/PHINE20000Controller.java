@@ -25,8 +25,8 @@ public class PHINE20000Controller {
     @Autowired
     private ProjectinfoService projectinfoService;
 
-//    @Autowired
-//    private OperationrecordService operationrecordService;
+    @Autowired
+    private OperationrecordService operationrecordService;
 
     /**
      * @return
@@ -41,8 +41,7 @@ public class PHINE20000Controller {
         if (StringUtils.isEmpty(projectId)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(null);
-//        return ApiResult.success(operationrecordService.getOperationrecordList(projectId));
+        return ApiResult.success(operationrecordService.getOperationrecordList(projectId));
     }
 
     /**

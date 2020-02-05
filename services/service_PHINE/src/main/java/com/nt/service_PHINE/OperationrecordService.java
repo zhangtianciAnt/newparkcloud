@@ -1,6 +1,6 @@
 package com.nt.service_PHINE;
 
-import com.nt.dao_PHINE.Operationrecord;
+import com.nt.dao_PHINE.Vo.OperationRecordVo;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ import java.util.List;
 public interface OperationrecordService {
 
     // 项目管理画面获取操作记录列表
-    List<Operationrecord> getOperationrecordList(String projectId);
+    List<OperationRecordVo> getOperationrecordList(String projectId);
 }
