@@ -10,6 +10,8 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class PHINEFileServiceImpl implements PHINEFileService {
 
@@ -18,6 +20,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
 
     @Override
     public ApiResult saveFileInfo(TokenModel tokenModel, Fileinfo fileInfo) throws Exception {
+        fileInfo.setId(UUID.randomUUID().toString());
         fileInfo.preInsert(tokenModel);
         int result = fileinfoMapper.insert(fileInfo);
         if (result > 0) {
