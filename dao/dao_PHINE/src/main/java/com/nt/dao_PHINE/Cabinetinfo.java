@@ -1,5 +1,7 @@
 package com.nt.dao_PHINE;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "cabinetinfo")
-public class Cabinetinfo {
+public class Cabinetinfo extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
