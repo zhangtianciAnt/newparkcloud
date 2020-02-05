@@ -1,7 +1,10 @@
-package com.nt.service_PHINE.model;
+package com.nt.dao_PHINE;
 
 import com.nt.utils.dao.BaseModel;
-import javax.persistence.*;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 public class Filemark2file extends BaseModel {
     @Id

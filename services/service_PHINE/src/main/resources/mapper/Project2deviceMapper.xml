@@ -16,19 +16,5 @@
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
   </resultMap>
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Project2device">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
-    <result column="deviceid" jdbcType="VARCHAR" property="deviceid" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-  </resultMap>
+
 </mapper>

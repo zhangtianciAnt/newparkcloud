@@ -19,22 +19,5 @@
     <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
     <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
   </resultMap>
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Operationrecord">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="title" jdbcType="VARCHAR" property="title" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="operationresult" jdbcType="VARCHAR" property="operationresult" />
-    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
-  </resultMap>
+
 </mapper>

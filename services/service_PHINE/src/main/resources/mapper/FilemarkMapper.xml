@@ -17,21 +17,5 @@
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
   </resultMap>
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Filemark">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-    <result column="versiondescribtion" jdbcType="VARCHAR" property="versiondescribtion" />
-    <result column="version" jdbcType="VARCHAR" property="version" />
-    <result column="fileid" jdbcType="VARCHAR" property="fileid" />
-    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
-  </resultMap>
+
 </mapper>
