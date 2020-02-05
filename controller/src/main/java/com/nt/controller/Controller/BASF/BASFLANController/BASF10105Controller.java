@@ -1,8 +1,14 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.Firealarm;
+import com.nt.dao_BASF.ServerInfo;
 import com.nt.service_BASF.DeviceInformationServices;
+import com.nt.service_BASF.FirealarmServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -11,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -33,6 +43,13 @@ public class BASF10105Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private FirealarmServices firealarmServices;
+
+    // websocket消息推送
+    private WebSocket ws = new WebSocket();
+    private WebSocketVo webSocketVo = new WebSocketVo();
+
     /**
      * @param request
      * @Method list
@@ -45,6 +62,33 @@ public class BASF10105Controller {
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody Deviceinformation deviceinformation, HttpServletRequest request) throws Exception {
         return ApiResult.success(deviceinFormationServices.list(deviceinformation));
+    }
+
+
+    @RequestMapping(value = "/linkagelist", method = {RequestMethod.POST})
+    public ApiResult linkagelist(@RequestBody ServerInfo serverinfo, HttpServletRequest request) throws Exception {
+        Deviceinformation deviceinformation = new Deviceinformation();
+        deviceinformation.setFactoryname(serverinfo.getFactoryname());
+        deviceinformation.setLine(serverinfo.getLine());
+        deviceinformation.setRow(serverinfo.getRow());
+        List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
+        if(linkagelist.size() == 1)
+        {
+            // 接收机柜传过来的报警信息
+            webSocketVo.setDeviceinformationList(linkagelist);
+            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+
+            TokenModel tokenModel = tokenService.getToken(request);
+            Firealarm firealarm = new Firealarm();
+            String yyMMdd = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
+
+            firealarm.setAlarmpeo("系统管理员");
+            firealarm.setAlarmtimes(yyMMdd);
+            firealarm.setIndevice(linkagelist.get(0).getDevice());
+            firealarmServices.insert(firealarm,tokenModel);
+        }
+
+        return ApiResult.success();
     }
 
     /**

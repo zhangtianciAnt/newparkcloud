@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.WebSocket;
 
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
@@ -64,6 +65,10 @@ public class WebSocketVo {
     private List<PassingRateVo> passingRateList = new ArrayList<>();
     //培训教育 培训非强制通过率
     private List<PassingRateVo> passingIsRateList = new ArrayList<>();
+    //接收机柜传过来的报警信息
+    private List<Deviceinformation> deviceinformationList = new ArrayList<>();
+
+
     //获取培训教育人员详细
     private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();
     //获取培训即将到期人员列表

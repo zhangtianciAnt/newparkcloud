@@ -98,5 +98,21 @@ public class Deviceinformation extends BaseModel {
      */
     private String ip;
 
+    /**
+     * 总厂/分厂名称
+     */
+    private String factoryname;
+
+    /**
+     * 回路号/寄存器地址
+     */
+    private String line;
+
+    /**
+     * 设备地址/寄存器位
+     */
+    private String row;
+
+
 
 }
