@@ -22,7 +22,7 @@ public class PHINE20000Controller {
 //    private OperationrecordService operationrecordService;
 
     @RequestMapping(value = "/getFileByVersion", method = {RequestMethod.GET})
-    public ApiResult getFileByVersion(HttpServletRequest request, @RequestParam String version) throws Exception {
+    public ApiResult saveProjectFileConfig(HttpServletRequest request, @RequestParam String version) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return null;
     }
