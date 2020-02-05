@@ -1,9 +1,12 @@
 package com.nt.service_PHINE.Impl;
 
 import com.nt.dao_PHINE.Operationrecord;
+import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.OperationrecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +19,9 @@ import java.util.List;
  * @CreateDate: 2020/2/3
  * @Version: 1.0
  */
+
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class OperationrecordServiceImpl implements OperationrecordService {
 
     @Autowired
@@ -30,9 +36,7 @@ public class OperationrecordServiceImpl implements OperationrecordService {
      * @Param
      **/
     @Override
-    public List<Operationrecord> getOperationrecordList(String projectId) {
-        Operationrecord operationrecord = new Operationrecord();
-        operationrecord.setProjectid(projectId);
-        return operationrecordMapper.select(operationrecord);
+    public List<OperationRecordVo> getOperationrecordList(String projectId) {
+        return operationrecordMapper.getOperationrecordList(projectId);
     }
 }

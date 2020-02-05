@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.OperationrecordMapper">
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Boardinfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="title" jdbcType="VARCHAR" property="title" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="operationresult" jdbcType="VARCHAR" property="operationresult" />
-    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
-  </resultMap>
+
+  <select id="getOperationrecordList" resultType="com.nt.dao_PHINE.Vo.OperationRecordVo">
+    SELECT
+      record.id,
+      record.title,
+      record.content,
+      record.operationresult,
+      record.projectid,
+      record.createon,
+      record.createby,
+      detail.id,
+      detail.createon,
+      detail.createby,
+      detail.devicename,
+      detail.configurationtype,
+      detail.filename,
+      detail.operationresult
+    FROM
+      operationrecord record
+    LEFT JOIN
+      operationdetail detail
+    ON
+      record.id = detail.operationid
+    where record.id = #{projectId}
+  </select>
 
 </mapper>
