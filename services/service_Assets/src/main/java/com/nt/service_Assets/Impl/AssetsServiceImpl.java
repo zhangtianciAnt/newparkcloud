@@ -137,7 +137,7 @@ public class AssetsServiceImpl implements AssetsService {
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            String[] qitazican = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,通関資料管理番号,型号,价格,HSコード,輸入日付,延期返却期限,備考,客户,管理番号,機材名称,INVOICEと一致性,設備写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考".split(",");
+            String[] qitazican = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,通関資料管理番号,型号,价格,HSコード,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,設備写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考".split(",");
             String[] gudingzichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,PC管理号,使用部门,部门代码,购入时间,价格,帐面净值,型号,备注".split(",");
             String[] buwaizichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,资产说明,序列号,启用日期,成本,标签号,型号,地点,使用部门,部门代码,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认".split(",");
 
@@ -165,6 +165,10 @@ public class AssetsServiceImpl implements AssetsService {
                 throw new LogicalException("错误的标题。");
             }
 
+            Map<String, String> PA001Map = getDictionaryMap("PA001");
+            Map<String, String> PA002Map = getDictionaryMap("PA002");
+            Map<String, String> PA003Map = getDictionaryMap("PA003");
+            Map<String, String> PA004Map = getDictionaryMap("PA004");
 
             int successCount = 0;
             int error = 0;
@@ -196,15 +200,23 @@ public class AssetsServiceImpl implements AssetsService {
                     List<Dictionary> dicIds = new ArrayList<Dictionary>();
                     // 资产类型
                     if(!StringUtils.isEmpty(trim(value.get(1)))){
-                        List<Dictionary> diclist = dictionaryService.getForSelect("PA001");
-                        dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
-                        if (dicIds.size() > 0) {
-                            assets.setTypeassets(dicIds.get(0).getCode());
+                        String tValue = trim(value.get(1));
+                        if ( PA001Map.containsKey(tValue) ) {
+                            assets.setTypeassets(PA001Map.get(tValue));
                         } else {
                             error++;
                             Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
                             continue;
                         }
+//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA001");
+//                        dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
+//                        if (dicIds.size() > 0) {
+//                            assets.setTypeassets(dicIds.get(0).getCode());
+//                        } else {
+//                            error++;
+//                            Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
+//                            continue;
+//                        }
                     }else {
                         error++;
                         Result.add("模板第" + lineNo + "行的资产类型不能为空，导入失败");
@@ -228,15 +240,24 @@ public class AssetsServiceImpl implements AssetsService {
 
                     // 条码类型
                     if(!StringUtils.isEmpty(trim(value.get(4)))){
-                        List<Dictionary> diclist = dictionaryService.getForSelect("PA004");
-                        List<Dictionary> dicIds1 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(4).toString()))).collect(Collectors.toList());
-                        if (dicIds1.size() > 0) {
-                            assets.setBartype(dicIds1.get(0).getCode());
+                        String tValue = trim(value.get(4));
+                        if ( PA004Map.containsKey(tValue) ) {
+                            assets.setBartype(PA004Map.get(tValue));
                         } else {
                             error++;
                             Result.add("模板第" + lineNo + "行的条码类型没有找到，导入失败");
                             continue;
                         }
+
+//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA004");
+//                        List<Dictionary> dicIds1 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(4).toString()))).collect(Collectors.toList());
+//                        if (dicIds1.size() > 0) {
+//                            assets.setBartype(dicIds1.get(0).getCode());
+//                        } else {
+//                            error++;
+//                            Result.add("模板第" + lineNo + "行的条码类型没有找到，导入失败");
+//                            continue;
+//                        }
                     } else {
                         error++;
                         Result.add("模板第" + lineNo + "行的条码类型不能为空，导入失败");
@@ -245,28 +266,46 @@ public class AssetsServiceImpl implements AssetsService {
 
                     // 资产状态
                     if(!StringUtils.isEmpty(trim(value.get(5)))){
-                        List<Dictionary> diclist = dictionaryService.getForSelect("PA003");
-                        List<Dictionary> dicIds2 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(5).toString()))).collect(Collectors.toList());
-                        if (dicIds2.size() > 0) {
-                            assets.setAssetstatus(dicIds2.get(0).getCode());
+                        String tValue = trim(value.get(5));
+                        if ( PA003Map.containsKey(tValue) ) {
+                            assets.setAssetstatus(PA003Map.get(tValue));
                         } else {
                             error++;
                             Result.add("模板第" + lineNo + "行的资产状态没有找到，导入失败");
                             continue;
                         }
+
+//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA003");
+//                        List<Dictionary> dicIds2 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(5).toString()))).collect(Collectors.toList());
+//                        if (dicIds2.size() > 0) {
+//                            assets.setAssetstatus(dicIds2.get(0).getCode());
+//                        } else {
+//                            error++;
+//                            Result.add("模板第" + lineNo + "行的资产状态没有找到，导入失败");
+//                            continue;
+//                        }
                     }
 
                     // 在库状态
                     if(!StringUtils.isEmpty(trim(value.get(6)))){
-                        List<Dictionary> diclist = dictionaryService.getForSelect("PA002");
-                        List<Dictionary> dicIds3 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
-                        if (dicIds3.size() > 0) {
-                            assets.setStockstatus(dicIds3.get(0).getCode());
+                        String tValue = trim(value.get(6));
+                        if ( PA002Map.containsKey(tValue) ) {
+                            assets.setStockstatus(PA002Map.get(tValue));
                         } else {
                             error++;
                             Result.add("模板第" + lineNo + "行的在库状态没有找到，导入失败");
                             continue;
                         }
+
+//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA002");
+//                        List<Dictionary> dicIds3 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
+//                        if (dicIds3.size() > 0) {
+//                            assets.setStockstatus(dicIds3.get(0).getCode());
+//                        } else {
+//                            error++;
+//                            Result.add("模板第" + lineNo + "行的在库状态没有找到，导入失败");
+//                            continue;
+//                        }
                     }
 
                     // start by zy
@@ -295,8 +334,11 @@ public class AssetsServiceImpl implements AssetsService {
                                 continue;
                             }
                         }
-                        // 资产说明，序列号，启用日期，成本，标签号，型号，地点，使用部门，部门代码，
-                        // PSDCD_借还情况，PSDCD_带出理由，PSDCD_带出开始日，PSDCD_预计归还日，PSDCD_是否逾期，PSDCD_对方单位，PSDCD_责任人，PSDCD_归还确认
+                        // 是否处理 否->0  是->1
+                        value.set(20, convertToOne(value.get(20)));
+
+                        // (7-15)资产说明，序列号，启用日期，成本，标签号，型号，地点，使用部门，部门代码，
+                        // (16-23)PSDCD_借还情况，PSDCD_带出理由，PSDCD_带出开始日，PSDCD_预计归还日，PSDCD_是否逾期，PSDCD_对方单位，PSDCD_责任人，PSDCD_归还确认
                         String[] buwaiCols = ("remarks,no,activitiondate,price,assetnumber,model,address,usedepartment,departmentcode," +
                                 "psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation").split(",");
                         int start = 7;
@@ -345,11 +387,17 @@ public class AssetsServiceImpl implements AssetsService {
 //                            continue;
 //                        }
 
+                        // 是否处理 否->0  是->1
+                        int[] iTrueCols = {17, 18, 21, 28, 29, 30, 34};
+                        for ( int col : iTrueCols ) {
+                            value.set(col, convertToOne(value.get(col)));
+                        }
+
                         /**
                          * （7列 - 16列）通関資料管理番号,型号, 价格， HSコード，輸入日付，延期返却期限，备注，客户，管理番号，機材名称，
                          * (17列 - 24列)： INVOICEと一致性, 設備写真あるか, 輸出部門担当者,実施日, 动作状况, 現場担当者, 実施日，備考
                          * ------- 以下列用for循环添加 ----------（outparams1..14）
-                         * （25列 - 33列）INVOICEとの一致性，入荷写真との一致性，梱包状況，現場担当者，入荷写真との一致性，梱包状況，現場担当者，輸出部門担当者，実施日
+                         * （25列 - 33列）動作状況	,現場実施者,実施日,INVOICEとの一致性，入荷写真との一致性，梱包状況，現場担当者，輸出部門担当者，実施日
                          * （34列 - 38列）最終確認，現場TL，輸出部門TL，実施日，備考
                          *
                          */
@@ -435,6 +483,7 @@ public class AssetsServiceImpl implements AssetsService {
         }
     }
 
+
     private String trim(Object o) {
         if ( o==null ) {
             return null;
@@ -450,10 +499,33 @@ public class AssetsServiceImpl implements AssetsService {
         return customerInfo;
     }
 
+    /**
+     * 是否处理 否->0  是->1
+     * @param o
+     * @return
+     *  o==是 || o==1 return 1
+     */
+    private String convertToOne(Object o) {
+        String s = o!=null ? o.toString().trim() : "";
+        if ("是".equals(s) || "1".equals(s)) {
+            return "1";
+        }
+        return "0";
+    }
+
+    private Map<String, String> getDictionaryMap(String code) throws Exception {
+        List<Dictionary> diclist = dictionaryService.getForSelect(code);
+        Map<String, String> result = new HashMap<>();
+        for (Dictionary d : diclist) {
+            result.put(d.getValue1(), d.getCode());
+        }
+        return result;
+    }
+
+
     @Override
     public List<Assets> getAssetsnameList(Assets assets, HttpServletRequest request) throws Exception {
         return assetsMapper.select(assets);
     }
-
 
 }
