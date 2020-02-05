@@ -21,12 +21,6 @@ public class PHINE20000Controller {
 //    @Autowired
 //    private OperationrecordService operationrecordService;
 
-    @RequestMapping(value = "/getFileByVersion", method = {RequestMethod.GET})
-    public ApiResult getFileByVersion(HttpServletRequest request, @RequestParam String version) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return null;
-    }
-
     /**
      * @return
      * @Method getOperationrecordList

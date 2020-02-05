@@ -5,6 +5,7 @@ import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.service_Org.UserService;
+import com.nt.service_PHINE.ChipinfoService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.utils.ApiResult;
@@ -46,6 +47,21 @@ public class PHINE30000Controller {
     @Autowired
     private DeviceinfoService deviceinfoService;
 
+    @Autowired
+    private ChipinfoService chipinfoService;
+
+
+    /**
+     * @方法名：getChipTypeList
+     * @描述：获取芯片信息列表
+     * @创建日期：2020/2/4
+     * @作者：MYT
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getChipTypeList", method = {RequestMethod.GET})
+    public ApiResult getChipTypeList() throws Exception {
+        return ApiResult.success(chipinfoService.getChipTypeList());
+    }
 
     /**
      * @方法名：saveProjectInfo
@@ -120,16 +136,32 @@ public class PHINE30000Controller {
     }
 
     /**
-     * @方法名：getDeviceList
-     * @描述：获取设备列表信息
+     * @方法名：getDeviceListByCompanyId
+     * @描述：根据企业ID获取设备列表信息
      * @创建日期：2020/1/31
      * @作者：MYT
-     * @参数：[登录用户的企业ID]
+     * @参数：[项目ID]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/getDeviceList", method = {RequestMethod.GET})
-    public ApiResult getDeviceList(String companyid) throws Exception {
-        return ApiResult.success(deviceinfoService.getDeviceList());
+    @RequestMapping(value = "/getDeviceListByCompanyId", method = {RequestMethod.GET})
+    public ApiResult getDeviceListByCompanyId(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        UserVo userVo = userService.getAccountCustomerById(tokenModel.getUserId());
+        String companyid = userVo.getCustomerInfo().getUserinfo().getCompanyid();
+        return ApiResult.success(deviceinfoService.getDeviceListByCompanyId(companyid));
+    }
+
+    /**
+     * @方法名：getDeviceListByProjectId
+     * @描述：根据项目ID获取设备列表信息
+     * @创建日期：2020/1/31
+     * @作者：MYT
+     * @参数：[项目ID]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getDeviceListByProjectId", method = {RequestMethod.GET})
+    public ApiResult getDeviceListByProjectId(String projectid) throws Exception {
+        return ApiResult.success(deviceinfoService.getDeviceListByProjectId(projectid));
     }
 
     /**
