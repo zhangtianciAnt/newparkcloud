@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.BoardinfoMapper">
-  <resultMap id="BaseResultMap" type="com.nt.service_PHINE.model.Boardinfo">
+  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Boardinfo">
     <!--
       WARNING - @mbg.generated
     -->
