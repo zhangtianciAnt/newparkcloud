@@ -30,9 +30,9 @@ public class Deviceinfo extends BaseModel {
     private String devicetype;
 
     /**
-     * 所属机房编号
+     * 所属机柜编号
      */
-    private String machineroomid;
+    private String cabinetid;
 
     private String currentuser;
 
