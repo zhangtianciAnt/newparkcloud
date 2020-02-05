@@ -144,10 +144,7 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getDeviceListByCompanyId", method = {RequestMethod.GET})
-    public ApiResult getDeviceListByCompanyId(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        UserVo userVo = userService.getAccountCustomerById(tokenModel.getUserId());
-        String companyid = userVo.getCustomerInfo().getUserinfo().getCompanyid();
+    public ApiResult getDeviceListByCompanyId(String companyid) throws Exception {
         return ApiResult.success(deviceinfoService.getDeviceListByCompanyId(companyid));
     }
 

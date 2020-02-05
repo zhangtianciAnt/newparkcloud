@@ -1,6 +1,8 @@
 package com.nt.service_PHINE;
 
+import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Projectinfo;
+import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
 
 import java.util.List;
@@ -27,4 +29,7 @@ public interface ProjectinfoService {
 
     // 查询projectid是否存在
     boolean selectProjectIdExist(String projectid);
+
+    // 平台项目管理画面根据项目ID获取设备列表
+    List<DeviceListVo> getDeviceIdByProjectId(String projectid);
 }

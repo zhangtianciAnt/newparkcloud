@@ -75,6 +75,11 @@ public class DeviceListVo implements Comparable<DeviceListVo>{
      */
     private List<String> boardList;
 
+    /**
+     * 设备编号List
+     */
+    private List<String> deviceidList;
+
     @Override
     public int compareTo(DeviceListVo deviceListVo) {
         String deviceid1 = this.getDeviceid();

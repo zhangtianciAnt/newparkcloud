@@ -16,5 +16,11 @@
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
   </resultMap>
-
+  <select id="getDeviceIdByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+    SELECT
+      deviceid
+    FROM
+      project2device
+    WHERE projectid = #{projectid}
+  </select>
 </mapper>

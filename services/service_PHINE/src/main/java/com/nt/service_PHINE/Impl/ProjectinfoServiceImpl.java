@@ -1,8 +1,10 @@
 package com.nt.service_PHINE.Impl;
 
 import com.nt.dao_PHINE.Projectinfo;
+import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
 import com.nt.service_PHINE.ProjectinfoService;
+import com.nt.service_PHINE.mapper.Project2deviceMapper;
 import com.nt.service_PHINE.mapper.ProjectinfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
 
     @Autowired
     private ProjectinfoMapper projectinfoMapper;
+
+    @Autowired
+    private Project2deviceMapper project2deviceMapper;
 
     /**
      * @return List<ProjectListVo>平台项目信息列表
@@ -81,5 +86,18 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         }else{
             return true;
         }
+    }
+
+    /**
+     * @return List<DeviceListVo> 设备ID列表
+     * @Method getDeviceIdByProjectId
+     * @Author MYT
+     * @Description 根据项目ID查询设备ID列表
+     * @Date 2020/1/31 15:27
+     * @Param projectid 项目ID
+     **/
+    @Override
+    public List<DeviceListVo> getDeviceIdByProjectId(String projectid) {
+        return project2deviceMapper.getDeviceIdByProjectId(projectid);
     }
 }
