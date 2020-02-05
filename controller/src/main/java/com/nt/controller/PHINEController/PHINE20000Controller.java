@@ -21,8 +21,8 @@ public class PHINE20000Controller {
 //    @Autowired
 //    private OperationrecordService operationrecordService;
 
-    @RequestMapping(value = "/getFileByVersion", method = {RequestMethod.GET})
-    public ApiResult saveProjectFileConfig(HttpServletRequest request, @RequestParam String version) throws Exception {
+    @RequestMapping(value = "/saveFileUrl", method = {RequestMethod.GET})
+    public ApiResult saveFileUrl(HttpServletRequest request, @RequestParam String version) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return null;
     }
