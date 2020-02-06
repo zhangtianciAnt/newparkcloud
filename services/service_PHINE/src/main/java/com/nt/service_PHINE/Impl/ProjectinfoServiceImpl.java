@@ -1,13 +1,16 @@
 package com.nt.service_PHINE.Impl;
 
+import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.service_PHINE.mapper.Project2deviceMapper;
 import com.nt.service_PHINE.mapper.ProjectinfoMapper;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 import java.util.List;
 
@@ -48,11 +51,42 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Description 创建项目模块
      * @Date 2020/1/31 15:27
      * @Param projectinfo 页面输入信息
-     * TODO:芯片类型未封装
+     * TODO:芯片类型未封装,主键ID不知具体插入什么数据，暂时插入UUID
      **/
     @Override
-    public void saveProjectInfo(Projectinfo projectinfo) {
+    public void saveProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
+        projectinfo.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+        projectinfo.setCreateby(tokenModel.getUserId());
+        projectinfo.setTenantid(tokenModel.getTenantId());
+        projectinfo.setCreateon(new java.sql.Date(System.currentTimeMillis()));
         projectinfoMapper.insert(projectinfo);
+    }
+
+    /**
+     * @Method saveProjectInfo
+     * @Author MYT
+     * @Description 创建项目模块
+     * @Date 2020/1/31 15:27
+     * @Param projectinfo 页面输入信息
+     * TODO:主键ID不知具体插入什么数据，暂时插入UUID
+     **/
+    @Override
+    public void saveResourcesInfo(TokenModel tokenModel, String projectid, String[] deviceidList) {
+//        // 删除关系表中既有数据
+////        Project2device delInfo = new Project2device();
+////        delInfo.setProjectid(projectid);
+////        project2deviceMapper.delete(delInfo);
+        // 插入新的数据
+        for (String deviceid : deviceidList) {
+            Project2device project2device = new Project2device();
+            project2device.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+            project2device.setDeviceid(deviceid);
+            project2device.setProjectid(projectid);
+            project2device.setCreateby(tokenModel.getUserId());
+            project2device.setTenantid(tokenModel.getTenantId());
+            project2device.setCreateon(new java.sql.Date(System.currentTimeMillis()));
+            project2deviceMapper.insert(project2device);
+        }
     }
 
     /**
@@ -81,11 +115,24 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         Projectinfo projectinfo = new Projectinfo();
         projectinfo.setProjectid(projectid);
         List<Projectinfo> projectList = projectinfoMapper.select(projectinfo);
-        if(projectList == null || projectList.size() == 0){
+        if (projectList == null || projectList.size() == 0) {
             return false;
-        }else{
+        } else {
             return true;
         }
+    }
+
+    /**
+     * @return ProjectListVo 项目信息
+     * @Method getDeviceIdByProjectId
+     * @Author MYT
+     * @Description 根据项目ID查询设备ID列表
+     * @Date 2020/1/31 15:27
+     * @Param projectid 项目ID
+     **/
+    @Override
+    public ProjectListVo getProjectInfo(String projectid) {
+        return projectinfoMapper.getProjectInfo(projectid);
     }
 
     /**
@@ -99,5 +146,20 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     @Override
     public List<DeviceListVo> getDeviceIdByProjectId(String projectid) {
         return project2deviceMapper.getDeviceIdByProjectId(projectid);
+    }
+
+    /**
+     * @Method updateProjectInfo
+     * @Author MYT
+     * @Description 根据项目ID更新项目信息
+     * @Date 2020/2/6 15:27
+     * @Param projectinfo 项目信息
+     **/
+    @Override
+    public void updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
+        projectinfo.setModifyby(tokenModel.getUserId());
+        projectinfo.setTenantid(tokenModel.getTenantId());
+        projectinfo.setModifyon(new java.sql.Date(System.currentTimeMillis()));
+        projectinfoMapper.updateProjectInfo(projectinfo);
     }
 }

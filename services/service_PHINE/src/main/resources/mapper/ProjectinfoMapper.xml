@@ -50,4 +50,17 @@
       a.projectname,
       a.createby
   </select>
+  <update id="updateProjectInfo" parameterType="com.nt.dao_PHINE.Projectinfo">
+    UPDATE projectinfo
+    SET projectname = #{projectname},
+        projectdescription = #{projectdescription},
+        modifyby = #{modifyby},
+        modifyon = #{modifyon}
+    WHERE projectid = #{projectid}
+  </update>
+  <select id="getProjectInfo" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
+    SELECT projectid,projectname,projectdescription
+    FROM projectinfo
+    WHERE projectid = #{projectid}
+  </select>
 </mapper>

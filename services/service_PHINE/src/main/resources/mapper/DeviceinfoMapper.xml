@@ -21,67 +21,76 @@
         <result column="remarks" property="remarks" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <select id="getDeviceListByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
-    SELECT
-      a.deviceid,
-      c.machineroomaddress,
-      d.boardid
-    FROM
-      deviceinfo a
-    INNER JOIN
-      project2device b
-    ON
-      a.deviceid = b.deviceid and b.projectid = #{projectid}
-    INNER JOIN
-      machineroominfo c
-    ON
-      a.cabinetid = c.cabinetid
-    LEFT JOIN
-      boardinfo d
-    ON
-      a.deviceid = d.deviceid
-    ORDER BY
-      a.deviceid,
-      c.machineroomaddress,
-      d.boardid
-  </select>
+        SELECT
+          a.deviceid,
+          d.machineroomaddress,
+          e.boardid
+        FROM
+          deviceinfo a
+        INNER JOIN
+          project2device b
+        ON
+          a.deviceid = b.deviceid and b.projectid = #{projectid}
+        INNER JOIN
+          cabinetinfo c
+        ON
+          a.cabinetid = c.cabinetid
+        INNER JOIN
+          machineroominfo d
+        ON
+          c.machineroomid = d.machineroomid
+        LEFT JOIN
+          boardinfo e
+        ON
+          a.deviceid = e.deviceid
+        ORDER BY
+          a.deviceid,
+          d.machineroomaddress,
+          e.boardid
+    </select>
     <select id="getDeviceListByCompanyId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
-    SELECT
-      a.deviceid,
-      c.machineroomaddress,
-      count( d.boardid ) AS boardcnt
-    FROM
-      deviceinfo a
-    INNER JOIN
-      machineroominfo c
-    ON
-      a.cabinetid = c.cabinetid
-    LEFT JOIN
-      boardinfo d
-    ON
-      a.deviceid = d.deviceid
-    WHERE a.companyid = #{companyid}
-    GROUP BY
-      a.deviceid,
-      c.machineroomaddress
-  </select>
+        SELECT
+          a.deviceid,
+          c.machineroomaddress,
+          count( d.boardid ) AS boardcnt
+        FROM
+          deviceinfo a
+		INNER JOIN
+          cabinetinfo b
+        ON
+          a.cabinetid = b.cabinetid
+        INNER JOIN
+          machineroominfo c
+        ON
+          b.machineroomid = c.machineroomid
+        LEFT JOIN
+          boardinfo d
+        ON
+          a.deviceid = d.deviceid
+        WHERE a.companyid = #{companyid}
+        AND a.deviceid NOT IN ( SELECT deviceid FROM project2device )
+        GROUP BY
+          a.deviceid,
+          c.machineroomaddress
+    </select>
     <select id="getDeviceInfoList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
-    SELECT
-      a.id,
-      b.cabinetid,
-      b.machineroomname,
-      a.deviceid,
-      a.companyid,
-      c.devicestatus
-    FROM
-      deviceinfo a
-    INNER JOIN
-      machineroominfo b
-    ON
-      a.cabinetid = b.id
-    LEFT JOIN
-      devicestatus c
-    ON
-      c.deviceid = a.id
-  </select>
+        SELECT
+          a.id,
+          b.cabinetid,
+          b.machineroomname,
+          a.deviceid,
+          a.companyid,
+          c.devicestatus
+        FROM
+          deviceinfo a
+        INNER JOIN
+          machineroominfo b
+        ON
+          a.cabinetid = b.id
+        LEFT JOIN
+          devicestatus c
+        ON
+          c.deviceid = a.id
+    </select>
 
 </mapper>

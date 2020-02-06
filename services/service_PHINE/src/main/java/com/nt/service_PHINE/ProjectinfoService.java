@@ -4,6 +4,7 @@ import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -22,7 +23,10 @@ public interface ProjectinfoService {
     List<ProjectListVo> getProjectInfoList(String ownerId);
 
     // 创建项目信息
-    void saveProjectInfo(Projectinfo projectinfo);
+    void saveProjectInfo(TokenModel tokenModel, Projectinfo projectinfo);
+
+    // 保存项目分配的设备信息
+    void saveResourcesInfo(TokenModel tokenModel, String projectid, String[] deviceidList);
 
     // 删除用户权限及管理设备信息
     void delUserAuth(String userid);
@@ -30,6 +34,12 @@ public interface ProjectinfoService {
     // 查询projectid是否存在
     boolean selectProjectIdExist(String projectid);
 
+    // 根据项目ID查询项目信息
+    ProjectListVo getProjectInfo(String projectid);
+
     // 平台项目管理画面根据项目ID获取设备列表
     List<DeviceListVo> getDeviceIdByProjectId(String projectid);
+
+    // 更新项目信息
+    void updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo);
 }
