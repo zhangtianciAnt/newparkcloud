@@ -7,7 +7,7 @@
         -->
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="cabinetid" jdbcType="VARCHAR" property="cabinetid"/>
-        <result column="machineroomname" jdbcType="VARCHAR" property="machineroomname"/>
+        <result column="cabinetname" jdbcType="VARCHAR" property="machineroomname"/>
         <result column="machineroomid" jdbcType="VARCHAR" property="machineroomid"/>
         <result column="remarks" jdbcType="LONGVARCHAR" property="remarks"/>
 

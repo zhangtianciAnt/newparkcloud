@@ -22,7 +22,7 @@ public class Cabinetinfo extends BaseModel {
 
     private String cabinetid;
 
-    private String machineroomname;
+    private String cabinetname;
 
     private String machineroomid;
 
