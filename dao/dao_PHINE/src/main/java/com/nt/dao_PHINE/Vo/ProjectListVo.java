@@ -47,4 +47,14 @@ public class ProjectListVo {
      * 创建者
      */
     private String createby;
+
+    /**
+     * 项目ID
+     */
+    private String projectid;;
+
+    /**
+     * 项目描述
+     */
+    private String projectdescription;
 }

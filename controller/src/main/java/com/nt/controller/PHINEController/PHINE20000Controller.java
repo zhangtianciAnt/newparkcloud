@@ -1,17 +1,16 @@
 package com.nt.controller.PHINEController;
 
+import com.nt.dao_PHINE.Operationdetail;
 import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
+import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -44,6 +43,24 @@ public class PHINE20000Controller {
         return ApiResult.success(operationrecordService.getOperationrecordList(projectId));
     }
 
+    /**
+     * @return
+     * @Method addOperationrecord
+     * @Author lxx
+     * @Description 创建操作记录列表
+     * @Date 2020/2/3 16:56
+     * @Param
+     **/
+    @RequestMapping(value = "/addOperationrecord", method = {RequestMethod.POST})
+    public ApiResult addOperationrecord(HttpServletRequest request, @RequestBody OperationRecordVo operation) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        operation.preInsert(tokenModel);
+        for(Operationdetail detail : operation.getDetailist()){
+            detail.preInsert(tokenModel);
+        }
+        operationrecordService.addOperationrecord(operation);
+        return ApiResult.success();
+    }
     /**
      * @return
      * @Method getDeviceIdByProjectId
