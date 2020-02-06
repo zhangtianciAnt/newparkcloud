@@ -1,14 +1,17 @@
 package com.nt.service_PHINE.Impl;
 
+import com.nt.dao_PHINE.Operationdetail;
 import com.nt.dao_PHINE.Operationrecord;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.OperationrecordMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @ProjectName: newparkcloud
@@ -38,5 +41,26 @@ public class OperationrecordServiceImpl implements OperationrecordService {
     @Override
     public List<OperationRecordVo> getOperationrecordList(String projectId) {
         return operationrecordMapper.getOperationrecordList(projectId);
+    }
+
+    /**
+     * @return
+     * @Method addOperationrecord
+     * @Author lxx
+     * @Description 创建操作记录
+     * @Date 2020/2/3 16:51
+     * @Param
+     **/
+    @Override
+    public void addOperationrecord(OperationRecordVo operation) {
+        Operationrecord operationrecord = new Operationrecord();
+        BeanUtils.copyProperties(operation, operationrecord);
+        operationrecord.setId(UUID.randomUUID().toString());
+        operationrecordMapper.insert(operationrecord);
+        for(Operationdetail detail : operation.getDetailist()){
+            detail.setId(UUID.randomUUID().toString());
+            detail.setOperationid(operationrecord.getId());
+        }
+        operationrecordMapper.insertdetaillist(operation.getDetailist());
     }
 }

@@ -4,6 +4,8 @@ import com.nt.dao_PHINE.Machineroominfo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
+import java.util.List;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.service_PHINE
@@ -23,4 +25,7 @@ public interface MachineroominfoService {
 
     // 删除机房信息
     ApiResult deleteMachineRoomInfo(Machineroominfo machineroominfo);
+
+    // 获取机房列表
+    List<Machineroominfo> getMachineroominfoList();
 }

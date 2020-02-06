@@ -9,6 +9,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,14 @@ public class MachineroominfoServiceImpl implements MachineroominfoService {
     @Autowired
     private MachineroominfoMapper machineroominfoMapper;
 
+    /**
+     * @return
+     * @Method saveMachineRoomInfo
+     * @Author SKAIXX
+     * @Description 创建机房信息
+     * @Date 2020/2/6 10:28
+     * @Param
+     **/
     @Override
     public ApiResult saveMachineRoomInfo(TokenModel tokenModel, Machineroominfo machineroominfo) {
         machineroominfo.setId(UUID.randomUUID().toString());
@@ -38,6 +47,14 @@ public class MachineroominfoServiceImpl implements MachineroominfoService {
         }
     }
 
+    /**
+     * @return
+     * @Method updateMachineRoomInfo
+     * @Author SKAIXX
+     * @Description 更新机房信息
+     * @Date 2020/2/6 10:28
+     * @Param
+     **/
     @Override
     public ApiResult updateMachineRoomInfo(TokenModel tokenModel, Machineroominfo machineroominfo) {
         machineroominfo.preUpdate(tokenModel);
@@ -49,6 +66,14 @@ public class MachineroominfoServiceImpl implements MachineroominfoService {
         }
     }
 
+    /**
+     * @return
+     * @Method deleteMachineRoomInfo
+     * @Author SKAIXX
+     * @Description 删除机房信息
+     * @Date 2020/2/6 10:28
+     * @Param
+     **/
     @Override
     public ApiResult deleteMachineRoomInfo(Machineroominfo machineroominfo) {
         int result = machineroominfoMapper.delete(machineroominfo);
@@ -57,5 +82,18 @@ public class MachineroominfoServiceImpl implements MachineroominfoService {
         } else {
             return ApiResult.fail(MsgConstants.ERROR_01);
         }
+    }
+
+    /**
+     * @return
+     * @Method getMachineroominfoList
+     * @Author SKAIXX
+     * @Description 获取机房列表
+     * @Date 2020/2/6 10:29
+     * @Param
+     **/
+    @Override
+    public List<Machineroominfo> getMachineroominfoList() {
+        return machineroominfoMapper.selectAll();
     }
 }
