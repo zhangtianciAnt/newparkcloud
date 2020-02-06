@@ -17,4 +17,7 @@ public interface OperationrecordService {
 
     // 项目管理画面获取操作记录列表
     List<OperationRecordVo> getOperationrecordList(String projectId);
+
+    //创建操作记录
+    void addOperationrecord(OperationRecordVo operation);
 }

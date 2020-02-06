@@ -59,7 +59,46 @@
       operationdetail detail
     ON
       record.id = detail.operationid
-    where record.id = #{projectId}
+    where record.projectid = #{projectId}
+    ORDER BY record.createon DESC
   </select>
+
+  <insert id="insertdetaillist"  parameterType="java.util.List">
+    insert into operationdetail (
+    id,
+    operationid,
+    devicename,
+    configurationtype,
+    filename,
+    operationresult,
+    status,
+    createon,
+    createby,
+    modifyon,
+    modifyby,
+    owner,
+    tenantid,
+    remarks
+    )
+    values
+    <foreach collection="detaillist" item="item" index="index" separator="," >
+      (
+      #{item.id},
+      #{item.operationid},
+      #{item.devicename},
+      #{item.configurationtype},
+      #{item.filename},
+      #{item.operationresult},
+      #{item.status},
+      #{item.createon},
+      #{item.createby},
+      #{item.modifyon},
+      #{item.modifyby},
+      #{item.owner},
+      #{item.tenantid},
+      #{item.remarks}
+      )
+    </foreach>
+  </insert>
 
 </mapper>
