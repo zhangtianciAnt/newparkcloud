@@ -473,6 +473,7 @@ public class AssetsServiceImpl implements AssetsService {
             if ( StringUtils.hasText(val) ) {
                 Class c = PropertyUtils.getPropertyType(target, col);
                 if ( c.equals(Date.class) ) {
+                    val = val.replace("/", "-");
                     Date d = _SF.parse(val);
                     PropertyUtils.setProperty(target, col, d);
                 } else {
