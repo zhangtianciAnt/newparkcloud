@@ -9,6 +9,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -57,5 +58,20 @@ public class CabinetinfoServiceImpl implements CabinetinfoService {
         } else {
             return ApiResult.fail(MsgConstants.ERROR_01);
         }
+    }
+
+    /**
+     * @return
+     * @Method getCabinetinfoListByMachineroomid
+     * @Author SKAIXX
+     * @Description 获取指定机房中的机柜列表
+     * @Date 2020/2/6 14:18
+     * @Param 机房id
+     **/
+    @Override
+    public List<Cabinetinfo> getCabinetinfoListByMachineroomid(String machineroomid) {
+        Cabinetinfo cabinetinfo = new Cabinetinfo();
+        cabinetinfo.setMachineroomid(machineroomid);
+        return cabinetinfoMapper.select(cabinetinfo);
     }
 }

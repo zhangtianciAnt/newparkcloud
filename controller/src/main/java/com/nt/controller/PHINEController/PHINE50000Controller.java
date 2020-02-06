@@ -54,6 +54,7 @@ public class PHINE50000Controller {
         return ApiResult.success(deviceinfoService.getDeviceInfoList());
     }
 
+    // region 机房相关Api
     /**
      * @return
      * @Method saveMachineRoomInfo
@@ -107,4 +108,61 @@ public class PHINE50000Controller {
     public ApiResult getMachineroominfoList(HttpServletRequest request) throws Exception {
         return ApiResult.success(machineroominfoService.getMachineroominfoList());
     }
+    // endregion
+
+    // region 机柜相关Api
+    /**
+     * @return
+     * @Method saveCabinetInfo
+     * @Author SKAIXX
+     * @Description 创建机柜信息
+     * @Date 2020/2/5 22:28
+     * @Param
+     **/
+    @RequestMapping(value = "/saveCabinetInfo",method={RequestMethod.POST})
+    public ApiResult saveCabinetInfo(HttpServletRequest request, @RequestBody Cabinetinfo cabinetinfo) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return cabinetinfoService.saveCabinetInfo(tokenModel, cabinetinfo);
+    }
+
+    /**
+     * @return
+     * @Method updateCabinetInfo
+     * @Author SKAIXX
+     * @Description 更新机柜信息
+     * @Date 2020/2/5 22:28
+     * @Param
+     **/
+    @RequestMapping(value = "/updateCabinetInfo",method={RequestMethod.POST})
+    public ApiResult updateCabinetInfo(HttpServletRequest request, @RequestBody Cabinetinfo cabinetinfo) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return cabinetinfoService.updateCabinetInfo(tokenModel, cabinetinfo);
+    }
+
+    /**
+     * @return
+     * @Method deleteCabinetInfo
+     * @Author SKAIXX
+     * @Description 删除机柜信息
+     * @Date 2020/2/5 22:28
+     * @Param
+     **/
+    @RequestMapping(value = "/deleteCabinetInfo",method={RequestMethod.POST})
+    public ApiResult deleteCabinetInfo(HttpServletRequest request, @RequestBody Cabinetinfo cabinetinfo) throws Exception {
+        return cabinetinfoService.deleteCabinetInfo(cabinetinfo);
+    }
+
+    /**
+     * @return
+     * @Method getCabinetInfoList
+     * @Author SKAIXX
+     * @Description 获取指定机房中的机柜列表
+     * @Date 2020/2/6 10:28
+     * @Param
+     **/
+    @RequestMapping(value = "/getCabinetInfoList",method={RequestMethod.GET})
+    public ApiResult getCabinetInfoList(HttpServletRequest request, String machineroomid) throws Exception {
+        return ApiResult.success(cabinetinfoService.getCabinetinfoListByMachineroomid(machineroomid));
+    }
+    // endregion
 }

@@ -1,8 +1,11 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Cabinetinfo;
+import com.nt.dao_PHINE.Machineroominfo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
+
+import java.util.List;
 
 /**
  * @ProjectName: newparkcloud
@@ -23,4 +26,7 @@ public interface CabinetinfoService {
 
     // 删除机柜信息
     ApiResult deleteCabinetInfo(Cabinetinfo cabinetinfo);
+
+    // 获取指定机房中的机柜列表
+    List<Cabinetinfo> getCabinetinfoListByMachineroomid(String machineroomid);
 }
