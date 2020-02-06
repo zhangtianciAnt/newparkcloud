@@ -94,4 +94,17 @@ public class PHINE50000Controller {
     public ApiResult deleteMachineRoomInfo(HttpServletRequest request, @RequestBody Machineroominfo machineroominfo) throws Exception {
         return machineroominfoService.deleteMachineRoomInfo(machineroominfo);
     }
+
+    /**
+     * @return
+     * @Method getMachineroominfoList
+     * @Author SKAIXX
+     * @Description 获取机房列表
+     * @Date 2020/2/6 10:28
+     * @Param
+     **/
+    @RequestMapping(value = "/getMachineroominfoList",method={RequestMethod.GET})
+    public ApiResult getMachineroominfoList(HttpServletRequest request) throws Exception {
+        return ApiResult.success(machineroominfoService.getMachineroominfoList());
+    }
 }
