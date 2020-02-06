@@ -247,4 +247,11 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
         return integer;
     }
 
+    //获取数据
+    @Override
+    public Riskassessment getData() throws Exception {
+        Query query = new Query();
+        return mongoTemplate.findOne(query, Riskassessment.class);
+    }
+
 }

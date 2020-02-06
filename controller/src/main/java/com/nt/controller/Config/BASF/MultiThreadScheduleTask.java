@@ -3,10 +3,7 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
-import com.nt.service_BASF.FirealarmServices;
-import com.nt.service_BASF.StartprogramServices;
-import com.nt.service_BASF.TrainjoinlistServices;
-import com.nt.service_BASF.VehicleinformationServices;
+import com.nt.service_BASF.*;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -17,8 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * basf多线程定时任务
@@ -47,6 +42,10 @@ public class MultiThreadScheduleTask {
     @Autowired
     @SuppressWarnings("all")
     TrainjoinlistServices trainjoinlistServices;
+
+    @Autowired
+    @SuppressWarnings("all")
+    RiskassessmentServices riskassessmentServices;
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
@@ -227,6 +226,16 @@ public class MultiThreadScheduleTask {
     public void BASF90800_GetFutureProgram() throws Exception {
         //获取未来三个月培训信息
         webSocketVo.setFutureProgramList(startprogramServices.getFutureProgram());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90900_GetRiskassessment() throws Exception {
+        //获取风险判研信息
+        System.out.println("执行 获取风险判研信息 定时任务: " + LocalDateTime.now().toLocalTime()
+                + "\r\n线程 : " + Thread.currentThread().getName());
+        webSocketVo.setRiskassessment(riskassessmentServices.getData());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion

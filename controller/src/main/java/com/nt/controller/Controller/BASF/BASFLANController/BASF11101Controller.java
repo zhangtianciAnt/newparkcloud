@@ -52,5 +52,10 @@ public class BASF11101Controller {
         }
     }
 
+    @RequestMapping(value = "/getData", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception {
+        return ApiResult.success(riskassessmentServices.getData());
+    }
+
 
 }

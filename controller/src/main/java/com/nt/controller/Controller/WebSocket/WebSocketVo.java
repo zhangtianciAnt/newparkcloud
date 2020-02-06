@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.WebSocket;
 
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.Riskassessment;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
@@ -75,5 +76,7 @@ public class WebSocketVo {
     private List<OverduePersonnelListVo> overduePersonnelListVoList = new ArrayList<>();
     //获取未来三个月培训信息
     private List<Startprogram> futureProgramList = new ArrayList<>();
+    //获取风险判研信息
+    private Riskassessment riskassessment = new Riskassessment();
     // endregion
 }

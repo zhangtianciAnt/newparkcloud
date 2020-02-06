@@ -1,5 +1,6 @@
 package com.nt.service_BASF;
 
+import com.nt.dao_BASF.Riskassessment;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,5 +19,8 @@ public interface RiskassessmentServices {
 
     //excel文档导入
     List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
+    //获取数据
+    Riskassessment getData() throws Exception;
 
 }
