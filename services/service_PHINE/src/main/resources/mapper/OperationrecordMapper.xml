@@ -2,7 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.OperationrecordMapper">
 
-  <select id="getOperationrecordList" resultType="com.nt.dao_PHINE.Vo.OperationRecordVo">
+  <resultMap id="OperationVoResultMap" type="com.nt.dao_PHINE.Vo.OperationRecordVo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="operationresult" property="operationresult" jdbcType="VARCHAR" />
+    <result column="projectid" property="projectid" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="createon" property="createon" jdbcType="TIMESTAMP" />
+    <result column="createby" property="createby" jdbcType="VARCHAR" />
+    <result column="modifyon" property="modifyon" jdbcType="TIMESTAMP" />
+    <result column="modifyby" property="modifyby" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
+    <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
+    <collection property="detailist" ofType="com.nt.dao_PHINE.Operationdetail">
+      <id column="detailid" property="id" jdbcType="VARCHAR" />
+      <result column="operationid" property="operationid" jdbcType="VARCHAR" />
+      <result column="devicename" property="devicename" jdbcType="VARCHAR" />
+      <result column="configurationtype" property="configurationtype" jdbcType="VARCHAR" />
+      <result column="filename" property="filename" jdbcType="VARCHAR" />
+      <result column="detailoperationresult" property="operationresult" jdbcType="VARCHAR" />
+      <result column="status" property="status" jdbcType="VARCHAR" />
+      <result column="detailcreateon" property="createon" jdbcType="TIMESTAMP" />
+      <result column="detailcreateby" property="createby" jdbcType="VARCHAR" />
+      <result column="modifyon" property="modifyon" jdbcType="TIMESTAMP" />
+      <result column="modifyby" property="modifyby" jdbcType="VARCHAR" />
+      <result column="owner" property="owner" jdbcType="VARCHAR" />
+      <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
+      <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
+    </collection>
+  </resultMap>
+
+  <select id="getOperationrecordList" resultMap="OperationVoResultMap">
     SELECT
       record.id,
       record.title,
@@ -11,13 +46,13 @@
       record.projectid,
       record.createon,
       record.createby,
-      detail.id,
-      detail.createon,
-      detail.createby,
+      detail.id detailid,
+      detail.createon detailcreateon,
+      detail.createby detailcreateby,
       detail.devicename,
       detail.configurationtype,
       detail.filename,
-      detail.operationresult
+      detail.operationresult detailoperationresult
     FROM
       operationrecord record
     LEFT JOIN
