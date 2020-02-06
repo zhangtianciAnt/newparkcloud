@@ -93,7 +93,9 @@ public class WebSocket implements WebSocketHandler {
         for (WebSocketSession ws : webSocketSessionSet) {
             if (ws.isOpen()) {
                 try {
-                    ws.sendMessage(message);
+                    synchronized (ws) {
+                        ws.sendMessage(message);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     return false;
