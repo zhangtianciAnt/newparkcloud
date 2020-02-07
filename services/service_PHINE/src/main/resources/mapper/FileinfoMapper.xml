@@ -6,6 +6,7 @@
           WARNING - @mbg.generated
         -->
         <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="projectid" jdbcType="VARCHAR" property="projectid"/>
         <result column="filetype" jdbcType="VARCHAR" property="filetype"/>
         <result column="deviceid" jdbcType="VARCHAR" property="deviceid"/>
         <result column="fpgaid" jdbcType="VARCHAR" property="fpgaid"/>
@@ -22,11 +23,12 @@
     </resultMap>
     <insert id="saveFilesInfo" parameterType="list">
         insert into
-        fileinfo (id,filetype,deviceid,fpgaid,filename,url,status,createon,createby,owner,tenantid,remarks)
+        fileinfo (id,projectid,filetype,deviceid,fpgaid,filename,url,status,createon,createby,owner,tenantid,remarks)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
             #{item.id,jdbcType=VARCHAR},
+            #{item.projectid,jdbcType=VARCHAR},
             #{item.filetype,jdbcType=VARCHAR},
             #{item.deviceid,jdbcType=VARCHAR},
             #{item.fpgaid,jdbcType=VARCHAR},
