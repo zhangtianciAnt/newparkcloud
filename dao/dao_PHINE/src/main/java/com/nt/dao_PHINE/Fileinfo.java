@@ -15,6 +15,8 @@ public class Fileinfo extends BaseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+    private String projectid;
+
     private String filetype;
 
     private String deviceid;

@@ -30,7 +30,7 @@ public class OperationRecordVo extends BaseModel {
     private String id;
 
     /**
-     * PLL 配置/ FMC 配置/ FPGA Config/ 寄存器访问
+     * PLL 配置/ FMC 配置/ FPGA Config/ 寄存器访问 /文件上传
      */
     private String title;
 
