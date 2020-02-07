@@ -4,6 +4,8 @@ import com.nt.dao_PHINE.Fileinfo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
+import java.util.List;
+
 public interface PHINEFileService {
-    ApiResult saveFileInfo(TokenModel tokenModel, Fileinfo fileInfo) throws Exception;
+    ApiResult saveFileInfo(TokenModel tokenModel, List<Fileinfo> filesInfo) throws Exception;
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/PHINEFile")
@@ -19,8 +20,8 @@ public class PHINEFileController {
     private PHINEFileService phineFileService;
 
     @RequestMapping(value = "/saveFileInfo", method = {RequestMethod.POST})
-    public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody Fileinfo fileInfo) throws Exception {
+    public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody List<Fileinfo> filesInfo) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return phineFileService.saveFileInfo(tokenModel, fileInfo);
+        return phineFileService.saveFileInfo(tokenModel, filesInfo);
     }
 }
