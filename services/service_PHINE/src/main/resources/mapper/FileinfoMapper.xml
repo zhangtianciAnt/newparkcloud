@@ -1,24 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.FileinfoMapper">
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Fileinfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="filetype" jdbcType="VARCHAR" property="filetype" />
-    <result column="deviceid" jdbcType="VARCHAR" property="deviceid" />
-    <result column="fpgaid" jdbcType="VARCHAR" property="fpgaid" />
-    <result column="filename" jdbcType="VARCHAR" property="filename" />
-    <result column="url" jdbcType="VARCHAR" property="url" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Fileinfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="projectid" jdbcType="VARCHAR" property="projectid"/>
+        <result column="filetype" jdbcType="VARCHAR" property="filetype"/>
+        <result column="deviceid" jdbcType="VARCHAR" property="deviceid"/>
+        <result column="fpgaid" jdbcType="VARCHAR" property="fpgaid"/>
+        <result column="filename" jdbcType="VARCHAR" property="filename"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="createon" jdbcType="TIMESTAMP" property="createon"/>
+        <result column="createby" jdbcType="VARCHAR" property="createby"/>
+        <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon"/>
+        <result column="modifyby" jdbcType="VARCHAR" property="modifyby"/>
+        <result column="owner" jdbcType="VARCHAR" property="owner"/>
+        <result column="tenantid" jdbcType="VARCHAR" property="tenantid"/>
+        <result column="remarks" jdbcType="LONGVARCHAR" property="remarks"/>
+    </resultMap>
+    <insert id="saveFilesInfo" parameterType="list">
+        insert into
+        fileinfo (id,projectid,filetype,deviceid,fpgaid,filename,url,status,createon,createby,owner,tenantid,remarks)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},
+            #{item.projectid,jdbcType=VARCHAR},
+            #{item.filetype,jdbcType=VARCHAR},
+            #{item.deviceid,jdbcType=VARCHAR},
+            #{item.fpgaid,jdbcType=VARCHAR},
+            #{item.filename,jdbcType=VARCHAR},
+            #{item.url,jdbcType=VARCHAR},
+            #{item.status,jdbcType=VARCHAR},
+            #{item.createon,jdbcType=TIMESTAMP},
+            #{item.createby,jdbcType=VARCHAR},
+            #{item.owner,jdbcType=VARCHAR},
+            #{item.tenantid,jdbcType=VARCHAR},
+            #{item.remarks,jdbcType=LONGVARCHAR}
+            )
+        </foreach>
+    </insert>
 
 </mapper>

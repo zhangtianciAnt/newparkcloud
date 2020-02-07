@@ -15,6 +15,8 @@ public class Filemark extends BaseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+    private String projectid;
+
     private String versiondescribtion;
 
     private String version;

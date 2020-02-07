@@ -1,6 +1,7 @@
 package com.nt.controller.PHINEController;
 
 import com.nt.dao_PHINE.Fileinfo;
+import com.nt.dao_PHINE.Vo.FileInfoVo;
 import com.nt.service_PHINE.PHINEFileService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/PHINEFile")
@@ -19,8 +21,8 @@ public class PHINEFileController {
     private PHINEFileService phineFileService;
 
     @RequestMapping(value = "/saveFileInfo", method = {RequestMethod.POST})
-    public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody Fileinfo fileInfo) throws Exception {
+    public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody FileInfoVo fileInfoVo) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return phineFileService.saveFileInfo(tokenModel, fileInfo);
+        return phineFileService.saveFileInfo(tokenModel, fileInfoVo.getFilesInfo(), fileInfoVo.getProjectId());
     }
 }
