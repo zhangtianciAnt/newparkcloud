@@ -5,6 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Project2deviceExtend;
+import com.nt.dao_PHINE.Project2userExtend;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.service_Org.UserService;
@@ -74,8 +75,8 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveProjectInfo", method = {RequestMethod.POST})
     public ApiResult saveProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
         if (!projectinfoService.selectProjectIdExist(projectinfo.getProjectid())) {
+            TokenModel tokenModel = tokenService.getToken(request);
             projectinfoService.saveProjectInfo(tokenModel, projectinfo);
             return ApiResult.success();
         } else {
@@ -93,12 +94,31 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/updateProjectInfo", method = {RequestMethod.POST})
     public ApiResult updateProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
         if (projectinfoService.selectProjectIdExist(projectinfo.getProjectid())) {
-            projectinfoService.updateProjectInfo(tokenModel,projectinfo);
+            TokenModel tokenModel = tokenService.getToken(request);
+            projectinfoService.updateProjectInfo(tokenModel, projectinfo);
             return ApiResult.success();
         } else {
             return ApiResult.fail("项目ID不存在，更新数据失败！");
+        }
+    }
+
+    /**
+     * @方法名：saveUserAuthInfo
+     * @描述：添加用户权限及设备信息
+     * @创建日期：2020/1/30
+     * @作者：MYT
+     * @参数：[request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/saveUserAuthInfo", method = {RequestMethod.POST})
+    public ApiResult saveUserAuthInfo(@RequestBody Project2userExtend project2userExtend, HttpServletRequest request) throws Exception {
+        if (projectinfoService.selectProjectIdExist(project2userExtend.getProjectid())) {
+            TokenModel tokenModel = tokenService.getToken(request);
+            projectinfoService.saveUserAuthInfo(tokenModel, project2userExtend.getProjectid(), project2userExtend.getUseridList());
+            return ApiResult.success();
+        } else {
+            return ApiResult.fail("项目ID不存在，请先创建项目后再添加用户权限信息。");
         }
     }
 
@@ -147,42 +167,13 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getUserAuthList", method = {RequestMethod.GET})
-    public ApiResult getUserAuthList(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        UserVo userVo = userService.getAccountCustomerById(tokenModel.getUserId());
-        String companyId = userVo.getCustomerInfo().getUserinfo().getCompanyid();
-        List<CustomerInfo> userInfoList = userService.getAccountCustomer(companyId, "");
-        List<UserAuthListVo> userAuthInfoList = new ArrayList<UserAuthListVo>();
-        for (CustomerInfo info : userInfoList) {
-            UserAuthListVo vo = new UserAuthListVo();
-            vo.setUserid(info.get_id());
-            vo.setInfoauth("1");
-            vo.setFileauth("1");
-            vo.setAuthmanage("1");
-            vo.setMachineauth("1");
-            userAuthInfoList.add(vo);
-        }
-        return ApiResult.success(userAuthInfoList);
-    }
-
-    /**
-     * @方法名：addUserAuth
-     * @描述：添加用户权限及设备信息
-     * @创建日期：2020/1/30
-     * @作者：MYT
-     * @参数：[request]
-     * @返回值：com.nt.utils.ApiResult
-     */
-    @RequestMapping(value = "/addUserAuth", method = {RequestMethod.POST})
-    public ApiResult addUserAuth(String projectid, HttpServletRequest request) throws Exception {
+    public ApiResult getUserAuthList(String projectid) throws Exception {
         if (projectinfoService.selectProjectIdExist(projectid)) {
-            TokenModel tokenModel = tokenService.getToken(request);
-            UserVo userVo = userService.getAccountCustomerById(tokenModel.getUserId());
-            userVo.getCustomerInfo().getUserinfo().getCompanyid();
-            return ApiResult.success();
+            return ApiResult.success(projectinfoService.getUserAuthList(projectid));
         } else {
-            return ApiResult.fail("项目ID不存在，请先创建项目后再添加用户权限信息。");
+            return ApiResult.fail("项目ID不存在，获取信息失败！");
         }
+
     }
 
     /**
@@ -220,8 +211,8 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/delUserAuth", method = {RequestMethod.POST})
-    public ApiResult delUserAuth(String userid) throws Exception {
-        projectinfoService.delUserAuth(userid);
+    public ApiResult delUserAuth(String projectid, String userid) throws Exception {
+        projectinfoService.delUserAuth(projectid, userid);
         return ApiResult.success();
     }
 }

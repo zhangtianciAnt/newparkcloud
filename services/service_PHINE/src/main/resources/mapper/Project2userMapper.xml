@@ -7,6 +7,7 @@
     -->
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="projectid" jdbcType="VARCHAR" property="projectid" />
+    <result column="userid" jdbcType="VARCHAR" property="userid" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="createon" jdbcType="TIMESTAMP" property="createon" />
     <result column="createby" jdbcType="VARCHAR" property="createby" />

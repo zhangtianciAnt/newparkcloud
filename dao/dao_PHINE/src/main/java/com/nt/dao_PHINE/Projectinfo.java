@@ -19,6 +19,8 @@ public class Projectinfo extends BaseModel {
 
     private String projectid;
 
+    private String chipid;
+
     private String projectname;
 
     private Date starttime;

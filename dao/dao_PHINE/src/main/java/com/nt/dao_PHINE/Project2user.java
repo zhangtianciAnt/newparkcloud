@@ -17,4 +17,6 @@ public class Project2user extends BaseModel {
 
     private String projectid;
 
+    private String userid;
+
 }
