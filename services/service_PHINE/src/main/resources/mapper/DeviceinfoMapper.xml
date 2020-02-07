@@ -76,17 +76,22 @@
     <select id="getDeviceInfoList" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
         SELECT
           a.id,
-          b.cabinetid,
+          b.machineroomid,
           b.machineroomname,
           a.deviceid,
+          a.devicetype,
           a.companyid,
-          c.devicestatus
+          IFNULL(c.devicestatus,'1') as devicestatus
         FROM
           deviceinfo a
         INNER JOIN
+          cabinetinfo d
+        ON
+          a.cabinetid = d.id
+        INNER JOIN
           machineroominfo b
         ON
-          a.cabinetid = b.id
+          d.machineroomid = b.id
         LEFT JOIN
           devicestatus c
         ON

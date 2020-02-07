@@ -37,5 +37,5 @@ public interface DeviceinfoService {
     ApiResult updateDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo);
 
     // 删除设备
-    ApiResult deleteDeviceInfo(DeviceinfoVo deviceinfoVo);
+    ApiResult deleteDeviceInfo(String id);
 }

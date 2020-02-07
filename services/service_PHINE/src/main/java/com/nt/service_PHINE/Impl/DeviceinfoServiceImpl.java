@@ -156,7 +156,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             BoardinfoListVo boardinfoListVo = new BoardinfoListVo();
             // 获取芯片信息
             Chipinfo chipinfo = new Chipinfo();
-            chipinfo.setBoardid(item.getBoardid());
+            chipinfo.setBoardid(item.getId());
             boardinfoListVo.setId(item.getId());
             boardinfoListVo.setBoardid(item.getBoardid());
             boardinfoListVo.setBoardipaddress(item.getBoardipaddress());
@@ -218,7 +218,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Param
      **/
     @Override
-    public ApiResult deleteDeviceInfo(DeviceinfoVo deviceinfoVo) {
+    public ApiResult deleteDeviceInfo(String id) {
+
+        DeviceinfoVo deviceinfoVo = getDeviceInfo(id);
+
         // 删除设备
         deviceinfoMapper.deleteByPrimaryKey(deviceinfoVo.getId());
 

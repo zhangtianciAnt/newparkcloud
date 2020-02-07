@@ -111,9 +111,9 @@ public class PHINE50000Controller {
      * @Date 2020/2/7 16:10
      * @Param
      **/
-    @RequestMapping(value = "/deleteDeviceInfo",method={RequestMethod.POST})
-    public ApiResult deleteDeviceInfo(HttpServletRequest request, @RequestBody DeviceinfoVo deviceinfoVo) throws Exception {
-        return deviceinfoService.deleteDeviceInfo(deviceinfoVo);
+    @RequestMapping(value = "/deleteDeviceInfo",method={RequestMethod.GET})
+    public ApiResult deleteDeviceInfo(HttpServletRequest request, String id) throws Exception {
+        return deviceinfoService.deleteDeviceInfo(id);
     }
 
     // region 机房相关Api
