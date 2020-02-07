@@ -27,6 +27,11 @@ public class Riskassessment extends BaseModel {
      */
     private String _id;
 
+    /**
+     * 承诺公告
+     */
+    private String notice;
+
     private Synthesize synthesize;
 
     /**

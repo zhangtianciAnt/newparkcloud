@@ -23,4 +23,7 @@ public interface RiskassessmentServices {
     //获取数据
     Riskassessment getData() throws Exception;
 
+    //承诺公告更新
+    void noticeUpdata(String notice, TokenModel tokenModel) throws Exception;
+
 }

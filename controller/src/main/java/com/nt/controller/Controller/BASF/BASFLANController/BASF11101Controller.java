@@ -57,5 +57,12 @@ public class BASF11101Controller {
         return ApiResult.success(riskassessmentServices.getData());
     }
 
+    @RequestMapping(value = "/noticeUpdata", method = {RequestMethod.GET})
+    public ApiResult noticeUpdata(String notice, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        riskassessmentServices.noticeUpdata(notice, tokenModel);
+        return ApiResult.success();
+    }
+
 
 }

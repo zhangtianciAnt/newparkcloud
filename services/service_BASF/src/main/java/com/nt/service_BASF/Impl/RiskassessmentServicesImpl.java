@@ -254,4 +254,14 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
         return mongoTemplate.findOne(query, Riskassessment.class);
     }
 
+    //承诺公告更新
+    @Override
+    public void noticeUpdata(String notice, TokenModel tokenModel) throws Exception {
+        Query query = new Query();
+        Riskassessment riskassessment = mongoTemplate.findOne(query, Riskassessment.class);
+        riskassessment.setNotice(notice);
+        riskassessment.preUpdate(tokenModel);
+        mongoTemplate.save(riskassessment);
+    }
+
 }
