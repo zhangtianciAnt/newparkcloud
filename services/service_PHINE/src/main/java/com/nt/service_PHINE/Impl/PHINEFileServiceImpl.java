@@ -27,7 +27,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
     private OperationrecordService operationrecordService;
 
     @Override
-    public ApiResult saveFileInfo(TokenModel tokenModel, List<Fileinfo> filesInfo) throws Exception {
+    public ApiResult saveFileInfo(TokenModel tokenModel, List<Fileinfo> filesInfo, String projectId) throws Exception {
         // 操作记录表详情集合
         List<Operationdetail> operationdetails = new ArrayList<Operationdetail>();
         filesInfo.forEach(item -> {
@@ -47,6 +47,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
             operationRecordVo.setTitle("文件上传");
             operationRecordVo.setContent("上传" + result + "个文件");
             operationRecordVo.setDetailist(operationdetails);
+            operationRecordVo.setProjectid(projectId);
             operationrecordService.addOperationrecord(operationRecordVo);
             return ApiResult.success(MsgConstants.INFO_01);
         } else {

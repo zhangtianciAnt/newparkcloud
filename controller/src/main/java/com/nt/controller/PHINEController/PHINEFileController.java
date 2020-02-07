@@ -1,6 +1,7 @@
 package com.nt.controller.PHINEController;
 
 import com.nt.dao_PHINE.Fileinfo;
+import com.nt.dao_PHINE.Vo.FileInfoVo;
 import com.nt.service_PHINE.PHINEFileService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
@@ -20,8 +21,8 @@ public class PHINEFileController {
     private PHINEFileService phineFileService;
 
     @RequestMapping(value = "/saveFileInfo", method = {RequestMethod.POST})
-    public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody List<Fileinfo> filesInfo) throws Exception {
+    public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody FileInfoVo fileInfoVo) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return phineFileService.saveFileInfo(tokenModel, filesInfo);
+        return phineFileService.saveFileInfo(tokenModel, fileInfoVo.getFilesInfo(), fileInfoVo.getProjectId());
     }
 }
