@@ -32,4 +32,10 @@ public interface DeviceinfoService {
 
     // 获取设备详情
     DeviceinfoVo getDeviceInfo(String id);
+
+    // 更新设备
+    ApiResult updateDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo);
+
+    // 删除设备
+    ApiResult deleteDeviceInfo(DeviceinfoVo deviceinfoVo);
 }

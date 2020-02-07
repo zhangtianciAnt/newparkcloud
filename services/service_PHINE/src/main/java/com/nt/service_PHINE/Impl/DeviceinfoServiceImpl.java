@@ -9,7 +9,6 @@ import com.nt.service_PHINE.mapper.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
-import org.opencv.aruco.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,18 +66,18 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // 执行数据查询
         List<DeviceListVo> deviceList = deviceinfoMapper.getDeviceListByProjectId(projectid);
         // 按照设备ID和设备地址分组，重构数据库数据
-        Map<String, List<String>> tmpMap = new HashMap<String, List<String>>();
+        Map<String, List<String>> tmpMap = new HashMap<>();
         for(DeviceListVo vo : deviceList){
             if(tmpMap.containsKey(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress()))){
                 tmpMap.get(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress())).add(vo.getBoardid());
             }else{//map中不存在，新建key，用来存放数据
-                List<String> tmpList = new ArrayList<String>();
+                List<String> tmpList = new ArrayList<>();
                 tmpList.add(vo.getBoardid());
                 tmpMap.put(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress()), tmpList);
             }
         }
         // 重新构建返回值
-        List<DeviceListVo> rtnDeviceList = new ArrayList<DeviceListVo>();
+        List<DeviceListVo> rtnDeviceList = new ArrayList<>();
         Set<Map.Entry<String,List<String>>> set = tmpMap.entrySet();
         for(Map.Entry<String,List<String>> entry:set){
             DeviceListVo deviceListVo = new DeviceListVo();
@@ -116,32 +115,14 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
         deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
         deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
-        deviceinfo.preInsert();
+        deviceinfo.preInsert(tokenModel);
         deviceinfoMapper.insert(deviceinfo);
         // endregion
 
-        // region 板卡信息
-        for (BoardinfoListVo boardinfoListVo : deviceinfoVo.getBoardinfoList()) {
-            Boardinfo boardinfo = new Boardinfo();
-            String boardid = UUID.randomUUID().toString();
-            boardinfo.setId(boardid);
-            boardinfo.setBoardid(boardinfoListVo.getBoardid());                     // 板卡编号
-            boardinfo.setBoardtype(boardinfoListVo.getBoardtype());                 // 板卡类型
-            boardinfo.setBoardipaddress(boardinfoListVo.getBoardipaddress());       // 板卡IP地址
-            boardinfo.setDeviceid(deviceid);                                        // 板卡所属设备ID
-            boardinfo.preInsert();
-            boardinfoMapper.insert(boardinfo);
-
-            // region 芯片信息
-            for (Chipinfo chipinfo : boardinfoListVo.getChipinfoList()) {
-                chipinfo.setId(UUID.randomUUID().toString());
-                chipinfo.setBoardid(boardid);                                       // 芯片所属板卡ID
-                chipinfo.preInsert();
-                chipinfoMapper.insert(chipinfo);
-            }
-            // endregion
-        }
+        // region 创建板卡&芯片信息
+        createBoardChip(tokenModel, deviceid, deviceinfoVo);
         // endregion
+
         return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
     }
 
@@ -158,16 +139,13 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         DeviceinfoVo deviceinfoVo = new DeviceinfoVo();
 
         // 获取设备信息
-        Deviceinfo deviceinfo = new Deviceinfo();
-        deviceinfo = deviceinfoMapper.selectByPrimaryKey(id);
+        Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(id);
 
         // 获取机柜信息
-        Cabinetinfo cabinetinfo = new Cabinetinfo();
-        cabinetinfo = cabinetinfoMapper.selectByPrimaryKey(deviceinfo.getCabinetid());
+        Cabinetinfo cabinetinfo = cabinetinfoMapper.selectByPrimaryKey(deviceinfo.getCabinetid());
 
         // 获取机房信息
-        Machineroominfo machineroominfo = new Machineroominfo();
-        machineroominfo = machineroominfoMapper.selectByPrimaryKey(cabinetinfo.getMachineroomid());
+        Machineroominfo machineroominfo = machineroominfoMapper.selectByPrimaryKey(cabinetinfo.getMachineroomid());
 
         // 获取板卡信息
         Boardinfo boardinfo = new Boardinfo();
@@ -197,5 +175,112 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         deviceinfoVo.setBoardinfoList(boardinfoListVoList);
 
         return deviceinfoVo;
+    }
+
+    /**
+     * @return
+     * @Method updateDeviceInfo
+     * @Author SKAIXX
+     * @Description 更新设备
+     * @Date 2020/2/7 19:23
+     * @Param
+     **/
+    @Override
+    public ApiResult updateDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo) {
+        // region 设备信息更新
+        Deviceinfo deviceinfo = new Deviceinfo();
+        deviceinfo.setId(deviceinfoVo.getId());                     // 设备ID
+        deviceinfo.setCabinetid(deviceinfoVo.getCabinetid());       // 机柜ID
+        deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
+        deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
+        deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
+        deviceinfo.preUpdate(tokenModel);
+        deviceinfoMapper.updateByPrimaryKey(deviceinfo);
+        // endregion
+
+        // region 删除板卡&芯片信息
+        deleteBoardChip(deviceinfoVo);
+        // endregion
+
+        // region 创建板卡&芯片信息
+        createBoardChip(tokenModel, deviceinfoVo.getId(), deviceinfoVo);
+        // endregion
+
+        return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
+    }
+
+    /**
+     * @return
+     * @Method deleteDeviceInfo
+     * @Author SKAIXX
+     * @Description 删除设备
+     * @Date 2020/2/7 19:24
+     * @Param
+     **/
+    @Override
+    public ApiResult deleteDeviceInfo(DeviceinfoVo deviceinfoVo) {
+        // 删除设备
+        deviceinfoMapper.deleteByPrimaryKey(deviceinfoVo.getId());
+
+        // region 删除板卡&芯片信息
+        deleteBoardChip(deviceinfoVo);
+        // endregion
+        return ApiResult.success(MsgConstants.INFO_01);
+    }
+
+    /**
+     * @return
+     * @Method deleteBoardChinp
+     * @Author SKAIXX
+     * @Description 删除卡板&芯片信息
+     * @Date 2020/2/7 19:52
+     * @Param
+     **/
+    private void deleteBoardChip(DeviceinfoVo deviceinfoVo) {
+        // 删除板卡
+        Boardinfo boardinfo = new Boardinfo();
+        boardinfo.setDeviceid(deviceinfoVo.getId());
+        List<Boardinfo> boardinfoList = boardinfoMapper.select(boardinfo);
+        boardinfoMapper.delete(boardinfo);
+
+        // 删除芯片
+        for(Boardinfo tmp : boardinfoList) {
+            Chipinfo chipinfo = new Chipinfo();
+            chipinfo.setBoardid(tmp.getId());
+            chipinfoMapper.delete(chipinfo);
+        }
+    }
+
+    /**
+     * @return
+     * @Method createBoardChip
+     * @Author SKAIXX
+     * @Description 创建板卡&芯片信息
+     * @Date 2020/2/7 19:55
+     * @Param
+     **/
+    private void createBoardChip(TokenModel tokenModel, String deviceid, DeviceinfoVo deviceinfoVo) {
+        // region 板卡信息
+        for (BoardinfoListVo boardinfoListVo : deviceinfoVo.getBoardinfoList()) {
+            Boardinfo boardinfo = new Boardinfo();
+            String boardid = UUID.randomUUID().toString();
+            boardinfo.setId(boardid);
+            boardinfo.setBoardid(boardinfoListVo.getBoardid());                     // 板卡编号
+            boardinfo.setBoardtype(boardinfoListVo.getBoardtype());                 // 板卡类型
+            boardinfo.setBoardipaddress(boardinfoListVo.getBoardipaddress());       // 板卡IP地址
+            boardinfo.setDeviceid(deviceid);                                        // 板卡所属设备ID
+            boardinfo.preInsert(tokenModel);
+            boardinfoMapper.insert(boardinfo);
+
+            // region 芯片信息
+            for (Chipinfo chipinfo : boardinfoListVo.getChipinfoList()) {
+                chipinfo.setId(UUID.randomUUID().toString());
+                chipinfo.setBoardid(boardid);                                       // 芯片所属板卡ID
+                chipinfo.preInsert(tokenModel);
+                chipinfoMapper.insert(chipinfo);
+            }
+            // endregion
+        }
+        // endregion
     }
 }
