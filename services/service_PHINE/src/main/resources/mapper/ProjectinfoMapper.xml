@@ -46,6 +46,8 @@
       c.deviceid = d.deviceid
     AND
       d.status = '0'
+    WHERE
+    IFNULL(a.status, '0') = '0'
     GROUP BY
       a.id,
       a.projectname,
