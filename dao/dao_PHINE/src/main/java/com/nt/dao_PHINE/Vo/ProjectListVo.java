@@ -59,6 +59,11 @@ public class ProjectListVo {
     private String chipid;
 
     /**
+     * 芯片ID
+     */
+    private String companyid;
+
+    /**
      * 项目描述
      */
     private String projectdescription;

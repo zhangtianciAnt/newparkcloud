@@ -17,4 +17,6 @@ public class Project2deviceExtend extends Project2device {
 
     private String[] deviceidList;
 
+    private String companyid;
+
 }

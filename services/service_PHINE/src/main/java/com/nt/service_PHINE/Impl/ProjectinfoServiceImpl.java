@@ -10,9 +10,13 @@ import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.service_PHINE.mapper.Project2deviceMapper;
 import com.nt.service_PHINE.mapper.Project2userMapper;
 import com.nt.service_PHINE.mapper.ProjectinfoMapper;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -62,12 +66,40 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * TODO:主键ID不知具体插入什么数据，暂时插入UUID
      **/
     @Override
-    public void saveProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
-        projectinfo.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-        projectinfo.setCreateby(tokenModel.getUserId());
-        projectinfo.setTenantid(tokenModel.getTenantId());
-        projectinfo.setCreateon(new java.sql.Date(System.currentTimeMillis()));
-        projectinfoMapper.insert(projectinfo);
+    public ApiResult saveProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
+        ProjectListVo projectInfo = getProjectInfo(projectinfo.getCompanyid(),projectinfo.getProjectid());
+        if(projectInfo != null){
+            return ApiResult.fail(MsgConstants.ERROR_06);
+        }else{
+            String id = UUID.randomUUID().toString();
+            projectinfo.setId(id);
+            projectinfo.setCreateby(tokenModel.getUserId());
+            projectinfo.setTenantid(tokenModel.getTenantId());
+            projectinfo.setCreateon(new java.sql.Date(System.currentTimeMillis()));
+            projectinfoMapper.insert(projectinfo);
+            return ApiResult.success(MsgConstants.INFO_01, projectinfo.getId());
+        }
+    }
+
+    /**
+     * @Method updateProjectInfo
+     * @Author MYT
+     * @Description 根据项目ID更新项目信息
+     * @Date 2020/2/6 15:27
+     * @Param projectinfo 项目信息
+     **/
+    @Override
+    public ApiResult updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
+        ProjectListVo projectInfo = getProjectInfo("",projectinfo.getId());
+        if(projectInfo == null){
+            return ApiResult.fail(MsgConstants.ERROR_07);
+        }else{
+            projectinfo.setModifyby(tokenModel.getUserId());
+            projectinfo.setTenantid(tokenModel.getTenantId());
+            projectinfo.setModifyon(new java.sql.Date(System.currentTimeMillis()));
+            projectinfoMapper.updateProjectInfo(projectinfo);
+            return ApiResult.success(MsgConstants.INFO_01);
+        }
     }
 
     /**
@@ -79,17 +111,23 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * TODO:主键ID不知具体插入什么数据，暂时插入UUID
      **/
     @Override
-    public void saveResourcesInfo(TokenModel tokenModel, String projectid, String[] deviceidList) {
-        // 插入新的数据
-        for (String deviceid : deviceidList) {
-            Project2device project2device = new Project2device();
-            project2device.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-            project2device.setDeviceid(deviceid);
-            project2device.setProjectid(projectid);
-            project2device.setCreateby(tokenModel.getUserId());
-            project2device.setTenantid(tokenModel.getTenantId());
-            project2device.setCreateon(new java.sql.Date(System.currentTimeMillis()));
-            project2deviceMapper.insert(project2device);
+    public ApiResult saveResourcesInfo(TokenModel tokenModel, String projectid, String[] deviceidList) {
+        ProjectListVo projectInfo = getProjectInfo("",projectid);
+        if(projectInfo == null){
+            return ApiResult.fail(MsgConstants.ERROR_09);
+        }else{
+            // 插入新的数据
+            for (String deviceid : deviceidList) {
+                Project2device project2device = new Project2device();
+                project2device.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+                project2device.setDeviceid(deviceid);
+                project2device.setProjectid(projectid);
+                project2device.setCreateby(tokenModel.getUserId());
+                project2device.setTenantid(tokenModel.getTenantId());
+                project2device.setCreateon(new java.sql.Date(System.currentTimeMillis()));
+                project2deviceMapper.insert(project2device);
+            }
+            return ApiResult.success(MsgConstants.INFO_01);
         }
     }
 
@@ -102,18 +140,24 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * TODO:主键ID不知具体插入什么数据，暂时插入UUID
      **/
     @Override
-    public void saveUserAuthInfo(TokenModel tokenModel, String projectid, String[] useridList) {
-        // 插入新的数据
-        for (String userid : useridList) {
-            Project2user project2user = new Project2user();
-            project2user.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-            project2user.setProjectid(projectid);
-            project2user.setCreateby(tokenModel.getUserId());
-            project2user.setTenantid(tokenModel.getTenantId());
-            project2user.setTenantid(tokenModel.getTenantId());
-            project2user.setCreateon(new java.sql.Date(System.currentTimeMillis()));
-            project2user.setUserid(userid);
-            project2userMapper.insert(project2user);
+    public ApiResult saveUserAuthInfo(TokenModel tokenModel, String projectid, String[] useridList) {
+        ProjectListVo projectInfo = getProjectInfo("",projectid);
+        if(projectInfo == null){
+            return ApiResult.fail(MsgConstants.ERROR_08);
+        }else{
+            // 插入新的数据
+            for (String userid : useridList) {
+                Project2user project2user = new Project2user();
+                project2user.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+                project2user.setProjectid(projectid);
+                project2user.setCreateby(tokenModel.getUserId());
+                project2user.setTenantid(tokenModel.getTenantId());
+                project2user.setTenantid(tokenModel.getTenantId());
+                project2user.setCreateon(new java.sql.Date(System.currentTimeMillis()));
+                project2user.setUserid(userid);
+                project2userMapper.insert(project2user);
+            }
+            return ApiResult.success(MsgConstants.INFO_01);
         }
     }
 
@@ -135,26 +179,6 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     }
 
     /**
-     * @return false:不存在;true:存在
-     * @Method selectProjectIdExist
-     * @Author MYT
-     * @Description 查询projectid是否存在
-     * @Date 2020/1/31 15:27
-     * @Param projectid 项目ID
-     **/
-    @Override
-    public boolean selectProjectIdExist(String projectid) {
-        Projectinfo projectinfo = new Projectinfo();
-        projectinfo.setProjectid(projectid);
-        List<Projectinfo> projectList = projectinfoMapper.select(projectinfo);
-        if (projectList == null || projectList.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
      * @return ProjectListVo 项目信息
      * @Method getDeviceIdByProjectId
      * @Author MYT
@@ -168,7 +192,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         selectCondition.setProjectid(projectid);
         List<Project2user> project2usersList = project2userMapper.select(selectCondition);
         List<UserAuthListVo> userAuthListVoList = new ArrayList<UserAuthListVo>();
-        for(Project2user userInfo : project2usersList){
+        for (Project2user userInfo : project2usersList) {
             UserAuthListVo userAuthListVo = new UserAuthListVo();
             userAuthListVo.setUserid(userInfo.getUserid());
             userAuthListVo.setInfoauth("1");
@@ -189,8 +213,16 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Param projectid 项目ID
      **/
     @Override
-    public ProjectListVo getProjectInfo(String projectid) {
-        return projectinfoMapper.getProjectInfo(projectid);
+    public ProjectListVo getProjectInfo(String companyid, String projectid) {
+        ProjectListVo projectListVo;
+        // 查询所属公司中项目ID是否存在
+        if (StringUtil.isNotEmpty(companyid)) {
+            projectListVo = projectinfoMapper.getProjectInfo(companyid,projectid);
+        } else {
+            // 根据主键查询项目是否存在
+            projectListVo = projectinfoMapper.getProjectInfo("",projectid);
+        }
+        return projectListVo;
     }
 
     /**
@@ -206,18 +238,4 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         return project2deviceMapper.getDeviceIdByProjectId(projectid);
     }
 
-    /**
-     * @Method updateProjectInfo
-     * @Author MYT
-     * @Description 根据项目ID更新项目信息
-     * @Date 2020/2/6 15:27
-     * @Param projectinfo 项目信息
-     **/
-    @Override
-    public void updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
-        projectinfo.setModifyby(tokenModel.getUserId());
-        projectinfo.setTenantid(tokenModel.getTenantId());
-        projectinfo.setModifyon(new java.sql.Date(System.currentTimeMillis()));
-        projectinfoMapper.updateProjectInfo(projectinfo);
-    }
 }

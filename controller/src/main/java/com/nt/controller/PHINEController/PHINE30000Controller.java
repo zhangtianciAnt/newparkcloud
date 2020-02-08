@@ -20,6 +20,7 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.util.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -40,9 +41,6 @@ public class PHINE30000Controller {
 
     @Autowired
     private TokenService tokenService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private ProjectinfoService projectinfoService;
@@ -75,13 +73,8 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveProjectInfo", method = {RequestMethod.POST})
     public ApiResult saveProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
-        if (!projectinfoService.selectProjectIdExist(projectinfo.getProjectid())) {
-            TokenModel tokenModel = tokenService.getToken(request);
-            projectinfoService.saveProjectInfo(tokenModel, projectinfo);
-            return ApiResult.success();
-        } else {
-            return ApiResult.fail("项目ID已经存在，请重新输入新的项目ID。");
-        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return projectinfoService.saveProjectInfo(tokenModel, projectinfo);
     }
 
     /**
@@ -94,13 +87,8 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/updateProjectInfo", method = {RequestMethod.POST})
     public ApiResult updateProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
-        if (projectinfoService.selectProjectIdExist(projectinfo.getProjectid())) {
-            TokenModel tokenModel = tokenService.getToken(request);
-            projectinfoService.updateProjectInfo(tokenModel, projectinfo);
-            return ApiResult.success();
-        } else {
-            return ApiResult.fail("项目ID不存在，更新数据失败！");
-        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return projectinfoService.updateProjectInfo(tokenModel, projectinfo);
     }
 
     /**
@@ -113,13 +101,8 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveUserAuthInfo", method = {RequestMethod.POST})
     public ApiResult saveUserAuthInfo(@RequestBody Project2userExtend project2userExtend, HttpServletRequest request) throws Exception {
-        if (projectinfoService.selectProjectIdExist(project2userExtend.getProjectid())) {
-            TokenModel tokenModel = tokenService.getToken(request);
-            projectinfoService.saveUserAuthInfo(tokenModel, project2userExtend.getProjectid(), project2userExtend.getUseridList());
-            return ApiResult.success();
-        } else {
-            return ApiResult.fail("项目ID不存在，请先创建项目后再添加用户权限信息。");
-        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return projectinfoService.saveUserAuthInfo(tokenModel, project2userExtend.getProjectid(), project2userExtend.getUseridList());
     }
 
     /**
@@ -132,13 +115,8 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveResourcesInfo", method = {RequestMethod.POST})
     public ApiResult saveResourcesInfo(@RequestBody Project2deviceExtend project2deviceExtend, HttpServletRequest request) throws Exception {
-        if (projectinfoService.selectProjectIdExist(project2deviceExtend.getProjectid())) {
-            TokenModel tokenModel = tokenService.getToken(request);
-            projectinfoService.saveResourcesInfo(tokenModel, project2deviceExtend.getProjectid(), project2deviceExtend.getDeviceidList());
-            return ApiResult.success();
-        } else {
-            return ApiResult.fail("项目ID不存在，请先创建项目后再添加设备信息。");
-        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return projectinfoService.saveResourcesInfo(tokenModel, project2deviceExtend.getProjectid(), project2deviceExtend.getDeviceidList());
     }
 
     /**
@@ -151,11 +129,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/getProjectInfo", method = {RequestMethod.GET})
     public ApiResult getProjectInfo(String projectid) throws Exception {
-        if (projectinfoService.selectProjectIdExist(projectid)) {
-            return ApiResult.success(projectinfoService.getProjectInfo(projectid));
-        } else {
-            return ApiResult.fail("项目ID不存在，获取信息失败！");
-        }
+        return ApiResult.success(projectinfoService.getProjectInfo("",projectid));
     }
 
     /**
@@ -167,13 +141,11 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getUserAuthList", method = {RequestMethod.GET})
-    public ApiResult getUserAuthList(String projectid) throws Exception {
-        if (projectinfoService.selectProjectIdExist(projectid)) {
-            return ApiResult.success(projectinfoService.getUserAuthList(projectid));
-        } else {
-            return ApiResult.fail("项目ID不存在，获取信息失败！");
+    public ApiResult getUserAuthList(String projectid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(projectid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-
+        return ApiResult.success(projectinfoService.getUserAuthList(projectid));
     }
 
     /**
@@ -185,7 +157,10 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getDeviceListByCompanyId", method = {RequestMethod.GET})
-    public ApiResult getDeviceListByCompanyId(String companyid) throws Exception {
+    public ApiResult getDeviceListByCompanyId(String companyid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(companyid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         return ApiResult.success(deviceinfoService.getDeviceListByCompanyId(companyid));
     }
 
@@ -198,7 +173,10 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getDeviceListByProjectId", method = {RequestMethod.GET})
-    public ApiResult getDeviceListByProjectId(String projectid) throws Exception {
+    public ApiResult getDeviceListByProjectId(String projectid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(projectid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         return ApiResult.success(deviceinfoService.getDeviceListByProjectId(projectid));
     }
 

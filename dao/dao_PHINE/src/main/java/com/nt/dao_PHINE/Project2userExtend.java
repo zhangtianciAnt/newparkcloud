@@ -17,4 +17,6 @@ public class Project2userExtend extends Project2user {
 
     private String[] useridList;
 
+    private String companyid;
+
 }

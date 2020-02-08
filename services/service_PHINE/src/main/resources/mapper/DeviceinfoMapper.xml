@@ -30,11 +30,11 @@
         INNER JOIN
           project2device b
         ON
-          a.deviceid = b.deviceid and b.projectid = #{projectid}
+          a.id = b.deviceid and b.projectid = #{projectid}
         INNER JOIN
           cabinetinfo c
         ON
-          a.cabinetid = c.cabinetid
+          a.cabinetid = c.id
         INNER JOIN
           machineroominfo d
         ON
@@ -42,7 +42,7 @@
         LEFT JOIN
           boardinfo e
         ON
-          a.deviceid = e.deviceid
+          a.id = e.deviceid
         ORDER BY
           a.deviceid,
           d.machineroomaddress,
@@ -50,6 +50,7 @@
     </select>
     <select id="getDeviceListByCompanyId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
         SELECT
+          a.id,
           a.deviceid,
           c.machineroomaddress,
           count( d.boardid ) AS boardcnt
@@ -58,7 +59,7 @@
 		INNER JOIN
           cabinetinfo b
         ON
-          a.cabinetid = b.cabinetid
+          a.cabinetid = b.id
         INNER JOIN
           machineroominfo c
         ON
@@ -66,10 +67,11 @@
         LEFT JOIN
           boardinfo d
         ON
-          a.deviceid = d.deviceid
+          a.id = d.deviceid
         WHERE a.companyid = #{companyid}
-        AND a.deviceid NOT IN ( SELECT deviceid FROM project2device )
+        AND a.id NOT IN ( SELECT deviceid FROM project2device )
         GROUP BY
+          a.id,
           a.deviceid,
           c.machineroomaddress
     </select>
