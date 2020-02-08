@@ -12,10 +12,6 @@ public class MsgConstants {
     public final static String ERROR_03 = "ERROR_03";
     public final static String ERROR_04 = "ERROR_04";
     public final static String ERROR_05 = "ERROR_05";
-    public final static String ERROR_06 = "ERROR_06";
-    public final static String ERROR_07 = "ERROR_07";
-    public final static String ERROR_08 = "ERROR_08";
-    public final static String ERROR_09 = "ERROR_09";
 
     public final static String INFO_01 = "INFO_01";
 

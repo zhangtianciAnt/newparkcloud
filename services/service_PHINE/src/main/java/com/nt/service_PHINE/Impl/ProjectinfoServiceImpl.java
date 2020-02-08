@@ -69,7 +69,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     public ApiResult saveProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
         ProjectListVo projectInfo = getProjectInfo(projectinfo.getCompanyid(),projectinfo.getProjectid());
         if(projectInfo != null){
-            return ApiResult.fail(MsgConstants.ERROR_06);
+            return ApiResult.fail("项目ID已经存在，请重新输入新的项目ID！");
         }else{
             String id = UUID.randomUUID().toString();
             projectinfo.setId(id);
@@ -92,7 +92,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     public ApiResult updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo) {
         ProjectListVo projectInfo = getProjectInfo("",projectinfo.getId());
         if(projectInfo == null){
-            return ApiResult.fail(MsgConstants.ERROR_07);
+            return ApiResult.fail("项目ID不存在，更新数据失败！");
         }else{
             projectinfo.setModifyby(tokenModel.getUserId());
             projectinfo.setTenantid(tokenModel.getTenantId());
@@ -114,7 +114,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     public ApiResult saveResourcesInfo(TokenModel tokenModel, String projectid, String[] deviceidList) {
         ProjectListVo projectInfo = getProjectInfo("",projectid);
         if(projectInfo == null){
-            return ApiResult.fail(MsgConstants.ERROR_09);
+            return ApiResult.fail("项目ID不存在，请先创建项目后再添加设备信息！");
         }else{
             // 插入新的数据
             for (String deviceid : deviceidList) {
@@ -143,7 +143,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     public ApiResult saveUserAuthInfo(TokenModel tokenModel, String projectid, String[] useridList) {
         ProjectListVo projectInfo = getProjectInfo("",projectid);
         if(projectInfo == null){
-            return ApiResult.fail(MsgConstants.ERROR_08);
+            return ApiResult.fail("项目ID不存在，请先创建项目后再添加用户权限信息！");
         }else{
             // 插入新的数据
             for (String userid : useridList) {
