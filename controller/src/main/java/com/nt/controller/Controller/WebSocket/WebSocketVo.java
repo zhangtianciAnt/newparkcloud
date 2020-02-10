@@ -1,10 +1,7 @@
 package com.nt.controller.Controller.WebSocket;
 
-import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.Riskassessment;
-import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.*;
-import com.nt.dao_BASF.Vehicleinformation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -68,7 +65,8 @@ public class WebSocketVo {
     private List<PassingRateVo> passingIsRateList = new ArrayList<>();
     //接收机柜传过来的报警信息
     private List<Deviceinformation> deviceinformationList = new ArrayList<>();
-
+    //应急预案列表
+    private List<Emergencyplan> emergencyplanList = new ArrayList<>();
 
     //获取培训教育人员详细
     private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();

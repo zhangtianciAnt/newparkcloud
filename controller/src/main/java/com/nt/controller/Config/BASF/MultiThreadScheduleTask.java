@@ -47,6 +47,9 @@ public class MultiThreadScheduleTask {
     @SuppressWarnings("all")
     RiskassessmentServices riskassessmentServices;
 
+    @Autowired
+    EmergencyplanServices emergencyplanServices;
+
     // websocket消息推送
     private WebSocket ws = new WebSocket();
     // WebSocketVow
@@ -202,6 +205,14 @@ public class MultiThreadScheduleTask {
     public void BASF90800_GetIsMandatoryInfo() throws Exception {
         // 获取培训教育非强制的通过/未通过
         webSocketVo.setPassingIsRateList(startprogramServices.getIsMandatoryInfo());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF10802_GetEmergencyplanInfo() throws Exception {
+        // 应急预案列表
+        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
