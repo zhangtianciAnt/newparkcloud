@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.Project2deviceMapper">
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Project2device">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
-    <result column="deviceid" jdbcType="VARCHAR" property="deviceid" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-  </resultMap>
-  <select id="getDeviceIdByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
-    SELECT
-      deviceid
-    FROM
-      project2device
-    WHERE id = #{projectid}
+    <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Project2device">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="projectid" jdbcType="VARCHAR" property="projectid"/>
+        <result column="deviceid" jdbcType="VARCHAR" property="deviceid"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="createon" jdbcType="TIMESTAMP" property="createon"/>
+        <result column="createby" jdbcType="VARCHAR" property="createby"/>
+        <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon"/>
+        <result column="modifyby" jdbcType="VARCHAR" property="modifyby"/>
+        <result column="owner" jdbcType="VARCHAR" property="owner"/>
+        <result column="tenantid" jdbcType="VARCHAR" property="tenantid"/>
+    </resultMap>
+    <select id="getDeviceIdByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+        select a.projectid,b.deviceid from project2device a
+        left join deviceinfo b on a.deviceid = b.id
+        where projectid=#{projectid}
   </select>
 </mapper>

@@ -20,9 +20,23 @@ public class PHINEFileController {
     @Autowired
     private PHINEFileService phineFileService;
 
+    /**
+     * 保存文件
+     *
+     * @param request
+     * @param fileInfoVo
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/saveFileInfo", method = {RequestMethod.POST})
     public ApiResult saveFileUrl(HttpServletRequest request, @RequestBody FileInfoVo fileInfoVo) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return phineFileService.saveFileInfo(tokenModel, fileInfoVo.getFilesInfo(), fileInfoVo.getProjectId());
     }
+
+    @RequestMapping(value = "/getFileByProjectId", method = {RequestMethod.GET})
+    public ApiResult getFileByProjectId(HttpServletRequest request, @RequestParam String projectId) throws Exception {
+        return phineFileService.getFileByProjectId(projectId);
+    }
+
 }
