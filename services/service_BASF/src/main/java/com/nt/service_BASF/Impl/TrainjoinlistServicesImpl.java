@@ -11,12 +11,10 @@ import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
-import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,7 +24,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -272,7 +273,11 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(overduePersonnelListVoList.get(i).getPersonnelid()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+            if (customerInfo != null) {
+                if (StringUtils.isNotBlank(customerInfo.getUserinfo().getCustomername())) {
+                    overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+                }
+            }
         }
         return overduePersonnelListVoList;
     }
