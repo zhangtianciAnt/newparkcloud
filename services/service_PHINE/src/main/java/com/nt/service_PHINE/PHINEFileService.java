@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface PHINEFileService {
     ApiResult saveFileInfo(TokenModel tokenModel, List<Fileinfo> filesInfo, String projectId) throws Exception;
+
+    ApiResult getFileByProjectId(String projectId) throws Exception;
 }

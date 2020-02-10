@@ -7,6 +7,7 @@ import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.PHINEFileService;
 import com.nt.service_PHINE.mapper.FileinfoMapper;
 import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,13 @@ public class PHINEFileServiceImpl implements PHINEFileService {
         } else {
             return ApiResult.fail("保存文件信息" + MsgConstants.ERROR_01);
         }
+    }
+
+    @Override
+    public ApiResult getFileByProjectId(String projectId) throws Exception {
+        Fileinfo fileinfo = new Fileinfo();
+        fileinfo.setId(projectId);
+        List<Fileinfo> fileinfoList = fileinfoMapper.select(fileinfo);
+        return ApiResult.success(MsgConstants.INFO_01, fileinfoList);
     }
 }
