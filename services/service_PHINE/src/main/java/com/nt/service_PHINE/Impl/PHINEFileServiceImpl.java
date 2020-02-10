@@ -59,7 +59,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
     @Override
     public ApiResult getFileByProjectId(String projectId) throws Exception {
         Fileinfo fileinfo = new Fileinfo();
-        fileinfo.setId(projectId);
+        fileinfo.setProjectid(projectId);
         List<Fileinfo> fileinfoList = fileinfoMapper.select(fileinfo);
         return ApiResult.success(MsgConstants.INFO_01, fileinfoList);
     }
