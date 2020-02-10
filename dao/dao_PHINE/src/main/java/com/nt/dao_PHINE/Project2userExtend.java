@@ -13,9 +13,9 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Project2deviceExtend extends Project2device {
+public class Project2userExtend extends Project2user {
 
-    private String[] deviceidList;
+    private String[] useridList;
 
     private String companyid;
 

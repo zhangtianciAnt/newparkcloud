@@ -1,6 +1,9 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Vo.DeviceListVo;
+import com.nt.dao_PHINE.Vo.DeviceinfoVo;
+import com.nt.utils.ApiResult;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -23,4 +26,16 @@ public interface DeviceinfoService {
 
     // 项目创建页面根据企业ID获取设备信息列表
     List<DeviceListVo> getDeviceListByCompanyId(String companyid);
+
+    // 新建设备
+    ApiResult saveDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo);
+
+    // 获取设备详情
+    DeviceinfoVo getDeviceInfo(String id);
+
+    // 更新设备
+    ApiResult updateDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo);
+
+    // 删除设备
+    ApiResult deleteDeviceInfo(String id);
 }

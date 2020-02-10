@@ -9,6 +9,7 @@
     <result column="companyid" jdbcType="VARCHAR" property="companyid" />
     <result column="projectid" jdbcType="VARCHAR" property="projectid" />
     <result column="projectname" jdbcType="VARCHAR" property="projectname" />
+    <result column="chipid" property="chipid" jdbcType="VARCHAR" />
     <result column="starttime" jdbcType="TIMESTAMP" property="starttime" />
     <result column="endtime" jdbcType="TIMESTAMP" property="endtime" />
     <result column="status" jdbcType="VARCHAR" property="status" />
@@ -45,6 +46,8 @@
       c.deviceid = d.deviceid
     AND
       d.status = '0'
+    WHERE
+    IFNULL(a.status, '0') = '0'
     GROUP BY
       a.id,
       a.projectname,
@@ -54,13 +57,22 @@
     UPDATE projectinfo
     SET projectname = #{projectname},
         projectdescription = #{projectdescription},
+        chipid = #{chipid},
         modifyby = #{modifyby},
         modifyon = #{modifyon}
-    WHERE projectid = #{projectid}
+    WHERE id = #{id}
   </update>
   <select id="getProjectInfo" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
-    SELECT projectid,projectname,projectdescription
+    SELECT id,projectid,projectname,projectdescription,chipid,companyid
     FROM projectinfo
-    WHERE projectid = #{projectid}
+    <where>
+      <if test="companyid != '' and projectid != ''">
+        and companyid = #{companyid}
+        and projectid = #{projectid}
+      </if>
+      <if test="companyid == '' and projectid != ''">
+        and id = #{projectid}
+      </if>
+    </where>
   </select>
 </mapper>

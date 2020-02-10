@@ -1,11 +1,16 @@
 package com.nt.controller.PHINEController;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_PHINE.Cabinetinfo;
 import com.nt.dao_PHINE.Machineroominfo;
+import com.nt.dao_PHINE.Vo.DeviceinfoVo;
 import com.nt.service_PHINE.CabinetinfoService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.MachineroominfoService;
 import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,63 @@ public class PHINE50000Controller {
     @RequestMapping(value = "/getDeviceInfoList",method={RequestMethod.GET})
     public ApiResult getDeviceInfoList(HttpServletRequest request) throws Exception {
         return ApiResult.success(deviceinfoService.getDeviceInfoList());
+    }
+
+    /**
+     * @return
+     * @Method getDeviceInfoList
+     * @Author SKAIXX
+     * @Description 获取设备详情
+     * @Date 2020/2/1 23:46
+     * @Param none
+     **/
+    @RequestMapping(value = "/getDeviceInfo",method={RequestMethod.GET})
+    public ApiResult getDeviceInfo(HttpServletRequest request, String id) throws Exception {
+        if (StrUtil.isEmpty(id)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(deviceinfoService.getDeviceInfo(id));
+    }
+
+    /**
+     * @return
+     * @Method saveDeviceInfo
+     * @Author SKAIXX
+     * @Description 创建设备信息
+     * @Date 2020/2/7 16:10
+     * @Param
+     **/
+    @RequestMapping(value = "/saveDeviceInfo",method={RequestMethod.POST})
+    public ApiResult saveDeviceInfo(HttpServletRequest request, @RequestBody DeviceinfoVo deviceinfoVo) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return deviceinfoService.saveDeviceInfo(tokenModel, deviceinfoVo);
+    }
+
+    /**
+     * @return
+     * @Method updateDeviceInfo
+     * @Author SKAIXX
+     * @Description 更新设备信息
+     * @Date 2020/2/7 16:10
+     * @Param
+     **/
+    @RequestMapping(value = "/updateDeviceInfo",method={RequestMethod.POST})
+    public ApiResult updateDeviceInfo(HttpServletRequest request, @RequestBody DeviceinfoVo deviceinfoVo) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return deviceinfoService.updateDeviceInfo(tokenModel, deviceinfoVo);
+    }
+
+    /**
+     * @return
+     * @Method deleteDeviceInfo
+     * @Author SKAIXX
+     * @Description 删除设备信息
+     * @Date 2020/2/7 16:10
+     * @Param
+     **/
+    @RequestMapping(value = "/deleteDeviceInfo",method={RequestMethod.GET})
+    public ApiResult deleteDeviceInfo(HttpServletRequest request, String id) throws Exception {
+        return deviceinfoService.deleteDeviceInfo(id);
     }
 
     // region 机房相关Api

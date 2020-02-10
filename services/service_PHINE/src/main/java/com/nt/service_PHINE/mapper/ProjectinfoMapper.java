@@ -15,6 +15,6 @@ public interface ProjectinfoMapper extends MyMapper<Projectinfo> {
     // 更新项目信息
     void updateProjectInfo(Projectinfo projectinfo);
 
-    // 根据项目ID查询项目信息
-    ProjectListVo getProjectInfo(String projectid);
+    // 根据条件查询项目信息
+    ProjectListVo getProjectInfo(String companyid,String projectid);
 }

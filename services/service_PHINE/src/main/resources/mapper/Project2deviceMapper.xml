@@ -21,6 +21,6 @@
       deviceid
     FROM
       project2device
-    WHERE projectid = #{projectid}
+    WHERE id = #{projectid}
   </select>
 </mapper>

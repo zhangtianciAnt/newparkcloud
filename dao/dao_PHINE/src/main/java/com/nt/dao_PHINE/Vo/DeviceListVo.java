@@ -26,7 +26,7 @@ public class DeviceListVo implements Comparable<DeviceListVo>{
     private String id;
 
     /**
-     * 机房编号&机柜编号
+     * 机房编号
      */
     private String machineroomid;
 
