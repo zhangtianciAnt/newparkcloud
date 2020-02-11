@@ -85,8 +85,11 @@ public class PHINE30000Controller {
      * @参数：[projectinfo]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/updateProjectInfo", method = {RequestMethod.POST})
+    @RequestMapping(value = "/updateProjectInfo", method = {RequestMethod.PUT})
     public ApiResult updateProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(projectinfo.getId())) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         return projectinfoService.updateProjectInfo(tokenModel, projectinfo);
     }
@@ -101,6 +104,9 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveUserAuthInfo", method = {RequestMethod.POST})
     public ApiResult saveUserAuthInfo(@RequestBody Project2userExtend project2userExtend, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(project2userExtend.getProjectid())) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         return projectinfoService.saveUserAuthInfo(tokenModel, project2userExtend.getProjectid(), project2userExtend.getUseridList());
     }
@@ -115,6 +121,9 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveResourcesInfo", method = {RequestMethod.POST})
     public ApiResult saveResourcesInfo(@RequestBody Project2deviceExtend project2deviceExtend, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(project2deviceExtend.getProjectid())) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         return projectinfoService.saveResourcesInfo(tokenModel, project2deviceExtend.getProjectid(), project2deviceExtend.getDeviceidList());
     }
@@ -128,8 +137,11 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getProjectInfo", method = {RequestMethod.GET})
-    public ApiResult getProjectInfo(String projectid) throws Exception {
-        return ApiResult.success(projectinfoService.getProjectInfo("",projectid));
+    public ApiResult getProjectInfo(String projectid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(projectid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(projectinfoService.getProjectInfo("", projectid));
     }
 
     /**
@@ -188,8 +200,11 @@ public class PHINE30000Controller {
      * @参数：[登录用户的企业ID]
      * @返回值：com.nt.utils.ApiResult
      */
-    @RequestMapping(value = "/delUserAuth", method = {RequestMethod.POST})
-    public ApiResult delUserAuth(String id) throws Exception {
+    @RequestMapping(value = "/delUserAuth", method = {RequestMethod.DELETE})
+    public ApiResult delUserAuth(String id, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(id)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         projectinfoService.delUserAuth(id);
         return ApiResult.success();
     }
