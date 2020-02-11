@@ -10,4 +10,5 @@ import java.util.List;
 @Component
 public interface FileinfoMapper extends MyMapper<Fileinfo> {
     int saveFilesInfo(List<Fileinfo> filesInfo);
+    List<Fileinfo> getFilesByFileMarkId(String projectId);
 }

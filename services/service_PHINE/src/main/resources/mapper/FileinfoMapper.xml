@@ -44,4 +44,14 @@
         </foreach>
     </insert>
 
+    <select id="getFilesByFileMarkId" parameterType="string" resultType="com.nt.dao_PHINE.Fileinfo">
+        select
+            a.id,a.filename,a.filetype,a.deviceid,a.fpgaid
+        from
+            fileinfo a
+        LEFT JOIN
+            filemark2file b on b.fileid=a.id
+        where
+            b.fileversionid=#{projectId}
+    </select>
 </mapper>
