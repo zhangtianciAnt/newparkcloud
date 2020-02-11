@@ -38,7 +38,7 @@ public class AssetsController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(assetsService.scanOne(code, tokenModel).getBarcode());
+        return ApiResult.success(assetsService.confirm(code, tokenModel).getBarcode());
     }
 
     @RequestMapping(value = "/scanList", method = {RequestMethod.POST})

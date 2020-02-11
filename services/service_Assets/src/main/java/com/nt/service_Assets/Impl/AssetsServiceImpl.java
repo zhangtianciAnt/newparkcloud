@@ -53,6 +53,18 @@ public class AssetsServiceImpl implements AssetsService {
     private DictionaryService dictionaryService;
 
     @Override
+    public Assets confirm(String code, TokenModel tokenModel) throws Exception {
+        Assets assets = new Assets();
+        assets.setRfidcd(code);
+        List<Assets> rst = assetsMapper.select(assets);
+        if(rst.size() > 0){
+            return rst.get(0);
+        }else{
+            return new Assets();
+        }
+    }
+
+    @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
         InventoryResults condition = new InventoryResults();
         condition.setRfidcd(code);
