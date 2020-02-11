@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,6 +59,16 @@ public class Pfans6004Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/updateexpatriatesinfor", method = {RequestMethod.POST})
+    public ApiResult updateexpatriatesinfor(@RequestBody List<Expatriatesinfor> expatriatesinfor, HttpServletRequest request) throws Exception {
+        if (expatriatesinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        expatriatesinforService.updateexpatriatesinfor(expatriatesinfor,tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult createexpatriatesinforApply(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
         if (expatriatesinfor == null) {
@@ -65,6 +76,15 @@ public class Pfans6004Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         expatriatesinforService.createexpatriatesinforApply(expatriatesinfor, tokenModel);
+        return ApiResult.success();
+    }
+    @RequestMapping(value = "/setexpatriatesinforApply", method = {RequestMethod.POST})
+    public ApiResult setexpatriatesinforApply(@RequestBody List<Expatriatesinfor> expatriatesinfor, HttpServletRequest request) throws Exception {
+        if (expatriatesinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        expatriatesinforService.updateexpatriatesinfor(expatriatesinfor,tokenModel);
         return ApiResult.success();
     }
 
