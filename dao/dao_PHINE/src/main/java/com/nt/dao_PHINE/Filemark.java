@@ -21,7 +21,5 @@ public class Filemark extends BaseModel {
 
     private String version;
 
-    private String fileid;
-
     private String remarks;
 }

@@ -3,7 +3,9 @@ package com.nt.controller.PHINEController;
 import com.nt.dao_PHINE.Operationdetail;
 import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
+import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
+import com.nt.service_PHINE.FilemarkService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.utils.*;
@@ -26,6 +28,9 @@ public class PHINE20000Controller {
 
     @Autowired
     private OperationrecordService operationrecordService;
+
+    @Autowired
+    private FilemarkService filemarkService;
 
     /**
      * @return
@@ -75,5 +80,19 @@ public class PHINE20000Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(projectinfoService.getDeviceIdByProjectId(projectId));
+    }
+
+    /**
+     * @return
+     * @Method saveFileMark
+     * @Author MYT
+     * @Description 保存文件标记
+     * @Date 2020/2/11 16:56
+     * @Param 文件标记信息
+     **/
+    @RequestMapping(value = "/saveFileMark", method = {RequestMethod.POST})
+    public ApiResult saveFileMark(HttpServletRequest request, @RequestParam FilemarkVo filemarkVo) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return filemarkService.saveFileMarkInfo(tokenModel, filemarkVo);
     }
 }

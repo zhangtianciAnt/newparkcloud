@@ -1,6 +1,9 @@
 package com.nt.dao_PHINE.Vo;
 
 import com.nt.dao_PHINE.Filemark2file;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,6 +16,9 @@ import java.util.List;
  * @CreateDate: 2020/2/11
  * @Version: 1.0
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FilemarkVo {
     private String id;
 
