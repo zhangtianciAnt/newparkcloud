@@ -70,10 +70,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     public void setexpatriatesinforApply(List<Expatriatesinfor> expatriatesmation, TokenModel tokenModel) throws Exception{
-        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         for(int j = 0; j < expatriatesmation.size(); j ++){
-            Expatriatesinfor expatriates = expatriatesmation.get(j);
-            expatriates.preInsert(tokenModel);
+            Expatriatesinfor expatriatesinfor = expatriatesmation.get(j);
+            expatriatesinfor.preInsert(tokenModel);
             //时间模板
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //入场时间
@@ -742,7 +741,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     }
                 }
             }
-            expatriatesinforMapper.insert(expatriates);
+            expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         }
     }
 
