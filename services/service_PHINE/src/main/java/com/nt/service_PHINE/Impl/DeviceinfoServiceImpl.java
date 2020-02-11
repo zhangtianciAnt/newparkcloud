@@ -11,6 +11,7 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.util.StringUtil;
 
 import java.util.*;
 
@@ -72,7 +73,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                 tmpMap.get(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress())).add(vo.getBoardid());
             }else{//map中不存在，新建key，用来存放数据
                 List<String> tmpList = new ArrayList<>();
-                tmpList.add(vo.getBoardid());
+                if(StringUtil.isNotEmpty(vo.getBoardid())){
+                    tmpList.add(vo.getBoardid());
+                }
                 tmpMap.put(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress()), tmpList);
             }
         }
