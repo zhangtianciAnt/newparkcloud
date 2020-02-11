@@ -9,6 +9,7 @@ import com.nt.service_PHINE.mapper.FilemarkMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
  * @CreateDate: 2020/2/11
  * @Version: 1.0
  */
+@Service
 public class FilemarkServiceImpl implements FilemarkService {
 
     @Autowired
@@ -51,6 +53,7 @@ public class FilemarkServiceImpl implements FilemarkService {
 
         // Filemark2file Insert
         for (Filemark2file filemark2file : filemarkVo.getFilemark2fileList()) {
+            filemark2file.setId(UUID.randomUUID().toString());
             filemark2file.preInsert(tokenModel);
             filemark2fileMapper.insert(filemark2file);
         }

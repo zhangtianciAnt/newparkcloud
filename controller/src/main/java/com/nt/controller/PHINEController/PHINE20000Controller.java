@@ -91,7 +91,7 @@ public class PHINE20000Controller {
      * @Param 文件标记信息
      **/
     @RequestMapping(value = "/saveFileMark", method = {RequestMethod.POST})
-    public ApiResult saveFileMark(HttpServletRequest request, @RequestParam FilemarkVo filemarkVo) throws Exception {
+    public ApiResult saveFileMark(HttpServletRequest request, @RequestBody FilemarkVo filemarkVo) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return filemarkService.saveFileMarkInfo(tokenModel, filemarkVo);
     }
