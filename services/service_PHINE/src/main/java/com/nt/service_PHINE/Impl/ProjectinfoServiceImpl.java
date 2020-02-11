@@ -5,6 +5,7 @@ import com.nt.dao_PHINE.Project2user;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
+import com.nt.dao_PHINE.Vo.ProjectinfoVo;
 import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.service_PHINE.mapper.Project2deviceMapper;
@@ -236,6 +237,19 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
     @Override
     public List<DeviceListVo> getDeviceIdByProjectId(String projectid) {
         return project2deviceMapper.getDeviceIdByProjectId(projectid);
+    }
+
+    /**
+     * @return ProjectinfoVo 项目信息
+     * @Method getProjectinfoById
+     * @Author MYT
+     * @Description 根据项目ID查询项目信息
+     * @Date 2020/1/31 15:27
+     * @Param projectid 项目ID
+     **/
+    @Override
+    public ProjectinfoVo getProjectinfoById(String projectid) {
+        return projectinfoMapper.getProjectinfoById(projectid);
     }
 
 }

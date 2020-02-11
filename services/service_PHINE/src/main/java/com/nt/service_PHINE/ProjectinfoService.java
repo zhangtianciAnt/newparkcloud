@@ -3,6 +3,7 @@ package com.nt.service_PHINE;
 import com.nt.dao_PHINE.Projectinfo;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.ProjectListVo;
+import com.nt.dao_PHINE.Vo.ProjectinfoVo;
 import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
@@ -46,4 +47,7 @@ public interface ProjectinfoService {
 
     // 更新项目信息
     ApiResult updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo);
+
+    // 获取项目信息包含项目相关人员
+    ProjectinfoVo getProjectinfoById(String projectid);
 }

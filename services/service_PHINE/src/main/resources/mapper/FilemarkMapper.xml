@@ -19,4 +19,12 @@
     <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
   </resultMap>
 
+    <select id="getFileMarkByProjectId" parameterType="string" resultType="com.nt.dao_PHINE.Filemark">
+        select
+            id, versiondescribtion, version
+        from
+            filemark
+        where
+            projectid=#{projectId}
+    </select>
 </mapper>

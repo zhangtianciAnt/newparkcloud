@@ -95,4 +95,18 @@ public class PHINE20000Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return filemarkService.saveFileMarkInfo(tokenModel, filemarkVo);
     }
+
+    /** @Method getProjectinfoById
+     * @Author MYT
+     * @Description 根据项目ID获取项目信息
+     * @Date 2020/2/3 16:56
+            * @Param projectId 项目ID
+     **/
+    @RequestMapping(value = "/getProjectinfoById", method = {RequestMethod.GET})
+    public ApiResult getProjectinfoById(HttpServletRequest request, @RequestParam String projectId) throws Exception {
+        if (StringUtils.isEmpty(projectId)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(projectinfoService.getProjectinfoById(projectId));
+    }
 }

@@ -18,4 +18,7 @@ public interface DeviceinfoMapper extends MyMapper<Deviceinfo> {
 
     // 项目创建页面根据企业ID获取设备信息列表
     List<DeviceListVo> getDeviceListByCompanyId(String companyid);
+
+    // 获取全部设备状态信息
+    List<DeviceListVo> getAllDeviceStatus();
 }

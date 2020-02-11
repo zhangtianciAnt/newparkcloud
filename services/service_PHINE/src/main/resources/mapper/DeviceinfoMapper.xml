@@ -38,7 +38,7 @@
         INNER JOIN
           machineroominfo d
         ON
-          c.machineroomid = d.machineroomid
+          c.machineroomid = d.id
         LEFT JOIN
           boardinfo e
         ON
@@ -63,7 +63,7 @@
         INNER JOIN
           machineroominfo c
         ON
-          b.machineroomid = c.machineroomid
+          b.machineroomid = c.id
         LEFT JOIN
           boardinfo d
         ON
@@ -99,5 +99,36 @@
         ON
           c.deviceid = a.id
     </select>
-
+    <select id="getAllDeviceStatus" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+        SELECT
+          a.deviceid,
+          d.machineroomaddress,
+          IFNULL(e.devicestatus,'1') as devicestatus,
+          f.boardid
+        FROM
+          deviceinfo a
+        INNER JOIN
+          project2device b
+        ON
+          a.id = b.deviceid
+        INNER JOIN
+          cabinetinfo c
+        ON
+          a.cabinetid = c.id
+        INNER JOIN
+          machineroominfo d
+        ON
+          c.machineroomid = d.id
+        LEFT JOIN
+          devicestatus e
+        ON
+          e.deviceid = a.id
+        LEFT JOIN
+          boardinfo f
+        ON
+          a.id = f.deviceid
+        ORDER BY
+          a.deviceid,
+          f.boardid
+    </select>
 </mapper>
