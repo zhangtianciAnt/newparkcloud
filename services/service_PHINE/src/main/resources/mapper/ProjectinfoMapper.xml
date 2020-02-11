@@ -75,4 +75,51 @@
       </if>
     </where>
   </select>
+
+  <resultMap id="ProjectinfoUser" type="com.nt.dao_PHINE.Vo.ProjectinfoVo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="companyid" jdbcType="VARCHAR" property="companyid" />
+    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
+    <result column="projectname" jdbcType="VARCHAR" property="projectname" />
+    <result column="chipid" property="chipid" jdbcType="VARCHAR" />
+    <result column="starttime" jdbcType="TIMESTAMP" property="starttime" />
+    <result column="endtime" jdbcType="TIMESTAMP" property="endtime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
+    <result column="createby" jdbcType="VARCHAR" property="createby" />
+    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
+    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
+    <result column="projectdescription" jdbcType="LONGVARCHAR" property="projectdescription" />
+    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
+    <collection property="project2userList" ofType="com.nt.dao_PHINE.Project2user">
+      <id column="puserid" property="id" jdbcType="VARCHAR" />
+      <result column="userid" property="userid" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+
+  <select id="getProjectinfoById" resultMap="ProjectinfoUser">
+    SELECT
+      pro.id,
+      pro.companyid,
+      pro.projectid,
+      pro.chipid,
+      pro.projectname,
+      pro.starttime,
+      pro.endtime,
+      p2u.id puserid,
+      p2u.userid userid
+    FROM
+      projectinfo pro
+    LEFT JOIN
+      project2user p2u
+    ON
+      pro.id = p2u.projectid
+    where pro.id = #{projectId}
+  </select>
+
 </mapper>
