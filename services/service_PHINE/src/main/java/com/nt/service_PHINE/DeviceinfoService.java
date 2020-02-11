@@ -38,4 +38,7 @@ public interface DeviceinfoService {
 
     // 删除设备
     ApiResult deleteDeviceInfo(String id);
+
+    // 获取全部设备状态信息
+    List<DeviceListVo> getAllDeviceStatus();
 }

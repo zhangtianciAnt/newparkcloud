@@ -20,7 +20,7 @@
   </resultMap>
   <select id="selectChipTypeList" resultType="com.nt.dao_PHINE.Vo.ChipinfoListVo">
     SELECT
-      chipid,
+      id,
       chiptype
     FROM
       chipinfo

@@ -64,16 +64,16 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public List<DeviceListVo> getDeviceListByProjectId(String projectid) {
-        // 执行数据查询
         List<DeviceListVo> deviceList = deviceinfoMapper.getDeviceListByProjectId(projectid);
         // 按照设备ID和设备地址分组，重构数据库数据
         Map<String, List<String>> tmpMap = new HashMap<>();
-        for(DeviceListVo vo : deviceList){
-            if(tmpMap.containsKey(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress()))){
+        for (DeviceListVo vo : deviceList) {
+            if (tmpMap.containsKey(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress()))) {
                 tmpMap.get(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress())).add(vo.getBoardid());
-            }else{//map中不存在，新建key，用来存放数据
+            } else {
+                //map中不存在，新建key，用来存放数据
                 List<String> tmpList = new ArrayList<>();
-                if(StringUtil.isNotEmpty(vo.getBoardid())){
+                if (StringUtil.isNotEmpty(vo.getBoardid())) {
                     tmpList.add(vo.getBoardid());
                 }
                 tmpMap.put(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress()), tmpList);
@@ -81,10 +81,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         }
         // 重新构建返回值
         List<DeviceListVo> rtnDeviceList = new ArrayList<>();
-        Set<Map.Entry<String,List<String>>> set = tmpMap.entrySet();
-        for(Map.Entry<String,List<String>> entry:set){
+        Set<Map.Entry<String, List<String>>> set = tmpMap.entrySet();
+        for (Map.Entry<String, List<String>> entry : set) {
             DeviceListVo deviceListVo = new DeviceListVo();
-            String key[] =entry.getKey().split(",");
+            String key[] = entry.getKey().split(",");
             deviceListVo.setDeviceid(key[0]);
             deviceListVo.setMachineroomaddress(key[1]);
             deviceListVo.setBoardList(entry.getValue());
@@ -250,7 +250,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         boardinfoMapper.delete(boardinfo);
 
         // 删除芯片
-        for(Boardinfo tmp : boardinfoList) {
+        for (Boardinfo tmp : boardinfoList) {
             Chipinfo chipinfo = new Chipinfo();
             chipinfo.setBoardid(tmp.getId());
             chipinfoMapper.delete(chipinfo);
@@ -288,5 +288,46 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             // endregion
         }
         // endregion
+    }
+
+    /**
+     * @Method getAllDeviceStatus
+     * @Author MYT
+     * @Description 获取全部设备状态信息
+     * @Date 2020/2/10 15:27
+     **/
+    @Override
+    public List<DeviceListVo> getAllDeviceStatus() {
+        List<DeviceListVo> deviceList = deviceinfoMapper.getAllDeviceStatus();
+        // 按照设备ID和设备地址分组，重构数据库数据
+        Map<String, List<String>> tmpMap = new HashMap<>();
+        for (DeviceListVo vo : deviceList) {
+            if (tmpMap.containsKey(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress().concat(",").concat(vo.getDevicestatus())))) {
+                tmpMap.get(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress().concat(",").concat(vo.getDevicestatus()))).add(vo.getBoardid());
+            } else {
+                //map中不存在，新建key，用来存放数据
+                List<String> tmpList = new ArrayList<>();
+                if (StringUtil.isNotEmpty(vo.getBoardid())) {
+                    tmpList.add(vo.getBoardid());
+                }
+                tmpMap.put(vo.getDeviceid().concat(",").concat(vo.getMachineroomaddress().concat(",").concat(vo.getDevicestatus())), tmpList);
+            }
+        }
+        // 重新构建返回值
+        List<DeviceListVo> rtnDeviceList = new ArrayList<>();
+        Set<Map.Entry<String, List<String>>> set = tmpMap.entrySet();
+        for (Map.Entry<String, List<String>> entry : set) {
+            DeviceListVo deviceListVo = new DeviceListVo();
+            String key[] = entry.getKey().split(",");
+            deviceListVo.setDeviceid(key[0]);
+            deviceListVo.setMachineroomaddress(key[1]);
+            deviceListVo.setDevicestatus(key[2]);
+            deviceListVo.setBoardList(entry.getValue());
+            rtnDeviceList.add(deviceListVo);
+        }
+        // 结果集按照设备ID排序
+        Collections.sort(rtnDeviceList);
+
+        return rtnDeviceList;
     }
 }
