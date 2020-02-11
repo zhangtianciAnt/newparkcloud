@@ -27,4 +27,38 @@
         where
             projectid=#{projectId}
     </select>
+
+    <select id="checkExists" parameterType="com.nt.dao_PHINE.Vo.FilemarkCheckVo" resultType="java.lang.String">
+        SELECT
+            tmp1.version
+        FROM
+            (
+            SELECT
+                COUNT( a.id ) AS tmp1cnt,
+                b.version
+            FROM
+                filemark2file a
+                INNER JOIN filemark b ON a.fileversionid = b.id
+            GROUP BY
+                b.version
+            ) tmp1
+            INNER JOIN (
+            SELECT
+                COUNT( a.id ) AS tmp2cnt,
+                b.version
+            FROM
+                filemark2file a
+                INNER JOIN filemark b ON a.fileversionid = b.id
+            WHERE
+                a.fileid IN
+                <foreach collection="filemark2fileList" index="index" item="item" open="(" separator="," close=")">
+                    #{item.fileid}
+                </foreach>
+            GROUP BY
+                b.version
+            ) tmp2 ON tmp1.version = tmp2.version
+            AND tmp1.tmp1cnt = tmp2.tmp2cnt
+        WHERE
+        tmp2.tmp2cnt = #{cnt}
+    </select>
 </mapper>

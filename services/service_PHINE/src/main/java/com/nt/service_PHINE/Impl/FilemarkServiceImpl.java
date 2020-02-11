@@ -2,11 +2,13 @@ package com.nt.service_PHINE.Impl;
 
 import com.nt.dao_PHINE.Filemark;
 import com.nt.dao_PHINE.Filemark2file;
+import com.nt.dao_PHINE.Vo.FilemarkCheckVo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.service_PHINE.FilemarkService;
 import com.nt.service_PHINE.mapper.Filemark2fileMapper;
 import com.nt.service_PHINE.mapper.FilemarkMapper;
 import com.nt.utils.ApiResult;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,16 +37,25 @@ public class FilemarkServiceImpl implements FilemarkService {
      * @return
      * @Method saveFileMarkInfo
      * @Author SKAIXX
-     * @Description TODO 方法描述
+     * @Description 文件标记
      * @Date 2020/2/11 12:49
      * @Param
      **/
     @Override
     public ApiResult saveFileMarkInfo(TokenModel tokenModel, FilemarkVo filemarkVo) {
-        // TODO:判断当前文件是否已经被标记
+        // 判断当前文件是否已经被标记
+        FilemarkCheckVo filemarkCheckVo = new FilemarkCheckVo();
+        filemarkCheckVo.setCnt(filemarkVo.getFilemark2fileList().size());
+        filemarkCheckVo.setFilemark2fileList(filemarkVo.getFilemark2fileList());
+        String result = filemarkMapper.checkExists(filemarkCheckVo);
+        if (StringUtils.isNotEmpty(result)) {
+            return ApiResult.fail("当前文件已被标记为版本【" +  result + "】");
+        }
+
         // Filemark Insert
+        String fileversionid = UUID.randomUUID().toString();
         Filemark filemark = new Filemark();
-        filemark.setId(UUID.randomUUID().toString());
+        filemark.setId(fileversionid);
         filemark.setProjectid(filemarkVo.getProjectid());
         filemark.setVersion(filemarkVo.getVersion());
         filemark.setVersiondescribtion(filemarkVo.getVersiondescribtion());
@@ -54,6 +65,7 @@ public class FilemarkServiceImpl implements FilemarkService {
         // Filemark2file Insert
         for (Filemark2file filemark2file : filemarkVo.getFilemark2fileList()) {
             filemark2file.setId(UUID.randomUUID().toString());
+            filemark2file.setFileversionid(fileversionid);
             filemark2file.preInsert(tokenModel);
             filemark2fileMapper.insert(filemark2file);
         }
