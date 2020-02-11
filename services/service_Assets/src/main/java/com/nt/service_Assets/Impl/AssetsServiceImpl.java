@@ -13,8 +13,10 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.service_Assets.AssetsService;
 import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Assets.mapper.InventoryResultsMapper;
+import com.nt.service_Assets.mapper.InventoryplanMapper;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -47,6 +49,9 @@ public class AssetsServiceImpl implements AssetsService {
     private InventoryResultsMapper assetsResultMapper;
 
     @Autowired
+    private InventoryplanMapper inventoryplanMapper;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
@@ -66,16 +71,33 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception {
-        InventoryResults condition = new InventoryResults();
-        condition.setRfidcd(code);
-        List<InventoryResults> rst = assetsResultMapper.select(condition);
-        if (rst.size() > 0) {
-            InventoryResults inventoryResults = rst.get(0);
-            inventoryResults.preUpdate(tokenModel);
-            inventoryResults.setResult("2");
-            assetsResultMapper.updateByPrimaryKey(inventoryResults);
-            return inventoryResults;
+        Inventoryplan cond = new Inventoryplan();
+        cond.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        List<Inventoryplan> list = inventoryplanMapper.select(cond);
+        for (Inventoryplan item:
+                list ) {
+            if(item.getInventorycycle().split("~").length > 1){
+
+                String st = item.getInventorycycle().split("~")[0].trim();
+                String ed = item.getInventorycycle().split("~")[1].trim();
+                String now = DateUtil.today();
+                if(st.compareTo(now) <= 0 && now.compareTo(ed) <= 0){
+                    InventoryResults condition = new InventoryResults();
+                    condition.setInventoryplan_id(item.getInventoryplan_id());
+                    condition.setRfidcd(code);
+                    List<InventoryResults> rst = assetsResultMapper.select(condition);
+                    if (rst.size() > 0) {
+                        InventoryResults inventoryResults = rst.get(0);
+                        inventoryResults.preUpdate(tokenModel);
+                        inventoryResults.setResult("2");
+                        assetsResultMapper.updateByPrimaryKey(inventoryResults);
+                        return inventoryResults;
+                    }
+                }
+            }
+
         }
+
         return new InventoryResults();
     }
 
