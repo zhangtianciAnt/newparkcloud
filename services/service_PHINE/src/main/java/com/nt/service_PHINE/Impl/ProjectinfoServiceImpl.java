@@ -162,11 +162,10 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * TODO:
      **/
     @Override
-    public void delUserAuth(String projectid, String userid) {
+    public void delUserAuth(String id) {
         // 删除关系表中既有用户数据
         Project2user deleteCondition = new Project2user();
-        deleteCondition.setProjectid(projectid);
-        deleteCondition.setUserid(userid);
+        deleteCondition.setId(id);
         project2userMapper.delete(deleteCondition);
     }
 
@@ -186,6 +185,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         List<UserAuthListVo> userAuthListVoList = new ArrayList<UserAuthListVo>();
         for (Project2user userInfo : project2usersList) {
             UserAuthListVo userAuthListVo = new UserAuthListVo();
+            userAuthListVo.setId(userInfo.getId());
             userAuthListVo.setUserid(userInfo.getUserid());
             userAuthListVo.setInfoauth("1");
             userAuthListVo.setFileauth("1");

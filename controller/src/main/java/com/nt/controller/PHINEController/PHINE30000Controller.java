@@ -189,8 +189,8 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/delUserAuth", method = {RequestMethod.POST})
-    public ApiResult delUserAuth(String projectid, String userid) throws Exception {
-        projectinfoService.delUserAuth(projectid, userid);
+    public ApiResult delUserAuth(String id) throws Exception {
+        projectinfoService.delUserAuth(id);
         return ApiResult.success();
     }
 }
