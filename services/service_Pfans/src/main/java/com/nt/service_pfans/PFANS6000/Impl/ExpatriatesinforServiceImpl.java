@@ -61,6 +61,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         expatriatesinfor.preInsert(tokenModel);
         expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
+        String yes = "是";
+        String no = "否";
+        if(expatriatesinfor.getOperationform().equals("BP024001")){
+            expatriatesinfor.setDistriobjects(yes);
+            expatriatesinfor.setVenuetarget(yes);
+        }else if(expatriatesinfor.getOperationform().equals("BP024002")){
+            expatriatesinfor.setDistriobjects(no);
+            expatriatesinfor.setVenuetarget(yes);
+        }else{
+            expatriatesinfor.setDistriobjects(no);
+            expatriatesinfor.setVenuetarget(no);
+        }
         expatriatesinforMapper.insert(expatriatesinfor);
         Priceset priceset = new Priceset();
         priceset.setPricesetid(UUID.randomUUID().toString());

@@ -253,5 +253,17 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "BPNAME")
     private String bpname;
 
+    /**
+     * 配賦対象
+     */
+    @Column(name = "DISTRIOBJECTS")
+    private String distriobjects;
+
+    /**
+     * 構内対象
+     */
+        @Column(name = "VENUETARGET")
+    private String venuetarget;
+
 
 }
