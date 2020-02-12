@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Id;
 import java.util.List;
 
 /**
@@ -73,6 +72,9 @@ public class Commandrecord extends BaseModel {
     private List<Command> command;
     //事故状态解除
     private ReleaseAccident releaseAccident;
+
+    //gis截图(base64)
+    private String gisimage;
 
     //    SCIP
     @Data
