@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_PHINE.Vo
- * @ClassName: FilemarkVo
- * @Description: 文件标记Vo
+ * @ClassName: FilemarkCheckVo
+ * @Description: 文件标记Check用Vo
  * @Author: SKAIXX
  * @CreateDate: 2020/2/11
  * @Version: 1.0
@@ -19,18 +19,15 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FilemarkVo {
-    private String id;
+public class FilemarkCheckVo {
 
-    private String projectid;
+    /**
+     * 标记文件数量
+     */
+    private int cnt;
 
-    private String versiondescribtion;
-
-    private String version;
-
-    private String fileid;
-
-    private String remarks;
-
+    /**
+     * 标记文件ID数组
+     */
     private List<Filemark2file> filemark2fileList;
 }

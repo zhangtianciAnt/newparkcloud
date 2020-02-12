@@ -2,6 +2,7 @@ package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.utils.ApiResult;
+import com.nt.utils.dao.TokenModel;
 
 /**
  * @ProjectName: newparkcloud
@@ -15,5 +16,5 @@ import com.nt.utils.ApiResult;
 public interface FilemarkService {
 
     // 保存文件标记信息
-    ApiResult saveFileMarkInfo(FilemarkVo filemarkVo);
+    ApiResult saveFileMarkInfo(TokenModel tokenModel, FilemarkVo filemarkVo);
 }

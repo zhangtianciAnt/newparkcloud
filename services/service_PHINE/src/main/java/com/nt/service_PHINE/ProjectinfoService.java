@@ -34,7 +34,7 @@ public interface ProjectinfoService {
     ApiResult saveUserAuthInfo(TokenModel tokenModel, String projectid, String[] useridList);
 
     // 删除用户权限及管理设备信息
-    void delUserAuth(String projectid, String userid);
+    void delUserAuth(String id);
 
     // 获取用户权限信息
     List<UserAuthListVo> getUserAuthList(String projectid);

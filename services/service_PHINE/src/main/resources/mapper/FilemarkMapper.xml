@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.FilemarkMapper">
-    <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Filemark">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <id column="id" jdbcType="VARCHAR" property="id"/>
-        <result column="status" jdbcType="VARCHAR" property="status"/>
-        <result column="createon" jdbcType="TIMESTAMP" property="createon"/>
-        <result column="createby" jdbcType="VARCHAR" property="createby"/>
-        <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon"/>
-        <result column="modifyby" jdbcType="VARCHAR" property="modifyby"/>
-        <result column="owner" jdbcType="VARCHAR" property="owner"/>
-        <result column="tenantid" jdbcType="VARCHAR" property="tenantid"/>
-        <result column="versiondescribtion" jdbcType="VARCHAR" property="versiondescribtion"/>
-        <result column="version" jdbcType="VARCHAR" property="version"/>
-        <result column="remarks" jdbcType="LONGVARCHAR" property="remarks"/>
-    </resultMap>
+  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Filemark">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <id column="projectid" jdbcType="VARCHAR" property="projectid" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
+    <result column="createby" jdbcType="VARCHAR" property="createby" />
+    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
+    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
+    <result column="versiondescribtion" jdbcType="VARCHAR" property="versiondescribtion" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
+  </resultMap>
 
     <select id="getFileMarkByProjectId" parameterType="string" resultType="com.nt.dao_PHINE.Filemark">
         select
@@ -25,5 +26,39 @@
             filemark
         where
             projectid=#{projectId}
+    </select>
+
+    <select id="checkExists" parameterType="com.nt.dao_PHINE.Vo.FilemarkCheckVo" resultType="java.lang.String">
+        SELECT
+            tmp1.version
+        FROM
+            (
+            SELECT
+                COUNT( a.id ) AS tmp1cnt,
+                b.version
+            FROM
+                filemark2file a
+                INNER JOIN filemark b ON a.fileversionid = b.id
+            GROUP BY
+                b.version
+            ) tmp1
+            INNER JOIN (
+            SELECT
+                COUNT( a.id ) AS tmp2cnt,
+                b.version
+            FROM
+                filemark2file a
+                INNER JOIN filemark b ON a.fileversionid = b.id
+            WHERE
+                a.fileid IN
+                <foreach collection="filemark2fileList" index="index" item="item" open="(" separator="," close=")">
+                    #{item.fileid}
+                </foreach>
+            GROUP BY
+                b.version
+            ) tmp2 ON tmp1.version = tmp2.version
+            AND tmp1.tmp1cnt = tmp2.tmp2cnt
+        WHERE
+        tmp2.tmp2cnt = #{cnt}
     </select>
 </mapper>

@@ -3,7 +3,9 @@ package com.nt.controller.PHINEController;
 import com.nt.dao_PHINE.Operationdetail;
 import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
+import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
+import com.nt.service_PHINE.FilemarkService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.ProjectinfoService;
 import com.nt.utils.*;
@@ -26,6 +28,9 @@ public class PHINE20000Controller {
 
     @Autowired
     private OperationrecordService operationrecordService;
+
+    @Autowired
+    private FilemarkService filemarkService;
 
     /**
      * @return
@@ -79,11 +84,23 @@ public class PHINE20000Controller {
 
     /**
      * @return
-     * @Method getProjectinfoById
+     * @Method saveFileMark
+     * @Author MYT
+     * @Description 保存文件标记
+     * @Date 2020/2/11 16:56
+     * @Param 文件标记信息
+     **/
+    @RequestMapping(value = "/saveFileMark", method = {RequestMethod.POST})
+    public ApiResult saveFileMark(HttpServletRequest request, @RequestBody FilemarkVo filemarkVo) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return filemarkService.saveFileMarkInfo(tokenModel, filemarkVo);
+    }
+
+    /** @Method getProjectinfoById
      * @Author MYT
      * @Description 根据项目ID获取项目信息
      * @Date 2020/2/3 16:56
-     * @Param projectId 项目ID
+            * @Param projectId 项目ID
      **/
     @RequestMapping(value = "/getProjectinfoById", method = {RequestMethod.GET})
     public ApiResult getProjectinfoById(HttpServletRequest request, @RequestParam String projectId) throws Exception {

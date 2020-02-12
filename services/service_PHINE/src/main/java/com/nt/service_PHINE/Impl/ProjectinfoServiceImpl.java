@@ -74,9 +74,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         }else{
             String id = UUID.randomUUID().toString();
             projectinfo.setId(id);
-            projectinfo.setCreateby(tokenModel.getUserId());
-            projectinfo.setTenantid(tokenModel.getTenantId());
-            projectinfo.setCreateon(new java.sql.Date(System.currentTimeMillis()));
+            projectinfo.preInsert(tokenModel);
             projectinfoMapper.insert(projectinfo);
             return ApiResult.success(MsgConstants.INFO_01, projectinfo.getId());
         }
@@ -95,9 +93,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         if(projectInfo == null){
             return ApiResult.fail("项目ID不存在，更新数据失败！");
         }else{
-            projectinfo.setModifyby(tokenModel.getUserId());
-            projectinfo.setTenantid(tokenModel.getTenantId());
-            projectinfo.setModifyon(new java.sql.Date(System.currentTimeMillis()));
+            projectinfo.preUpdate(tokenModel);
             projectinfoMapper.updateProjectInfo(projectinfo);
             return ApiResult.success(MsgConstants.INFO_01);
         }
@@ -120,12 +116,10 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
             // 插入新的数据
             for (String deviceid : deviceidList) {
                 Project2device project2device = new Project2device();
-                project2device.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+                project2device.setId(UUID.randomUUID().toString());
                 project2device.setDeviceid(deviceid);
                 project2device.setProjectid(projectid);
-                project2device.setCreateby(tokenModel.getUserId());
-                project2device.setTenantid(tokenModel.getTenantId());
-                project2device.setCreateon(new java.sql.Date(System.currentTimeMillis()));
+                project2device.preInsert(tokenModel);
                 project2deviceMapper.insert(project2device);
             }
             return ApiResult.success(MsgConstants.INFO_01);
@@ -149,13 +143,10 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
             // 插入新的数据
             for (String userid : useridList) {
                 Project2user project2user = new Project2user();
-                project2user.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+                project2user.setId(UUID.randomUUID().toString());
                 project2user.setProjectid(projectid);
-                project2user.setCreateby(tokenModel.getUserId());
-                project2user.setTenantid(tokenModel.getTenantId());
-                project2user.setTenantid(tokenModel.getTenantId());
-                project2user.setCreateon(new java.sql.Date(System.currentTimeMillis()));
                 project2user.setUserid(userid);
+                project2user.preInsert(tokenModel);
                 project2userMapper.insert(project2user);
             }
             return ApiResult.success(MsgConstants.INFO_01);
@@ -171,11 +162,10 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * TODO:
      **/
     @Override
-    public void delUserAuth(String projectid, String userid) {
+    public void delUserAuth(String id) {
         // 删除关系表中既有用户数据
         Project2user deleteCondition = new Project2user();
-        deleteCondition.setProjectid(projectid);
-        deleteCondition.setUserid(userid);
+        deleteCondition.setId(id);
         project2userMapper.delete(deleteCondition);
     }
 
@@ -195,6 +185,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
         List<UserAuthListVo> userAuthListVoList = new ArrayList<UserAuthListVo>();
         for (Project2user userInfo : project2usersList) {
             UserAuthListVo userAuthListVo = new UserAuthListVo();
+            userAuthListVo.setId(userInfo.getId());
             userAuthListVo.setUserid(userInfo.getUserid());
             userAuthListVo.setInfoauth("1");
             userAuthListVo.setFileauth("1");

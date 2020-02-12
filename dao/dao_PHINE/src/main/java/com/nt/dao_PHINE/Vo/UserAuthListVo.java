@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAuthListVo {
 
+    private String id;
+
     /**
      * 用户ID
      */
