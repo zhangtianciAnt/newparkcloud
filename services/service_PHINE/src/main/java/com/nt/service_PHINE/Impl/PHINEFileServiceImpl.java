@@ -75,21 +75,13 @@ public class PHINEFileServiceImpl implements PHINEFileService {
     @Override
     public ApiResult getFileMarkByProjectId(String projectId) throws Exception {
         List<Filemark> filemarkList = filemarkMapper.getFileMarkByProjectId(projectId);
-        if (filemarkList.size() > 0) {
-            return ApiResult.success(filemarkList);
-        } else {
-            return ApiResult.fail("获取文件版本信息" + MsgConstants.ERROR_01);
-        }
+        return ApiResult.success(filemarkList);
     }
 
     @Override
     public ApiResult getFilesByFileMarkId(String projectId) throws Exception {
         List<Fileinfo> fileinfoList = fileinfoMapper.getFilesByFileMarkId(projectId);
-        if (fileinfoList.size() > 0) {
-            return ApiResult.success(fileinfoList);
-        } else {
-            return ApiResult.fail("获取版本id获取文件信息" + MsgConstants.ERROR_01);
-        }
+        return ApiResult.success(fileinfoList);
     }
 
     @Override
