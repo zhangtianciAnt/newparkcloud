@@ -7,6 +7,7 @@ import com.nt.dao_PHINE.Vo.DeviceinfoVo;
 import com.nt.service_PHINE.CabinetinfoService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.MachineroominfoService;
+import com.nt.service_PHINE.TestService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -46,6 +47,9 @@ public class PHINE50000Controller {
     @Autowired
     private CabinetinfoService cabinetinfoService;
 
+    @Autowired
+    private TestService testService;
+
     /**
      * @return List<DeviceListVo>设备信息列表
      * @Method getDeviceInfoList
@@ -56,6 +60,7 @@ public class PHINE50000Controller {
      **/
     @RequestMapping(value = "/getDeviceInfoList",method={RequestMethod.GET})
     public ApiResult getDeviceInfoList(HttpServletRequest request) throws Exception {
+        System.out.println(testService.closeConnection(""));
         return ApiResult.success(deviceinfoService.getDeviceInfoList());
     }
 

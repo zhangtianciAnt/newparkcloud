@@ -52,6 +52,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public List<DeviceListVo> getDeviceInfoList() {
+
         return deviceinfoMapper.getDeviceInfoList();
     }
 
