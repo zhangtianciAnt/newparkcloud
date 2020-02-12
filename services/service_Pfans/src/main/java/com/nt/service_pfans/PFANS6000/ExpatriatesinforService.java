@@ -14,7 +14,11 @@ public interface ExpatriatesinforService {
 
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
 
+    public void updateexpatriatesinfor(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception;
+
     public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
+
+    public void setexpatriatesinforApply(List<Expatriatesinfor> expatriatesmation,  TokenModel tokenModel) throws Exception;
 
     List<String> expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 }

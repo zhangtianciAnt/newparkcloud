@@ -92,6 +92,12 @@ public class Expatriatesinfor extends BaseModel {
     private String jobclassification;
 
     /**
+     * 毕业年
+     */
+    @Column(name = "GRADUATION_YEAR")
+    private Date graduation_year;
+
+    /**
      * 入场时间
      */
     @Column(name = "ADMISSIONTIME")
@@ -210,6 +216,12 @@ public class Expatriatesinfor extends BaseModel {
      */
     @Column(name = "DECEMBER")
     private String december;
+
+    /**
+     * 勤続月数
+     */
+    @Column(name = "MONTHLENGTH")
+    private String monthlength;
 
     /**
      * 备注

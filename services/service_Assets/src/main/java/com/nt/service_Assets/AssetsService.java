@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface AssetsService {
 
+    Assets confirm(String code, TokenModel tokenModel) throws Exception;
+
     InventoryResults scanOne(String code, TokenModel tokenModel) throws Exception;
 
     int scanList(String code, TokenModel tokenModel) throws Exception;
