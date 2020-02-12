@@ -41,4 +41,7 @@ public interface DeviceinfoService {
 
     // 获取全部设备状态信息
     List<DeviceListVo> getAllDeviceStatus();
+
+    // 获取通信操作设备信息
+    List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid);
 }

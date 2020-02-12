@@ -131,4 +131,23 @@
           a.deviceid,
           f.boardid
     </select>
+    <select id="getCommunicationDeviceInfo" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
+        SELECT
+          c.deviceid,
+          c.currentuser
+        FROM
+          projectinfo a
+        LEFT JOIN
+          project2device b
+        ON
+          a.id = b.projectid
+        LEFT JOIN
+          deviceinfo c
+        ON
+          b.deviceid = c.id
+        WHERE
+          a.id = #{projectid}
+        ORDER BY
+          c.deviceid
+    </select>
 </mapper>

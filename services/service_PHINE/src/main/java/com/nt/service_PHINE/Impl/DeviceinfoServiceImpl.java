@@ -330,4 +330,19 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
         return rtnDeviceList;
     }
+
+    /**
+     * @Method getCommunicationDeviceInfo
+     * @Author MYT
+     * @Description 获取通信操作设备信息
+     * @Date 2020/2/10 15:27
+     **/
+    @Override
+    public List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid) {
+        List<DeviceListVo> deviceList = deviceinfoMapper.getCommunicationDeviceInfo(projectid);
+        for(DeviceListVo vo : deviceList){
+            vo.setCurrentloginuser(tokenModel.getUserId());
+        }
+        return deviceList;
+    }
 }

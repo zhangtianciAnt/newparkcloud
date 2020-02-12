@@ -5,6 +5,7 @@ import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
+import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.FilemarkService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.ProjectinfoService;
@@ -31,6 +32,9 @@ public class PHINE20000Controller {
 
     @Autowired
     private FilemarkService filemarkService;
+
+    @Autowired
+    private DeviceinfoService deviceinfoService;
 
     /**
      * @return
@@ -96,7 +100,8 @@ public class PHINE20000Controller {
         return filemarkService.saveFileMarkInfo(tokenModel, filemarkVo);
     }
 
-    /** @Method getProjectinfoById
+    /**
+     * @Method getProjectinfoById
      * @Author MYT
      * @Description 根据项目ID获取项目信息
      * @Date 2020/2/3 16:56
@@ -108,5 +113,21 @@ public class PHINE20000Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(projectinfoService.getProjectinfoById(projectId));
+    }
+
+    /**
+     * @Method getCommunicationDeviceInfo
+     * @Author MYT
+     * @Description 获取通信操作设备信息
+     * @Date 2020/2/3 16:56
+     * @Param projectId 项目ID
+     **/
+    @RequestMapping(value = "/getCommunicationDeviceInfo", method = {RequestMethod.GET})
+    public ApiResult getCommunicationDeviceInfo(HttpServletRequest request, @RequestParam String projectId) throws Exception {
+        if (StringUtils.isEmpty(projectId)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(deviceinfoService.getCommunicationDeviceInfo(tokenModel, projectId));
     }
 }

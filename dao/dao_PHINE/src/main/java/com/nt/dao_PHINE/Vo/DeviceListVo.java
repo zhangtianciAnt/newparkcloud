@@ -46,6 +46,16 @@ public class DeviceListVo implements Comparable<DeviceListVo>{
     private String devicetype;
 
     /**
+     * 当前用户
+     */
+    private String currentuser;
+
+    /**
+     * 当前登录用户
+     */
+    private String currentloginuser;
+
+    /**
      * 所属公司
      */
     private String companyid;
