@@ -44,4 +44,10 @@ public interface DeviceinfoService {
 
     // 获取通信操作设备信息
     List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid);
+
+    // 设备创建连接
+    ApiResult createConnection(TokenModel tokenModel, String deviceid);
+
+    // 设备关闭连接
+    ApiResult closeConnection(TokenModel tokenModel, String deviceid);
 }

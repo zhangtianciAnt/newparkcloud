@@ -130,4 +130,37 @@ public class PHINE20000Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(deviceinfoService.getCommunicationDeviceInfo(tokenModel, projectId));
     }
+
+    /**
+     * @Method createConnection
+     * @Author MYT
+     * @Description 设备创建连接
+     * @Date 2020/2/3 16:56
+     * @Param deviceId 设备ID
+     **/
+    @RequestMapping(value = "/createConnection", method = {RequestMethod.PUT})
+    public ApiResult createConnection(HttpServletRequest request, @RequestParam String deviceId) throws Exception {
+        if (StringUtils.isEmpty(deviceId)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return deviceinfoService.createConnection(tokenModel, deviceId);
+    }
+
+    /**
+     * @Method closeConnection
+     * @Author MYT
+     * @Description 设备关闭连接
+     * @Date 2020/2/3 16:56
+     * @Param deviceId 设备ID
+     **/
+    @RequestMapping(value = "/closeConnection", method = {RequestMethod.PUT})
+    public ApiResult closeConnection(HttpServletRequest request, @RequestParam String deviceId) throws Exception {
+        if (StringUtils.isEmpty(deviceId)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return deviceinfoService.closeConnection(tokenModel, deviceId);
+    }
+
 }

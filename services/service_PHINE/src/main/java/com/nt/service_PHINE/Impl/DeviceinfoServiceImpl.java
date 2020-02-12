@@ -9,6 +9,7 @@ import com.nt.service_PHINE.mapper.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.util.StringUtil;
@@ -340,9 +341,51 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     @Override
     public List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid) {
         List<DeviceListVo> deviceList = deviceinfoMapper.getCommunicationDeviceInfo(projectid);
-        for(DeviceListVo vo : deviceList){
+        for (DeviceListVo vo : deviceList) {
             vo.setCurrentloginuser(tokenModel.getUserId());
         }
         return deviceList;
+    }
+
+    /**
+     * @Method createConnection
+     * @Author MYT
+     * @Description 设备创建连接
+     * @Date 2020/2/10 15:27
+     **/
+    @Override
+    public ApiResult createConnection(TokenModel tokenModel, String deviceid) {
+        // TODO :操作用户权限暂时不封装
+        // TODO :调用打开设备接口未封装
+        // 创建连接成功后，更新数据库
+        Deviceinfo uptDeviceinfo = new Deviceinfo();
+        uptDeviceinfo.setId(deviceid);
+        uptDeviceinfo.setCurrentuser(tokenModel.getUserId());
+        uptDeviceinfo.preUpdate(tokenModel);
+        deviceinfoMapper.updateCommunicationDeviceInfo(uptDeviceinfo);
+        return ApiResult.success();
+        // 创建失败
+        // return ApiResult.fail();
+    }
+
+    /**
+     * @Method closeConnection
+     * @Author MYT
+     * @Description 设备关闭连接
+     * @Date 2020/2/10 15:27
+     **/
+    @Override
+    public ApiResult closeConnection(TokenModel tokenModel, String deviceid) {
+        // TODO :操作用户权限暂时不封装
+        // TODO :调用打开设备接口未封装
+        // 关闭连接成功后，更新数据库
+        Deviceinfo uptDeviceinfo = new Deviceinfo();
+        uptDeviceinfo.setId(deviceid);
+        uptDeviceinfo.setCurrentuser(null);
+        uptDeviceinfo.preUpdate(tokenModel);
+        deviceinfoMapper.updateCommunicationDeviceInfo(uptDeviceinfo);
+        return ApiResult.success();
+        // 关闭失败
+        // return ApiResult.fail();
     }
 }
