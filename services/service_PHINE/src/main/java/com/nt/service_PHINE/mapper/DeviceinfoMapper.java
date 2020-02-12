@@ -24,4 +24,6 @@ public interface DeviceinfoMapper extends MyMapper<Deviceinfo> {
 
     // 获取通信操作设备信息
     List<DeviceListVo> getCommunicationDeviceInfo(String projectid);
+
+    void updateCommunicationDeviceInfo(Deviceinfo deviceinfo);
 }

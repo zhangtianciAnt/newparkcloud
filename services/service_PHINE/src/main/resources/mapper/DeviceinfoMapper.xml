@@ -151,4 +151,12 @@
         ORDER BY
           c.deviceid
     </select>
+    <update id="updateCommunicationDeviceInfo" parameterType="com.nt.dao_PHINE.Deviceinfo">
+        UPDATE deviceinfo
+        SET currentuser = #{currentuser},
+            status = #{status},
+            modifyby = #{modifyby},
+            modifyon = #{modifyon}
+        WHERE id = #{id}
+    </update>
 </mapper>
