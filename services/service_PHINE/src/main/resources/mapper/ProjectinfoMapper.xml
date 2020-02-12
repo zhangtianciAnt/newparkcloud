@@ -24,34 +24,41 @@
   </resultMap>
   <select id="getProjectInfoList" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
     SELECT
-      a.id,
-      a.projectname,
-      a.createby,
-      COUNT(b.id) as usercnt,
-      COUNT(c.id) as devicecnt,
-      COUNT(DISTINCT(d.deviceid)) as errorcnt
+        a.id,
+        a.projectname,
+        a.createby,
+        IFNULL( deviceInfo.devicecnt, '0' ) AS devicecnt,
+        IFNULL( deviceInfo.errorcnt, '0' ) AS errorcnt,
+        IFNULL( userCount.usercnt, '0' ) AS usercnt
     FROM
-      projectinfo a
-    LEFT JOIN
-      project2user b
-    ON
-      a.id = b.projectid
-    LEFT JOIN
-      project2device c
-    ON
-      a.id = c.projectid
-    LEFT JOIN
-      devicestatus d
-    ON
-      c.deviceid = d.deviceid
-    AND
-      d.status = '0'
-    WHERE
-    IFNULL(a.status, '0') = '0'
+        projectinfo a
+        LEFT JOIN (
+    SELECT
+        a.id,
+        count( b.id ) AS devicecnt,
+        count( c.deviceid ) AS errorcnt
+    FROM
+        projectinfo a
+        LEFT JOIN project2device b ON a.id = b.projectid
+        LEFT JOIN devicestatus c ON b.deviceid = c.deviceid
+        AND c.devicestatus = '2'
     GROUP BY
-      a.id,
-      a.projectname,
-      a.createby
+        a.id
+        ) deviceInfo ON a.id = deviceInfo.id
+        LEFT JOIN (
+    SELECT
+        a.id,
+        count( b.id ) AS usercnt
+    FROM
+        projectinfo a,
+        project2user b
+    WHERE
+        a.id = b.projectid
+    GROUP BY
+        a.id
+        ) userCount ON a.id = userCount.id
+    ORDER BY
+        a.projectname
   </select>
   <update id="updateProjectInfo" parameterType="com.nt.dao_PHINE.Projectinfo">
     UPDATE projectinfo
