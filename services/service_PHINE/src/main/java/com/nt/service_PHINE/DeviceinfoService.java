@@ -1,5 +1,6 @@
 package com.nt.service_PHINE;
 
+import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.DeviceinfoVo;
 import com.nt.utils.ApiResult;
@@ -50,4 +51,7 @@ public interface DeviceinfoService {
 
     // 设备关闭连接
     ApiResult closeConnection(TokenModel tokenModel, String deviceid);
+
+    // 逻辑加载
+    ApiResult logicFileLoad(TokenModel tokenMode, List<Fileinfo> fileinfoList);
 }
