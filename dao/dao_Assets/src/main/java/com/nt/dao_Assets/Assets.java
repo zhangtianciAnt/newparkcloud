@@ -321,4 +321,40 @@ public class Assets extends BaseModel {
      */
     @Column(name = "OUTPARAMS14")
     private String outparams14;
+
+    /**
+     * 客户
+     */
+    @Column(name = "customer")
+    private String customer;
+
+    /**
+     * 管理番号
+     */
+    @Column(name = "controlno")
+    private String controlno;
+
+    /**
+     * 機材名称
+     */
+    @Column(name = "machinename")
+    private String machinename;
+
+    /**
+     * 部门代码
+     */
+    @Column(name = "departmentcode")
+    private String departmentcode;
+
+    /**
+     * 是否逾期
+     */
+    @Column(name = "psdcdisoverdue")
+    private String psdcdisoverdue;
+
+    /**
+     * PSDCD_预计归还日
+     */
+    @Column(name = "psdcdreturndate")
+    private String psdcdreturndate;
 }

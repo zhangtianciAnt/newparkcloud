@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +74,7 @@ public class InventoryplanServiceImpl implements InventoryplanService {
         List<InventoryRange> inventList = inventoryRangeVo.getInventoryRange();
         inventoryplanMapper.insertSelective(inventoryplan);
         if (inventList != null) {
+            List<InventoryRange> insertList = new ArrayList<>();
             int rowindex = 0;
             for (InventoryRange inve : inventList) {
                 rowindex = rowindex + 1;
@@ -84,11 +82,14 @@ public class InventoryplanServiceImpl implements InventoryplanService {
                 inve.setInventoryrange_id(UUID.randomUUID().toString());
                 inve.setInventoryplan_id(inventoryRangeid);
                 inve.setRowindex(rowindex);
-                inventoryRangeMapper.insertSelective(inve);
+//                inventoryRangeMapper.insertSelective(inve);
+                insertList.add(inve);
             }
+            inventoryRangeMapper.insertRangeList(insertList);
         }
         List<InventoryResults> invresuList = inventoryRangeVo.getInventoryResults();
         if (invresuList != null) {
+            List<InventoryResults> insertList = new ArrayList<>();
             int rowindex = 0;
             for (InventoryResults invreu : invresuList) {
                 rowindex = rowindex + 1;
@@ -97,8 +98,10 @@ public class InventoryplanServiceImpl implements InventoryplanService {
                 invreu.setInventoryplan_id(inventoryRangeid);
                 invreu.setResult("1");
                 invreu.setRowindex(rowindex);
-                inventoryResultsMapper.insertSelective(invreu);
+//                inventoryResultsMapper.insertSelective(invreu);
+                insertList.add(invreu);
             }
+            inventoryResultsMapper.insertResultsList(insertList);
         }
     }
 

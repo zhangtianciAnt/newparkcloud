@@ -21,8 +21,32 @@
                  MAX(BARCODE) BARCODE
              FROM
                  assets
+             inner join (
+             	select CASE WHEN #{Asstype} = 'PA001001' OR #{Asstype} = 'PA001002' OR #{Asstype} = 'PA001003' OR #{Asstype} = 'PA001004' THEN
+                              (SELECT value2 FROM dictionary WHERE CODE = #{Asstype})
+                      ELSE
+                          CONCAT( (SELECT value2 FROM dictionary WHERE CODE = #{Asstype}), (SELECT value2 FROM dictionary WHERE CODE = #{Bartype}))
+                     END REVAL
+                FROM dual
+             ) T
+             on assets.barcode like concat(T.REVAL, '%')
              WHERE
                  TYPEASSETS = #{Asstype}
             ) TMP
+    </select>
+
+    <select id="selectList4Show" parameterType="com.nt.dao_Assets.Assets" resultType="com.nt.dao_Assets.Assets">
+        SELECT
+          *
+        FROM
+          assets
+        where
+          1=1
+        <if test="owners != null and owners.size() > 0 ">
+            AND OWNER in
+            <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
+        　　　　#{item}
+        　　</foreach>
+        </if>
     </select>
 </mapper>

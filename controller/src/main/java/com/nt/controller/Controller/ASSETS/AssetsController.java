@@ -9,10 +9,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +38,7 @@ public class AssetsController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(assetsService.scanOne(code, tokenModel).getBarcode());
+        return ApiResult.success(assetsService.confirm(code, tokenModel).getBarcode());
     }
 
     @RequestMapping(value = "/scanList", method = {RequestMethod.POST})
@@ -113,9 +110,23 @@ public class AssetsController {
         }
     }
 
-    @RequestMapping(value = "/download", method = {RequestMethod.POST})
-    public void download(HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public void download(String type, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
-        ExcelOutPutUtil.OutPut("资产","zichan.xlsx",data,response);
+        String templateName = null;
+        String fileName = null;
+        if ( "0".equals(type) ) {
+            templateName = "qitazichan.xlsx";
+            fileName = "资产";
+        } else if ( "1".equals(type) ) {
+            templateName = "buwaizichan.xlsx";
+            fileName = "簿外";
+        } else  if ( "2".equals(type) ) {
+            templateName = "gudingzichan.xlsx";
+            fileName = "固定";
+        }
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
     }
 }

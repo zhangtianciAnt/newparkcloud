@@ -43,6 +43,12 @@ public class ProjectreSources extends BaseModel {
     @Column(name = "ROLE")
     private String role;
 
+    @Column(name = "ADMISSIONTIME")
+    private Date admissiontime;
+
+    @Column(name = "EXITTIME")
+    private Date exittime;
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
