@@ -133,6 +133,7 @@
     </select>
     <select id="getCommunicationDeviceInfo" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
         SELECT
+          c.id,
           c.deviceid,
           c.currentuser
         FROM
