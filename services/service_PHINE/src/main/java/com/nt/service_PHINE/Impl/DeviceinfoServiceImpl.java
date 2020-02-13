@@ -4,10 +4,12 @@ import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.BoardinfoListVo;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.DeviceinfoVo;
+import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
 import com.nt.service_PHINE.DeviceCommunication.HardwareDeviceService;
 import com.nt.service_PHINE.DeviceCommunication.IHardwareDeviceService;
 import com.nt.service_PHINE.DeviceinfoService;
+import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MsgConstants;
@@ -47,6 +49,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
     @Autowired
     private MachineroominfoMapper machineroominfoMapper;
+
+    @Autowired
+    private OperationrecordService operationrecordService;
 
     // WCF服务地址
     private static URL WSDL_LOCATION;
@@ -449,24 +454,45 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
         IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
         Boolean result = false;     // 加载操作执行结果
-        Operationrecord operationrecord = new Operationrecord();
+        OperationRecordVo operationRecordVo = new OperationRecordVo();
+        String operationId = UUID.randomUUID().toString();
+        List<Operationdetail> detailist = new ArrayList<>();
         for (Fileinfo fileinfo : fileinfoList) {
+            Operationdetail operationdetail = new Operationdetail();
+            Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(fileinfo.getDeviceid());
+            String configurationtype = "";
             switch (fileinfo.getFiletype()) {
                 case "FPGA":        // 执行FPGA加载
-                    result = port.configFpga(fileinfo.getDeviceid(), Integer.parseInt(fileinfo.getFpgaid()), fileinfo.getFilename());
+                    result = port.configFpga(deviceinfo.getDeviceid(), Integer.parseInt(fileinfo.getFpgaid()), fileinfo.getUrl());
+                    configurationtype = "FPGA加载";
                     break;
                 case "FMC":         // TODO:执行FMC加载
 //                    result = port.setFmcVoltage(fileinfo.getDeviceid(), )
+                    configurationtype = "FMC加载";
                     break;
                 case "PLL":         // TODO:执行PLL加载
 //                    result = port.setPllClock(fileinfo.getDeviceid(), )
+                    configurationtype = "PLL加载";
                     break;
             }
             fileinfo.setRemarks(result ? "成功" : "失败");
-            // TODO:添加操作记录
+            // 添加操作记录详情
+            operationdetail.setId(UUID.randomUUID().toString());
+            operationdetail.setConfigurationtype(configurationtype);
+            operationdetail.setDevicename(deviceinfo.getDeviceid());
+            operationdetail.setFilename(fileinfo.getFilename());
+            operationdetail.setOperationresult(result ? "成功" : "失败");
+            operationdetail.setOperationid(operationId);
+            operationdetail.preInsert(tokenMode);
+            detailist.add(operationdetail);
         }
-
-
-        return null;
+        // 添加操作记录
+        operationRecordVo.setId(operationId);
+        operationRecordVo.setDetailist(detailist);
+        operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
+        operationRecordVo.setTitle("逻辑加载");
+        operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
+        operationrecordService.addOperationrecord(operationRecordVo);
+        return ApiResult.success(fileinfoList);
     }
 }
