@@ -121,4 +121,9 @@ public class Cooperinterview extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     * 毕业年
+     */
+    @Column(name = "GRADUATION_YEAR")
+    private Date graduation_year;
 }

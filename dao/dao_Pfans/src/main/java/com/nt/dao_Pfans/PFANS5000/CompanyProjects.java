@@ -25,6 +25,68 @@ public class CompanyProjects extends BaseModel {
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
+    //新增
+    /**
+     * 所属センター
+     */
+    @Column(name = "CENTER_ID")
+    private String center_id;
+
+    /**
+     * 所属グループ
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    /**
+     * 所属チーム
+     */
+    @Column(name = "TEAM_ID")
+    private String team_id;
+
+    /**
+     * 受託工数
+     */
+    @Column(name = "WORK")
+    private String work;
+
+    /**
+     * 納期
+     */
+    @Column(name = "DEADLINE")
+    private String deadline;
+
+    /**
+     * 其他管理工具
+     */
+    @Column(name = "TOOLS")
+    private String tools;
+
+    /**
+     * 委托元
+     */
+    @Column(name = "ENTRUST")
+    private String entrust;
+
+    /**
+     * 委托元部署
+     */
+    @Column(name = "DEPLOYMENT")
+    private String deployment;
+
+    /**
+     * 委托元代表
+     */
+    @Column(name = "BEHALF")
+    private String behalf;
+
+    /**
+     * 委托元情报
+     */
+    @Column(name = "INTELLIGENCE")
+    private String intelligence;
+    //新增结束
+
     /**
      * 项目名称(中)
      */

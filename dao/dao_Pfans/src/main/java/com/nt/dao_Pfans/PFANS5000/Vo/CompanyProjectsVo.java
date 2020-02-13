@@ -28,7 +28,8 @@ public class CompanyProjectsVo {
 
 
     private List<OutSource> outSources;
-
-
+    /**
+     * 项目开发计划
+     */
     private List<StageInformation> stageinformation;
 }

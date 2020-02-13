@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.utils.dao.TokenModel;
@@ -29,10 +30,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public void insert(Contractapplication contractapplication, TokenModel tokenModel) throws Exception {
-
-        contractapplication.preInsert(tokenModel);
-        contractapplication.setContractapplication_id(UUID.randomUUID().toString());
-        contractapplicationMapper.insert(contractapplication);
+    public void insert(List<Contractapplication> contractapplication, TokenModel tokenModel) throws Exception {
+        for(int i = 0; i < contractapplication.size(); i ++){
+            Contractapplication co = contractapplication.get(i);
+            co.preInsert(tokenModel);
+            co.setContractapplication_id(UUID.randomUUID().toString());
+            contractapplicationMapper.insert(co);
+        }
     }
 }
