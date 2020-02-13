@@ -262,7 +262,7 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 構内対象
      */
-        @Column(name = "VENUETARGET")
+    @Column(name = "VENUETARGET")
     private String venuetarget;
 
 
