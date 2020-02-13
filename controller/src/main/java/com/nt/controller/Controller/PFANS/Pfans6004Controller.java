@@ -84,7 +84,7 @@ public class Pfans6004Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        expatriatesinforService.updateexpatriatesinfor(expatriatesinfor,tokenModel);
+        expatriatesinforService.setexpatriatesinforApply(expatriatesinfor,tokenModel);
         return ApiResult.success();
     }
 
