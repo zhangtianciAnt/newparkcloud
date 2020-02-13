@@ -379,9 +379,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     public ApiResult createConnection(TokenModel tokenModel, String deviceid) {
         // TODO :操作用户权限暂时不封装
         // region 通信连接
+        Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
         HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
         IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
-        ConnectionResult result = port.openConnection(deviceid);
+        ConnectionResult result = port.openConnection(deviceinfo.getDeviceid());
         String message = "通信连接成功";
         switch (result.value()) {
             case "Result_Unknown":
@@ -417,9 +418,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     public ApiResult closeConnection(TokenModel tokenModel, String deviceid) {
         // TODO :操作用户权限暂时不封装
         // region 通信关闭
+        Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
         HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
         IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
-        Boolean result = port.closeConnection(deviceid);
+        Boolean result = port.closeConnection(deviceinfo.getDeviceid());
         if (!result) {
             return ApiResult.fail("通信关闭失败，请稍后重试！");
         }
