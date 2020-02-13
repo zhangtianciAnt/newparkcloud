@@ -11,6 +11,6 @@ public interface ContractapplicationService {
 
     public void update(Contractapplication contractapplication, TokenModel tokenModel) throws Exception;
 
-    public void insert(Contractapplication contractapplication, TokenModel tokenModel)throws Exception;
+    public void insert(List<Contractapplication> contractapplication, TokenModel tokenModel)throws Exception;
 
 }
