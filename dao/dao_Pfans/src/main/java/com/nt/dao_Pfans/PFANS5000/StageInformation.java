@@ -38,6 +38,12 @@ public class StageInformation extends BaseModel {
     private String phase;
 
     /**
+     * 阶段状态
+     */
+    @Column(name = "PHASESTATUS")
+    private String phasestatus;
+
+    /**
      * 阶段成果物
      */
     @Column(name = "STAGEPRODUCT")
