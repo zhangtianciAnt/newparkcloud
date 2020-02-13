@@ -231,6 +231,46 @@ public class CompanyProjects extends BaseModel {
     @Column(name = "REQUIREMENT")
     private String requirement;
 
+    /**
+     * 资产管理地址
+     */
+    @Column(name = "ASSETADDRESS")
+    private String assetaddress;
+
+    /**
+     * 说明
+     */
+    @Column(name = "EXPLAIN")
+    private String explain;
+
+    /**
+     * 经验与体会
+     */
+    @Column(name = "EXPRENCE")
+    private String exprence;
+
+    /**
+     * 需要改进的建议
+     */
+    @Column(name = "ADVISE")
+    private String advise;
+
+    /**
+     * 备注
+     */
+    @Column(name = "NOTE")
+    private String note;
+
+    /**
+     * 重要信息
+     */
+    @Column(name = "MESSAGE")
+    private String message;
+
+
+    /**
+     * 文件上传
+     */
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
