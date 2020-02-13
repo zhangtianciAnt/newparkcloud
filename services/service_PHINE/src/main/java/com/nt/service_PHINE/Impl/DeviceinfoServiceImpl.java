@@ -362,7 +362,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     public List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid) {
         List<DeviceListVo> deviceList = deviceinfoMapper.getCommunicationDeviceInfo(projectid);
         for (DeviceListVo vo : deviceList) {
-            vo.setCurrentloginuser(tokenModel.getUserId());
+            if (vo != null) {
+                vo.setCurrentloginuser(tokenModel.getUserId());
+            }
         }
         return deviceList;
     }
