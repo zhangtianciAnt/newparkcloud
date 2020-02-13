@@ -1,18 +1,18 @@
 
 package com.nt.service_PHINE.DeviceCommunication;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
- * <p>ArrayOfboolean complex type的 Java 类。
+ * <p>ArrayOfboolean complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType name="ArrayOfboolean"&gt;

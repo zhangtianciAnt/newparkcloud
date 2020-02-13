@@ -2,13 +2,17 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex type的 Java 类。
+ * <p>anonymous complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType&gt;
@@ -38,7 +42,7 @@ public class ReConfigFpga {
     protected Integer fpgaId;
 
     /**
-     * 获取deviceId属性的值。
+     * ��ȡdeviceId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -50,7 +54,7 @@ public class ReConfigFpga {
     }
 
     /**
-     * 设置deviceId属性的值。
+     * ����deviceId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -62,7 +66,7 @@ public class ReConfigFpga {
     }
 
     /**
-     * 获取fpgaId属性的值。
+     * ��ȡfpgaId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -74,7 +78,7 @@ public class ReConfigFpga {
     }
 
     /**
-     * 设置fpgaId属性的值。
+     * ����fpgaId���Ե�ֵ��
      *
      * @param value
      *     allowed object is

@@ -2,13 +2,17 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>DeviceConnState complex type的 Java 类。
+ * <p>DeviceConnState complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType name="DeviceConnState"&gt;
@@ -26,7 +30,7 @@ import javax.xml.bind.annotation.*;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DeviceConnState", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice", propOrder = {
+@XmlType(name = "DeviceConnState", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
     "connStatus",
     "deviceId"
 })
@@ -34,11 +38,11 @@ public class DeviceConnState {
 
     @XmlElement(name = "ConnStatus")
     protected Integer connStatus;
-    @XmlElementRef(name = "deviceId", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice", type = JAXBElement.class, required = false)
+    @XmlElementRef(name = "deviceId", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
 
     /**
-     * 获取connStatus属性的值。
+     * ��ȡconnStatus���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -50,7 +54,7 @@ public class DeviceConnState {
     }
 
     /**
-     * 设置connStatus属性的值。
+     * ����connStatus���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -62,7 +66,7 @@ public class DeviceConnState {
     }
 
     /**
-     * 获取deviceId属性的值。
+     * ��ȡdeviceId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -74,7 +78,7 @@ public class DeviceConnState {
     }
 
     /**
-     * 设置deviceId属性的值。
+     * ����deviceId���Ե�ֵ��
      *
      * @param value
      *     allowed object is

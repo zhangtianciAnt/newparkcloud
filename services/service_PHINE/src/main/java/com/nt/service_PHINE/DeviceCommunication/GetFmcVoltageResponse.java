@@ -2,13 +2,18 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex type的 Java 类。
+ * <p>anonymous complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType&gt;
@@ -16,7 +21,7 @@ import javax.xml.bind.annotation.*;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="GetFmcVoltageResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
- *         &lt;element name="fmcVoltageObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice}FmcVoltageObject" minOccurs="0"/&gt;
+ *         &lt;element name="fmcVoltageObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}FmcVoltageObject" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -39,7 +44,7 @@ public class GetFmcVoltageResponse {
     protected JAXBElement<FmcVoltageObject> fmcVoltageObject;
 
     /**
-     * 获取getFmcVoltageResult属性的值。
+     * ��ȡgetFmcVoltageResult���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -51,7 +56,7 @@ public class GetFmcVoltageResponse {
     }
 
     /**
-     * 设置getFmcVoltageResult属性的值。
+     * ����getFmcVoltageResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -63,7 +68,7 @@ public class GetFmcVoltageResponse {
     }
 
     /**
-     * 获取fmcVoltageObject属性的值。
+     * ��ȡfmcVoltageObject���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -75,7 +80,7 @@ public class GetFmcVoltageResponse {
     }
 
     /**
-     * 设置fmcVoltageObject属性的值。
+     * ����fmcVoltageObject���Ե�ֵ��
      *
      * @param value
      *     allowed object is

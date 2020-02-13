@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="OpenConnectionResult" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConnectionResult" minOccurs="0"/&gt;
+ *         &lt;element name="RegWriteResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -30,37 +29,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "openConnectionResult"
+    "regWriteResult"
 })
-@XmlRootElement(name = "OpenConnectionResponse")
-public class OpenConnectionResponse {
+@XmlRootElement(name = "RegWriteResponse")
+public class RegWriteResponse {
 
-    @XmlElement(name = "OpenConnectionResult")
-    @XmlSchemaType(name = "string")
-    protected ConnectionResult openConnectionResult;
+    @XmlElement(name = "RegWriteResult")
+    protected Boolean regWriteResult;
 
     /**
-     * ��ȡopenConnectionResult���Ե�ֵ��
+     * ��ȡregWriteResult���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link ConnectionResult }
+     *     {@link Boolean }
      *
      */
-    public ConnectionResult getOpenConnectionResult() {
-        return openConnectionResult;
+    public Boolean isRegWriteResult() {
+        return regWriteResult;
     }
 
     /**
-     * ����openConnectionResult���Ե�ֵ��
+     * ����regWriteResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link ConnectionResult }
+     *     {@link Boolean }
      *
      */
-    public void setOpenConnectionResult(ConnectionResult value) {
-        this.openConnectionResult = value;
+    public void setRegWriteResult(Boolean value) {
+        this.regWriteResult = value;
     }
 
 }

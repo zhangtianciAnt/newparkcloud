@@ -2,20 +2,24 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex type的 Java 类。
+ * <p>anonymous complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="deviceConnStates" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice}ArrayOfDeviceConnState" minOccurs="0"/&gt;
+ *         &lt;element name="deviceConnStates" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ArrayOfDeviceConnState" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -35,7 +39,7 @@ public class GetCurrentConnStatus {
     protected JAXBElement<ArrayOfDeviceConnState> deviceConnStates;
 
     /**
-     * 获取deviceConnStates属性的值。
+     * ��ȡdeviceConnStates���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -47,7 +51,7 @@ public class GetCurrentConnStatus {
     }
 
     /**
-     * 设置deviceConnStates属性的值。
+     * ����deviceConnStates���Ե�ֵ��
      *
      * @param value
      *     allowed object is
