@@ -1,16 +1,10 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS5000.OutSource;
-import com.nt.dao_Pfans.PFANS5000.ProjectPlan;
-import com.nt.dao_Pfans.PFANS5000.ProjectreSources;
+import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
-import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
-import com.nt.service_pfans.PFANS5000.mapper.OutSourceMapper;
-import com.nt.service_pfans.PFANS5000.mapper.ProjectplanMapper;
-import com.nt.service_pfans.PFANS5000.mapper.ProjectresourcesMapper;
+import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +32,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Autowired
     private OutSourceMapper outSourceMapper;
+    @Autowired
+    private StageInformationMapper stageinformationMapper;
 
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
@@ -60,20 +56,25 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         ProjectPlan projectPlan = new ProjectPlan();
         ProjectreSources projectreSources = new ProjectreSources();
         OutSource outSource = new OutSource();
+        StageInformation stageInformation = new StageInformation();
         projectPlan.setCompanyprojects_id(companyprojectsid);
         projectreSources.setCompanyprojects_id(companyprojectsid);
         outSource.setCompanyprojects_id(companyprojectsid);
+        stageInformation.setCompanyprojects_id(companyprojectsid);
         List<ProjectPlan> projectPlanList = projectplanMapper.select(projectPlan);
         List<ProjectreSources> projectreSourcesList = projectresourcesMapper.select(projectreSources);
         List<OutSource> outsourcesList = outSourceMapper.select(outSource);
+        List<StageInformation> stageinformationList = stageinformationMapper.select(stageInformation);
         projectPlanList = projectPlanList.stream().sorted(Comparator.comparing(ProjectPlan::getRowindex)).collect(Collectors.toList());
         projectreSourcesList = projectreSourcesList.stream().sorted(Comparator.comparing(ProjectreSources::getRowindex)).collect(Collectors.toList());
         outsourcesList = outsourcesList.stream().sorted(Comparator.comparing(OutSource::getRowindex)).collect(Collectors.toList());
+        stageinformationList = stageinformationList.stream().sorted(Comparator.comparing(StageInformation::getRowindex)).collect(Collectors.toList());
         CompanyProjects Staff = companyprojectsMapper.selectByPrimaryKey(companyprojectsid);
         staffVo.setCompanyprojects(Staff);
         staffVo.setProjectplan(projectPlanList);
         staffVo.setProjectresources(projectreSourcesList);
         staffVo.setOutSources(outsourcesList);
+        staffVo.setStageinformation(stageinformationList);
         return staffVo;
     }
 
@@ -88,15 +89,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         ProjectPlan pro = new ProjectPlan();
         ProjectreSources sou = new ProjectreSources();
         OutSource out = new OutSource();
+        StageInformation sta = new StageInformation();
         pro.setCompanyprojects_id(companyprojectsid);
         sou.setCompanyprojects_id(companyprojectsid);
         out.setCompanyprojects_id(companyprojectsid);
+        sta.setCompanyprojects_id(companyprojectsid);
         projectplanMapper.delete(pro);
         projectresourcesMapper.delete(sou);
         outSourceMapper.delete(out);
+        stageinformationMapper.delete(sta);
         List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
         List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
         List<OutSource> outSourceList = companyProjectsVo.getOutSources();
+        List<StageInformation> stageinformationList = companyProjectsVo.getStageinformation();
         if (projectPlanList != null) {
             int rowundex = 0;
             for (ProjectPlan projectPlan : projectPlanList) {
@@ -130,8 +135,17 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 outSourceMapper.insertSelective(outsource);
             }
         }
-
-
+        if (stageinformationList != null) {
+            int rowindex = 0;
+            for (StageInformation stageinformation : stageinformationList) {
+                rowindex = rowindex + 1;
+                stageinformation.preInsert(tokenModel);
+                stageinformation.setStageinformation_id(UUID.randomUUID().toString());
+                stageinformation.setCompanyprojects_id(companyprojectsid);
+                stageinformation.setRowindex(rowindex);
+                stageinformationMapper.insertSelective(stageinformation);
+            }
+        }
     }
 
     //新建
@@ -146,6 +160,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
         List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
         List<OutSource> outSourceList = companyProjectsVo.getOutSources();
+        List<StageInformation> stageInformationList = companyProjectsVo.getStageinformation();
         if (projectPlanList != null) {
             int rowundex = 0;
             for (ProjectPlan projectPlan : projectPlanList) {
@@ -182,6 +197,17 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 outSource.setCompanyprojects_id(companyprojectsid);
                 outSource.setRowindex(rowindex);
                 outSourceMapper.insertSelective(outSource);
+            }
+        }
+        if (stageInformationList != null) {
+            int rowundex = 0;
+            for (StageInformation stageInformation : stageInformationList) {
+                rowundex = rowundex + 1;
+                stageInformation.preInsert(tokenModel);
+                stageInformation.setStageinformation_id(UUID.randomUUID().toString());
+                stageInformation.setCompanyprojects_id(companyprojectsid);
+                stageInformation.setRowindex(rowundex);
+                stageinformationMapper.insertSelective(stageInformation);
             }
         }
     }

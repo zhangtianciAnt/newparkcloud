@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "projectInformation")
+@Table(name = "stageinformation")
 public class StageInformation extends BaseModel {
 
     private static final long serialVersionUID = 1L;
@@ -27,14 +28,20 @@ public class StageInformation extends BaseModel {
     /**
      * 主表外键
      */
-    @Column(name = "pro_PROJECTINFORMATION_ID")
-    private String pro_projectinformation_id;
+    @Column(name = "COMPANYPROJECTS_ID")
+    private String companyprojects_id;
 
     /**
      * 工作阶段
      */
     @Column(name = "PHASE")
     private String phase;
+
+    /**
+     * 阶段状态
+     */
+    @Column(name = "PHASESTATUS")
+    private String phasestatus;
 
     /**
      * 阶段成果物
@@ -64,13 +71,13 @@ public class StageInformation extends BaseModel {
      * 预计开始时间
      */
     @Column(name = "ESTIMATEDSTARTTIME")
-    private String estimatedstarttime;
+    private Date estimatedstarttime;
 
     /**
      * 预计结束时间
      */
     @Column(name = "ESTIMATEDENDTIME")
-    private String estimatedendtime;
+    private Date estimatedendtime;
 
     /**
      * 备注
@@ -82,13 +89,13 @@ public class StageInformation extends BaseModel {
      * 实际开始时间
      */
     @Column(name = "ACTUALSTARTTIME")
-    private String actualstarttime;
+    private Date actualstarttime;
 
     /**
      * 实际结束时间
      */
     @Column(name = "ACTUALENDTIME")
-    private String actualendtime;
+    private Date actualendtime;
 
     /**
      * 成果物
@@ -96,6 +103,6 @@ public class StageInformation extends BaseModel {
     @Column(name = "PRODUCT")
     private String product;
 
-
-
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 }
