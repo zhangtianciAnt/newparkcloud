@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="OpenConnectionResult" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConnectionResult" minOccurs="0"/&gt;
+ *         &lt;element name="SetFmcVoltageByFileResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -30,37 +29,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "openConnectionResult"
+    "setFmcVoltageByFileResult"
 })
-@XmlRootElement(name = "OpenConnectionResponse")
-public class OpenConnectionResponse {
+@XmlRootElement(name = "SetFmcVoltageByFileResponse")
+public class SetFmcVoltageByFileResponse {
 
-    @XmlElement(name = "OpenConnectionResult")
-    @XmlSchemaType(name = "string")
-    protected ConnectionResult openConnectionResult;
+    @XmlElement(name = "SetFmcVoltageByFileResult")
+    protected Boolean setFmcVoltageByFileResult;
 
     /**
-     * ��ȡopenConnectionResult���Ե�ֵ��
+     * ��ȡsetFmcVoltageByFileResult���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link ConnectionResult }
+     *     {@link Boolean }
      *
      */
-    public ConnectionResult getOpenConnectionResult() {
-        return openConnectionResult;
+    public Boolean isSetFmcVoltageByFileResult() {
+        return setFmcVoltageByFileResult;
     }
 
     /**
-     * ����openConnectionResult���Ե�ֵ��
+     * ����setFmcVoltageByFileResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link ConnectionResult }
+     *     {@link Boolean }
      *
      */
-    public void setOpenConnectionResult(ConnectionResult value) {
-        this.openConnectionResult = value;
+    public void setSetFmcVoltageByFileResult(Boolean value) {
+        this.setFmcVoltageByFileResult = value;
     }
 
 }

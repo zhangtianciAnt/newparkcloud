@@ -466,12 +466,12 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                     result = port.configFpga(deviceinfo.getDeviceid(), Integer.parseInt(fileinfo.getFpgaid()), fileinfo.getUrl());
                     configurationtype = "FPGA加载";
                     break;
-                case "FMC":         // TODO:执行FMC加载
-//                    result = port.setFmcVoltage(fileinfo.getDeviceid(), )
+                case "FMC":         // 执行FMC加载
+                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
                     configurationtype = "FMC加载";
                     break;
-                case "PLL":         // TODO:执行PLL加载
-//                    result = port.setPllClock(fileinfo.getDeviceid(), )
+                case "PLL":         // 执行PLL加载
+                    result = port.setPllClockByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
                     configurationtype = "PLL加载";
                     break;
             }

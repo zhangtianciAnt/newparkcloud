@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>ConnectionResult的 Java 类。
+ * <p>ConnectionResult�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  * <p>
  * <pre>
  * &lt;simpleType name="ConnectionResult"&gt;
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  *
  */
-@XmlType(name = "ConnectionResult", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice")
+@XmlType(name = "ConnectionResult", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform")
 @XmlEnum
 public enum ConnectionResult {
 

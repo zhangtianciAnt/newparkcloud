@@ -1,13 +1,17 @@
 
 package com.nt.service_PHINE.DeviceCommunication;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex type的 Java 类。
+ * <p>anonymous complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType&gt;
@@ -34,7 +38,7 @@ public class SetPllClockResponse {
     protected Boolean setPllClockResult;
 
     /**
-     * 获取setPllClockResult属性的值。
+     * ��ȡsetPllClockResult���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -46,7 +50,7 @@ public class SetPllClockResponse {
     }
 
     /**
-     * 设置setPllClockResult属性的值。
+     * ����setPllClockResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
