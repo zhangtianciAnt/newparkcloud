@@ -35,6 +35,9 @@ public class DeviceListVo implements Comparable<DeviceListVo>{
      */
     private String machineroomname;
 
+
+    private String devicekey;
+
     /**
      * 设备编号
      */
