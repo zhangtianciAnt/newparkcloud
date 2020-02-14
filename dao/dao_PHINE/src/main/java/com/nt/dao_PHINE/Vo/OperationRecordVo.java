@@ -27,7 +27,7 @@ import java.util.List;
 public class OperationRecordVo extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private String operationid;
 
     /**
      * PLL 配置/ FMC 配置/ FPGA Config/ 寄存器访问 /文件上传

@@ -25,6 +25,11 @@ public class Boardinfo extends BaseModel {
     private String boardid;
 
     /**
+     * 板卡的槽位编号
+     */
+    private String boardslotid;
+
+    /**
      * 板卡类型
      */
     private String boardtype;

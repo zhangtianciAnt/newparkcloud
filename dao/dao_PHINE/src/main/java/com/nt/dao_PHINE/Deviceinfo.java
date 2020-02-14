@@ -34,8 +34,19 @@ public class Deviceinfo extends BaseModel {
      */
     private String cabinetid;
 
+    /**
+     * 设备所属机柜的槽位编号
+     */
+    private String cabinetslotid;
+
+    /**
+     * 当前操作用户
+     */
     private String currentuser;
 
+    /**
+     * 企业ID
+     */
     private String companyid;
 
     /**
