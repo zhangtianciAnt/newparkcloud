@@ -5,6 +5,7 @@ import com.nt.dao_PHINE.Operationrecord;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.OperationrecordMapper;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,14 +53,16 @@ public class OperationrecordServiceImpl implements OperationrecordService {
      * @Param
      **/
     @Override
-    public void addOperationrecord(OperationRecordVo operation) {
+    public void addOperationrecord(TokenModel tokenModel,OperationRecordVo operation) {
         Operationrecord operationrecord = new Operationrecord();
         BeanUtils.copyProperties(operation, operationrecord);
         operationrecord.setOperationid(UUID.randomUUID().toString());
+        operationrecord.preInsert(tokenModel);
         operationrecordMapper.insert(operationrecord);
         for(Operationdetail detail : operation.getDetailist()){
             detail.setId(UUID.randomUUID().toString());
             detail.setOperationid(operationrecord.getOperationid());
+            detail.preInsert(tokenModel);
         }
         operationrecordMapper.insertdetaillist(operation.getDetailist());
     }
