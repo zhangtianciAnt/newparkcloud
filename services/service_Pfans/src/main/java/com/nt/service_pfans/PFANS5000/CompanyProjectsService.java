@@ -12,7 +12,7 @@ public interface CompanyProjectsService {
     //新建
     void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception;
 
-    public List<CompanyProjects> list(CompanyProjects talentPlan) throws Exception;
+    public List<CompanyProjects> list(CompanyProjects companyprojects) throws Exception;
     //编辑
     void update(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception;
 
