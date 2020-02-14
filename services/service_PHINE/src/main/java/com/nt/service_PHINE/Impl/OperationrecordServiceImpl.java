@@ -55,11 +55,11 @@ public class OperationrecordServiceImpl implements OperationrecordService {
     public void addOperationrecord(OperationRecordVo operation) {
         Operationrecord operationrecord = new Operationrecord();
         BeanUtils.copyProperties(operation, operationrecord);
-        operationrecord.setId(UUID.randomUUID().toString());
+        operationrecord.setOperationid(UUID.randomUUID().toString());
         operationrecordMapper.insert(operationrecord);
         for(Operationdetail detail : operation.getDetailist()){
             detail.setId(UUID.randomUUID().toString());
-            detail.setOperationid(operationrecord.getId());
+            detail.setOperationid(operationrecord.getOperationid());
         }
         operationrecordMapper.insertdetaillist(operation.getDetailist());
     }

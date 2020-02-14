@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Fileinfo extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private String fileid;
 
     private String projectid;
 

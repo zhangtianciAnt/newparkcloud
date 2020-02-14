@@ -35,6 +35,11 @@ public class Chipinfo extends BaseModel {
     private String boardid;
 
     /**
+     * core板在base板中的槽位编号
+     */
+    private String chipslotid;
+
+    /**
      * 备注
      */
     private String remarks;

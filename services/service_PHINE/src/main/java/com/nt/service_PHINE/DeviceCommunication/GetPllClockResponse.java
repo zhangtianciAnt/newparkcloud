@@ -2,13 +2,18 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex type的 Java 类。
+ * <p>anonymous complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType&gt;
@@ -16,7 +21,7 @@ import javax.xml.bind.annotation.*;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="GetPllClockResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
- *         &lt;element name="pllClockObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice}PllClockObject" minOccurs="0"/&gt;
+ *         &lt;element name="pllClockObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}PllClockObject" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -39,7 +44,7 @@ public class GetPllClockResponse {
     protected JAXBElement<PllClockObject> pllClockObject;
 
     /**
-     * 获取getPllClockResult属性的值。
+     * ��ȡgetPllClockResult���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -51,7 +56,7 @@ public class GetPllClockResponse {
     }
 
     /**
-     * 设置getPllClockResult属性的值。
+     * ����getPllClockResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -63,7 +68,7 @@ public class GetPllClockResponse {
     }
 
     /**
-     * 获取pllClockObject属性的值。
+     * ��ȡpllClockObject���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -75,7 +80,7 @@ public class GetPllClockResponse {
     }
 
     /**
-     * 设置pllClockObject属性的值。
+     * ����pllClockObject���Ե�ֵ��
      *
      * @param value
      *     allowed object is

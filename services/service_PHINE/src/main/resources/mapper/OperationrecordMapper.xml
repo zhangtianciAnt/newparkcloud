@@ -6,7 +6,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="operationid" property="operationid" jdbcType="VARCHAR" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="operationresult" property="operationresult" jdbcType="VARCHAR" />
@@ -20,7 +20,7 @@
     <result column="owner" property="owner" jdbcType="VARCHAR" />
     <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
     <collection property="detailist" ofType="com.nt.dao_PHINE.Operationdetail">
-      <id column="detailid" property="id" jdbcType="VARCHAR" />
+      <id column="id" property="id" jdbcType="VARCHAR" />
       <result column="operationid" property="operationid" jdbcType="VARCHAR" />
       <result column="devicename" property="devicename" jdbcType="VARCHAR" />
       <result column="configurationtype" property="configurationtype" jdbcType="VARCHAR" />
@@ -39,7 +39,7 @@
 
   <select id="getOperationrecordList" resultMap="OperationVoResultMap">
     SELECT
-      record.id,
+      record.operationid,
       record.title,
       record.content,
       record.operationresult,
@@ -58,7 +58,7 @@
     LEFT JOIN
       operationdetail detail
     ON
-      record.id = detail.operationid
+      record.operationid = detail.operationid
     where record.projectid = #{projectId}
     ORDER BY record.createon DESC
   </select>

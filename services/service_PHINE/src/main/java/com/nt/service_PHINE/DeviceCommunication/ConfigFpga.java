@@ -2,13 +2,17 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex type的 Java 类。
+ * <p>anonymous complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType&gt;
@@ -17,7 +21,7 @@ import javax.xml.bind.annotation.*;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/&gt;
- *         &lt;element name="configFileName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="configFilePath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -30,7 +34,7 @@ import javax.xml.bind.annotation.*;
 @XmlType(name = "", propOrder = {
     "deviceId",
     "fpgaId",
-    "configFileName"
+    "configFilePath"
 })
 @XmlRootElement(name = "ConfigFpga")
 public class ConfigFpga {
@@ -38,11 +42,11 @@ public class ConfigFpga {
     @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
     protected Integer fpgaId;
-    @XmlElementRef(name = "configFileName", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<String> configFileName;
+    @XmlElementRef(name = "configFilePath", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> configFilePath;
 
     /**
-     * 获取deviceId属性的值。
+     * ��ȡdeviceId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -54,7 +58,7 @@ public class ConfigFpga {
     }
 
     /**
-     * 设置deviceId属性的值。
+     * ����deviceId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -66,7 +70,7 @@ public class ConfigFpga {
     }
 
     /**
-     * 获取fpgaId属性的值。
+     * ��ȡfpgaId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -78,7 +82,7 @@ public class ConfigFpga {
     }
 
     /**
-     * 设置fpgaId属性的值。
+     * ����fpgaId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -90,27 +94,27 @@ public class ConfigFpga {
     }
 
     /**
-     * 获取configFileName属性的值。
+     * ��ȡconfigFilePath���Ե�ֵ��
      *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public JAXBElement<String> getConfigFileName() {
-        return configFileName;
+    public JAXBElement<String> getConfigFilePath() {
+        return configFilePath;
     }
 
     /**
-     * 设置configFileName属性的值。
+     * ����configFilePath���Ե�ֵ��
      *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public void setConfigFileName(JAXBElement<String> value) {
-        this.configFileName = value;
+    public void setConfigFilePath(JAXBElement<String> value) {
+        this.configFilePath = value;
     }
 
 }

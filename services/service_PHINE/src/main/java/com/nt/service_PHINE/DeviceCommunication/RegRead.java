@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -20,7 +21,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="fmcVoltageObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}FmcVoltageObject" minOccurs="0"/&gt;
+ *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/&gt;
+ *         &lt;element name="regAddr" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
+ *         &lt;element name="regData" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -32,15 +35,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "deviceId",
-    "fmcVoltageObject"
+    "fpgaId",
+    "regAddr",
+    "regData"
 })
-@XmlRootElement(name = "SetFmcVoltage")
-public class SetFmcVoltage {
+@XmlRootElement(name = "RegRead")
+public class RegRead {
 
     @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
-    @XmlElementRef(name = "fmcVoltageObject", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<FmcVoltageObject> fmcVoltageObject;
+    protected Integer fpgaId;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long regAddr;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long regData;
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
@@ -67,27 +75,75 @@ public class SetFmcVoltage {
     }
 
     /**
-     * ��ȡfmcVoltageObject���Ե�ֵ��
+     * ��ȡfpgaId���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}
+     *     {@link Integer }
      *
      */
-    public JAXBElement<FmcVoltageObject> getFmcVoltageObject() {
-        return fmcVoltageObject;
+    public Integer getFpgaId() {
+        return fpgaId;
     }
 
     /**
-     * ����fmcVoltageObject���Ե�ֵ��
+     * ����fpgaId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}
+     *     {@link Integer }
      *
      */
-    public void setFmcVoltageObject(JAXBElement<FmcVoltageObject> value) {
-        this.fmcVoltageObject = value;
+    public void setFpgaId(Integer value) {
+        this.fpgaId = value;
+    }
+
+    /**
+     * ��ȡregAddr���Ե�ֵ��
+     *
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *
+     */
+    public Long getRegAddr() {
+        return regAddr;
+    }
+
+    /**
+     * ����regAddr���Ե�ֵ��
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *
+     */
+    public void setRegAddr(Long value) {
+        this.regAddr = value;
+    }
+
+    /**
+     * ��ȡregData���Ե�ֵ��
+     *
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *
+     */
+    public Long getRegData() {
+        return regData;
+    }
+
+    /**
+     * ����regData���Ե�ֵ��
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *
+     */
+    public void setRegData(Long value) {
+        this.regData = value;
     }
 
 }

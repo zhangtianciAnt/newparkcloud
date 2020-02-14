@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="fmcVoltageObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}FmcVoltageObject" minOccurs="0"/&gt;
+ *         &lt;element name="configFilePath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -32,15 +32,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "deviceId",
-    "fmcVoltageObject"
+    "configFilePath"
 })
-@XmlRootElement(name = "SetFmcVoltage")
-public class SetFmcVoltage {
+@XmlRootElement(name = "SetFmcVoltageByFile")
+public class SetFmcVoltageByFile {
 
     @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
-    @XmlElementRef(name = "fmcVoltageObject", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<FmcVoltageObject> fmcVoltageObject;
+    @XmlElementRef(name = "configFilePath", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> configFilePath;
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
@@ -67,27 +67,27 @@ public class SetFmcVoltage {
     }
 
     /**
-     * ��ȡfmcVoltageObject���Ե�ֵ��
+     * ��ȡconfigFilePath���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public JAXBElement<FmcVoltageObject> getFmcVoltageObject() {
-        return fmcVoltageObject;
+    public JAXBElement<String> getConfigFilePath() {
+        return configFilePath;
     }
 
     /**
-     * ����fmcVoltageObject���Ե�ֵ��
+     * ����configFilePath���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public void setFmcVoltageObject(JAXBElement<FmcVoltageObject> value) {
-        this.fmcVoltageObject = value;
+    public void setConfigFilePath(JAXBElement<String> value) {
+        this.configFilePath = value;
     }
 
 }

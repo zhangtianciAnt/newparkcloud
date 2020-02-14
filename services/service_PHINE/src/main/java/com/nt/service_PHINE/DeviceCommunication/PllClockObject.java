@@ -2,13 +2,18 @@
 package com.nt.service_PHINE.DeviceCommunication;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>PllClockObject complex type的 Java 类。
+ * <p>PllClockObject complex type�� Java �ࡣ
  *
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  *
  * <pre>
  * &lt;complexType name="PllClockObject"&gt;
@@ -30,7 +35,7 @@ import javax.xml.bind.annotation.*;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PllClockObject", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice", propOrder = {
+@XmlType(name = "PllClockObject", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
     "enablesOutputClock",
     "fpgaId",
     "frequencyInputClock",
@@ -40,14 +45,14 @@ import javax.xml.bind.annotation.*;
 })
 public class PllClockObject {
 
-    @XmlElementRef(name = "Enables_OutputClock", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice", type = JAXBElement.class, required = false)
+    @XmlElementRef(name = "Enables_OutputClock", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", type = JAXBElement.class, required = false)
     protected JAXBElement<ArrayOfboolean> enablesOutputClock;
     @XmlElement(name = "FpgaId")
     @XmlSchemaType(name = "unsignedInt")
     protected Long fpgaId;
     @XmlElement(name = "Frequency_InputClock")
     protected Float frequencyInputClock;
-    @XmlElementRef(name = "Frequencys_OutputClock", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_HardwareDevice", type = JAXBElement.class, required = false)
+    @XmlElementRef(name = "Frequencys_OutputClock", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", type = JAXBElement.class, required = false)
     protected JAXBElement<ArrayOffloat> frequencysOutputClock;
     @XmlElement(name = "InputClockId")
     @XmlSchemaType(name = "unsignedInt")
@@ -57,7 +62,7 @@ public class PllClockObject {
     protected Long pllId;
 
     /**
-     * 获取enablesOutputClock属性的值。
+     * ��ȡenablesOutputClock���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -69,7 +74,7 @@ public class PllClockObject {
     }
 
     /**
-     * 设置enablesOutputClock属性的值。
+     * ����enablesOutputClock���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -81,7 +86,7 @@ public class PllClockObject {
     }
 
     /**
-     * 获取fpgaId属性的值。
+     * ��ȡfpgaId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -93,7 +98,7 @@ public class PllClockObject {
     }
 
     /**
-     * 设置fpgaId属性的值。
+     * ����fpgaId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -105,7 +110,7 @@ public class PllClockObject {
     }
 
     /**
-     * 获取frequencyInputClock属性的值。
+     * ��ȡfrequencyInputClock���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -117,7 +122,7 @@ public class PllClockObject {
     }
 
     /**
-     * 设置frequencyInputClock属性的值。
+     * ����frequencyInputClock���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -129,7 +134,7 @@ public class PllClockObject {
     }
 
     /**
-     * 获取frequencysOutputClock属性的值。
+     * ��ȡfrequencysOutputClock���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -141,7 +146,7 @@ public class PllClockObject {
     }
 
     /**
-     * 设置frequencysOutputClock属性的值。
+     * ����frequencysOutputClock���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -153,7 +158,7 @@ public class PllClockObject {
     }
 
     /**
-     * 获取inputClockId属性的值。
+     * ��ȡinputClockId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -165,7 +170,7 @@ public class PllClockObject {
     }
 
     /**
-     * 设置inputClockId属性的值。
+     * ����inputClockId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
@@ -177,7 +182,7 @@ public class PllClockObject {
     }
 
     /**
-     * 获取pllId属性的值。
+     * ��ȡpllId���Ե�ֵ��
      *
      * @return
      *     possible object is
@@ -189,7 +194,7 @@ public class PllClockObject {
     }
 
     /**
-     * 设置pllId属性的值。
+     * ����pllId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
