@@ -62,11 +62,7 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/addOperationrecord", method = {RequestMethod.POST})
     public ApiResult addOperationrecord(HttpServletRequest request, @RequestBody OperationRecordVo operation) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        operation.preInsert(tokenModel);
-        for(Operationdetail detail : operation.getDetailist()){
-            detail.preInsert(tokenModel);
-        }
-        operationrecordService.addOperationrecord(operation);
+        operationrecordService.addOperationrecord(tokenModel,operation);
         return ApiResult.success();
     }
     /**

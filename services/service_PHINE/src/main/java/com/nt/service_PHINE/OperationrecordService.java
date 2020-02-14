@@ -1,6 +1,7 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -19,5 +20,5 @@ public interface OperationrecordService {
     List<OperationRecordVo> getOperationrecordList(String projectId);
 
     //创建操作记录
-    void addOperationrecord(OperationRecordVo operation);
+    void addOperationrecord(TokenModel tokenModel,OperationRecordVo operation);
 }
