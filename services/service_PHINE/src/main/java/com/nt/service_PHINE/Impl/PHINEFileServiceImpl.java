@@ -40,7 +40,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
         // 操作记录表详情集合
         List<Operationdetail> operationdetails = new ArrayList<Operationdetail>();
         filesInfo.forEach(item -> {
-            item.setId(UUID.randomUUID().toString());
+            item.setFileid(UUID.randomUUID().toString());
             item.preInsert(tokenModel);
             // 操作记录详情
             Operationdetail operationdetail = new Operationdetail();

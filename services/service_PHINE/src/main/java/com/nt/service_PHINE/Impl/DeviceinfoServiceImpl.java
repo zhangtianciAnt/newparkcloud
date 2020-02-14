@@ -487,7 +487,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             detailist.add(operationdetail);
         }
         // 添加操作记录
-        operationRecordVo.setId(operationId);
+        operationRecordVo.setOperationid(operationId);
         operationRecordVo.setDetailist(detailist);
         operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
         operationRecordVo.setTitle("逻辑加载");
