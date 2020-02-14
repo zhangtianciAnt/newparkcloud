@@ -5,7 +5,7 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <id column="fileid" jdbcType="VARCHAR" property="fileid"/>
         <result column="projectid" jdbcType="VARCHAR" property="projectid"/>
         <result column="filetype" jdbcType="VARCHAR" property="filetype"/>
         <result column="deviceid" jdbcType="VARCHAR" property="deviceid"/>
@@ -23,11 +23,11 @@
     </resultMap>
     <insert id="saveFilesInfo" parameterType="list">
         insert into
-        fileinfo (id,projectid,filetype,deviceid,fpgaid,filename,url,status,createon,createby,owner,tenantid,remarks)
+        fileinfo (fileid,projectid,filetype,deviceid,fpgaid,filename,url,status,createon,createby,owner,tenantid,remarks)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.id,jdbcType=VARCHAR},
+            #{item.fileid,jdbcType=VARCHAR},
             #{item.projectid,jdbcType=VARCHAR},
             #{item.filetype,jdbcType=VARCHAR},
             #{item.deviceid,jdbcType=VARCHAR},
@@ -46,11 +46,11 @@
 
     <select id="getFilesByFileMarkId" parameterType="string" resultType="com.nt.dao_PHINE.Fileinfo">
         select
-            a.id,a.filename,a.filetype,a.deviceid,a.fpgaid
+            a.fileid,a.filename,a.filetype,a.deviceid,a.fpgaid
         from
             fileinfo a
         LEFT JOIN
-            filemark2file b on b.fileid=a.id
+            filemark2file b on b.fileid=a.fileid
         where
             b.fileversionid=#{projectId}
     </select>

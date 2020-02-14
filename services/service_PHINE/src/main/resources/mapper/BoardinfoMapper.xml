@@ -18,5 +18,6 @@
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
     <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
+    <result column="boardslotid" jdbcType="LONGVARCHAR" property="boardslotid" />
   </resultMap>
 </mapper>

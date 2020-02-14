@@ -19,6 +19,7 @@
         <result column="owner" property="owner" jdbcType="VARCHAR"/>
         <result column="tenantid" property="tenantid" jdbcType="VARCHAR"/>
         <result column="remarks" property="remarks" jdbcType="LONGVARCHAR"/>
+        <result column="cabinetslotid" property="cabinetslotid" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <select id="getDeviceListByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
         SELECT
