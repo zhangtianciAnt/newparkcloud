@@ -1,15 +1,12 @@
 package com.nt.service_PHINE.Impl;
 
 import com.nt.dao_PHINE.Vo.ChipinfoListVo;
-import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.service_PHINE.ChipinfoService;
-import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.mapper.ChipinfoMapper;
-import com.nt.service_PHINE.mapper.DeviceinfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * @ProjectName: newparkcloud
@@ -24,7 +21,7 @@ import java.util.*;
 public class ChipinfoServiceImpl implements ChipinfoService {
 
     @Autowired
-    private ChipinfoMapper hipinfoMapper;
+    private ChipinfoMapper chipinfoMapper;
 
     /**
      * @Method getDeviceListByCompanyId
@@ -35,6 +32,6 @@ public class ChipinfoServiceImpl implements ChipinfoService {
      **/
     @Override
     public List<ChipinfoListVo> getChipTypeList() {
-        return hipinfoMapper.selectChipTypeList();
+        return chipinfoMapper.selectChipTypeList();
     }
 }

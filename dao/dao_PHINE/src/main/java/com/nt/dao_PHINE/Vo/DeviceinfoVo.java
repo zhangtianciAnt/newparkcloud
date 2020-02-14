@@ -36,6 +36,11 @@ public class DeviceinfoVo {
     private String cabinetid;
 
     /**
+     * 所在机柜槽位
+     */
+    private String cabinetslotid;
+
+    /**
      * 设备编号
      */
     private String deviceid;

@@ -191,6 +191,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             boardinfoListVo.setBoardipaddress(item.getBoardipaddress());
             boardinfoListVo.setBoardtype(item.getBoardtype());
             boardinfoListVo.setChipinfoList(chipinfoMapper.select(chipinfo));
+            boardinfoListVo.setBoardslotid(item.getBoardslotid());
             boardinfoListVoList.add(boardinfoListVo);
         }
 
@@ -201,6 +202,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         deviceinfoVo.setDeviceid(deviceinfo.getDeviceid());
         deviceinfoVo.setDevicetype(deviceinfo.getDevicetype());
         deviceinfoVo.setCompanyid(deviceinfo.getCompanyid());
+        deviceinfoVo.setCabinetslotid(deviceinfo.getCabinetslotid());
         deviceinfoVo.setBoardinfoList(boardinfoListVoList);
 
         return deviceinfoVo;
@@ -302,6 +304,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             boardinfo.setBoardipaddress(boardinfoListVo.getBoardipaddress());       // 板卡IP地址
             boardinfo.setDeviceid(deviceid);                                        // 板卡所属设备ID
             boardinfo.preInsert(tokenModel);
+            boardinfo.setBoardslotid(boardinfoListVo.getBoardslotid());             // 所在设备槽位
             boardinfoMapper.insert(boardinfo);
 
             // region 芯片信息

@@ -42,6 +42,11 @@ public class BoardinfoListVo {
     private String boardipaddress;
 
     /**
+     * 所在设备槽位
+     */
+    private String boardslotid;
+
+    /**
      * 板卡内的芯片列表
      */
     private List<Chipinfo> chipinfoList;

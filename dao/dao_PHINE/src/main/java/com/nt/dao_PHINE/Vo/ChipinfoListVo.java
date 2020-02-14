@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_PHINE.Vo
@@ -39,6 +37,11 @@ public class ChipinfoListVo {
      * 所属板卡编号
      */
     private String boardid;
+
+    /**
+     * 所在板卡槽位
+     */
+    private String chipslotid;
 
     /**
      * 备注
