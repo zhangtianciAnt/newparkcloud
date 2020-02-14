@@ -17,7 +17,7 @@
         <result column="tenantid" jdbcType="VARCHAR" property="tenantid"/>
     </resultMap>
     <select id="getDeviceIdByProjectId" resultType="com.nt.dao_PHINE.Vo.DeviceListVo">
-        select a.projectid,b.deviceid from project2device a
+        select a.projectid, b.id as devicekey, b.deviceid from project2device a
         left join deviceinfo b on a.deviceid = b.id
         where projectid=#{projectid}
   </select>
