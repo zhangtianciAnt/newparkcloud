@@ -57,8 +57,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
             operationRecordVo.setContent("上传" + result + "个文件");
             operationRecordVo.setDetailist(operationdetails);
             operationRecordVo.setProjectid(projectId);
-            operationRecordVo.preInsert(tokenModel);
-            operationrecordService.addOperationrecord(operationRecordVo);
+            operationrecordService.addOperationrecord(tokenModel.getToken(), operationRecordVo);
             return ApiResult.success(MsgConstants.INFO_01);
         } else {
             return ApiResult.fail("保存文件信息" + MsgConstants.ERROR_01);
