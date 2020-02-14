@@ -452,7 +452,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Param
      **/
     @Override
-    public ApiResult logicFileLoad(TokenModel tokenMode, List<Fileinfo> fileinfoList) {
+    public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
         // 设备通信-->逻辑加载处理
         HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
         IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
@@ -486,7 +486,6 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             operationdetail.setFilename(fileinfo.getFilename());
             operationdetail.setOperationresult(result ? "成功" : "失败");
             operationdetail.setOperationid(operationId);
-            operationdetail.preInsert(tokenMode);
             detailist.add(operationdetail);
         }
         // 添加操作记录
@@ -495,7 +494,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
         operationRecordVo.setTitle("逻辑加载");
         operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
-        operationrecordService.addOperationrecord(operationRecordVo);
+        operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
         return ApiResult.success(fileinfoList);
     }
 }
