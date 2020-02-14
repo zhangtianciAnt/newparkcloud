@@ -240,8 +240,8 @@ public class CompanyProjects extends BaseModel {
     /**
      * 说明
      */
-    @Column(name = "EXPLAIN")
-    private String explain;
+    @Column(name = "INSTRUCTIONS")
+    private String instructions;
 
     /**
      * 经验与体会
