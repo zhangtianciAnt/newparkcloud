@@ -50,6 +50,9 @@ public class MultiThreadScheduleTask {
     @Autowired
     EmergencyplanServices emergencyplanServices;
 
+    @Autowired
+    private ResponseinformationServices responseinformationServices;
+
     // websocket消息推送
     private WebSocket ws = new WebSocket();
     // WebSocketVow
@@ -213,6 +216,13 @@ public class MultiThreadScheduleTask {
     public void BASF10802_GetEmergencyplanInfo() throws Exception {
         // 应急预案列表
         webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF10803_GetResponseinformationInfo() throws Exception {
+        //应急预案工艺处置队列表
+        webSocketVo.setResponseinformationList(responseinformationServices.list());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

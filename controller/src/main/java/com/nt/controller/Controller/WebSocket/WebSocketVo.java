@@ -67,6 +67,8 @@ public class WebSocketVo {
     private List<Deviceinformation> deviceinformationList = new ArrayList<>();
     //应急预案列表
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();
+    //响应信息列表
+    private List<Responseinformation> responseinformationList = new ArrayList<>();
 
     //获取培训教育人员详细
     private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();
