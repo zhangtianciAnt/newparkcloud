@@ -2,13 +2,13 @@ package com.nt.service_pfans.PFANS6000;
 
 import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
-import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CompanyStatisticsService {
 
-    List<CompanyStatistics> getCosts(Coststatistics coststatistics) throws Exception;
+    Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception;
 
     List<CompanyStatistics> getWorkTimes(Coststatistics coststatistics);
 

@@ -4,10 +4,8 @@ import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
-import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
-import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +20,63 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     @Autowired
     private CoststatisticsMapper coststatisticsMapper;
 
+    @Autowired
+    private VariousfundsMapper variousfundsMapper;
+
 
     @Override
-    public List<CompanyStatistics> getCosts(Coststatistics coststatistics) throws Exception{
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
+    public Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception{
+        Map<String, Object> result = new HashMap<>();
 
+        Variousfunds variousfunds = new Variousfunds();
+//        variousfunds.setOwner(tokenModel.getUserId());
+        List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
+        Map<String, Double> tripMap = new HashMap<>();
+        Map<String, Double> assetsMap = new HashMap<>();
+        for ( Variousfunds v : allVariousfunds ) {
+            String month = v.getPlmonthplan();
+            Map<String, Double> targetMap = null;
+            if ( "BP014001".equals(v.getTypeoffees())) {
+                //出张经费
+                targetMap = tripMap;
+            } else if ("BP014002".equals(v.getTypeoffees())) {
+                //设备经费
+                targetMap = assetsMap;
+            } else {
+                continue;
+            }
+            double value = targetMap.getOrDefault(month, 0.0);
+            double addValue = 0;
+            try {
+                addValue = Double.parseDouble(v.getPayment());
+            } catch (Exception e) {}
+            targetMap.put(month, value + addValue);
+        }
+        // rebuild Map
+        // format : {cost1..12, totalcost}
+        Map<String, Double> finalTripMap = new HashMap<>();
+        Map<String, Double> finalAssetsMap = new HashMap<>();
+        double totalTrip = 0;
+        double totalAssets = 0;
+        for (int i=1; i<=12; i++) {
+            String key = i + "";
+            double trip = tripMap.getOrDefault(key, 0.0);
+            double asset = assetsMap.getOrDefault(key, 0.0);
+            finalTripMap.put("cost".concat(key), trip);
+            finalAssetsMap.put("cost".concat(key), asset);
+            totalAssets += asset;
+            totalTrip += trip;
+        }
+        finalTripMap.put("totalcost", totalTrip);
+        finalAssetsMap.put("totalcost", totalAssets);
+
+        // add to result
+        result.put("trip", finalTripMap);
+        result.put("asset", finalAssetsMap);
+
+
+
+        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         for ( Coststatistics c : allCostList ) {
             String bpcompany = c.getBpcompany();
@@ -83,8 +133,17 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             company.setTotalmanhours(oldTotalmanhours + totalmanhours + "");
             companyMap.put(bpcompany, company);
         }
+        result.put("company", new ArrayList<>(companyMap.values()));
 
-        return new ArrayList<>(companyMap.values());
+        // year
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        if ( now.get(Calendar.MONTH) <= 2 ) {
+            year--;
+        }
+        result.put("year", year);
+
+        return result;
     }
 
     @Override
