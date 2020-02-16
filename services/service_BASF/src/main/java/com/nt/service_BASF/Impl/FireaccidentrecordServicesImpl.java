@@ -6,21 +6,25 @@ import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_BASF.FireaccidentrecordServices;
 import com.nt.service_BASF.mapper.FireaccidentrecordMapper;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
-import com.nt.utils.jxlsUtil.JxlsBuilder;
-import jdk.jfr.Category;
+import com.nt.utils.jxlsUtil.JxlsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
-import com.nt.service_Org.DictionaryService;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import javax.xml.bind.DatatypeConverter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -62,7 +66,6 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         return fireaccidentrecordMapper.selectByPrimaryKey(fireaccidentrecordid);
     }
 
-
     @Override
     public void insert(TokenModel tokenModel, Fireaccidentrecord fireaccidentrecord) throws Exception {
         fireaccidentrecord.preInsert(tokenModel);
@@ -73,7 +76,6 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         fireaccidentrecord.setFireaccidentno(no);
         fireaccidentrecordMapper.insert(fireaccidentrecord);
     }
-
 
     @Override
     public void update(TokenModel tokenModel, Fireaccidentrecord fireaccidentrecord) throws Exception {
@@ -118,6 +120,50 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         data.put("accidentCommands", accidentCommands);
         data.put("command", command);
         data.put("casualties", commandrecord.getCasualties().getNumber());
+        String imgname = null;
+        if (commandrecord.getGisimage() != null) {
+            byte[] a = DatatypeConverter.parseBase64Binary(commandrecord.getGisimage().split(",")[1]);
+            String b = commandrecord.getGisimage().split(",")[1];
+            imgname = BASE64CodeToBeImage(b, JxlsConfig.getImageRoot(), "png");
+            data.put("gisimage", imgname);
+        }
         ExcelOutPutUtil.OutPut(fireaccidentrecord.getFireaccidentno(), "fireaccidentrecord.xlsx", data, response);
+        deleteImage(JxlsConfig.getImageRoot() + "/" + imgname);
+    }
+
+    public String BASE64CodeToBeImage(String BASE64str, String path, String ext) throws Exception {
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            fileDir.setWritable(true);
+            fileDir.mkdirs();
+        }
+        //文件名称
+        String uploadFileName = UUID.randomUUID().toString() + "." + ext;
+        File targetFile = new File(path, uploadFileName);
+        try (OutputStream out = new FileOutputStream(targetFile)) {
+            byte[] b = DatatypeConverter.parseBase64Binary(BASE64str);
+            for (int i = 0; i < b.length; i++) {
+                if (b[i] < 0) {
+                    b[i] += 256;
+                }
+            }
+            out.write(b);
+            out.flush();
+//            return path + "/" + uploadFileName + "." + ext;
+            return uploadFileName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void deleteImage(String path) throws Exception {
+        File file = new File(path);
+        if (!file.exists()) {
+            return;
+        }
+        if (file.isFile()) {
+            file.delete();
+        }
     }
 }

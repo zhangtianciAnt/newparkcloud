@@ -1,12 +1,10 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 
-
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.Commandrecord;
 import com.nt.dao_BASF.Fireaccidentrecord;
 import com.nt.dao_BASF.Firealarm;
-import com.nt.dao_BASF.VO.UsergroupVo;
 import com.nt.service_BASF.CommandrecordServices;
 import com.nt.service_BASF.FireaccidentrecordServices;
 import com.nt.service_BASF.FirealarmServices;
@@ -100,7 +98,8 @@ public class BASF10203Controller {
                 commandrecord = commandrecordService.get(commandrecordid);
             }
             fireaccidentrecordServices.excelexport(fireaccidentrecord, firealarm, commandrecord, response);
-
         }
+        /*ExcelController excelController=new ExcelController();
+        excelController.save(response);*/
     }
 }
