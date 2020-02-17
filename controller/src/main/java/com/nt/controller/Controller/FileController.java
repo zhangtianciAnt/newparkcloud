@@ -32,7 +32,7 @@ public class FileController {
     @RequestMapping(value = "/getToken",method={RequestMethod.GET})
     private ApiResult getToken() throws Exception {
         //无锡
-        String url = Url + "/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=newtouch1!";
+        String url = Url + "/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=newtouch1!";
         //大连
         //String url = Url + "/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=admin";
 
