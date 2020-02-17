@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper">
+
+	<select id="getExpatriatesinfor" parameterType="com.nt.dao_Pfans.PFANS6000.Coststatistics" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
+		select a.`EXPNAME` as BPNAME, b.COMPANY as BPCOMPANY, b.TOTALUNIT as UNITPRICE,
+		a.`JANUARY` as MANHOUR1, a.FEBRUARY as MANHOUR2, a.MARCH as MANHOUR3, a.APRIL as MANHOUR4, a.MAY as MANHOUR5, a.JUNE as MANHOUR6, a.`JULY` as MANHOUR7,
+		a.AUGUST as MANHOUR8, a.SEPTEMBER as MANHOUR9, a.OCTOBER as MANHOUR10, a.NOVEMBER as MANHOUR11, a.DECEMBER as MANHOUR12
+		from `priceset` as b
+		inner join (
+			select exp.`EXPNAME`,
+			sum(exp.`JANUARY`) as JANUARY, sum(exp.FEBRUARY) as FEBRUARY, sum(exp.MARCH) as MARCH, sum(exp.APRIL) as APRIL, sum(exp.MAY) as MAY, sum(exp.JUNE) as JUNE,
+			sum(exp.`JULY`) as JULY, sum(exp.AUGUST) as AUGUST, sum(exp.SEPTEMBER) as SEPTEMBER, sum(exp.OCTOBER) as OCTOBER, sum(exp.NOVEMBER) as NOVEMBER, sum(exp.DECEMBER) as DECEMBER
+			from expatriatesinfor exp
+			group by exp.`EXPNAME`
+		) a
+		on a.`EXPNAME` = b.`USER_ID`
+		and b.`STATUS` = '0'
+	</select>
+
+	<insert id="insertAll" parameterType="list">
+		insert into coststatistics
+		(COSTSTATISTICS_ID,BPNAME,BPCOMPANY,UNITPRICE,MANHOUR4,COST4,MANHOUR5,COST5,MANHOUR6,COST6,
+		SUPPORT6,TOTALMANHOURS6,TOTALCOST6,EXPENSE6,CONTRACT6,MANHOUR7,COST7,MANHOUR8,COST8,
+		MANHOUR9,COST9,SUPPORT9,TOTALMANHOURS9,TOTALCOST9,EXPENSE9,CONTRACT9,
+		MANHOUR10,COST10,MANHOUR11,COST11,MANHOUR12,COST12,
+		SUPPORT12,TOTALMANHOURS12,TOTALCOST12,EXPENSE12,CONTRACT12,
+		MANHOUR1,COST1,MANHOUR2,COST2,MANHOUR3,COST3,SUPPORT3,TOTALMANHOURS3,TOTALCOST3,EXPENSE3,CONTRACT3,
+		ROWINDEX,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID)
+		values
+		<foreach item="item" index="index" collection="list"
+				 open="(" separator="," close=")">
+			#{item.coststatistics_id},
+			#{item.bpname},
+			#{item.bpcompany},
+			#{item.unitprice},
+			#{item.manhour4},
+			#{item.cost4},
+			#{item.manhour5},
+			#{item.cost5},
+			#{item.manhour6},
+			#{item.cost6},
+			#{item.support6},
+			#{item.totalmanhours6},
+			#{item.totalcost6},
+			#{item.expense6},
+			#{item.contract6},
+			#{item.manhour7},
+			#{item.cost7},
+			#{item.manhour8},
+			#{item.cost8},
+			#{item.manhour9},
+			#{item.cost9},
+			#{item.support9},
+			#{item.totalmanhours9},
+			#{item.totalcost9},
+			#{item.expense9},
+			#{item.contract9},
+			#{item.manhour10},
+			#{item.cost10},
+			#{item.manhour11},
+			#{item.cost11},
+			#{item.manhour12},
+			#{item.cost12},
+			#{item.support12},
+			#{item.totalmanhours12},
+			#{item.totalcost12},
+			#{item.expense12},
+			#{item.contract12},
+			#{item.manhour1},
+			#{item.cost1},
+			#{item.manhour2},
+			#{item.cost2},
+			#{item.manhour3},
+			#{item.cost3},
+			#{item.support3},
+			#{item.totalmanhours3},
+			#{item.totalcost3},
+			#{item.expense3},
+			#{item.contract3},
+			#{item.rowindex},
+			#{item.createby},
+			#{item.createon},
+			#{item.modifyby},
+			#{item.modifyon},
+			#{item.owner},
+			#{item.status},
+			#{item.tenantid}
+		</foreach>
+	</insert>
+</mapper>
