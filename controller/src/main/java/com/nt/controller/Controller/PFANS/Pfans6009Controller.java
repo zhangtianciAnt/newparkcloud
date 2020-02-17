@@ -43,6 +43,6 @@ public class Pfans6009Controller {
     public ApiResult getCompanyReport3(HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getWorkTimeInfos(coststatistics));
+        return ApiResult.success(companyStatisticsService.getWorkerCounts(coststatistics));
     }
 }

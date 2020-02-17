@@ -4,10 +4,12 @@ import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
+import com.nt.service_pfans.PFANS6000.mapper.CompanyStatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.beans.BeanMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
     @Autowired
     private VariousfundsMapper variousfundsMapper;
+
+    @Autowired
+    private CompanyStatisticsMapper companyStatisticsMapper;
 
 
     @Override
@@ -136,23 +141,45 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         result.put("company", new ArrayList<>(companyMap.values()));
 
         // year
-        Calendar now = Calendar.getInstance();
-        int year = now.get(Calendar.YEAR);
-        if ( now.get(Calendar.MONTH) <= 2 ) {
-            year--;
-        }
-        result.put("year", year);
+        result.put("year", getBusinessYear());
 
         return result;
     }
 
     @Override
-    public List<CompanyStatistics> getWorkTimes(Coststatistics coststatistics) {
-        return null;
+    public Map<String, Object> getWorkTimes(Coststatistics coststatistics) {
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String, Object> sqlParams = new HashMap<>();
+        sqlParams.putAll(BeanMap.create(coststatistics));
+        sqlParams.put("yesValue", "是");
+        sqlParams.put("noValue", "否");
+        List<CompanyStatistics> list = companyStatisticsMapper.getWorkTimes(sqlParams);
+        result.put("worktimes", list);
+        // year
+        result.put("year", getBusinessYear());
+        return result;
     }
 
     @Override
-    public List<CompanyStatistics> getWorkTimeInfos(Coststatistics coststatistics) {
-        return null;
+    public Map<String, Object> getWorkerCounts(Coststatistics coststatistics) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> sqlParams = new HashMap<>();
+        sqlParams.putAll(BeanMap.create(coststatistics));
+        sqlParams.put("yesValue", "是");
+        List<CompanyStatistics> list = companyStatisticsMapper.getWorkers(sqlParams);
+        result.put("workers", list);
+        // year
+        result.put("year", getBusinessYear());
+        return result;
+    }
+
+    private int getBusinessYear() {
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        if ( now.get(Calendar.MONTH) <= 2 ) {
+            year--;
+        }
+        return year;
     }
 }
