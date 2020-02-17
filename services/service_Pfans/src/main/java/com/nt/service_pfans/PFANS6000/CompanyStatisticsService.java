@@ -10,7 +10,7 @@ public interface CompanyStatisticsService {
 
     Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception;
 
-    List<CompanyStatistics> getWorkTimes(Coststatistics coststatistics);
+    Map<String, Object> getWorkTimes(Coststatistics coststatistics);
 
-    List<CompanyStatistics> getWorkTimeInfos(Coststatistics coststatistics);
+    Map<String, Object> getWorkerCounts(Coststatistics coststatistics);
 }
