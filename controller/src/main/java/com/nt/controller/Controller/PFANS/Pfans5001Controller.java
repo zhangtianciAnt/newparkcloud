@@ -74,7 +74,6 @@ public class Pfans5001Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         companyProjectsService.update(companyProjectsVo,tokenModel);
         return ApiResult.success();
-
     }
 
 

@@ -54,7 +54,7 @@ public class CompanyProjects extends BaseModel {
      * 納期
      */
     @Column(name = "DEADLINE")
-    private String deadline;
+    private Date deadline;
 
     /**
      * 其他管理工具
