@@ -33,18 +33,18 @@ public class OutSource extends BaseModel {
     @Column(name = "RN")
     private String rn;
 
-//    @Column(name = "ADMISSIONTIME")
-//    private Date admissiontime;
-//
-//    @Column(name = "EXITTIME")
-//    private Date exittime;
-//
-//
-//    @Column(name = "PROJECT_NAME")
-//    private Date project_name;
-//
-//    @Column(name = "MANAGERID")
-//    private Date managerid;
+    @Column(name = "ADMISSIONTIME")
+    private Date admissiontime;
+
+    @Column(name = "EXITTIME")
+    private Date exittime;
+
+
+    @Column(name = "PROJECT_NAME")
+    private Date project_name;
+
+    @Column(name = "MANAGERID")
+    private Date managerid;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
