@@ -28,7 +28,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Autowired
     private ProjectplanMapper projectplanMapper;
     @Autowired
-    private ProjectresourcesMapper projectresourcesMapper;
+    private ProjectsystemMapper projectsystemMapper;
 
     @Autowired
     private OutSourceMapper outSourceMapper;
@@ -54,25 +54,25 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     public CompanyProjectsVo selectById(String companyprojectsid) throws Exception {
         CompanyProjectsVo staffVo = new CompanyProjectsVo();
         ProjectPlan projectPlan = new ProjectPlan();
-        ProjectreSources projectreSources = new ProjectreSources();
+        Projectsystem projectsystem = new Projectsystem();
         OutSource outSource = new OutSource();
         StageInformation stageInformation = new StageInformation();
         projectPlan.setCompanyprojects_id(companyprojectsid);
-        projectreSources.setCompanyprojects_id(companyprojectsid);
+        projectsystem.setCompanyprojects_id(companyprojectsid);
         outSource.setCompanyprojects_id(companyprojectsid);
         stageInformation.setCompanyprojects_id(companyprojectsid);
         List<ProjectPlan> projectPlanList = projectplanMapper.select(projectPlan);
-        List<ProjectreSources> projectreSourcesList = projectresourcesMapper.select(projectreSources);
+        List<Projectsystem> projectsystemList = projectsystemMapper.select(projectsystem);
         List<OutSource> outsourcesList = outSourceMapper.select(outSource);
         List<StageInformation> stageinformationList = stageinformationMapper.select(stageInformation);
         projectPlanList = projectPlanList.stream().sorted(Comparator.comparing(ProjectPlan::getRowindex)).collect(Collectors.toList());
-        projectreSourcesList = projectreSourcesList.stream().sorted(Comparator.comparing(ProjectreSources::getRowindex)).collect(Collectors.toList());
+        projectsystemList = projectsystemList.stream().sorted(Comparator.comparing(Projectsystem::getRowindex)).collect(Collectors.toList());
         outsourcesList = outsourcesList.stream().sorted(Comparator.comparing(OutSource::getRowindex)).collect(Collectors.toList());
         stageinformationList = stageinformationList.stream().sorted(Comparator.comparing(StageInformation::getRowindex)).collect(Collectors.toList());
         CompanyProjects Staff = companyprojectsMapper.selectByPrimaryKey(companyprojectsid);
         staffVo.setCompanyprojects(Staff);
         staffVo.setProjectplan(projectPlanList);
-        staffVo.setProjectresources(projectreSourcesList);
+        staffVo.setProjectsystem(projectsystemList);
         staffVo.setOutSources(outsourcesList);
         staffVo.setStageinformation(stageinformationList);
         return staffVo;
@@ -86,20 +86,20 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyProjects.preUpdate(tokenModel);
         companyprojectsMapper.updateByPrimaryKey(companyProjects);
         String companyprojectsid = companyProjects.getCompanyprojects_id();
-        ProjectPlan pro = new ProjectPlan();
-        ProjectreSources sou = new ProjectreSources();
-        OutSource out = new OutSource();
-        StageInformation sta = new StageInformation();
-        pro.setCompanyprojects_id(companyprojectsid);
-        sou.setCompanyprojects_id(companyprojectsid);
-        out.setCompanyprojects_id(companyprojectsid);
-        sta.setCompanyprojects_id(companyprojectsid);
-        projectplanMapper.delete(pro);
-        projectresourcesMapper.delete(sou);
-        outSourceMapper.delete(out);
-        stageinformationMapper.delete(sta);
+//        ProjectPlan pro = new ProjectPlan();
+//        Projectsystem sou = new Projectsystem();
+//        OutSource out = new OutSource();
+//        StageInformation sta = new StageInformation();
+//        pro.setCompanyprojects_id(companyprojectsid);
+//        sou.setCompanyprojects_id(companyprojectsid);
+//        out.setCompanyprojects_id(companyprojectsid);
+//        sta.setCompanyprojects_id(companyprojectsid);
+//        projectplanMapper.delete(pro);
+//        projectsystemMapper.delete(sou);
+//        outSourceMapper.delete(out);
+//        stageinformationMapper.delete(sta);
         List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
-        List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
+        List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
         List<OutSource> outSourceList = companyProjectsVo.getOutSources();
         List<StageInformation> stageinformationList = companyProjectsVo.getStageinformation();
         if (projectPlanList != null) {
@@ -113,15 +113,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectplanMapper.insertSelective(projectPlan);
             }
         }
-        if (projectreSourcesList != null) {
+        if (projectsystemList != null) {
             int rowundex = 0;
-            for (ProjectreSources projectreSources : projectreSourcesList) {
+            for (Projectsystem projectsystem : projectsystemList) {
                 rowundex = rowundex + 1;
-                projectreSources.preInsert(tokenModel);
-                projectreSources.setProjectresources_id(UUID.randomUUID().toString());
-                projectreSources.setCompanyprojects_id(companyprojectsid);
-                projectreSources.setRowindex(rowundex);
-                projectresourcesMapper.insertSelective(projectreSources);
+                projectsystem.preInsert(tokenModel);
+                projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                projectsystem.setCompanyprojects_id(companyprojectsid);
+                projectsystem.setRowindex(rowundex);
+                projectsystemMapper.insertSelective(projectsystem);
             }
         }
         if (outSourceList != null) {
@@ -158,7 +158,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyProjects.setCompanyprojects_id(companyprojectsid);
         companyprojectsMapper.insertSelective(companyProjects);
         List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
-        List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
+        List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
         List<OutSource> outSourceList = companyProjectsVo.getOutSources();
         List<StageInformation> stageInformationList = companyProjectsVo.getStageinformation();
         if (projectPlanList != null) {
@@ -172,15 +172,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectplanMapper.insertSelective(projectPlan);
             }
         }
-        if (projectreSourcesList != null) {
+        if (projectsystemList != null) {
             int rowundex = 0;
-            for (ProjectreSources projectreSources : projectreSourcesList) {
+            for (Projectsystem projectsystem : projectsystemList) {
                 rowundex = rowundex + 1;
-                projectreSources.preInsert(tokenModel);
-                projectreSources.setProjectresources_id(UUID.randomUUID().toString());
-                projectreSources.setCompanyprojects_id(companyprojectsid);
-                projectreSources.setRowindex(rowundex);
-                projectresourcesMapper.insertSelective(projectreSources);
+                projectsystem.preInsert(tokenModel);
+                projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                projectsystem.setCompanyprojects_id(companyprojectsid);
+                projectsystem.setRowindex(rowundex);
+                projectsystemMapper.insertSelective(projectsystem);
             }
         }
         if (outSourceList != null) {
