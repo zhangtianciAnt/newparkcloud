@@ -1,10 +1,9 @@
 package com.nt.service_PHINE.Impl;
 
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_PHINE.*;
-import com.nt.dao_PHINE.Vo.BoardinfoListVo;
-import com.nt.dao_PHINE.Vo.DeviceListVo;
-import com.nt.dao_PHINE.Vo.DeviceinfoVo;
-import com.nt.dao_PHINE.Vo.OperationRecordVo;
+import com.nt.dao_PHINE.Vo.*;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
 import com.nt.service_PHINE.DeviceCommunication.HardwareDeviceService;
 import com.nt.service_PHINE.DeviceCommunication.IHardwareDeviceService;
@@ -52,6 +51,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
     @Autowired
     private OperationrecordService operationrecordService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     // WCF服务地址
     private static URL WSDL_LOCATION;
@@ -496,5 +498,36 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
         operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
         return ApiResult.success(fileinfoList);
+    }
+
+    /**
+     * @return
+     * @Method getDeviceChartInfo
+     * @Author SKAIXX
+     * @Description 获取企业/设备图表数据
+     * @Date 2020/2/19 13:57
+     * @Param
+     **/
+    @Override
+    public List<ChartDataRow> getDeviceChartInfo() {
+        List<ChartDataRow> chartDataRowList = deviceinfoMapper.getDeviceChartInfo();
+        // 通过公司ID获取公司名称
+        chartDataRowList.forEach(item -> {
+            if (!item.getName().equals("未分配")) {
+                OrgTree orgTree = new OrgTree();
+                orgTree.set_id(item.getName());
+                try {
+                    item.setName(orgTreeService.getById(orgTree).get(0).getCompanyshortname());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return chartDataRowList;
+    }
+
+    @Override
+    public List<ChartDataRow> getDeviceStatusChartInfo() {
+        return deviceinfoMapper.getDeviceStatusChartInfo();
     }
 }
