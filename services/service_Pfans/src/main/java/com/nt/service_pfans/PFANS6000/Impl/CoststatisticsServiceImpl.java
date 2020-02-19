@@ -120,11 +120,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         try {
             // 导出文件
             List<Coststatistics> list = coststatisticsVo.getCoststatistics();
-
             InputStream in = null;
             FileOutputStream f = null;
             XSSFWorkbook work = null;
-
             //表格操作
             in = getClass().getClassLoader().getResourceAsStream("jxls_templates/feiyongtongji.xlsx");
             work = new XSSFWorkbook(in);
@@ -134,19 +132,50 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             for (Coststatistics c : list) {
                 //创建工作表的行
                 XSSFRow row = sheet1.createRow(i);
+                for (int k = 0; k <=12; k++) {
+                    double manhour = 0;
+                    String property = "manhour" + k;
+                    try {
+                        manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
+                        switch(k){
+                            case 4:
+                                row.createCell(4).setCellValue(manhour);
+                            case 5:
+                                row.createCell(8).setCellValue(manhour);
+                            case 6:
+                                row.createCell(12).setCellValue(manhour);
+                            case 7:
+                                row.createCell(20).setCellValue(manhour);
+                            case 8:
+                                row.createCell(24).setCellValue(manhour);
+                            case 9:
+                                row.createCell(28).setCellValue(manhour);
+                            case 10:
+                                row.createCell(36).setCellValue(manhour);
+                            case 11:
+                                row.createCell(40).setCellValue(manhour);
+                            case 12:
+                                row.createCell(44).setCellValue(manhour);
+                            case 1:
+                                row.createCell(52).setCellValue(manhour);
+                            case 2:
+                                row.createCell(56).setCellValue(manhour);
+                            case 3:
+                                row.createCell(60).setCellValue(manhour);
+                        }
+                    } catch (Exception e) {}
+
+                }
                 row.createCell(0).setCellValue(i - 2);
                 row.createCell(1).setCellValue(c.getBpname());
                 row.createCell(2).setCellValue(c.getBpcompany());
                 row.createCell(3).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(4).setCellValue(c.getManhour4());
                 row.createCell(5).setCellValue(c.getCost4());
                 row.createCell(6).setCellValue(c.getSupport6());
                 row.createCell(7).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(8).setCellValue(c.getManhour5());
                 row.createCell(9).setCellValue(c.getCost5());
                 row.createCell(10).setCellValue(c.getSupport6());
                 row.createCell(11).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(12).setCellValue(c.getManhour6());
                 row.createCell(13).setCellValue(c.getCost6());
                 row.createCell(14).setCellValue(c.getSupport6());
                 row.createCell(15).setCellValue(c.getTotalmanhours6());
@@ -154,15 +183,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 row.createCell(17).setCellValue(c.getExpense6());
                 row.createCell(18).setCellValue(c.getContract6());
                 row.createCell(19).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(20).setCellValue(c.getManhour7());
                 row.createCell(21).setCellValue(c.getCost7());
                 row.createCell(22).setCellValue(c.getSupport9());
                 row.createCell(23).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(24).setCellValue(c.getManhour8());
                 row.createCell(25).setCellValue(c.getCost8());
                 row.createCell(26).setCellValue(c.getSupport9());
                 row.createCell(27).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(28).setCellValue(c.getManhour9());
                 row.createCell(29).setCellValue(c.getCost9());
                 row.createCell(30).setCellValue(c.getSupport9());
                 row.createCell(31).setCellValue(c.getTotalmanhours9());
@@ -170,15 +196,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 row.createCell(33).setCellValue(c.getExpense9());
                 row.createCell(34).setCellValue(c.getContract9());
                 row.createCell(35).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(36).setCellValue(c.getManhour10());
                 row.createCell(37).setCellValue(c.getCost10());
                 row.createCell(38).setCellValue(c.getSupport12());
                 row.createCell(39).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(40).setCellValue(c.getManhour11());
                 row.createCell(41).setCellValue(c.getCost11());
                 row.createCell(42).setCellValue(c.getSupport12());
                 row.createCell(43).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(44).setCellValue(c.getManhour11());
                 row.createCell(45).setCellValue(c.getCost11());
                 row.createCell(46).setCellValue(c.getSupport12());
                 row.createCell(47).setCellValue(c.getTotalmanhours12());
@@ -186,15 +209,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 row.createCell(49).setCellValue(c.getExpense12());
                 row.createCell(50).setCellValue(c.getContract12());
                 row.createCell(51).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(52).setCellValue(c.getManhour1());
                 row.createCell(53).setCellValue(c.getCost1());
                 row.createCell(54).setCellValue(c.getSupport3());
                 row.createCell(55).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(56).setCellValue(c.getManhour2());
                 row.createCell(57).setCellValue(c.getCost2());
                 row.createCell(58).setCellValue(c.getSupport3());
                 row.createCell(59).setCellValue(c.getUnitprice());//todo danjia
-                row.createCell(60).setCellValue(c.getManhour3());
                 row.createCell(61).setCellValue(c.getCost3());
                 row.createCell(62).setCellValue(c.getSupport3());
                 row.createCell(63).setCellValue(c.getTotalmanhours3());
