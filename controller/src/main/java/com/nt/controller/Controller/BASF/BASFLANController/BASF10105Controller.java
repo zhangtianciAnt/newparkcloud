@@ -7,6 +7,7 @@ import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.ServerInfo;
+import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.utils.*;
@@ -79,9 +80,9 @@ public class BASF10105Controller {
                 deviceinformation.setLine(serverinfo.getLine());
                 deviceinformation.setRow(serverinfo.getRow());
                 List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
+                DeviceinformationVo linkagelistVo = new DeviceinformationVo();
                 if(linkagelist.size() == 1)
                 {
-                    list.add(linkagelist);
                     TokenModel tokenModel = tokenService.getToken(request);
                     Firealarm firealarm = new Firealarm();
                     String yyMMdd = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
@@ -89,7 +90,10 @@ public class BASF10105Controller {
                     firealarm.setAlarmpeo("系统管理员");
                     firealarm.setAlarmtimes(yyMMdd);
                     firealarm.setIndevice(linkagelist.get(0).getDevice());
-                    firealarmServices.insert(firealarm,tokenModel);
+                    String firealarmuuid = firealarmServices.insert(firealarm,tokenModel);
+                    linkagelistVo.setDeviceinformation(linkagelist.get(0));
+                    linkagelistVo.setFirealarmuuid(firealarmuuid);
+                    list.add(linkagelistVo);
                 }
             }
             // 接收机柜传过来的报警信息
