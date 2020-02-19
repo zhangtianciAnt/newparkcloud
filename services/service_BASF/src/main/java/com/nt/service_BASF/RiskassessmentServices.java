@@ -1,6 +1,8 @@
 package com.nt.service_BASF;
 
+import com.nt.dao_BASF.Highriskarea;
 import com.nt.dao_BASF.Riskassessment;
+import com.nt.dao_BASF.VO.HighriskareaVo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,5 +27,15 @@ public interface RiskassessmentServices {
 
     //承诺公告更新
     void noticeUpdata(String notice, TokenModel tokenModel) throws Exception;
+
+    List<HighriskareaVo> selecthig(TokenModel tokenModel,Highriskarea highriskarea) throws Exception;
+    //insert
+    void insert(TokenModel tokenModel, HighriskareaVo highriskareaVo) throws Exception;
+
+    //update
+    void update(TokenModel tokenModel, HighriskareaVo highriskareaVo) throws Exception;
+
+    //delete
+    void delete(TokenModel tokenModel, Highriskarea highriskarea) throws Exception;
 
 }

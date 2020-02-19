@@ -21,6 +21,7 @@ import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,28 +67,35 @@ public class BASF10105Controller {
 
 
     @RequestMapping(value = "/linkagelist", method = {RequestMethod.POST})
-    public ApiResult linkagelist(@RequestBody ServerInfo serverinfo, HttpServletRequest request) throws Exception {
-        Deviceinformation deviceinformation = new Deviceinformation();
-        deviceinformation.setFactoryname(serverinfo.getFactoryname());
-        deviceinformation.setLine(serverinfo.getLine());
-        deviceinformation.setRow(serverinfo.getRow());
-        List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
-        if(linkagelist.size() == 1)
+    public ApiResult linkagelist(@RequestBody List<ServerInfo> serverinfolist, HttpServletRequest request) throws Exception {
+
+        if(serverinfolist.size()>0)
         {
+            ArrayList list = new ArrayList<>();
+            for(int i = 0;i<serverinfolist.size();i++){
+                ServerInfo serverinfo = serverinfolist.get(i);
+                Deviceinformation deviceinformation = new Deviceinformation();
+                deviceinformation.setFactoryname(serverinfo.getFactoryname());
+                deviceinformation.setLine(serverinfo.getLine());
+                deviceinformation.setRow(serverinfo.getRow());
+                List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
+                if(linkagelist.size() == 1)
+                {
+                    list.add(linkagelist);
+                    TokenModel tokenModel = tokenService.getToken(request);
+                    Firealarm firealarm = new Firealarm();
+                    String yyMMdd = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
+
+                    firealarm.setAlarmpeo("系统管理员");
+                    firealarm.setAlarmtimes(yyMMdd);
+                    firealarm.setIndevice(linkagelist.get(0).getDevice());
+                    firealarmServices.insert(firealarm,tokenModel);
+                }
+            }
             // 接收机柜传过来的报警信息
-            webSocketVo.setDeviceinformationList(linkagelist);
+            webSocketVo.setDeviceinformationList(list);
             ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-
-            TokenModel tokenModel = tokenService.getToken(request);
-            Firealarm firealarm = new Firealarm();
-            String yyMMdd = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
-
-            firealarm.setAlarmpeo("系统管理员");
-            firealarm.setAlarmtimes(yyMMdd);
-            firealarm.setIndevice(linkagelist.get(0).getDevice());
-            firealarmServices.insert(firealarm,tokenModel);
         }
-
         return ApiResult.success();
     }
 
