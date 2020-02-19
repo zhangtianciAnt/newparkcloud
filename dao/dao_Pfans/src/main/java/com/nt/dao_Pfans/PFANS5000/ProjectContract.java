@@ -13,45 +13,45 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "projectresources")
-public class ProjectreSources extends BaseModel {
-
+@Table(name = "projectcontract")
+public class ProjectContract extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 项目计划ID
+     * 项目合同
      */
     @Id
-    @Column(name = "PROJECTRESOURCES_ID")
-    private String projectresources_id;
+    @Column(name = "PROJECTCONTRACT_ID")
+    private String projectcontract_id;
 
     /**
-     * 所属项目
+     * 所属公司项目
      */
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
     /**
-     * 姓名
+     * 合同
      */
-    @Column(name = "USER_ID")
-    private String user_id;
+    @Column(name = "CONTRACT")
+    private String contract;
 
     /**
-     * 角色
+     * テーマ
      */
-    @Column(name = "ROLE")
-    private String role;
+    @Column(name = "THEME")
+    private String theme;
 
-    @Column(name = "ADMISSIONTIME")
-    private Date admissiontime;
+    /**
+     * 工时
+     */
+    @Column(name = "WORKINGHOURS")
+    private String workinghours;
 
-    @Column(name = "EXITTIME")
-    private Date exittime;
-
+    /**
+     * 顺序
+     */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
-
-
 
 }

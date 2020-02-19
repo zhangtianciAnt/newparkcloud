@@ -20,20 +20,13 @@ public class CompanyProjectsVo {
     /**
      * 项目计划
      */
-    private List<ProjectPlan> projectplan;
+    private List<StageInformation> stageinformation;
     /**
      * 项目体制
      */
     private List<Projectsystem> projectsystem;
     /**
-     * 项目资源
+     * 项目合同
      */
-    private List<ProjectreSources> projectresources;
-
-
-    private List<OutSource> outSources;
-    /**
-     * 项目开发计划
-     */
-    private List<StageInformation> stageinformation;
+    private List<ProjectContract> projectcontract;
 }
