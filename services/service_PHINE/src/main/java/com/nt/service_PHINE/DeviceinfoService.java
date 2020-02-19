@@ -1,6 +1,7 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Fileinfo;
+import com.nt.dao_PHINE.Vo.ChartDataRow;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.DeviceinfoVo;
 import com.nt.utils.ApiResult;
@@ -54,4 +55,10 @@ public interface DeviceinfoService {
 
     // 逻辑加载
     ApiResult logicFileLoad(TokenModel tokenMode, List<Fileinfo> fileinfoList);
+
+    // 获取企业/设备数据
+    List<ChartDataRow> getDeviceChartInfo();
+
+    // 获取设备状态数据
+    List<ChartDataRow> getDeviceStatusChartInfo();
 }

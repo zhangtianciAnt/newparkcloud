@@ -160,4 +160,26 @@
             modifyon = #{modifyon}
         WHERE id = #{id}
     </update>
+    <select id="getDeviceChartInfo" resultType="com.nt.dao_PHINE.Vo.ChartDataRow">
+        select
+            ifnull(companyid, '未分配') as name,
+            count(id) as cnt
+        from
+            deviceinfo
+        GROUP BY
+            companyid
+    </select>
+    <select id="getDeviceStatusChartInfo" resultType="com.nt.dao_PHINE.Vo.ChartDataRow">
+        select
+            '正常' as name,
+            count(id)-(select count(deviceid) as cnt from devicestatus) as cnt
+        from
+            deviceinfo
+        union all
+        select
+            '异常' as name,
+            count(deviceid) as cnt
+        from
+            devicestatus
+    </select>
 </mapper>

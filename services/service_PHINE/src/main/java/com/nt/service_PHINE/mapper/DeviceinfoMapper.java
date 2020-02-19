@@ -1,6 +1,7 @@
 package com.nt.service_PHINE.mapper;
 
 import com.nt.dao_PHINE.Deviceinfo;
+import com.nt.dao_PHINE.Vo.ChartDataRow;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.utils.MyMapper;
 import org.springframework.stereotype.Component;
@@ -26,4 +27,10 @@ public interface DeviceinfoMapper extends MyMapper<Deviceinfo> {
     List<DeviceListVo> getCommunicationDeviceInfo(String projectid);
 
     void updateCommunicationDeviceInfo(Deviceinfo deviceinfo);
+
+    // 获取企业/设备数据
+    List<ChartDataRow> getDeviceChartInfo();
+
+    // 获取设备状态数据
+    List<ChartDataRow> getDeviceStatusChartInfo();
 }
