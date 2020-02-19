@@ -18,7 +18,7 @@
 		and b.`STATUS` = '0'
 	</select>
 
-	<insert id="insertAll" parameterType="list">
+	<insert id="insertAll" parameterType="java.util.List">
 		insert into coststatistics
 		(COSTSTATISTICS_ID,BPNAME,BPCOMPANY,UNITPRICE,MANHOUR4,COST4,MANHOUR5,COST5,MANHOUR6,COST6,
 		SUPPORT6,TOTALMANHOURS6,TOTALCOST6,EXPENSE6,CONTRACT6,MANHOUR7,COST7,MANHOUR8,COST8,
@@ -28,9 +28,8 @@
 		MANHOUR1,COST1,MANHOUR2,COST2,MANHOUR3,COST3,SUPPORT3,TOTALMANHOURS3,TOTALCOST3,EXPENSE3,CONTRACT3,
 		ROWINDEX,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID)
 		values
-		<foreach item="item" index="index" collection="list"
-				 open="(" separator="," close=")">
-			#{item.coststatistics_id},
+		<foreach item="item" collection="list" separator=",">
+			(#{item.coststatistics_id},
 			#{item.bpname},
 			#{item.bpcompany},
 			#{item.unitprice},
@@ -85,7 +84,7 @@
 			#{item.modifyon},
 			#{item.owner},
 			#{item.status},
-			#{item.tenantid}
+			#{item.tenantid})
 		</foreach>
 	</insert>
 </mapper>
