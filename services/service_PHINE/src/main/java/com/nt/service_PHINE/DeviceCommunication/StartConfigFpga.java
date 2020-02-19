@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="pllClockObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}PllClockObject" minOccurs="0"/&gt;
+ *         &lt;element name="fpgaConfigObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}FpgaConfigObject" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -30,36 +30,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "pllClockObject"
+    "fpgaConfigObject"
 })
-@XmlRootElement(name = "SetPllClock")
-public class SetPllClock {
+@XmlRootElement(name = "StartConfigFpga")
+public class StartConfigFpga {
 
-    @XmlElementRef(name = "pllClockObject", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<PllClockObject> pllClockObject;
+    @XmlElementRef(name = "fpgaConfigObject", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
+    protected JAXBElement<FpgaConfigObject> fpgaConfigObject;
 
     /**
-     * ��ȡpllClockObject���Ե�ֵ��
+     * ��ȡfpgaConfigObject���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
+     *     {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}
      *
      */
-    public JAXBElement<PllClockObject> getPllClockObject() {
-        return pllClockObject;
+    public JAXBElement<FpgaConfigObject> getFpgaConfigObject() {
+        return fpgaConfigObject;
     }
 
     /**
-     * ����pllClockObject���Ե�ֵ��
+     * ����fpgaConfigObject���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
+     *     {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}
      *
      */
-    public void setPllClockObject(JAXBElement<PllClockObject> value) {
-        this.pllClockObject = value;
+    public void setFpgaConfigObject(JAXBElement<FpgaConfigObject> value) {
+        this.fpgaConfigObject = value;
     }
 
 }

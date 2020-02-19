@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -20,8 +21,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/&gt;
- *         &lt;element name="configFilePath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
+ *         &lt;element name="configResult" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConfigStatus" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -34,16 +35,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "deviceId",
     "fpgaId",
-    "configFilePath"
+    "configResult"
 })
-@XmlRootElement(name = "ConfigFpga")
-public class ConfigFpga {
+@XmlRootElement(name = "GetFpgaConfigStatus")
+public class GetFpgaConfigStatus {
 
     @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
-    protected Integer fpgaId;
-    @XmlElementRef(name = "configFilePath", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<String> configFilePath;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long fpgaId;
+    @XmlSchemaType(name = "string")
+    protected ConfigStatus configResult;
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
@@ -74,10 +76,10 @@ public class ConfigFpga {
      *
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link Long }
      *
      */
-    public Integer getFpgaId() {
+    public Long getFpgaId() {
         return fpgaId;
     }
 
@@ -86,35 +88,35 @@ public class ConfigFpga {
      *
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link Long }
      *
      */
-    public void setFpgaId(Integer value) {
+    public void setFpgaId(Long value) {
         this.fpgaId = value;
     }
 
     /**
-     * ��ȡconfigFilePath���Ե�ֵ��
+     * ��ȡconfigResult���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     {@link ConfigStatus }
      *
      */
-    public JAXBElement<String> getConfigFilePath() {
-        return configFilePath;
+    public ConfigStatus getConfigResult() {
+        return configResult;
     }
 
     /**
-     * ����configFilePath���Ե�ֵ��
+     * ����configResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     {@link ConfigStatus }
      *
      */
-    public void setConfigFilePath(JAXBElement<String> value) {
-        this.configFilePath = value;
+    public void setConfigResult(ConfigStatus value) {
+        this.configResult = value;
     }
 
 }

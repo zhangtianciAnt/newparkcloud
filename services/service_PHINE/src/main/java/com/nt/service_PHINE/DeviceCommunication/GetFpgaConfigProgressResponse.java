@@ -1,10 +1,9 @@
 
 package com.nt.service_PHINE.DeviceCommunication;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -20,8 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
+ *         &lt;element name="GetFpgaConfigProgressResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="progress" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -32,63 +31,63 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "deviceId",
-    "fpgaId"
+    "getFpgaConfigProgressResult",
+    "progress"
 })
-@XmlRootElement(name = "ReConfigFpga")
-public class ReConfigFpga {
+@XmlRootElement(name = "GetFpgaConfigProgressResponse")
+public class GetFpgaConfigProgressResponse {
 
-    @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<String> deviceId;
+    @XmlElement(name = "GetFpgaConfigProgressResult")
+    protected Boolean getFpgaConfigProgressResult;
     @XmlSchemaType(name = "unsignedInt")
-    protected Long fpgaId;
+    protected Long progress;
 
     /**
-     * ��ȡdeviceId���Ե�ֵ��
+     * ��ȡgetFpgaConfigProgressResult���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     {@link Boolean }
      *
      */
-    public JAXBElement<String> getDeviceId() {
-        return deviceId;
+    public Boolean isGetFpgaConfigProgressResult() {
+        return getFpgaConfigProgressResult;
     }
 
     /**
-     * ����deviceId���Ե�ֵ��
+     * ����getFpgaConfigProgressResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     {@link Boolean }
      *
      */
-    public void setDeviceId(JAXBElement<String> value) {
-        this.deviceId = value;
+    public void setGetFpgaConfigProgressResult(Boolean value) {
+        this.getFpgaConfigProgressResult = value;
     }
 
     /**
-     * ��ȡfpgaId���Ե�ֵ��
+     * ��ȡprogress���Ե�ֵ��
      *
      * @return
      *     possible object is
      *     {@link Long }
      *
      */
-    public Long getFpgaId() {
-        return fpgaId;
+    public Long getProgress() {
+        return progress;
     }
 
     /**
-     * ����fpgaId���Ե�ֵ��
+     * ����progress���Ե�ֵ��
      *
      * @param value
      *     allowed object is
      *     {@link Long }
      *
      */
-    public void setFpgaId(Long value) {
-        this.fpgaId = value;
+    public void setProgress(Long value) {
+        this.progress = value;
     }
 
 }

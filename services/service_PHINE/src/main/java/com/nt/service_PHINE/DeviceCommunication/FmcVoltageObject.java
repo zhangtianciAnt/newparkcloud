@@ -1,9 +1,11 @@
 
 package com.nt.service_PHINE.DeviceCommunication;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
@@ -18,10 +20,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
+ *         &lt;element name="DeviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="FmcId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *         &lt;element name="FpgaId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *         &lt;element name="IsWritetoEeprom" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
- *         &lt;element name="VoltageValue" type="{http://www.w3.org/2001/XMLSchema}float" minOccurs="0"/&gt;
+ *         &lt;element name="VoltageValueIndex" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -32,13 +35,16 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FmcVoltageObject", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
+    "deviceId",
     "fmcId",
     "fpgaId",
     "isWritetoEeprom",
-    "voltageValue"
+    "voltageValueIndex"
 })
 public class FmcVoltageObject {
 
+    @XmlElementRef(name = "DeviceId", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> deviceId;
     @XmlElement(name = "FmcId")
     @XmlSchemaType(name = "unsignedInt")
     protected Long fmcId;
@@ -47,8 +53,33 @@ public class FmcVoltageObject {
     protected Long fpgaId;
     @XmlElement(name = "IsWritetoEeprom")
     protected Boolean isWritetoEeprom;
-    @XmlElement(name = "VoltageValue")
-    protected Float voltageValue;
+    @XmlElement(name = "VoltageValueIndex")
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long voltageValueIndex;
+
+    /**
+     * ��ȡdeviceId���Ե�ֵ��
+     *
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *
+     */
+    public JAXBElement<String> getDeviceId() {
+        return deviceId;
+    }
+
+    /**
+     * ����deviceId���Ե�ֵ��
+     *
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *
+     */
+    public void setDeviceId(JAXBElement<String> value) {
+        this.deviceId = value;
+    }
 
     /**
      * ��ȡfmcId���Ե�ֵ��
@@ -123,27 +154,27 @@ public class FmcVoltageObject {
     }
 
     /**
-     * ��ȡvoltageValue���Ե�ֵ��
+     * ��ȡvoltageValueIndex���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link Float }
+     *     {@link Long }
      *
      */
-    public Float getVoltageValue() {
-        return voltageValue;
+    public Long getVoltageValueIndex() {
+        return voltageValueIndex;
     }
 
     /**
-     * ����voltageValue���Ե�ֵ��
+     * ����voltageValueIndex���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link Float }
+     *     {@link Long }
      *
      */
-    public void setVoltageValue(Float value) {
-        this.voltageValue = value;
+    public void setVoltageValueIndex(Long value) {
+        this.voltageValueIndex = value;
     }
 
 }

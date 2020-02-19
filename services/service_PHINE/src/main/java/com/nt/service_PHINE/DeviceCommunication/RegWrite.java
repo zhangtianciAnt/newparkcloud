@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/&gt;
+ *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *         &lt;element name="regAddr" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *         &lt;element name="regData" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
@@ -44,7 +44,8 @@ public class RegWrite {
 
     @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
-    protected Integer fpgaId;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long fpgaId;
     @XmlSchemaType(name = "unsignedInt")
     protected Long regAddr;
     @XmlSchemaType(name = "unsignedInt")
@@ -79,10 +80,10 @@ public class RegWrite {
      *
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link Long }
      *
      */
-    public Integer getFpgaId() {
+    public Long getFpgaId() {
         return fpgaId;
     }
 
@@ -91,10 +92,10 @@ public class RegWrite {
      *
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link Long }
      *
      */
-    public void setFpgaId(Integer value) {
+    public void setFpgaId(Long value) {
         this.fpgaId = value;
     }
 

@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="pllClockObject" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}PllClockObject" minOccurs="0"/&gt;
+ *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -30,36 +30,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "pllClockObject"
+    "deviceId"
 })
-@XmlRootElement(name = "SetPllClock")
-public class SetPllClock {
+@XmlRootElement(name = "OfflineDevice")
+public class OfflineDevice {
 
-    @XmlElementRef(name = "pllClockObject", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<PllClockObject> pllClockObject;
+    @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> deviceId;
 
     /**
-     * ��ȡpllClockObject���Ե�ֵ��
+     * ��ȡdeviceId���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public JAXBElement<PllClockObject> getPllClockObject() {
-        return pllClockObject;
+    public JAXBElement<String> getDeviceId() {
+        return deviceId;
     }
 
     /**
-     * ����pllClockObject���Ե�ֵ��
+     * ����deviceId���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public void setPllClockObject(JAXBElement<PllClockObject> value) {
-        this.pllClockObject = value;
+    public void setDeviceId(JAXBElement<String> value) {
+        this.deviceId = value;
     }
 
 }

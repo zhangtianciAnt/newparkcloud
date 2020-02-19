@@ -22,8 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
- *         &lt;element name="regAddr" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
- *         &lt;element name="regData" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
+ *         &lt;element name="configFilePath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -36,20 +35,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "deviceId",
     "fpgaId",
-    "regAddr",
-    "regData"
+    "configFilePath"
 })
-@XmlRootElement(name = "RegRead")
-public class RegRead {
+@XmlRootElement(name = "StartConfigFpgaByFile")
+public class StartConfigFpgaByFile {
 
     @XmlElementRef(name = "deviceId", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> deviceId;
     @XmlSchemaType(name = "unsignedInt")
     protected Long fpgaId;
-    @XmlSchemaType(name = "unsignedInt")
-    protected Long regAddr;
-    @XmlSchemaType(name = "unsignedInt")
-    protected Long regData;
+    @XmlElementRef(name = "configFilePath", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> configFilePath;
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
@@ -100,51 +96,27 @@ public class RegRead {
     }
 
     /**
-     * ��ȡregAddr���Ե�ֵ��
+     * ��ȡconfigFilePath���Ե�ֵ��
      *
      * @return
      *     possible object is
-     *     {@link Long }
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public Long getRegAddr() {
-        return regAddr;
+    public JAXBElement<String> getConfigFilePath() {
+        return configFilePath;
     }
 
     /**
-     * ����regAddr���Ե�ֵ��
+     * ����configFilePath���Ե�ֵ��
      *
      * @param value
      *     allowed object is
-     *     {@link Long }
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *
      */
-    public void setRegAddr(Long value) {
-        this.regAddr = value;
-    }
-
-    /**
-     * ��ȡregData���Ե�ֵ��
-     *
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *
-     */
-    public Long getRegData() {
-        return regData;
-    }
-
-    /**
-     * ����regData���Ե�ֵ��
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *
-     */
-    public void setRegData(Long value) {
-        this.regData = value;
+    public void setConfigFilePath(JAXBElement<String> value) {
+        this.configFilePath = value;
     }
 
 }

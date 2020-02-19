@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>ConnectionResult�� Java �ࡣ
+ * <p>ConnectionResult的 Java 类。
  *
- * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
+ * <p>以下模式片段指定包含在此类中的预期内容。
  * <p>
  * <pre>
  * &lt;simpleType name="ConnectionResult"&gt;
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *     &lt;enumeration value="Result_Unknown"/&gt;
- *     &lt;enumeration value="Result_OK"/&gt;
- *     &lt;enumeration value="Result_Occupied"/&gt;
- *     &lt;enumeration value="Result_Error"/&gt;
+ *     &lt;enumeration value="Unknown"/&gt;
+ *     &lt;enumeration value="OK"/&gt;
+ *     &lt;enumeration value="Occupied"/&gt;
+ *     &lt;enumeration value="Error"/&gt;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
@@ -27,14 +27,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ConnectionResult {
 
-    @XmlEnumValue("Result_Unknown")
-    RESULT_UNKNOWN("Result_Unknown"),
-    @XmlEnumValue("Result_OK")
-    RESULT_OK("Result_OK"),
-    @XmlEnumValue("Result_Occupied")
-    RESULT_OCCUPIED("Result_Occupied"),
-    @XmlEnumValue("Result_Error")
-    RESULT_ERROR("Result_Error");
+    @XmlEnumValue("Unknown")
+    UNKNOWN("Unknown"),
+    OK("OK"),
+    @XmlEnumValue("Occupied")
+    OCCUPIED("Occupied"),
+    @XmlEnumValue("Error")
+    ERROR("Error");
     private final String value;
 
     ConnectionResult(String v) {

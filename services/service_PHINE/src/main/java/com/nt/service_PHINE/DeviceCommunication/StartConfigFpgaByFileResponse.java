@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="ConfigFpgaResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="StartConfigFpgaByFileResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -29,36 +29,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "configFpgaResult"
+    "startConfigFpgaByFileResult"
 })
-@XmlRootElement(name = "ConfigFpgaResponse")
-public class ConfigFpgaResponse {
+@XmlRootElement(name = "StartConfigFpgaByFileResponse")
+public class StartConfigFpgaByFileResponse {
 
-    @XmlElement(name = "ConfigFpgaResult")
-    protected Boolean configFpgaResult;
+    @XmlElement(name = "StartConfigFpgaByFileResult")
+    protected Boolean startConfigFpgaByFileResult;
 
     /**
-     * ��ȡconfigFpgaResult���Ե�ֵ��
+     * ��ȡstartConfigFpgaByFileResult���Ե�ֵ��
      *
      * @return
      *     possible object is
      *     {@link Boolean }
      *
      */
-    public Boolean isConfigFpgaResult() {
-        return configFpgaResult;
+    public Boolean isStartConfigFpgaByFileResult() {
+        return startConfigFpgaByFileResult;
     }
 
     /**
-     * ����configFpgaResult���Ե�ֵ��
+     * ����startConfigFpgaByFileResult���Ե�ֵ��
      *
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *
      */
-    public void setConfigFpgaResult(Boolean value) {
-        this.configFpgaResult = value;
+    public void setStartConfigFpgaByFileResult(Boolean value) {
+        this.startConfigFpgaByFileResult = value;
     }
 
 }

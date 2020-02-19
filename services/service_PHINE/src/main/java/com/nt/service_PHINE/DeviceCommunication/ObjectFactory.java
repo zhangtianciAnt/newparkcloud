@@ -14,7 +14,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each
  * Java content interface and Java element interface
- * generated in the HardwareDeviceService package.
+ * generated in the DeviceService package.
  * <p>An ObjectFactory allows you to programatically
  * construct new instances of the Java representation
  * for XML content. The Java representation of XML
@@ -28,8 +28,6 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _ArrayOfboolean_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/Arrays", "ArrayOfboolean");
-    private final static QName _ArrayOffloat_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/Arrays", "ArrayOffloat");
     private final static QName _AnyType_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "anyType");
     private final static QName _AnyURI_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "anyURI");
     private final static QName _Base64Binary_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "base64Binary");
@@ -51,25 +49,65 @@ public class ObjectFactory {
     private final static QName _Char_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "char");
     private final static QName _Duration_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "duration");
     private final static QName _Guid_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "guid");
+    private final static QName _ArrayOfboolean_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/Arrays", "ArrayOfboolean");
+    private final static QName _ArrayOffloat_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/Arrays", "ArrayOffloat");
     private final static QName _ArrayOfDeviceConnState_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "ArrayOfDeviceConnState");
     private final static QName _DeviceConnState_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "DeviceConnState");
     private final static QName _ConnectionResult_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "ConnectionResult");
     private final static QName _FmcVoltageObject_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "FmcVoltageObject");
     private final static QName _PllClockObject_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "PllClockObject");
+    private final static QName _FpgaConfigObject_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "FpgaConfigObject");
+    private final static QName _FpgaControlBit_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "FpgaControlBit");
+    private final static QName _ConfigStatus_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "ConfigStatus");
+    private final static QName _OnlineDeviceDeviceId_QNAME = new QName("http://tempuri.org/", "deviceId");
     private final static QName _GetCurrentConnStatusDeviceConnStates_QNAME = new QName("http://tempuri.org/", "deviceConnStates");
-    private final static QName _OpenConnectionDeviceId_QNAME = new QName("http://tempuri.org/", "deviceId");
-    private final static QName _SetFmcVoltageFmcVoltageObject_QNAME = new QName("http://tempuri.org/", "fmcVoltageObject");
     private final static QName _SetFmcVoltageByFileConfigFilePath_QNAME = new QName("http://tempuri.org/", "configFilePath");
+    private final static QName _SetFmcVoltageFmcVoltageObject_QNAME = new QName("http://tempuri.org/", "fmcVoltageObject");
     private final static QName _SetPllClockPllClockObject_QNAME = new QName("http://tempuri.org/", "pllClockObject");
+    private final static QName _StartConfigFpgaFpgaConfigObject_QNAME = new QName("http://tempuri.org/", "fpgaConfigObject");
     private final static QName _DeviceConnStateDeviceId_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "deviceId");
-    private final static QName _PllClockObjectEnablesOutputClock_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "Enables_OutputClock");
-    private final static QName _PllClockObjectFrequencysOutputClock_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "Frequencys_OutputClock");
+    private final static QName _FpgaConfigObjectBinFilePath_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "BinFilePath");
+    private final static QName _FpgaConfigObjectDeviceId_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "DeviceId");
+    private final static QName _PllClockObjectOutputClockEnables_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "OutputClockEnables");
+    private final static QName _PllClockObjectOutputClockFrequencys_QNAME = new QName("http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", "OutputClockFrequencys");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: HardwareDeviceService
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: DeviceService
      *
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link OnlineDevice }
+     *
+     */
+    public OnlineDevice createOnlineDevice() {
+        return new OnlineDevice();
+    }
+
+    /**
+     * Create an instance of {@link OnlineDeviceResponse }
+     *
+     */
+    public OnlineDeviceResponse createOnlineDeviceResponse() {
+        return new OnlineDeviceResponse();
+    }
+
+    /**
+     * Create an instance of {@link OfflineDevice }
+     *
+     */
+    public OfflineDevice createOfflineDevice() {
+        return new OfflineDevice();
+    }
+
+    /**
+     * Create an instance of {@link OfflineDeviceResponse }
+     *
+     */
+    public OfflineDeviceResponse createOfflineDeviceResponse() {
+        return new OfflineDeviceResponse();
     }
 
     /**
@@ -129,6 +167,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SetFmcVoltageByFile }
+     *
+     */
+    public SetFmcVoltageByFile createSetFmcVoltageByFile() {
+        return new SetFmcVoltageByFile();
+    }
+
+    /**
+     * Create an instance of {@link SetFmcVoltageByFileResponse }
+     *
+     */
+    public SetFmcVoltageByFileResponse createSetFmcVoltageByFileResponse() {
+        return new SetFmcVoltageByFileResponse();
+    }
+
+    /**
      * Create an instance of {@link SetFmcVoltage }
      *
      */
@@ -169,19 +223,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SetFmcVoltageByFile }
+     * Create an instance of {@link SetPllClockByFile }
      *
      */
-    public SetFmcVoltageByFile createSetFmcVoltageByFile() {
-        return new SetFmcVoltageByFile();
+    public SetPllClockByFile createSetPllClockByFile() {
+        return new SetPllClockByFile();
     }
 
     /**
-     * Create an instance of {@link SetFmcVoltageByFileResponse }
+     * Create an instance of {@link SetPllClockByFileResponse }
      *
      */
-    public SetFmcVoltageByFileResponse createSetFmcVoltageByFileResponse() {
-        return new SetFmcVoltageByFileResponse();
+    public SetPllClockByFileResponse createSetPllClockByFileResponse() {
+        return new SetPllClockByFileResponse();
     }
 
     /**
@@ -225,35 +279,75 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SetPllClockByFile }
+     * Create an instance of {@link StartConfigFpgaByFile }
      *
      */
-    public SetPllClockByFile createSetPllClockByFile() {
-        return new SetPllClockByFile();
+    public StartConfigFpgaByFile createStartConfigFpgaByFile() {
+        return new StartConfigFpgaByFile();
     }
 
     /**
-     * Create an instance of {@link SetPllClockByFileResponse }
+     * Create an instance of {@link StartConfigFpgaByFileResponse }
      *
      */
-    public SetPllClockByFileResponse createSetPllClockByFileResponse() {
-        return new SetPllClockByFileResponse();
+    public StartConfigFpgaByFileResponse createStartConfigFpgaByFileResponse() {
+        return new StartConfigFpgaByFileResponse();
     }
 
     /**
-     * Create an instance of {@link ConfigFpga }
+     * Create an instance of {@link StartConfigFpga }
      *
      */
-    public ConfigFpga createConfigFpga() {
-        return new ConfigFpga();
+    public StartConfigFpga createStartConfigFpga() {
+        return new StartConfigFpga();
     }
 
     /**
-     * Create an instance of {@link ConfigFpgaResponse }
+     * Create an instance of {@link FpgaConfigObject }
      *
      */
-    public ConfigFpgaResponse createConfigFpgaResponse() {
-        return new ConfigFpgaResponse();
+    public FpgaConfigObject createFpgaConfigObject() {
+        return new FpgaConfigObject();
+    }
+
+    /**
+     * Create an instance of {@link StartConfigFpgaResponse }
+     *
+     */
+    public StartConfigFpgaResponse createStartConfigFpgaResponse() {
+        return new StartConfigFpgaResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetFpgaConfigStatus }
+     *
+     */
+    public GetFpgaConfigStatus createGetFpgaConfigStatus() {
+        return new GetFpgaConfigStatus();
+    }
+
+    /**
+     * Create an instance of {@link GetFpgaConfigStatusResponse }
+     *
+     */
+    public GetFpgaConfigStatusResponse createGetFpgaConfigStatusResponse() {
+        return new GetFpgaConfigStatusResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetFpgaConfigProgress }
+     *
+     */
+    public GetFpgaConfigProgress createGetFpgaConfigProgress() {
+        return new GetFpgaConfigProgress();
+    }
+
+    /**
+     * Create an instance of {@link GetFpgaConfigProgressResponse }
+     *
+     */
+    public GetFpgaConfigProgressResponse createGetFpgaConfigProgressResponse() {
+        return new GetFpgaConfigProgressResponse();
     }
 
     /**
@@ -326,24 +420,6 @@ public class ObjectFactory {
      */
     public DeviceConnState createDeviceConnState() {
         return new DeviceConnState();
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", name = "ArrayOfboolean")
-    public JAXBElement<ArrayOfboolean> createArrayOfboolean(ArrayOfboolean value) {
-        return new JAXBElement<ArrayOfboolean>(_ArrayOfboolean_QNAME, ArrayOfboolean.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", name = "ArrayOffloat")
-    public JAXBElement<ArrayOffloat> createArrayOffloat(ArrayOffloat value) {
-        return new JAXBElement<ArrayOffloat>(_ArrayOffloat_QNAME, ArrayOffloat.class, null, value);
     }
 
     /**
@@ -536,6 +612,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", name = "ArrayOfboolean")
+    public JAXBElement<ArrayOfboolean> createArrayOfboolean(ArrayOfboolean value) {
+        return new JAXBElement<ArrayOfboolean>(_ArrayOfboolean_QNAME, ArrayOfboolean.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", name = "ArrayOffloat")
+    public JAXBElement<ArrayOffloat> createArrayOffloat(ArrayOffloat value) {
+        return new JAXBElement<ArrayOffloat>(_ArrayOffloat_QNAME, ArrayOffloat.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}}
      *
      */
@@ -581,6 +675,51 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "FpgaConfigObject")
+    public JAXBElement<FpgaConfigObject> createFpgaConfigObject(FpgaConfigObject value) {
+        return new JAXBElement<FpgaConfigObject>(_FpgaConfigObject_QNAME, FpgaConfigObject.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FpgaControlBit }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "FpgaControlBit")
+    public JAXBElement<FpgaControlBit> createFpgaControlBit(FpgaControlBit value) {
+        return new JAXBElement<FpgaControlBit>(_FpgaControlBit_QNAME, FpgaControlBit.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ConfigStatus }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "ConfigStatus")
+    public JAXBElement<ConfigStatus> createConfigStatus(ConfigStatus value) {
+        return new JAXBElement<ConfigStatus>(_ConfigStatus_QNAME, ConfigStatus.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = OnlineDevice.class)
+    public JAXBElement<String> createOnlineDeviceDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, OnlineDevice.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = OfflineDevice.class)
+    public JAXBElement<String> createOfflineDeviceDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, OfflineDevice.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}}
      *
      */
@@ -604,7 +743,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = OpenConnection.class)
     public JAXBElement<String> createOpenConnectionDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, OpenConnection.class, value);
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, OpenConnection.class, value);
     }
 
     /**
@@ -613,16 +752,25 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = CloseConnection.class)
     public JAXBElement<String> createCloseConnectionDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, CloseConnection.class, value);
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, CloseConnection.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetFmcVoltage.class)
-    public JAXBElement<String> createSetFmcVoltageDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, SetFmcVoltage.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetFmcVoltageByFile.class)
+    public JAXBElement<String> createSetFmcVoltageByFileDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, SetFmcVoltageByFile.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = SetFmcVoltageByFile.class)
+    public JAXBElement<String> createSetFmcVoltageByFileConfigFilePath(String value) {
+        return new JAXBElement<String>(_SetFmcVoltageByFileConfigFilePath_QNAME, String.class, SetFmcVoltageByFile.class, value);
     }
 
     /**
@@ -632,15 +780,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "fmcVoltageObject", scope = SetFmcVoltage.class)
     public JAXBElement<FmcVoltageObject> createSetFmcVoltageFmcVoltageObject(FmcVoltageObject value) {
         return new JAXBElement<FmcVoltageObject>(_SetFmcVoltageFmcVoltageObject_QNAME, FmcVoltageObject.class, SetFmcVoltage.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = GetFmcVoltage.class)
-    public JAXBElement<String> createGetFmcVoltageDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, GetFmcVoltage.class, value);
     }
 
     /**
@@ -665,27 +804,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetFmcVoltageByFile.class)
-    public JAXBElement<String> createSetFmcVoltageByFileDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, SetFmcVoltageByFile.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetPllClockByFile.class)
+    public JAXBElement<String> createSetPllClockByFileDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, SetPllClockByFile.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = SetFmcVoltageByFile.class)
-    public JAXBElement<String> createSetFmcVoltageByFileConfigFilePath(String value) {
-        return new JAXBElement<String>(_SetFmcVoltageByFileConfigFilePath_QNAME, String.class, SetFmcVoltageByFile.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetPllClock.class)
-    public JAXBElement<String> createSetPllClockDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, SetPllClock.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = SetPllClockByFile.class)
+    public JAXBElement<String> createSetPllClockByFileConfigFilePath(String value) {
+        return new JAXBElement<String>(_SetFmcVoltageByFileConfigFilePath_QNAME, String.class, SetPllClockByFile.class, value);
     }
 
     /**
@@ -695,15 +825,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "pllClockObject", scope = SetPllClock.class)
     public JAXBElement<PllClockObject> createSetPllClockPllClockObject(PllClockObject value) {
         return new JAXBElement<PllClockObject>(_SetPllClockPllClockObject_QNAME, PllClockObject.class, SetPllClock.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = GetPllClock.class)
-    public JAXBElement<String> createGetPllClockDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, GetPllClock.class, value);
     }
 
     /**
@@ -728,36 +849,45 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetPllClockByFile.class)
-    public JAXBElement<String> createSetPllClockByFileDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, SetPllClockByFile.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = StartConfigFpgaByFile.class)
+    public JAXBElement<String> createStartConfigFpgaByFileDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, StartConfigFpgaByFile.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = SetPllClockByFile.class)
-    public JAXBElement<String> createSetPllClockByFileConfigFilePath(String value) {
-        return new JAXBElement<String>(_SetFmcVoltageByFileConfigFilePath_QNAME, String.class, SetPllClockByFile.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = StartConfigFpgaByFile.class)
+    public JAXBElement<String> createStartConfigFpgaByFileConfigFilePath(String value) {
+        return new JAXBElement<String>(_SetFmcVoltageByFileConfigFilePath_QNAME, String.class, StartConfigFpgaByFile.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "fpgaConfigObject", scope = StartConfigFpga.class)
+    public JAXBElement<FpgaConfigObject> createStartConfigFpgaFpgaConfigObject(FpgaConfigObject value) {
+        return new JAXBElement<FpgaConfigObject>(_StartConfigFpgaFpgaConfigObject_QNAME, FpgaConfigObject.class, StartConfigFpga.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = ConfigFpga.class)
-    public JAXBElement<String> createConfigFpgaDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, ConfigFpga.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = GetFpgaConfigStatus.class)
+    public JAXBElement<String> createGetFpgaConfigStatusDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, GetFpgaConfigStatus.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = ConfigFpga.class)
-    public JAXBElement<String> createConfigFpgaConfigFilePath(String value) {
-        return new JAXBElement<String>(_SetFmcVoltageByFileConfigFilePath_QNAME, String.class, ConfigFpga.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = GetFpgaConfigProgress.class)
+    public JAXBElement<String> createGetFpgaConfigProgressDeviceId(String value) {
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, GetFpgaConfigProgress.class, value);
     }
 
     /**
@@ -766,7 +896,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = ReConfigFpga.class)
     public JAXBElement<String> createReConfigFpgaDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, ReConfigFpga.class, value);
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, ReConfigFpga.class, value);
     }
 
     /**
@@ -775,7 +905,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = RegRead.class)
     public JAXBElement<String> createRegReadDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, RegRead.class, value);
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, RegRead.class, value);
     }
 
     /**
@@ -784,7 +914,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = RegWrite.class)
     public JAXBElement<String> createRegWriteDeviceId(String value) {
-        return new JAXBElement<String>(_OpenConnectionDeviceId_QNAME, String.class, RegWrite.class, value);
+        return new JAXBElement<String>(_OnlineDeviceDeviceId_QNAME, String.class, RegWrite.class, value);
     }
 
     /**
@@ -797,21 +927,57 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "BinFilePath", scope = FpgaConfigObject.class)
+    public JAXBElement<String> createFpgaConfigObjectBinFilePath(String value) {
+        return new JAXBElement<String>(_FpgaConfigObjectBinFilePath_QNAME, String.class, FpgaConfigObject.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceId", scope = FpgaConfigObject.class)
+    public JAXBElement<String> createFpgaConfigObjectDeviceId(String value) {
+        return new JAXBElement<String>(_FpgaConfigObjectDeviceId_QNAME, String.class, FpgaConfigObject.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceId", scope = PllClockObject.class)
+    public JAXBElement<String> createPllClockObjectDeviceId(String value) {
+        return new JAXBElement<String>(_FpgaConfigObjectDeviceId_QNAME, String.class, PllClockObject.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "Enables_OutputClock", scope = PllClockObject.class)
-    public JAXBElement<ArrayOfboolean> createPllClockObjectEnablesOutputClock(ArrayOfboolean value) {
-        return new JAXBElement<ArrayOfboolean>(_PllClockObjectEnablesOutputClock_QNAME, ArrayOfboolean.class, PllClockObject.class, value);
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "OutputClockEnables", scope = PllClockObject.class)
+    public JAXBElement<ArrayOfboolean> createPllClockObjectOutputClockEnables(ArrayOfboolean value) {
+        return new JAXBElement<ArrayOfboolean>(_PllClockObjectOutputClockEnables_QNAME, ArrayOfboolean.class, PllClockObject.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "Frequencys_OutputClock", scope = PllClockObject.class)
-    public JAXBElement<ArrayOffloat> createPllClockObjectFrequencysOutputClock(ArrayOffloat value) {
-        return new JAXBElement<ArrayOffloat>(_PllClockObjectFrequencysOutputClock_QNAME, ArrayOffloat.class, PllClockObject.class, value);
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "OutputClockFrequencys", scope = PllClockObject.class)
+    public JAXBElement<ArrayOffloat> createPllClockObjectOutputClockFrequencys(ArrayOffloat value) {
+        return new JAXBElement<ArrayOffloat>(_PllClockObjectOutputClockFrequencys_QNAME, ArrayOffloat.class, PllClockObject.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceId", scope = FmcVoltageObject.class)
+    public JAXBElement<String> createFmcVoltageObjectDeviceId(String value) {
+        return new JAXBElement<String>(_FpgaConfigObjectDeviceId_QNAME, String.class, FmcVoltageObject.class, value);
     }
 
 }

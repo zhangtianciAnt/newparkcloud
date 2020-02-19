@@ -5,8 +5,8 @@ import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
-import com.nt.service_PHINE.DeviceCommunication.HardwareDeviceService;
-import com.nt.service_PHINE.DeviceCommunication.IHardwareDeviceService;
+import com.nt.service_PHINE.DeviceCommunication.DeviceService;
+import com.nt.service_PHINE.DeviceCommunication.IDeviceService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
@@ -60,14 +60,14 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
     static {
         try {
-            WSDL_LOCATION = new URL("http://localhost:8734/WcfServiceLib_HardwareDevice/HardwareDeviceService/?wsdl");
+            WSDL_LOCATION = new URL("http://localhost:8734/WcfServiceLib_VerityPlatform/DeviceService/?wsdl");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }
 
     // WCF接口名称
-    private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "HardwareDeviceService");
+    private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "DeviceService");
 
     /**
      * @return List<ProjectListVo>平台项目信息列表
@@ -390,22 +390,22 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // TODO :操作用户权限暂时不封装
         // region 通信连接
         Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
-        HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         ConnectionResult result = port.openConnection(deviceinfo.getDeviceid());
         String message = "通信连接成功";
         switch (result.value()) {
-            case "Result_Unknown":
+            case "Unknown":
                 message = "发生未知错误，请联系管理员或稍后重试！";
                 break;
-            case "Result_Error":
+            case "Error":
                 message = "连接失败，请稍后重试！";
                 break;
-            case "Result_Occupied":
+            case "Occupied":
                 message = "设备被占用，请稍后重试！";
                 break;
         }
-        if (!result.value().equals("Result_OK")) {
+        if (!result.value().equals("OK")) {
             return ApiResult.fail(message);
         }
         // endregion
@@ -429,8 +429,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // TODO :操作用户权限暂时不封装
         // region 通信关闭
         Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
-        HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         Boolean result = port.closeConnection(deviceinfo.getDeviceid());
         if (!result) {
             return ApiResult.fail("通信关闭失败，请稍后重试！");
@@ -456,8 +456,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     @Override
     public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
         // 设备通信-->逻辑加载处理
-        HardwareDeviceService ss = new HardwareDeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IHardwareDeviceService port = ss.getBasicHttpBindingIHardwareDeviceService();
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         Boolean result = false;     // 加载操作执行结果
         OperationRecordVo operationRecordVo = new OperationRecordVo();
         String operationId = UUID.randomUUID().toString();
@@ -468,15 +468,15 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             String configurationtype = "";
             switch (fileinfo.getFiletype()) {
                 case "FPGA":        // 执行FPGA加载
-                    result = port.configFpga(deviceinfo.getDeviceid(), Integer.parseInt(fileinfo.getFpgaid()), fileinfo.getUrl());
+                    result = port.startConfigFpgaByFile(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
                     configurationtype = "FPGA加载";
                     break;
                 case "FMC":         // 执行FMC加载
-                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
+                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
                     configurationtype = "FMC加载";
                     break;
                 case "PLL":         // 执行PLL加载
-                    result = port.setPllClockByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
+                    result = port.setPllClockByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
                     configurationtype = "PLL加载";
                     break;
             }
