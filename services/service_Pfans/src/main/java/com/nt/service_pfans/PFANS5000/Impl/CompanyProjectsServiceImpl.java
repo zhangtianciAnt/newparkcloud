@@ -75,6 +75,16 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyProjects.preUpdate(tokenModel);
         companyprojectsMapper.updateByPrimaryKey(companyProjects);
         String companyprojectsid = companyProjects.getCompanyprojects_id();
+
+        StageInformation stageinformation = new StageInformation();
+        Projectsystem projectsystem = new Projectsystem();
+        ProjectContract projectcontract = new ProjectContract();
+        stageinformation.setCompanyprojects_id(companyprojectsid);
+        projectsystem.setCompanyprojects_id(companyprojectsid);
+        projectcontract.setCompanyprojects_id(companyprojectsid);
+        stageinformationMapper.delete(stageinformation);
+        projectsystemMapper.delete(projectsystem);
+        projectcontractMapper.delete(projectcontract);
         //项目计划
         List<StageInformation> stageinformationList = companyProjectsVo.getStageinformation();
         //项目体制
@@ -83,35 +93,35 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
         if (stageinformationList != null) {
             int rowindex = 0;
-            for (StageInformation stageinformation : stageinformationList) {
+            for (StageInformation sta : stageinformationList) {
                 rowindex = rowindex + 1;
-                stageinformation.preInsert(tokenModel);
-                stageinformation.setStageinformation_id(UUID.randomUUID().toString());
-                stageinformation.setCompanyprojects_id(companyprojectsid);
-                stageinformation.setRowindex(rowindex);
-                stageinformationMapper.insertSelective(stageinformation);
+                sta.preInsert(tokenModel);
+                sta.setStageinformation_id(UUID.randomUUID().toString());
+                sta.setCompanyprojects_id(companyprojectsid);
+                sta.setRowindex(rowindex);
+                stageinformationMapper.insertSelective(sta);
             }
         }
         if (projectsystemList != null) {
             int rowundex = 0;
-            for (Projectsystem projectsystem : projectsystemList) {
+            for (Projectsystem pro : projectsystemList) {
                 rowundex = rowundex + 1;
-                projectsystem.preInsert(tokenModel);
-                projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
-                projectsystem.setCompanyprojects_id(companyprojectsid);
-                projectsystem.setRowindex(rowundex);
-                projectsystemMapper.insertSelective(projectsystem);
+                pro.preInsert(tokenModel);
+                pro.setProjectsystem_id(UUID.randomUUID().toString());
+                pro.setCompanyprojects_id(companyprojectsid);
+                pro.setRowindex(rowundex);
+                projectsystemMapper.insertSelective(pro);
             }
         }
         if (projectcontractList != null) {
             int rowundex = 0;
-            for (ProjectContract projectcontract : projectcontractList) {
+            for (ProjectContract pro : projectcontractList) {
                 rowundex = rowundex + 1;
-                projectcontract.preInsert(tokenModel);
-                projectcontract.setProjectcontract_id(UUID.randomUUID().toString());
-                projectcontract.setCompanyprojects_id(companyprojectsid);
-                projectcontract.setRowindex(rowundex);
-                projectcontractMapper.insertSelective(projectcontract);
+                pro.preInsert(tokenModel);
+                pro.setProjectcontract_id(UUID.randomUUID().toString());
+                pro.setCompanyprojects_id(companyprojectsid);
+                pro.setRowindex(rowundex);
+                projectcontractMapper.insertSelective(pro);
             }
         }
     }
