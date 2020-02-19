@@ -27,57 +27,55 @@ public class Projectsystem extends BaseModel {
     /**
      * 所属公司项目
      */
-    @Id
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
     /**
      * 社内外协区分
      */
-    @Id
     @Column(name = "TYPE")
     private String type;
 
     /**
      * 编号
      */
-    @Id
     @Column(name = "NUMBER")
     private String number;
 
     /**
      * 协力公司
      */
-    @Id
     @Column(name = "COMPANY")
     private String company;
 
     /**
      * 姓名
      */
-    @Id
     @Column(name = "NAME")
     private String name;
 
     /**
      * 职位
      */
-    @Id
     @Column(name = "POSITION")
     private String position;
 
     /**
      * 入场时间
      */
-    @Id
     @Column(name = "ADMISSIONTIME")
     private Date admissiontime;
 
     /**
      * 退场时间
      */
-    @Id
     @Column(name = "EXITTIME")
     private Date exittime;
+
+    /**
+     * 顺序
+     */
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 
 }

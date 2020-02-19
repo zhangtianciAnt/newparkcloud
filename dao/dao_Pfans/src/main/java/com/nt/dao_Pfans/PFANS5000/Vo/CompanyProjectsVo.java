@@ -22,6 +22,10 @@ public class CompanyProjectsVo {
      */
     private List<ProjectPlan> projectplan;
     /**
+     * 项目体制
+     */
+    private List<Projectsystem> projectsystem;
+    /**
      * 项目资源
      */
     private List<ProjectreSources> projectresources;
