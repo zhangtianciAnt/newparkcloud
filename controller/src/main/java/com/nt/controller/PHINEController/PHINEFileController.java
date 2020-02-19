@@ -1,5 +1,7 @@
 package com.nt.controller.PHINEController;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Filemark2file;
 import com.nt.dao_PHINE.Vo.FileInfoVo;
@@ -8,9 +10,24 @@ import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -20,6 +37,40 @@ public class PHINEFileController {
     private TokenService tokenService;
     @Autowired
     private PHINEFileService phineFileService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @RequestMapping(value = "/uploadFile", method = {RequestMethod.POST})
+    public ApiResult uploadFile(HttpServletRequest request, @RequestParam String accessToken, @RequestBody MultipartFile[] files) throws Exception {
+        for (MultipartFile file : files) {
+            // 文件名
+            String fileName = file.getOriginalFilename();
+            // 临时文件目录
+            String tempFilePath = System.getProperty("java.io.tmpdir") + file.getOriginalFilename();
+            //生成临时文件
+            File tempFile = new File(tempFilePath);
+            file.transferTo(tempFile);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+            headers.setContentType(MediaType.parseMediaType("multipart/form-data;charset=UTF-8"));
+
+            MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+            //MultipartFile 直接转 fileSystemResource 是不行的, 需要把临时文件变成filesystemresource
+            FileSystemResource resource = new FileSystemResource(tempFilePath);
+            param.add("file", resource);
+
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(param, headers);
+            ResponseEntity<JSONObject> responseEntity = restTemplate.postForEntity(accessToken, requestEntity, JSONObject.class);
+            JSONObject jsonObject = responseEntity.getBody();
+
+            //删除临时文件文件
+            tempFile.delete();
+            return ApiResult.success(jsonObject);
+        }
+        return null;
+    }
 
     /**
      * 保存文件

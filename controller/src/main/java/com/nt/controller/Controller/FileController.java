@@ -27,21 +27,21 @@ public class FileController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${file.url}")String Url;
+    @Value("${file.url}")
+    String Url;
 
-    @RequestMapping(value = "/getToken",method={RequestMethod.GET})
+    @RequestMapping(value = "/getToken", method = {RequestMethod.GET})
     private ApiResult getToken() throws Exception {
         //无锡
-//        String url = Url + "/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=newtouch1!";
+        String url = Url + "/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=newtouch1!";
         //大连
-        String url = Url + "/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=admin";
-
+        //        String url = Url + "/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=admin";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         HttpEntity<String> requestEntity = new HttpEntity<String>(null, headers);
-        ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.GET,requestEntity,String.class);
+        ResponseEntity<String> rst = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
         String value = rst.getBody();
         JSONObject string_to_json = JSONUtil.parseObj(value);
         return ApiResult.success(string_to_json);
