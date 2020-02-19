@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -36,6 +37,25 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     @Override
     public List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception {
         return expatriatesinforMapper.select(expatriatesinfor);
+    }
+
+
+    @Override
+    public List<Expatriatesinfor> getexpatriatesinforthisyear(Expatriatesinfor expatriatesinfor) throws Exception {
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        List<Expatriatesinfor> expatriatesinforList1 = new ArrayList<Expatriatesinfor>();
+        int j = expatriatesinforList.size();
+        for(int i = 0; i < j; i++){
+            //退场日期
+            String newdate = DateUtil.format(new Date(),"YYYY");
+            String exitime = DateUtil.format(expatriatesinforList.get(i).getExitime(),"YYYY");
+            if(!exitime.equals("")){
+                if(Integer.parseInt(exitime) >= Integer.parseInt(newdate)) {
+                   expatriatesinforList1.add(expatriatesinforList.get(i));
+                }
+            }
+        }
+        return expatriatesinforList1;
     }
 
 

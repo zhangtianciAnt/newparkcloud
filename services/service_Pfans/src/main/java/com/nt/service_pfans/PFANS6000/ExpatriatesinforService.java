@@ -10,6 +10,8 @@ public interface ExpatriatesinforService {
 
     List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception;
 
+    List<Expatriatesinfor> getexpatriatesinforthisyear(Expatriatesinfor expatriatesinfor) throws Exception;
+
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception;
 
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
