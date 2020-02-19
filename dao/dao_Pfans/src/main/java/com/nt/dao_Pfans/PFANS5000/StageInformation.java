@@ -103,6 +103,9 @@ public class StageInformation extends BaseModel {
     @Column(name = "PRODUCT")
     private String product;
 
+    /**
+     * 行坐标
+     */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 }
