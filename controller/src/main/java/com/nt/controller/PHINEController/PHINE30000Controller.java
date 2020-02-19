@@ -105,7 +105,7 @@ public class PHINE30000Controller {
     @RequestMapping(value = "/saveUserAuthInfo", method = {RequestMethod.POST})
     public ApiResult saveUserAuthInfo(@RequestBody Project2userExtend project2userExtend, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(project2userExtend.getProjectid())) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail("请先创建项目信息后，再添加用户权限！");
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return projectinfoService.saveUserAuthInfo(tokenModel, project2userExtend.getProjectid(), project2userExtend.getUseridList());
@@ -122,7 +122,7 @@ public class PHINE30000Controller {
     @RequestMapping(value = "/saveResourcesInfo", method = {RequestMethod.POST})
     public ApiResult saveResourcesInfo(@RequestBody Project2deviceExtend project2deviceExtend, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(project2deviceExtend.getProjectid())) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail("请先创建项目信息后，再分配设备资源！");
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return projectinfoService.saveResourcesInfo(tokenModel, project2deviceExtend.getProjectid(), project2deviceExtend.getDeviceidList());
