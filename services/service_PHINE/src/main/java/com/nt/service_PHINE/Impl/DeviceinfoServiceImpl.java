@@ -509,7 +509,12 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public ApiResult closeConnection(TokenModel tokenModel, String deviceid) {
-        // TODO :操作用户权限暂时不封装
+        // 判断操作用户权限
+        Deviceinfo di = deviceinfoMapper.selectByPrimaryKey(deviceid);
+        // 仅当前连接者和平台管理员可以断开连接
+        if (!tokenModel.getUserId().equals(di.getCurrentuser()) && !"5e33c197ad58b921c4d2a1e2".equals(tokenModel.getUserId())) {
+            return ApiResult.fail("设备被占用，请稍后重试！");
+        }
         // region 通信关闭
         Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
         DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
