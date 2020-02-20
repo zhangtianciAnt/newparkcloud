@@ -65,12 +65,14 @@
     SET projectname = #{projectname},
         projectdescription = #{projectdescription},
         chipid = #{chipid},
+        starttime = #{starttime},
+        endtime = #{endtime},
         modifyby = #{modifyby},
         modifyon = #{modifyon}
     WHERE id = #{id}
   </update>
   <select id="getProjectInfo" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
-    SELECT id,projectid,projectname,projectdescription,chipid,companyid
+    SELECT id,projectid,projectname,projectdescription,chipid,companyid,starttime,endtime
     FROM projectinfo
     <where>
       <if test="companyid != '' and projectid != ''">

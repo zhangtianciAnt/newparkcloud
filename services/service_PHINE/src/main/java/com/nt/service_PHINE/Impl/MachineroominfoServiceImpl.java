@@ -96,4 +96,17 @@ public class MachineroominfoServiceImpl implements MachineroominfoService {
     public List<Machineroominfo> getMachineroominfoList() {
         return machineroominfoMapper.selectAll();
     }
+
+    /**
+     * @return
+     * @Method getMachineRoomInfo
+     * @Author SKAIXX
+     * @Description 获取机房信息
+     * @Date 2020/2/6 10:29
+     * @Param
+     **/
+    @Override
+    public Machineroominfo getMachineRoomInfo(Machineroominfo machineroominfo) {
+        return machineroominfoMapper.selectOne(machineroominfo);
+    }
 }

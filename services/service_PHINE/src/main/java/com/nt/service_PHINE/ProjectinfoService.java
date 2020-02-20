@@ -8,6 +8,7 @@ import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public interface ProjectinfoService {
     List<ProjectListVo> getProjectInfoList(String ownerId);
 
     // 创建项目信息
-    ApiResult saveProjectInfo(TokenModel tokenModel, Projectinfo projectinfo);
+    ApiResult saveProjectInfo(TokenModel tokenModel, ProjectListVo projectListVo) throws ParseException;
 
     // 保存项目分配的设备信息
     ApiResult saveResourcesInfo(TokenModel tokenModel, String projectid, String[] deviceidList);
@@ -40,13 +41,13 @@ public interface ProjectinfoService {
     List<UserAuthListVo> getUserAuthList(String projectid);
 
     // 根据条件查询项目信息
-    ProjectListVo getProjectInfo(String companyid, String projectid);
+    ProjectListVo getProjectInfo(String companyid, String projectid) throws ParseException;
 
     // 平台项目管理画面根据项目ID获取设备列表
     List<DeviceListVo> getDeviceIdByProjectId(String projectid);
 
     // 更新项目信息
-    ApiResult updateProjectInfo(TokenModel tokenModel, Projectinfo projectinfo);
+    ApiResult updateProjectInfo(TokenModel tokenModel, ProjectListVo projectListVo) throws ParseException;
 
     // 获取项目信息包含项目相关人员
     ProjectinfoVo getProjectinfoById(String projectid);
