@@ -132,6 +132,19 @@ public class PHINE50000Controller {
 
     /**
      * @return
+     * @Method getCabinetInfo
+     * @Author MYT
+     * @Description 获取机柜信息
+     * @Date 2020/2/5 22:28
+     * @Param
+     **/
+    @RequestMapping(value = "/getCabinetInfo",method={RequestMethod.POST})
+    public ApiResult getCabinetInfo(HttpServletRequest request, @RequestBody Cabinetinfo cabinetinfo) throws Exception {
+        return ApiResult.success(cabinetinfoService.getCabinetInfo(cabinetinfo));
+    }
+
+    /**
+     * @return
      * @Method saveMachineRoomInfo
      * @Author SKAIXX
      * @Description 创建机房信息

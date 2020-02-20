@@ -4,10 +4,7 @@ import com.nt.dao_Org.OrgTree;
 import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
-import com.nt.service_PHINE.DeviceCommunication.ConfigStatus;
-import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
-import com.nt.service_PHINE.DeviceCommunication.DeviceService;
-import com.nt.service_PHINE.DeviceCommunication.IDeviceService;
+import com.nt.service_PHINE.DeviceCommunication.*;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
@@ -393,19 +390,66 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         return deviceList;
     }
 
-//    /**
-//     * @Method getCurrentConnStatus
-//     * @Author MYT
-//     * @Description 获取当前设备连接状态
-//     * @Date 2020/2/10 15:27
-//     **/
-//    @Override
-//    public ApiResult getCurrentConnStatus(TokenModel tokenModel, String projectid) {
-//        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
-//        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-//
-//        return ApiResult.success();
-//    }
+    /**
+     * @Method getCurrentConnStatus
+     * @Author MYT
+     * @Description 获取当前设备连接状态
+     * @Date 2020/2/10 15:27
+     **/
+    @Override
+    public List<CurrentConnStatusVo> getCurrentConnStatus(String projectid) {
+        // 获取当前项目的设备列表
+        // region 通过项目ID获取所有设备ID
+        Project2device tmpModel = new Project2device();
+        tmpModel.setProjectid(projectid);
+        List<Project2device> project2deviceList = project2deviceMapper.select(tmpModel);
+        // 当前项目下没有设备时，则返回
+        if (project2deviceList.size() == 0) {
+            return null;
+        }
+        // endregion
+        List<CurrentConnStatusVo> currentConnStatusVoList = new ArrayList<>();
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+        Holder<ArrayOfDeviceConnState> deviceConnStates = new Holder<>();
+        Holder<Boolean> getCurrentConnStatusResult = new Holder<>(false);
+        port.getCurrentConnStatus(deviceConnStates, getCurrentConnStatusResult);
+        ArrayOfDeviceConnState arrayOfDeviceConnState = deviceConnStates.value;
+        arrayOfDeviceConnState.getDeviceConnState().forEach(item -> {
+            CurrentConnStatusVo currentConnStatusVo = new CurrentConnStatusVo();
+            Deviceinfo deviceinfo = new Deviceinfo();
+            deviceinfo.setDeviceid(item.getDeviceId().getValue());
+            List<Deviceinfo> deviceinfoList = deviceinfoMapper.select(deviceinfo);
+            if (deviceinfoList != null && deviceinfoList.size() > 0 ) {
+                Project2device tmp = project2deviceList.get(0);
+                tmp.setDeviceid(deviceinfoList.get(0).getId());
+                if(project2deviceList.contains(tmp)) {
+                    currentConnStatusVo.setId(deviceinfoList.get(0).getId());
+                }
+            } else {
+                return;
+            }
+            currentConnStatusVo.setDeviceid(item.getDeviceId().getValue());
+            String status = "";
+            switch (item.getConnStatus()) {
+                case 2:
+                    status = "未连接";
+                    break;
+                case 1:
+                    status = "已连接";
+                    break;
+                case 0:
+                    status = "离线";
+                    break;
+                default:
+                    status = "未知";
+                    break;
+            }
+            currentConnStatusVo.setConnstatus(status);
+            currentConnStatusVoList.add(currentConnStatusVo);
+        });
+        return currentConnStatusVoList;
+    }
 
     /**
      * @Method createConnection
@@ -500,7 +544,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                     boolean loopFlg = false;
                     while (!loopFlg) {
                         // 循环获取Fpga执行结果
-                        Holder<ConfigStatus> configResult = new Holder<ConfigStatus>();
+                        Holder<ConfigStatus> configResult = new Holder<>();
                         Holder<Boolean> getFpgaConfigStatusResult = new Holder<>(false);
                         // 获取当前Config状态
                         port.getFpgaConfigStatus(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), configResult, getFpgaConfigStatusResult);

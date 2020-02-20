@@ -1,10 +1,7 @@
 package com.nt.service_PHINE;
 
 import com.nt.dao_PHINE.Fileinfo;
-import com.nt.dao_PHINE.Vo.ChartDataRow;
-import com.nt.dao_PHINE.Vo.DeviceListVo;
-import com.nt.dao_PHINE.Vo.DeviceinfoVo;
-import com.nt.dao_PHINE.Vo.ReadWriteTestVo;
+import com.nt.dao_PHINE.Vo.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
@@ -65,4 +62,7 @@ public interface DeviceinfoService {
 
     // 获取设备状态数据
     List<ChartDataRow> getDeviceStatusChartInfo();
+
+    // 获取设备当前连接状态
+    List<CurrentConnStatusVo> getCurrentConnStatus(String projectid);
 }
