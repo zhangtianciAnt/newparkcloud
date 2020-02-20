@@ -4,6 +4,7 @@ import com.nt.dao_Org.OrgTree;
 import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_PHINE.DeviceCommunication.ConfigStatus;
 import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
 import com.nt.service_PHINE.DeviceCommunication.DeviceService;
 import com.nt.service_PHINE.DeviceCommunication.IDeviceService;
@@ -384,6 +385,20 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         return deviceList;
     }
 
+//    /**
+//     * @Method getCurrentConnStatus
+//     * @Author MYT
+//     * @Description 获取当前设备连接状态
+//     * @Date 2020/2/10 15:27
+//     **/
+//    @Override
+//    public ApiResult getCurrentConnStatus(TokenModel tokenModel, String projectid) {
+//        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+//        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+//
+//        return ApiResult.success();
+//    }
+
     /**
      * @Method createConnection
      * @Author MYT
@@ -474,7 +489,38 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             switch (fileinfo.getFiletype()) {
                 case "FPGA":        // 执行FPGA加载
                     result = port.startConfigFpgaByFile(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
-                    // TODO:FPGA结果加载
+                    boolean loopFlg = false;
+                    while (!loopFlg) {
+                        // 循环获取Fpga执行结果
+                        Holder<ConfigStatus> configResult = new Holder<ConfigStatus>();
+                        Holder<Boolean> getFpgaConfigStatusResult = new Holder<>(false);
+                        // 获取当前Config状态
+                        port.getFpgaConfigStatus(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), configResult, getFpgaConfigStatusResult);
+                        switch (configResult.value.toString()) {
+                            // 配置中
+                            case "Configing":
+                                Holder<Long> progress = new Holder<Long>(0L);
+                                Holder<Boolean> getFpgaConfigProgressResult = new Holder<>(false);
+                                // 调用GetFpgaConfigProgress()获取当前Config进度
+                                port.getFpgaConfigProgress(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), progress, getFpgaConfigProgressResult);
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            // 配置成功
+                            case "Succeed":
+                                result = true;
+                                loopFlg = true;
+                                break;
+                            // 配置失败
+                            default:
+                                result = false;
+                                loopFlg = true;
+                                break;
+                        }
+                    }
                     configurationtype = "FPGA加载";
                     break;
                 case "FMC":         // 执行FMC加载
@@ -490,7 +536,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             // 添加操作记录详情
             operationdetail.setId(UUID.randomUUID().toString());
             operationdetail.setConfigurationtype(configurationtype);
-            operationdetail.setDevicename(deviceinfo.getDeviceid());
+            operationdetail.setDevicename(deviceinfo.getId());
             operationdetail.setFilename(fileinfo.getFilename());
             operationdetail.setOperationresult(result ? "成功" : "失败");
             operationdetail.setOperationid(operationId);
