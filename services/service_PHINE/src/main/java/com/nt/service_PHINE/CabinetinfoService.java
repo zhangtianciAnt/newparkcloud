@@ -29,4 +29,7 @@ public interface CabinetinfoService {
 
     // 获取指定机房中的机柜列表
     List<Cabinetinfo> getCabinetinfoListByMachineroomid(String machineroomid);
+
+    // 获取机柜信息
+    List<Cabinetinfo> getCabinetInfo(Cabinetinfo cabinetinfo);
 }
