@@ -74,4 +74,17 @@ public class CabinetinfoServiceImpl implements CabinetinfoService {
         cabinetinfo.setMachineroomid(machineroomid);
         return cabinetinfoMapper.select(cabinetinfo);
     }
+
+    /**
+     * @return
+     * @Method getCabinetInfo
+     * @Author MYT
+     * @Description 获取机柜信息
+     * @Date 2020/2/6 10:29
+     * @Param
+     **/
+    @Override
+    public List<Cabinetinfo> getCabinetInfo(Cabinetinfo cabinetinfo) {
+        return cabinetinfoMapper.select(cabinetinfo);
+    }
 }

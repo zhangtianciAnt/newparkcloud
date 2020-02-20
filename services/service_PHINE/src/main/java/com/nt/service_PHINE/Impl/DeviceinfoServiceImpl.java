@@ -429,10 +429,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             Deviceinfo deviceinfo = new Deviceinfo();
             deviceinfo.setDeviceid(item.getDeviceId().getValue());
             List<Deviceinfo> deviceinfoList = deviceinfoMapper.select(deviceinfo);
-            if (deviceinfoList != null && deviceinfoList.size() > 0 ) {
+            if (deviceinfoList != null && deviceinfoList.size() > 0) {
                 Project2device tmp = project2deviceList.get(0);
                 tmp.setDeviceid(deviceinfoList.get(0).getId());
-                if(project2deviceList.contains(tmp)) {
+                if (project2deviceList.contains(tmp)) {
                     currentConnStatusVo.setId(deviceinfoList.get(0).getId());
                 }
             } else {
