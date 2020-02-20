@@ -1,6 +1,7 @@
 package com.nt.controller.PHINEController;
 
 import com.nt.dao_PHINE.Fileinfo;
+import com.nt.dao_PHINE.Vo.CurrentConnStatusVo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.DeviceinfoService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -200,4 +202,35 @@ public class PHINE20000Controller {
         return ApiResult.success(deviceinfoService.readWriteTest(tokenModel, projectid));
     }
 
+    /**
+     * @return
+     * @Method getCurrentConnStatus
+     * @Author SKAIXX
+     * @Description 获取设备当前连接状态
+     * @Date 2020/2/20 14:04
+     * @Param
+     **/
+    @RequestMapping(value = "/getCurrentConnStatus", method = {RequestMethod.GET})
+    public ApiResult getCurrentConnStatus(HttpServletRequest request, @RequestParam String projectid) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        // region 测试代码
+        List<CurrentConnStatusVo> currentConnStatusVoList = new ArrayList<>();
+        CurrentConnStatusVo currentConnStatusVo1 = new CurrentConnStatusVo();
+        CurrentConnStatusVo currentConnStatusVo2 = new CurrentConnStatusVo();
+        CurrentConnStatusVo currentConnStatusVo3 = new CurrentConnStatusVo();
+        currentConnStatusVo1.setId("");
+        currentConnStatusVo1.setDeviceid("device1");
+        currentConnStatusVo1.setId("未连接");
+        currentConnStatusVo2.setId("");
+        currentConnStatusVo2.setDeviceid("device2");
+        currentConnStatusVo2.setId("已连接");
+        currentConnStatusVo3.setId("");
+        currentConnStatusVo3.setDeviceid("device3");
+        currentConnStatusVo3.setId("离线");
+        currentConnStatusVoList.add(currentConnStatusVo1);
+        currentConnStatusVoList.add(currentConnStatusVo2);
+        currentConnStatusVoList.add(currentConnStatusVo3);
+        // endregion
+        return ApiResult.success(currentConnStatusVoList);
+    }
 }
