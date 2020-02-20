@@ -183,7 +183,7 @@ public class PHINE20000Controller {
      * @Param
      **/
     @RequestMapping(value = "/readWriteTest", method = {RequestMethod.GET})
-    public ApiResult readWriteTest(HttpServletRequest request, @RequestParam String deviceid) throws Exception {
+    public ApiResult readWriteTest(HttpServletRequest request, @RequestParam String projectid) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         List<ReadWriteTestVo> readWriteTestVoList = new ArrayList<>();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
