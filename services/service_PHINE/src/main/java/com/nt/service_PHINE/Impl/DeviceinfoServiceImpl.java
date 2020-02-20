@@ -152,15 +152,23 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
         deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
         deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
-        deviceinfo.preInsert(tokenModel);
-        deviceinfoMapper.insert(deviceinfo);
-        // endregion
 
-        // region 创建板卡&芯片信息
-        createBoardChip(tokenModel, deviceid, deviceinfoVo);
-        // endregion
+        int result = deviceinfoMapper.selectCount(deviceinfo);
+        if (result > 0) {
+            return ApiResult.fail(MsgConstants.ERROR_01);
+        } else {
+            deviceinfo.preInsert(tokenModel);
+            deviceinfoMapper.insert(deviceinfo);
+            // endregion
 
-        return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
+            // region 创建板卡&芯片信息
+            createBoardChip(tokenModel, deviceid, deviceinfoVo);
+            // endregion
+
+            return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
+        }
+
+
     }
 
     /**
