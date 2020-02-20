@@ -106,7 +106,7 @@ public class MachineroominfoServiceImpl implements MachineroominfoService {
      * @Param
      **/
     @Override
-    public Machineroominfo getMachineRoomInfo(Machineroominfo machineroominfo) {
-        return machineroominfoMapper.selectOne(machineroominfo);
+    public List<Machineroominfo> getMachineRoomInfo(Machineroominfo machineroominfo) {
+        return machineroominfoMapper.select(machineroominfo);
     }
 }
