@@ -23,7 +23,7 @@ import java.util.List;
 public interface ProjectinfoService {
 
     // 平台项目画面获取项目列表
-    List<ProjectListVo> getProjectInfoList(String ownerId);
+    List<ProjectListVo> getProjectInfoList(String companyId);
 
     // 创建项目信息
     ApiResult saveProjectInfo(TokenModel tokenModel, ProjectListVo projectListVo) throws ParseException;

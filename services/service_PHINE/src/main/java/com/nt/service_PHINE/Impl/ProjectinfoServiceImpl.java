@@ -59,8 +59,8 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Param TODO:权限部分暂未实装
      **/
     @Override
-    public List<ProjectListVo> getProjectInfoList(String ownerId) {
-        return projectinfoMapper.getProjectInfoList();
+    public List<ProjectListVo> getProjectInfoList(String companyId) {
+        return projectinfoMapper.getProjectInfoList(companyId);
     }
 
     /**
@@ -226,7 +226,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Param projectid 项目ID
      **/
     @Override
-    public ProjectListVo getProjectInfo(String companyid, String projectid){
+    public ProjectListVo getProjectInfo(String companyid, String projectid) {
         ProjectListVo projectListVo;
         // 查询所属公司中项目ID是否存在
         if (StringUtil.isNotEmpty(companyid)) {
@@ -235,7 +235,7 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
             // 根据主键查询项目是否存在
             projectListVo = projectinfoMapper.getProjectInfo("", projectid);
         }
-        if(projectListVo != null){
+        if (projectListVo != null) {
             String startTime = getDateToString(projectListVo.getStarttime());
             String endTime = getDateToString(projectListVo.getEndtime());
             String[] tmpList = new String[2];
@@ -293,8 +293,8 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Date 2020/1/31 15:27
      * @Param param 参数
      **/
-    private String getDateToString(Date param){
-        if(StringUtils.isEmpty(param)) {
+    private String getDateToString(Date param) {
+        if (StringUtils.isEmpty(param)) {
             return "";
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");

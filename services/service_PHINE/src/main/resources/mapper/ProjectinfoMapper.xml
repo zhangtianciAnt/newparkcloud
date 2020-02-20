@@ -1,66 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nt.service_PHINE.mapper.ProjectinfoMapper">
-  <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Projectinfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="id" jdbcType="VARCHAR" property="id" />
-    <result column="companyid" jdbcType="VARCHAR" property="companyid" />
-    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
-    <result column="projectname" jdbcType="VARCHAR" property="projectname" />
-    <result column="chipid" property="chipid" jdbcType="VARCHAR" />
-    <result column="starttime" jdbcType="TIMESTAMP" property="starttime" />
-    <result column="endtime" jdbcType="TIMESTAMP" property="endtime" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-    <result column="projectdescription" jdbcType="LONGVARCHAR" property="projectdescription" />
-    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
-  </resultMap>
-  <select id="getProjectInfoList" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
-    SELECT
+    <resultMap id="BaseResultMap" type="com.nt.dao_PHINE.Projectinfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="companyid" jdbcType="VARCHAR" property="companyid"/>
+        <result column="projectid" jdbcType="VARCHAR" property="projectid"/>
+        <result column="projectname" jdbcType="VARCHAR" property="projectname"/>
+        <result column="chipid" property="chipid" jdbcType="VARCHAR"/>
+        <result column="starttime" jdbcType="TIMESTAMP" property="starttime"/>
+        <result column="endtime" jdbcType="TIMESTAMP" property="endtime"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="createon" jdbcType="TIMESTAMP" property="createon"/>
+        <result column="createby" jdbcType="VARCHAR" property="createby"/>
+        <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon"/>
+        <result column="modifyby" jdbcType="VARCHAR" property="modifyby"/>
+        <result column="owner" jdbcType="VARCHAR" property="owner"/>
+        <result column="tenantid" jdbcType="VARCHAR" property="tenantid"/>
+        <result column="projectdescription" jdbcType="LONGVARCHAR" property="projectdescription"/>
+        <result column="remarks" jdbcType="LONGVARCHAR" property="remarks"/>
+    </resultMap>
+    <select id="getProjectInfoList" parameterType="String" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
+        SELECT
         a.id,
         a.projectname,
         a.createby,
         IFNULL( deviceInfo.devicecnt, '0' ) AS devicecnt,
         IFNULL( deviceInfo.errorcnt, '0' ) AS errorcnt,
         IFNULL( userCount.usercnt, '0' ) AS usercnt
-    FROM
+        FROM
         projectinfo a
         LEFT JOIN (
-    SELECT
+        SELECT
         a.id,
         count( b.id ) AS devicecnt,
         count( c.deviceid ) AS errorcnt
-    FROM
+        FROM
         projectinfo a
         LEFT JOIN project2device b ON a.id = b.projectid
         LEFT JOIN devicestatus c ON b.deviceid = c.deviceid
         AND c.devicestatus = '2'
-    GROUP BY
+        GROUP BY
         a.id
         ) deviceInfo ON a.id = deviceInfo.id
         LEFT JOIN (
-    SELECT
+        SELECT
         a.id,
         count( b.id ) AS usercnt
-    FROM
+        FROM
         projectinfo a,
         project2user b
-    WHERE
+        WHERE
         a.id = b.projectid
-    GROUP BY
+        GROUP BY
         a.id
         ) userCount ON a.id = userCount.id
-    ORDER BY
+        <where>
+            <if test="companyId != '' and companyId != null">
+                a.companyid=#{companyId}
+            </if>
+        </where>
+        ORDER BY
         a.projectname
-  </select>
-  <update id="updateProjectInfo" parameterType="com.nt.dao_PHINE.Projectinfo">
+    </select>
+    <update id="updateProjectInfo" parameterType="com.nt.dao_PHINE.Projectinfo">
     UPDATE projectinfo
     SET projectname = #{projectname},
         projectdescription = #{projectdescription},
@@ -71,47 +76,47 @@
         modifyon = #{modifyon}
     WHERE id = #{id}
   </update>
-  <select id="getProjectInfo" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
-    SELECT id,projectid,projectname,projectdescription,chipid,companyid,starttime,endtime
-    FROM projectinfo
-    <where>
-      <if test="companyid != '' and projectid != ''">
-        and companyid = #{companyid}
-        and projectid = #{projectid}
-      </if>
-      <if test="companyid == '' and projectid != ''">
-        and id = #{projectid}
-      </if>
-    </where>
-  </select>
+    <select id="getProjectInfo" resultType="com.nt.dao_PHINE.Vo.ProjectListVo">
+        SELECT id,projectid,projectname,projectdescription,chipid,companyid,starttime,endtime
+        FROM projectinfo
+        <where>
+            <if test="companyid != '' and projectid != ''">
+                and companyid = #{companyid}
+                and projectid = #{projectid}
+            </if>
+            <if test="companyid == '' and projectid != ''">
+                and id = #{projectid}
+            </if>
+        </where>
+    </select>
 
-  <resultMap id="ProjectinfoUser" type="com.nt.dao_PHINE.Vo.ProjectinfoVo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="id" jdbcType="VARCHAR" property="id" />
-    <result column="companyid" jdbcType="VARCHAR" property="companyid" />
-    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
-    <result column="projectname" jdbcType="VARCHAR" property="projectname" />
-    <result column="chipid" property="chipid" jdbcType="VARCHAR" />
-    <result column="starttime" jdbcType="TIMESTAMP" property="starttime" />
-    <result column="endtime" jdbcType="TIMESTAMP" property="endtime" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createon" jdbcType="TIMESTAMP" property="createon" />
-    <result column="createby" jdbcType="VARCHAR" property="createby" />
-    <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon" />
-    <result column="modifyby" jdbcType="VARCHAR" property="modifyby" />
-    <result column="owner" jdbcType="VARCHAR" property="owner" />
-    <result column="tenantid" jdbcType="VARCHAR" property="tenantid" />
-    <result column="projectdescription" jdbcType="LONGVARCHAR" property="projectdescription" />
-    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
-    <collection property="project2userList" ofType="com.nt.dao_PHINE.Project2user">
-      <id column="puserid" property="id" jdbcType="VARCHAR" />
-      <result column="userid" property="userid" jdbcType="VARCHAR" />
-    </collection>
-  </resultMap>
+    <resultMap id="ProjectinfoUser" type="com.nt.dao_PHINE.Vo.ProjectinfoVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="companyid" jdbcType="VARCHAR" property="companyid"/>
+        <result column="projectid" jdbcType="VARCHAR" property="projectid"/>
+        <result column="projectname" jdbcType="VARCHAR" property="projectname"/>
+        <result column="chipid" property="chipid" jdbcType="VARCHAR"/>
+        <result column="starttime" jdbcType="TIMESTAMP" property="starttime"/>
+        <result column="endtime" jdbcType="TIMESTAMP" property="endtime"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="createon" jdbcType="TIMESTAMP" property="createon"/>
+        <result column="createby" jdbcType="VARCHAR" property="createby"/>
+        <result column="modifyon" jdbcType="TIMESTAMP" property="modifyon"/>
+        <result column="modifyby" jdbcType="VARCHAR" property="modifyby"/>
+        <result column="owner" jdbcType="VARCHAR" property="owner"/>
+        <result column="tenantid" jdbcType="VARCHAR" property="tenantid"/>
+        <result column="projectdescription" jdbcType="LONGVARCHAR" property="projectdescription"/>
+        <result column="remarks" jdbcType="LONGVARCHAR" property="remarks"/>
+        <collection property="project2userList" ofType="com.nt.dao_PHINE.Project2user">
+            <id column="puserid" property="id" jdbcType="VARCHAR"/>
+            <result column="userid" property="userid" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
 
-  <select id="getProjectinfoById" resultMap="ProjectinfoUser">
+    <select id="getProjectinfoById" resultMap="ProjectinfoUser">
     SELECT
       pro.id,
       pro.companyid,

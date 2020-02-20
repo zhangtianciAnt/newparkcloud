@@ -9,6 +9,7 @@ import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,9 +41,9 @@ public class PHINE10000Controller {
      * @Date 2020/1/30 15:46
      * @Param ownerid
      **/
-    @RequestMapping(value = "/getProjectInfoList",method={RequestMethod.GET})
-    public ApiResult getProjectInfoList(HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getProjectInfoList", method = {RequestMethod.GET})
+    public ApiResult getProjectInfoList(HttpServletRequest request, @RequestParam String companyId) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(projectinfoService.getProjectInfoList(tokenModel.getUserId()));
+        return ApiResult.success(projectinfoService.getProjectInfoList(companyId));
     }
 }
