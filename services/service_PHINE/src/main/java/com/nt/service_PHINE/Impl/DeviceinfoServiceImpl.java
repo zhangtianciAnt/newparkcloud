@@ -10,6 +10,7 @@ import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -143,31 +144,37 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     public ApiResult saveDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo) {
         // region 设备信息
         Deviceinfo deviceinfo = new Deviceinfo();
+        String deviceid = deviceinfoVo.getId();
+        boolean isNew = false;
+        if (StringUtils.isEmpty(deviceid)) {
+            deviceid = UUID.randomUUID().toString();
+            isNew = true;
+        }
+        deviceinfo.setId(deviceid);
+        deviceinfo.setCabinetid(deviceinfoVo.getCabinetid());       // 机柜ID
         deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
-        int result = deviceinfoMapper.selectCount(deviceinfo);
-
-        if (result > 0) {
-            return ApiResult.fail("操作失败，设备编号已存在");
-        } else {
-            String deviceid = UUID.randomUUID().toString();
-            deviceinfo.setId(deviceid);
-            deviceinfo.setCabinetid(deviceinfoVo.getCabinetid());       // 机柜ID
-            deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
-            deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
-            deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
-
+        deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
+        deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
+        deviceinfo.setCabinetslotid(deviceinfoVo.getCabinetslotid());   // 机柜槽位信息
+        // 新建数据
+        if (isNew) {
             deviceinfo.preInsert(tokenModel);
             deviceinfoMapper.insert(deviceinfo);
-            // endregion
-
-            // region 创建板卡&芯片信息
-            createBoardChip(tokenModel, deviceid, deviceinfoVo);
-            // endregion
-
-            return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
+        } else {    // 更新数据
+            deviceinfo.preUpdate(tokenModel);
+            deviceinfoMapper.updateByPrimaryKey(deviceinfo);
         }
+        // endregion
 
+        // region 删除板卡&芯片信息
+        deleteBoardChip(deviceinfoVo);
+        // endregion
 
+        // region 创建板卡&芯片信息
+        createBoardChip(tokenModel, deviceid, deviceinfoVo);
+        // endregion
+
+        return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
     }
 
     /**
