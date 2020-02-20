@@ -83,6 +83,9 @@
           b.machineroomname,
           a.deviceid,
           a.devicetype,
+          a.cabinetid,
+          a.cabinetslotid,
+          d.cabinetname cabinetname,
           a.companyid,
           IFNULL(c.devicestatus,'1') as devicestatus
         FROM
