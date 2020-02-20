@@ -1,5 +1,6 @@
 package com.nt.service_PHINE.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
@@ -428,12 +429,13 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             CurrentConnStatusVo currentConnStatusVo = new CurrentConnStatusVo();
             Deviceinfo deviceinfo = new Deviceinfo();
             deviceinfo.setDeviceid(item.getDeviceId().getValue());
-            List<Deviceinfo> deviceinfoList = deviceinfoMapper.select(deviceinfo);
-            if (deviceinfoList != null && deviceinfoList.size() > 0) {
-                Project2device tmp = project2deviceList.get(0);
-                tmp.setDeviceid(deviceinfoList.get(0).getId());
+            Deviceinfo deviceinfo1 = deviceinfoMapper.selectOne(deviceinfo);
+            if (deviceinfo1 != null) {
+                Project2device tmp = new Project2device();
+                BeanUtil.copyProperties(project2deviceList.get(0), tmp);
+                tmp.setDeviceid(deviceinfo1.getId());
                 if (project2deviceList.contains(tmp)) {
-                    currentConnStatusVo.setId(deviceinfoList.get(0).getId());
+                    currentConnStatusVo.setId(deviceinfo1.getId());
                 }
             } else {
                 return;
