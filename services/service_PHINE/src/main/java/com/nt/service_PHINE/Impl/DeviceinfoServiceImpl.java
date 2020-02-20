@@ -143,17 +143,19 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     public ApiResult saveDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo) {
         // region 设备信息
         Deviceinfo deviceinfo = new Deviceinfo();
-        String deviceid = UUID.randomUUID().toString();
-        deviceinfo.setId(deviceid);
-        deviceinfo.setCabinetid(deviceinfoVo.getCabinetid());       // 机柜ID
         deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
-        deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
-        deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
-
         int result = deviceinfoMapper.selectCount(deviceinfo);
+
         if (result > 0) {
-            return ApiResult.fail(MsgConstants.ERROR_01);
+            return ApiResult.fail("操作失败，设备编号已存在");
         } else {
+            String deviceid = UUID.randomUUID().toString();
+            deviceinfo.setId(deviceid);
+            deviceinfo.setCabinetid(deviceinfoVo.getCabinetid());       // 机柜ID
+            deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
+            deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
+            deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
+
             deviceinfo.preInsert(tokenModel);
             deviceinfoMapper.insert(deviceinfo);
             // endregion
@@ -420,10 +422,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             Deviceinfo deviceinfo = new Deviceinfo();
             deviceinfo.setDeviceid(item.getDeviceId().getValue());
             List<Deviceinfo> deviceinfoList = deviceinfoMapper.select(deviceinfo);
-            if (deviceinfoList != null && deviceinfoList.size() > 0 ) {
+            if (deviceinfoList != null && deviceinfoList.size() > 0) {
                 Project2device tmp = project2deviceList.get(0);
                 tmp.setDeviceid(deviceinfoList.get(0).getId());
-                if(project2deviceList.contains(tmp)) {
+                if (project2deviceList.contains(tmp)) {
                     currentConnStatusVo.setId(deviceinfoList.get(0).getId());
                 }
             } else {
