@@ -7,6 +7,8 @@ import com.nt.dao_PHINE.Project2device;
 import com.nt.dao_PHINE.Project2deviceExtend;
 import com.nt.dao_PHINE.Project2userExtend;
 import com.nt.dao_PHINE.Projectinfo;
+import com.nt.dao_PHINE.Vo.ProjectListVo;
+import com.nt.dao_PHINE.Vo.ProjectinfoVo;
 import com.nt.dao_PHINE.Vo.UserAuthListVo;
 import com.nt.service_Org.UserService;
 import com.nt.service_PHINE.ChipinfoService;
@@ -72,9 +74,9 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/saveProjectInfo", method = {RequestMethod.POST})
-    public ApiResult saveProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
+    public ApiResult saveProjectInfo(@RequestBody ProjectListVo projectListVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return projectinfoService.saveProjectInfo(tokenModel, projectinfo);
+        return projectinfoService.saveProjectInfo(tokenModel, projectListVo);
     }
 
     /**
@@ -86,12 +88,12 @@ public class PHINE30000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/updateProjectInfo", method = {RequestMethod.PUT})
-    public ApiResult updateProjectInfo(@RequestBody Projectinfo projectinfo, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(projectinfo.getId())) {
+    public ApiResult updateProjectInfo(@RequestBody ProjectListVo projectListVo, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(projectListVo.getId())) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return projectinfoService.updateProjectInfo(tokenModel, projectinfo);
+        return projectinfoService.updateProjectInfo(tokenModel, projectListVo);
     }
 
     /**
