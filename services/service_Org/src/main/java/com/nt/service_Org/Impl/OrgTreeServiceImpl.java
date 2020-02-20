@@ -46,8 +46,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
     @Override
     public void save(OrgTree orgTree) throws Exception {
         // 执行更新操作
-        orgTree.preInsert();
-        orgTree.setTenantid(UUID.randomUUID().toString());
+//        orgTree.preInsert();
         mongoTemplate.save(orgTree);
     }
 
