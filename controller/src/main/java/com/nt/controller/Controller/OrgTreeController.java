@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/OrgTree")
@@ -58,10 +59,13 @@ public class OrgTreeController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        if(orgTree.getCreateby() == null || orgTree.getCreateon() == null){
+        if (orgTree.getCreateby() == null || orgTree.getCreateon() == null) {
             orgTree.preInsert(tokenModel);
+            orgTree.setTenantid(UUID.randomUUID().toString());
+
+        } else {
+            orgTree.preUpdate(tokenModel);
         }
-        orgTree.preUpdate(tokenModel);
         orgTreeService.save(orgTree);
         return ApiResult.success();
     }

@@ -187,13 +187,13 @@ public class PHINE20000Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         List<ReadWriteTestVo> readWriteTestVoList = new ArrayList<>();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 1; i++) {
             ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
             readWriteTestVo.setDeviceid("device_1");
             readWriteTestVo.setResult(df.format(new Date()) + "-FPGA" + (i+1) + "读取成功，写入失败！");
             readWriteTestVoList.add(readWriteTestVo);
         }
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 1; i++) {
             ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
             readWriteTestVo.setDeviceid("device_2");
             readWriteTestVo.setResult(df.format(new Date()) + "-FPGA" + (i+1) + "读取失败，写入成功！");
