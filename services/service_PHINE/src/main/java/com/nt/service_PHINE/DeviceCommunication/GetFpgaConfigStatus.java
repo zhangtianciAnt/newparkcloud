@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -22,20 +22,20 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence&gt;
  *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="fpgaId" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
- *         &lt;element name="configResult" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConfigStatus" minOccurs="0"/&gt;
+ *         &lt;element name="configStatus" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConfigStatus" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "deviceId",
     "fpgaId",
-    "configResult"
+    "configStatus"
 })
 @XmlRootElement(name = "GetFpgaConfigStatus")
 public class GetFpgaConfigStatus {
@@ -45,15 +45,15 @@ public class GetFpgaConfigStatus {
     @XmlSchemaType(name = "unsignedInt")
     protected Long fpgaId;
     @XmlSchemaType(name = "string")
-    protected ConfigStatus configResult;
+    protected ConfigStatus configStatus;
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -61,11 +61,11 @@ public class GetFpgaConfigStatus {
 
     /**
      * ����deviceId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -73,11 +73,11 @@ public class GetFpgaConfigStatus {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -85,38 +85,38 @@ public class GetFpgaConfigStatus {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;
     }
 
     /**
-     * ��ȡconfigResult���Ե�ֵ��
-     *
+     * ��ȡconfigStatus���Ե�ֵ��
+     * 
      * @return
      *     possible object is
      *     {@link ConfigStatus }
-     *
+     *     
      */
-    public ConfigStatus getConfigResult() {
-        return configResult;
+    public ConfigStatus getConfigStatus() {
+        return configStatus;
     }
 
     /**
-     * ����configResult���Ե�ֵ��
-     *
+     * ����configStatus���Ե�ֵ��
+     * 
      * @param value
      *     allowed object is
      *     {@link ConfigStatus }
-     *
+     *     
      */
-    public void setConfigResult(ConfigStatus value) {
-        this.configResult = value;
+    public void setConfigStatus(ConfigStatus value) {
+        this.configStatus = value;
     }
 
 }

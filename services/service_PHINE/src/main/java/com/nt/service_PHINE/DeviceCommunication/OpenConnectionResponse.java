@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -41,11 +41,11 @@ public class OpenConnectionResponse {
 
     /**
      * ��ȡopenConnectionResult���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link ConnectionResult }
-     *
+     *     
      */
     public ConnectionResult getOpenConnectionResult() {
         return openConnectionResult;
@@ -53,11 +53,11 @@ public class OpenConnectionResponse {
 
     /**
      * ����openConnectionResult���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link ConnectionResult }
-     *
+     *     
      */
     public void setOpenConnectionResult(ConnectionResult value) {
         this.openConnectionResult = value;

@@ -12,18 +12,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each
- * Java content interface and Java element interface
- * generated in the DeviceService package.
- * <p>An ObjectFactory allows you to programatically
- * construct new instances of the Java representation
- * for XML content. The Java representation of XML
- * content can consist of schema derived interfaces
- * and classes representing the binding of schema
- * type definitions, element declarations and model
- * groups.  Factory methods for each of these are
+ * This object contains factory methods for each 
+ * Java content interface and Java element interface 
+ * generated in the DeviceService package. 
+ * <p>An ObjectFactory allows you to programatically 
+ * construct new instances of the Java representation 
+ * for XML content. The Java representation of XML 
+ * content can consist of schema derived interfaces 
+ * and classes representing the binding of schema 
+ * type definitions, element declarations and model 
+ * groups.  Factory methods for each of these are 
  * provided in this class.
- *
+ * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -73,14 +73,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: DeviceService
-     *
+     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link OnlineDevice }
-     *
+     * 
      */
     public OnlineDevice createOnlineDevice() {
         return new OnlineDevice();
@@ -88,7 +88,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OnlineDeviceResponse }
-     *
+     * 
      */
     public OnlineDeviceResponse createOnlineDeviceResponse() {
         return new OnlineDeviceResponse();
@@ -96,7 +96,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OfflineDevice }
-     *
+     * 
      */
     public OfflineDevice createOfflineDevice() {
         return new OfflineDevice();
@@ -104,7 +104,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OfflineDeviceResponse }
-     *
+     * 
      */
     public OfflineDeviceResponse createOfflineDeviceResponse() {
         return new OfflineDeviceResponse();
@@ -112,7 +112,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCurrentConnStatus }
-     *
+     * 
      */
     public GetCurrentConnStatus createGetCurrentConnStatus() {
         return new GetCurrentConnStatus();
@@ -120,7 +120,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArrayOfDeviceConnState }
-     *
+     * 
      */
     public ArrayOfDeviceConnState createArrayOfDeviceConnState() {
         return new ArrayOfDeviceConnState();
@@ -128,7 +128,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetCurrentConnStatusResponse }
-     *
+     * 
      */
     public GetCurrentConnStatusResponse createGetCurrentConnStatusResponse() {
         return new GetCurrentConnStatusResponse();
@@ -136,7 +136,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OpenConnection }
-     *
+     * 
      */
     public OpenConnection createOpenConnection() {
         return new OpenConnection();
@@ -144,7 +144,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OpenConnectionResponse }
-     *
+     * 
      */
     public OpenConnectionResponse createOpenConnectionResponse() {
         return new OpenConnectionResponse();
@@ -152,7 +152,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CloseConnection }
-     *
+     * 
      */
     public CloseConnection createCloseConnection() {
         return new CloseConnection();
@@ -160,7 +160,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CloseConnectionResponse }
-     *
+     * 
      */
     public CloseConnectionResponse createCloseConnectionResponse() {
         return new CloseConnectionResponse();
@@ -168,7 +168,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetFmcVoltageByFile }
-     *
+     * 
      */
     public SetFmcVoltageByFile createSetFmcVoltageByFile() {
         return new SetFmcVoltageByFile();
@@ -176,7 +176,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetFmcVoltageByFileResponse }
-     *
+     * 
      */
     public SetFmcVoltageByFileResponse createSetFmcVoltageByFileResponse() {
         return new SetFmcVoltageByFileResponse();
@@ -184,7 +184,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetFmcVoltage }
-     *
+     * 
      */
     public SetFmcVoltage createSetFmcVoltage() {
         return new SetFmcVoltage();
@@ -192,7 +192,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FmcVoltageObject }
-     *
+     * 
      */
     public FmcVoltageObject createFmcVoltageObject() {
         return new FmcVoltageObject();
@@ -200,7 +200,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetFmcVoltageResponse }
-     *
+     * 
      */
     public SetFmcVoltageResponse createSetFmcVoltageResponse() {
         return new SetFmcVoltageResponse();
@@ -208,7 +208,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFmcVoltage }
-     *
+     * 
      */
     public GetFmcVoltage createGetFmcVoltage() {
         return new GetFmcVoltage();
@@ -216,7 +216,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFmcVoltageResponse }
-     *
+     * 
      */
     public GetFmcVoltageResponse createGetFmcVoltageResponse() {
         return new GetFmcVoltageResponse();
@@ -224,7 +224,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetPllClockByFile }
-     *
+     * 
      */
     public SetPllClockByFile createSetPllClockByFile() {
         return new SetPllClockByFile();
@@ -232,7 +232,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetPllClockByFileResponse }
-     *
+     * 
      */
     public SetPllClockByFileResponse createSetPllClockByFileResponse() {
         return new SetPllClockByFileResponse();
@@ -240,7 +240,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetPllClock }
-     *
+     * 
      */
     public SetPllClock createSetPllClock() {
         return new SetPllClock();
@@ -248,7 +248,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PllClockObject }
-     *
+     * 
      */
     public PllClockObject createPllClockObject() {
         return new PllClockObject();
@@ -256,7 +256,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SetPllClockResponse }
-     *
+     * 
      */
     public SetPllClockResponse createSetPllClockResponse() {
         return new SetPllClockResponse();
@@ -264,7 +264,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetPllClock }
-     *
+     * 
      */
     public GetPllClock createGetPllClock() {
         return new GetPllClock();
@@ -272,7 +272,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetPllClockResponse }
-     *
+     * 
      */
     public GetPllClockResponse createGetPllClockResponse() {
         return new GetPllClockResponse();
@@ -280,7 +280,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StartConfigFpgaByFile }
-     *
+     * 
      */
     public StartConfigFpgaByFile createStartConfigFpgaByFile() {
         return new StartConfigFpgaByFile();
@@ -288,7 +288,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StartConfigFpgaByFileResponse }
-     *
+     * 
      */
     public StartConfigFpgaByFileResponse createStartConfigFpgaByFileResponse() {
         return new StartConfigFpgaByFileResponse();
@@ -296,7 +296,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StartConfigFpga }
-     *
+     * 
      */
     public StartConfigFpga createStartConfigFpga() {
         return new StartConfigFpga();
@@ -304,7 +304,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FpgaConfigObject }
-     *
+     * 
      */
     public FpgaConfigObject createFpgaConfigObject() {
         return new FpgaConfigObject();
@@ -312,7 +312,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StartConfigFpgaResponse }
-     *
+     * 
      */
     public StartConfigFpgaResponse createStartConfigFpgaResponse() {
         return new StartConfigFpgaResponse();
@@ -320,7 +320,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFpgaConfigStatus }
-     *
+     * 
      */
     public GetFpgaConfigStatus createGetFpgaConfigStatus() {
         return new GetFpgaConfigStatus();
@@ -328,7 +328,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFpgaConfigStatusResponse }
-     *
+     * 
      */
     public GetFpgaConfigStatusResponse createGetFpgaConfigStatusResponse() {
         return new GetFpgaConfigStatusResponse();
@@ -336,7 +336,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFpgaConfigProgress }
-     *
+     * 
      */
     public GetFpgaConfigProgress createGetFpgaConfigProgress() {
         return new GetFpgaConfigProgress();
@@ -344,7 +344,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetFpgaConfigProgressResponse }
-     *
+     * 
      */
     public GetFpgaConfigProgressResponse createGetFpgaConfigProgressResponse() {
         return new GetFpgaConfigProgressResponse();
@@ -352,7 +352,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReConfigFpga }
-     *
+     * 
      */
     public ReConfigFpga createReConfigFpga() {
         return new ReConfigFpga();
@@ -360,7 +360,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReConfigFpgaResponse }
-     *
+     * 
      */
     public ReConfigFpgaResponse createReConfigFpgaResponse() {
         return new ReConfigFpgaResponse();
@@ -368,7 +368,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegRead }
-     *
+     * 
      */
     public RegRead createRegRead() {
         return new RegRead();
@@ -376,7 +376,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegReadResponse }
-     *
+     * 
      */
     public RegReadResponse createRegReadResponse() {
         return new RegReadResponse();
@@ -384,7 +384,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegWrite }
-     *
+     * 
      */
     public RegWrite createRegWrite() {
         return new RegWrite();
@@ -392,7 +392,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RegWriteResponse }
-     *
+     * 
      */
     public RegWriteResponse createRegWriteResponse() {
         return new RegWriteResponse();
@@ -400,7 +400,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArrayOfboolean }
-     *
+     * 
      */
     public ArrayOfboolean createArrayOfboolean() {
         return new ArrayOfboolean();
@@ -408,7 +408,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArrayOffloat }
-     *
+     * 
      */
     public ArrayOffloat createArrayOffloat() {
         return new ArrayOffloat();
@@ -416,7 +416,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeviceConnState }
-     *
+     * 
      */
     public DeviceConnState createDeviceConnState() {
         return new DeviceConnState();
@@ -424,7 +424,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "anyType")
     public JAXBElement<Object> createAnyType(Object value) {
@@ -433,7 +433,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "anyURI")
     public JAXBElement<String> createAnyURI(String value) {
@@ -442,7 +442,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "base64Binary")
     public JAXBElement<byte[]> createBase64Binary(byte[] value) {
@@ -451,7 +451,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "boolean")
     public JAXBElement<Boolean> createBoolean(Boolean value) {
@@ -460,7 +460,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Byte }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "byte")
     public JAXBElement<Byte> createByte(Byte value) {
@@ -469,7 +469,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XMLGregorianCalendar }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "dateTime")
     public JAXBElement<XMLGregorianCalendar> createDateTime(XMLGregorianCalendar value) {
@@ -478,7 +478,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigDecimal }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "decimal")
     public JAXBElement<BigDecimal> createDecimal(BigDecimal value) {
@@ -487,7 +487,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Double }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "double")
     public JAXBElement<Double> createDouble(Double value) {
@@ -496,7 +496,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Float }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "float")
     public JAXBElement<Float> createFloat(Float value) {
@@ -505,7 +505,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "int")
     public JAXBElement<Integer> createInt(Integer value) {
@@ -514,7 +514,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Long }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "long")
     public JAXBElement<Long> createLong(Long value) {
@@ -523,7 +523,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QName }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "QName")
     public JAXBElement<QName> createQName(QName value) {
@@ -532,7 +532,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Short }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "short")
     public JAXBElement<Short> createShort(Short value) {
@@ -541,7 +541,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "string")
     public JAXBElement<String> createString(String value) {
@@ -550,7 +550,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Short }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "unsignedByte")
     public JAXBElement<Short> createUnsignedByte(Short value) {
@@ -559,7 +559,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Long }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "unsignedInt")
     public JAXBElement<Long> createUnsignedInt(Long value) {
@@ -568,7 +568,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "unsignedLong")
     public JAXBElement<BigInteger> createUnsignedLong(BigInteger value) {
@@ -577,7 +577,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "unsignedShort")
     public JAXBElement<Integer> createUnsignedShort(Integer value) {
@@ -586,7 +586,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "char")
     public JAXBElement<Integer> createChar(Integer value) {
@@ -595,7 +595,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Duration }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "duration")
     public JAXBElement<Duration> createDuration(Duration value) {
@@ -604,7 +604,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/", name = "guid")
     public JAXBElement<String> createGuid(String value) {
@@ -613,7 +613,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", name = "ArrayOfboolean")
     public JAXBElement<ArrayOfboolean> createArrayOfboolean(ArrayOfboolean value) {
@@ -622,7 +622,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", name = "ArrayOffloat")
     public JAXBElement<ArrayOffloat> createArrayOffloat(ArrayOffloat value) {
@@ -631,7 +631,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "ArrayOfDeviceConnState")
     public JAXBElement<ArrayOfDeviceConnState> createArrayOfDeviceConnState(ArrayOfDeviceConnState value) {
@@ -640,7 +640,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeviceConnState }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceConnState")
     public JAXBElement<DeviceConnState> createDeviceConnState(DeviceConnState value) {
@@ -649,7 +649,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConnectionResult }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "ConnectionResult")
     public JAXBElement<ConnectionResult> createConnectionResult(ConnectionResult value) {
@@ -658,7 +658,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "FmcVoltageObject")
     public JAXBElement<FmcVoltageObject> createFmcVoltageObject(FmcVoltageObject value) {
@@ -667,7 +667,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "PllClockObject")
     public JAXBElement<PllClockObject> createPllClockObject(PllClockObject value) {
@@ -676,7 +676,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "FpgaConfigObject")
     public JAXBElement<FpgaConfigObject> createFpgaConfigObject(FpgaConfigObject value) {
@@ -685,7 +685,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FpgaControlBit }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "FpgaControlBit")
     public JAXBElement<FpgaControlBit> createFpgaControlBit(FpgaControlBit value) {
@@ -694,7 +694,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConfigStatus }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "ConfigStatus")
     public JAXBElement<ConfigStatus> createConfigStatus(ConfigStatus value) {
@@ -703,7 +703,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = OnlineDevice.class)
     public JAXBElement<String> createOnlineDeviceDeviceId(String value) {
@@ -712,7 +712,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = OfflineDevice.class)
     public JAXBElement<String> createOfflineDeviceDeviceId(String value) {
@@ -721,7 +721,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceConnStates", scope = GetCurrentConnStatus.class)
     public JAXBElement<ArrayOfDeviceConnState> createGetCurrentConnStatusDeviceConnStates(ArrayOfDeviceConnState value) {
@@ -730,7 +730,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceConnStates", scope = GetCurrentConnStatusResponse.class)
     public JAXBElement<ArrayOfDeviceConnState> createGetCurrentConnStatusResponseDeviceConnStates(ArrayOfDeviceConnState value) {
@@ -739,7 +739,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = OpenConnection.class)
     public JAXBElement<String> createOpenConnectionDeviceId(String value) {
@@ -748,7 +748,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = CloseConnection.class)
     public JAXBElement<String> createCloseConnectionDeviceId(String value) {
@@ -757,7 +757,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetFmcVoltageByFile.class)
     public JAXBElement<String> createSetFmcVoltageByFileDeviceId(String value) {
@@ -766,7 +766,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = SetFmcVoltageByFile.class)
     public JAXBElement<String> createSetFmcVoltageByFileConfigFilePath(String value) {
@@ -775,7 +775,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "fmcVoltageObject", scope = SetFmcVoltage.class)
     public JAXBElement<FmcVoltageObject> createSetFmcVoltageFmcVoltageObject(FmcVoltageObject value) {
@@ -784,7 +784,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "fmcVoltageObject", scope = GetFmcVoltage.class)
     public JAXBElement<FmcVoltageObject> createGetFmcVoltageFmcVoltageObject(FmcVoltageObject value) {
@@ -793,7 +793,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "fmcVoltageObject", scope = GetFmcVoltageResponse.class)
     public JAXBElement<FmcVoltageObject> createGetFmcVoltageResponseFmcVoltageObject(FmcVoltageObject value) {
@@ -802,7 +802,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = SetPllClockByFile.class)
     public JAXBElement<String> createSetPllClockByFileDeviceId(String value) {
@@ -811,7 +811,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = SetPllClockByFile.class)
     public JAXBElement<String> createSetPllClockByFileConfigFilePath(String value) {
@@ -820,7 +820,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "pllClockObject", scope = SetPllClock.class)
     public JAXBElement<PllClockObject> createSetPllClockPllClockObject(PllClockObject value) {
@@ -829,7 +829,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "pllClockObject", scope = GetPllClock.class)
     public JAXBElement<PllClockObject> createGetPllClockPllClockObject(PllClockObject value) {
@@ -838,7 +838,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "pllClockObject", scope = GetPllClockResponse.class)
     public JAXBElement<PllClockObject> createGetPllClockResponsePllClockObject(PllClockObject value) {
@@ -847,7 +847,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = StartConfigFpgaByFile.class)
     public JAXBElement<String> createStartConfigFpgaByFileDeviceId(String value) {
@@ -856,7 +856,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "configFilePath", scope = StartConfigFpgaByFile.class)
     public JAXBElement<String> createStartConfigFpgaByFileConfigFilePath(String value) {
@@ -865,7 +865,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "fpgaConfigObject", scope = StartConfigFpga.class)
     public JAXBElement<FpgaConfigObject> createStartConfigFpgaFpgaConfigObject(FpgaConfigObject value) {
@@ -874,7 +874,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = GetFpgaConfigStatus.class)
     public JAXBElement<String> createGetFpgaConfigStatusDeviceId(String value) {
@@ -883,7 +883,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = GetFpgaConfigProgress.class)
     public JAXBElement<String> createGetFpgaConfigProgressDeviceId(String value) {
@@ -892,7 +892,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = ReConfigFpga.class)
     public JAXBElement<String> createReConfigFpgaDeviceId(String value) {
@@ -901,7 +901,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = RegRead.class)
     public JAXBElement<String> createRegReadDeviceId(String value) {
@@ -910,7 +910,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://tempuri.org/", name = "deviceId", scope = RegWrite.class)
     public JAXBElement<String> createRegWriteDeviceId(String value) {
@@ -919,7 +919,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "deviceId", scope = DeviceConnState.class)
     public JAXBElement<String> createDeviceConnStateDeviceId(String value) {
@@ -928,7 +928,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "BinFilePath", scope = FpgaConfigObject.class)
     public JAXBElement<String> createFpgaConfigObjectBinFilePath(String value) {
@@ -937,7 +937,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceId", scope = FpgaConfigObject.class)
     public JAXBElement<String> createFpgaConfigObjectDeviceId(String value) {
@@ -946,7 +946,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceId", scope = PllClockObject.class)
     public JAXBElement<String> createPllClockObjectDeviceId(String value) {
@@ -955,7 +955,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "OutputClockEnables", scope = PllClockObject.class)
     public JAXBElement<ArrayOfboolean> createPllClockObjectOutputClockEnables(ArrayOfboolean value) {
@@ -964,7 +964,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "OutputClockFrequencys", scope = PllClockObject.class)
     public JAXBElement<ArrayOffloat> createPllClockObjectOutputClockFrequencys(ArrayOffloat value) {
@@ -973,7 +973,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     *
+     * 
      */
     @XmlElementDecl(namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", name = "DeviceId", scope = FmcVoltageObject.class)
     public JAXBElement<String> createFmcVoltageObjectDeviceId(String value) {

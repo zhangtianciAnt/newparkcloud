@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>DeviceConnState complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType name="DeviceConnState"&gt;
  *   &lt;complexContent&gt;
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeviceConnState", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
@@ -43,11 +43,11 @@ public class DeviceConnState {
 
     /**
      * ��ȡconnStatus���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Integer }
-     *
+     *     
      */
     public Integer getConnStatus() {
         return connStatus;
@@ -55,11 +55,11 @@ public class DeviceConnState {
 
     /**
      * ����connStatus���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *
+     *     
      */
     public void setConnStatus(Integer value) {
         this.connStatus = value;
@@ -67,11 +67,11 @@ public class DeviceConnState {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -79,11 +79,11 @@ public class DeviceConnState {
 
     /**
      * ����deviceId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;

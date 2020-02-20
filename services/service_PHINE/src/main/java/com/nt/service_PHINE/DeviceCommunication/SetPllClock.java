@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -40,11 +40,11 @@ public class SetPllClock {
 
     /**
      * ��ȡpllClockObject���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
-     *
+     *     
      */
     public JAXBElement<PllClockObject> getPllClockObject() {
         return pllClockObject;
@@ -52,11 +52,11 @@ public class SetPllClock {
 
     /**
      * ����pllClockObject���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
-     *
+     *     
      */
     public void setPllClockObject(JAXBElement<PllClockObject> value) {
         this.pllClockObject = value;

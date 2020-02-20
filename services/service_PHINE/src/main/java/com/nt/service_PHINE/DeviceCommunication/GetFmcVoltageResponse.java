@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -45,11 +45,11 @@ public class GetFmcVoltageResponse {
 
     /**
      * ��ȡgetFmcVoltageResult���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Boolean }
-     *
+     *     
      */
     public Boolean isGetFmcVoltageResult() {
         return getFmcVoltageResult;
@@ -57,11 +57,11 @@ public class GetFmcVoltageResponse {
 
     /**
      * ����getFmcVoltageResult���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *
+     *     
      */
     public void setGetFmcVoltageResult(Boolean value) {
         this.getFmcVoltageResult = value;
@@ -69,11 +69,11 @@ public class GetFmcVoltageResponse {
 
     /**
      * ��ȡfmcVoltageObject���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}
-     *
+     *     
      */
     public JAXBElement<FmcVoltageObject> getFmcVoltageObject() {
         return fmcVoltageObject;
@@ -81,11 +81,11 @@ public class GetFmcVoltageResponse {
 
     /**
      * ����fmcVoltageObject���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link FmcVoltageObject }{@code >}
-     *
+     *     
      */
     public void setFmcVoltageObject(JAXBElement<FmcVoltageObject> value) {
         this.fmcVoltageObject = value;

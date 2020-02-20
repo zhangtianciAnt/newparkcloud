@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -39,11 +39,11 @@ public class SetFmcVoltageByFileResponse {
 
     /**
      * ��ȡsetFmcVoltageByFileResult���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Boolean }
-     *
+     *     
      */
     public Boolean isSetFmcVoltageByFileResult() {
         return setFmcVoltageByFileResult;
@@ -51,11 +51,11 @@ public class SetFmcVoltageByFileResponse {
 
     /**
      * ����setFmcVoltageByFileResult���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *
+     *     
      */
     public void setSetFmcVoltageByFileResult(Boolean value) {
         this.setFmcVoltageByFileResult = value;

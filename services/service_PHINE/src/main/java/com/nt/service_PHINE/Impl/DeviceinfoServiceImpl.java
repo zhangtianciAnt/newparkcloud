@@ -553,21 +553,28 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                 case "FPGA":        // 执行FPGA加载
                     result = port.startConfigFpgaByFile(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
                     boolean loopFlg = false;
+                    int idx =0;
                     while (!loopFlg) {
+                        idx ++;
                         // 循环获取Fpga执行结果
                         Holder<ConfigStatus> configResult = new Holder<>();
                         Holder<Boolean> getFpgaConfigStatusResult = new Holder<>(false);
                         // 获取当前Config状态
                         port.getFpgaConfigStatus(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), configResult, getFpgaConfigStatusResult);
-                        switch (configResult.value.toString()) {
+                        System.out.println("第" + idx + "次调用getFpgaConfigStatus ---------------返回值：" + configResult.value.toString());
+                        switch (configResult.value.value()) {
                             // 配置中
                             case "Configing":
                                 Holder<Long> progress = new Holder<Long>(0L);
                                 Holder<Boolean> getFpgaConfigProgressResult = new Holder<>(false);
                                 // 调用GetFpgaConfigProgress()获取当前Config进度
                                 port.getFpgaConfigProgress(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), progress, getFpgaConfigProgressResult);
+                                System.out.println("第" + idx + "次调用getFpgaConfigProgress ---------------返回值：" + progress.value);
                                 try {
+
+                                    System.out.println("第" + idx + "次Before sleep ---------------");
                                     Thread.sleep(1000);
+                                    System.out.println("第" + idx + "次After sleep ---------------");
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }

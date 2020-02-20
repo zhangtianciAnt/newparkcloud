@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>PllClockObject complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType name="PllClockObject"&gt;
  *   &lt;complexContent&gt;
@@ -32,8 +32,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PllClockObject", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
@@ -67,11 +67,11 @@ public class PllClockObject {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -79,11 +79,11 @@ public class PllClockObject {
 
     /**
      * ����deviceId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -91,11 +91,11 @@ public class PllClockObject {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -103,11 +103,11 @@ public class PllClockObject {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;
@@ -115,11 +115,11 @@ public class PllClockObject {
 
     /**
      * ��ȡinputClockFrequency���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Float }
-     *
+     *     
      */
     public Float getInputClockFrequency() {
         return inputClockFrequency;
@@ -127,11 +127,11 @@ public class PllClockObject {
 
     /**
      * ����inputClockFrequency���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Float }
-     *
+     *     
      */
     public void setInputClockFrequency(Float value) {
         this.inputClockFrequency = value;
@@ -139,11 +139,11 @@ public class PllClockObject {
 
     /**
      * ��ȡinputClockId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getInputClockId() {
         return inputClockId;
@@ -151,11 +151,11 @@ public class PllClockObject {
 
     /**
      * ����inputClockId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setInputClockId(Long value) {
         this.inputClockId = value;
@@ -163,11 +163,11 @@ public class PllClockObject {
 
     /**
      * ��ȡoutputClockEnables���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}
-     *
+     *     
      */
     public JAXBElement<ArrayOfboolean> getOutputClockEnables() {
         return outputClockEnables;
@@ -175,11 +175,11 @@ public class PllClockObject {
 
     /**
      * ����outputClockEnables���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ArrayOfboolean }{@code >}
-     *
+     *     
      */
     public void setOutputClockEnables(JAXBElement<ArrayOfboolean> value) {
         this.outputClockEnables = value;
@@ -187,11 +187,11 @@ public class PllClockObject {
 
     /**
      * ��ȡoutputClockFrequencys���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}
-     *
+     *     
      */
     public JAXBElement<ArrayOffloat> getOutputClockFrequencys() {
         return outputClockFrequencys;
@@ -199,11 +199,11 @@ public class PllClockObject {
 
     /**
      * ����outputClockFrequencys���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ArrayOffloat }{@code >}
-     *
+     *     
      */
     public void setOutputClockFrequencys(JAXBElement<ArrayOffloat> value) {
         this.outputClockFrequencys = value;
@@ -211,11 +211,11 @@ public class PllClockObject {
 
     /**
      * ��ȡpllId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getPllId() {
         return pllId;
@@ -223,11 +223,11 @@ public class PllClockObject {
 
     /**
      * ����pllId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setPllId(Long value) {
         this.pllId = value;

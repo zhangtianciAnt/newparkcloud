@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -49,11 +49,11 @@ public class GetFpgaConfigProgress {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -61,11 +61,11 @@ public class GetFpgaConfigProgress {
 
     /**
      * ����deviceId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *
+     *     
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -73,11 +73,11 @@ public class GetFpgaConfigProgress {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -85,11 +85,11 @@ public class GetFpgaConfigProgress {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;
@@ -97,11 +97,11 @@ public class GetFpgaConfigProgress {
 
     /**
      * ��ȡprogress���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getProgress() {
         return progress;
@@ -109,11 +109,11 @@ public class GetFpgaConfigProgress {
 
     /**
      * ����progress���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setProgress(Long value) {
         this.progress = value;

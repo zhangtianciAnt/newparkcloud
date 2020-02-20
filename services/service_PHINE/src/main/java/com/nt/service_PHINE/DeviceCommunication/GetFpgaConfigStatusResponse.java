@@ -11,28 +11,28 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="GetFpgaConfigStatusResult" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
- *         &lt;element name="configResult" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConfigStatus" minOccurs="0"/&gt;
+ *         &lt;element name="configStatus" type="{http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform}ConfigStatus" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "getFpgaConfigStatusResult",
-    "configResult"
+    "configStatus"
 })
 @XmlRootElement(name = "GetFpgaConfigStatusResponse")
 public class GetFpgaConfigStatusResponse {
@@ -40,15 +40,15 @@ public class GetFpgaConfigStatusResponse {
     @XmlElement(name = "GetFpgaConfigStatusResult")
     protected Boolean getFpgaConfigStatusResult;
     @XmlSchemaType(name = "string")
-    protected ConfigStatus configResult;
+    protected ConfigStatus configStatus;
 
     /**
      * ��ȡgetFpgaConfigStatusResult���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Boolean }
-     *
+     *     
      */
     public Boolean isGetFpgaConfigStatusResult() {
         return getFpgaConfigStatusResult;
@@ -56,38 +56,38 @@ public class GetFpgaConfigStatusResponse {
 
     /**
      * ����getFpgaConfigStatusResult���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *
+     *     
      */
     public void setGetFpgaConfigStatusResult(Boolean value) {
         this.getFpgaConfigStatusResult = value;
     }
 
     /**
-     * ��ȡconfigResult���Ե�ֵ��
-     *
+     * ��ȡconfigStatus���Ե�ֵ��
+     * 
      * @return
      *     possible object is
      *     {@link ConfigStatus }
-     *
+     *     
      */
-    public ConfigStatus getConfigResult() {
-        return configResult;
+    public ConfigStatus getConfigStatus() {
+        return configStatus;
     }
 
     /**
-     * ����configResult���Ե�ֵ��
-     *
+     * ����configStatus���Ե�ֵ��
+     * 
      * @param value
      *     allowed object is
      *     {@link ConfigStatus }
-     *
+     *     
      */
-    public void setConfigResult(ConfigStatus value) {
-        this.configResult = value;
+    public void setConfigStatus(ConfigStatus value) {
+        this.configStatus = value;
     }
 
 }

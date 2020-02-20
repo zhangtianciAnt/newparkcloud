@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -45,11 +45,11 @@ public class GetPllClockResponse {
 
     /**
      * ��ȡgetPllClockResult���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Boolean }
-     *
+     *     
      */
     public Boolean isGetPllClockResult() {
         return getPllClockResult;
@@ -57,11 +57,11 @@ public class GetPllClockResponse {
 
     /**
      * ����getPllClockResult���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *
+     *     
      */
     public void setGetPllClockResult(Boolean value) {
         this.getPllClockResult = value;
@@ -69,11 +69,11 @@ public class GetPllClockResponse {
 
     /**
      * ��ȡpllClockObject���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
-     *
+     *     
      */
     public JAXBElement<PllClockObject> getPllClockObject() {
         return pllClockObject;
@@ -81,11 +81,11 @@ public class GetPllClockResponse {
 
     /**
      * ����pllClockObject���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link PllClockObject }{@code >}
-     *
+     *     
      */
     public void setPllClockObject(JAXBElement<PllClockObject> value) {
         this.pllClockObject = value;

@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- *
+ * 
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- *
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -44,11 +44,11 @@ public class RegReadResponse {
 
     /**
      * ��ȡregReadResult���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Boolean }
-     *
+     *     
      */
     public Boolean isRegReadResult() {
         return regReadResult;
@@ -56,11 +56,11 @@ public class RegReadResponse {
 
     /**
      * ����regReadResult���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *
+     *     
      */
     public void setRegReadResult(Boolean value) {
         this.regReadResult = value;
@@ -68,11 +68,11 @@ public class RegReadResponse {
 
     /**
      * ��ȡregData���Ե�ֵ��
-     *
+     * 
      * @return
      *     possible object is
      *     {@link Long }
-     *
+     *     
      */
     public Long getRegData() {
         return regData;
@@ -80,11 +80,11 @@ public class RegReadResponse {
 
     /**
      * ����regData���Ե�ֵ��
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link Long }
-     *
+     *     
      */
     public void setRegData(Long value) {
         this.regData = value;
