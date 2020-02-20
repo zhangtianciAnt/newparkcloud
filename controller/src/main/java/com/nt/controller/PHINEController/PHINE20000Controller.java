@@ -220,13 +220,13 @@ public class PHINE20000Controller {
         CurrentConnStatusVo currentConnStatusVo3 = new CurrentConnStatusVo();
         currentConnStatusVo1.setId("");
         currentConnStatusVo1.setDeviceid("device1");
-        currentConnStatusVo1.setId("未连接");
+        currentConnStatusVo1.setConnstatus("未连接");
         currentConnStatusVo2.setId("");
         currentConnStatusVo2.setDeviceid("device2");
-        currentConnStatusVo2.setId("已连接");
+        currentConnStatusVo2.setConnstatus("已连接");
         currentConnStatusVo3.setId("");
         currentConnStatusVo3.setDeviceid("device3");
-        currentConnStatusVo3.setId("离线");
+        currentConnStatusVo3.setConnstatus("离线");
         currentConnStatusVoList.add(currentConnStatusVo1);
         currentConnStatusVoList.add(currentConnStatusVo2);
         currentConnStatusVoList.add(currentConnStatusVo3);
