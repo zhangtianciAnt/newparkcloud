@@ -30,5 +30,5 @@ public interface MachineroominfoService {
     List<Machineroominfo> getMachineroominfoList();
 
     // 获取机房信息
-    Machineroominfo getMachineRoomInfo(Machineroominfo machineroominfo);
+    List<Machineroominfo> getMachineRoomInfo(Machineroominfo machineroominfo);
 }
