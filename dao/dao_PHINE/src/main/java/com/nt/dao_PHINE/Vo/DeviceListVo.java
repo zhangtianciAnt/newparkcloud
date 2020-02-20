@@ -31,6 +31,21 @@ public class DeviceListVo implements Comparable<DeviceListVo>{
     private String machineroomid;
 
     /**
+     * 所属机柜编号
+     */
+    private String cabinetid;
+
+    /**
+     * 所属机柜名称
+     */
+    private String cabinetname;
+
+    /**
+     * 设备所属机柜的槽位编号
+     */
+    private String cabinetslotid;
+
+    /**
      * 机房名
      */
     private String machineroomname;
