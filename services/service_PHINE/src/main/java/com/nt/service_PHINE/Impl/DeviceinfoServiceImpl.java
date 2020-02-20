@@ -1,6 +1,5 @@
 package com.nt.service_PHINE.Impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
@@ -23,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @ProjectName: newparkcloud
@@ -431,11 +431,11 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             deviceinfo.setDeviceid(item.getDeviceId().getValue());
             Deviceinfo deviceinfo1 = deviceinfoMapper.selectOne(deviceinfo);
             if (deviceinfo1 != null) {
-                Project2device tmp = new Project2device();
-                BeanUtil.copyProperties(project2deviceList.get(0), tmp);
-                tmp.setDeviceid(deviceinfo1.getId());
-                if (project2deviceList.contains(tmp)) {
+                List<Project2device> dummy = project2deviceList.stream().filter(s -> s.getDeviceid().equals(deviceinfo1.getId())).collect(Collectors.toList());
+                if (dummy.size() > 0) {
                     currentConnStatusVo.setId(deviceinfo1.getId());
+                } else {
+                    return;
                 }
             } else {
                 return;
