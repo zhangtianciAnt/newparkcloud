@@ -14,9 +14,11 @@ import com.nt.service_PHINE.mapper.ProjectinfoMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
+import org.bytedeco.javacpp.videoInputLib;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.util.StringUtil;
 
 import java.text.ParseException;
@@ -292,6 +294,9 @@ public class ProjectinfoServiceImpl implements ProjectinfoService {
      * @Param param 参数
      **/
     private String getDateToString(Date param){
+        if(StringUtils.isEmpty(param)) {
+            return "";
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(param);
     }

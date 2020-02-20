@@ -14,10 +14,7 @@ import com.nt.service_Org.UserService;
 import com.nt.service_PHINE.ChipinfoService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.ProjectinfoService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +86,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/updateProjectInfo", method = {RequestMethod.PUT})
     public ApiResult updateProjectInfo(@RequestBody ProjectListVo projectListVo, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(projectListVo.getId())) {
+        if (StringUtils.isEmpty(projectListVo.getId())) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
@@ -106,7 +103,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveUserAuthInfo", method = {RequestMethod.POST})
     public ApiResult saveUserAuthInfo(@RequestBody Project2userExtend project2userExtend, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(project2userExtend.getProjectid())) {
+        if (StringUtils.isEmpty(project2userExtend.getProjectid())) {
             return ApiResult.fail("请先创建项目信息后，再添加用户权限！");
         }
         TokenModel tokenModel = tokenService.getToken(request);
@@ -123,7 +120,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/saveResourcesInfo", method = {RequestMethod.POST})
     public ApiResult saveResourcesInfo(@RequestBody Project2deviceExtend project2deviceExtend, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(project2deviceExtend.getProjectid())) {
+        if (StringUtils.isEmpty(project2deviceExtend.getProjectid())) {
             return ApiResult.fail("请先创建项目信息后，再分配设备资源！");
         }
         TokenModel tokenModel = tokenService.getToken(request);
@@ -140,7 +137,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/getProjectInfo", method = {RequestMethod.GET})
     public ApiResult getProjectInfo(String projectid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(projectid)) {
+        if (StringUtils.isEmpty(projectid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(projectinfoService.getProjectInfo("", projectid));
@@ -156,7 +153,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/getUserAuthList", method = {RequestMethod.GET})
     public ApiResult getUserAuthList(String projectid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(projectid)) {
+        if (StringUtils.isEmpty(projectid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(projectinfoService.getUserAuthList(projectid));
@@ -172,7 +169,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/getDeviceListByCompanyId", method = {RequestMethod.GET})
     public ApiResult getDeviceListByCompanyId(String companyid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(companyid)) {
+        if (StringUtils.isEmpty(companyid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(deviceinfoService.getDeviceListByCompanyId(companyid));
@@ -188,7 +185,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/getDeviceListByProjectId", method = {RequestMethod.GET})
     public ApiResult getDeviceListByProjectId(String projectid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(projectid)) {
+        if (StringUtils.isEmpty(projectid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(deviceinfoService.getDeviceListByProjectId(projectid));
@@ -204,7 +201,7 @@ public class PHINE30000Controller {
      */
     @RequestMapping(value = "/delUserAuth", method = {RequestMethod.DELETE})
     public ApiResult delUserAuth(String id, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(id)) {
+        if (StringUtils.isEmpty(id)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         projectinfoService.delUserAuth(id);
