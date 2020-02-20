@@ -75,23 +75,12 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyProjects.preUpdate(tokenModel);
         companyprojectsMapper.updateByPrimaryKey(companyProjects);
         String companyprojectsid = companyProjects.getCompanyprojects_id();
-
-        StageInformation stageinformation = new StageInformation();
-        Projectsystem projectsystem = new Projectsystem();
-        ProjectContract projectcontract = new ProjectContract();
-        stageinformation.setCompanyprojects_id(companyprojectsid);
-        projectsystem.setCompanyprojects_id(companyprojectsid);
-        projectcontract.setCompanyprojects_id(companyprojectsid);
-        stageinformationMapper.delete(stageinformation);
-        projectsystemMapper.delete(projectsystem);
-        projectcontractMapper.delete(projectcontract);
         //项目计划
         List<StageInformation> stageinformationList = companyProjectsVo.getStageinformation();
-        //项目体制
-        List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
-        //项目合同
-        List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
         if (stageinformationList != null) {
+            StageInformation stageinformation = new StageInformation();
+            stageinformation.setCompanyprojects_id(companyprojectsid);
+            stageinformationMapper.delete(stageinformation);
             int rowindex = 0;
             for (StageInformation sta : stageinformationList) {
                 rowindex = rowindex + 1;
@@ -102,7 +91,12 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 stageinformationMapper.insertSelective(sta);
             }
         }
+        //项目体制
+        List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
         if (projectsystemList != null) {
+            Projectsystem projectsystem = new Projectsystem();
+            projectsystem.setCompanyprojects_id(companyprojectsid);
+            projectsystemMapper.delete(projectsystem);
             int rowundex = 0;
             for (Projectsystem pro : projectsystemList) {
                 rowundex = rowundex + 1;
@@ -113,7 +107,12 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectsystemMapper.insertSelective(pro);
             }
         }
+        //项目合同
+        List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
         if (projectcontractList != null) {
+            ProjectContract projectcontract = new ProjectContract();
+            projectcontract.setCompanyprojects_id(companyprojectsid);
+            projectcontractMapper.delete(projectcontract);
             int rowundex = 0;
             for (ProjectContract pro : projectcontractList) {
                 rowundex = rowundex + 1;
