@@ -40,6 +40,7 @@ public class Pfans5001Controller {
     @Autowired
     private TokenService tokenService;
 
+
     /**
      * 查看
      */
@@ -106,5 +107,14 @@ public class Pfans5001Controller {
         }
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
+    }
+
+    @RequestMapping(value = "/getstageInformation", method = { RequestMethod.POST })
+    public ApiResult getstageInformation(@RequestBody StageInformation stageInformation, HttpServletRequest request) throws Exception{
+        if (stageInformation == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.getstageInformation(stageInformation));
     }
 }
