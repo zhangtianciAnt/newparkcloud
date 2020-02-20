@@ -4,6 +4,7 @@ import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.ChartDataRow;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.dao_PHINE.Vo.DeviceinfoVo;
+import com.nt.dao_PHINE.Vo.ReadWriteTestVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
@@ -55,6 +56,9 @@ public interface DeviceinfoService {
 
     // 逻辑加载
     ApiResult logicFileLoad(TokenModel tokenMode, List<Fileinfo> fileinfoList);
+
+    // 测试读写
+    List<ReadWriteTestVo> readWriteTest(TokenModel tokenModel, String projectid);
 
     // 获取企业/设备数据
     List<ChartDataRow> getDeviceChartInfo();

@@ -3,7 +3,6 @@ package com.nt.controller.PHINEController;
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
-import com.nt.dao_PHINE.Vo.ReadWriteTestVo;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.FilemarkService;
 import com.nt.service_PHINE.OperationrecordService;
@@ -15,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -185,21 +181,23 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/readWriteTest", method = {RequestMethod.GET})
     public ApiResult readWriteTest(HttpServletRequest request, @RequestParam String projectid) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        List<ReadWriteTestVo> readWriteTestVoList = new ArrayList<>();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        for (int i = 0; i < 1; i++) {
-            ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
-            readWriteTestVo.setDeviceid("device_1");
-            readWriteTestVo.setResult(df.format(new Date()) + "-FPGA" + (i+1) + "读取成功，写入失败！");
-            readWriteTestVoList.add(readWriteTestVo);
-        }
-        for (int i = 0; i < 1; i++) {
-            ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
-            readWriteTestVo.setDeviceid("device_2");
-            readWriteTestVo.setResult(df.format(new Date()) + "-FPGA" + (i+1) + "读取失败，写入成功！");
-            readWriteTestVoList.add(readWriteTestVo);
-        }
-        return ApiResult.success(readWriteTestVoList);
+        // region 测试代码
+//        List<ReadWriteTestVo> readWriteTestVoList = new ArrayList<>();
+//        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+//        for (int i = 0; i < 6; i++) {
+//            ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
+//            readWriteTestVo.setDeviceid("device_1");
+//            readWriteTestVo.setResult(df.format(new Date()) + "-FPGA" + (i+1) + "读取成功，写入失败！");
+//            readWriteTestVoList.add(readWriteTestVo);
+//        }
+//        for (int i = 0; i < 6; i++) {
+//            ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
+//            readWriteTestVo.setDeviceid("device_2");
+//            readWriteTestVo.setResult(df.format(new Date()) + "-FPGA" + (i+1) + "读取失败，写入成功！");
+//            readWriteTestVoList.add(readWriteTestVo);
+//        }
+        // endregion
+        return ApiResult.success(deviceinfoService.readWriteTest(tokenModel, projectid));
     }
 
 }

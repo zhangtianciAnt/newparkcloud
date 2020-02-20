@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
  * @ProjectName: newparkcloud
  * @Package: com.nt.dao_PHINE.Vo
@@ -59,7 +61,7 @@ public class ProjectListVo {
     private String chipid;
 
     /**
-     * 芯片ID
+     * 公司ID
      */
     private String companyid;
 
@@ -67,4 +69,19 @@ public class ProjectListVo {
      * 项目描述
      */
     private String projectdescription;
+
+    /**
+     * 项目时间
+     */
+    private String[] projectdate;
+
+    /**
+     * 项目开始时间
+     */
+    private Date starttime;
+
+    /**
+     * 项目结束时间
+     */
+    private Date endtime;
 }

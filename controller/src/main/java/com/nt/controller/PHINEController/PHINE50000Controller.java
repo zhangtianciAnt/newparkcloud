@@ -119,6 +119,19 @@ public class PHINE50000Controller {
     // region 机房相关Api
     /**
      * @return
+     * @Method getMachineRoomInfo
+     * @Author SKAIXX
+     * @Description 获取机房信息
+     * @Date 2020/2/5 22:28
+     * @Param
+     **/
+    @RequestMapping(value = "/getMachineRoomInfo",method={RequestMethod.POST})
+    public ApiResult getMachineRoomInfo(HttpServletRequest request, @RequestBody Machineroominfo machineroominfo) throws Exception {
+        return ApiResult.success(machineroominfoService.getMachineRoomInfo(machineroominfo));
+    }
+
+    /**
+     * @return
      * @Method saveMachineRoomInfo
      * @Author SKAIXX
      * @Description 创建机房信息

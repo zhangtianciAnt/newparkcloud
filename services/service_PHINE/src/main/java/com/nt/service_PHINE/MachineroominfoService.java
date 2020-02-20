@@ -28,4 +28,7 @@ public interface MachineroominfoService {
 
     // 获取机房列表
     List<Machineroominfo> getMachineroominfoList();
+
+    // 获取机房信息
+    Machineroominfo getMachineRoomInfo(Machineroominfo machineroominfo);
 }

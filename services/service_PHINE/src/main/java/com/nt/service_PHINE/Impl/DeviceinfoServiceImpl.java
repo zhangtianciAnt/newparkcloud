@@ -18,8 +18,10 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.util.StringUtil;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -54,6 +56,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
     @Autowired
     private OrgTreeService orgTreeService;
+
+    @Autowired
+    private Project2deviceMapper project2deviceMapper;
 
     // WCF服务地址
     private static URL WSDL_LOCATION;
@@ -469,14 +474,15 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             switch (fileinfo.getFiletype()) {
                 case "FPGA":        // 执行FPGA加载
                     result = port.startConfigFpgaByFile(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
+                    // TODO:FPGA结果加载
                     configurationtype = "FPGA加载";
                     break;
                 case "FMC":         // 执行FMC加载
-                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
+                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), 0L, fileinfo.getUrl());
                     configurationtype = "FMC加载";
                     break;
                 case "PLL":         // 执行PLL加载
-                    result = port.setPllClockByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
+                    result = port.setPllClockByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), 0L, fileinfo.getUrl());
                     configurationtype = "PLL加载";
                     break;
             }
@@ -498,6 +504,45 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
         operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
         return ApiResult.success(fileinfoList);
+    }
+
+    @Override
+    public List<ReadWriteTestVo> readWriteTest(TokenModel tokenModel, String projectid) {
+
+        List<ReadWriteTestVo> readWriteTestVoList = new ArrayList<>();
+
+        // region 通过项目ID获取所有设备ID
+        Project2device tmpModel = new Project2device();
+        tmpModel.setProjectid(projectid);
+        List<Project2device> project2deviceList = project2deviceMapper.select(tmpModel);
+        List<Deviceinfo> deviceinfoList = new ArrayList<>();
+        project2deviceList.forEach(item -> {
+            deviceinfoList.add(deviceinfoMapper.selectByPrimaryKey(item.getDeviceid()));
+        });
+        // endregion
+
+        // region 设备读写测试
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        deviceinfoList.forEach(item -> {
+            ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
+            String msg = df.format(new Date()) + "-FPGA1 ";
+            // 读寄存器
+            Holder<Long> regData = new Holder<Long>(0L);
+            Holder<Boolean> holderResult = new Holder<>(false);
+            port.regRead(item.getDeviceid(), 1L, Long.parseLong("000C", 16), regData, holderResult);
+            msg += holderResult.value ? "读取成功," : "读取失败,";
+            // 写寄存器
+            Boolean result = port.regWrite(item.getDeviceid(), 1L, Long.parseLong("000C", 16), 1L);
+            msg += result ? "写入成功！" : "写入失败！";
+            readWriteTestVo.setDeviceid(item.getDeviceid());
+            readWriteTestVo.setResult(msg);
+            readWriteTestVoList.add(readWriteTestVo);
+        });
+        // endregion
+
+        return readWriteTestVoList;
     }
 
     /**
