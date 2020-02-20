@@ -288,6 +288,8 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
             String id = highriskareaList.get(i).getHighriskareaid();
             String name = highriskareaList.get(i).getHighriskareaname();
             String detailedlocation = highriskareaList.get(i).getDetailedlocation();
+            String mapid = highriskareaList.get(i).getMapid();
+            String content = highriskareaList.get(i).getHighriskareacontent();
             Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
             highriskareadetailed.setHighriskareaid(id);
             List<Highriskareadetailed> highriskareadetailedlist = highriskareadetailedMapper.select(highriskareadetailed);
@@ -295,6 +297,8 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
             highriskareavo.setHighriskareaid(id);
             highriskareavo.setHighriskareaname(name);
             highriskareavo.setDetailedlocation(detailedlocation);
+            highriskareavo.setMapid(mapid);
+            highriskareavo.setHighriskareacontent(content);
             ArrayList list = new ArrayList();
             for(int j = 0;j<highriskareadetailedlist.size();j++)
             {

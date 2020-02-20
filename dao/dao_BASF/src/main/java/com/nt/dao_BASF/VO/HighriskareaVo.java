@@ -28,5 +28,15 @@ public class HighriskareaVo extends BaseModel {
      */
     private String detailedlocation;
 
+    /**
+     * mapid
+     */
+    private String mapid;
+
+    /**
+     * 高风险作业内容
+     */
+    private String highriskareacontent;
+
     private ArrayList highriskareadetailedlist;
 }

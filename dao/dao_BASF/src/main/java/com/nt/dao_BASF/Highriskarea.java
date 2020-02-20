@@ -25,4 +25,15 @@ public class Highriskarea extends BaseModel {
      * 详细位置
      */
     private String detailedlocation;
+
+    /**
+     * mapid
+     */
+    private String mapid;
+
+    /**
+     * 高风险作业内容
+     */
+    private String highriskareacontent;
+
 }
