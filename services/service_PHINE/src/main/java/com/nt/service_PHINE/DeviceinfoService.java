@@ -4,6 +4,7 @@ import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public interface DeviceinfoService {
     ApiResult deleteDeviceInfo(String id);
 
     // 获取全部设备状态信息
-    List<DeviceListVo> getAllDeviceStatus();
+    List<DeviceListVo> getAllDeviceStatus(String companyid);
 
     // 获取通信操作设备信息
     List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid);
