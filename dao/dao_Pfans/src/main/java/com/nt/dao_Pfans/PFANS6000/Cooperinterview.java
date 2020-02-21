@@ -26,6 +26,12 @@ public class Cooperinterview extends BaseModel {
     private String cooperinterview_id;
 
     /**
+     * 姓名id
+     */
+    @Column(name = "COOPERUSERID")
+    private String cooperuserid;
+
+    /**
      * 姓名
      */
     @Column(name = "COOPERNAME")
