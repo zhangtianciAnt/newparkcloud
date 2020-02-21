@@ -4,6 +4,7 @@ import com.nt.dao_PHINE.Deviceinfo;
 import com.nt.dao_PHINE.Vo.ChartDataRow;
 import com.nt.dao_PHINE.Vo.DeviceListVo;
 import com.nt.utils.MyMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface DeviceinfoMapper extends MyMapper<Deviceinfo> {
     List<DeviceListVo> getDeviceListByCompanyId(String companyid);
 
     // 获取全部设备状态信息
-    List<DeviceListVo> getAllDeviceStatus();
+    List<DeviceListVo> getAllDeviceStatus(@Param(value = "companyid") String companyid);
 
     // 获取通信操作设备信息
     List<DeviceListVo> getCommunicationDeviceInfo(String projectid);

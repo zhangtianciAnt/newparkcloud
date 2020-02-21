@@ -131,6 +131,11 @@
           boardinfo f
         ON
           a.id = f.deviceid
+        <where>
+            <if test="companyid != '' and companyid != null">
+                a.companyid = #{companyid}
+            </if>
+        </where>
         ORDER BY
           a.deviceid,
           f.boardid

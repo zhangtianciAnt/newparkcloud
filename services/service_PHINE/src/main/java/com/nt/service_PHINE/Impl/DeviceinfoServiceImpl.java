@@ -349,8 +349,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Date 2020/2/10 15:27
      **/
     @Override
-    public List<DeviceListVo> getAllDeviceStatus() {
-        List<DeviceListVo> deviceList = deviceinfoMapper.getAllDeviceStatus();
+    public List<DeviceListVo> getAllDeviceStatus(String companyid) {
+        List<DeviceListVo> deviceList = deviceinfoMapper.getAllDeviceStatus(companyid);
         // 按照设备ID和设备地址分组，重构数据库数据
         Map<String, List<String>> tmpMap = new HashMap<>();
         for (DeviceListVo vo : deviceList) {

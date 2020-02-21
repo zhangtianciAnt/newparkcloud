@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @ProjectName: PHINE管理平台
- * @Package: com.nt.controller.PHINEController.PHINE30000Controller
- * @ClassName: PHINE30000Controller
+ * @Package: com.nt.controller.PHINEController.PHINE40000Controller
+ * @ClassName: PHINE40000Controller
  * @Author: MYT
- * @Description: PHINE创建项目Controller
+ * @Description: PHINE项目状态Controller
  * @Date: 2020/1/30 14.01
  * @Version: 1.0
  */
@@ -46,7 +46,7 @@ public class PHINE40000Controller {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getAllDeviceStatus", method = {RequestMethod.GET})
-    public ApiResult getAllDeviceStatus() throws Exception {
-        return ApiResult.success(deviceinfoService.getAllDeviceStatus());
+    public ApiResult getAllDeviceStatus(String companyid) throws Exception {
+        return ApiResult.success(deviceinfoService.getAllDeviceStatus(companyid));
     }
 }
