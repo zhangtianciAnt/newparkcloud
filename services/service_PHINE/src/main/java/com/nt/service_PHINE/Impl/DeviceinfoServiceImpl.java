@@ -304,13 +304,13 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         Boardinfo boardinfo = new Boardinfo();
         boardinfo.setDeviceid(deviceinfoVo.getId());
         List<Boardinfo> boardinfoList = boardinfoMapper.select(boardinfo);
-        boardinfoMapper.delete(boardinfo);
+        boardinfoMapper.deleteByPrimaryKey(boardinfo);
 
         // 删除芯片
         for (Boardinfo tmp : boardinfoList) {
             Chipinfo chipinfo = new Chipinfo();
             chipinfo.setBoardid(tmp.getId());
-            chipinfoMapper.delete(chipinfo);
+            chipinfoMapper.deleteByPrimaryKey(chipinfo);
         }
     }
 
