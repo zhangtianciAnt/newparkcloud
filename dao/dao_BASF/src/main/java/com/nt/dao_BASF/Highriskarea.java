@@ -36,4 +36,9 @@ public class Highriskarea extends BaseModel {
      */
     private String highriskareacontent;
 
+    /**
+     * 坐标
+     */
+    private String highriskareadetailedlist;
+
 }

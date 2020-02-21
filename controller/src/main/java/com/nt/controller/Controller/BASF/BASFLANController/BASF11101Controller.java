@@ -78,16 +78,16 @@ public class BASF11101Controller {
     }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody HighriskareaVo highriskareaVo, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        riskassessmentservices.insert(tokenModel,highriskareaVo);
+        riskassessmentservices.insert(tokenModel,highriskarea);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody HighriskareaVo highriskareaVo, HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        riskassessmentservices.update(tokenModel,highriskareaVo);
+        riskassessmentservices.update(tokenModel,highriskarea);
         return ApiResult.success();
     }
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})

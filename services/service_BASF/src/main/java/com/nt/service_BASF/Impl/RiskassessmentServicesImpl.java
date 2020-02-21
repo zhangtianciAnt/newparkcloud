@@ -277,86 +277,85 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
     }
 
     @Override
-    public List<HighriskareaVo> selecthig(TokenModel tokenModel,Highriskarea highriskarea) throws Exception {
-        List<HighriskareaVo> highriskareavolist = new ArrayList<>();
+    public List<Highriskarea> selecthig(TokenModel tokenModel,Highriskarea highriskarea) throws Exception {
+          return highriskareaMapper.select(highriskarea);
 
-
-        List<Highriskarea> highriskareaList =  highriskareaMapper.select(highriskarea);
-
-        for(int i = 0;i<highriskareaList.size();i++)
-        {
-            String id = highriskareaList.get(i).getHighriskareaid();
-            String name = highriskareaList.get(i).getHighriskareaname();
-            String detailedlocation = highriskareaList.get(i).getDetailedlocation();
-            String mapid = highriskareaList.get(i).getMapid();
-            String content = highriskareaList.get(i).getHighriskareacontent();
-            Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
-            highriskareadetailed.setHighriskareaid(id);
-            List<Highriskareadetailed> highriskareadetailedlist = highriskareadetailedMapper.select(highriskareadetailed);
-            HighriskareaVo  highriskareavo  = new HighriskareaVo();
-            highriskareavo.setHighriskareaid(id);
-            highriskareavo.setHighriskareaname(name);
-            highriskareavo.setDetailedlocation(detailedlocation);
-            highriskareavo.setMapid(mapid);
-            highriskareavo.setHighriskareacontent(content);
-            ArrayList list = new ArrayList();
-            for(int j = 0;j<highriskareadetailedlist.size();j++)
-            {
-                String coordinate = highriskareadetailedlist.get(j).getCoordinate();
-                list.add(coordinate);
-            }
-            highriskareavo.setHighriskareadetailedlist(list);
-            highriskareavolist.add(highriskareavo);
-        }
-        return highriskareavolist;
+//        List<HighriskareaVo> highriskareavolist = new ArrayList<>();//
+//        List<Highriskarea> highriskareaList =  highriskareaMapper.select(highriskarea);//
+//        for(int i = 0;i<highriskareaList.size();i++)
+//        {
+//            String id = highriskareaList.get(i).getHighriskareaid();
+//            String name = highriskareaList.get(i).getHighriskareaname();
+//            String detailedlocation = highriskareaList.get(i).getDetailedlocation();
+//            String mapid = highriskareaList.get(i).getMapid();
+//            String content = highriskareaList.get(i).getHighriskareacontent();
+//            Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
+//            highriskareadetailed.setHighriskareaid(id);
+//            List<Highriskareadetailed> highriskareadetailedlist = highriskareadetailedMapper.select(highriskareadetailed);
+//            HighriskareaVo  highriskareavo  = new HighriskareaVo();
+//            highriskareavo.setHighriskareaid(id);
+//            highriskareavo.setHighriskareaname(name);
+//            highriskareavo.setDetailedlocation(detailedlocation);
+//            highriskareavo.setMapid(mapid);
+//            highriskareavo.setHighriskareacontent(content);
+//            ArrayList list = new ArrayList();
+//            for(int j = 0;j<highriskareadetailedlist.size();j++)
+//            {
+//                String coordinate = highriskareadetailedlist.get(j).getCoordinate();
+//                list.add(coordinate);
+//            }
+//            highriskareavo.setHighriskareadetailedlist(list);
+//            highriskareavolist.add(highriskareavo);
+//        }
+//        return highriskareavolist;
     }
 
     @Override
-    public void insert(TokenModel tokenModel, HighriskareaVo highriskareaVo) throws Exception {
-        Highriskarea highriskarea = new Highriskarea();
+    public void insert(TokenModel tokenModel, Highriskarea highriskarea) throws Exception {
+        //Highriskarea highriskarea = new Highriskarea();
         highriskarea.preInsert(tokenModel);
         String id = UUID.randomUUID().toString();
         highriskarea.setHighriskareaid(id);
-        highriskarea.setHighriskareaname(highriskareaVo.getHighriskareaname());
-        highriskarea.setDetailedlocation(highriskareaVo.getDetailedlocation());
+//        highriskarea.setHighriskareaname(highriskarea.getHighriskareaname());
+//        highriskarea.setDetailedlocation(highriskarea.getDetailedlocation());
         highriskareaMapper.insert(highriskarea);
 
-        if (highriskareaVo.getHighriskareadetailedlist().size() >0) {
-            for (int i = 0; i < highriskareaVo.getHighriskareadetailedlist().size(); i++) {
-                String coordinate = highriskareaVo.getHighriskareadetailedlist().get(i).toString();
-                Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
-                highriskareadetailed.preInsert(tokenModel);
-                highriskareadetailed.setHighriskareadetailedid(UUID.randomUUID().toString());
-                highriskareadetailed.setHighriskareaid(id);
-                highriskareadetailed.setCoordinate(coordinate);
-                highriskareadetailedMapper.insert(highriskareadetailed);
-            }
-        }
+//        if (highriskareaVo.getHighriskareadetailedlist().size() >0) {
+//            for (int i = 0; i < highriskareaVo.getHighriskareadetailedlist().size(); i++) {
+//                String coordinate = highriskareaVo.getHighriskareadetailedlist().get(i).toString();
+//                Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
+//                highriskareadetailed.preInsert(tokenModel);
+//                highriskareadetailed.setHighriskareadetailedid(UUID.randomUUID().toString());
+//                highriskareadetailed.setHighriskareaid(id);
+//                highriskareadetailed.setCoordinate(coordinate);
+//                highriskareadetailedMapper.insert(highriskareadetailed);
+//            }
+//        }
     }
 
     @Override
-    public void update(TokenModel tokenModel, HighriskareaVo highriskareaVo) throws Exception {
-        Highriskarea highriskarea = new Highriskarea();
+    public void update(TokenModel tokenModel, Highriskarea highriskarea) throws Exception {
+        //Highriskarea highriskarea = new Highriskarea();
         highriskarea.preUpdate(tokenModel);
-        highriskarea.setHighriskareaid(highriskareaVo.getHighriskareaid());
-        highriskarea.setHighriskareaname(highriskareaVo.getHighriskareaname());
-        highriskarea.setDetailedlocation(highriskareaVo.getDetailedlocation());
+//        highriskarea.setHighriskareaid(highriskareaVo.getHighriskareaid());
+//        highriskarea.setHighriskareaname(highriskareaVo.getHighriskareaname());
+//        highriskarea.setDetailedlocation(highriskareaVo.getDetailedlocation());
         highriskareaMapper.updateByPrimaryKeySelective(highriskarea);
-        Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
-        highriskareadetailed.setHighriskareaid(highriskareaVo.getHighriskareaid());
-        highriskareadetailedMapper.delete(highriskareadetailed);
-
-        if (highriskareaVo.getHighriskareadetailedlist().size() >0) {
-            for (int i = 0; i < highriskareaVo.getHighriskareadetailedlist().size(); i++) {
-                String coordinate = highriskareaVo.getHighriskareadetailedlist().get(i).toString();
-                Highriskareadetailed highriskareadetailednew = new Highriskareadetailed();
-                highriskareadetailednew.preInsert(tokenModel);
-                highriskareadetailednew.setHighriskareadetailedid(UUID.randomUUID().toString());
-                highriskareadetailednew.setHighriskareaid(highriskareaVo.getHighriskareaid());
-                highriskareadetailednew.setCoordinate(coordinate);
-                highriskareadetailedMapper.insert(highriskareadetailednew);
-            }
-        }
+//        Highriskareadetailed highriskareadetailed = new Highriskareadetailed();
+//        highriskareadetailed.setHighriskareaid(highriskareaVo.getHighriskareaid());
+//        highriskareadetailedMapper.delete(highriskareadetailed);
+//
+//        if (highriskareaVo.getHighriskareadetailedlist().size() >0) {
+//            for (int i = 0; i < highriskareaVo.getHighriskareadetailedlist().size(); i++) {
+//                String coordinate = highriskareaVo.getHighriskareadetailedlist().get(i).toString();
+//                Highriskareadetailed highriskareadetailednew = new Highriskareadetailed();
+//                highriskareadetailednew.preInsert(tokenModel);
+//                highriskareadetailednew.setHighriskareadetailedid(UUID.randomUUID().toString());
+//                highriskareadetailednew.setHighriskareaid(highriskareaVo.getHighriskareaid());
+//                highriskareadetailednew.setCoordinate(coordinate);
+//                highriskareadetailedMapper.insert(highriskareadetailednew);
+//            }
+//        }
     }
 
     @Override
