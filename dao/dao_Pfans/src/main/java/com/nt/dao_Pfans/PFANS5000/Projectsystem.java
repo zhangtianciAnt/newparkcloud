@@ -13,45 +13,69 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "projectresources")
-public class ProjectreSources extends BaseModel {
-
+@Table(name = "projectsystem")
+public class Projectsystem extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 项目计划ID
+     * 项目体制
      */
     @Id
-    @Column(name = "PROJECTRESOURCES_ID")
-    private String projectresources_id;
+    @Column(name = "PROJECTSYSTEM_ID")
+    private String projectsystem_id;
 
     /**
-     * 所属项目
+     * 所属公司项目
      */
     @Column(name = "COMPANYPROJECTS_ID")
     private String companyprojects_id;
 
     /**
-     * 姓名
+     * 社内外协区分
      */
-    @Column(name = "USER_ID")
-    private String user_id;
+    @Column(name = "TYPE")
+    private String type;
 
     /**
-     * 角色
+     * 编号
      */
-    @Column(name = "ROLE")
-    private String role;
+    @Column(name = "NUMBER")
+    private String number;
 
+    /**
+     * 协力公司
+     */
+    @Column(name = "COMPANY")
+    private String company;
+
+    /**
+     * 姓名
+     */
+    @Column(name = "NAME")
+    private String name;
+
+    /**
+     * 职位
+     */
+    @Column(name = "POSITION")
+    private String position;
+
+    /**
+     * 入场时间
+     */
     @Column(name = "ADMISSIONTIME")
     private Date admissiontime;
 
+    /**
+     * 退场时间
+     */
     @Column(name = "EXITTIME")
     private Date exittime;
 
+    /**
+     * 顺序
+     */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
-
-
 
 }

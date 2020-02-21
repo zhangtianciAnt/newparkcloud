@@ -40,6 +40,14 @@ public class Pfans6004Controller {
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
+    @RequestMapping(value = "/getexpatriatesinforthisyear", method = {RequestMethod.GET})
+    public ApiResult getexpatriatesinforthisyear(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(expatriatesinforService.getexpatriatesinforthisyear(expatriatesinfor));
+    }
+
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getexpatriatesinforApplyOne(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
         if (expatriatesinfor == null) {
@@ -84,7 +92,7 @@ public class Pfans6004Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        expatriatesinforService.updateexpatriatesinfor(expatriatesinfor,tokenModel);
+        expatriatesinforService.setexpatriatesinforApply(expatriatesinfor,tokenModel);
         return ApiResult.success();
     }
 

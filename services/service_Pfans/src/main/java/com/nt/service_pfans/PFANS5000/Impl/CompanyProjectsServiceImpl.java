@@ -1,17 +1,9 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS5000.OutSource;
-import com.nt.dao_Pfans.PFANS5000.ProjectPlan;
-import com.nt.dao_Pfans.PFANS5000.ProjectreSources;
+import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
-import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
-import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
-import com.nt.service_pfans.PFANS5000.mapper.OutSourceMapper;
-import com.nt.service_pfans.PFANS5000.mapper.ProjectplanMapper;
-import com.nt.service_pfans.PFANS5000.mapper.ProjectresourcesMapper;
-import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +24,16 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Autowired
     private CompanyProjectsMapper companyprojectsMapper;
     @Autowired
-    private ProjectplanMapper projectplanMapper;
+    private StageInformationMapper stageinformationMapper;
     @Autowired
-    private ProjectresourcesMapper projectresourcesMapper;
-
+    private ProjectsystemMapper projectsystemMapper;
     @Autowired
-    private OutSourceMapper outSourceMapper;
-
-    @Autowired
-    private ExpatriatesinforMapper expatriatesinforMapper;
+    private ProjectContractMapper projectcontractMapper;
 
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
         return companyprojectsMapper.select(companyprojects);
     }
-
 
     @Override
     public List<CompanyProjects> list(CompanyProjects companyProjects) throws Exception {
@@ -57,23 +44,26 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public CompanyProjectsVo selectById(String companyprojectsid) throws Exception {
         CompanyProjectsVo staffVo = new CompanyProjectsVo();
-        ProjectPlan projectPlan = new ProjectPlan();
-        ProjectreSources projectreSources = new ProjectreSources();
-        OutSource outSource = new OutSource();
-        projectPlan.setCompanyprojects_id(companyprojectsid);
-        projectreSources.setCompanyprojects_id(companyprojectsid);
-        outSource.setCompanyprojects_id(companyprojectsid);
-        List<ProjectPlan> projectPlanList = projectplanMapper.select(projectPlan);
-        List<ProjectreSources> projectreSourcesList = projectresourcesMapper.select(projectreSources);
-        List<OutSource> outsourcesList = outSourceMapper.select(outSource);
-        projectPlanList = projectPlanList.stream().sorted(Comparator.comparing(ProjectPlan::getRowindex)).collect(Collectors.toList());
-        projectreSourcesList = projectreSourcesList.stream().sorted(Comparator.comparing(ProjectreSources::getRowindex)).collect(Collectors.toList());
-        outsourcesList = outsourcesList.stream().sorted(Comparator.comparing(OutSource::getRowindex)).collect(Collectors.toList());
-        CompanyProjects Staff = companyprojectsMapper.selectByPrimaryKey(companyprojectsid);
-        staffVo.setCompanyprojects(Staff);
-        staffVo.setProjectplan(projectPlanList);
-        staffVo.setProjectresources(projectreSourcesList);
-        staffVo.setOutSources(outsourcesList);
+        //项目计划
+        StageInformation stageInformation = new StageInformation();
+        //项目体制
+        Projectsystem projectsystem = new Projectsystem();
+        //项目合同
+        ProjectContract projectcontract = new ProjectContract();
+        projectsystem.setCompanyprojects_id(companyprojectsid);
+        stageInformation.setCompanyprojects_id(companyprojectsid);
+        projectcontract.setCompanyprojects_id(companyprojectsid);
+        CompanyProjects companyprojects = companyprojectsMapper.selectByPrimaryKey(companyprojectsid);
+        List<Projectsystem> projectsystemList = projectsystemMapper.select(projectsystem);
+        List<StageInformation> stageinformationList = stageinformationMapper.select(stageInformation);
+        List<ProjectContract> projectcontractList = projectcontractMapper.select(projectcontract);
+        projectsystemList = projectsystemList.stream().sorted(Comparator.comparing(Projectsystem::getRowindex)).collect(Collectors.toList());
+        stageinformationList = stageinformationList.stream().sorted(Comparator.comparing(StageInformation::getRowindex)).collect(Collectors.toList());
+        projectcontractList = projectcontractList.stream().sorted(Comparator.comparing(ProjectContract::getRowindex)).collect(Collectors.toList());
+        staffVo.setCompanyprojects(companyprojects);
+        staffVo.setProjectsystem(projectsystemList);
+        staffVo.setStageinformation(stageinformationList);
+        staffVo.setProjectcontract(projectcontractList);
         return staffVo;
     }
 
@@ -85,53 +75,54 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyProjects.preUpdate(tokenModel);
         companyprojectsMapper.updateByPrimaryKey(companyProjects);
         String companyprojectsid = companyProjects.getCompanyprojects_id();
-        ProjectPlan pro = new ProjectPlan();
-        ProjectreSources sou = new ProjectreSources();
-        OutSource out = new OutSource();
-        pro.setCompanyprojects_id(companyprojectsid);
-        sou.setCompanyprojects_id(companyprojectsid);
-        out.setCompanyprojects_id(companyprojectsid);
-        projectplanMapper.delete(pro);
-        projectresourcesMapper.delete(sou);
-        outSourceMapper.delete(out);
-        List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
-        List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
-        List<OutSource> outSourceList = companyProjectsVo.getOutSources();
-        if (projectPlanList != null) {
-            int rowundex = 0;
-            for (ProjectPlan projectPlan : projectPlanList) {
-                rowundex = rowundex + 1;
-                projectPlan.preInsert(tokenModel);
-                projectPlan.setProjectplan_id(UUID.randomUUID().toString());
-                projectPlan.setCompanyprojects_id(companyprojectsid);
-                projectPlan.setRowindex(rowundex);
-                projectplanMapper.insertSelective(projectPlan);
-            }
-        }
-        if (projectreSourcesList != null) {
-            int rowundex = 0;
-            for (ProjectreSources projectreSources : projectreSourcesList) {
-                rowundex = rowundex + 1;
-                projectreSources.preInsert(tokenModel);
-                projectreSources.setProjectresources_id(UUID.randomUUID().toString());
-                projectreSources.setCompanyprojects_id(companyprojectsid);
-                projectreSources.setRowindex(rowundex);
-                projectresourcesMapper.insertSelective(projectreSources);
-            }
-        }
-        if (outSourceList != null) {
+        //项目计划
+        List<StageInformation> stageinformationList = companyProjectsVo.getStageinformation();
+        if (stageinformationList != null) {
+            StageInformation stageinformation = new StageInformation();
+            stageinformation.setCompanyprojects_id(companyprojectsid);
+            stageinformationMapper.delete(stageinformation);
             int rowindex = 0;
-            for (OutSource outsource : outSourceList) {
+            for (StageInformation sta : stageinformationList) {
                 rowindex = rowindex + 1;
-                outsource.preInsert(tokenModel);
-                outsource.setOutsource_id(UUID.randomUUID().toString());
-                outsource.setCompanyprojects_id(companyprojectsid);
-                outsource.setRowindex(rowindex);
-                outSourceMapper.insertSelective(outsource);
+                sta.preInsert(tokenModel);
+                sta.setStageinformation_id(UUID.randomUUID().toString());
+                sta.setCompanyprojects_id(companyprojectsid);
+                sta.setRowindex(rowindex);
+                stageinformationMapper.insertSelective(sta);
             }
         }
-
-
+        //项目体制
+        List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
+        if (projectsystemList != null) {
+            Projectsystem projectsystem = new Projectsystem();
+            projectsystem.setCompanyprojects_id(companyprojectsid);
+            projectsystemMapper.delete(projectsystem);
+            int rowundex = 0;
+            for (Projectsystem pro : projectsystemList) {
+                rowundex = rowundex + 1;
+                pro.preInsert(tokenModel);
+                pro.setProjectsystem_id(UUID.randomUUID().toString());
+                pro.setCompanyprojects_id(companyprojectsid);
+                pro.setRowindex(rowundex);
+                projectsystemMapper.insertSelective(pro);
+            }
+        }
+        //项目合同
+        List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
+        if (projectcontractList != null) {
+            ProjectContract projectcontract = new ProjectContract();
+            projectcontract.setCompanyprojects_id(companyprojectsid);
+            projectcontractMapper.delete(projectcontract);
+            int rowundex = 0;
+            for (ProjectContract pro : projectcontractList) {
+                rowundex = rowundex + 1;
+                pro.preInsert(tokenModel);
+                pro.setProjectcontract_id(UUID.randomUUID().toString());
+                pro.setCompanyprojects_id(companyprojectsid);
+                pro.setRowindex(rowundex);
+                projectcontractMapper.insertSelective(pro);
+            }
+        }
     }
 
     //新建
@@ -143,46 +134,55 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         companyProjects.preInsert(tokenModel);
         companyProjects.setCompanyprojects_id(companyprojectsid);
         companyprojectsMapper.insertSelective(companyProjects);
-        List<ProjectPlan> projectPlanList = companyProjectsVo.getProjectplan();
-        List<ProjectreSources> projectreSourcesList = companyProjectsVo.getProjectresources();
-        List<OutSource> outSourceList = companyProjectsVo.getOutSources();
-        if (projectPlanList != null) {
+        //项目计划
+        List<StageInformation> stageInformationList = companyProjectsVo.getStageinformation();
+        //项目体制
+        List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
+        //项目合同
+        List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
+        if (projectsystemList != null) {
             int rowundex = 0;
-            for (ProjectPlan projectPlan : projectPlanList) {
+            for (Projectsystem projectsystem : projectsystemList) {
                 rowundex = rowundex + 1;
-                projectPlan.preInsert(tokenModel);
-                projectPlan.setProjectplan_id(UUID.randomUUID().toString());
-                projectPlan.setCompanyprojects_id(companyprojectsid);
-                projectPlan.setRowindex(rowundex);
-                projectplanMapper.insertSelective(projectPlan);
+                projectsystem.preInsert(tokenModel);
+                projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                projectsystem.setCompanyprojects_id(companyprojectsid);
+                projectsystem.setRowindex(rowundex);
+                projectsystemMapper.insertSelective(projectsystem);
             }
         }
-        if (projectreSourcesList != null) {
+        if (stageInformationList != null) {
             int rowundex = 0;
-            for (ProjectreSources projectreSources : projectreSourcesList) {
+            for (StageInformation stageInformation : stageInformationList) {
                 rowundex = rowundex + 1;
-                projectreSources.preInsert(tokenModel);
-                projectreSources.setProjectresources_id(UUID.randomUUID().toString());
-                projectreSources.setCompanyprojects_id(companyprojectsid);
-                projectreSources.setRowindex(rowundex);
-                projectresourcesMapper.insertSelective(projectreSources);
+                stageInformation.preInsert(tokenModel);
+                stageInformation.setStageinformation_id(UUID.randomUUID().toString());
+                stageInformation.setCompanyprojects_id(companyprojectsid);
+                stageInformation.setRowindex(rowundex);
+                stageinformationMapper.insertSelective(stageInformation);
             }
         }
-        if (outSourceList != null) {
-            int rowindex = 0;
-            for (OutSource outSource : outSourceList) {
-                //对外驻人员登记表数据库进行操作
-                Expatriatesinfor infor = expatriatesinforMapper.selectByPrimaryKey(outSource.getBpname());
-                infor.setProject_name(companyProjects.getProject_name());
-                infor.setManagerid(companyProjects.getManagerid());
-                expatriatesinforMapper.updateByPrimaryKeySelective(infor);
-                rowindex = rowindex + 1;
-                outSource.preInsert(tokenModel);
-                outSource.setOutsource_id(UUID.randomUUID().toString());
-                outSource.setCompanyprojects_id(companyprojectsid);
-                outSource.setRowindex(rowindex);
-                outSourceMapper.insertSelective(outSource);
+        if (projectcontractList != null) {
+            int rowundex = 0;
+            for (ProjectContract projectcontract : projectcontractList) {
+                rowundex = rowundex + 1;
+                projectcontract.preInsert(tokenModel);
+                projectcontract.setProjectcontract_id(UUID.randomUUID().toString());
+                projectcontract.setCompanyprojects_id(companyprojectsid);
+                projectcontract.setRowindex(rowundex);
+                projectcontractMapper.insertSelective(projectcontract);
             }
         }
+    }
+
+    /**
+     * 开发计划查询列表
+     * @param stageInformation
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception {
+        return stageinformationMapper.select(stageInformation);
     }
 }

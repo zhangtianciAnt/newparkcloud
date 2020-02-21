@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/contractapplication")
@@ -47,10 +48,7 @@ public class Pfans1026Controller {
     }
 
     @RequestMapping(value = "/insert",method={RequestMethod.POST})
-    public ApiResult insert(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
-        if (contractapplication == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
+    public ApiResult insert(@RequestBody List<Contractapplication> contractapplication, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         contractapplicationService.insert(contractapplication,tokenModel);
         return ApiResult.success();

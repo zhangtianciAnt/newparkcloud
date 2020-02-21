@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -36,9 +37,9 @@ public class Pfans5001Controller {
     @Autowired
     private ExpatriatesinforService expatriatesinforService;
 
-
     @Autowired
     private TokenService tokenService;
+
 
     /**
      * 查看
@@ -74,7 +75,6 @@ public class Pfans5001Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         companyProjectsService.update(companyProjectsVo,tokenModel);
         return ApiResult.success();
-
     }
 
 
@@ -107,5 +107,14 @@ public class Pfans5001Controller {
         }
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
+    }
+
+    @RequestMapping(value = "/getstageInformation", method = { RequestMethod.POST })
+    public ApiResult getstageInformation(@RequestBody StageInformation stageInformation, HttpServletRequest request) throws Exception{
+        if (stageInformation == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.getstageInformation(stageInformation));
     }
 }
