@@ -21,4 +21,6 @@ public interface PHINEFileService {
     ApiResult delFileMark2File(List<Filemark2file> filemark2fileList) throws Exception;
 
     ApiResult getLogicLoadHistory(String projectId) throws Exception;
+
+    ApiResult isExistSameNameFile(List<Fileinfo> fileinfoList) throws Exception;
 }

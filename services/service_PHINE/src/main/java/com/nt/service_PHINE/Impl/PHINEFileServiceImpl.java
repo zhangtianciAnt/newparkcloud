@@ -38,30 +38,37 @@ public class PHINEFileServiceImpl implements PHINEFileService {
     public ApiResult saveFileInfo(TokenModel tokenModel, List<Fileinfo> filesInfo, String projectId) throws Exception {
         // 操作记录表详情集合
         List<Operationdetail> operationdetails = new ArrayList<Operationdetail>();
-        filesInfo.forEach(item -> {
-            item.setFileid(UUID.randomUUID().toString());
-            item.preInsert(tokenModel);
+
+        for (Fileinfo fileinfo : filesInfo) {
+            // 判断文件名称是否已经存在
+            Fileinfo tmp = new Fileinfo();
+            tmp.setFilename(fileinfo.getFilename());
+            tmp = fileinfoMapper.selectOne(tmp);
+            if ( tmp != null) {
+                fileinfo.setFileid(tmp.getFileid());
+                fileinfo.preUpdate(tokenModel);
+                fileinfoMapper.updateByPrimaryKey(fileinfo);
+            } else {
+                fileinfo.setFileid(UUID.randomUUID().toString());
+                fileinfo.preInsert(tokenModel);
+                fileinfoMapper.insert(fileinfo);
+            }
             // 操作记录详情
             Operationdetail operationdetail = new Operationdetail();
-            operationdetail.setDevicename(item.getDeviceid());
-            operationdetail.setConfigurationtype(item.getFiletype());
-            operationdetail.setFilename(item.getFilename());
-            operationdetail.setFileid(item.getFileid());
+            operationdetail.setDevicename(fileinfo.getDeviceid());
+            operationdetail.setConfigurationtype(fileinfo.getFiletype());
+            operationdetail.setFilename(fileinfo.getFilename());
+            operationdetail.setFileid(fileinfo.getFileid());
             operationdetails.add(operationdetail);
-        });
-        int result = fileinfoMapper.saveFilesInfo(filesInfo);
-        if (result > 0) {
-            // 生成操作记录
-            OperationRecordVo operationRecordVo = new OperationRecordVo();
-            operationRecordVo.setTitle("文件上传");
-            operationRecordVo.setContent("上传" + result + "个文件");
-            operationRecordVo.setDetailist(operationdetails);
-            operationRecordVo.setProjectid(projectId);
-            operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
-            return ApiResult.success(MsgConstants.INFO_01);
-        } else {
-            return ApiResult.fail("保存文件信息" + MsgConstants.ERROR_01);
         }
+        // 生成操作记录
+        OperationRecordVo operationRecordVo = new OperationRecordVo();
+        operationRecordVo.setTitle("文件上传");
+        operationRecordVo.setContent("上传" + filesInfo.size() + "个文件");
+        operationRecordVo.setDetailist(operationdetails);
+        operationRecordVo.setProjectid(projectId);
+        operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
+        return ApiResult.success(MsgConstants.INFO_01);
     }
 
     @Override
@@ -127,6 +134,25 @@ public class PHINEFileServiceImpl implements PHINEFileService {
                 });
                 break;
             }
+        }
+        return ApiResult.success(fileinfoList);
+    }
+
+    /**
+     * @return
+     * @Method isExistSameNameFile
+     * @Author SKAIXX
+     * @Description 判断文件服务器中是否存在同名文件
+     * @Date 2020/2/21 21:58
+     * @Param
+     **/
+    @Override
+    public ApiResult isExistSameNameFile(List<Fileinfo> fileinfoList) throws Exception {
+        for (Fileinfo fileinfo : fileinfoList) {
+            Fileinfo tmp = new Fileinfo();
+            tmp.setFilename(fileinfo.getFilename());
+            int fileCnt = fileinfoMapper.selectCount(tmp);
+            fileinfo.setRemarks(fileCnt > 0 ? "1" : "0");
         }
         return ApiResult.success(fileinfoList);
     }
