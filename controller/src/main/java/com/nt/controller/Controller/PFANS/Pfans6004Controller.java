@@ -86,15 +86,15 @@ public class Pfans6004Controller {
         expatriatesinforService.createexpatriatesinforApply(expatriatesinfor, tokenModel);
         return ApiResult.success();
     }
-    @RequestMapping(value = "/setexpatriatesinforApply", method = {RequestMethod.POST})
-    public ApiResult setexpatriatesinforApply(@RequestBody List<Expatriatesinfor> expatriatesinfor, HttpServletRequest request) throws Exception {
-        if (expatriatesinfor == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        expatriatesinforService.setexpatriatesinforApply(expatriatesinfor,tokenModel);
-        return ApiResult.success();
-    }
+//    @RequestMapping(value = "/setexpatriatesinforApply", method = {RequestMethod.POST})
+//    public ApiResult setexpatriatesinforApply(@RequestBody List<Expatriatesinfor> expatriatesinfor, HttpServletRequest request) throws Exception {
+//        if (expatriatesinfor == null) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        expatriatesinforService.setexpatriatesinforApply(expatriatesinfor,tokenModel);
+//        return ApiResult.success();
+//    }
 
     @RequestMapping(value = "/getSupplierNameList", method = {RequestMethod.POST})
     public ApiResult getSupplierNameList(@RequestBody Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {

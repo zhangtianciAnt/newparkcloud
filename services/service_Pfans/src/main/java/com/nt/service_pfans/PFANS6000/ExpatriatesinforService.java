@@ -20,7 +20,7 @@ public interface ExpatriatesinforService {
 
     public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
 
-    public void setexpatriatesinforApply(List<Expatriatesinfor> expatriatesmation,  TokenModel tokenModel) throws Exception;
+//    public void setexpatriatesinforApply(List<Expatriatesinfor> expatriatesmation,  TokenModel tokenModel) throws Exception;
 
     List<String> expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 }
