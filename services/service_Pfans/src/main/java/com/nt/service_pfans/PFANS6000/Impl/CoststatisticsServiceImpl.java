@@ -1,10 +1,10 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
-import com.nt.dao_Pfans.PFANS6000.Coststatistics;
-import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
-import com.nt.dao_Pfans.PFANS6000.Variousfunds;
+import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
@@ -16,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Autowired
     private VariousfundsMapper variousfundsMapper;
 
+    @Autowired
+    private PricesetMapper pricesetMapper;
+
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
+
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
         return coststatisticsMapper.select(coststatistics);
@@ -47,7 +54,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Override
     public Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         coststatisticsMapper.delete(coststatistics);
-
+        //获取经费
         Variousfunds variousfunds = new Variousfunds();
 //        variousfunds.setOwner(tokenModel.getUserId());
         List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
@@ -63,15 +70,75 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             }
             variousfundsMap.put(key, value);
         }
+        // 获取所有人的单价设定
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat();
+        int month = now.get(Calendar.MONTH);  //todo 
+        String startTime = "";
+        String endTime = "";
+        if(month >= 1 && month <= 4) {
+            startTime = String.valueOf(now.get(Calendar.YEAR) - 1) + "-" + "04" + "-" + "01";
+            endTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "03" + "-" + "31";
+        }else {
+            startTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "04" + "-" + "01";
+            endTime = String.valueOf(now.get(Calendar.YEAR) + 1) + "-" + "03" + "-" + "31";
+        }
 
+        List<Priceset> allPriceset = pricesetMapper.selectByYear(startTime, endTime);
+        Map<String, Double> pricesetMap = new HashMap<String, Double>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = sdf.parse(startTime);
+        for ( Priceset priceset : allPriceset ) {
+            Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
+            int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
+            if ( pointDate.before(startDate) ) {
+                for ( int i=1; i<=12; i++) {
+                    String key = priceset.getUser_id() + "price" + i;
+                    Double value = 0.0;
+                    value = Double.parseDouble(priceset.getTotalunit().trim());
+                    pricesetMap.put(key, value);
+                }
+            }else {
+                if(startM >= 1 && startM<=3){
+                    for (int k = startM; k<=3; k++) {
+                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(priceset.getTotalunit().trim()));
+                    }
+                }else {
+                    for (int k = startM; k<=12; k++) {
+                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(priceset.getTotalunit().trim()));
+                    }
+                    for (int k = 1; k<=3; k++) {
+                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(priceset.getTotalunit().trim()));
+                    }
+                }
+            }
+        }
+
+        // 获取公司名称
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
+        Map<String, String> companyMap = new HashMap<String, String>();
+        for ( Expatriatesinfor ex : companyList) {
+            String key = ex.getExpname();
+            String value = ex.getSuppliername();
+            companyMap.put(key, value);
+        }
+        // 获取活用情报信息
         List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
         for ( Coststatistics c : allCostList ) {
             // 合计费用
             double totalmanhours = 0;
             // 合计工数
             double totalcost = 0;
-            double price = c.getUnitprice();
+
             for ( int i = 1 ; i <= 12; i++ ) {
+                // 单价
+                double price = 0;
+                String priceKey = c.getBpname() + "price" + i;
+                if ( pricesetMap.containsKey(priceKey) ) {
+                    price = pricesetMap.get(priceKey);
+                }
+                BeanUtils.setProperty(c, "price" +i, price);
                 double manhour = 0;
                 String property = "manhour" + i;
                 try {
@@ -98,12 +165,17 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     totalmanhours = 0;
                 }
             }
-
+            //供应商名称
+            String companyName = "";
+            if ( companyMap.containsKey(c.getBpname()) ) {
+                BeanUtils.setProperty(c, "bpcompany", companyMap.get(c.getBpname()));
+            }
             c.setCoststatistics_id(UUID.randomUUID().toString());
             c.setSupport3("3");
             c.setSupport6("6");
             c.setSupport9("9");
             c.setSupport12("12");
+
             c.preInsert(tokenModel);
         }
 

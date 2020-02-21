@@ -3,19 +3,12 @@
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper">
 
 	<select id="getExpatriatesinfor" parameterType="com.nt.dao_Pfans.PFANS6000.Coststatistics" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
-		select a.`EXPNAME` as BPNAME, b.COMPANY as BPCOMPANY, b.TOTALUNIT as UNITPRICE,
-		a.`JANUARY` as MANHOUR1, a.FEBRUARY as MANHOUR2, a.MARCH as MANHOUR3, a.APRIL as MANHOUR4, a.MAY as MANHOUR5, a.JUNE as MANHOUR6, a.`JULY` as MANHOUR7,
-		a.AUGUST as MANHOUR8, a.SEPTEMBER as MANHOUR9, a.OCTOBER as MANHOUR10, a.NOVEMBER as MANHOUR11, a.DECEMBER as MANHOUR12
-		from `priceset` as b
-		inner join (
-			select exp.`EXPNAME`,
-			sum(exp.`JANUARY`) as JANUARY, sum(exp.FEBRUARY) as FEBRUARY, sum(exp.MARCH) as MARCH, sum(exp.APRIL) as APRIL, sum(exp.MAY) as MAY, sum(exp.JUNE) as JUNE,
-			sum(exp.`JULY`) as JULY, sum(exp.AUGUST) as AUGUST, sum(exp.SEPTEMBER) as SEPTEMBER, sum(exp.OCTOBER) as OCTOBER, sum(exp.NOVEMBER) as NOVEMBER, sum(exp.DECEMBER) as DECEMBER
-			from expatriatesinfor exp
-			group by exp.`EXPNAME`
-		) a
-		on a.`EXPNAME` = b.`USER_ID`
-		and b.`STATUS` = '0'
+		select exp.`EXPNAME` as BPNAME,
+		sum(exp.`JANUARY`) as MANHOUR1, sum(exp.FEBRUARY) as MANHOUR2, sum(exp.MARCH) as MANHOUR3, sum(exp.APRIL) as MANHOUR4, sum(exp.MAY) as MANHOUR5, sum(exp.JUNE) as MANHOUR6,
+		sum(exp.`JULY`) as MANHOUR7, sum(exp.AUGUST) as MANHOUR8, sum(exp.SEPTEMBER) as MANHOUR9, sum(exp.OCTOBER) as MANHOUR10, sum(exp.NOVEMBER) as MANHOUR11, sum(exp.DECEMBER) as MANHOUR12
+		from expatriatesinfor exp
+		where exp.`STATUS` = '0'
+		group by exp.`EXPNAME`
 	</select>
 
 	<insert id="insertAll" parameterType="java.util.List">
@@ -26,6 +19,7 @@
 		MANHOUR10,COST10,MANHOUR11,COST11,MANHOUR12,COST12,
 		SUPPORT12,TOTALMANHOURS12,TOTALCOST12,EXPENSE12,CONTRACT12,
 		MANHOUR1,COST1,MANHOUR2,COST2,MANHOUR3,COST3,SUPPORT3,TOTALMANHOURS3,TOTALCOST3,EXPENSE3,CONTRACT3,
+		PRICE1,PRICE2,PRICE3,PRICE4,PRICE5,PRICE6,PRICE7,PRICE8,PRICE9,PRICE10,PRICE11,PRICE12,
 		ROWINDEX,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID)
 		values
 		<foreach item="item" collection="list" separator=",">
@@ -77,6 +71,18 @@
 			#{item.totalcost3},
 			#{item.expense3},
 			#{item.contract3},
+			#{item.price1},
+			#{item.price2},
+			#{item.price3},
+			#{item.price4},
+			#{item.price5},
+			#{item.price6},
+			#{item.price7},
+			#{item.price8},
+			#{item.price9},
+			#{item.price10},
+			#{item.price11},
+			#{item.price12},
 			#{item.rowindex},
 			#{item.createby},
 			#{item.createon},

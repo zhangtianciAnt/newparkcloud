@@ -313,5 +313,75 @@ public class Coststatistics extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    /**
+     * 1月单价
+     */
+    @Column(name = "PRICE1")
+    private Double price1;
 
+    /**
+     * 2月单价
+     */
+    @Column(name = "PRICE2")
+    private Double price2;
+
+    /**
+     * 3月单价
+     */
+    @Column(name = "PRICE3")
+    private Double price3;
+
+    /**
+     * 4月单价
+     */
+    @Column(name = "PRICE4")
+    private Double price4;
+
+    /**
+     * 5月单价
+     */
+    @Column(name = "PRICE5")
+    private Double price5;
+
+    /**
+     * 6月单价
+     */
+    @Column(name = "PRICE6")
+    private Double price6;
+
+    /**
+     * 7月单价
+     */
+    @Column(name = "PRICE7")
+    private Double price7;
+
+    /**
+     * 8月单价
+     */
+    @Column(name = "PRICE8")
+    private Double price8;
+
+    /**
+     * 9月单价
+     */
+    @Column(name = "PRICE9")
+    private Double price9;
+
+    /**
+     * 10月单价
+     */
+    @Column(name = "PRICE10")
+    private Double price10;
+
+    /**
+     * 11月单价
+     */
+    @Column(name = "PRICE11")
+    private Double price11;
+
+    /**
+     * 12月单价
+     */
+    @Column(name = "PRICE12")
+    private Double price12;
 }
