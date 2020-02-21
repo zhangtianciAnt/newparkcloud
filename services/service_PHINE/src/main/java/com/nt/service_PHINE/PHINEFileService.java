@@ -19,4 +19,6 @@ public interface PHINEFileService {
     ApiResult updateFileNameById(TokenModel tokenModel, Fileinfo fileinfo) throws Exception;
 
     ApiResult delFileMark2File(List<Filemark2file> filemark2fileList) throws Exception;
+
+    ApiResult getLogicLoadHistory(String projectId) throws Exception;
 }

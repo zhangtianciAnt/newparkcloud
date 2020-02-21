@@ -615,6 +615,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             operationdetail.setFilename(fileinfo.getFilename());
             operationdetail.setOperationresult(result ? "成功" : "失败");
             operationdetail.setOperationid(operationId);
+            operationdetail.setFileid(fileinfo.getFileid());
             detailist.add(operationdetail);
         }
         // 添加操作记录

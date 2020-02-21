@@ -23,6 +23,8 @@ public class Operationdetail extends BaseModel {
 
     private String remarks;
 
+    private String fileid;
+
     /**
      * @return id
      */
@@ -35,6 +37,14 @@ public class Operationdetail extends BaseModel {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getFileid() {
+        return fileid;
+    }
+
+    public void setFileid(String fileid) {
+        this.fileid = fileid;
     }
 
     /**

@@ -3,10 +3,7 @@ package com.nt.controller.PHINEController;
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
-import com.nt.service_PHINE.DeviceinfoService;
-import com.nt.service_PHINE.FilemarkService;
-import com.nt.service_PHINE.OperationrecordService;
-import com.nt.service_PHINE.ProjectinfoService;
+import com.nt.service_PHINE.*;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -33,6 +30,9 @@ public class PHINE20000Controller {
 
     @Autowired
     private DeviceinfoService deviceinfoService;
+
+    @Autowired
+    private PHINEFileService phineFileService;
 
     /**
      * @return
@@ -211,5 +211,18 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/getCurrentConnStatus", method = {RequestMethod.GET})
     public ApiResult getCurrentConnStatus(HttpServletRequest request, @RequestParam String projectid) throws Exception {
         return ApiResult.success(deviceinfoService.getCurrentConnStatus(projectid));
+    }
+
+    /**
+     * @return
+     * @Method getLogicLoadHistory
+     * @Author SKAIXX
+     * @Description 获取前回逻辑加载的文件列表
+     * @Date 2020/2/21 09:27
+     * @Param
+     **/
+    @RequestMapping(value = "/getLogicLoadHistory", method = {RequestMethod.GET})
+    public ApiResult getLogicLoadHistory(HttpServletRequest request, @RequestParam String projectid) throws Exception {
+        return phineFileService.getLogicLoadHistory(projectid);
     }
 }

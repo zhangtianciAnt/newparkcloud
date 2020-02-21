@@ -34,6 +34,7 @@
       <result column="owner" property="owner" jdbcType="VARCHAR" />
       <result column="tenantid" property="tenantid" jdbcType="VARCHAR" />
       <result column="remarks" property="remarks" jdbcType="LONGVARCHAR" />
+      <result column="fileid" property="fileid" jdbcType="VARCHAR" />
     </collection>
   </resultMap>
 
@@ -52,7 +53,8 @@
       devinfo.deviceid devicename,
       detail.configurationtype,
       detail.filename,
-      detail.operationresult detailoperationresult
+      detail.operationresult detailoperationresult,
+      detail.fileid
     FROM
       operationrecord record
     LEFT JOIN
@@ -82,7 +84,8 @@
     modifyby,
     owner,
     tenantid,
-    remarks
+    remarks,
+    fileid
     )
     values
     <foreach collection="detaillist" item="item" index="index" separator="," >
@@ -100,7 +103,8 @@
       #{item.modifyby},
       #{item.owner},
       #{item.tenantid},
-      #{item.remarks}
+      #{item.remarks},
+      #{item.fileid}
       )
     </foreach>
   </insert>

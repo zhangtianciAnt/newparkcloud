@@ -11,7 +11,6 @@ import com.nt.service_PHINE.mapper.FileinfoMapper;
 import com.nt.service_PHINE.mapper.Filemark2fileMapper;
 import com.nt.service_PHINE.mapper.FilemarkMapper;
 import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
             operationdetail.setDevicename(item.getDeviceid());
             operationdetail.setConfigurationtype(item.getFiletype());
             operationdetail.setFilename(item.getFilename());
+            operationdetail.setFileid(item.getFileid());
             operationdetails.add(operationdetail);
         });
         int result = fileinfoMapper.saveFilesInfo(filesInfo);
@@ -101,5 +101,33 @@ public class PHINEFileServiceImpl implements PHINEFileService {
             filemark2fileMapper.delete(item);
         });
         return ApiResult.success(MsgConstants.INFO_01);
+    }
+
+    /**
+     * @return
+     * @Method getLogicLoadHistory
+     * @Author SKAIXX
+     * @Description 获取前回逻辑加载的文件列表
+     * @Date 2020/2/21 8:34
+     * @Param
+     **/
+    @Override
+    public ApiResult getLogicLoadHistory(String projectId) throws Exception {
+        // 通过ProjectId获取操作记录
+        List<OperationRecordVo> operationRecordVoList = operationrecordService.getOperationrecordList(projectId);
+        List<Fileinfo> fileinfoList = new ArrayList<>();
+        for (OperationRecordVo item : operationRecordVoList) {
+            // 如果存在逻辑加载的操作记录
+            if (item.getTitle().equals("逻辑加载")) {
+                // 根据操作记录获取文件列表
+                item.getDetailist().forEach(subItem -> {
+                    Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(subItem.getFileid());
+                    fileinfo.setRemarks(subItem.getOperationresult());
+                    fileinfoList.add(fileinfo);
+                });
+                break;
+            }
+        }
+        return ApiResult.success(fileinfoList);
     }
 }
