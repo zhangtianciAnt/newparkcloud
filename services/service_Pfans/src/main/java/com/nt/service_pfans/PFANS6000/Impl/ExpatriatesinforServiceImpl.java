@@ -155,8 +155,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             if (thisMonth_i == 1) {// 当前时间为一月
                                 if (expatriatesinforList.get(i).getJanuary() == null) {//一月份字段为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setJanuary(jobNub_str);
                                 }
                             } else if (thisMonth_i == 2) {   // 当前时间为二月
@@ -164,8 +163,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setJanuary("1.00");
                                 } else {//一月份字段为不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
+                                    jobNub_dbe = Double.valueOf(jobNub_str);
                                     if (jobNub_dbe > 1.00) {
                                         jobNub_str = "1.00";
                                     }
@@ -178,8 +177,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setFebruary("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setMarch(jobNub_str);
                                 }
                             } else if (thisMonth_i == 4) {   // 当前时间为四月
@@ -191,8 +189,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setMarch("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setApril(jobNub_str);
                                 }
                             } else if (thisMonth_i == 5) {   // 当前时间为五月
@@ -206,8 +203,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setApril("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setMay(jobNub_str);
                                 }
                             } else if (thisMonth_i == 6) {   // 当前时间为六月
@@ -223,8 +219,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setMay("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setJune(jobNub_str);
                                 }
                             } else if (thisMonth_i == 7) {   // 当前时间为七月
@@ -242,8 +237,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setJune("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setJuly(jobNub_str);
                                 }
                             } else if (thisMonth_i == 8) {   // 当前时间为八月
@@ -263,8 +257,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setJuly("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setAugust(jobNub_str);
                                 }
                             } else if (thisMonth_i == 9) {   // 当前时间为九月
@@ -286,8 +279,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setAugust("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setSeptember(jobNub_str);
                                 }
                             } else if (thisMonth_i == 10) {   // 当前时间为十月
@@ -311,8 +303,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setSeptember("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setOctober(jobNub_str);
                                 }
                             } else if (thisMonth_i == 11) {   // 当前时间为十一月
@@ -338,8 +329,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setOctober("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setNovember(jobNub_str);
                                 }
                             } else if (thisMonth_i == 12) {   // 当前时间为十二月
@@ -367,8 +357,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setNovember("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setDecember(jobNub_str);
                                 }
                             }
@@ -381,8 +370,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             if (thisMonth_i == 1) {
                                 if (expatriatesinforList.get(i).getJanuary() == null) {//一月份字段为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setJanuary(jobNub_str);
                                 }
                             } else if (thisMonth_i == 2) {   // 当前时间为二月
@@ -390,8 +378,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setJanuary("1.00");
                                 } else {//一月份字段为不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
+                                    jobNub_dbe = Double.valueOf(jobNub_str);
                                     if (jobNub_dbe > 1.00) {
                                         jobNub_str = "1.00";
                                     }
@@ -404,8 +392,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setFebruary("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setMarch(jobNub_str);
                                 }
                             } else if (thisMonth_i == 4) {   // 当前时间为四月
@@ -417,8 +404,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setMarch("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setApril(jobNub_str);
                                 }
                             } else if (thisMonth_i == 5) {   // 当前时间为五月
@@ -432,8 +418,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setApril("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setMay(jobNub_str);
                                 }
                             } else if (thisMonth_i == 6) {   // 当前时间为六月
@@ -449,8 +434,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setMay("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setJune(jobNub_str);
                                 }
                             } else if (thisMonth_i == 7) {   // 当前时间为七月
@@ -468,8 +452,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setJune("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setJuly(jobNub_str);
                                 }
                             } else if (thisMonth_i == 8) {   // 当前时间为八月
@@ -489,8 +472,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setJuly("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setAugust(jobNub_str);
                                 }
                             } else if (thisMonth_i == 9) {   // 当前时间为九月
@@ -512,8 +494,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setAugust("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setSeptember(jobNub_str);
                                 }
                             } else if (thisMonth_i == 10) {   // 当前时间为十月
@@ -537,8 +518,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setSeptember("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setOctober(jobNub_str);
                                 }
                             } else if (thisMonth_i == 11) {   // 当前时间为十一月
@@ -564,8 +544,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setOctober("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setNovember(jobNub_str);
                                 }
                             } else if (thisMonth_i == 12) {   // 当前时间为十二月
@@ -593,8 +572,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     expatriatesinforList.get(i).setNovember("1.00");
                                 } else {//都不为空
                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                    jobNub_str = Double.toString(jobNub_dbe);
+                                    jobNub_str = df.format(jobNub_obj);
                                     expatriatesinforList.get(i).setDecember(jobNub_str);
                                 }
                             }
@@ -608,26 +586,28 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         //！！注意：还需要判断退场时间：
                         //1.2.1.1，若退场时间与入场时间为同一个月，则该员工本月的工数：（本月的工数=（本月退场日期-本月入场日期+1）/该月份最大日期）
                         //1.2.1.2，若退场时间与入场时间不同一个月，则该员工的工数，入场与退场的月份需计算，之间的几个月工数都为1.00
-                        if (expatriatesinforList.get(i).getExitime() != null) {
                             if (thisDate_d.after(admissiontime_d)) {
                                 //说明该员工已经入场工作
                                 //判断入退场时间是否为同一个月
                                 //工作天数
-                                if (admissiontimeMonth_s.equals(exitimeMonth_s)) {//同一个月
-                                    workDay_i = Integer.parseInt(exitimeDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                if (admissiontimeMonth_s.equals(exitimeMonth_s) && admissiontimeYear_s.equals(exitimeYear_s)) {//同一个月并且入场退场为同一年
+                                    if(exitime_d.after(thisDate_d)){//入退场同一个月，已经入场工作但未退场
+                                        workDay_i = Integer.parseInt(thisDate_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                    }else{//入退场同一个月，已经入场工作已经退场
+                                        workDay_i = Integer.parseInt(exitimeDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                    }
                                     thisMonth_i = Integer.parseInt(exitimeMonth_s);
                                     if (thisMonth_i == 1) {
                                         if (expatriatesinforList.get(i).getJanuary() == null) {//一月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJanuary(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 2) {
                                         if (expatriatesinforList.get(i).getFebruary() == null) {//二月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
+                                            jobNub_dbe = Double.valueOf(jobNub_str);
                                             if (jobNub_dbe > 1.00) {
                                                 jobNub_str = "1.00";
                                             }
@@ -636,110 +616,113 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     } else if (thisMonth_i == 3) {
                                         if (expatriatesinforList.get(i).getMarch() == null) {//三月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setMarch(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 4) {
                                         if (expatriatesinforList.get(i).getApril() == null) {//四月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setApril(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 5) {
                                         if (expatriatesinforList.get(i).getMay() == null) {//五月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setMay(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 6) {
                                         if (expatriatesinforList.get(i).getJune() == null) {//六月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJune(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 7) {
                                         if (expatriatesinforList.get(i).getJuly() == null) {//七月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJuly(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 8) {
                                         if (expatriatesinforList.get(i).getAugust() == null) {//八月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setAugust(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 9) {
                                         if (expatriatesinforList.get(i).getSeptember() == null) {//九月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setSeptember(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 10) {
                                         if (expatriatesinforList.get(i).getOctober() == null) {//十月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setOctober(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 11) {
                                         if (expatriatesinforList.get(i).getNovember() == null) {//十一月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setNovember(jobNub_str);
                                         }
                                     } else if (thisMonth_i == 12) {
                                         if (expatriatesinforList.get(i).getDecember() == null) {//十二月份字段为空
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setDecember(jobNub_str);
                                         }
                                     }
                                 } else {//退场入场月份不是同一个月
                                     //2.其次需要判断退场时间与当前时间的先后顺序
-                                    // 2.1，若当前时间在退场时间之前，则取当前时间做计算
-                                    //2.1.1，当进行计算时，该员工该月份的工数：（当前月的工数=当前的日期/该月份的最大日期）
-                                    // 2.2，若当前时间在退场时间之后，说明该员工已退场，则取该员工退场时间做计算
-                                    //2.2.1，当进行计算时，该员工退场的该月份的工数：（退场月的工数=该员工退场的日期/该月份的最大日期）
-                                    int month_real_ad;
-                                    if(thisYear_s.equals(admissiontimeYear_s)){
-                                        month_real_ad = Integer.parseInt(admissiontimeMonth_s);
-                                    }else{
-                                        month_real_ad = 0;
+                                        // 2.1，若当前时间在退场时间之前，则取当前时间做计算
+                                            //2.1.1，当进行计算时，该员工该月份的工数：（当前月的工数=当前的日期/该月份的最大日期）
+                                        // 2.2，若当前时间在退场时间之后，说明该员工已退场，则取该员工退场时间做计算
+                                            // 2.2.1，当进行计算时，该员工退场的该月份的工数：（退场月的工数=该员工退场的日期/该月份的最大日期）
+                                    //入场月份
+                                    int month_real_ad = Integer.parseInt(admissiontimeMonth_s);//入场年份为今年
+                                    //退场月份
+                                    int month_real_ex;
+                                    if(thisYear_s.equals(exitimeYear_s) && thisDate_d.before(exitime_d)){//若退场时间为今年,并且已经退场，
+                                        month_real_ex = Integer.parseInt(exitimeMonth_s);
+                                    }else{//若退场时间不是今年或当前时间之后，则取当前时间
+                                        month_real_ex = Integer.parseInt(thisMonth_s);
                                     }
-                                    int month_real_ex = Integer.parseInt(exitimeMonth_s);
                                     for (int m = 1; m < 13; m++) {
                                         if (m >= month_real_ad && m <= month_real_ex) {
-                                            if (m == 1 && expatriatesinforList.get(i).getJanuary() == null) {  //仅入场月份为一月
-                                                workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if (m == 1 && expatriatesinforList.get(i).getJanuary() == null) {  //仅入场月份为一月，退场月份不为一月，但需要与当前时间判断(前提条件已经入场工作)
+                                                if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                }
                                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                jobNub_str = Double.toString(jobNub_dbe);
+                                                jobNub_str = df.format(jobNub_obj);
                                                 expatriatesinforList.get(i).setJanuary(jobNub_str);
                                             } else if (m == 2) {
                                                 if (month_real_ad == 2 && expatriatesinforList.get(i).getFebruary() == null) {//仅入场时间为二月
-                                                    workDay_i = 28 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 28 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
+                                                    jobNub_dbe = Double.valueOf(jobNub_str);
                                                     if (jobNub_dbe > 1.00) {
                                                         jobNub_str = "1.00";
                                                     }
                                                     expatriatesinforList.get(i).setFebruary(jobNub_str);
                                                 } else if (month_real_ex == 2 && expatriatesinforList.get(i).getFebruary() == null) {//仅退场时间为二月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
+                                                    jobNub_dbe = Double.valueOf(jobNub_str);
                                                     if (jobNub_dbe > 1.00) {
                                                         jobNub_str = "1.00";
                                                     }
@@ -749,154 +732,211 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             } else if (m == 3) {
                                                 if (month_real_ad == 3 && expatriatesinforList.get(i).getMarch() == null) {//仅入场时间为三月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setMarch(jobNub_str);
                                                 } else if (month_real_ex == 3 && expatriatesinforList.get(i).getMarch() == null) {//仅退场时间为三月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setMarch(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getMarch() == null) {
                                                     expatriatesinforList.get(i).setMarch("1.00");
                                                 }
                                             } else if (m == 4) {
                                                 if (month_real_ad == 4 && expatriatesinforList.get(i).getApril() == null) {//仅入场时间为四月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setApril(jobNub_str);
                                                 } else if (month_real_ex == 4 && expatriatesinforList.get(i).getApril() == null) {//仅退场时间为四月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setApril(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getApril() == null) {
                                                     expatriatesinforList.get(i).setApril("1.00");
                                                 }
                                             } else if (m == 5) {
                                                 if (month_real_ad == 5 && expatriatesinforList.get(i).getMay() == null) {//仅入场时间为五月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setMay(jobNub_str);
                                                 } else if (month_real_ex == 5 && expatriatesinforList.get(i).getMay() == null) {//仅退场时间为五月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setMay(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getMay() == null) {
                                                     expatriatesinforList.get(i).setMay("1.00");
                                                 }
                                             } else if (m == 6) {
                                                 if (month_real_ad == 6 && expatriatesinforList.get(i).getJune() == null) {//仅入场时间为六月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setJune(jobNub_str);
                                                 } else if (month_real_ex == 6 && expatriatesinforList.get(i).getJune() == null) {//仅退场时间为六月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setJune(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getJune() == null) {
                                                     expatriatesinforList.get(i).setJune("1.00");
                                                 }
                                             } else if (m == 7) {
                                                 if (month_real_ad == 7 && expatriatesinforList.get(i).getJuly() == null) {//仅入场时间为七月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setJuly(jobNub_str);
                                                 } else if (month_real_ex == 7 && expatriatesinforList.get(i).getJuly() == null) {//仅退场时间为七月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setJuly(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getJuly() == null) {
                                                     expatriatesinforList.get(i).setJuly("1.00");
                                                 }
                                             } else if (m == 8) {
                                                 if (month_real_ad == 8 && expatriatesinforList.get(i).getAugust() == null) {//仅入场时间为八月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setAugust(jobNub_str);
                                                 } else if (month_real_ex == 8 && expatriatesinforList.get(i).getAugust() == null) {//仅退场时间为八月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setAugust(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getAugust() == null) {
                                                     expatriatesinforList.get(i).setAugust("1.00");
                                                 }
                                             } else if (m == 9) {
                                                 if (month_real_ad == 9 && expatriatesinforList.get(i).getSeptember() == null) {//仅入场时间为九月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setSeptember(jobNub_str);
                                                 } else if (month_real_ex == 9 && expatriatesinforList.get(i).getSeptember() == null) {//仅退场时间为九月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setSeptember(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getSeptember() == null) {
                                                     expatriatesinforList.get(i).setSeptember("1.00");
                                                 }
                                             } else if (m == 10) {
                                                 if (month_real_ad == 10 && expatriatesinforList.get(i).getOctober() == null) {//仅入场时间为十月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setOctober(jobNub_str);
                                                 } else if (month_real_ex == 10 && expatriatesinforList.get(i).getOctober() == null) {//仅退场时间为十月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setOctober(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getOctober() == null) {
                                                     expatriatesinforList.get(i).setOctober("1.00");
                                                 }
                                             } else if (m == 11) {
                                                 if (month_real_ad == 11 && expatriatesinforList.get(i).getNovember() == null) {//仅入场时间为十一月
-                                                    workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    if(thisMonth_s.equals(attendanceMonth_s)){//如果当前月份与入场月份相同，且已经入场工作
+                                                        workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }else{//如果当前月份与入场月份不相同，且已经入场工作
+                                                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setNovember(jobNub_str);
                                                 } else if (month_real_ex == 11 && expatriatesinforList.get(i).getNovember() == null) {//仅退场时间为十一月
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setNovember(jobNub_str);
                                                 } else if (expatriatesinforList.get(i).getNovember() == null) {
                                                     expatriatesinforList.get(i).setNovember("1.00");
                                                 }
                                             } else if (m == 12) {
                                                 if (month_real_ex == 12 && expatriatesinforList.get(i).getDecember() == null) {
-                                                    workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    if (thisDate_d.before(exitime_d)) {//还未退场
+                                                        workDay_i = Integer.parseInt(thisDay_s);
+                                                    }else{//已经退场
+                                                        workDay_i = Integer.parseInt(exitimeDay_s);
+                                                    }
                                                     BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                                    jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                                    jobNub_str = Double.toString(jobNub_dbe);
+                                                    jobNub_str = df.format(jobNub_obj);
                                                     expatriatesinforList.get(i).setDecember(jobNub_str);
                                                 }
                                             }
@@ -904,16 +944,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                             }
-                        }
                     }
                 } else {
                     //退场时间为空
                     //入场月份
-                    int month_real_ad;
-                    if(thisYear_s.equals(admissiontimeYear_s)){
+                    int month_real_ad = -1;
+                    if(!thisYear_s.equals(admissiontimeYear_s)){
                         month_real_ad = Integer.parseInt(admissiontimeMonth_s);
-                    }else{
-                        month_real_ad = 0;
                     }
                     //当前时间月份
                     int month_real_nowmonth = Integer.parseInt(thisMonth_s);
@@ -922,71 +959,185 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     if (thisDate_d.after(admissiontime_d)) {//说明已经来此工作
                         if (month_real_ad == month_real_nowmonth) {
                             //入场月份与当前时间月份相同
-                            workDay_i = Integer.parseInt(thisDate_s) - Integer.parseInt(admissiontimeDay_s) + 1;
                             //月份容器
                             int month_real = month_real_ad;
                             if (month_real == 1 && expatriatesinforList.get(i).getJanuary() == null) {//入场月份与当前月份都为一月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31 - Integer.parseInt(thisDay_s) + 1;
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setJanuary(jobNub_str);
                             } else if (month_real == 2 && expatriatesinforList.get(i).getFebruary() == null) {//入场月份与当前月份都为二月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 28 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
+                                jobNub_dbe = Double.valueOf(jobNub_str);
                                 if (jobNub_dbe > 1.00) {
                                     jobNub_str = "1.00";
                                 }
                                 expatriatesinforList.get(i).setFebruary(jobNub_str);
                             } else if (month_real == 3 && expatriatesinforList.get(i).getMarch() == null) {//入场月份与当前月份都为三月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setMarch(jobNub_str);
                             } else if (month_real == 4 && expatriatesinforList.get(i).getApril() == null) {//入场月份与当前月份都为四月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 30 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setApril(jobNub_str);
                             } else if (month_real == 5 && expatriatesinforList.get(i).getMay() == null) {//入场月份与当前月份都为五月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setMay(jobNub_str);
                             } else if (month_real == 6 && expatriatesinforList.get(i).getJune() == null) {//入场月份与当前月份都为六月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 30 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setJune(jobNub_str);
                             } else if (month_real == 7 && expatriatesinforList.get(i).getJuly() == null) {//入场月份与当前月份都为七月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                    expatriatesinforList.get(i).setJune("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setJuly(jobNub_str);
                             } else if (month_real == 8 && expatriatesinforList.get(i).getAugust() == null) {//入场月份与当前月份都为八月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                    expatriatesinforList.get(i).setJune("1.00");
+                                    expatriatesinforList.get(i).setJuly("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setAugust(jobNub_str);
                             } else if (month_real == 9 && expatriatesinforList.get(i).getSeptember() == null) {//入场月份与当前月份都为九月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 30 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                    expatriatesinforList.get(i).setJune("1.00");
+                                    expatriatesinforList.get(i).setJuly("1.00");
+                                    expatriatesinforList.get(i).setAugust("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setSeptember(jobNub_str);
                             } else if (month_real == 10 && expatriatesinforList.get(i).getOctober() == null) {//入场月份与当前月份都为十月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31- Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                    expatriatesinforList.get(i).setJune("1.00");
+                                    expatriatesinforList.get(i).setJuly("1.00");
+                                    expatriatesinforList.get(i).setAugust("1.00");
+                                    expatriatesinforList.get(i).setSeptember("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setOctober(jobNub_str);
                             } else if (month_real == 11 && expatriatesinforList.get(i).getNovember() == null) {//入场月份与当前月份都为十一月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 30 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                    expatriatesinforList.get(i).setJune("1.00");
+                                    expatriatesinforList.get(i).setJuly("1.00");
+                                    expatriatesinforList.get(i).setAugust("1.00");
+                                    expatriatesinforList.get(i).setSeptember("1.00");
+                                    expatriatesinforList.get(i).setOctober("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setNovember(jobNub_str);
                             } else if (month_real == 12 && expatriatesinforList.get(i).getDecember() == null) {//入场月份与当前月份都为十二月
+                                if(thisYear_s.equals(admissiontimeYear_s)){
+                                    workDay_i = Integer.parseInt(thisDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
+                                }else{
+                                    workDay_i = 31 - Integer.parseInt(thisDay_s) + 1;
+                                    expatriatesinforList.get(i).setJanuary("1.00");
+                                    expatriatesinforList.get(i).setFebruary("1.00");
+                                    expatriatesinforList.get(i).setMarch("1.00");
+                                    expatriatesinforList.get(i).setApril("1.00");
+                                    expatriatesinforList.get(i).setMay("1.00");
+                                    expatriatesinforList.get(i).setJune("1.00");
+                                    expatriatesinforList.get(i).setJuly("1.00");
+                                    expatriatesinforList.get(i).setAugust("1.00");
+                                    expatriatesinforList.get(i).setSeptember("1.00");
+                                    expatriatesinforList.get(i).setOctober("1.00");
+                                    expatriatesinforList.get(i).setNovember("1.00");
+                                }
                                 BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                jobNub_str = Double.toString(jobNub_dbe);
+                                jobNub_str = df.format(jobNub_obj);
                                 expatriatesinforList.get(i).setDecember(jobNub_str);
                             }
                         } else {
@@ -1000,17 +1151,24 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             for (int h = 1; h < 13; h++) {
                                 if (h >= month_real_ad && h <= month_real_nowmonth) {
                                     if (h == 1 && expatriatesinforList.get(i).getJanuary() == null) {//入场日期为一月
-                                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                        if(thisYear_s.equals(admissiontimeYear_s)){
+                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                        }else{
+                                            workDay_i = 31;
+                                        }
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                        jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                        jobNub_str = Double.toString(jobNub_dbe);
+                                        jobNub_str = df.format(jobNub_obj);
                                         expatriatesinforList.get(i).setJanuary(jobNub_str);
                                     } else if (h == 2) {
                                         if (month_real_ad == 2 && expatriatesinforList.get(i).getFebruary() == null) {//仅入场时间为二月
-                                            workDay_i = 28 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 28 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 28;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
+                                            jobNub_dbe = Double.valueOf(jobNub_str);
                                             if (jobNub_dbe > 1.00) {
                                                 jobNub_str = "1.00";
                                             }
@@ -1018,8 +1176,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         } else if (month_real_nowmonth == 2 && expatriatesinforList.get(i).getFebruary() == null) {//仅退场时间为二月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
+                                            jobNub_dbe = Double.valueOf(jobNub_str);
                                             if (jobNub_dbe > 1.00) {
                                                 jobNub_str = "1.00";
                                             }
@@ -1029,144 +1187,162 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         }
                                     } else if (h == 3) {
                                         if (month_real_ad == 3 && expatriatesinforList.get(i).getMarch() == null) {//仅入场时间为三月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 31;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setMarch(jobNub_str);
                                         } else if (month_real_nowmonth == 3 && expatriatesinforList.get(i).getMarch() == null) {//仅退场时间为三月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setMarch(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getMarch() == null) {
                                             expatriatesinforList.get(i).setMarch("1.00");
                                         }
                                     } else if (h == 4) {
                                         if (month_real_ad == 4 && expatriatesinforList.get(i).getApril() == null) {//仅入场时间为四月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 30;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setApril(jobNub_str);
                                         } else if (month_real_nowmonth == 4 && expatriatesinforList.get(i).getApril() == null) {//仅退场时间为四月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setApril(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getApril() == null) {
                                             expatriatesinforList.get(i).setApril("1.00");
                                         }
                                     } else if (h == 5) {
                                         if (month_real_ad == 5 && expatriatesinforList.get(i).getMay() == null) {//仅入场时间为五月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 31;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setMay(jobNub_str);
                                         } else if (month_real_nowmonth == 5 && expatriatesinforList.get(i).getMay() == null) {//仅退场时间为五月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setMay(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getMay() == null) {
                                             expatriatesinforList.get(i).setMay("1.00");
                                         }
                                     } else if (h == 6) {
                                         if (month_real_ad == 6 && expatriatesinforList.get(i).getJune() == null) {//仅入场时间为六月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 30;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJune(jobNub_str);
                                         } else if (month_real_nowmonth == 6 && expatriatesinforList.get(i).getJune() == null) {//仅退场时间为六月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJune(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getJune() == null) {
                                             expatriatesinforList.get(i).setJune("1.00");
                                         }
                                     } else if (h == 7) {
                                         if (month_real_ad == 7 && expatriatesinforList.get(i).getJuly() == null) {//仅入场时间为七月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 31;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJuly(jobNub_str);
                                         } else if (month_real_nowmonth == 7 && expatriatesinforList.get(i).getJuly() == null) {//仅退场时间为七月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setJuly(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getJuly() == null) {
                                             expatriatesinforList.get(i).setJuly("1.00");
                                         }
                                     } else if (h == 8) {
                                         if (month_real_ad == 8 && expatriatesinforList.get(i).getAugust() == null) {//仅入场时间为八月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 31;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setAugust(jobNub_str);
                                         } else if (month_real_nowmonth == 8 && expatriatesinforList.get(i).getAugust() == null) {//仅退场时间为八月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setAugust(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getAugust() == null) {
                                             expatriatesinforList.get(i).setAugust("1.00");
                                         }
                                     } else if (h == 9) {
                                         if (month_real_ad == 9 && expatriatesinforList.get(i).getSeptember() == null) {//仅入场时间为九月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 30;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setSeptember(jobNub_str);
                                         } else if (month_real_nowmonth == 9 && expatriatesinforList.get(i).getSeptember() == null) {//仅退场时间为九月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setSeptember(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getSeptember() == null) {
                                             expatriatesinforList.get(i).setSeptember("1.00");
                                         }
                                     } else if (h == 10) {
                                         if (month_real_ad == 10 && expatriatesinforList.get(i).getOctober() == null) {//仅入场时间为十月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 31;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setOctober(jobNub_str);
                                         } else if (month_real_nowmonth == 10 && expatriatesinforList.get(i).getOctober() == null) {//仅退场时间为十月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setOctober(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getOctober() == null) {
                                             expatriatesinforList.get(i).setOctober("1.00");
                                         }
                                     } else if (h == 11) {
                                         if (month_real_ad == 11 && expatriatesinforList.get(i).getNovember() == null) {//仅入场时间为十一月
-                                            workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            if(thisYear_s.equals(admissiontimeYear_s)){
+                                                workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                                            }else{
+                                                workDay_i = 30;
+                                            }
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setNovember(jobNub_str);
                                         } else if (month_real_nowmonth == 11 && expatriatesinforList.get(i).getNovember() == null) {//仅退场时间为十一月
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setNovember(jobNub_str);
                                         } else if (expatriatesinforList.get(i).getNovember() == null) {
                                             expatriatesinforList.get(i).setNovember("1.00");
@@ -1175,8 +1351,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         if (month_real_nowmonth == 12 && expatriatesinforList.get(i).getDecember() == null) {
                                             workDay_i = Integer.parseInt(thisDay_s);
                                             BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
-                                            jobNub_dbe = Math.floor(jobNub_obj.doubleValue());
-                                            jobNub_str = Double.toString(jobNub_dbe);
+                                            jobNub_str = df.format(jobNub_obj);
                                             expatriatesinforList.get(i).setDecember(jobNub_str);
                                         }
                                     }

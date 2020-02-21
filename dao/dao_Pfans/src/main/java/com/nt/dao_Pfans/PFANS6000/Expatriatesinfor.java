@@ -43,12 +43,6 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "AGE")
     private String age;
 
-//    /**
-//     * 出生日期
-//     */
-//    @Column(name = "BIRTH")
-//    private Date birth;
-
     /**
      * 供应商名称
      */
@@ -264,6 +258,18 @@ public class Expatriatesinfor extends BaseModel {
      */
     @Column(name = "VENUETARGET")
     private String venuetarget;
+
+    /**
+     * 编号
+     */
+    @Column(name = "NUMBER")
+    private String number;
+
+    /**
+     * 职位
+     */
+    @Column(name = "POST")
+    private String post;
 
 
 }
