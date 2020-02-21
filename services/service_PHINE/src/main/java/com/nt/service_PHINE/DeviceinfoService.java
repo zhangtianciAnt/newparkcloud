@@ -65,4 +65,10 @@ public interface DeviceinfoService {
 
     // 获取设备当前连接状态
     List<CurrentConnStatusVo> getCurrentConnStatus(String projectid);
+
+    // 获取指定Token的Progress
+    List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);
+
+    // 根据指定的Token清除Progress数据
+    void clearConfigProgressByToken(TokenModel tokenModel);
 }

@@ -225,4 +225,33 @@ public class PHINE20000Controller {
     public ApiResult getLogicLoadHistory(HttpServletRequest request, @RequestParam String projectid) throws Exception {
         return phineFileService.getLogicLoadHistory(projectid);
     }
+
+    /**
+     * @return
+     * @Method getConfigProgressMap
+     * @Author SKAIXX
+     * @Description 获取前回逻辑加载的文件列表
+     * @Date 2020/2/21 09:27
+     * @Param
+     **/
+    @RequestMapping(value = "/getConfigProgressMap", method = {RequestMethod.GET})
+    public ApiResult getConfigProgressMap(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(deviceinfoService.getConfigProgressMap(tokenModel));
+    }
+
+    /**
+     * @return
+     * @Method clearConfigProgressByToken
+     * @Author SKAIXX
+     * @Description 获取前回逻辑加载的文件列表
+     * @Date 2020/2/21 09:27
+     * @Param
+     **/
+    @RequestMapping(value = "/clearConfigProgressByToken", method = {RequestMethod.GET})
+    public ApiResult clearConfigProgressByToken(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        deviceinfoService.clearConfigProgressByToken(tokenModel);
+        return ApiResult.success();
+    }
 }

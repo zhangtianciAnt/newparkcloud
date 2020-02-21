@@ -60,6 +60,12 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     @Autowired
     private Project2deviceMapper project2deviceMapper;
 
+    @Autowired
+    private FileinfoMapper fileinfoMapper;
+
+    // 全局变量：存储FpgaConfig进度
+    private static Map<String, List<Fileinfo>> configProgressMap = new HashMap<String, List<Fileinfo>>();
+
     // WCF服务地址
     private static URL WSDL_LOCATION;
 
@@ -574,6 +580,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                                 Holder<Boolean> getFpgaConfigProgressResult = new Holder<>(false);
                                 // 调用GetFpgaConfigProgress()获取当前Config进度
                                 port.getFpgaConfigProgress(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), progress, getFpgaConfigProgressResult);
+                                // 更新处理进度到Fileinfo
+                                fileinfo.setRemarks(progress.value.toString());
+                                configProgressMap.put(tokenModel.getToken(), fileinfoList);
                                 System.out.println("第" + idx + "次调用getFpgaConfigProgress ---------------返回值：" + progress.value);
                                 try {
 
@@ -696,5 +705,31 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     @Override
     public List<ChartDataRow> getDeviceStatusChartInfo() {
         return deviceinfoMapper.getDeviceStatusChartInfo();
+    }
+
+    /**
+     * @return
+     * @Method getConfigProgressMap
+     * @Author SKAIXX
+     * @Description 获取指定Token的Progress
+     * @Date 2020/2/21 15:26
+     * @Param
+     **/
+    @Override
+    public List<Fileinfo> getConfigProgressMap(TokenModel tokenModel) {
+        return configProgressMap.get(tokenModel.getToken());
+    }
+
+    /**
+     * @return
+     * @Method clearConfigProgressByToken
+     * @Author SKAIXX
+     * @Description 根据指定的Token清除Progress数据
+     * @Date 2020/2/21 15:26
+     * @Param
+     **/
+    @Override
+    public void clearConfigProgressByToken(TokenModel tokenModel) {
+        configProgressMap.remove(tokenModel.getToken());
     }
 }
