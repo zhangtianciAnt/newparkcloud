@@ -46,7 +46,7 @@
 
     <select id="getFilesByFileMarkId" parameterType="string" resultType="com.nt.dao_PHINE.Fileinfo">
         select
-            a.fileid,a.filename,a.filetype,a.deviceid,a.fpgaid
+            a.fileid,a.filename,a.filetype,a.deviceid,a.fpgaid,a.url
         from
             fileinfo a
         LEFT JOIN
