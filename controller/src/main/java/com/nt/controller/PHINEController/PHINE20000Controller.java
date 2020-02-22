@@ -34,6 +34,9 @@ public class PHINE20000Controller {
     @Autowired
     private PHINEFileService phineFileService;
 
+    @Autowired
+    private AsyncService asyncService;
+
     /**
      * @return
      * @Method getOperationrecordList
@@ -61,9 +64,10 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/addOperationrecord", method = {RequestMethod.POST})
     public ApiResult addOperationrecord(HttpServletRequest request, @RequestBody OperationRecordVo operation) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        operationrecordService.addOperationrecord(tokenModel,operation);
+        operationrecordService.addOperationrecord(tokenModel, operation);
         return ApiResult.success();
     }
+
     /**
      * @return
      * @Method getDeviceIdByProjectId
@@ -99,7 +103,7 @@ public class PHINE20000Controller {
      * @Author MYT
      * @Description 根据项目ID获取项目信息
      * @Date 2020/2/3 16:56
-            * @Param projectId 项目ID
+     * @Param projectId 项目ID
      **/
     @RequestMapping(value = "/getProjectinfoById", method = {RequestMethod.GET})
     public ApiResult getProjectinfoById(HttpServletRequest request, @RequestParam String projectId) throws Exception {
@@ -238,5 +242,34 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/isExistSameNameFile", method = {RequestMethod.POST})
     public ApiResult isExistSameNameFile(HttpServletRequest request, @RequestBody List<Fileinfo> fileinfoList) throws Exception {
         return phineFileService.isExistSameNameFile(fileinfoList);
+    }
+
+    /**
+     * @return
+     * @Method getConfigProgressMap
+     * @Author SKAIXX
+     * @Description 获取当前Config进度
+     * @Date 2020/2/21 09:27
+     * @Param
+     **/
+    @RequestMapping(value = "/getConfigProgressMap", method = {RequestMethod.GET})
+    public ApiResult getConfigProgressMap(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(asyncService.getConfigProgressMap(tokenModel));
+    }
+
+    /**
+     * @return
+     * @Method clearConfigProgressByToken
+     * @Author SKAIXX
+     * @Description 清空逻辑加载进度
+     * @Date 2020/2/21 09:27
+     * @Param
+     **/
+    @RequestMapping(value = "/clearConfigProgressByToken", method = {RequestMethod.GET})
+    public ApiResult clearConfigProgressByToken(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        asyncService.clearConfigProgressByToken(tokenModel);
+        return ApiResult.success();
     }
 }

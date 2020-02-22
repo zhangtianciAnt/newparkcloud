@@ -125,6 +125,4 @@ public class AsyncServiceImpl implements AsyncService {
     public void clearConfigProgressByToken(TokenModel tokenModel) {
         configProgressMap.remove(tokenModel.getToken());
     }
-
-
 }
