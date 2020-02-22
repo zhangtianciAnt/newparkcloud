@@ -26,7 +26,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -565,9 +567,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
-        // TODO：设备连接状态Check
-//        // 从逻辑文件加载列表中除去设备未连接的加载文件
-//        List<CurrentConnStatusVo> currentConnStatusVoList = getCurrentConnStatus(tokenModel, fileinfoList.get(0).getProjectid());
+        // 从逻辑文件加载列表中除去设备未连接的加载文件
+        List<CurrentConnStatusVo> currentConnStatusVoList = getCurrentConnStatus(tokenModel, fileinfoList.get(0).getProjectid());
 
         OperationRecordVo operationRecordVo = new OperationRecordVo();
         String operationId = UUID.randomUUID().toString();
@@ -578,30 +579,27 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // 安装deviceId进行分组Map
         Map<String, List<Fileinfo>> fileInfoMap = fileinfoList.stream().collect(Collectors.groupingBy(Fileinfo::getDeviceid));
 
-        // TODO：设备连接状态Check
-//        // 加载文件数
-//        AtomicInteger configFileCnt = new AtomicInteger();
-//        // 更新各设备连接状态到List中
-//        for (Fileinfo fileinfo : fileinfoList) {
-//            // 当前设备未连接
-//            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接"))) {
-//                fileinfo.setRemarks(currentConnStatusVoList.stream().filter(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接")).collect(Collectors.toList()).get(0).getConnstatus());
-//            }
-//        }
+        // 加载文件数
+        AtomicInteger configFileCnt = new AtomicInteger();
+        // 更新各设备连接状态到List中
+        for (Fileinfo fileinfo : fileinfoList) {
+            // 当前设备未连接
+            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接"))) {
+                fileinfo.setRemarks(currentConnStatusVoList.stream().filter(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接")).collect(Collectors.toList()).get(0).getConnstatus());
+            }
+        }
         configProgressMap.put(tokenModel.getToken(), fileinfoList);
         // 循环Map分组
         fileInfoMap.forEach((key, value) -> {
-            // TODO：设备连接状态Check
-//            // 判断当前设备是否已连接
-//            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(key) && !s.getConnstatus().equals("已连接"))) {
-//                return;
-//            }
-//            configFileCnt.addAndGet(value.size());
+            // 判断当前设备是否已连接
+            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(key) && !s.getConnstatus().equals("已连接"))) {
+                return;
+            }
+            configFileCnt.addAndGet(value.size());
             asyncReturnMap.put(key, asyncService.doLogicFileLoad(value, tokenModel, operationId, WSDL_LOCATION, SERVICE_NAME, configProgressMap));
         });
 
         while (true) {
-            System.out.println(asyncReturnMap);
             AtomicReference<Boolean> temp = new AtomicReference<>(false);
             // 判断所有线程是否都已经结束
             asyncReturnMap.forEach((key, value) -> {
@@ -611,31 +609,32 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                     temp.set(false);
                 }
             });
-            if (temp.get()) {
-                // TODO：设备连接状态Check
-//            if (temp.get() && configFileCnt.get() != 0) {
+            if (temp.get() && configFileCnt.get() != 0) {
                 // 添加操作记录
                 operationRecordVo.setOperationid(operationId);
+                // 汇总所有线程的操作详情
+                asyncReturnMap.forEach((key, value) -> {
+                    try {
+                        detailist.addAll(value.get());
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                });
                 operationRecordVo.setDetailist(detailist);
-                operationRecordVo.setContent("加载了" + fileinfoList.size() + "个文件");
-                // TODO：设备连接状态Check
-//                operationRecordVo.setContent("加载了" + configFileCnt.get() + "个文件");
+                operationRecordVo.setContent("加载了" + configFileCnt.get() + "个文件");
                 operationRecordVo.setTitle("逻辑加载");
                 operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
                 operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
                 break;
+            } else if (configFileCnt.get() == 0) {
+                break;
             }
-            // TODO：设备连接状态Check
-//            else if (configFileCnt.get() == 0) {
-//                break;
-//            }
         }
 
-        // TODO：设备连接状态Check
-//        // 如果没有实际加载，则返回初始List
-//        if (configFileCnt.get() == 0) {
-//            configProgressMap.put(tokenModel.getToken(), fileinfoList);
-//        }
+        // 如果没有实际加载，则返回初始List
+        if (configFileCnt.get() == 0) {
+            configProgressMap.put(tokenModel.getToken(), fileinfoList);
+        }
         return ApiResult.success(fileinfoList);
     }
 

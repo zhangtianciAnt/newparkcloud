@@ -58,7 +58,6 @@ public class AsyncServiceImpl implements AsyncService {
                         Holder<Boolean> getFpgaConfigStatusResult = new Holder<>(false);
                         // 获取当前Config状态
                         port.getFpgaConfigStatus(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), configResult, getFpgaConfigStatusResult);
-                        System.out.println("第" + idx + "次调用getFpgaConfigStatus ---------------返回值：" + configResult.value.toString());
                         switch (configResult.value.value()) {
                             // 配置中
                             case "Configing":
@@ -66,18 +65,14 @@ public class AsyncServiceImpl implements AsyncService {
                                 Holder<Boolean> getFpgaConfigProgressResult = new Holder<>(false);
                                 // 调用GetFpgaConfigProgress()获取当前Config进度
                                 port.getFpgaConfigProgress(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), progress, getFpgaConfigProgressResult);
-                                // 更新处理进度到Fileinfo
-//                                fileinfo.setRemarks(progress.value.toString());
                                 // 获取当前token的FileList
                                 List<Fileinfo> tmpList = configProgressMap.get(tokenModel.getToken());
-                                tmpList.stream().filter(item -> item.getFiletype().equals(fileinfo.getFileid())).collect(Collectors.toList()).forEach(item -> item.setRemarks(progress.value.toString()));
+                                // 更新处理进度到全局Map中
+                                tmpList.stream().filter(item -> item.getFileid().equals(fileinfo.getFileid())).collect(Collectors.toList()).forEach(item -> item.setRemarks(progress.value.toString()));
                                 configProgressMap.put(tokenModel.getToken(), tmpList);
-                                System.out.println("第" + idx + "次调用getFpgaConfigProgress ---------------返回值：" + progress.value);
                                 try {
 
-                                    System.out.println("第" + idx + "次Before sleep ---------------");
                                     Thread.sleep(1000);
-                                    System.out.println("第" + idx + "次After sleep ---------------");
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
