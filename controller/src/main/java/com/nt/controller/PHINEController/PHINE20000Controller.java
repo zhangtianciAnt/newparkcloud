@@ -157,18 +157,18 @@ public class PHINE20000Controller {
         return deviceinfoService.closeConnection(tokenModel, deviceId);
     }
 
-    /**
-     * @Method closeConnection
-     * @Author MYT
-     * @Description 设备关闭连接
-     * @Date 2020/2/3 16:56
-     * @Param deviceId 设备ID
-     **/
-    @RequestMapping(value = "/logicFileLoad", method = {RequestMethod.POST})
-    public ApiResult logicFileLoad(HttpServletRequest request, @RequestBody List<Fileinfo> fileinfoList) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return deviceinfoService.logicFileLoad(tokenModel, fileinfoList);
-    }
+//    /**
+//     * @Method closeConnection
+//     * @Author MYT
+//     * @Description 设备关闭连接
+//     * @Date 2020/2/3 16:56
+//     * @Param deviceId 设备ID
+//     **/
+//    @RequestMapping(value = "/logicFileLoad", method = {RequestMethod.POST})
+//    public ApiResult logicFileLoad(HttpServletRequest request, @RequestBody List<Fileinfo> fileinfoList) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        return deviceinfoService.logicFileLoad(tokenModel, fileinfoList);
+//    }
 
     /**
      * @return
