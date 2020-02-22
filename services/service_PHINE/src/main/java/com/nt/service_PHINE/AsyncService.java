@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 public interface AsyncService {
-    Future<List<Operationdetail>> doLogicFileLoad(List<Fileinfo> fileinfoList, TokenModel tokenModel, String operationId, URL WSDL_LOCATION, QName SERVICE_NAME);
+    Future<List<Operationdetail>> doLogicFileLoad(List<Fileinfo> fileinfoList, TokenModel tokenModel, String operationId, URL WSDL_LOCATION, QName SERVICE_NAME, Map<String, List<Fileinfo>> configProgressMap);
 
-    List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);
-
-    void clearConfigProgressByToken(TokenModel tokenModel);
+//    List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);
+//
+//    void clearConfigProgressByToken(TokenModel tokenModel);
 }

@@ -255,7 +255,7 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/getConfigProgressMap", method = {RequestMethod.GET})
     public ApiResult getConfigProgressMap(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(asyncService.getConfigProgressMap(tokenModel));
+        return ApiResult.success(deviceinfoService.getConfigProgressMap(tokenModel));
     }
 
     /**
@@ -269,7 +269,7 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/clearConfigProgressByToken", method = {RequestMethod.GET})
     public ApiResult clearConfigProgressByToken(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        asyncService.clearConfigProgressByToken(tokenModel);
+        deviceinfoService.clearConfigProgressByToken(tokenModel);
         return ApiResult.success();
     }
 }

@@ -66,4 +66,7 @@ public interface DeviceinfoService {
     // 获取设备当前连接状态
     List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid);
 
+    List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);
+
+    void clearConfigProgressByToken(TokenModel tokenModel);
 }

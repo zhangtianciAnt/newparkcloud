@@ -596,10 +596,11 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 //                return;
 //            }
 //            configFileCnt.addAndGet(value.size());
-            asyncReturnMap.put(key, asyncService.doLogicFileLoad(value, tokenModel, operationId, WSDL_LOCATION, SERVICE_NAME));
+            asyncReturnMap.put(key, asyncService.doLogicFileLoad(value, tokenModel, operationId, WSDL_LOCATION, SERVICE_NAME, configProgressMap));
         });
 
         while (true) {
+            System.out.println(asyncReturnMap);
             AtomicReference<Boolean> temp = new AtomicReference<>(false);
             // 判断所有线程是否都已经结束
             asyncReturnMap.forEach((key, value) -> {
@@ -705,4 +706,13 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         return deviceinfoMapper.getDeviceStatusChartInfo();
     }
 
+    @Override
+    public List<Fileinfo> getConfigProgressMap(TokenModel tokenModel) {
+        return configProgressMap.get(tokenModel.getToken());
+    }
+
+    @Override
+    public void clearConfigProgressByToken(TokenModel tokenModel) {
+        configProgressMap.remove(tokenModel.getToken());
+    }
 }
