@@ -588,6 +588,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 //                fileinfo.setRemarks(currentConnStatusVoList.stream().filter(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接")).collect(Collectors.toList()).get(0).getConnstatus());
 //            }
 //        }
+        configProgressMap.put(tokenModel.getToken(), fileinfoList);
         // 循环Map分组
         fileInfoMap.forEach((key, value) -> {
             // TODO：设备连接状态Check

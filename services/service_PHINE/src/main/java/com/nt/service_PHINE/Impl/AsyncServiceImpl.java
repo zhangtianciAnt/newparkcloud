@@ -18,6 +18,7 @@ import javax.xml.ws.Holder;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Service
 public class AsyncServiceImpl implements AsyncService {
@@ -66,8 +67,11 @@ public class AsyncServiceImpl implements AsyncService {
                                 // 调用GetFpgaConfigProgress()获取当前Config进度
                                 port.getFpgaConfigProgress(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), progress, getFpgaConfigProgressResult);
                                 // 更新处理进度到Fileinfo
-                                fileinfo.setRemarks(progress.value.toString());
-                                configProgressMap.put(tokenModel.getToken(), fileinfoList);
+//                                fileinfo.setRemarks(progress.value.toString());
+                                // 获取当前token的FileList
+                                List<Fileinfo> tmpList = configProgressMap.get(tokenModel.getToken());
+                                tmpList.stream().filter(item -> item.getFiletype().equals(fileinfo.getFileid())).collect(Collectors.toList()).forEach(item -> item.setRemarks(progress.value.toString()));
+                                configProgressMap.put(tokenModel.getToken(), tmpList);
                                 System.out.println("第" + idx + "次调用getFpgaConfigProgress ---------------返回值：" + progress.value);
                                 try {
 
