@@ -4,7 +4,6 @@ import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -65,7 +64,7 @@ public interface DeviceinfoService {
     List<ChartDataRow> getDeviceStatusChartInfo();
 
     // 获取设备当前连接状态
-    List<CurrentConnStatusVo> getCurrentConnStatus(String projectid);
+    List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid);
 
     // 获取指定Token的Progress
     List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);

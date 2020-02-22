@@ -210,7 +210,8 @@ public class PHINE20000Controller {
      **/
     @RequestMapping(value = "/getCurrentConnStatus", method = {RequestMethod.GET})
     public ApiResult getCurrentConnStatus(HttpServletRequest request, @RequestParam String projectid) throws Exception {
-        return ApiResult.success(deviceinfoService.getCurrentConnStatus(projectid));
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(deviceinfoService.getCurrentConnStatus(tokenModel, projectid));
     }
 
     /**

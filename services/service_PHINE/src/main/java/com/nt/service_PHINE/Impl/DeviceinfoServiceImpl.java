@@ -413,7 +413,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Date 2020/2/10 15:27
      **/
     @Override
-    public List<CurrentConnStatusVo> getCurrentConnStatus(String projectid) {
+    public List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid) {
         // 获取当前项目的设备列表
         // region 通过项目ID获取所有设备ID
         Project2device tmpModel = new Project2device();
@@ -453,7 +453,11 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                     status = "未连接";
                     break;
                 case 1:
-                    status = "已连接";
+                    if (tokenModel.getUserId().equals(deviceinfo1.getCurrentuser())) {
+                        status = "已连接";
+                    } else {
+                        status = "已占用";
+                    }
                     break;
                 case 0:
                     status = "离线";
@@ -549,6 +553,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
+        // 从逻辑文件加载列表中除去设备未连接的加载文件
+        List<CurrentConnStatusVo> currentConnStatusVoList = getCurrentConnStatus(tokenModel, fileinfoList.get(0).getProjectid());
         // 设备通信-->逻辑加载处理
         DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
@@ -556,7 +562,14 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         OperationRecordVo operationRecordVo = new OperationRecordVo();
         String operationId = UUID.randomUUID().toString();
         List<Operationdetail> detailist = new ArrayList<>();
+        int total = 0;
         for (Fileinfo fileinfo : fileinfoList) {
+            // 当前设备未连接
+            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接"))) {
+                fileinfo.setRemarks(currentConnStatusVoList.stream().filter(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接")).collect(Collectors.toList()).get(0).getConnstatus());
+                continue;
+            }
+            total += 1;
             Operationdetail operationdetail = new Operationdetail();
             Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(fileinfo.getDeviceid());
             String configurationtype = "";
@@ -627,13 +640,17 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             operationdetail.setFileid(fileinfo.getFileid());
             detailist.add(operationdetail);
         }
-        // 添加操作记录
-        operationRecordVo.setOperationid(operationId);
-        operationRecordVo.setDetailist(detailist);
-        operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
-        operationRecordVo.setTitle("逻辑加载");
-        operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
-        operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
+        if (total > 0) {
+            // 添加操作记录
+            operationRecordVo.setOperationid(operationId);
+            operationRecordVo.setDetailist(detailist);
+            operationRecordVo.setContent("加载了" + total + "文件");
+            operationRecordVo.setTitle("逻辑加载");
+            operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
+            operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
+        } else {
+            configProgressMap.put(tokenModel.getToken(), fileinfoList);
+        }
         return ApiResult.success(fileinfoList);
     }
 

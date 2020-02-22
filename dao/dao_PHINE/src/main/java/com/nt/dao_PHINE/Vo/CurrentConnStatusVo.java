@@ -29,7 +29,7 @@ public class CurrentConnStatusVo {
     private String deviceid;
 
     /**
-     * 当前连接状态（已连接、未连接、离线）
+     * 当前连接状态（已连接、已占用、未连接、离线）
      */
     private String connstatus;
 }
