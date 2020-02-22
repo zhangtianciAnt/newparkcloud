@@ -671,29 +671,4 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         return deviceinfoMapper.getDeviceStatusChartInfo();
     }
 
-    /**
-     * @return
-     * @Method getConfigProgressMap
-     * @Author SKAIXX
-     * @Description 获取指定Token的Progress
-     * @Date 2020/2/21 15:26
-     * @Param
-     **/
-    @Override
-    public List<Fileinfo> getConfigProgressMap(TokenModel tokenModel) {
-        return configProgressMap.get(tokenModel.getToken());
-    }
-
-    /**
-     * @return
-     * @Method clearConfigProgressByToken
-     * @Author SKAIXX
-     * @Description 根据指定的Token清除Progress数据
-     * @Date 2020/2/21 15:26
-     * @Param
-     **/
-    @Override
-    public void clearConfigProgressByToken(TokenModel tokenModel) {
-        configProgressMap.remove(tokenModel.getToken());
-    }
 }

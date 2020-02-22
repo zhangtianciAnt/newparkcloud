@@ -115,4 +115,16 @@ public class AsyncServiceImpl implements AsyncService {
 
         return new AsyncResult<>(detailist);
     }
+
+    @Override
+    public List<Fileinfo> getConfigProgressMap(TokenModel tokenModel) {
+        return configProgressMap.get(tokenModel.getToken());
+    }
+
+    @Override
+    public void clearConfigProgressByToken(TokenModel tokenModel) {
+        configProgressMap.remove(tokenModel.getToken());
+    }
+
+
 }

@@ -229,20 +229,6 @@ public class PHINE20000Controller {
 
     /**
      * @return
-     * @Method getConfigProgressMap
-     * @Author SKAIXX
-     * @Description 获取当前Config进度
-     * @Date 2020/2/21 09:27
-     * @Param
-     **/
-    @RequestMapping(value = "/getConfigProgressMap", method = {RequestMethod.GET})
-    public ApiResult getConfigProgressMap(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(deviceinfoService.getConfigProgressMap(tokenModel));
-    }
-
-    /**
-     * @return
      * @Method isExistSameNameFile
      * @Author SKAIXX
      * @Description 判断文件服务器中是否存在同名文件
@@ -252,20 +238,5 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/isExistSameNameFile", method = {RequestMethod.POST})
     public ApiResult isExistSameNameFile(HttpServletRequest request, @RequestBody List<Fileinfo> fileinfoList) throws Exception {
         return phineFileService.isExistSameNameFile(fileinfoList);
-    }
-
-    /**
-     * @return
-     * @Method clearConfigProgressByToken
-     * @Author SKAIXX
-     * @Description 清空逻辑加载进度
-     * @Date 2020/2/21 09:27
-     * @Param
-     **/
-    @RequestMapping(value = "/clearConfigProgressByToken", method = {RequestMethod.GET})
-    public ApiResult clearConfigProgressByToken(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        deviceinfoService.clearConfigProgressByToken(tokenModel);
-        return ApiResult.success();
     }
 }
