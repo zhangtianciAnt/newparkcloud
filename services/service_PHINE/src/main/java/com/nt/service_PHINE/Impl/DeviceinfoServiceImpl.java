@@ -4,6 +4,7 @@ import com.nt.dao_Org.OrgTree;
 import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_PHINE.AsyncService;
 import com.nt.service_PHINE.DeviceCommunication.*;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
@@ -13,6 +14,8 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.util.StringUtil;
 
@@ -22,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +68,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     @Autowired
     private FileinfoMapper fileinfoMapper;
 
+    private final AsyncService asyncService;
+
     // 全局变量：存储FpgaConfig进度
     private static Map<String, List<Fileinfo>> configProgressMap = new HashMap<String, List<Fileinfo>>();
 
@@ -79,6 +86,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
     // WCF接口名称
     private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "DeviceService");
+
+    public DeviceinfoServiceImpl(AsyncService asyncService) {
+        this.asyncService = asyncService;
+    }
 
     /**
      * @return List<ProjectListVo>平台项目信息列表
@@ -549,91 +560,40 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
-        // 设备通信-->逻辑加载处理
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-        Boolean result = false;     // 加载操作执行结果
         OperationRecordVo operationRecordVo = new OperationRecordVo();
         String operationId = UUID.randomUUID().toString();
         List<Operationdetail> detailist = new ArrayList<>();
-        for (Fileinfo fileinfo : fileinfoList) {
-            Operationdetail operationdetail = new Operationdetail();
-            Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(fileinfo.getDeviceid());
-            String configurationtype = "";
-            switch (fileinfo.getFiletype()) {
-                case "FPGA":        // 执行FPGA加载
-                    result = port.startConfigFpgaByFile(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
-                    boolean loopFlg = false;
-                    int idx =0;
-                    while (!loopFlg) {
-                        idx ++;
-                        // 循环获取Fpga执行结果
-                        Holder<ConfigStatus> configResult = new Holder<>();
-                        Holder<Boolean> getFpgaConfigStatusResult = new Holder<>(false);
-                        // 获取当前Config状态
-                        port.getFpgaConfigStatus(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), configResult, getFpgaConfigStatusResult);
-                        System.out.println("第" + idx + "次调用getFpgaConfigStatus ---------------返回值：" + configResult.value.toString());
-                        switch (configResult.value.value()) {
-                            // 配置中
-                            case "Configing":
-                                Holder<Long> progress = new Holder<Long>(0L);
-                                Holder<Boolean> getFpgaConfigProgressResult = new Holder<>(false);
-                                // 调用GetFpgaConfigProgress()获取当前Config进度
-                                port.getFpgaConfigProgress(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), progress, getFpgaConfigProgressResult);
-                                // 更新处理进度到Fileinfo
-                                fileinfo.setRemarks(progress.value.toString());
-                                configProgressMap.put(tokenModel.getToken(), fileinfoList);
-                                System.out.println("第" + idx + "次调用getFpgaConfigProgress ---------------返回值：" + progress.value);
-                                try {
 
-                                    System.out.println("第" + idx + "次Before sleep ---------------");
-                                    Thread.sleep(1000);
-                                    System.out.println("第" + idx + "次After sleep ---------------");
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
-                            // 配置成功
-                            case "Succeed":
-                                result = true;
-                                loopFlg = true;
-                                break;
-                            // 配置失败
-                            default:
-                                result = false;
-                                loopFlg = true;
-                                break;
-                        }
-                    }
-                    configurationtype = "FPGA加载";
-                    break;
-                case "FMC":         // 执行FMC加载
-                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), 0L, fileinfo.getUrl());
-                    configurationtype = "FMC加载";
-                    break;
-                case "PLL":         // 执行PLL加载
-                    result = port.setPllClockByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), 0L, fileinfo.getUrl());
-                    configurationtype = "PLL加载";
-                    break;
+        // 多线程返回Map
+        Map<String, Future<List<Operationdetail>>> asyncReturnMap = new HashMap<>();
+        // 安装deviceId进行分组Map
+        Map<String, List<Fileinfo>> fileInfoMap = fileinfoList.stream().collect(Collectors.groupingBy(t -> t.getDeviceid()));
+        // 循环Map分组
+        fileInfoMap.forEach((key, value) -> {
+            asyncReturnMap.put(key, asyncService.doLogicFileLoad(value, tokenModel, operationId, WSDL_LOCATION, SERVICE_NAME));
+        });
+
+        while (true) {
+            AtomicReference<Boolean> temp = new AtomicReference<>(false);
+            // 判断所有线程是否都已经结束
+            asyncReturnMap.forEach((key, value) -> {
+                if (value.isDone()) {
+                    temp.set(true);
+                } else {
+                    temp.set(false);
+                }
+            });
+            if (temp.get()) {
+                // 添加操作记录
+                operationRecordVo.setOperationid(operationId);
+                operationRecordVo.setDetailist(detailist);
+                operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
+                operationRecordVo.setTitle("逻辑加载");
+                operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
+                operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
+                break;
             }
-            fileinfo.setRemarks(result ? "成功" : "失败");
-            // 添加操作记录详情
-            operationdetail.setId(UUID.randomUUID().toString());
-            operationdetail.setConfigurationtype(configurationtype);
-            operationdetail.setDevicename(deviceinfo.getId());
-            operationdetail.setFilename(fileinfo.getFilename());
-            operationdetail.setOperationresult(result ? "成功" : "失败");
-            operationdetail.setOperationid(operationId);
-            operationdetail.setFileid(fileinfo.getFileid());
-            detailist.add(operationdetail);
         }
-        // 添加操作记录
-        operationRecordVo.setOperationid(operationId);
-        operationRecordVo.setDetailist(detailist);
-        operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
-        operationRecordVo.setTitle("逻辑加载");
-        operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
-        operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
         return ApiResult.success(fileinfoList);
     }
 
