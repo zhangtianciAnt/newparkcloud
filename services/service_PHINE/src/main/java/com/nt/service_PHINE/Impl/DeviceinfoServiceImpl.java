@@ -5,7 +5,10 @@ import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_PHINE.AsyncService;
-import com.nt.service_PHINE.DeviceCommunication.*;
+import com.nt.service_PHINE.DeviceCommunication.ArrayOfDeviceConnState;
+import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
+import com.nt.service_PHINE.DeviceCommunication.DeviceService;
+import com.nt.service_PHINE.DeviceCommunication.IDeviceService;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
@@ -14,8 +17,6 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.util.StringUtil;
 
@@ -134,7 +135,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         Set<Map.Entry<String, List<String>>> set = tmpMap.entrySet();
         for (Map.Entry<String, List<String>> entry : set) {
             DeviceListVo deviceListVo = new DeviceListVo();
-            String key[] = entry.getKey().split(",");
+            String[] key = entry.getKey().split(",");
             deviceListVo.setDeviceid(key[0]);
             deviceListVo.setMachineroomaddress(key[1]);
             deviceListVo.setBoardList(entry.getValue());
@@ -458,7 +459,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                 return;
             }
             currentConnStatusVo.setDeviceid(item.getDeviceId().getValue());
-            String status = "";
+            String status;
             switch (item.getConnStatus()) {
                 case 2:
                     status = "未连接";
@@ -564,6 +565,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      **/
     @Override
     public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
+        // TODO：设备连接状态Check
+//        // 从逻辑文件加载列表中除去设备未连接的加载文件
+//        List<CurrentConnStatusVo> currentConnStatusVoList = getCurrentConnStatus(tokenModel, fileinfoList.get(0).getProjectid());
+
         OperationRecordVo operationRecordVo = new OperationRecordVo();
         String operationId = UUID.randomUUID().toString();
         List<Operationdetail> detailist = new ArrayList<>();
@@ -571,9 +576,26 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // 多线程返回Map
         Map<String, Future<List<Operationdetail>>> asyncReturnMap = new HashMap<>();
         // 安装deviceId进行分组Map
-        Map<String, List<Fileinfo>> fileInfoMap = fileinfoList.stream().collect(Collectors.groupingBy(t -> t.getDeviceid()));
+        Map<String, List<Fileinfo>> fileInfoMap = fileinfoList.stream().collect(Collectors.groupingBy(Fileinfo::getDeviceid));
+
+        // TODO：设备连接状态Check
+//        // 加载文件数
+//        AtomicInteger configFileCnt = new AtomicInteger();
+//        // 更新各设备连接状态到List中
+//        for (Fileinfo fileinfo : fileinfoList) {
+//            // 当前设备未连接
+//            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接"))) {
+//                fileinfo.setRemarks(currentConnStatusVoList.stream().filter(s -> s.getId().equals(fileinfo.getDeviceid()) && !s.getConnstatus().equals("已连接")).collect(Collectors.toList()).get(0).getConnstatus());
+//            }
+//        }
         // 循环Map分组
         fileInfoMap.forEach((key, value) -> {
+            // TODO：设备连接状态Check
+//            // 判断当前设备是否已连接
+//            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(key) && !s.getConnstatus().equals("已连接"))) {
+//                return;
+//            }
+//            configFileCnt.addAndGet(value.size());
             asyncReturnMap.put(key, asyncService.doLogicFileLoad(value, tokenModel, operationId, WSDL_LOCATION, SERVICE_NAME));
         });
 
@@ -588,16 +610,30 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                 }
             });
             if (temp.get()) {
+                // TODO：设备连接状态Check
+//            if (temp.get() && configFileCnt.get() != 0) {
                 // 添加操作记录
                 operationRecordVo.setOperationid(operationId);
                 operationRecordVo.setDetailist(detailist);
-                operationRecordVo.setContent("加载了" + fileinfoList.size() + "文件");
+                operationRecordVo.setContent("加载了" + fileinfoList.size() + "个文件");
+                // TODO：设备连接状态Check
+//                operationRecordVo.setContent("加载了" + configFileCnt.get() + "个文件");
                 operationRecordVo.setTitle("逻辑加载");
                 operationRecordVo.setProjectid(fileinfoList.get(0).getProjectid());
                 operationrecordService.addOperationrecord(tokenModel, operationRecordVo);
                 break;
             }
+            // TODO：设备连接状态Check
+//            else if (configFileCnt.get() == 0) {
+//                break;
+//            }
         }
+
+        // TODO：设备连接状态Check
+//        // 如果没有实际加载，则返回初始List
+//        if (configFileCnt.get() == 0) {
+//            configProgressMap.put(tokenModel.getToken(), fileinfoList);
+//        }
         return ApiResult.success(fileinfoList);
     }
 
@@ -611,9 +647,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         tmpModel.setProjectid(projectid);
         List<Project2device> project2deviceList = project2deviceMapper.select(tmpModel);
         List<Deviceinfo> deviceinfoList = new ArrayList<>();
-        project2deviceList.forEach(item -> {
-            deviceinfoList.add(deviceinfoMapper.selectByPrimaryKey(item.getDeviceid()));
-        });
+        project2deviceList.forEach(item -> deviceinfoList.add(deviceinfoMapper.selectByPrimaryKey(item.getDeviceid())));
         // endregion
 
         // region 设备读写测试
@@ -624,7 +658,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
             String msg = df.format(new Date()) + "-FPGA1 ";
             // 读寄存器
-            Holder<Long> regData = new Holder<Long>(0L);
+            Holder<Long> regData = new Holder<>(0L);
             Holder<Boolean> holderResult = new Holder<>(false);
             port.regRead(item.getDeviceid(), 1L, Long.parseLong("000C", 16), regData, holderResult);
             msg += holderResult.value ? "读取成功," : "读取失败,";
