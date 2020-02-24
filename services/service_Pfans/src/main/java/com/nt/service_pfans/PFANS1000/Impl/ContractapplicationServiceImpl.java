@@ -28,8 +28,15 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     public void update(List<Contractapplication> contractapplication, TokenModel tokenModel) throws Exception {
         for(int i = 0; i < contractapplication.size(); i ++){
             Contractapplication co = contractapplication.get(i);
-            co.preUpdate(tokenModel);
-            contractapplicationMapper.updateByPrimaryKeySelective(co);
+            if(co.getContractapplication_id().equals("")){
+                co.preInsert(tokenModel);
+                co.setContractapplication_id(UUID.randomUUID().toString());
+                contractapplicationMapper.insert(co);
+            }
+            else{
+                co.preUpdate(tokenModel);
+                contractapplicationMapper.updateByPrimaryKeySelective(co);
+            }
         }
     }
 
