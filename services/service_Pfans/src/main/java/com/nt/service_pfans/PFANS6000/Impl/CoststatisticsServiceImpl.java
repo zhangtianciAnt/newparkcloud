@@ -157,7 +157,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public Map<String, Double> getUserPriceMap() throws Exception {
         // 获取所有人的单价设定
         Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH) + 1;  //todo
+        int month = now.get(Calendar.MONTH) + 1;
         String startTime = "";
         String endTime = "";
         if(month >= 1 && month <= 4) {
