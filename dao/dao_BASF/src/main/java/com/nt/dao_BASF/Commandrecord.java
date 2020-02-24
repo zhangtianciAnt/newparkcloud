@@ -72,7 +72,6 @@ public class Commandrecord extends BaseModel {
     private List<Command> command;
     //事故状态解除
     private ReleaseAccident releaseAccident;
-
     //gis截图(base64)
     private String gisimage;
 

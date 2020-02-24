@@ -6,15 +6,12 @@ import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.dao_BASF.VO.TrainEducationPerVo;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.UserAccount;
-import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.utils.dao.TokenModel;
-import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -58,6 +55,15 @@ public class StartprogramServicesImpl implements StartprogramServices {
         startprogram.setStatus("0");
         startprogram.setProgramtype("BC039001");
         startprogram.setIsonline("BC032002");
+        return startprogramMapper.select(startprogram);
+    }
+
+    @Override
+    public List<Startprogram> onlineNostart() throws Exception {
+        Startprogram startprogram = new Startprogram();
+        startprogram.setStatus("0");
+        startprogram.setProgramtype("BC039001");
+        startprogram.setIsonline("BC032001");
         return startprogramMapper.select(startprogram);
     }
 

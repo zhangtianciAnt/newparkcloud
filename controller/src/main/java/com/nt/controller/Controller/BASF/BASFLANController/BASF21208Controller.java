@@ -1,10 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
-import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
-import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -42,6 +40,12 @@ public class BASF21208Controller {
     @RequestMapping(value = "/nostart", method = {RequestMethod.POST})
     public ApiResult nostart(HttpServletRequest request) throws Exception {
         return ApiResult.success(startprogramServices.nostart());
+    }
+
+    //获取未开班培训列表
+    @RequestMapping(value = "/onlineNostart", method = {RequestMethod.POST})
+    public ApiResult onlineNostart(HttpServletRequest request) throws Exception {
+        return ApiResult.success(startprogramServices.onlineNostart());
     }
 
     //获取获取未开班参加人员id名单

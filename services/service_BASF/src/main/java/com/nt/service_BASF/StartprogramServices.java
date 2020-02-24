@@ -22,6 +22,9 @@ public interface StartprogramServices {
     //获取未开班培训列表
     List<Startprogram> nostart() throws Exception;
 
+    //获取在线未开班培训列表
+    List<Startprogram> onlineNostart() throws Exception;
+
     //获取one
     Startprogram one(String startprogramid) throws Exception;
 
