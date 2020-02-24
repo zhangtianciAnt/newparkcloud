@@ -1,12 +1,13 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
-import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
-import com.nt.dao_Pfans.PFANS6000.Coststatistics;
-import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
-import com.nt.dao_Pfans.PFANS6000.Variousfunds;
+import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS6000.*;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
+import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.CompanyStatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
 import com.nt.utils.LogicalException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -14,6 +15,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
@@ -28,6 +30,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -42,6 +46,15 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     @Autowired
     private CompanyStatisticsMapper companyStatisticsMapper;
 
+    @Autowired
+    private CoststatisticsService coststatisticsService;
+
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
+
 
     @Override
     public Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception{
@@ -50,10 +63,22 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         Variousfunds variousfunds = new Variousfunds();
 //        variousfunds.setOwner(tokenModel.getUserId());
         List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
+        List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
+        Map<String, String> plmonthPlanMap = new HashMap<>();
+        Pattern pattern = Pattern.compile("(\\d+)");
+        for ( Dictionary d : dictionaryList ) {
+            String value = d.getValue1();
+            Matcher matcher = pattern.matcher(value);
+            if ( matcher.find() ) {
+                value = matcher.group(1);
+            }
+            plmonthPlanMap.put(d.getCode(), value);
+        }
+
         Map<String, Double> tripMap = new HashMap<>();
         Map<String, Double> assetsMap = new HashMap<>();
         for ( Variousfunds v : allVariousfunds ) {
-            String month = v.getPlmonthplan();
+            String month = plmonthPlanMap.getOrDefault(v.getPlmonthplan(), "");
             Map<String, Double> targetMap = null;
             if ( "BP014001".equals(v.getTypeoffees())) {
                 //出张经费
@@ -72,7 +97,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             targetMap.put(month, value + addValue);
         }
         // rebuild Map
-        // format : {cost1..12, totalcost}
+        // format : key: cost{1..12}, value: totalcost
         Map<String, Double> finalTripMap = new HashMap<>();
         Map<String, Double> finalAssetsMap = new HashMap<>();
         double totalTrip = 0;
@@ -94,26 +119,37 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         result.put("asset", finalAssetsMap);
 
 
+        Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMap();
+        // 获取公司名称
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
+        Map<String, String> user2CompanyMap = new HashMap<String, String>();
+        for ( Expatriatesinfor ex : companyList) {
+            String key = ex.getExpname();
+            String value = ex.getSuppliername();
+            user2CompanyMap.put(key, value);
+        }
+
 
         List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         for ( Coststatistics c : allCostList ) {
-            String bpcompany = c.getBpcompany();
-            CompanyStatistics company = companyMap.get(bpcompany);
-            if ( company == null ) {
-                company = new CompanyStatistics();
-                company.setBpcompany(bpcompany);
-            }
-//            double price = c.getUnitprice();
-            double price = 100;//todo 假数据
-            // 个人单位的合计费用
+            String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
+            CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
+            company.setBpcompany(bpcompany);
+
+            String userPriceKey = c.getBpname() + "price";
+            // 个人单位的合计费用(行合计)
             double totalmanhours = 0;
-            // 个人单位的合计工数
+            // 个人单位的合计工数(行合计)
             double totalcost = 0;
+
+            // 分别计算12个月的累计值
             for ( int i=1; i<=12; i++ ) {
                 String p_manhour = "manhour" + i;
                 String p_cost = "cost" + i;
 
+                // 上一次合计结果
                 double oldManhour = 0;
                 double oldCost = 0;
                 try {
@@ -123,10 +159,12 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     oldCost = Double.parseDouble(BeanUtils.getProperty(company, p_cost));
                 } catch (Exception e) {}
 
+                // 当前结果
                 double manhour = 0;
                 try {
                     manhour = Double.parseDouble(BeanUtils.getProperty(c, p_manhour));
                 } catch (Exception e) {}
+                double price = userPriceMap.getOrDefault(userPriceKey+i, 0d);
                 double cost = price * manhour;
 
                 double newCost = cost + oldCost;
@@ -140,6 +178,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 totalmanhours += manhour;
             }
 
+            // 操作行合计值
             double oldTotalmanhours = 0;
             double oldTotalcost = 0;
             try {
@@ -200,145 +239,84 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
     @Override
     public XSSFWorkbook downloadExcel(HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
+        InputStream in = null;
+        try {
+            //表格操作
+            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/BPshetongji.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(in);
+            this.getReportWork1(workbook.getSheetAt(0));
+            this.getReportWork2(workbook.getSheetAt(1));
+            this.getReportWork3(workbook.getSheetAt(2));
+
+            return workbook;
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+
+    private void getReportWork1(XSSFSheet sheet1) throws LogicalException {
         try {
             Coststatistics coststatistics = new Coststatistics();
             Map<String, Object> result = getCosts(coststatistics);
             List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>)result.get("company");
             Map<String, Double> trip = (Map<String, Double>) result.get("trip");
             Map<String, Double> asset = (Map<String, Double>) result.get("asset");
-            InputStream in = null;
-            FileOutputStream f = null;
-            XSSFWorkbook work = null;
-            //表格操作
-            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/BPshetongji.xlsx");
-            work = new XSSFWorkbook(in);
-            XSSFSheet sheet1 = work.getSheetAt(0);
+
             Calendar now = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年mm月");
-            int year = now.get(Calendar.YEAR);
-            int year1 = year + 1;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
+            now.setTime(sdf.parse(getBusinessYear() + "年04月"));
             //日期赋值
-            for(int c = 3; c< 25; c++) {
-                if(c <= 19) {
-                    int m = 4;
-                    sheet1.getRow(1).getCell(c).setCellValue(year + "年" + m + "月");
-                    m++;
-                }else {
-                    int n = 1;
-                    sheet1.getRow(1).getCell(c).setCellValue(year1 + "年" + n + "月");
-                    n++;
-                }
-                c = c+2;
+            for ( int j = 1; j<=12; j++ ) {
+                sheet1.getRow(1).getCell(2*j+1).setCellValue(sdf.format(now.getTime()));
+                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
             }
+            //
+            Map<String, Double> totalCostMap = new HashMap<>();
             //将数据放入Excel
             int i = 3;
             for (CompanyStatistics c : companyStatisticsList) {
                 //创建工作表的行
                 XSSFRow row = sheet1.createRow(i);
 
-                for (int k = 0; k <=12; k++) {
+                for (int k = 1; k <=13; k++) {
                     double manhour = 0;
                     double cost = 0;
                     String property = "manhour" + k;
                     String propertyC = "cost" + k;
+                    if ( k > 12 ) {
+                        property  = "totalmanhours";
+                        propertyC  = "totalcost";
+                    }
                     try {
                         manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
                         cost = Double.parseDouble(BeanUtils.getProperty(c, propertyC));
-                        switch(k){
-                            case 4:
-                                row.createCell(3).setCellValue(manhour);
-                                row.createCell(4).setCellValue(cost);
-                            case 5:
-                                row.createCell(5).setCellValue(manhour);
-                                row.createCell(6).setCellValue(cost);
-                            case 6:
-                                row.createCell(7).setCellValue(manhour);
-                                row.createCell(8).setCellValue(cost);
-                            case 7:
-                                row.createCell(9).setCellValue(manhour);
-                                row.createCell(10).setCellValue(cost);
-                            case 8:
-                                row.createCell(11).setCellValue(manhour);
-                                row.createCell(12).setCellValue(cost);
-                            case 9:
-                                row.createCell(13).setCellValue(manhour);
-                                row.createCell(14).setCellValue(cost);
-                            case 10:
-                                row.createCell(15).setCellValue(manhour);
-                                row.createCell(16).setCellValue(cost);
-                            case 11:
-                                row.createCell(17).setCellValue(manhour);
-                                row.createCell(18).setCellValue(cost);
-                            case 12:
-                                row.createCell(19).setCellValue(manhour);
-                                row.createCell(20).setCellValue(cost);
-                            case 1:
-                                row.createCell(21).setCellValue(manhour);
-                                row.createCell(22).setCellValue(cost);
-                            case 2:
-                                row.createCell(23).setCellValue(manhour);
-                                row.createCell(24).setCellValue(cost);
-                            case 3:
-                                row.createCell(25).setCellValue(manhour);
-                                row.createCell(26).setCellValue(cost);
-                        }
+
+                        int colIndex = getColIndex4Month(k);
+                        row.createCell(colIndex).setCellValue(manhour);
+                        row.createCell(colIndex+1).setCellValue(cost);
+
+                        totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
+                        totalCostMap.put(propertyC, totalCostMap.getOrDefault(propertyC, 0.0) + cost);
                     } catch (Exception e) {}
 
                 }
 
                 row.createCell(1).setCellValue(i - 2);
                 row.createCell(2).setCellValue(c.getBpcompany());
-                row.createCell(27).setCellValue(c.getTotalmanhours());
-                row.createCell(28).setCellValue(c.getTotalcost());
+//                row.createCell(27).setCellValue(c.getTotalmanhours());
+//                row.createCell(28).setCellValue(c.getTotalcost());
+
+                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
+                totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
                 i++;
             }
-
-            Map<String, Double> addLine1 = new HashMap<String, Double>();
-            Map<String, Double> addLine2 = new HashMap<String, Double>();
-            Map<String, Double> addLine5 = new HashMap<String, Double>();
-            String lineHour1 = "";
-            String lineCost1 = "";
-            String lineKey2 = "";
-            String tripKey = "";
-            String assetKey = "";
-            String lineKey5 = "";
-            for (int t =1; t<=13; t++) {
-                double total_manhour = 0;
-                double total_cost = 0;
-                String key_hour = "manhour" + t;
-                String key_cost  = "cost" + t;
-                if ( t > 12 ) {
-                    key_cost  = "totalcost";
-                    key_hour  = "totalmanhours";
-                }
-                for (CompanyStatistics cList : companyStatisticsList) {
-
-                    total_manhour += Double.parseDouble(BeanUtils.getProperty(cList, key_hour));
-                    total_cost += Double.parseDouble(BeanUtils.getProperty(cList, key_cost));
-                }
-                lineHour1 = key_hour + t;
-                lineCost1 = key_cost + t;
-                addLine1.put(lineHour1, total_manhour);
-                addLine1.put(lineCost1, total_cost);
-                lineKey2 = key_cost + t;
-                if ( total_manhour == 0 ) {
-                    addLine2.put(lineKey2, 0.0);
-                } else {
-                    addLine2.put(lineKey2, total_cost/total_manhour);
-                }
-                tripKey = "cost" + t;
-                assetKey = "cost" + t;
-                lineKey5 = "cost" + t;
-                addLine5.put(lineKey5, total_cost + trip.get("tripKey") + asset.get("assetKey"));
-                addLine5.put("lineKeyTotal", total_cost + trip.get("totalcost") + asset.get("totalcost"));
-            }
-
-            int rowIndex = companyStatisticsList.size();
+            int rowIndex = companyStatisticsList.size()+2;
             //合计行
             XSSFRow rowT = sheet1.createRow(1 + rowIndex);
             rowT.createCell(1).setCellValue("合计");
-            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
-            sheet1.addMergedRegion(region);
             //経費除きの平均単価(人月)
             XSSFRow rowT1 = sheet1.createRow(2 + rowIndex);
             rowT1.createCell(1).setCellValue("経費除きの平均単価(人月)");
@@ -351,40 +329,213 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             //外注総合費用合計(元)
             XSSFRow rowT4 = sheet1.createRow(5 + rowIndex);
             rowT4.createCell(1).setCellValue("外注総合費用合計(元)");
-            for(int r = 1; r<=13; r++) {
-                CellRangeAddress region1 = new CellRangeAddress(rowIndex + 2, rowIndex + 2, r, r + 1);
-                sheet1.addMergedRegion(region1);
-                CellRangeAddress region2 = new CellRangeAddress(rowIndex + 3, rowIndex + 3, r, r + 1);
-                sheet1.addMergedRegion(region2);
-                CellRangeAddress region3 = new CellRangeAddress(rowIndex + 4, rowIndex + 4, r, r + 1);
-                sheet1.addMergedRegion(region3);
-                CellRangeAddress region4 = new CellRangeAddress(rowIndex + 5, rowIndex + 5, r, r + 1);
-                sheet1.addMergedRegion(region4);
+
+            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
+            sheet1.addMergedRegion(region);
+            // 合计28列，后数4行，两两合并
+            for ( int r = rowIndex+2; r<rowIndex+6; r++ ) {
+                for ( i=1; i<=28; i=i+2) {
+                    CellRangeAddress region1 = new CellRangeAddress(r , r, i, i+1);
+                    sheet1.addMergedRegion(region1);
+                }
             }
-            //合计五行赋值
-            for(int p = 1; p <= 12; p++) {
-                String hourKeys = "manhour" + p;
-                String costKeys = "cost" + p;
-                int j = 3;
+            // 设置值
+            for (int k = 1; k <=13; k++) {
+                String property = "manhour" + k;
+                String propertyC = "cost" + k;
+                if ( k > 12 ) {
+                    property  = "totalmanhours";
+                    propertyC  = "totalcost";
+                }
+                int colIndex = getColIndex4Month(k);
                 //合计行
-                rowT.createCell(j).setCellValue(addLine1.get(hourKeys));
-                rowT.createCell(j + 1).setCellValue(addLine1.get(costKeys));
-                //
-                rowT1.createCell(j).setCellValue(addLine2.get(costKeys));
-                //
-                rowT2.createCell(j).setCellValue(trip.get(costKeys));
-                //
-                rowT3.createCell(j).setCellValue(asset.get(costKeys));
-                //
-                rowT3.createCell(j).setCellValue(addLine5.get(costKeys));
-                // todo 最后一列合计没做
-                j = j + 2;
+                rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+                rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
+                //経費除きの平均単価(人月)
+                Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
+                rowT1.createCell(colIndex).setCellValue(avg);
+                //出張経費(元)
+                rowT2.createCell(colIndex).setCellValue(trip.get(propertyC));
+                //設備経費(元)
+                rowT3.createCell(colIndex).setCellValue(asset.get(propertyC));
+                //外注総合費用合計(元)
+                Double totalAll = totalCostMap.get(propertyC) + trip.get(propertyC) + asset.get(propertyC);
+                rowT4.createCell(colIndex).setCellValue(totalAll);
             }
 
-            //写出到文件
-            return work;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
+        }
+    }
+
+
+    private void getReportWork2(XSSFSheet sheet1) throws LogicalException {
+        try {
+            Calendar now = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
+            now.setTime(sdf.parse(getBusinessYear() + "年04月"));
+            //日期赋值
+            for ( int j = 1; j<=12; j++ ) {
+                sheet1.getRow(1).getCell(2*j+1).setCellValue(sdf.format(now.getTime()));
+                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
+            }
+
+            List<CompanyStatistics> list = (List<CompanyStatistics>) this.getWorkTimes(new Coststatistics()).get("worktimes");
+            //将数据放入Excel
+            int i = 3;
+            Map<String, Double> totalCostMap = new HashMap<>();
+            for (CompanyStatistics c : list) {
+                //创建工作表的行
+                XSSFRow row = sheet1.createRow(i);
+
+                Double lineTotalManhour = 0.0, lineTotalCost = 0.0;
+                for (int k = 1; k <=13; k++) {
+                    double manhour = 0;
+                    double cost = 0;
+                    String property = "manhour" + k;
+                    String propertyC = "cost" + k;
+                    if ( k > 12 ) {
+                        property  = "totalmanhours";
+                        propertyC  = "totalcost";
+                    }
+                    try {
+                        int colIndex = getColIndex4Month(k);
+                        if ( k > 12 ) {
+                            manhour = lineTotalManhour;
+                            cost = lineTotalCost;
+                        } else {
+                            manhour = getDoubleValue(c, property);
+                            cost = getDoubleValue(c, propertyC);
+                            lineTotalManhour += manhour;
+                            lineTotalManhour += cost;
+                        }
+                        row.createCell(colIndex).setCellValue(manhour);
+                        row.createCell(colIndex+1).setCellValue(cost);
+
+                        totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
+                        totalCostMap.put(propertyC, totalCostMap.getOrDefault(propertyC, 0.0) + cost);
+                    } catch (Exception e) {}
+
+                }
+
+                row.createCell(1).setCellValue(i - 2);
+                row.createCell(2).setCellValue(c.getBpcompany());
+
+                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
+                totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
+                i++;
+            }
+
+            int rowIndex = list.size()+2;
+            //合计行
+            XSSFRow rowT = sheet1.createRow(1 + rowIndex);
+            rowT.createCell(1).setCellValue("合计");
+            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
+            sheet1.addMergedRegion(region);
+
+            // 设置值
+            for (int k = 1; k <=13; k++) {
+                String property = "manhour" + k;
+                String propertyC = "cost" + k;
+                if ( k > 12 ) {
+                    property  = "totalmanhours";
+                    propertyC  = "totalcost";
+                }
+                int colIndex = getColIndex4Month(k);
+                //合计行
+                rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+                rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
+            }
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+
+    private void getReportWork3(XSSFSheet sheet) throws LogicalException {
+        try {
+            Calendar now = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
+            now.setTime(sdf.parse(getBusinessYear() + "年04月"));
+            //日期赋值
+            for ( int j = 1; j<=12; j++ ) {
+                sheet.getRow(2).getCell(j+2).setCellValue(sdf.format(now.getTime()));
+                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
+            }
+
+            List<CompanyStatistics> list = (List<CompanyStatistics>) this.getWorkerCounts(new Coststatistics()).get("workers");
+            //将数据放入Excel
+            int i = 4;
+            Map<String, Double> totalCostMap = new HashMap<>();
+            for (CompanyStatistics c : list) {
+                //创建工作表的行
+                XSSFRow row = sheet.createRow(i);
+
+                Double lineTotalManhour = 0.0;
+                for (int k = 1; k <=13; k++) {
+                    double manhour = 0;
+                    String property = "manhour" + k;
+                    if ( k > 12 ) {
+                        property  = "totalmanhours";
+                    }
+                    try {
+                        int colIndex = k > 12 ? k+2 : (getColIndex4Month(k)-3)/2 + 3;
+                        if ( k > 12 ) {
+                            manhour = lineTotalManhour;
+                        } else {
+                            manhour = getDoubleValue(c, property);
+                            lineTotalManhour += manhour;
+                        }
+                        row.createCell(colIndex).setCellValue(manhour);
+
+                        totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
+                    } catch (Exception e) {}
+
+                }
+
+                row.createCell(1).setCellValue(i - 3);
+                row.createCell(2).setCellValue(c.getBpcompany());
+
+                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
+                i++;
+            }
+
+            int rowIndex = list.size()+3;
+            //合计行
+            XSSFRow rowT = sheet.createRow(1 + rowIndex);
+            rowT.createCell(1).setCellValue("合计");
+            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
+            sheet.addMergedRegion(region);
+
+            // 设置值
+            for (int k = 1; k <=13; k++) {
+                String property = "manhour" + k;
+                if ( k > 12 ) {
+                    property  = "totalmanhours";
+                }
+                int colIndex = k > 12 ? k+2 : (getColIndex4Month(k)-3)/2 + 3;
+                //合计行
+                rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+            }
+        } catch (Exception e ) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+
+    private Double getDoubleValue(Object o, String property) {
+        try {
+            return Double.parseDouble(BeanUtils.getProperty(o, property));
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+
+    private int getColIndex4Month(int month) {
+        if ( month <=3 ) {
+            return 2*(month-4+12)+3;
+        } else if ( month > 12 ) {
+            return 2*month+1;
+        } else {
+            return 2*(month-4)+3;
         }
     }
 }

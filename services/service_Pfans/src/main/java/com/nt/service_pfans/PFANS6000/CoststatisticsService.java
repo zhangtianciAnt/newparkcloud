@@ -9,11 +9,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 public interface CoststatisticsService {
     List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception;
 
     Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception;
+
+    Map<String, Double> getUserPriceMap() throws Exception;
 
     public XSSFWorkbook downloadExcel(CoststatisticsVo coststatisticsVo, HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
 }
