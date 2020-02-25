@@ -593,7 +593,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         //上级审批
                     } else if ("2".equals(item.getNodeusertype())) {
 
-                        String user = getUpUser("");
+                        String user = getUpUser(tokenModel.getUserId());
                         // 创建节点
                         Workflowstep workflowstep = new Workflowstep();
                         workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
