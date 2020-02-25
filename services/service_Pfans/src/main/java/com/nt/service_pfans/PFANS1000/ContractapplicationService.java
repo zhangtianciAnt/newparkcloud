@@ -9,7 +9,7 @@ public interface ContractapplicationService {
 
     List<Contractapplication> get(Contractapplication contractapplication) throws Exception;
 
-    public void update(Contractapplication contractapplication, TokenModel tokenModel) throws Exception;
+    public void update(List<Contractapplication> contractapplication, TokenModel tokenModel) throws Exception;
 
     public void insert(List<Contractapplication> contractapplication, TokenModel tokenModel)throws Exception;
 

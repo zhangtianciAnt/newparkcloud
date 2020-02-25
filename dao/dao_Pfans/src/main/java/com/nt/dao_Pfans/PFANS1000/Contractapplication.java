@@ -21,8 +21,20 @@ public class Contractapplication extends BaseModel {
     @Column(name = "CONTRACTAPPLICATION_ID")
     private String contractapplication_id;
 
+    @Column(name = "CAREERYEAR")
+    private String careeryear;
+
+    @Column(name = "PERIODS")
+    private String periods;
+
     @Column(name = "GROUP_ID")
     private String group_id;
+
+    @Column(name = "DEPARTMENT")
+    private String department;
+
+    @Column(name = "ORGNUMBER")
+    private String orgnumber;
 
     @Column(name = "DEPLOYMENT")
     private String deployment;

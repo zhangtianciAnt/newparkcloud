@@ -58,6 +58,7 @@ public class OrgTree extends BaseModel {
     private String companyid;
     private String companyshortname;
     private String companyen;
+    private String orgname;
     private String companyname;
     private String companyaddress;
     private String companycorporation;

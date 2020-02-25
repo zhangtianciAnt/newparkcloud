@@ -39,6 +39,7 @@ public class CooperinterviewServiceImpl implements CooperinterviewService {
     public void createcooperinterviewApply(Cooperinterview cooperinterview, TokenModel tokenModel) throws Exception {
         cooperinterview.preInsert(tokenModel);
         cooperinterview.setCooperinterview_id(UUID.randomUUID().toString());
+        cooperinterview.setCooperuserid(UUID.randomUUID().toString());
         cooperinterviewMapper.insert(cooperinterview);
     }
 
