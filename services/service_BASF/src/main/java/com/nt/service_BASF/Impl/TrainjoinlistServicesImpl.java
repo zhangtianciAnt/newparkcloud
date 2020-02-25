@@ -60,12 +60,37 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                     trainjoinlist.preInsert(tokenModel);
                     trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
                     trainjoinlist.setJointype("正常");
+                    trainjoinlist.setNumber(1);
                     trainjoinlistMapper.insert(trainjoinlist);
                 }
             }
         }
     }
 
+    //在线培训添加人员名单
+    @Override
+    public void onlineInsert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
+        if (StringUtils.isNotBlank(trainjoinlistVo.getStartprogramid()) && trainjoinlistVo.getTrainjoinlists() != null) {
+            //循环添加
+            for (Trainjoinlist trainjoinlist : trainjoinlistVo.getTrainjoinlists()) {
+                if (trainjoinlist.getPersonnelid() != null && trainjoinlist.getPersonnelid().trim() != "") {
+                    if (trainjoinlistMapper.equals(trainjoinlist)) {
+                        trainjoinlist.preUpdate(tokenModel);
+                        trainjoinlist.setJointype("正常");
+                        trainjoinlist.setNumber(trainjoinlist.getNumber() + 1);
+                    } else {
+                        trainjoinlist.setStartprogramid(trainjoinlistVo.getStartprogramid());
+                        trainjoinlist.preInsert(tokenModel);
+                        trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
+                        trainjoinlist.setJointype("正常");
+                        trainjoinlist.setNumber(1);
+                        trainjoinlistMapper.insert(trainjoinlist);
+                    }
+
+                }
+            }
+        }
+    }
     //根据培训列表id删除参加名单
     @Override
     public void delete(String startprogramid, TokenModel tokenModel) throws Exception {

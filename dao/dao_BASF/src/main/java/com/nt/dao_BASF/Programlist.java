@@ -35,6 +35,8 @@ public class Programlist extends BaseModel {
 
     private String money;//培训费用
 
+    private Integer remindtime;//到期提醒提前时间（月）
+
     private Date lastdate;//上次培训日期
 
     private Date thisdate;//本次培训日期

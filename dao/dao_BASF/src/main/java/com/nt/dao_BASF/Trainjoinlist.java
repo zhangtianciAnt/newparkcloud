@@ -73,4 +73,14 @@ public class Trainjoinlist extends BaseModel {
      * 通过状态
      */
     private String throughtype;
+
+    /**
+     * 考试次数
+     */
+    private Integer number;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

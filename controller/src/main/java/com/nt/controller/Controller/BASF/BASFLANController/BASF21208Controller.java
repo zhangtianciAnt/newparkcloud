@@ -71,6 +71,17 @@ public class BASF21208Controller {
         return ApiResult.success();
     }
 
+    //在线培训添加培训参加人员名单
+    @RequestMapping(value = "/addOnlineInsert", method = {RequestMethod.POST})
+    public ApiResult addOnlineInsert(@RequestBody TrainjoinlistVo trainjoinlistVo, HttpServletRequest request) throws Exception {
+        if (trainjoinlistVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        trainjoinlistServices.onlineInsert(trainjoinlistVo, tokenModel);
+        return ApiResult.success();
+    }
+
     //excel成绩导入，更新培训参加名单成绩信息
     @RequestMapping(value = "/importexcel", method = {RequestMethod.POST})
     public ApiResult importexcel(HttpServletRequest request) {

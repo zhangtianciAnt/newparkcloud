@@ -61,8 +61,11 @@ public class StartprogramServicesImpl implements StartprogramServices {
     @Override
     public List<Startprogram> onlineNostart() throws Exception {
         Startprogram startprogram = new Startprogram();
+        //未删除的
         startprogram.setStatus("0");
-        startprogram.setProgramtype("BC039001");
+        //进行中的
+        startprogram.setProgramtype("BC039002");
+        //线上的
         startprogram.setIsonline("BC032001");
         return startprogramMapper.select(startprogram);
     }
