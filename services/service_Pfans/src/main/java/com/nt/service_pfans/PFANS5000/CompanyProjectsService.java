@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS5000;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,4 +23,7 @@ public interface CompanyProjectsService {
     CompanyProjectsVo selectById(String companyprojectsid) throws Exception;
 
     List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception;
+
+    //现场管理list
+    List<CompanyProjectsVo2> getSiteList() throws Exception;
 }
