@@ -117,4 +117,18 @@ public class Pfans5001Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getstageInformation(stageInformation));
     }
+
+    /**
+     * @方法名：getSiteList
+     * @描述：获取现场管理列表
+     * @创建日期：2020/02/25
+     * @作者：zy
+     * @参数：[]
+     * @返回值：List<CompanyProjects>
+     */
+    @RequestMapping(value="/getSiteList", method={RequestMethod.GET})
+    public ApiResult List(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.getSiteList());
+    }
 }
