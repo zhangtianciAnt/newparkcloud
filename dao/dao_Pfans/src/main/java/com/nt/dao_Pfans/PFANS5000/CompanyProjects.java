@@ -160,6 +160,12 @@ public class CompanyProjects extends BaseModel {
     private String manmonth;
 
     /**
+     * 预计人月总
+     */
+    @Column(name = "ESTIMATEDWORK")
+    private String estimatedwork;
+
+    /**
      * 预计成本 (千元)
      */
     @Column(name = "COST")
