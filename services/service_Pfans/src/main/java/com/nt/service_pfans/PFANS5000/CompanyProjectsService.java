@@ -26,4 +26,7 @@ public interface CompanyProjectsService {
 
     //现场管理list
     List<CompanyProjectsVo2> getSiteList() throws Exception;
+    //PJ完了审批
+    List<CompanyProjectsVo2> getPjList() throws Exception;
+
 }

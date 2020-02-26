@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS5000.Impl;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -12,9 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -196,4 +196,79 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     public List<CompanyProjectsVo2> getSiteList() throws Exception {
         return companyprojectsMapper.getList();
     }
+
+    /**
+     * PJ完了审批列表
+     * @作者：zy
+     * @return List<CompanyProjectsVo2>
+     */
+    @Override
+    public List<CompanyProjectsVo2> getPjList() throws Exception {
+        CompanyProjects companyProjects = new CompanyProjects();
+        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects); // 主表，大部分数据都从这个里来
+        //获取阶段信息实际开始时间，结束时间
+        StageInformation stageInformation = new StageInformation();
+        List<StageInformation> stageInformationList = stageinformationMapper.select(stageInformation);// 这个表取开始时间，结束时间，放到主表里
+
+        List<CompanyProjectsVo2> listVo2 = companyprojectsMapper.getListVo2();
+        Map<String, String> mapVo2 = new HashMap<>();
+        for ( CompanyProjectsVo2 vo2 : listVo2 ) {
+            String key = vo2.getCompanyprojects_id();
+            String value = vo2.getContractnumber();
+            if ( !mapVo2.containsKey(key) ) {
+                mapVo2.put(key, value);
+            }
+        }
+
+        Map<String, StageInformation> map = new HashMap<>();
+        for ( StageInformation info : stageInformationList ) {
+            String key = info.getCompanyprojects_id();
+            if ( !map.containsKey(key) ) {
+                map.put(key, info);
+            } else {
+                StageInformation oldVo = map.get(key);
+                Date oStart = oldVo.getActualstarttime();
+                Date oEnd = oldVo.getActualendtime();
+
+                if(info.getActualstarttime() != null) {
+                    if ( info.getActualstarttime().before(oStart) ) {
+                        oldVo.setActualstarttime(info.getActualstarttime());
+                    }
+                }
+                if(info.getActualendtime() != null ){
+                    if ( info.getActualendtime().after(oEnd)) {
+                        oldVo.setActualendtime(info.getActualendtime());
+                    }
+                }
+            }
+        }
+
+        List<CompanyProjectsVo2> result = new ArrayList<>();
+
+        for ( CompanyProjects projects : companyProjectsList) {
+            CompanyProjectsVo2 vo = new CompanyProjectsVo2();
+            vo.setCompanyprojects_id(projects.getCompanyprojects_id());
+            //契约番号
+            if ( mapVo2.containsKey(projects.getCompanyprojects_id()) ) {
+                vo.setContractnumber(mapVo2.get(projects.getCompanyprojects_id()));
+            }
+
+            vo.setEntrust(projects.getEntrust());//委托元
+            vo.setField(projects.getField());//项目分野
+            vo.setLeaderid(projects.getLeaderid());//PL
+            vo.setNumbers(projects.getNumbers());//项目编号
+            vo.setProject_name(projects.getProject_name());//项目名称
+            vo.setStatus(projects.getStatus());//审批状态
+            vo.setWork(projects.getWork());//受托工数
+            StageInformation info = map.get(projects.getCompanyprojects_id());
+            if ( info!=null ) {
+                vo.setActualstarttime(info.getActualstarttime());
+                vo.setActualendtime(info.getActualendtime());
+            }
+
+            result.add(vo);
+        }
+        return result;
+    }
+
 }
