@@ -1,7 +1,6 @@
 package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.SecureUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
@@ -9,8 +8,9 @@ import com.nt.service_Org.UserService;
 import com.nt.utils.LogicalException;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
-import com.nt.utils.services.TokenService;
+import com.nt.utils.services.JsTokenService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class UserServiceImpl implements UserService {
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private TokenService tokenService;
+    private JsTokenService jsTokenService;
+
 
     /**
      * @方法名：getUserAccount
@@ -94,8 +96,8 @@ public class UserServiceImpl implements UserService {
      * @返回值：TokenModel
      */
     @Override
-    public TokenModel login(UserAccount userAccount,String locale) throws Exception {
-        TokenModel tokenModel = new TokenModel();
+    public JsTokenModel login(UserAccount userAccount, String locale) throws Exception {
+
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
@@ -104,22 +106,11 @@ public class UserServiceImpl implements UserService {
 
         //数据不存在时
         if (userAccountlist.size() <= 0) {
-            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04,locale));
+            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
         } else {
-            tokenModel = tokenService.getToken(SecureUtil.md5(userAccountlist.get(0).get_id()));
-            if (tokenModel != null) {
-                tokenService.setToken(tokenModel);
-            } else {
-                tokenModel = new TokenModel();
-                //存在用户时，获取用户信息，生成token
-                tokenModel.setUserId(userAccountlist.get(0).get_id());
-                tokenModel.setUserType(userAccountlist.get(0).getUsertype());
-                tokenModel.setTenantId(userAccountlist.get(0).getTenantid());
-                tokenModel.setLocale(locale);
-                tokenService.setToken(tokenModel);
-            }
+            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale,"");
         }
-        return tokenModel;
+
     }
 
     /**
@@ -205,9 +196,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
         Query query = new Query();
-        if(StrUtil.isNotBlank(orgid)){
+        if (StrUtil.isNotBlank(orgid)) {
             query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
-                    Criteria.where("userinfo.groupid").is(orgid),Criteria.where("userinfo.teamid").is(orgid)));
+                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfos;
@@ -395,7 +386,7 @@ public class UserServiceImpl implements UserService {
                 tokenModel.setUserId(useraccount.get_id());
                 tokenModel.setUserType(useraccount.getUsertype());
                 tokenModel.setTenantId(useraccount.getTenantid());
-                tokenService.setToken(tokenModel);
+//                tokenService.setToken(tokenModel);
                 return tokenModel;
             } else {
                 throw new LogicalException("微信用户不在系统中，请先前往个人中心完善个人信息");
@@ -438,14 +429,14 @@ public class UserServiceImpl implements UserService {
             userVo.setUserAccount(userAccount);
         }
         //生成token
-        TokenModel tokenModel = new TokenModel();
-        tokenModel.setUserId(userAccount.get_id());
-        tokenModel.setUserType(userAccount.getUsertype());
-        tokenModel.setTenantId(userAccount.getTenantid());
-        tokenService.setToken(tokenModel);
+//        TokenModel tokenModel = new TokenModel();
+//        tokenModel.setUserId(userAccount.get_id());
+//        tokenModel.setUserType(userAccount.getUsertype());
+//        tokenModel.setTenantId(userAccount.getTenantid());
+//        tokenService.setToken(tokenModel);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("userVo", userVo);
-        result.put("tokenModel", tokenModel);
+//        result.put("tokenModel", tokenModel);
         return result;
     }
 

@@ -7,6 +7,9 @@ package com.nt.utils;
  */
 public class AuthConstants {
 
+    // token过期时间，默认60分钟
+    public final static int TOKEN_EXPIRES_TIME = 3600;
+
     // 请求头中的用来标记token的名称
     public final static String AUTH_TOKEN = "x-auth-token";
     public final static String LOCALE = "locale";
