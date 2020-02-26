@@ -45,7 +45,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                     return false;
 
                 }else{
-                    if(tokenModel.getUrl().equals(url)){
+                    if(url != null && tokenModel.getUrl().equals(url)){
                         return true;
                     }
                 }
