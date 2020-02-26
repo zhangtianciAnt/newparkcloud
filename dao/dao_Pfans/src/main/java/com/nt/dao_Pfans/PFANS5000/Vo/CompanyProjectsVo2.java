@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -59,5 +61,45 @@ public class CompanyProjectsVo2 {
      * id
      */
     private String companyprojects_id;
+
+    /**
+     * 契約書番号
+     */
+    private String contractnumber;
+
+    /**
+     * 项目负责人(PL)
+     */
+    private String leaderid;
+
+    /**
+     * 项目分野
+     */
+    private String field;
+
+    /**
+     * 契約形式 todo
+     */
+//    private String contractnumber;
+
+    /**
+     * 受託工数
+     */
+    private String work;
+
+    /**
+     * 委托元
+     */
+    private String entrust;
+
+    /**
+     * 实际开始时间
+     */
+    private Date actualstarttime;
+
+    /**
+     * 实际结束时间
+     */
+    private Date actualendtime;
 
 }

@@ -96,4 +96,38 @@ public class Award extends BaseModel {
     @Column(name = "PLAN")
     private String plan;
 
+    @Column(name = "DEPOSITJAPANESE")
+    private String depositjapanese;
+
+    @Column(name = "DEPOSITCHINESE")
+    private String depositchinese;
+
+    @Column(name = "DEPLACEJAPANESE")
+    private String deplacejapanese;
+
+    @Column(name = "DEPLACECHINESE")
+    private String deplacechinese;
+
+    @Column(name = "TOTAL")
+    private String total;
+
+    @Column(name = "NUMBERMOTH")
+    private String numbermoth;
+
+    @Column(name = "PRICE")
+    private String price;
+
+    @Column(name = "RATE")
+    private String rate;
+
+    @Column(name = "MAKETYPE")
+    private String maketype;
+
+
+
+
+
+
+
+
 }
