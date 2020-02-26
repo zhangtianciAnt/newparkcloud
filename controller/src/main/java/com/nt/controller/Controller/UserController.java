@@ -8,6 +8,7 @@ import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
+import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import lombok.val;
@@ -80,17 +81,17 @@ public class UserController {
             if (userAccount == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
             }
-            TokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
+            JsTokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
 
             var log = new Log();
             log.setType(AuthConstants.LOG_TYPE_LOGIN);
             var logs = new Log.Logs();
             //logs.setIp(HttpUtil.getClientIP(request));
-            logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
-            log.setLogs(new ArrayList<Log.Logs>());
-            log.getLogs().add(logs);
-            log.preInsert(tokenModel);
-            logService.save(log);
+//            logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+//            log.setLogs(new ArrayList<Log.Logs>());
+//            log.getLogs().add(logs);
+//            log.preInsert(tokenModel);
+//            logService.save(log);
             messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
             return ApiResult.success(tokenModel);
         } catch (LogicalException ex) {
