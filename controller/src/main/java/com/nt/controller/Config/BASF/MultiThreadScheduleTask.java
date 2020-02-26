@@ -3,8 +3,12 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
+import com.nt.dao_SQL.SqlAPBCardHolder;
+import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
+import com.nt.service_SQL.SqlUserInfoServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
+import com.nt.service_SQL.sqlMapper.SqlUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -14,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * basf多线程定时任务
@@ -53,6 +59,12 @@ public class MultiThreadScheduleTask {
     @Autowired
     private ResponseinformationServices responseinformationServices;
 
+    @Autowired
+    private SqlUserInfoServices sqluserinfoservices;
+
+    @Autowired
+    private SqlUserInfoMapper sqlUserInfoMapper;
+
     // websocket消息推送
     private WebSocket ws = new WebSocket();
     // WebSocketVow
@@ -71,18 +83,93 @@ public class MultiThreadScheduleTask {
     public void selectUsersCount() throws Exception {
         System.out.println("执行 查询员工人数 定时任务: " + LocalDateTime.now().toLocalTime()
                 + "\r\n线程 : " + Thread.currentThread().getName());
-        // 查询员工人数
-        int usersCount = basfUserInfoMapper.selectUsersCount();
-        // 查询承包商人数
-        int contractorsCount = basfUserInfoMapper.selectContractorsCount();
-        // 查询访客人数
-        int visitorsCount = basfUserInfoMapper.selectVisitorsCount();
-        // 在厂总人数
-        int allUsersCount = usersCount + contractorsCount + visitorsCount;
-        webSocketVo.setUsersCount(usersCount);
-        webSocketVo.setContractorsCount(contractorsCount);
-        webSocketVo.setVisitorsCount(visitorsCount);
-        webSocketVo.setAllUsersCount(allUsersCount);
+//        // 查询员工人数
+//        int usersCount = basfUserInfoMapper.selectUsersCount();
+//        // 查询承包商人数
+//        int contractorsCount = basfUserInfoMapper.selectContractorsCount();
+//        // 查询访客人数
+//        int visitorsCount = basfUserInfoMapper.selectVisitorsCount();
+//        // 在厂总人数
+//        int allUsersCount = usersCount + contractorsCount + visitorsCount;
+
+        List apblist = sqlUserInfoMapper.selectapbcard();
+        int YG = 0;
+        int FK = 0;
+        int CBS = 0;
+        int ZALL = 0;
+        if(apblist.size()>0)
+        {
+            for(int i = 0;i<apblist.size();i++)
+            {
+                String lastAPBName = ((SqlAPBCardHolder) apblist.get(i)).getLastapbname();
+                String DepartmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
+                if(lastAPBName.indexOf("厂外") < 0 )
+                {
+                    SqlViewDepartment sqlviewdepartment1 = sqlUserInfoMapper.selectdepartmentid(DepartmentID);
+                    if(sqlviewdepartment1.getDepartmentpeid().indexOf("-1")==0)
+                    {
+                        String name1 = sqlviewdepartment1.getName();
+                        if("'访客','送货员','临时工作人员','VIP'".indexOf(name1) > 0)
+                        {
+                            FK = FK + 1;
+                        }
+                        else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name1) > 0)
+                        {
+                            YG = YG + 1;
+                        }
+                        else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name1) > 0)
+                        {
+                            CBS = CBS + 1;
+                        }
+                    }
+                    else{
+                        SqlViewDepartment sqlviewdepartment2 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment1.getDepartmentpeid());
+
+                        if(sqlviewdepartment2.getDepartmentpeid().indexOf("-1")==0)
+                        {
+                            String name2 = sqlviewdepartment2.getName();
+                            if("'访客','送货员','临时工作人员','VIP'".indexOf(name2) > 0)
+                            {
+                                FK = FK + 1;
+                            }
+                            else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name2) > 0)
+                            {
+                                YG = YG + 1;
+                            }
+                            else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name2) > 0)
+                            {
+                                CBS = CBS + 1;
+                            }
+                        }
+                        else{
+                            SqlViewDepartment sqlviewdepartment3 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment2.getDepartmentpeid());
+
+                            if(sqlviewdepartment3.getDepartmentpeid().indexOf("-1")==0)
+                            {
+                                String name3 = sqlviewdepartment3.getName();
+                                if("'访客','送货员','临时工作人员','VIP'".indexOf(name3) > 0)
+                                {
+                                    FK = FK + 1;
+                                }
+                                else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name3) > 0)
+                                {
+                                    YG = YG + 1;
+                                }
+                                else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name3) > 0)
+                                {
+                                    CBS = CBS + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ZALL = YG + FK + CBS;
+        webSocketVo.setUsersCount(YG);
+        webSocketVo.setContractorsCount(FK);
+        webSocketVo.setVisitorsCount(CBS);
+        webSocketVo.setAllUsersCount(ZALL);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
@@ -223,6 +310,13 @@ public class MultiThreadScheduleTask {
     public void BASF10803_GetResponseinformationInfo() throws Exception {
         //应急预案工艺处置队列表
         webSocketVo.setResponseinformationList(responseinformationServices.list());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASFSQL60001_GetSelectapbcard() throws Exception {
+        //在厂人员列表
+        webSocketVo.setSelectapbcardList(sqluserinfoservices.selectapbcard());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

@@ -2,6 +2,7 @@ package com.nt.controller.Controller.WebSocket;
 
 import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.*;
+import com.nt.dao_SQL.SqlAPBCardHolder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -69,6 +70,8 @@ public class WebSocketVo {
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();
     //响应信息列表
     private List<Responseinformation> responseinformationList = new ArrayList<>();
+    //在厂人员列表
+    private List<SqlAPBCardHolder> selectapbcardList = new ArrayList<>();
 
     //获取培训教育人员详细
     private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();

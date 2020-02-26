@@ -36,6 +36,11 @@ public class BASFSQL60001Controller {
     public ApiResult sqluserinfolist( HttpServletRequest request) throws Exception {
         return ApiResult.success(sqluserInfoServices.list());
     }
+
+    @RequestMapping(value = "/selectapbcard", method = {RequestMethod.GET})
+    public ApiResult selectapbcard( HttpServletRequest request) throws Exception {
+        return ApiResult.success(sqluserInfoServices.selectapbcard());
+    }
 }
 
 
