@@ -40,19 +40,29 @@ public class PHINEFileServiceImpl implements PHINEFileService {
         List<Operationdetail> operationdetails = new ArrayList<Operationdetail>();
 
         for (Fileinfo fileinfo : filesInfo) {
-            // 判断文件名称是否已经存在
             Fileinfo tmp = new Fileinfo();
+            // 判断文件名称是否已经存在
             tmp.setFilename(fileinfo.getFilename());
             tmp = fileinfoMapper.selectOne(tmp);
-            if ( tmp != null) {
-                fileinfo.setFileid(tmp.getFileid());
-                fileinfo.preUpdate(tokenModel);
-                fileinfoMapper.updateByPrimaryKey(fileinfo);
+            if ( tmp != null) {     // 如果文件已存在，则删除原文件信息
+                fileinfoMapper.deleteByPrimaryKey(tmp);
+            }
+            // 判断用户是否选择了"ALL"
+            if (fileinfo.getFpgaid().equals("ALL")) {
+                int index = 1;
+                while (index <= 6) {
+                    fileinfo.setFileid(UUID.randomUUID().toString());
+                    fileinfo.setFpgaid(String.valueOf(index));  // Fpga1~6
+                    fileinfo.preInsert(tokenModel);
+                    fileinfoMapper.insert(fileinfo);
+                    index ++;
+                }
             } else {
                 fileinfo.setFileid(UUID.randomUUID().toString());
                 fileinfo.preInsert(tokenModel);
                 fileinfoMapper.insert(fileinfo);
             }
+
             // 操作记录详情
             Operationdetail operationdetail = new Operationdetail();
             operationdetail.setDevicename(fileinfo.getDeviceid());
