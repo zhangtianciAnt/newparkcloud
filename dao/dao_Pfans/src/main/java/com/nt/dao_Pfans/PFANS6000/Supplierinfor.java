@@ -55,6 +55,18 @@ public class Supplierinfor extends BaseModel {
     private String liableperson;
 
     /**
+     * 供应商编码
+     */
+    @Column(name = "VENDORNUM")
+    private String vendornum;
+
+    /**
+     * 所属公司
+     */
+    @Column(name = "THECOMPANY")
+    private String thecompany;
+
+    /**
      * 中文(项目联络人)
      */
     @Column(name = "PROCHINESE")
