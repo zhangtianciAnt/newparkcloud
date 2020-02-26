@@ -167,8 +167,8 @@ public class MultiThreadScheduleTask {
         }
         ZALL = YG + FK + CBS;
         webSocketVo.setUsersCount(YG);
-        webSocketVo.setContractorsCount(FK);
-        webSocketVo.setVisitorsCount(CBS);
+        webSocketVo.setContractorsCount(CBS);
+        webSocketVo.setVisitorsCount(FK);
         webSocketVo.setAllUsersCount(ZALL);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }

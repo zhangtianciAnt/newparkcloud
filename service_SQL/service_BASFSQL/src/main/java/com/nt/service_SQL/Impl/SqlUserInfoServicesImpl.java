@@ -50,14 +50,17 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
                         String name1 = sqlviewdepartment1.getName();
                         if("'访客','送货员','临时工作人员','VIP'".indexOf(name1) > 0)
                         {
+                            ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
                             resultlist.add(apblist.get(i));
                         }
                         else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name1) > 0)
                         {
+                            ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
                             resultlist.add(apblist.get(i));
                         }
                         else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name1) > 0)
                         {
+                            ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
                             resultlist.add(apblist.get(i));
                         }
                     }
@@ -69,14 +72,17 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
                             String name2 = sqlviewdepartment2.getName();
                             if("'访客','送货员','临时工作人员','VIP'".indexOf(name2) > 0)
                             {
+                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
                                 resultlist.add(apblist.get(i));
                             }
                             else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name2) > 0)
                             {
+                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
                                 resultlist.add(apblist.get(i));
                             }
                             else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name2) > 0)
                             {
+                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
                                 resultlist.add(apblist.get(i));
                             }
                         }
@@ -88,14 +94,17 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
                                 String name3 = sqlviewdepartment3.getName();
                                 if("'访客','送货员','临时工作人员','VIP'".indexOf(name3) > 0)
                                 {
+                                    ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
                                     resultlist.add(apblist.get(i));
                                 }
                                 else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name3) > 0)
                                 {
+                                    ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
                                     resultlist.add(apblist.get(i));
                                 }
                                 else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name3) > 0)
                                 {
+                                    ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
                                     resultlist.add(apblist.get(i));
                                 }
                             }
