@@ -7,7 +7,9 @@ import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.services.JsTokenService;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -22,7 +24,7 @@ import java.util.List;
 public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    private TokenService tokenService;
+    private JsTokenService jsTokenService;
     @Autowired
     private AuthService authService;
 
@@ -35,13 +37,18 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         String locale = request.getHeader(AuthConstants.LOCALE);
         try {
             if (StrUtil.isNotBlank(token)) {
-                // 验证token
-//                if (!tokenService.validToken(request)) {
-//                    // 验证token失败，则返回直接返回用户未登录错误
-//                    errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
-//                    return false;
-//
-//                }
+                 //验证token
+                JsTokenModel tokenModel = jsTokenService.getTokenModel(token);
+                if (!(tokenModel !=null && !StrUtil.isEmpty(tokenModel.getToken()))){
+                    // 验证token失败，则返回直接返回用户未登录错误
+                    errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
+                    return false;
+
+                }else{
+                    if(tokenModel.getUrl().equals(url)){
+                        return true;
+                    }
+                }
             } else {
                 // 验证token失败，则返回直接返回用户未登录错误
                 errorResponse(response, ApiResult.failtoken(MessageUtil.getMessage(MsgConstants.ERROR_02,locale)));
@@ -53,14 +60,16 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        tokenModel.setLocale(locale);
-//        //获取ownerlist
-//        if (!StrUtil.isEmpty(url)) {
-//            List<String> ownerList = getOwnerList(url, tokenModel);
-//            tokenModel.setOwnerList(ownerList);
-//        }
-//        tokenService.setToken(tokenModel);
+        JsTokenModel tokenModel = jsTokenService.getTokenModel(token);
+        tokenModel.setLocale(locale);
+        tokenModel.setUrl(url);
+        //获取ownerlist
+        if (!StrUtil.isEmpty(url)) {
+            List<String> ownerList = getOwnerList(url, tokenModel);
+            tokenModel.setOwnerList(ownerList);
+        }
+        jsTokenService.createTokenModel(tokenModel);
+
         return true;
     }
 
@@ -86,7 +95,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
      * @参数：[url, userid]
      * @返回值：java.util.List<java.lang.String>
      */
-    private List<String> getOwnerList(String url, TokenModel tokenModel) throws Exception {
+    private List<String> getOwnerList(String url, JsTokenModel tokenModel) throws Exception {
         List<String> ownerList = new ArrayList<String>();
         ownerList = authService.getOwnerList(url, tokenModel.getUserId());
         return ownerList;
