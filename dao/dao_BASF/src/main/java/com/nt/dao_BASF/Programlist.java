@@ -29,7 +29,7 @@ public class Programlist extends BaseModel {
 
     private String isonline;//培训形式（线上/线下）
 
-    private String thelength;//培训时长（即课时）
+    private Double thelength;//培训时长（即课时）
 
     private String validity;//培训有效期（例：3个月）
 

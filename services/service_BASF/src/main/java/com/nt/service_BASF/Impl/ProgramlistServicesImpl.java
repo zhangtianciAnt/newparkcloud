@@ -201,7 +201,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 //培训形式（线上/线下）
                 programlist.setIsonline(code("BC032",value.get(5).toString()));
                 //培训时长（即课时）
-                programlist.setThelength(value.get(6).toString());
+                programlist.setThelength(Double.parseDouble(value.get(6).toString()));
                 //培训有效期（例：3个月）
                 programlist.setValidity(value.get(7).toString());
                 //培训费用
