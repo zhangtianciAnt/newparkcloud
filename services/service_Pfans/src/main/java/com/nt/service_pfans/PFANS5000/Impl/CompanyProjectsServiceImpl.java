@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS5000.Impl;
 
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -184,5 +185,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception {
         return stageinformationMapper.select(stageInformation);
+    }
+
+    /**
+     * 现场管理列表
+     * @作者：zy
+     * @return List<CompanyProjectsVo2>
+     */
+    @Override
+    public List<CompanyProjectsVo2> getSiteList() throws Exception {
+        return companyprojectsMapper.getList();
     }
 }

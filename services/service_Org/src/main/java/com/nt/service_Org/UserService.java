@@ -5,6 +5,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
+import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface UserService {
     void upUserAccount(UserAccount userAccount) throws Exception;
 
     // 用户登陆
-    TokenModel login(UserAccount userAccount,String locale) throws Exception;
+    JsTokenModel login(UserAccount userAccount, String locale) throws Exception;
 
     //获取客户信息
     List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception;
