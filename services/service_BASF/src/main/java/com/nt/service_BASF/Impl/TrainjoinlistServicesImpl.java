@@ -69,27 +69,35 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
 
     //在线培训添加人员名单
     @Override
-    public void onlineInsert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
+    public String onlineInsert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
         if (StringUtils.isNotBlank(trainjoinlistVo.getStartprogramid()) && trainjoinlistVo.getTrainjoinlists() != null) {
             //循环添加
             for (Trainjoinlist trainjoinlist : trainjoinlistVo.getTrainjoinlists()) {
                 if (trainjoinlist.getPersonnelid() != null && trainjoinlist.getPersonnelid().trim() != "") {
-                    if (trainjoinlistMapper.equals(trainjoinlist)) {
-                        trainjoinlist.preUpdate(tokenModel);
-                        trainjoinlist.setJointype("正常");
-                        trainjoinlist.setNumber(trainjoinlist.getNumber() + 1);
+                    trainjoinlist.setStartprogramid(trainjoinlistVo.getStartprogramid());
+                    Trainjoinlist trainjoinlist1 = new Trainjoinlist();
+                    trainjoinlist1.setStartprogramid(trainjoinlistVo.getStartprogramid());
+                    trainjoinlist1.setPersonnelid(trainjoinlist.getPersonnelid());
+                    if (trainjoinlistMapper.selectCount(trainjoinlist1) > 0) {
+                        Trainjoinlist trainjoinlist2 = trainjoinlistMapper.selectOne(trainjoinlist1);
+                        trainjoinlist2.preUpdate(tokenModel);
+                        trainjoinlist2.setJointype("正常");
+                        trainjoinlist2.setNumber(trainjoinlist2.getNumber() + 1);
+                        trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist2);
+                        return trainjoinlist2.getTrainjoinlistid();
                     } else {
-                        trainjoinlist.setStartprogramid(trainjoinlistVo.getStartprogramid());
                         trainjoinlist.preInsert(tokenModel);
                         trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
                         trainjoinlist.setJointype("正常");
                         trainjoinlist.setNumber(1);
                         trainjoinlistMapper.insert(trainjoinlist);
+                        return trainjoinlist.getTrainjoinlistid();
                     }
 
                 }
             }
         }
+        return null;
     }
     //根据培训列表id删除参加名单
     @Override

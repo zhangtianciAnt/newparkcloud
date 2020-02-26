@@ -78,8 +78,7 @@ public class BASF21208Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        trainjoinlistServices.onlineInsert(trainjoinlistVo, tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(trainjoinlistServices.onlineInsert(trainjoinlistVo, tokenModel));
     }
 
     //excel成绩导入，更新培训参加名单成绩信息
