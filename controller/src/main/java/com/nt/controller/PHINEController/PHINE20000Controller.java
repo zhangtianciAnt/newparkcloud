@@ -2,6 +2,7 @@ package com.nt.controller.PHINEController;
 
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
+import com.nt.dao_PHINE.Vo.FpgaDataVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.*;
 import com.nt.utils.*;
@@ -271,5 +272,18 @@ public class PHINE20000Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         deviceinfoService.clearConfigProgressByToken(tokenModel);
         return ApiResult.success();
+    }
+
+    /**
+     * @return
+     * @Method getALLFpga
+     * @Author SKAIXX
+     * @Description 加载策略时，如果选择了"ALL"，则返回所有FPGAID的List
+     * @Date 2020/2/26 12:27
+     * @Param
+     **/
+    @RequestMapping(value = "/getALLFpga", method = {RequestMethod.POST})
+    public ApiResult getALLFpga(HttpServletRequest request, @RequestBody List<FpgaDataVo> fpgaDataVoList) throws Exception {
+        return deviceinfoService.getALLFpga(fpgaDataVoList);
     }
 }

@@ -69,4 +69,7 @@ public interface DeviceinfoService {
     List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);
 
     void clearConfigProgressByToken(TokenModel tokenModel);
+
+    // 加载策略时，如果选择了"ALL"，则返回所有FPGAID的List
+    ApiResult getALLFpga(List<FpgaDataVo> fpgaDataVoList) throws Exception;
 }

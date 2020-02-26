@@ -715,4 +715,37 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     public void clearConfigProgressByToken(TokenModel tokenModel) {
         configProgressMap.remove(tokenModel.getToken());
     }
+
+    @Override
+    public ApiResult getALLFpga(List<FpgaDataVo> fpgaDataVoList) throws Exception {
+        List<FpgaDataVo> newFpgaDataVoList = new ArrayList<>(fpgaDataVoList);
+        AtomicInteger uid = new AtomicInteger(fpgaDataVoList.size());
+        fpgaDataVoList.forEach(item -> {
+            if (item.getFpgaid().equals("ALL")) {
+                // 删除"ALL"选项
+                newFpgaDataVoList.remove(item);
+                // 插入Fpga1~6
+                Fileinfo fileinfo = new Fileinfo();
+                fileinfo.setFilename(item.getFilename());
+                fileinfo.setDeviceid(item.getDeviceid());
+                fileinfo.setFiletype(item.getFiletype());
+                fileinfo.setProjectid(item.getProjectid());
+                List<Fileinfo> fileinfoList = fileinfoMapper.select(fileinfo).stream().filter(subItem -> !subItem.getFpgaid().equals("ALL")).collect(Collectors.toList()).stream().sorted(Comparator.comparing(Fileinfo::getFpgaid)).collect(Collectors.toList());
+                fileinfoList.forEach(fileItem -> {
+                    FpgaDataVo fpgaDataVo = new FpgaDataVo();
+                    fpgaDataVo.setUid(uid.get());
+                    fpgaDataVo.setDeviceid(fileItem.getDeviceid());
+                    fpgaDataVo.setFileid(fileItem.getFileid());
+                    fpgaDataVo.setFilename(fileItem.getFilename());
+                    fpgaDataVo.setFiletype(fileItem.getFiletype());
+                    fpgaDataVo.setFpgaid(fileItem.getFpgaid());
+                    fpgaDataVo.setProjectid(fileItem.getProjectid());
+                    fpgaDataVo.setUrl(fileItem.getUrl());
+                    newFpgaDataVoList.add(fpgaDataVo);
+                    uid.getAndIncrement();
+                });
+            }
+        });
+        return ApiResult.success(newFpgaDataVoList);
+    }
 }

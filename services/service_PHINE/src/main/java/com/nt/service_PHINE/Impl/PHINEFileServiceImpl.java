@@ -49,6 +49,9 @@ public class PHINEFileServiceImpl implements PHINEFileService {
             }
             // 判断用户是否选择了"ALL"
             if (fileinfo.getFpgaid().equals("ALL")) {
+                fileinfo.setFileid(UUID.randomUUID().toString());
+                fileinfo.preInsert(tokenModel);
+                fileinfoMapper.insert(fileinfo);
                 int index = 1;
                 while (index <= 6) {
                     fileinfo.setFileid(UUID.randomUUID().toString());
