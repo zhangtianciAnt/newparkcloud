@@ -44,7 +44,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
             // 判断文件名称是否已经存在
             tmp.setFilename(fileinfo.getFilename());
             tmp = fileinfoMapper.selectOne(tmp);
-            if ( tmp != null) {     // 如果文件已存在，则删除原文件信息
+            if (tmp != null) {     // 如果文件已存在，则删除原文件信息
                 fileinfoMapper.deleteByPrimaryKey(tmp);
             }
             // 判断用户是否选择了"ALL"
@@ -55,7 +55,7 @@ public class PHINEFileServiceImpl implements PHINEFileService {
                     fileinfo.setFpgaid(String.valueOf(index));  // Fpga1~6
                     fileinfo.preInsert(tokenModel);
                     fileinfoMapper.insert(fileinfo);
-                    index ++;
+                    index++;
                 }
             } else {
                 fileinfo.setFileid(UUID.randomUUID().toString());
@@ -158,12 +158,15 @@ public class PHINEFileServiceImpl implements PHINEFileService {
      **/
     @Override
     public ApiResult isExistSameNameFile(List<Fileinfo> fileinfoList) throws Exception {
+        List<String> duplicateNameList = new ArrayList<>();
         for (Fileinfo fileinfo : fileinfoList) {
             Fileinfo tmp = new Fileinfo();
             tmp.setFilename(fileinfo.getFilename());
             int fileCnt = fileinfoMapper.selectCount(tmp);
-            fileinfo.setRemarks(fileCnt > 0 ? "1" : "0");
+            if (fileCnt > 0) {
+                duplicateNameList.add(tmp.getFilename());
+            }
         }
-        return ApiResult.success(fileinfoList);
+        return ApiResult.success(duplicateNameList);
     }
 }
