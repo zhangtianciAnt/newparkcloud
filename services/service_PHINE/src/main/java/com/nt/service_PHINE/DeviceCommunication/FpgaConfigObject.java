@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>FpgaConfigObject complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType name="FpgaConfigObject"&gt;
  *   &lt;complexContent&gt;
@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FpgaConfigObject", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
@@ -54,11 +54,11 @@ public class FpgaConfigObject {
 
     /**
      * ��ȡbinFilePath���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public JAXBElement<String> getBinFilePath() {
         return binFilePath;
@@ -66,11 +66,11 @@ public class FpgaConfigObject {
 
     /**
      * ����binFilePath���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public void setBinFilePath(JAXBElement<String> value) {
         this.binFilePath = value;
@@ -78,11 +78,11 @@ public class FpgaConfigObject {
 
     /**
      * ��ȡcontrolBit���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FpgaControlBit }
-     *     
+     *
      */
     public FpgaControlBit getControlBit() {
         return controlBit;
@@ -90,11 +90,11 @@ public class FpgaConfigObject {
 
     /**
      * ����controlBit���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FpgaControlBit }
-     *     
+     *
      */
     public void setControlBit(FpgaControlBit value) {
         this.controlBit = value;
@@ -102,11 +102,11 @@ public class FpgaConfigObject {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -114,11 +114,11 @@ public class FpgaConfigObject {
 
     /**
      * ����deviceId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -126,11 +126,11 @@ public class FpgaConfigObject {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -138,11 +138,11 @@ public class FpgaConfigObject {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;

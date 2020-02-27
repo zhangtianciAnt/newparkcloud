@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -45,11 +45,11 @@ public class GetCurrentConnStatusResponse {
 
     /**
      * ��ȡgetCurrentConnStatusResult���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isGetCurrentConnStatusResult() {
         return getCurrentConnStatusResult;
@@ -57,11 +57,11 @@ public class GetCurrentConnStatusResponse {
 
     /**
      * ����getCurrentConnStatusResult���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setGetCurrentConnStatusResult(Boolean value) {
         this.getCurrentConnStatusResult = value;
@@ -69,11 +69,11 @@ public class GetCurrentConnStatusResponse {
 
     /**
      * ��ȡdeviceConnStates���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}
-     *     
+     *
      */
     public JAXBElement<ArrayOfDeviceConnState> getDeviceConnStates() {
         return deviceConnStates;
@@ -81,11 +81,11 @@ public class GetCurrentConnStatusResponse {
 
     /**
      * ����deviceConnStates���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link ArrayOfDeviceConnState }{@code >}
-     *     
+     *
      */
     public void setDeviceConnStates(JAXBElement<ArrayOfDeviceConnState> value) {
         this.deviceConnStates = value;

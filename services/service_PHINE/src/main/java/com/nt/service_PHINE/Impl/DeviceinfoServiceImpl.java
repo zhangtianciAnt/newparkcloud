@@ -5,10 +5,7 @@ import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_PHINE.AsyncService;
-import com.nt.service_PHINE.DeviceCommunication.ArrayOfDeviceConnState;
-import com.nt.service_PHINE.DeviceCommunication.ConnectionResult;
-import com.nt.service_PHINE.DeviceCommunication.DeviceService;
-import com.nt.service_PHINE.DeviceCommunication.IDeviceService;
+import com.nt.service_PHINE.DeviceCommunication.*;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
@@ -44,38 +41,12 @@ import java.util.stream.Collectors;
 @Service
 public class DeviceinfoServiceImpl implements DeviceinfoService {
 
-    @Autowired
-    private DeviceinfoMapper deviceinfoMapper;
-
-    @Autowired
-    private BoardinfoMapper boardinfoMapper;
-
-    @Autowired
-    private ChipinfoMapper chipinfoMapper;
-
-    @Autowired
-    private CabinetinfoMapper cabinetinfoMapper;
-
-    @Autowired
-    private MachineroominfoMapper machineroominfoMapper;
-
-    @Autowired
-    private OperationrecordService operationrecordService;
-
-    @Autowired
-    private OrgTreeService orgTreeService;
-
-    @Autowired
-    private Project2deviceMapper project2deviceMapper;
-
-    @Autowired
-    private FileinfoMapper fileinfoMapper;
-
-    private final AsyncService asyncService;
-
+    // WCF接口名称
+    private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "DeviceService");
     // 全局变量：存储FpgaConfig进度
-    private static Map<String, List<Fileinfo>> configProgressMap = new HashMap<String, List<Fileinfo>>();
-
+    private static Map<String, List<Fileinfo>> configProgressMap = new HashMap<>();
+    // 全局变量：存储测试读写进度
+    private static Map<String, Map<String, Integer>> interConnProgressMap = new HashMap<>();
     // WCF服务地址
     private static URL WSDL_LOCATION;
 
@@ -87,8 +58,25 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         }
     }
 
-    // WCF接口名称
-    private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "DeviceService");
+    private final AsyncService asyncService;
+    @Autowired
+    private DeviceinfoMapper deviceinfoMapper;
+    @Autowired
+    private BoardinfoMapper boardinfoMapper;
+    @Autowired
+    private ChipinfoMapper chipinfoMapper;
+    @Autowired
+    private CabinetinfoMapper cabinetinfoMapper;
+    @Autowired
+    private MachineroominfoMapper machineroominfoMapper;
+    @Autowired
+    private OperationrecordService operationrecordService;
+    @Autowired
+    private OrgTreeService orgTreeService;
+    @Autowired
+    private Project2deviceMapper project2deviceMapper;
+    @Autowired
+    private FileinfoMapper fileinfoMapper;
 
     public DeviceinfoServiceImpl(AsyncService asyncService) {
         this.asyncService = asyncService;
@@ -747,5 +735,138 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             }
         });
         return ApiResult.success(newFpgaDataVoList);
+    }
+
+    /**
+     * @return
+     * @Method interConnTestStart
+     * @Author SKAIXX
+     * @Description 测试读写Step1:系统互联检测开始
+     * @Date 2020/2/26 20:16
+     * @Param
+     **/
+    @Override
+    public ApiResult interConnTestStart(TokenModel tokenModel, String projectId, String filePath) throws Exception {
+        // region Step.1 获取当前项目的设备信息
+        // 通过项目ID获取该项目的所有设备
+        Project2device tmpModel = new Project2device();
+        tmpModel.setProjectid(projectId);
+        List<Project2device> project2deviceList = project2deviceMapper.select(tmpModel);
+        // WCF用，设备编号&槽位ID
+        List<DeviceSlotInfo> deviceSlotInfoList = new ArrayList<>();
+        ObjectFactory objectFactory = new ObjectFactory();
+        project2deviceList.forEach(item -> {
+            // 根据主键获取设备信息
+            Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(item.getDeviceid());
+            DeviceSlotInfo deviceSlotInfo = new DeviceSlotInfo();
+            deviceSlotInfo.setDeviceId(objectFactory.createDeviceSlotInfoDeviceId(deviceinfo.getDeviceid()));    // 设备编号
+            deviceSlotInfo.setSlotID(Integer.parseInt(deviceinfo.getCabinetslotid()));                           // 机柜槽位
+            deviceSlotInfoList.add(deviceSlotInfo);
+        });
+        // endregion
+
+        // region Step.2 调用WCF接口：开始系统互联检测
+        // 存储测试读写进度初始化
+        Map<String, Integer> interConnProgress = new HashMap<>();
+        // 测试初始化
+        interConnProgress.put("0", 0);
+        interConnProgressMap.put(tokenModel.getToken(), interConnProgress);
+        // 准备WCF接口参数
+        ArrayOfDeviceSlotInfo arrayOfDeviceSlotInfo = new ArrayOfDeviceSlotInfo();
+        arrayOfDeviceSlotInfo.setDeviceSlotInfo(deviceSlotInfoList);
+        // 开始调用WCF_API:InterconnTestStart
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+        boolean result = port.interconnTestStart(arrayOfDeviceSlotInfo, filePath);
+        // endregion
+        return ApiResult.success();
+    }
+
+    /**
+     * @return
+     * @Method interConnGetProgress
+     * @Author SKAIXX
+     * @Description 测试读写Step2.1:获取系统互联检测进度
+     * @Date 2020/2/26 20:16
+     * @Param
+     **/
+    @Override
+    public ApiResult interConnGetProgress(TokenModel tokenModel) throws Exception {
+        boolean progressing = true;
+        while (progressing) {
+            // 获取前回状态
+            Map<String, Integer> interConnProgress = interConnProgressMap.get(tokenModel.getToken());
+            // 调用WCF接口：获取系统互联检测进度
+            DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+            IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+            Holder<InterConnTestState> currTestState = new Holder<>();
+            Holder<Boolean> result = new Holder<>();
+            port.interconnGetProcess(currTestState, result);
+            String testid = currTestState.value.getTestId().value();
+            switch (testid) {
+                case "0":   //测试初始化
+                    interConnProgress.put("0", currTestState.value.getProgress());
+                    break;
+                case "1":   //GT互联测试
+                    interConnProgress.put("0", 100);
+                    interConnProgress.put("1", currTestState.value.getProgress());
+                    break;
+                case "2":   //IO互联测试
+                    interConnProgress.put("1", 100);
+                    interConnProgress.put("2", currTestState.value.getProgress());
+                    break;
+                case "3":   //子卡测试
+                    interConnProgress.put("2", 100);
+                    interConnProgress.put("3", currTestState.value.getProgress());
+                    break;
+                case "99":  //测试结束
+                    interConnProgress.put("3", 100);
+                    progressing = false;
+                    break;
+            }
+            // 进程等待1秒钟，再次获取Progress
+            Thread.sleep(1000);
+        }
+        return ApiResult.success();
+    }
+
+    /**
+     * @return
+     * @Method interConnClearProgress
+     * @Author SKAIXX
+     * @Description 测试读写Step2.2:清除系统互联检测进度
+     * @Date 2020/2/26 20:17
+     * @Param
+     **/
+    @Override
+    public ApiResult interConnClearProgress(TokenModel tokenModel) throws Exception {
+        interConnProgressMap.remove(tokenModel.getToken());
+        return ApiResult.success();
+    }
+
+    /**
+     * @return
+     * @Method interConnGetResult
+     * @Author SKAIXX
+     * @Description 测试读写Step3:获取互联检测结果
+     * @Date 2020/2/26 20:17
+     * @Param
+     **/
+    @Override
+    public ApiResult interConnGetResult(List<InterConnDetailVo> interConnDetailVoList) throws Exception {
+        // 获取互联检测结果
+        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+        Holder<ArrayOfint> interConnStatus = new Holder<>();
+        Holder<String> resultFilePath = new Holder<>();
+        Holder<Boolean> result = new Holder<>();
+        port.interconnGetResult(interConnStatus, resultFilePath, result);
+        List<Integer> statusList = interConnStatus.value.getInt();
+        AtomicInteger idx = new AtomicInteger();
+        interConnDetailVoList.forEach(item -> {
+            item.setStatus(statusList.get(idx.get()).toString());
+            idx.getAndIncrement();
+        });
+        return ApiResult.success(resultFilePath.value, interConnDetailVoList);
     }
 }

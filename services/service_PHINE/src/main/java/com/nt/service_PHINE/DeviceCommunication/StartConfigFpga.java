@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -40,11 +40,11 @@ public class StartConfigFpga {
 
     /**
      * ��ȡfpgaConfigObject���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}
-     *     
+     *
      */
     public JAXBElement<FpgaConfigObject> getFpgaConfigObject() {
         return fpgaConfigObject;
@@ -52,11 +52,11 @@ public class StartConfigFpga {
 
     /**
      * ����fpgaConfigObject���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link FpgaConfigObject }{@code >}
-     *     
+     *
      */
     public void setFpgaConfigObject(JAXBElement<FpgaConfigObject> value) {
         this.fpgaConfigObject = value;

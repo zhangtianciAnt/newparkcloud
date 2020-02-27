@@ -72,4 +72,16 @@ public interface DeviceinfoService {
 
     // 加载策略时，如果选择了"ALL"，则返回所有FPGAID的List
     ApiResult getALLFpga(List<FpgaDataVo> fpgaDataVoList) throws Exception;
+
+    // 测试读写Step1:系统互联检测开始
+    ApiResult interConnTestStart(TokenModel tokenModel, String projectId, String filePath) throws Exception;
+
+    // 测试读写Step2.1:获取系统互联检测进度
+    ApiResult interConnGetProgress(TokenModel tokenModel) throws Exception;
+
+    // 测试读写Step2.2:清除系统互联检测进度
+    ApiResult interConnClearProgress(TokenModel tokenModel) throws Exception;
+
+    // 测试读写Step3:获取互联检测结果
+    ApiResult interConnGetResult(List<InterConnDetailVo> interConnDetailVoList) throws Exception;
 }

@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -44,11 +44,11 @@ public class GetFpgaConfigStatusResponse {
 
     /**
      * ��ȡgetFpgaConfigStatusResult���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isGetFpgaConfigStatusResult() {
         return getFpgaConfigStatusResult;
@@ -56,11 +56,11 @@ public class GetFpgaConfigStatusResponse {
 
     /**
      * ����getFpgaConfigStatusResult���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setGetFpgaConfigStatusResult(Boolean value) {
         this.getFpgaConfigStatusResult = value;
@@ -68,11 +68,11 @@ public class GetFpgaConfigStatusResponse {
 
     /**
      * ��ȡconfigStatus���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConfigStatus }
-     *     
+     *
      */
     public ConfigStatus getConfigStatus() {
         return configStatus;
@@ -80,11 +80,11 @@ public class GetFpgaConfigStatusResponse {
 
     /**
      * ����configStatus���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConfigStatus }
-     *     
+     *
      */
     public void setConfigStatus(ConfigStatus value) {
         this.configStatus = value;

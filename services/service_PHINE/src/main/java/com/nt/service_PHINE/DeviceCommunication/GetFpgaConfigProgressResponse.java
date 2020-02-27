@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -44,11 +44,11 @@ public class GetFpgaConfigProgressResponse {
 
     /**
      * ��ȡgetFpgaConfigProgressResult���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isGetFpgaConfigProgressResult() {
         return getFpgaConfigProgressResult;
@@ -56,11 +56,11 @@ public class GetFpgaConfigProgressResponse {
 
     /**
      * ����getFpgaConfigProgressResult���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setGetFpgaConfigProgressResult(Boolean value) {
         this.getFpgaConfigProgressResult = value;
@@ -68,11 +68,11 @@ public class GetFpgaConfigProgressResponse {
 
     /**
      * ��ȡprogress���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getProgress() {
         return progress;
@@ -80,11 +80,11 @@ public class GetFpgaConfigProgressResponse {
 
     /**
      * ����progress���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setProgress(Long value) {
         this.progress = value;

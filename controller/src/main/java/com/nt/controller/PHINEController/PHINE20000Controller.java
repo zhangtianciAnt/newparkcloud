@@ -3,6 +3,7 @@ package com.nt.controller.PHINEController;
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.FilemarkVo;
 import com.nt.dao_PHINE.Vo.FpgaDataVo;
+import com.nt.dao_PHINE.Vo.InterConnDetailVo;
 import com.nt.dao_PHINE.Vo.OperationRecordVo;
 import com.nt.service_PHINE.*;
 import com.nt.utils.*;
@@ -285,5 +286,57 @@ public class PHINE20000Controller {
     @RequestMapping(value = "/getALLFpga", method = {RequestMethod.POST})
     public ApiResult getALLFpga(HttpServletRequest request, @RequestBody List<FpgaDataVo> fpgaDataVoList) throws Exception {
         return deviceinfoService.getALLFpga(fpgaDataVoList);
+    }
+
+    /**
+     * @return
+     * @Method interConnTestStart
+     * @Author SKAIXX
+     * @Description 系统互联检测开始
+     * @Date 2020/2/27 15:54
+     * @Param
+     **/
+    @RequestMapping(value = "/interConnTestStart", method = {RequestMethod.GET})
+    public ApiResult interConnTestStart(HttpServletRequest request, @RequestParam String projectId, @RequestParam String filePath) throws Exception {
+        return deviceinfoService.interConnTestStart(tokenService.getToken(request), projectId, filePath);
+    }
+
+    /**
+     * @return
+     * @Method interConnGetProgress
+     * @Author SKAIXX
+     * @Description 获取系统互联检测进度
+     * @Date 2020/2/27 15:56
+     * @Param
+     **/
+    @RequestMapping(value = "/interConnGetProgress", method = {RequestMethod.GET})
+    public ApiResult interConnGetProgress(HttpServletRequest request) throws Exception {
+        return deviceinfoService.interConnGetProgress(tokenService.getToken(request));
+    }
+
+    /**
+     * @return
+     * @Method interConnClearProgress
+     * @Author SKAIXX
+     * @Description 清除系统互联检测进度
+     * @Date 2020/2/27 16:09
+     * @Param
+     **/
+    @RequestMapping(value = "/interConnClearProgress", method = {RequestMethod.GET})
+    public ApiResult interConnClearProgress(HttpServletRequest request, @RequestParam String projectId, @RequestParam String filePath) throws Exception {
+        return deviceinfoService.interConnClearProgress(tokenService.getToken(request));
+    }
+
+    /**
+     * @return
+     * @Method interConnGetResult
+     * @Author SKAIXX
+     * @Description 获取互联检测结果
+     * @Date 2020/2/27 16:11
+     * @Param
+     **/
+    @RequestMapping(value = "/interConnGetResult", method = {RequestMethod.POST})
+    public ApiResult interConnGetResult(HttpServletRequest request, @RequestBody List<InterConnDetailVo> interConnDetailVoList) throws Exception {
+        return deviceinfoService.interConnGetResult(interConnDetailVoList);
     }
 }

@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>FpgaControlBit�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
  * <p>
  * <pre>
@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
- * 
+ *
  */
 @XmlType(name = "FpgaControlBit", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform")
 @XmlEnum

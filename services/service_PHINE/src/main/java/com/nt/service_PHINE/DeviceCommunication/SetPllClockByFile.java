@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -53,11 +53,11 @@ public class SetPllClockByFile {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -65,11 +65,11 @@ public class SetPllClockByFile {
 
     /**
      * ����deviceId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -77,11 +77,11 @@ public class SetPllClockByFile {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -89,11 +89,11 @@ public class SetPllClockByFile {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;
@@ -101,11 +101,11 @@ public class SetPllClockByFile {
 
     /**
      * ��ȡpllId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getPllId() {
         return pllId;
@@ -113,11 +113,11 @@ public class SetPllClockByFile {
 
     /**
      * ����pllId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setPllId(Long value) {
         this.pllId = value;
@@ -125,11 +125,11 @@ public class SetPllClockByFile {
 
     /**
      * ��ȡconfigFilePath���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public JAXBElement<String> getConfigFilePath() {
         return configFilePath;
@@ -137,11 +137,11 @@ public class SetPllClockByFile {
 
     /**
      * ����configFilePath���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public void setConfigFilePath(JAXBElement<String> value) {
         this.configFilePath = value;

@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>anonymous complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -53,11 +53,11 @@ public class RegRead {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -65,11 +65,11 @@ public class RegRead {
 
     /**
      * ����deviceId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -77,11 +77,11 @@ public class RegRead {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -89,11 +89,11 @@ public class RegRead {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;
@@ -101,11 +101,11 @@ public class RegRead {
 
     /**
      * ��ȡregAddr���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getRegAddr() {
         return regAddr;
@@ -113,11 +113,11 @@ public class RegRead {
 
     /**
      * ����regAddr���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setRegAddr(Long value) {
         this.regAddr = value;
@@ -125,11 +125,11 @@ public class RegRead {
 
     /**
      * ��ȡregData���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getRegData() {
         return regData;
@@ -137,11 +137,11 @@ public class RegRead {
 
     /**
      * ����regData���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setRegData(Long value) {
         this.regData = value;

@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>FmcVoltageObject complex type�� Java �ࡣ
- * 
+ *
  * <p>����ģʽƬ��ָ�������ڴ����е�Ԥ�����ݡ�
- * 
+ *
  * <pre>
  * &lt;complexType name="FmcVoltageObject"&gt;
  *   &lt;complexContent&gt;
@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FmcVoltageObject", namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLib_VerityPlatform", propOrder = {
@@ -59,11 +59,11 @@ public class FmcVoltageObject {
 
     /**
      * ��ȡdeviceId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public JAXBElement<String> getDeviceId() {
         return deviceId;
@@ -71,11 +71,11 @@ public class FmcVoltageObject {
 
     /**
      * ����deviceId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
-     *     
+     *
      */
     public void setDeviceId(JAXBElement<String> value) {
         this.deviceId = value;
@@ -83,11 +83,11 @@ public class FmcVoltageObject {
 
     /**
      * ��ȡfmcId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getFmcId() {
         return fmcId;
@@ -95,11 +95,11 @@ public class FmcVoltageObject {
 
     /**
      * ����fmcId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setFmcId(Long value) {
         this.fmcId = value;
@@ -107,11 +107,11 @@ public class FmcVoltageObject {
 
     /**
      * ��ȡfpgaId���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getFpgaId() {
         return fpgaId;
@@ -119,11 +119,11 @@ public class FmcVoltageObject {
 
     /**
      * ����fpgaId���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setFpgaId(Long value) {
         this.fpgaId = value;
@@ -131,11 +131,11 @@ public class FmcVoltageObject {
 
     /**
      * ��ȡisWritetoEeprom���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsWritetoEeprom() {
         return isWritetoEeprom;
@@ -143,11 +143,11 @@ public class FmcVoltageObject {
 
     /**
      * ����isWritetoEeprom���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsWritetoEeprom(Boolean value) {
         this.isWritetoEeprom = value;
@@ -155,11 +155,11 @@ public class FmcVoltageObject {
 
     /**
      * ��ȡvoltageValueIndex���Ե�ֵ��
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getVoltageValueIndex() {
         return voltageValueIndex;
@@ -167,11 +167,11 @@ public class FmcVoltageObject {
 
     /**
      * ����voltageValueIndex���Ե�ֵ��
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setVoltageValueIndex(Long value) {
         this.voltageValueIndex = value;
