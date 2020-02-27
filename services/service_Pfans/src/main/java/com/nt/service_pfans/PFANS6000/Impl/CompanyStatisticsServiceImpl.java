@@ -194,7 +194,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         }
         result.put("company", new ArrayList<>(companyMap.values()));
 
-        // year todo 画面赋值年有问题
+        // year
         result.put("year", getBusinessYear());
 
         return result;
@@ -228,13 +228,24 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         return result;
     }
 
-    private int getBusinessYear() {
+    private String[] getBusinessYear() {
+        String[] arr = {"", ""};
         Calendar now = Calendar.getInstance();
-        int year = now.get(Calendar.YEAR);
-        if ( now.get(Calendar.MONTH) <= 2 ) {
-            year--;
+        int month = now.get(Calendar.MONTH) + 1;
+
+        if(month >= 1 && month <= 4) {
+            String yearL = String.valueOf(now.get(Calendar.YEAR) - 1);
+            String year = String.valueOf(now.get(Calendar.YEAR));
+            arr[0] = yearL;
+            arr[1] = year;
+            return arr;
+        }else {
+            String yearL = String.valueOf(now.get(Calendar.YEAR));
+            String year = String.valueOf(now.get(Calendar.YEAR) + 1);
+            arr[0] = yearL;
+            arr[1] = year;
+            return arr;
         }
-        return year;
     }
 
     @Override
