@@ -204,12 +204,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      */
     @Override
     public List<CompanyProjectsVo2> getPjList() throws Exception {
+        //项目表
         CompanyProjects companyProjects = new CompanyProjects();
-        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects); // 主表，大部分数据都从这个里来
-        //获取阶段信息实际开始时间，结束时间
+        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
+        //阶段信息表
         StageInformation stageInformation = new StageInformation();
-        List<StageInformation> stageInformationList = stageinformationMapper.select(stageInformation);// 这个表取开始时间，结束时间，放到主表里
-
+        List<StageInformation> stageInformationList = stageinformationMapper.select(stageInformation);
+        //合同表，获取该项目下最新的合同的契约番号
         List<CompanyProjectsVo2> listVo2 = companyprojectsMapper.getListVo2();
         Map<String, String> mapVo2 = new HashMap<>();
         for ( CompanyProjectsVo2 vo2 : listVo2 ) {
@@ -219,7 +220,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 mapVo2.put(key, value);
             }
         }
-
+        //获取该项目下阶段信息最小的实际开始时间，最大的结束时间
         Map<String, StageInformation> map = new HashMap<>();
         for ( StageInformation info : stageInformationList ) {
             String key = info.getCompanyprojects_id();
@@ -242,9 +243,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 }
             }
         }
-
         List<CompanyProjectsVo2> result = new ArrayList<>();
-
         for ( CompanyProjects projects : companyProjectsList) {
             CompanyProjectsVo2 vo = new CompanyProjectsVo2();
             vo.setCompanyprojects_id(projects.getCompanyprojects_id());
@@ -252,7 +251,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             if ( mapVo2.containsKey(projects.getCompanyprojects_id()) ) {
                 vo.setContractnumber(mapVo2.get(projects.getCompanyprojects_id()));
             }
-
             vo.setEntrust(projects.getEntrust());//委托元
             vo.setField(projects.getField());//项目分野
             vo.setLeaderid(projects.getLeaderid());//PL
@@ -265,10 +263,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 vo.setActualstarttime(info.getActualstarttime());
                 vo.setActualendtime(info.getActualendtime());
             }
-
             result.add(vo);
         }
         return result;
     }
-
 }
