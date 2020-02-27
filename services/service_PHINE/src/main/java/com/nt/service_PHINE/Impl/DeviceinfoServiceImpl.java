@@ -808,23 +808,23 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             String currTestId = "";
             String testid = currTestState.value.getTestId().value();
             switch (testid) {
-                case "0":   //测试初始化
+                case "Initialize":   //测试初始化
                     interConnProgress.put("测试初始化", currTestState.value.getProgress());
                     currTestId = "测试初始化";
                     break;
-                case "1":   //GT互联测试
+                case "GT":   //GT互联测试
                     interConnProgress.put("GT互联测试", currTestState.value.getProgress());
                     currTestId = "GT互联测试";
                     break;
-                case "2":   //IO互联测试
+                case "IO":   //IO互联测试
                     interConnProgress.put("IO互联测试", currTestState.value.getProgress());
                     currTestId = "IO互联测试";
                     break;
-                case "3":   //子卡测试
+                case "CARD":   //子卡测试
                     interConnProgress.put("子卡测试", currTestState.value.getProgress());
                     currTestId = "子卡测试";
                     break;
-                case "99":  //测试结束
+                case "END":  //测试结束
                     interConnProgress.put("测试结束", 0);
                     progressing = false;
                     preTestId = ""; // 重置全局变量
