@@ -2,10 +2,11 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
-import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PersonnelplanServiceImpl implements PersonnelplanService {
@@ -38,8 +40,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     }
 
     @Override
-    public List<Expatriatesinfor> getExpatriatesinfor() {
-        return null;
+    public List<ExternalVo> getExpatriatesinfor() {
+        List<ExternalVo> externalVos = personnelplanMapper.getExternal();
+        return externalVos;
     }
 
     @Override
@@ -54,5 +57,18 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     public PersonnelPlan getOne(String id) {
         PersonnelPlan personnelPlan =  personnelplanMapper.selectByPrimaryKey(id);
         return personnelPlan;
+    }
+
+    @Override
+    public void update(PersonnelPlan personnelPlan, TokenModel tokenModel) {
+        personnelPlan.preUpdate(tokenModel);
+        personnelplanMapper.updateByPrimaryKeySelective(personnelPlan);
+    }
+
+    @Override
+    public void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) {
+        personnelPlan.preInsert(tokenModel);
+        personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
+        personnelplanMapper.insert(personnelPlan);
     }
 }
