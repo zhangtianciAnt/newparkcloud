@@ -112,7 +112,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.setPjnamechinese("");
                     petition.setDevelopdate("");
                     petition.setBusinesscode("");
-//                    petition.setDeliverydate(new Date());
+//                    petition.setD1eliverydate(new Date());
                     petition.setClaimoney("");
                     petition.setDepositphone("");
                     petition.setClaimnumber("");
