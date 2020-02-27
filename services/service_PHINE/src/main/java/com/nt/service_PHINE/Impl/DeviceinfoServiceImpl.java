@@ -48,7 +48,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     // 全局变量：存储测试读写进度
     private static Map<String, Map<String, Integer>> interConnProgressMap = new HashMap<>();
     // 全局变量：前回互联测试项目
-    private static String preTestId;
+    private static String preTestId = "";
     // WCF服务地址
     private static URL WSDL_LOCATION;
 
@@ -770,8 +770,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // region Step.2 调用WCF接口：开始系统互联检测
         // 存储测试读写进度初始化
         Map<String, Integer> interConnProgress = new HashMap<>();
-        // 测试初始化
-        interConnProgress.put("0", 0);
+        // 测试初始化 TODO：测试时只有GT进度
+        interConnProgress.put("GT互联测试", 0);
         interConnProgressMap.put(tokenModel.getToken(), interConnProgress);
         // 准备WCF接口参数
         ArrayOfDeviceSlotInfo arrayOfDeviceSlotInfo = new ArrayOfDeviceSlotInfo();
