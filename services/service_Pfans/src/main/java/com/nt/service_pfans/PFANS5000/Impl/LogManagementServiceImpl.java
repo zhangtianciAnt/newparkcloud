@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -59,9 +60,9 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Override
     public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
-
         return logmanagementmapper.select(logmanagement);
     }
+
 
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
@@ -74,6 +75,24 @@ public class LogManagementServiceImpl implements LogManagementService {
         LogManagement log = logmanagementmapper.selectByPrimaryKey(logmanagement_id);
         return log;
     }
+
+//    @Override
+//    public List<LogManagement> getWeek(String companyprojectsid) throws Exception{
+//        LogManagement logManagement = new LogManagement();
+//        logManagement.setProject_id(companyprojectsid);
+//        List<LogManagement> logManagementList = logmanagementmapper.select(logManagement);
+//        if(logManagementList != null && logManagementList.size() > 0){
+//            for(int i = 0; i < logManagementList.size(); i++){
+//                Map columns = new HashMap();
+//                Date log_date = logManagementList.get(i).getLog_date();
+//                columns.put("log_date" , log_date);
+//                columns.put("time_" , week);
+//            }
+//        }
+//        return null;
+//    }
+
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
