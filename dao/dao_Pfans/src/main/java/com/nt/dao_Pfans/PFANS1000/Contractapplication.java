@@ -36,6 +36,9 @@ public class Contractapplication extends BaseModel {
     @Column(name = "ORGNUMBER")
     private String orgnumber;
 
+    @Column(name = "SIDEGROUP")
+    private String sidegroup;
+
     @Column(name = "DEPLOYMENT")
     private String deployment;
 
