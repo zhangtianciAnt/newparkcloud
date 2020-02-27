@@ -323,7 +323,7 @@ public class PHINE20000Controller {
      * @Param
      **/
     @RequestMapping(value = "/interConnClearProgress", method = {RequestMethod.GET})
-    public ApiResult interConnClearProgress(HttpServletRequest request, @RequestParam String projectId, @RequestParam String filePath) throws Exception {
+    public ApiResult interConnClearProgress(HttpServletRequest request) throws Exception {
         return deviceinfoService.interConnClearProgress(tokenService.getToken(request));
     }
 
