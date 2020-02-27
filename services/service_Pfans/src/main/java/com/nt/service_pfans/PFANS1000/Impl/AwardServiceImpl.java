@@ -2,10 +2,12 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.AwardDetail;
+import com.nt.dao_Pfans.PFANS1000.StaffDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.AwardDetailMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
+import com.nt.service_pfans.PFANS1000.mapper.StaffDetailMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     private AwardDetailMapper awardDetailMapper;
 
+    @Autowired
+    private StaffDetailMapper staffDetailMapper;
+
     @Override
     public List<Award> get(Award award) throws Exception {
         return awardMapper.select(award);
@@ -36,12 +41,17 @@ public class AwardServiceImpl implements AwardService {
     public AwardVo selectById(String award_id) throws Exception {
        AwardVo awavo=new AwardVo();
        AwardDetail awadetail=new AwardDetail();
-       awadetail.setAward_id(award_id);
+        awadetail.setAward_id(award_id);
+        StaffDetail staffdetail=new StaffDetail();
+      staffdetail.setAward_id(award_id);
        List<AwardDetail> awalist=awardDetailMapper.select(awadetail);
+       List<StaffDetail> stafflist=staffDetailMapper.select(staffdetail);
        awalist=awalist.stream().sorted(Comparator.comparing(AwardDetail::getRowindex)).collect(Collectors.toList());
+       stafflist=stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
        Award awa=awardMapper.selectByPrimaryKey(award_id);
        awavo.setAward(awa);
        awavo.setAwardDetail(awalist);
+       awavo.setStaffDetails(stafflist);
        return awavo;
     }
     @Override
@@ -57,6 +67,13 @@ public class AwardServiceImpl implements AwardService {
         awardDetailMapper.delete(award2);
         List<AwardDetail> awardDetails=awardVo.getAwardDetail();
 
+
+        StaffDetail sta=new StaffDetail();
+        sta.setAward_id(awardid);
+        staffDetailMapper.delete(sta);
+        List<StaffDetail> stalist=awardVo.getStaffDetails();
+
+
         if(awardDetails!=null){
             int rowindex=0;
             for(AwardDetail awarddetail: awardDetails){
@@ -68,6 +85,19 @@ public class AwardServiceImpl implements AwardService {
               awardDetailMapper.insertSelective(awarddetail);
             }
         }
+
+        if(stalist!=null){
+            int rowindex=0;
+            for(StaffDetail staffDetail: stalist){
+                rowindex =rowindex +1;
+                staffDetail.preInsert(tokenModel);
+                staffDetail.setStaffdetail_id(UUID.randomUUID().toString());
+                staffDetail.setAward_id(awardid);
+                staffDetail.setRowindex(rowindex);
+                staffDetailMapper.insertSelective(staffDetail);
+            }
+        }
+
     }
 
 }

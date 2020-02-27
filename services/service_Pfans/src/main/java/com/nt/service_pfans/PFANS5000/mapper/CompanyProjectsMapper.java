@@ -9,4 +9,5 @@ import java.util.List;
 public interface CompanyProjectsMapper extends MyMapper<CompanyProjects> {
 
     List<CompanyProjectsVo2> getList();
+    List<CompanyProjectsVo2> getListVo2();
 }

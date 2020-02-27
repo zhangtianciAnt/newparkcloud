@@ -1,7 +1,6 @@
 package com.nt.controller.Controller.PFANS;
-
-import com.nt.dao_Pfans.PFANS1000.Napalm;
-import com.nt.service_pfans.PFANS1000.NapalmService;
+import com.nt.dao_Pfans.PFANS1000.Contract;
+import com.nt.service_pfans.PFANS1000.ContractService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -15,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 @RestController
-@RequestMapping("/napalm")
-public class pfans1031Controller {
+@RequestMapping("/contract")
+public class Pfans1029Controller {
     @Autowired
-    private NapalmService napalmService;
+    private ContractService contractService;
 
     @Autowired
     private TokenService tokenService;
@@ -26,29 +25,28 @@ public class pfans1031Controller {
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
-        Napalm napalm = new Napalm();
-        napalm.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(napalmService.get(napalm));
+        Contract contract = new Contract();
+        contract.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractService.get(contract));
 
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Napalm napalm, HttpServletRequest request) throws Exception {
-        if (napalm == null) {
+    public ApiResult one(@RequestBody Contract contract, HttpServletRequest request) throws Exception {
+        if (contract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(napalmService.One(napalm.getNapalm_id()));
+        return ApiResult.success(contractService.One(contract.getContract_id()));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Napalm napalm, HttpServletRequest request) throws Exception{
-        if (napalm == null) {
+    public ApiResult update(@RequestBody Contract contract, HttpServletRequest request) throws Exception{
+        if (contract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        napalmService.update(napalm,tokenModel);
+        contractService.update(contract,tokenModel);
         return ApiResult.success();
     }
-
 }

@@ -4,35 +4,56 @@
 
 	<select id="getList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
 		select
-			c.`PROJECT_NAME` as project_name,
-			c.`NUMBERS` as numbers,
-			s.`PHASE` as phase,
-			s.`PRODUCTSTATUS` as productstatus,
-			<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME`  ]]> then '0'
-			when s.`COMPANYPROJECTS_ID` != "" then '1'
-			ELSE '' END as phasestatus,
-			s.`ESTIMATEDWORK` as estimatedwork,
-			s.`ACTUALWORK` as actualwork,
-			<![CDATA[ case when a.CONTRACTAPPLICATION_ID != "" && (curdate() < substring(a.CLAIMDATETIME,1,10) || curdate() > substring(a.CLAIMDATETIME,14,10))  ]]> then '0'
-			<![CDATA[ when a.CONTRACTAPPLICATION_ID != "" && curdate() >= substring(a.CLAIMDATETIME,1,10) && curdate() <= substring(a.CLAIMDATETIME,14,10)  ]]> then '1'
-			else '2' end as contractstatus,
-			c.`STATUS` as status,
-			c.`COMPANYPROJECTS_ID` as companyprojects_id
+		c.`COMPANYPROJECTS_ID`,
+		c.`PROJECT_NAME` as PROJECT_NAME,
+		c.`NUMBERS` as NUMBERS,
+		s.`PHASE` as phase,
+		s.`PRODUCTSTATUS` as productstatus,
+		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+		when s.`COMPANYPROJECTS_ID` != "" then '1'
+		ELSE '' END as phasestatus,
+		s.`ESTIMATEDWORK` as estimatedwork,
+		s.`ACTUALWORK` as actualwork,
+		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
+		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
+		else '2' end as contractstatus,
+		c.`STATUS` as status,
+		c.`COMPANYPROJECTS_ID`,
+		c.ENTRUST as ENTRUST,
+		c.WORK as WORK,
+		c.LEADERID as LEADERID,
+		c.FIELD as FIELD
 		from `companyprojects` c
 		left outer join `stageinformation` s
 		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
 		and s.status = '0'
-		and
-		<![CDATA[ s.ACTUALSTARTTIME <= curdate()
+		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
 		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
+		left join (
+		select p.COMPANYPROJECTS_ID,
+		max(substring(a.CLAIMDATETIME,1,10)) as stime,
+		min(substring(a.CLAIMDATETIME,14,10)) as etime
+		from projectcontract p
+		inner join contractapplication a
+		on a.CONTRACTAPPLICATION_ID = p.CONTRACT
+		and a.status = '0' and p.status = '0'
+		group by p.COMPANYPROJECTS_ID
+		) pp
+		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+		where c.`STATUS` != '1'
+		order by c.`CREATEON` desc
+	</select>
+
+	<select id="getListVo2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+		select a.CONTRACTNUMBER as contractnumber,c.COMPANYPROJECTS_ID as companyprojects_id
+		from companyprojects c
 		left outer join `projectcontract` p
 		on c.`COMPANYPROJECTS_ID` = p.`COMPANYPROJECTS_ID`
 		and p.status = '0'
 		left outer join contractapplication a
 		on a.CONTRACTAPPLICATION_ID = p.CONTRACT
 		and a.status = '0'
-		where c.`STATUS` != '1'
-		order by c.`CREATEON` desc
+		where c.status = '0'
+		order by a.createon desc
 	</select>
-
 </mapper>
