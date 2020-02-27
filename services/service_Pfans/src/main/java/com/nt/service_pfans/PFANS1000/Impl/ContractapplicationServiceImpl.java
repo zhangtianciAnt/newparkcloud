@@ -1,11 +1,13 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS1000.Quotation;
 import com.nt.dao_Pfans.PFANS1000.Petition;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
@@ -24,8 +26,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
+    @Autowired
+    private QuotationMapper quotationMapper;
+    @Autowired
     private AwardMapper AwardMapper;
+    @Autowired
     private NapalmMapper napalmMapper;
+    @Autowired
     private PetitionMapper PetitionMapper;
 
     @Override
@@ -70,7 +77,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractapplication contract : coList) {
                 //見積書作成
                 if(rowindex.equals("1")){
-
+                    Quotation quotation = new Quotation();
+                    quotation.preInsert(tokenModel);
+                    quotation.setQuotationid(UUID.randomUUID().toString());
+                    quotation.setContractnumber(contractnumber);
+                    quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
                 else if(rowindex.equals("2")){
