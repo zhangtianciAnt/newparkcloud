@@ -801,7 +801,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             // 调用WCF接口：获取系统互联检测进度
             DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
             IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-            Holder<InterConnTestState> currTestState = new Holder<>();
+            InterConnTestState interConnTestState = new InterConnTestState();
+            Holder<InterConnTestState> currTestState = new Holder<>(interConnTestState);
             Holder<Boolean> result = new Holder<>();
             port.interconnGetProcess(currTestState, result);
             String currTestId = "";
