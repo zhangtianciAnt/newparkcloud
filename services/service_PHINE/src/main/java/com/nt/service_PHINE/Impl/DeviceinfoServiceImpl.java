@@ -47,6 +47,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     private static Map<String, List<Fileinfo>> configProgressMap = new HashMap<>();
     // 全局变量：存储测试读写进度
     private static Map<String, Map<String, Integer>> interConnProgressMap = new HashMap<>();
+    // 全局变量：前回互联测试项目
+    private static String preTestId;
     // WCF服务地址
     private static URL WSDL_LOCATION;
 
@@ -802,27 +804,35 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             Holder<InterConnTestState> currTestState = new Holder<>();
             Holder<Boolean> result = new Holder<>();
             port.interconnGetProcess(currTestState, result);
+            String currTestId = "";
             String testid = currTestState.value.getTestId().value();
             switch (testid) {
                 case "0":   //测试初始化
-                    interConnProgress.put("0", currTestState.value.getProgress());
+                    interConnProgress.put("测试初始化", currTestState.value.getProgress());
+                    currTestId = "测试初始化";
                     break;
                 case "1":   //GT互联测试
-                    interConnProgress.put("0", 100);
-                    interConnProgress.put("1", currTestState.value.getProgress());
+                    interConnProgress.put("GT互联测试", currTestState.value.getProgress());
+                    currTestId = "GT互联测试";
                     break;
                 case "2":   //IO互联测试
-                    interConnProgress.put("1", 100);
-                    interConnProgress.put("2", currTestState.value.getProgress());
+                    interConnProgress.put("IO互联测试", currTestState.value.getProgress());
+                    currTestId = "IO互联测试";
                     break;
                 case "3":   //子卡测试
-                    interConnProgress.put("2", 100);
-                    interConnProgress.put("3", currTestState.value.getProgress());
+                    interConnProgress.put("子卡测试", currTestState.value.getProgress());
+                    currTestId = "子卡测试";
                     break;
                 case "99":  //测试结束
-                    interConnProgress.put("3", 100);
+                    interConnProgress.put("测试结束", 0);
                     progressing = false;
+                    preTestId = ""; // 重置全局变量
                     break;
+            }
+            if (preTestId.isEmpty()) {  // 初次执行
+                preTestId = currTestId;
+            } else if (!preTestId.equals(currTestId)) {
+                interConnProgress.put(preTestId, 100);
             }
             // 进程等待1秒钟，再次获取Progress
             Thread.sleep(1000);
