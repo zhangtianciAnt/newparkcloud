@@ -5,6 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -102,6 +103,7 @@ public class UserServiceImpl implements UserService {
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
         //数据不存在时

@@ -53,6 +53,7 @@ public class SupplierinforServiceImpl implements SupplierinforService {
     public void createsupplierinforApply(Supplierinfor supplierinfor, TokenModel tokenModel) throws Exception {
         supplierinfor.preInsert(tokenModel);
         supplierinfor.setSupplierinfor_id(UUID.randomUUID().toString());
+        supplierinfor.setSupchineseid(UUID.randomUUID().toString());
         supplierinforMapper.insert(supplierinfor);
     }
 
