@@ -130,7 +130,7 @@ public class CompanyProjects extends BaseModel {
     private String projecttype;
 
     /**
-     * 项目领域
+     * 项目分野
      */
     @Column(name = "FIELD")
     private String field;
@@ -158,6 +158,12 @@ public class CompanyProjects extends BaseModel {
      */
     @Column(name = "MANMONTH")
     private String manmonth;
+
+    /**
+     * 预计人月总
+     */
+    @Column(name = "ESTIMATEDWORK")
+    private String estimatedwork;
 
     /**
      * 预计成本 (千元)
@@ -274,5 +280,16 @@ public class CompanyProjects extends BaseModel {
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
+    /**
+     * 事业国别
+     */
+    @Column(name = "COUNTRY")
+    private String country;
+
+    /**
+     * 车载
+     */
+    @Column(name = "CARON")
+    private String caron;
 
 }

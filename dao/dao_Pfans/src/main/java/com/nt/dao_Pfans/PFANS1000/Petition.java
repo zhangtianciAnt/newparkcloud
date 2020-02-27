@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -54,7 +55,7 @@ public class Petition extends BaseModel {
     private String businesscode;
 
     @Column(name = "DELIVERYDATE")
-    private String deliverydate;
+    private Date deliverydate;
 
     @Column(name = "CLAIMONEY")
     private String claimoney;

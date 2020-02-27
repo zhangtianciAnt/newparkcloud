@@ -51,4 +51,11 @@ public class Pfans1026Controller {
         contractapplicationService.insert(contractapplication,tokenModel);
         return ApiResult.success();
     }
+
+    @RequestMapping(value = "/insertBook",method={RequestMethod.POST})
+    public ApiResult insertBook(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        contractapplicationService.insertBook(contractapplication,tokenModel);
+        return ApiResult.success();
+    }
 }

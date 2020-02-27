@@ -1,14 +1,20 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
-import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS1000.Petition;
+import com.nt.dao_Pfans.PFANS1000.Napalm;
+import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
+import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +24,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
+    private AwardMapper AwardMapper;
+    private NapalmMapper napalmMapper;
+    private PetitionMapper PetitionMapper;
 
     @Override
     public List<Contractapplication> get(Contractapplication contractapplication ) {
@@ -47,6 +56,73 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             co.preInsert(tokenModel);
             co.setContractapplication_id(UUID.randomUUID().toString());
             contractapplicationMapper.insert(co);
+        }
+    }
+
+    @Override
+    public void insertBook(Contractapplication contractapplication, TokenModel tokenModel) throws Exception {
+        String contractnumber = contractapplication.getContractnumber();
+        String rowindex = contractapplication.getRowindex();
+        Contractapplication co = new Contractapplication();
+        co.setContractnumber(contractnumber);
+        List<Contractapplication> coList = contractapplicationMapper.select(co);
+        if (coList != null) {
+            for (Contractapplication contract : coList) {
+                //見積書作成
+                if(rowindex.equals("1")){
+
+                }
+                //該非判定書作成
+                else if(rowindex.equals("2")){
+
+                }
+                //契約書作成
+                else if(rowindex.equals("3")){
+
+                }
+                //決裁書作成
+                else if(rowindex.equals("4")){
+                    Award award = new Award();
+                    award.preInsert(tokenModel);
+                    award.setAward_id(UUID.randomUUID().toString());
+                    award.setContractnumber(contractnumber);
+                    AwardMapper.insert(award);
+                }
+                //納品書作成
+                else if(rowindex.equals("5")){
+                    Napalm napalm = new Napalm();
+                    napalm.preInsert(tokenModel);
+                    napalm.setNapalm_id(UUID.randomUUID().toString());
+                    napalm.setContractnumber(contractnumber);
+                    napalmMapper.insert(napalm);
+                }
+                //請求書作成
+                else if(rowindex.equals("6")){
+                    Petition petition = new Petition();
+                    petition.preInsert(tokenModel);
+                    petition.setPetition_id(UUID.randomUUID().toString());
+                    petition.setContractnumber(contractnumber);
+                    petition.setContracttype(contract.getContracttype());
+                    petition.setDepositenglish("");
+                    petition.setDepositchinese("");
+                    petition.setDereenglish("");
+                    petition.setPrplaceenglish("");
+                    petition.setPrplacechinese("");
+                    petition.setPjnamejapanese("");
+                    petition.setPjnamechinese("");
+                    petition.setDevelopdate("");
+                    petition.setBusinesscode("");
+//                    petition.setDeliverydate(new Date());
+                    petition.setClaimoney("");
+                    petition.setDepositphone("");
+                    petition.setClaimnumber("");
+                    petition.setClaimtype("");
+                    petition.setCurrencyformat("");
+                    PetitionMapper.insert(petition);
+                }
+                contract.preUpdate(tokenModel);
+                contractapplicationMapper.updateByPrimaryKeySelective(contract);
+            }
         }
     }
 }

@@ -31,6 +31,12 @@ public class Supplierinfor extends BaseModel {
     private String supchinese;
 
     /**
+     * 中文(客户信息详情ID)
+     */
+    @Column(name = "SUPCHINESEID")
+    private String supchineseid;
+
+    /**
      * 日文(客户信息详情)
      */
     @Column(name = "SUPJAPANESE")
@@ -53,6 +59,18 @@ public class Supplierinfor extends BaseModel {
      */
     @Column(name = "LIABLEPERSON")
     private String liableperson;
+
+    /**
+     * 供应商编码
+     */
+    @Column(name = "VENDORNUM")
+    private String vendornum;
+
+    /**
+     * 所属公司
+     */
+    @Column(name = "THECOMPANY")
+    private String thecompany;
 
     /**
      * 中文(项目联络人)

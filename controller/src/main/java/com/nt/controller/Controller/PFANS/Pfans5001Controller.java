@@ -124,11 +124,26 @@ public class Pfans5001Controller {
      * @创建日期：2020/02/25
      * @作者：zy
      * @参数：[]
-     * @返回值：List<CompanyProjects>
+     * @返回值：List<CompanyProjectsVo2>
      */
     @RequestMapping(value="/getSiteList", method={RequestMethod.GET})
-    public ApiResult List(HttpServletRequest request) throws Exception {
+    public ApiResult getSiteList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getSiteList());
+    }
+
+
+    /**
+     * @方法名：getPjList
+     * @描述：获取PJ完了审批列表
+     * @创建日期：2020/02/26
+     * @作者：zy
+     * @参数：[]
+     * @返回值：List<CompanyProjectsVo2>
+     */
+    @RequestMapping(value="/getPjList", method={RequestMethod.GET})
+    public ApiResult getPjList(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.getPjList());
     }
 }
