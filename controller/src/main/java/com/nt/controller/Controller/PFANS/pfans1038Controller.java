@@ -25,6 +25,7 @@ public class pfans1038Controller {
     private PersonnelplanService personnelplanService;
     @Autowired
     private TokenService tokenService;
+
     //获取部门下用户
     @RequestMapping(value = "/getcustomer", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request, @RequestParam String id) throws Exception {
@@ -46,14 +47,14 @@ public class pfans1038Controller {
    //获取全部
     @RequestMapping(value = "/getall", method = {RequestMethod.GET})
     public ApiResult getAll(HttpServletRequest request) throws Exception {
-
-        return ApiResult.success();
+        List<PersonnelPlan> personnelPlans = personnelplanService.getAll();
+        return ApiResult.success(personnelPlans);
     }
     //获取选中
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})
     public ApiResult getOne(HttpServletRequest request ,@RequestParam String id) throws Exception {
-
-        return ApiResult.success();
+        PersonnelPlan personnelPlan = personnelplanService.getOne(id);
+        return ApiResult.success(personnelPlan);
     }
     //更新
     @RequestMapping(value = "/update", method = {RequestMethod.GET})
@@ -61,7 +62,7 @@ public class pfans1038Controller {
 
         return ApiResult.success();
     }
-    //更新
+    //创建
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(HttpServletRequest request, @RequestBody PersonnelPlan personnelPlan) throws Exception {
 

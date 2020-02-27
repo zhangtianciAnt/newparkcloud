@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
@@ -39,5 +40,19 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     @Override
     public List<Expatriatesinfor> getExpatriatesinfor() {
         return null;
+    }
+
+    @Override
+    public List<PersonnelPlan> getAll() {
+        PersonnelPlan personnelPlan = new PersonnelPlan();
+        personnelPlan.setStatus("0");
+       List<PersonnelPlan> personnelPlans = personnelplanMapper.select(personnelPlan);
+        return personnelPlans;
+    }
+
+    @Override
+    public PersonnelPlan getOne(String id) {
+        PersonnelPlan personnelPlan =  personnelplanMapper.selectByPrimaryKey(id);
+        return personnelPlan;
     }
 }
