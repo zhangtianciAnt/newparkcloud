@@ -2,12 +2,12 @@ package com.nt.service_BASF.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.nt.dao_Org.Dictionary;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.service_BASF.QuestionManageServices;
 import com.nt.service_BASF.mapper.QuestionManageMapper;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +43,7 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
+
     /**
      * @param questionmanage
      * @Method list
@@ -124,105 +125,241 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
 
     /**
      * @param tokenModel
-     * @Method update
-     * @Author Wxz
+     * @Method eximport
+     * @Author 王哲
      * @Version 1.0
-     * @Description 导入导出题库
+     * @Description 导入题库
      * @Return void
-     * @Date 2019/12/9 10:21
+     * @Date 2020/02/27 16:51
      */
     @Override
-    public List<String> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<Object> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        //存放所有数据
+        List<Object> allData = new ArrayList<>();
+        //存放消息
+        List<String> result = new ArrayList<>();
+        //临时文件
+        File f = null;
+        //插入成功数
+        int successCount = 0;
+        //插入失败数
+        int errorCount = 0;
+        //excel集合
+        List<List<Object>> list;
+        //转换后的excel集合
+        List<List<String>> strList = new ArrayList<>();
+        //当前执行行数
+        int k = 1;
+        //存放数据
+        List<QuestionManage> listVo = new ArrayList<QuestionManage>();
         try {
-            List<QuestionManage> listVo = new ArrayList<QuestionManage>();
-            List<String> Result = new ArrayList<String>();
+            //转化为文件
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
-            File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在读取并存储为临时文件时发生未知异常！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        }
+        try {
+            //读取excel临时文件
             ExcelReader reader = ExcelUtil.getReader(f);
-            List<List<Object>> list = reader.read();
-            List<Object> model = new ArrayList<Object>();
+            //读取到的excel集合
+            list = reader.read();
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在读取Excel临时文件时发生未知异常！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        }
+        try {
+            //判断是否是空文件
+            if (list == null) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
+                result.add("空文件，请上传正确的文件");
+                allData.add(result);
+                allData.add(listVo);
+                return allData;
+            }
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("文件格式不正确！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        }
+        try {
+            //判断行数
+            if (list.size() < 1) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
+                result.add("空文件，请上传正确的文件");
+                allData.add(result);
+                allData.add(listVo);
+                return allData;
+            }
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("文件格式不正确！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        }
+        try {
+            //转换为sing的list集合
+            for (List<Object> list1 : list) {
+                List<String> stringList = new ArrayList<>();
+                for (Object obj : list1) {
+                    stringList.add(obj.toString());
+                }
+                strList.add(stringList);
+            }
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在数据获取时发生未知异常！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        }
+        try {
+            //列名
+            List<String> model = new ArrayList<String>();
             model.add("题型");
             model.add("题目");
-            model.add("选项一");
-            model.add("选项二");
-            model.add("选项三");
-            model.add("选项四");
-            model.add("选项五");
-            model.add("分值");
-            model.add("所属培训类型");
+            model.add("选项1");
+            model.add("选项2");
+            model.add("选项3");
+            model.add("选项4");
+            model.add("选项5");
             model.add("正确答案");
             model.add("答案解析");
-            List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
-                if (!key.get(i).toString().trim().equals(model.get(i))) {
-                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString() + "导入失败");
+            model.add("分值");
+            //获取表第一列
+            List<String> key = strList.get(0);
+            //验证列名是否正确
+            for (int i = 0; i < model.size(); i++) {
+                if (!key.get(i).trim().equals(model.get(i))) {
+                    result.add("第" + (i + 1) + "列标题错误，应为" + model.get(i) + "导入失败");
+                    errorCount += 1;
                 }
             }
-            int k = 1;
-            int accesscount = 0;
-            int error = 0;
-            for (int i = 1; i < list.size(); i++) {
-                QuestionManage questionManage = new QuestionManage();
-                List<Object> value = list.get(k);
-                k++;
-                Dictionary dictionary = new Dictionary();
-                dictionary.setValue1(value.get(0).toString());
-                List<Dictionary> dictionaryList = dictionaryMapper.select(dictionary);
-                for (Dictionary dic : dictionaryList) {
-                    if (dictionary != null) {
-                        questionManage.setQuestiontype(dic.getCode());
-                    }
-                    if (dictionary == null) {
-                        error = error + 1;
-                        Result.add("模板第 + (k - 1) + 行的题型没有找到，请输入正确的题型，导入失败");
-                    }
-                }
-                String a = "";
-                if (value.get(2) == null) {
-                    questionManage.setOption1(a);
-                } else {
-                    questionManage.setOption1(value.get(2).toString());
-                }
-                if (value.get(3) == null) {
-                    questionManage.setOption2(a);
-                } else {
-                    questionManage.setOption2(value.get(3).toString());
-                }
-                if (value.get(4) == null) {
-                    questionManage.setOption3(a);
-                } else {
-                    questionManage.setOption3(value.get(4).toString());
-                }
-                if (value.get(5) == null) {
-                    questionManage.setOption4(a);
-                } else {
-                    questionManage.setOption4(value.get(5).toString());
-                }
-                if (value.get(6) == null) {
-                    questionManage.setOption5(a);
-                } else {
-                    questionManage.setOption5(value.get(6).toString());
-                }
-                if (value != null && !value.isEmpty()) {
-                    questionManage.setQuestiontopic(value.get(1).toString());
-                    questionManage.setScore(value.get(7).toString());
-                    questionManage.setProgramtpe(value.get(8).toString());
-                    questionManage.setQuestionanswers(value.get(9).toString());
-                    questionManage.setAnswersanalysis(value.get(10).toString());
-                }
-                questionManage.preInsert(tokenModel);
-                questionManage.setQuestionid(UUID.randomUUID().toString());
-                questionManageMapper.insert(questionManage);
-                listVo.add(questionManage);
-                accesscount = accesscount + 1;
+            if (errorCount > 0) {
+                result.add("失败数：" + errorCount);
+                allData.add(result);
+                allData.add(listVo);
+                return allData;
             }
-            Result.add("失败数：" + error);
-            Result.add("成功数：" + accesscount);
-            return Result;
         } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在验证列标题时发生未知异常！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        }
+        try {
+            for (int i = 1; i < strList.size(); i++) {
+                k += 1;
+                try {
+                    QuestionManage questionManage = new QuestionManage();
+                    //题型
+                    if (StringUtils.isNotBlank(strList.get(i).get(0).trim())) {
+                        switch (strList.get(i).get(0).trim()) {
+                            case "单选题":
+                                questionManage.setQuestiontype("BC036001");
+                                break;
+                            case "多选题":
+                                questionManage.setQuestiontype("BC036002");
+                                break;
+                            case "填空题":
+                                questionManage.setQuestiontype("BC036003");
+                                break;
+                            case "判断题":
+                                questionManage.setQuestiontype("BC036004");
+                                break;
+                            default:
+                                errorCount += 1;
+                                result.add("题库第" + k + "行题型错误！");
+                                continue;
+                        }
+                    }
+                    //题目
+                    if (StringUtils.isNotBlank(strList.get(i).get(1).trim())) {
+                        questionManage.setQuestiontopic(strList.get(i).get(1).trim());
+                    } else {
+                        errorCount += 1;
+                        result.add("题库第" + k + "行题目为空！");
+                        continue;
+                    }
+                    //题目选项
+                    if (
+                            StringUtils.isBlank(strList.get(i).get(2)) &&
+                                    StringUtils.isBlank(strList.get(i).get(3)) &&
+                                    StringUtils.isBlank(strList.get(i).get(4)) &&
+                                    StringUtils.isBlank(strList.get(i).get(5)) &&
+                                    StringUtils.isBlank(strList.get(i).get(6))
+                    ) {
+                        if (questionManage.getQuestiontype() != "BC036003") {
+                            errorCount += 1;
+                            result.add("题库第" + k + "行非填空题无选项！");
+                            continue;
+                        }
+                    } else {
+                        questionManage.setOption1(strList.get(i).get(2).trim());
+                        questionManage.setOption2(strList.get(i).get(3).trim());
+                        questionManage.setOption3(strList.get(i).get(4).trim());
+                        questionManage.setOption4(strList.get(i).get(5).trim());
+                        questionManage.setOption5(strList.get(i).get(6).trim());
+                    }
+                    //正确答案
+                    if (StringUtils.isNotBlank(strList.get(i).get(7).trim())) {
+                        questionManage.setQuestionanswers(strList.get(i).get(7).trim());
+                    } else {
+                        errorCount += 1;
+                        result.add("题库第" + k + "行正确答案为空！");
+                        continue;
+                    }
+                    //答案解析
+                    if (StringUtils.isNotBlank(strList.get(i).get(8).trim())) {
+                        questionManage.setAnswersanalysis(strList.get(i).get(8).trim());
+                    }
+                    //分值
+                    if (StringUtils.isNotBlank(strList.get(i).get(9).trim())) {
+                        questionManage.setScore(strList.get(i).get(9).trim());
+                    } else {
+                        errorCount += 1;
+                        result.add("题库第" + k + "行分值为空！");
+                        continue;
+                    }
+                    listVo.add(questionManage);
+                    successCount += 1;
+
+                } catch (Exception e) {
+                    errorCount += 1;
+                    result.add("题库第" + k + "行读取时发生未知异常！");
+                }
+            }
+            result.add("失败数：" + errorCount);
+            result.add("成功数：" + successCount);
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
+        } catch (Exception e) {
+            result.add("系统在遍历题目数据时发生未知异常！");
+            allData.add(result);
+            allData.add(listVo);
+            return allData;
         }
     }
+
 }

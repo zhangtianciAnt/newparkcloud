@@ -33,5 +33,5 @@ public interface QuestionManageServices {
     void update(QuestionManage questionManage, TokenModel tokenModel) throws Exception;
 
     //execl导入
-    List<String> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+    List<Object> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 }
