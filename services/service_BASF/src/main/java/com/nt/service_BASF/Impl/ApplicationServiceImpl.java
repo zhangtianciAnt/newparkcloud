@@ -9,8 +9,10 @@ package com.nt.service_BASF.Impl;
  * @Version: 1.0
  */
 import com.nt.dao_BASF.Application;
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.ApplicationServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class ApplicationServiceImpl implements ApplicationServices {
 
     @Autowired
     private ApplicationMapper applicationMapper;
+
+    @Autowired
+    private DeviceinformationMapper deviceinformationMapper;
 
     @Override
     public List<Application> get(Application application) throws Exception {
@@ -41,6 +46,12 @@ public class ApplicationServiceImpl implements ApplicationServices {
         application.setApplicationstatus("BC012005");
 
         applicationMapper.insert(application);
+
+        Deviceinformation deviceinformation = new Deviceinformation();
+        deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
+        deviceinformation.preUpdate(tokenModel);
+        deviceinformation.setDevicestatus("BC011002");
+        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
     }
 
     @Override
