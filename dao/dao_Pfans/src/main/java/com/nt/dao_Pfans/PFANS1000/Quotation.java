@@ -39,7 +39,7 @@ public class Quotation extends BaseModel {
     private String entrustedjapanese;
 
     @Column(name = "ENTRUSTEDCHINESE")
-    private Date entrustedchinese;
+    private String entrustedchinese;
 
     @Column(name = "DEPARTMENT")
     private String department;

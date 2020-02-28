@@ -2,12 +2,16 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Quotation;
+import com.nt.dao_Pfans.PFANS1000.Contract;
+import com.nt.dao_Pfans.PFANS1000.NonJudgment;
 import com.nt.dao_Pfans.PFANS1000.Petition;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
+import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
@@ -28,6 +32,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
     private QuotationMapper quotationMapper;
+    @Autowired
+    private ContractMapper contractMapper;
+    @Autowired
+    private NonJudgmentMapper nonJudgmentMapper;
     @Autowired
     private AwardMapper AwardMapper;
     @Autowired
@@ -74,22 +82,34 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         co.setContractnumber(contractnumber);
         List<Contractapplication> coList = contractapplicationMapper.select(co);
         if (coList != null) {
-            for (Contractapplication contract : coList) {
+            for (Contractapplication contractapp : coList) {
                 //見積書作成
                 if(rowindex.equals("1")){
                     Quotation quotation = new Quotation();
                     quotation.preInsert(tokenModel);
                     quotation.setQuotationid(UUID.randomUUID().toString());
                     quotation.setContractnumber(contractnumber);
+                    quotation.setContracttype(contractapp.getContracttype());
+                    quotation.setDepartment(contractapp.getDepartment());
+                    quotation.setDeployment(contractapp.getDeployment());
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
                 else if(rowindex.equals("2")){
-
+                    NonJudgment nonJudgment = new NonJudgment();
+                    nonJudgment.preInsert(tokenModel);
+                    nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
+                    nonJudgment.setContractnumber(contractnumber);
+                    nonJudgment.setContractnumber(contractapp.getContractnumber());
+                    nonJudgmentMapper.insert(nonJudgment);
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
-
+//                    Contract contract = new Contract();
+//                    contract.preInsert(tokenModel);
+//                    contract.setContract_id(UUID.randomUUID().toString());
+//                    contract.setContractnumber(contractnumber);
+//                    contractMapper.insert(contract);
                 }
                 //決裁書作成
                 else if(rowindex.equals("4")){
@@ -97,6 +117,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
                     award.setContractnumber(contractnumber);
+                    award.setContracttype(contractapp.getContracttype());
+                    award.setDeployment(contractapp.getDeployment());
+                    award.setDeliverydate(contractapp.getDeliverydate());
+                    award.setClaimamount(contractapp.getClaimamount());
+                    award.setUser_id(contractapp.getUser_id());
+                    award.setRemarks(contractapp.getRemarks());
+                    award.setMaketype(contractapp.getMaketype());
                     AwardMapper.insert(award);
                 }
                 //納品書作成
@@ -105,6 +132,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.preInsert(tokenModel);
                     napalm.setNapalm_id(UUID.randomUUID().toString());
                     napalm.setContractnumber(contractnumber);
+                    napalm.setDeployment(contractapp.getDeployment());
+                    napalm.setClaimtype(contractapp.getClaimtype());
+                    napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                    napalm.setDeliverydate(contractapp.getDeliverydate());
+                    napalm.setCompletiondate(contractapp.getCompletiondate());
+                    napalm.setClaimamount(contractapp.getClaimamount());
+                    napalm.setLoadingjudge(contractapp.getLoadingjudge());
                     napalmMapper.insert(napalm);
                 }
                 //請求書作成
@@ -113,26 +147,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.preInsert(tokenModel);
                     petition.setPetition_id(UUID.randomUUID().toString());
                     petition.setContractnumber(contractnumber);
-                    petition.setContracttype(contract.getContracttype());
-                    petition.setDepositenglish("");
-                    petition.setDepositchinese("");
-                    petition.setDereenglish("");
-                    petition.setPrplaceenglish("");
-                    petition.setPrplacechinese("");
-                    petition.setPjnamejapanese("");
-                    petition.setPjnamechinese("");
-                    petition.setDevelopdate("");
-                    petition.setBusinesscode("");
+                    petition.setContracttype(contractapp.getContracttype());
+                    petition.setBusinesscode(contractapp.getBusinesscode());
 //                    petition.setD1eliverydate(new Date());
-                    petition.setClaimoney("");
-                    petition.setDepositphone("");
-                    petition.setClaimnumber("");
-                    petition.setClaimtype("");
-                    petition.setCurrencyformat("");
+                    petition.setClaimtype(contractapp.getClaimtype());
                     PetitionMapper.insert(petition);
                 }
-                contract.preUpdate(tokenModel);
-                contractapplicationMapper.updateByPrimaryKeySelective(contract);
+                contractapp.preUpdate(tokenModel);
+                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
         }
     }

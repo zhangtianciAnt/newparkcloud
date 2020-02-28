@@ -17,11 +17,18 @@ import java.util.Date;
 public class Contract extends BaseModel {
     private static final long serialVersionUID = 1L;
     /**
-     * 契約番号
+     * 契約表
      */
     @Id
     @Column(name = "CONTRACT_ID")
     private String contract_id;
+
+    /**
+     * 契約番号
+     */
+    @Id
+    @Column(name = "CONTRACTNUMBER")
+    private String contractnumber;
 
     /**
      * 契約種類
