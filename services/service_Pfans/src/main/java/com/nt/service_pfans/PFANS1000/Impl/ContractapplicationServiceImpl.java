@@ -95,17 +95,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else if(rowindex.equals("2")){
                     NonJudgment nonJudgment = new NonJudgment();
                     nonJudgment.preInsert(tokenModel);
-                    nonJudgment.setContract_id(UUID.randomUUID().toString());
+                    nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
                     nonJudgment.setContractnumber(contractnumber);
                     nonJudgmentMapper.insert(nonJudgment);
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
-                    Contract contract = new Contract();
-                    contract.preInsert(tokenModel);
-                    contract.setContract_id(UUID.randomUUID().toString());
-                    contract.setContractnumber(contractnumber);
-                    contractMapper.insert(contract);
+//                    Contract contract = new Contract();
+//                    contract.preInsert(tokenModel);
+//                    contract.setContract_id(UUID.randomUUID().toString());
+//                    contract.setContractnumber(contractnumber);
+//                    contractMapper.insert(contract);
                 }
                 //決裁書作成
                 else if(rowindex.equals("4")){
@@ -129,7 +129,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.preInsert(tokenModel);
                     petition.setPetition_id(UUID.randomUUID().toString());
                     petition.setContractnumber(contractnumber);
-                    petition.setContracttype(contract.getContracttype());
+                    petition.setContracttype(contractapp.getContracttype());
                     petition.setDepositenglish("");
                     petition.setDepositchinese("");
                     petition.setDereenglish("");
