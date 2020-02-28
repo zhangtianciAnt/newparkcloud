@@ -27,17 +27,17 @@ public class Award extends BaseModel {
     @Column(name = "CONTRACTTYPE")
     private String contracttype;
 
-    @Column(name = "ENTRUSTJAPANESE")
-    private String entrustjapanese;
+    @Column(name = "CUSTOJAPANESE")
+    private String custojapanese;
 
-    @Column(name = "ENTRUSTCHINESE")
-    private String entrustchinese;
+    @Column(name = "CUSTOCHINESE")
+    private String custochinese;
 
-    @Column(name = "ENPLACEJAPANESE")
-    private String enplacejapanese;
+    @Column(name = "PLACEJAPANESE")
+    private String placejapanese;
 
-    @Column(name = "ENPLACECHINESE")
-    private String enplacechinese;
+    @Column(name = "PLACECHINESE")
+    private String placechinese;
 
     @Column(name = "DEPLOYMENT")
     private String deployment;
@@ -48,14 +48,14 @@ public class Award extends BaseModel {
     @Column(name = "PJNAMECHINESE")
     private String pjnamechinese;
 
-    @Column(name = "DEVELOPDATE")
-    private String developdate;
+    @Column(name = "CLAIMDATETIME")
+    private String claimdatetime;
 
     @Column(name = "DELIVERYDATE")
     private Date deliverydate;
 
-    @Column(name = "CURRENCYFORMAT")
-    private String currencyformat;
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
 
     @Column(name = "CLAIMAMOUNT")
     private String claimamount;
@@ -96,17 +96,6 @@ public class Award extends BaseModel {
     @Column(name = "PLAN")
     private String plan;
 
-    @Column(name = "DEPOSITJAPANESE")
-    private String depositjapanese;
-
-    @Column(name = "DEPOSITCHINESE")
-    private String depositchinese;
-
-    @Column(name = "DEPLACEJAPANESE")
-    private String deplacejapanese;
-
-    @Column(name = "DEPLACECHINESE")
-    private String deplacechinese;
 
     @Column(name = "TOTAL")
     private String total;
