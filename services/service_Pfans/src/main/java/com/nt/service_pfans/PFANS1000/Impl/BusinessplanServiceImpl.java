@@ -1,11 +1,13 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
+import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Pieceworktotal;
 import com.nt.dao_Pfans.PFANS1000.Totalplan;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PieceworktotalMapper;
 import com.nt.service_pfans.PFANS1000.mapper.TotalplanMapper;
 import com.nt.utils.dao.TokenModel;
@@ -29,6 +31,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private TotalplanMapper totalplanMapper;
     @Autowired
     private PieceworktotalMapper pieceworktotalMapper;
+    @Autowired
+    private BusinessplandetMapper businessplandetMapper;
 
     @Override
     public List<Businessplan> get(Businessplan businessplan) throws Exception {
@@ -38,18 +42,27 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Override
     public BusinessplanVo selectById(String businessplanid) throws Exception {
         BusinessplanVo busVo = new BusinessplanVo();
+
         Pieceworktotal pieceworktotal = new Pieceworktotal();
         Totalplan totalplan = new Totalplan();
+        Businessplandet businessplandet=new Businessplandet();
+
         pieceworktotal.setBusinessplanid(businessplanid);
         totalplan.setBusinessplanid(businessplanid);
+        businessplandet.setBusinessplan_id(businessplanid);
+
         List<Pieceworktotal> pieceworktotallist = pieceworktotalMapper.select(pieceworktotal);
         List<Totalplan> totalplanlist = totalplanMapper.select(totalplan);
+        List<Businessplandet> businessplandetList = businessplandetMapper.select(businessplandet);
+
         pieceworktotallist = pieceworktotallist.stream().sorted(Comparator.comparing(Pieceworktotal::getRowindex)).collect(Collectors.toList());
         totalplanlist = totalplanlist.stream().sorted(Comparator.comparing(Totalplan::getRowindex)).collect(Collectors.toList());
         Businessplan Bus = businessplanMapper.selectByPrimaryKey(businessplanid);
         busVo.setBusinessplan(Bus);
         busVo.setPieceworktotal(pieceworktotallist);
         busVo.setTotalplan(totalplanlist);
+        busVo.setBusinessplandets(businessplandetList);
+
         return busVo;
     }
 
@@ -102,6 +115,14 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         businessplanMapper.insertSelective(businessplan);
         List<Pieceworktotal> pieceworktotallist = businessplanVo.getPieceworktotal();
         List<Totalplan> totalplanlist = businessplanVo.getTotalplan();
+        List<Businessplandet> businessplandetList = businessplanVo.getBusinessplandets();
+        if(businessplandetList !=null){
+            for(Businessplandet businessplandet : businessplandetList){
+                businessplandet.setBusinessplandet_id(UUID.randomUUID().toString());
+                businessplandet.setBusinessplan_id(businessplanid);
+                businessplandetMapper.insertSelective(businessplandet);
+            }
+        }
         if (pieceworktotallist != null) {
             int rowindex = 0;
             for (Pieceworktotal pieceworktotal : pieceworktotallist) {
