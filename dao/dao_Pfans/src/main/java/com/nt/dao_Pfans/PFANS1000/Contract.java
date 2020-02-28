@@ -93,8 +93,8 @@ public class Contract extends BaseModel {
     /*
      * 通貨形式
      */
-    @Column(name = "CURRENCYFORMAT")
-    private String currencyformat;
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
 
     /**
      * 請求金額
