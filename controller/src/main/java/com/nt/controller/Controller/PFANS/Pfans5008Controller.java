@@ -113,6 +113,15 @@ public class Pfans5008Controller {
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
     }
 
+    @RequestMapping(value = "/gettlist", method = {RequestMethod.POST})
+    public ApiResult gettlist(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.gettlist());
+    }
+
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request,String flag){
         try{

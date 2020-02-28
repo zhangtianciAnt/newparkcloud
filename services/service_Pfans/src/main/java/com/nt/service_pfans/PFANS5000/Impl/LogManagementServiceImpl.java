@@ -63,6 +63,11 @@ public class LogManagementServiceImpl implements LogManagementService {
         return logmanagementmapper.select(logmanagement);
     }
 
+    @Override
+    public List<LogManagement> gettlist() throws Exception {
+        return logmanagementmapper.gettlist();
+    }
+
 
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
