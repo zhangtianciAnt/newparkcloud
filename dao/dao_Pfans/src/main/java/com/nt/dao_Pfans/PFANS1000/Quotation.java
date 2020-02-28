@@ -39,10 +39,10 @@ public class Quotation extends BaseModel {
     private String entrustedjapanese;
 
     @Column(name = "ENTRUSTEDCHINESE")
-    private Date entrustedchinese;
+    private String entrustedchinese;
 
-    @Column(name = "DEPARTMENT")
-    private String department;
+    @Column(name = "DEPLOYMENT")
+    private String deployment;
 
     @Column(name = "PJJAPANESE")
     private String pjjapanese;
@@ -56,14 +56,14 @@ public class Quotation extends BaseModel {
     @Column(name = "ENDDATE")
     private Date enddate;
 
-    @Column(name = "CURRENCY")
-    private String currency;
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
 
-    @Column(name = "REQUESTED")
-    private String requested;
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
 
-    @Column(name = "EXECUTOR")
-    private String executor;
+    @Column(name = "LOADINGJUDGE")
+    private String loadingjudge;
 
     @Column(name = "REQUESTNUMBER")
     private String requestnumber;
@@ -77,20 +77,8 @@ public class Quotation extends BaseModel {
     @Column(name = "CONTRACT")
     private String contract;
 
-    @Column(name = "APPOINT")
-    private String appoint;
-
-    @Column(name = "CONSERVATIVE")
-    private String conservative;
-
-    @Column(name = "AVAILABLE")
-    private String available;
-
-    @Column(name = "NONE")
-    private String none;
-
-    @Column(name = "DEPLOYMENT")
-    private String deployment;
+    @Column(name = "DEPLOY")
+    private String deploy;
 
     @Column(name = "RESPONSIBLE")
     private String responsible;

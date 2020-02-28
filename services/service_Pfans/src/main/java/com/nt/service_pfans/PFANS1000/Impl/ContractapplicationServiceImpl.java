@@ -89,6 +89,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     quotation.preInsert(tokenModel);
                     quotation.setQuotationid(UUID.randomUUID().toString());
                     quotation.setContractnumber(contractnumber);
+                    //3
+                    quotation.setContracttype(contractapp.getContracttype());
+                    quotation.setDeployment(contractapp.getDeployment());
+                    quotation.setCurrencyposition(contractapp.getCurrencyposition());
+
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
@@ -97,6 +102,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     nonJudgment.preInsert(tokenModel);
                     nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
                     nonJudgment.setContractnumber(contractnumber);
+                    nonJudgment.setContractnumber(contractapp.getContractnumber());
                     nonJudgmentMapper.insert(nonJudgment);
                 }
                 //契約書作成
@@ -113,6 +119,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
                     award.setContractnumber(contractnumber);
+                    award.setContracttype(contractapp.getContracttype());
+                    award.setDeployment(contractapp.getDeployment());
+                    award.setDeliverydate(contractapp.getDeliverydate());
+                    award.setClaimamount(contractapp.getClaimamount());
+                    award.setUser_id(contractapp.getUser_id());
+                    award.setRemarks(contractapp.getRemarks());
+                    award.setMaketype(contractapp.getMaketype());
                     AwardMapper.insert(award);
                 }
                 //納品書作成
@@ -121,6 +134,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.preInsert(tokenModel);
                     napalm.setNapalm_id(UUID.randomUUID().toString());
                     napalm.setContractnumber(contractnumber);
+                    napalm.setDeployment(contractapp.getDeployment());
+                    napalm.setClaimtype(contractapp.getClaimtype());
+                    napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                    napalm.setDeliverydate(contractapp.getDeliverydate());
+                    napalm.setCompletiondate(contractapp.getCompletiondate());
+                    napalm.setClaimamount(contractapp.getClaimamount());
+                    napalm.setLoadingjudge(contractapp.getLoadingjudge());
                     napalmMapper.insert(napalm);
                 }
                 //請求書作成
@@ -130,21 +150,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.setPetition_id(UUID.randomUUID().toString());
                     petition.setContractnumber(contractnumber);
                     petition.setContracttype(contractapp.getContracttype());
-                    petition.setDepositenglish("");
-                    petition.setDepositchinese("");
-                    petition.setDereenglish("");
-                    petition.setPrplaceenglish("");
-                    petition.setPrplacechinese("");
-                    petition.setPjnamejapanese("");
-                    petition.setPjnamechinese("");
-                    petition.setDevelopdate("");
-                    petition.setBusinesscode("");
+                    petition.setBusinesscode(contractapp.getBusinesscode());
 //                    petition.setD1eliverydate(new Date());
-                    petition.setClaimoney("");
-                    petition.setDepositphone("");
-                    petition.setClaimnumber("");
-                    petition.setClaimtype("");
-                    petition.setCurrencyformat("");
+                    petition.setClaimtype(contractapp.getClaimtype());
                     PetitionMapper.insert(petition);
                 }
                 contractapp.preUpdate(tokenModel);

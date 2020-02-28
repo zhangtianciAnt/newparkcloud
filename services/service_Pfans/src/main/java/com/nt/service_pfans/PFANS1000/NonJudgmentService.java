@@ -9,5 +9,4 @@ public interface NonJudgmentService {
     List<NonJudgment> get(NonJudgment nonJudgment) throws Exception;
     NonJudgment one(String nonjumend_id) throws Exception;
     void  update(NonJudgment nonJudgment,TokenModel tokenModel) throws  Exception;
-
 }

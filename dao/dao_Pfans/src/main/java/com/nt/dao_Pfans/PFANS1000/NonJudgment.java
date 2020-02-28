@@ -21,14 +21,14 @@ public class NonJudgment extends BaseModel {
     @Column(name = "NONJUDGMENT_ID")
     private String nonjudgment_id;
 
-    @Column(name = "NO")
-    private String   no;
+    @Column(name = "DECISIONNUMBER")
+    private String  decisionnumber;
 
     @Column(name = "CAREER")
     private String career;
 
-    @Column(name = "ORGANIZATION")
-    private String organization;
+    @Column(name = "DEPLOYMENT")
+    private String deployment;
 
     @Column(name = "CONTRACTNUMBER")
     private String contractnumber;
@@ -36,11 +36,11 @@ public class NonJudgment extends BaseModel {
     @Column(name = "JANAME")
     private String janame;
 
-    @Column(name = "DEPOSITARY")
-    private String depositary;
+    @Column(name = "CUSTOENGLISH")
+    private String custoenglish;
 
-    @Column(name = "COUNTRY")
-    private String country;
+    @Column(name = "VARTO")
+    private String varto;
 
     @Column(name = "REVIEW")
     private String review;
@@ -48,8 +48,8 @@ public class NonJudgment extends BaseModel {
     @Column(name = "REQUIREMENTS")
     private String requirements;
 
-    @Column(name = "PERIOD")
-    private String period;
+    @Column(name = "CLAIMDATETIME")
+    private String claimdatetime;
 
     @Column(name = "TECHNICAL")
     private String technical;
@@ -60,14 +60,19 @@ public class NonJudgment extends BaseModel {
     @Column(name = "EXPORT")
     private String export;
 
-    @Column(name = "JX-JUDGENO")
-    private String   jxjudgeno;
+    @Column(name = "OUTNUMBER")
+    private String  outnumber;
 
-    @Column(name = "GF-JUDGENO")
-    private String gfjudgeno;
+    @Column(name = "PRODUCTNUMBER")
+    private String  productnumber;
 
-    @Column(name = "LY-JUDGENo")
-    private String  lyjudgeno;
+
+    @Column(name = "OUTPUTLIMIT2")
+    private String  outputlimit2;
+
+    @Column(name = "MAREASON")
+    private String  mareason;
+
 
     @Column(name = "MANAGEMENT2")
     private String  management2;
@@ -119,5 +124,11 @@ public class NonJudgment extends BaseModel {
 
     @Column(name = "SUPPLIECOM")
     private String suppliecom;
+
+    @Column(name = "SUJUDEGRESULT")
+    private String sujudegresult;
+
+    @Column(name = "LIJUDEGRESULT")
+    private String lijudegresult;
 
 }
