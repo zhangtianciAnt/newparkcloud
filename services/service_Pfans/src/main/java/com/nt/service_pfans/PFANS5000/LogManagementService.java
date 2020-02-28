@@ -17,6 +17,8 @@ public interface LogManagementService {
 
     public List<LogManagement> getDataList(LogManagement logmanagemenr) throws Exception;
 
+    public List<LogManagement> gettlist() throws Exception;
+
     void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
 
     LogManagement One(String Logmanagement_id) throws Exception;

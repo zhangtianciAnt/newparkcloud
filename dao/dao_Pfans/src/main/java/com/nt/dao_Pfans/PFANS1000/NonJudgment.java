@@ -131,4 +131,13 @@ public class NonJudgment extends BaseModel {
     @Column(name = "LIJUDEGRESULT")
     private String lijudegresult;
 
+    @Column(name = "JXJUDGENO")
+    private String jxjudgeno;
+
+    @Column(name = "GFJUDGENO")
+    private String gfjudgeno;
+
+    @Column(name = "LYJUDGENO")
+    private String lyjudgeno;
+
 }

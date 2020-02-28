@@ -7,6 +7,5 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface LogManagementMapper extends MyMapper<LogManagement> {
-
-
+    List<LogManagement> gettlist();
 }

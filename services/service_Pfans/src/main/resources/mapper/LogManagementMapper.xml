@@ -7,4 +7,7 @@
 			)a
 		ORDER BY a.log_date,a.TIME_START;
 	</select>
+	<select id="gettlist" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+		select * from logmanagement where HAS_PROJECT = '02' ;
+	</select>
 </mapper>

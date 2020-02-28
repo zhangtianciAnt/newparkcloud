@@ -50,13 +50,13 @@ public class Petition extends BaseModel {
     private String pjnamechinese;
 
     @Column(name = "CLAIMDATETIME")
-    private Date claimdatetime;
+    private String claimdatetime;
 
     @Column(name = "BUSINESSCODE")
     private String businesscode;
 
     @Column(name = "DELIVERYFINSHDATE")
-    private String deliveryfinshdate;
+    private Date  deliveryfinshdate;
 
     @Column(name = "CLAIMAMOUNT")
     private String claimamount;
