@@ -78,6 +78,32 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
         return ccid;
     }
 
+    //创建试题List
+    @Override
+    public void insertList(List<QuestionManage> questionManageList, TokenModel tokenModel) throws Exception {
+        if (questionManageList.size() > 0) {
+            if (StringUtils.isNotBlank(questionManageList.get(0).getProgramtpe())) {
+                deleteList(questionManageList.get(0).getProgramtpe());
+                for (QuestionManage questionManage : questionManageList) {
+                    questionManage.preInsert(tokenModel);
+                    questionManage.setQuestionid(UUID.randomUUID().toString());
+                    questionManageMapper.insert(questionManage);
+                }
+            }
+        }
+    }
+
+    //根据培训计划id删除试题
+    @Override
+    public void deleteList(String programtpe) throws Exception {
+        QuestionManage questionManage = new QuestionManage();
+        questionManage.setProgramtpe(programtpe);
+        List<QuestionManage> questionManageList = questionManageMapper.select(questionManage);
+        for (QuestionManage questionManage1 : questionManageList) {
+            questionManageMapper.delete(questionManage1);
+        }
+    }
+
     /**
      * @param questionManage
      * @Method Delete

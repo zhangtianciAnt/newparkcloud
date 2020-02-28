@@ -23,8 +23,14 @@ public interface QuestionManageServices {
     //创建试题
     String insert(QuestionManage questionManage, TokenModel tokenModel) throws Exception;
 
+    //创建试题List
+    void insertList(List<QuestionManage> questionManageList, TokenModel tokenModel) throws Exception;
+
     //删除试题
     void delete(QuestionManage questionManage) throws Exception;
+
+    //根据培训计划id删除试题
+    void deleteList(String programtpe) throws Exception;
 
     //获取试题详情
     QuestionManage one(String questionid) throws Exception;

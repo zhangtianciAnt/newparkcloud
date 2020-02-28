@@ -83,8 +83,7 @@ public class BASF21207Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        programlistroServices.insert(programlist, tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(programlistroServices.insert(programlist, tokenModel));
     }
 
     /**

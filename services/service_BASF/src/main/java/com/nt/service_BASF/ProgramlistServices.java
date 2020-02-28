@@ -22,7 +22,7 @@ public interface ProgramlistServices {
     //获取培训计划清单详情
     Programlist one(String programlistid) throws Exception;
     //创建培训计划清单
-    void insert(Programlist programlist, TokenModel tokenModel) throws Exception;
+    String insert(Programlist programlist, TokenModel tokenModel) throws Exception;
     //更新培训计划清单
     void update(Programlist programlist, TokenModel tokenModel) throws Exception;
     //删除培训清单

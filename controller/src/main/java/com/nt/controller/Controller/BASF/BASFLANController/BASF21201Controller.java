@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -62,7 +63,16 @@ public class BASF21201Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        questionManageServices.insert(questionManage, tokenModel);
+        return ApiResult.success(questionManageServices.insert(questionManage, tokenModel));
+    }
+
+    @RequestMapping(value = "/createList", method = {RequestMethod.POST})
+    public ApiResult createList(@RequestBody List<QuestionManage> questionManageList, HttpServletRequest request) throws Exception {
+        if (questionManageList == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        questionManageServices.insertList(questionManageList, tokenModel);
         return ApiResult.success();
     }
 

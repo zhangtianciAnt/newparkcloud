@@ -98,11 +98,13 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
      * @Date 2019/11/25 14:16
      */
     @Override
-    public void insert(Programlist programlist, TokenModel tokenModel) throws Exception {
+    public String insert(Programlist programlist, TokenModel tokenModel) throws Exception {
         programlist.preInsert(tokenModel);
         programlist.setProgramtype("BC039001");
-        programlist.setProgramlistid(UUID.randomUUID().toString());
+        String uuid = UUID.randomUUID().toString();
+        programlist.setProgramlistid(uuid);
         programlistMapper.insert(programlist);
+        return uuid;
     }
 
     /**
