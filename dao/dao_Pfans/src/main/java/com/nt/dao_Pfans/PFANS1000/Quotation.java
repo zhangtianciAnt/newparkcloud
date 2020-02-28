@@ -62,8 +62,8 @@ public class Quotation extends BaseModel {
     @Column(name = "REQUESTED")
     private String requested;
 
-    @Column(name = "EXECUTOR")
-    private String executor;
+    @Column(name = "LOADINGJUDGE")
+    private String loadingjudge;
 
     @Column(name = "REQUESTNUMBER")
     private String requestnumber;
