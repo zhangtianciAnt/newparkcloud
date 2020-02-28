@@ -2,12 +2,16 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Quotation;
+import com.nt.dao_Pfans.PFANS1000.Contract;
+import com.nt.dao_Pfans.PFANS1000.NonJudgment;
 import com.nt.dao_Pfans.PFANS1000.Petition;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
+import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
@@ -28,6 +32,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
     private QuotationMapper quotationMapper;
+    @Autowired
+    private ContractMapper contractMapper;
+    @Autowired
+    private NonJudgmentMapper nonJudgmentMapper;
     @Autowired
     private AwardMapper AwardMapper;
     @Autowired
@@ -74,7 +82,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         co.setContractnumber(contractnumber);
         List<Contractapplication> coList = contractapplicationMapper.select(co);
         if (coList != null) {
-            for (Contractapplication contract : coList) {
+            for (Contractapplication contractapp : coList) {
                 //見積書作成
                 if(rowindex.equals("1")){
                     Quotation quotation = new Quotation();
@@ -85,11 +93,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //該非判定書作成
                 else if(rowindex.equals("2")){
-
+                    NonJudgment nonJudgment = new NonJudgment();
+                    nonJudgment.preInsert(tokenModel);
+                    nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
+                    nonJudgment.setContractnumber(contractnumber);
+                    nonJudgmentMapper.insert(nonJudgment);
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
-
+//                    Contract contract = new Contract();
+//                    contract.preInsert(tokenModel);
+//                    contract.setContract_id(UUID.randomUUID().toString());
+//                    contract.setContractnumber(contractnumber);
+//                    contractMapper.insert(contract);
                 }
                 //決裁書作成
                 else if(rowindex.equals("4")){
@@ -113,7 +129,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.preInsert(tokenModel);
                     petition.setPetition_id(UUID.randomUUID().toString());
                     petition.setContractnumber(contractnumber);
-                    petition.setContracttype(contract.getContracttype());
+                    petition.setContracttype(contractapp.getContracttype());
                     petition.setDepositenglish("");
                     petition.setDepositchinese("");
                     petition.setDereenglish("");
@@ -131,8 +147,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.setCurrencyformat("");
                     PetitionMapper.insert(petition);
                 }
-                contract.preUpdate(tokenModel);
-                contractapplicationMapper.updateByPrimaryKeySelective(contract);
+                contractapp.preUpdate(tokenModel);
+                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
         }
     }
