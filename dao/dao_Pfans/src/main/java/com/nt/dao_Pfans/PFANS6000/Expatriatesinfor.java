@@ -271,5 +271,17 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "POST")
     private String post;
 
+    /**
+     * 姓名ID
+     */
+    @Column(name = "COOPERUSERID")
+    private String cooperuserid;
+
+    /**
+     * 供应商ID
+     */
+    @Column(name = "SUPPLIERNAMEID")
+    private String suppliernameid;
+
 
 }

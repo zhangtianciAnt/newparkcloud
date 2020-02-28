@@ -1406,7 +1406,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         expatriatesinforMapper.insert(expatriatesinfor);
         Priceset priceset = new Priceset();
         priceset.setPricesetid(UUID.randomUUID().toString());
-        priceset.setUser_id(expatriatesinfor.getExpname());
+        priceset.setUser_id(expatriatesinfor.getCooperuserid());
+        priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());
         pricesetMapper.insert(priceset);
     }

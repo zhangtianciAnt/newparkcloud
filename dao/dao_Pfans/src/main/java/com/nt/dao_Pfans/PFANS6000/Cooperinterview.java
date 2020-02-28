@@ -132,4 +132,10 @@ public class Cooperinterview extends BaseModel {
      */
     @Column(name = "GRADUATION_YEAR")
     private Date graduation_year;
+
+    /**
+     * 供应商UUID
+     */
+    @Column(name = "SUPPLIERNAMEID")
+    private String suppliernameid;
 }
