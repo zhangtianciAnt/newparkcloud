@@ -243,6 +243,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String budgetunit;
         /**
+         * 个人编码
+         */
+        private String personalcode;
+        /**
          * 職務
          */
         private String post;
