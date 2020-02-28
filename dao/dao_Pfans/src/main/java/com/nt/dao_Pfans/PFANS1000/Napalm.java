@@ -102,19 +102,19 @@ public class Napalm extends BaseModel {
      * 納品作成日
      */
     @Column(name = "DELIVERYFINSHDATE")
-    private String deliveryfinshdate;
+    private Date deliveryfinshdate;
 
     /**
      * 納品予定日
      */
     @Column(name = "DELIVERYDATE")
-    private String deliverydate;
+    private Date deliverydate;
 
     /**
      * 検収完了日
      */
     @Column(name = "COMPLETIONDATE")
-    private String completiondate;
+    private Date completiondate;
 
     /**
      * 通貨形式

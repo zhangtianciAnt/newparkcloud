@@ -51,6 +51,16 @@ public class Pfans5001Controller {
         }
         return ApiResult.success(companyProjectsService.selectById(companyprojectsid));
     }
+//    /**
+//     * 查看
+//     */
+//    @RequestMapping(value = "/select", method = {RequestMethod.GET})
+//    public ApiResult select(String companyprojectsid, HttpServletRequest request) throws Exception {
+//        if(companyprojectsid==null){
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+//        }
+//        return ApiResult.success(companyProjectsService.select(companyprojectsid));
+//    }
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
     public ApiResult List(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {

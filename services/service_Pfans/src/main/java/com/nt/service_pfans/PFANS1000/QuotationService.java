@@ -14,6 +14,6 @@ public interface QuotationService {
 
     void update(QuotationVo quotationVo, TokenModel tokenModel) throws Exception;
 
-    public void insert(QuotationVo quotationVo, TokenModel tokenModel)throws Exception;
+//    public void insert(QuotationVo quotationVo, TokenModel tokenModel)throws Exception;
 
 }

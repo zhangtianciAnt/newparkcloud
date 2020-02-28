@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Contracttheme")
+@Table(name = "contracttheme")
 public class Contracttheme extends BaseModel {
     private static final long serialVersionUID = 1L;
 

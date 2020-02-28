@@ -17,11 +17,14 @@ public interface LogManagementService {
 
     public List<LogManagement> getDataList(LogManagement logmanagemenr) throws Exception;
 
-
     void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
 
     LogManagement One(String Logmanagement_id) throws Exception;
+//
+//    //项目工数动态生成表格
+//    List<LogManagement> getWeek(LogManagement logManagement) throws Exception;
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+
     String downloadUserModel() throws LogicalException;
 }

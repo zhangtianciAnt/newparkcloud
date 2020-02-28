@@ -26,6 +26,10 @@ public class CompanyProjectsVo {
      */
     private List<Projectsystem> projectsystem;
     /**
+     * 日志管理
+     */
+    private List<LogManagement> logmanagement;
+    /**
      * 项目合同
      */
     private List<ProjectContract> projectcontract;

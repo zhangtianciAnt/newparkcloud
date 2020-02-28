@@ -5,10 +5,7 @@ import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
-import com.nt.service_pfans.PFANS6000.mapper.CompanyStatisticsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.LogicalException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -54,6 +51,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private SupplierinforMapper supplierinforMapper;
 
 
     @Override
@@ -278,7 +278,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            now.setTime(sdf.parse(getBusinessYear() + "年04月"));
+            now.setTime(sdf.parse(getBusinessYear()[0] + "年04月"));
             //日期赋值
             for ( int j = 1; j<=12; j++ ) {
                 sheet1.getRow(1).getCell(2*j+1).setCellValue(sdf.format(now.getTime()));
@@ -316,7 +316,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
 
                 row.createCell(1).setCellValue(i - 2);
-                row.createCell(2).setCellValue(c.getBpcompany());
+                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
+                if (ls != null) {
+                    row.createCell(2).setCellValue(ls.getSupchinese());
+                }
 //                row.createCell(27).setCellValue(c.getTotalmanhours());
 //                row.createCell(28).setCellValue(c.getTotalcost());
 
@@ -384,7 +387,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         try {
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            now.setTime(sdf.parse(getBusinessYear() + "年04月"));
+            now.setTime(sdf.parse(getBusinessYear()[0] + "年04月"));
             //日期赋值
             for ( int j = 1; j<=12; j++ ) {
                 sheet1.getRow(1).getCell(2*j+1).setCellValue(sdf.format(now.getTime()));
@@ -430,7 +433,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
 
                 row.createCell(1).setCellValue(i - 2);
-                row.createCell(2).setCellValue(c.getBpcompany());
+                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
+                if (ls != null) {
+                    row.createCell(2).setCellValue(ls.getSupchinese());
+                }
 
                 totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
                 totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
@@ -466,7 +472,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         try {
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            now.setTime(sdf.parse(getBusinessYear() + "年04月"));
+            now.setTime(sdf.parse(getBusinessYear()[0] + "年04月"));
             //日期赋值
             for ( int j = 1; j<=12; j++ ) {
                 sheet.getRow(2).getCell(j+2).setCellValue(sdf.format(now.getTime()));
@@ -504,7 +510,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
 
                 row.createCell(1).setCellValue(i - 3);
-                row.createCell(2).setCellValue(c.getBpcompany());
+                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
+                if (ls != null) {
+                    row.createCell(2).setCellValue(ls.getSupchinese());
+                }
 
                 totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
                 i++;

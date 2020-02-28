@@ -30,6 +30,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ProjectsystemMapper projectsystemMapper;
     @Autowired
     private ProjectContractMapper projectcontractMapper;
+    @Autowired
+    private LogManagementMapper logManagementMapper;
 
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
@@ -51,22 +53,40 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         Projectsystem projectsystem = new Projectsystem();
         //项目合同
         ProjectContract projectcontract = new ProjectContract();
+        //日志管理
+        LogManagement logManagement = new LogManagement();
+
         projectsystem.setCompanyprojects_id(companyprojectsid);
         stageInformation.setCompanyprojects_id(companyprojectsid);
         projectcontract.setCompanyprojects_id(companyprojectsid);
+        logManagement.setProject_id(companyprojectsid);
+
         CompanyProjects companyprojects = companyprojectsMapper.selectByPrimaryKey(companyprojectsid);
         List<Projectsystem> projectsystemList = projectsystemMapper.select(projectsystem);
         List<StageInformation> stageinformationList = stageinformationMapper.select(stageInformation);
         List<ProjectContract> projectcontractList = projectcontractMapper.select(projectcontract);
+        List<LogManagement> logManagementList = logManagementMapper.select(logManagement);
+
         projectsystemList = projectsystemList.stream().sorted(Comparator.comparing(Projectsystem::getRowindex)).collect(Collectors.toList());
         stageinformationList = stageinformationList.stream().sorted(Comparator.comparing(StageInformation::getRowindex)).collect(Collectors.toList());
         projectcontractList = projectcontractList.stream().sorted(Comparator.comparing(ProjectContract::getRowindex)).collect(Collectors.toList());
+
         staffVo.setCompanyprojects(companyprojects);
         staffVo.setProjectsystem(projectsystemList);
         staffVo.setStageinformation(stageinformationList);
         staffVo.setProjectcontract(projectcontractList);
+        staffVo.setLogmanagement(logManagementList);
         return staffVo;
     }
+
+//    //附表查询
+//    @Override
+//    public List<Projectsystem> select(String companyprojectsid) throws Exception {
+//        Projectsystem projectsystem = new Projectsystem();
+//        projectsystem.setCompanyprojects_id(companyprojectsid);
+//        List<Projectsystem> proList = projectsystemMapper.select(projectsystem);
+//        return proList;
+//    }
 
     //更新
     @Override
