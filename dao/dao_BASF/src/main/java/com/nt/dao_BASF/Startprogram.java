@@ -91,6 +91,12 @@ public class Startprogram extends BaseModel {
     //报名资料url
     private String applydataurl;
 
+    //合格判定标准（%）
+    private Integer standard;
+
+    //出题数量
+    private Integer questionnum;
+
     //开班状态
     private String programtype;
 

@@ -55,5 +55,9 @@ public class Programlist extends BaseModel {
 
     private String traindataurl;//培训资料url
 
-    private String programtype;//培训状态（用于通知是否可用，0未开班、1已开班）
+    private Integer standard;//合格判定标准（%）
+
+    private Integer questionnum;//出题数量
+
+    private String programtype;//培训状态
 }

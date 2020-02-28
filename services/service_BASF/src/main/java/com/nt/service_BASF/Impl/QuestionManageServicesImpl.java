@@ -2,8 +2,10 @@ package com.nt.service_BASF.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.service_BASF.QuestionManageServices;
+import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.QuestionManageMapper;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
@@ -40,6 +42,9 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
 
     @Autowired
     private QuestionManageMapper questionManageMapper;
+
+    @Autowired
+    private ProgramlistMapper programlistMapper;
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
@@ -387,5 +392,16 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
             return allData;
         }
     }
+
+    //获取考试题目
+//    @Override
+//    public List<QuestionManage> getQuestions(String programlistid) throws Exception{
+//        Programlist programlist=new Programlist();
+//        programlist.setProgramlistid(programlistid);
+//        programlist=programlistMapper.selectOne(programlist);
+//        //出题数量
+//        int questionnum=programlist.getQuestionnum();
+//        //
+//    }
 
 }

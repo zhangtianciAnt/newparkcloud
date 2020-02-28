@@ -66,6 +66,7 @@ public class BASF21201Controller {
         return ApiResult.success(questionManageServices.insert(questionManage, tokenModel));
     }
 
+    //创建大量试题
     @RequestMapping(value = "/createList", method = {RequestMethod.POST})
     public ApiResult createList(@RequestBody List<QuestionManage> questionManageList, HttpServletRequest request) throws Exception {
         if (questionManageList == null) {
@@ -154,4 +155,14 @@ public class BASF21201Controller {
             return ApiResult.fail("操作失败！");
         }
     }
+
+    //获取考试题目
+//    @RequestMapping(value = "/getQuestions", method = {RequestMethod.GET})
+//    public ApiResult getQuestions(String programlistid, HttpServletRequest request) throws Exception {
+//        if (StringUtils.isBlank(programlistid)) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        questionManageServices.update(questionManage, tokenModel);
+//        return ApiResult.success();
+//    }
 }

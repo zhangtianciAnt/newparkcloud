@@ -40,4 +40,7 @@ public interface QuestionManageServices {
 
     //execl导入
     List<Object> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
+    //获取考试题目
+//    List<QuestionManage> getQuestions(String programlistid) throws Exception;
 }
