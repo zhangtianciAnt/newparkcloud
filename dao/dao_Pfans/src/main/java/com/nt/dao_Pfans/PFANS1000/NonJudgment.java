@@ -30,8 +30,8 @@ public class NonJudgment extends BaseModel {
     @Column(name = "ORGANIZATION")
     private String organization;
 
-    @Column(name = "JAPANNO")
-    private String japanno;
+    @Column(name = "CONTRACTNUMBER")
+    private String contractnumber;
 
     @Column(name = "JANAME")
     private String janame;
