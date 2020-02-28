@@ -138,7 +138,7 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/12/12 14:36
      */
     @Override
-    public List<Deviceinformation> deviceList(String mapid, String[] devicetype, String devicename, Integer pageindex, Integer pagesize) throws Exception {
+    public List<Deviceinformation> deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception {
         if (Arrays.asList(devicetype).contains("BC004006")) {
             //查询更新路障信息
             Deviceinformation deviceinformation0 = new Deviceinformation();
@@ -158,7 +158,7 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
                 deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
             }
         }
-        return deviceinformationMapper.selectDeviceList(mapid, devicetype, devicename, pageindex, pagesize);
+        return deviceinformationMapper.selectDeviceList(mapid, devicetype, devicetypesmall, devicename, pageindex, pagesize);
 
     }
 }

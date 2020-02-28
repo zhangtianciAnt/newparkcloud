@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DeviceinformationMapper extends MyMapper<Deviceinformation> {
     List<Deviceinformation> selectDeviceList(
-            @Param("mapid") String mapid, @Param("devicetype") String[] devicetype,
+            @Param("mapid") String mapid, @Param("devicetype") String[] devicetype, @Param("devicetypesmall") String[] devicetypesmall,
             @Param("devicename") String devicename, @Param("pageindex") Integer pageindex,
-            @Param("pagesize") Integer pagesize);
+            @Param("pagesize") Integer pagesize) throws Exception;
 }

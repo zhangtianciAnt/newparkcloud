@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.ElementType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -190,17 +191,21 @@ public class BASF10105Controller {
      * @Date 2019/12/12 14:47
      */
     @RequestMapping(value = "/deviceList", method = {RequestMethod.GET})
-    public ApiResult deviceList(String mapid, String devicetype, String devicename, Integer pageindex, Integer pagesize, HttpServletRequest request) throws Exception {
+    public ApiResult deviceList(String mapid, String devicetype, String devicetypesmall, String devicename, Integer pageindex, Integer pagesize, HttpServletRequest request) throws Exception {
         if (StrUtil.isEmpty(mapid) || StrUtil.isEmpty(devicetype) || pageindex == null || pagesize == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         String[] devicetypeList = devicetype.split("-");
+        String[] devicetypesmallList = null;
+        if (devicetypesmall != null) {
+            devicetypesmallList = devicetypesmall.split("-");
+        }
         if (!StrUtil.isEmpty(devicename)) {
             devicename = "%" + devicename + "%";
         }
         pageindex = pagesize * (pageindex - 1);
         return ApiResult.success(
-                deviceinFormationServices.deviceList(mapid, devicetypeList, devicename, pageindex, pagesize)
+                deviceinFormationServices.deviceList(mapid, devicetypeList, devicetypesmallList, devicename, pageindex, pagesize)
         );
     }
 }

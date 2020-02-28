@@ -33,5 +33,5 @@ public interface DeviceInformationServices {
     void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
 
     //查询设备列表（GIS专用）
-    List<Deviceinformation> deviceList(String mapid, String[] devicetype, String devicename, Integer pageindex, Integer pagesize) throws Exception;
+    List<Deviceinformation> deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception;
 }

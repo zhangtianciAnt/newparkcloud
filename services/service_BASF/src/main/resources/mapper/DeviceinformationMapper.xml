@@ -40,13 +40,17 @@
         d.personliable,
         d.region,
         d.defencearea,
-        d.floor,
         d.device,
+        d.floor,
         d.subordinatesystem,
         d.detailedlocation,
         d.devicestatus,
         d.GIS,
-        d.remark
+        d.remark,
+        d.ip,
+        d.factoryname,
+        d.line,
+        d.`row`
         FROM deviceinformation AS d
         WHERE
         `STATUS`="0"
@@ -57,6 +61,14 @@
             (
             <foreach collection="devicetype" item="item" separator="OR">
                 devicetype=#{item}
+            </foreach>
+            )
+        </if>
+        <if test="devicetypesmall!=null">
+            AND
+            (
+            <foreach collection="devicetypesmall" item="item" separator="OR">
+                devicetypesmall=#{item}
             </foreach>
             )
         </if>
