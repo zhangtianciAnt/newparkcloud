@@ -539,6 +539,25 @@ public class UserServiceImpl implements UserService {
         return mongoTemplate.findAll(CustomerInfo.class);
     }
 
+    public String departmentname (List<OrgTree> orgs,String departmentname) {
+
+        String depid = "";
+        for(int j = 0;j<orgs.size();j++)
+        {
+            if(orgs.get(j).getDepartmentname().equals(departmentname))
+            {
+                depid =  orgs.get(j).get_id();
+            }
+            else
+            {
+                if(orgs.get(j).getOrgs()!= null && orgs.get(j).getOrgs().size()>0)
+                {
+                    depid = departmentname(orgs.get(j).getOrgs(),departmentname);
+                }
+            }
+        }
+        return depid;
+    }
     /**
      * @param request
      * @param tokenModel
@@ -635,15 +654,11 @@ public class UserServiceImpl implements UserService {
                 userInfo.setEmail(email);
                 List<String> dep = new ArrayList<>();
                 List<String> com = new ArrayList<>();
-                for(int j = 0;j<orgs.size();j++)
-                {
-                    if(orgs.get(j).getDepartmentname().equals(departmentname))
-                    {
-                        dep.add(orgs.get(j).get_id());
-                        com.add(orgs.get(j).get_id());
-                    }
-                }
 
+                String depid = "";
+                depid = departmentname(orgs,departmentname);
+                dep.add(depid);
+                com.add(depid);
                 userInfo.setDepartmentid(dep);
                 userInfo.setCompanyid(com);
                 userInfo.setCustomername(name);
@@ -673,6 +688,7 @@ public class UserServiceImpl implements UserService {
 
                     mongoTemplate.save(useraccount);
                     mongoTemplate.save(customerinfo);
+                    accesscount = accesscount + 1;
                 }
                 else
                 {
