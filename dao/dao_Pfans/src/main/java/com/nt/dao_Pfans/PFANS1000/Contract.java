@@ -26,7 +26,6 @@ public class Contract extends BaseModel {
     /**
      * 契約番号
      */
-    @Id
     @Column(name = "CONTRACTNUMBER")
     private String contractnumber;
 
