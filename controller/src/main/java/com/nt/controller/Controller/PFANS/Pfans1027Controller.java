@@ -34,15 +34,15 @@ public class Pfans1027Controller {
         return ApiResult.success(quotationService.get(quotation));
     }
 
-    @RequestMapping(value = "insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody QuotationVo quotationVo, HttpServletRequest request) throws Exception {
-        if (quotationVo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        quotationService.insert(quotationVo, tokenModel);
-        return ApiResult.success();
-    }
+//    @RequestMapping(value = "insert", method = {RequestMethod.POST})
+//    public ApiResult insert(@RequestBody QuotationVo quotationVo, HttpServletRequest request) throws Exception {
+//        if (quotationVo == null) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        quotationService.insert(quotationVo, tokenModel);
+//        return ApiResult.success();
+//    }
 
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String quotationid, HttpServletRequest request) throws Exception {
