@@ -59,8 +59,8 @@ public class Quotation extends BaseModel {
     @Column(name = "CURRENCYPOSITION")
     private String currencyposition;
 
-    @Column(name = "REQUESTED")
-    private String requested;
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
 
     @Column(name = "LOADINGJUDGE")
     private String loadingjudge;
