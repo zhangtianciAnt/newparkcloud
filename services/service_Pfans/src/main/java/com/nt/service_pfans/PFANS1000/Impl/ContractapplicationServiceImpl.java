@@ -89,9 +89,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     quotation.preInsert(tokenModel);
                     quotation.setQuotationid(UUID.randomUUID().toString());
                     quotation.setContractnumber(contractnumber);
+                    //3
                     quotation.setContracttype(contractapp.getContracttype());
-                    quotation.setDepartment(contractapp.getDepartment());
                     quotation.setDeployment(contractapp.getDeployment());
+                    quotation.setCurrencyposition(contractapp.getCurrencyposition());
+
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
