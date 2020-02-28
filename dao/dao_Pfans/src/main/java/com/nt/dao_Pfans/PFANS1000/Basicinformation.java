@@ -27,23 +27,23 @@ public class Basicinformation extends BaseModel {
     @Column(name = "QUOTATION_ID")
     private String quotationid;
 
-    @Column(name = "DELIVERY")
-    private String delivery;
+    @Column(name = "CLAIMTYPE")
+    private String claimtype;
 
-    @Column(name = "DELIVERYAATE")
-    private Date deliveryaate;
+    @Column(name = "DELIVERYDATE")
+    private Date deliverydate;
 
-    @Column(name = "FINISHEDDAY")
-    private Date finishedday;
+    @Column(name = "COMPLETIONDATE")
+    private Date completiondate;
 
-    @Column(name = "SUPPORTDAY")
-    private Date supportday;
+    @Column(name = "CLAIMDATE")
+    private Date claimdate;
 
-    @Column(name = "REQUESTDAY")
-    private Date requestday;
+    @Column(name = "SUPPORTDATE")
+    private Date supportdate;
 
-    @Column(name = "AMOUNT")
-    private String amount;
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
