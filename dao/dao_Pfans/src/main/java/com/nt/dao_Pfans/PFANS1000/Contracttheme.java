@@ -33,8 +33,8 @@ public class Contracttheme extends BaseModel {
     @Column(name = "CENTER_ID")
     private String centerid;
 
-    @Column(name = "ENTRUSTCENTER_ID")
-    private String entrustcenter_id;
+    @Column(name = "ENTRUSTGROUP_ID")
+    private String entrustgroup_id;
 
     @Column(name = "GROUP_ID")
     private String groupid;
