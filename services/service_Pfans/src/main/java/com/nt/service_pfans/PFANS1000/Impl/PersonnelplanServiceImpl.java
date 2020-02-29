@@ -48,8 +48,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     @Override
     public List<PersonnelPlan> getAll() {
         PersonnelPlan personnelPlan = new PersonnelPlan();
-        personnelPlan.setStatus("0");
-       List<PersonnelPlan> personnelPlans = personnelplanMapper.select(personnelPlan);
+        List<PersonnelPlan> personnelPlans = personnelplanMapper.selectAll();
         return personnelPlans;
     }
 

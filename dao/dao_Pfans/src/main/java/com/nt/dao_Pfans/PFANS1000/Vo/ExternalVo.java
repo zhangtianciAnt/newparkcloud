@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExternalVo {
-    //人id
-   private String expname;
+    //id
+   private String expatriatesinfor_id;
    //人名
-   private String coopername;
-     //供应商id
+   private String name;
+     //供应商
     private String suppliername;
-    //供应商名称
-    private String supchinese;
+    //rn
+    private String thisyear;
 
 }

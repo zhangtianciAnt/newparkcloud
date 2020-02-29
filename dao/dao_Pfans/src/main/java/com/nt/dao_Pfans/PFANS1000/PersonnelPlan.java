@@ -15,6 +15,7 @@ import javax.persistence.Table;
 @Table(name = "personnelplan")
 public class PersonnelPlan extends BaseModel {
     private static final long serialVersionUID = 1L;
+
     @Id
     private String personnelplanid;
     //年份

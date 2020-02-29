@@ -16,12 +16,6 @@ public interface PersonnelplanMapper extends MyMapper<PersonnelPlan> {
   @Select("select supplierinfor_id,supchinese from supplierinfor where status = '0'")
   List<Supplierinfor> getSupplierinfor();
 
-  @Select("select expname,cooperinterview.coopername,cooperinterview.suppliername,supplierinfor.supchinese\n" +
-          "from expatriatesinfor\n" +
-          "left join cooperinterview\n" +
-          "on expatriatesinfor.expname = cooperinterview.cooperinterview_id\n" +
-          "left join supplierinfor\n" +
-          "on cooperinterview.suppliername = supplierinfor.supplierinfor_id\n" +
-          "where expatriatesinfor.status = '0'")
+  @Select("select expatriatesinfor_id,expname as name,suppliername,rn as thisyear from expatriatesinfor where status = '0'")
   List<ExternalVo> getExternal();
 }
