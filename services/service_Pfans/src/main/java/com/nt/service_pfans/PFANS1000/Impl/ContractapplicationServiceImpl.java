@@ -122,11 +122,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
-//                    Contract contract = new Contract();
-//                    contract.preInsert(tokenModel);
-//                    contract.setContract_id(UUID.randomUUID().toString());
-//                    contract.setContractnumber(contractnumber);
-//                    contractMapper.insert(contract);
+                    Contract contract = new Contract();
+                    contract.preInsert(tokenModel);
+                    contract.setContract_id(UUID.randomUUID().toString());
+                    contract.setContractnumber(contractnumber);
+
+                    //4
+                    contract.setContracttype(contractapp.getContracttype());
+                    contract.setDeployment(contractapp.getDeployment());
+                    contract.setCurrencyposition(contractapp.getCurrencyposition());
+                    contract.setClaimamount(contractapp.getClaimamount());
+
+
+                    contractMapper.insert(contract);
                 }
                 //決裁書作成
                 else if(rowindex.equals("4")){
