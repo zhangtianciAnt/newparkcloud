@@ -145,5 +145,5 @@ public class Contracttheme extends BaseModel {
     private String type;
 
     @Column(name = "ROWINDEX")
-    private int rowindex;
+    private String rowindex;
 }

@@ -10,7 +10,7 @@ public interface ContractthemeService {
     //查看
     List<Contracttheme> get(Contracttheme contracttheme) throws Exception;
 
-    public Contracttheme One(String communication_id) throws Exception;
+    List<Contracttheme> one(Contracttheme contracttheme) throws Exception;
 
     //创建
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception;

@@ -43,7 +43,7 @@ public class Pfans1040Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(contractthemeService.get(contracttheme));
+        return ApiResult.success(contractthemeService.one(contracttheme));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})

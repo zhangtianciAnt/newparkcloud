@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -24,8 +26,10 @@ public class ContractthemeServiceImpl implements ContractthemeService {
     }
 
     @Override
-    public Contracttheme One(String contracttheme_id) throws Exception {
-        return contractthemeMapper.selectByPrimaryKey(contracttheme_id);
+    public List<Contracttheme> one(Contracttheme contracttheme) throws Exception {
+        List<Contracttheme> conList = contractthemeMapper.select(contracttheme);
+        conList = conList.stream().sorted(Comparator.comparing(Contracttheme::getRowindex)).collect(Collectors.toList());
+        return conList;
     }
 
     @Override
@@ -34,22 +38,54 @@ public class ContractthemeServiceImpl implements ContractthemeService {
         for(int i = 0; i < contracttheme.size(); i ++){
             rowindex = rowindex + 1;
             Contracttheme co = contracttheme.get(i);
-            co.preUpdate(tokenModel);
-            co.setRowindex(rowindex);
-            contractthemeMapper.updateByPrimaryKey(co);
+            if(!co.getContractthemeid().equals("")){
+                co.preUpdate(tokenModel);
+                co.setRowindex(String.valueOf(rowindex));
+                contractthemeMapper.updateByPrimaryKey(co);
+            }
+            else{
+                co.preInsert(tokenModel);
+                co.setContractthemeid(UUID.randomUUID().toString());
+                co.setRowindex(String.valueOf(rowindex));
+                contractthemeMapper.insert(co);
+            }
         }
     }
 
     @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
+        Contracttheme con = new Contracttheme();
+        con.setYears(contracttheme.get(0).getYears());
+        List<Contracttheme> conList = contractthemeMapper.select(con);
         int rowindex = 0;
         for(int i = 0; i < contracttheme.size(); i ++){
             rowindex = rowindex + 1;
             Contracttheme co = contracttheme.get(i);
-            co.preInsert(tokenModel);
-            co.setContractthemeid(UUID.randomUUID().toString());
-            co.setRowindex(rowindex);
-            contractthemeMapper.insert(co);
+            if(!co.getContractthemeid().equals("")){
+                if(conList.size() > 0){
+                    for (Contracttheme conlist : conList) {
+                        if(co.getContractthemeid().equals(conlist.getContractthemeid())){
+                            co.preUpdate(tokenModel);
+                            co.setRowindex(String.valueOf(rowindex));
+                            contractthemeMapper.updateByPrimaryKey(co);
+                        }
+                        else{
+                            contractthemeMapper.delete(conlist);
+                        }
+                    }
+                }
+                else{
+                    co.preUpdate(tokenModel);
+                    co.setRowindex(String.valueOf(rowindex));
+                    contractthemeMapper.updateByPrimaryKey(co);
+                }
+            }
+            else{
+                co.preInsert(tokenModel);
+                co.setContractthemeid(UUID.randomUUID().toString());
+                co.setRowindex(String.valueOf(rowindex));
+                contractthemeMapper.insert(co);
+            }
         }
     }
 }
