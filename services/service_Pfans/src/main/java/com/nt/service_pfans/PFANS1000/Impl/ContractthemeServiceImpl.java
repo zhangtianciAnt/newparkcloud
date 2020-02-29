@@ -30,6 +30,9 @@ public class ContractthemeServiceImpl implements ContractthemeService {
     @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
         Contracttheme con = new Contracttheme();
+        if(!contracttheme.get(0).getMonths().equals("")){
+            con.setMonths(contracttheme.get(0).getMonths());
+        }
         con.setYears(contracttheme.get(0).getYears());
         //数据库原有数据
         List<Contracttheme> conList = contractthemeMapper.select(con);
@@ -51,9 +54,18 @@ public class ContractthemeServiceImpl implements ContractthemeService {
                     }
                 }
                 else{
-                    co.preUpdate(tokenModel);
-                    co.setRowindex(String.valueOf(rowindex));
-                    contractthemeMapper.updateByPrimaryKey(co);
+                    if(!contracttheme.get(0).getMonths().equals("")){
+                        //添加新添加的数据
+                        co.preInsert(tokenModel);
+                        co.setContractthemeid(UUID.randomUUID().toString());
+                        co.setRowindex(String.valueOf(rowindex));
+                        contractthemeMapper.insert(co);
+                    }
+                    else{
+                        co.preUpdate(tokenModel);
+                        co.setRowindex(String.valueOf(rowindex));
+                        contractthemeMapper.updateByPrimaryKey(co);
+                    }
                 }
             }
             else{

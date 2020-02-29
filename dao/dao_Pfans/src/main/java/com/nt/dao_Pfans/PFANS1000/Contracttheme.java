@@ -24,6 +24,9 @@ public class Contracttheme extends BaseModel {
     @Column(name = "YEARS")
     private String years;
 
+    @Column(name = "MONTHS")
+    private String months;
+
     @Column(name = "THEME")
     private String theme;
 
