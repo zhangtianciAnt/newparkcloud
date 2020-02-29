@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper">
+
+	<select id="getContractList" parameterType="string" resultType="com.nt.dao_Pfans.PFANS1000.Vo.ContractVo">
+		select cp.PROJECT_NAME, cp.PROJECT_NAMEJP, ca.DEPLOYMENT, ca.CLAIMTYPE,
+		 ca.DELIVERYDATE, ca.COMPLETIONDATE, ca.CLAIMDATE, ca.SUPPORTDATE,ca.CLAIMAMOUNT, ca.CURRENCYPOSITION
+		from contract c
+		left join contractapplication ca
+		on ca.CONTRACTNUMBER = c.CONTRACTNUMBER and ca.status = '0'
+		left join projectcontract pc
+		on pc.CONTRACT = ca.CONTRACTAPPLICATION_ID and pc.status = '0'
+		left join companyprojects cp
+		on cp.COMPANYPROJECTS_ID = pc.COMPANYPROJECTS_ID
+		where
+		c.status = '0'
+		and c.CONTRACT_ID = #{contractId}
+	</select>
+
+
+</mapper>

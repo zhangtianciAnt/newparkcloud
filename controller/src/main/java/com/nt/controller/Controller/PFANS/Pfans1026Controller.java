@@ -9,6 +9,7 @@ import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,5 +58,15 @@ public class Pfans1026Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         contractapplicationService.insertBook(contractapplication,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "getContractList", method = {RequestMethod.GET})
+    public ApiResult getContractList(String contractId, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(contractId)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.getContractList(contractId, tokenModel));
+
     }
 }

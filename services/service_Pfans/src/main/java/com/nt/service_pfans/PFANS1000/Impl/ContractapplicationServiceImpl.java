@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -242,5 +243,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
         }
+    }
+
+    @Override
+    public List<?> getContractList(String contractId, TokenModel tokenModel) throws Exception {
+        return contractapplicationMapper.getContractList(contractId);
     }
 }
