@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.Contracttheme;
 import com.nt.service_pfans.PFANS1000.ContractthemeService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractthemeMapper;
@@ -30,7 +31,7 @@ public class ContractthemeServiceImpl implements ContractthemeService {
     @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
         Contracttheme con = new Contracttheme();
-        if(!contracttheme.get(0).getMonths().equals("")){
+        if(!StringUtils.isNullOrEmpty(contracttheme.get(0).getMonths())){
             con.setMonths(contracttheme.get(0).getMonths());
         }
         con.setYears(contracttheme.get(0).getYears());
