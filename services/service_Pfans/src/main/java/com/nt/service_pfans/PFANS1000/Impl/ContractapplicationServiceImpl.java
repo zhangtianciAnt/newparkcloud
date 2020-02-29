@@ -140,7 +140,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     contractMapper.insert(contract);
                 }
-                //決裁書作成
+                //決裁書作成(受託)
                 else if(rowindex.equals("4")){
                     Award award = new Award();
                     award.preInsert(tokenModel);
@@ -160,7 +160,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setClaimamount(contractapp.getClaimamount());
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
-                    award.setMaketype(contractapp.getMaketype());
+                    award.setMaketype(rowindex);
 
                     AwardMapper.insert(award);
                 }
@@ -208,7 +208,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     PetitionMapper.insert(petition);
                 }
-                //請求書作成
+                //請求書作成(委託)
                 else if(rowindex.equals("7")){
                     Award award = new Award();
                     award.preInsert(tokenModel);
@@ -227,7 +227,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setClaimamount(contractapp.getClaimamount());
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
-                    award.setMaketype(contractapp.getMaketype());
+                    award.setMaketype(rowindex);
 
                     AwardMapper.insert(award);
                 }
