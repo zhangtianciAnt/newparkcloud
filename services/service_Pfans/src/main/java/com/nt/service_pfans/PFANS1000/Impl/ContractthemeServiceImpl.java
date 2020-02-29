@@ -29,15 +29,27 @@ public class ContractthemeServiceImpl implements ContractthemeService {
     }
 
     @Override
-    public void update(Contracttheme contracttheme, TokenModel tokenModel) throws Exception {
-        contracttheme.preUpdate(tokenModel);
-        contractthemeMapper.updateByPrimaryKey(contracttheme);
+    public void update(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
+        int rowindex = 0;
+        for(int i = 0; i < contracttheme.size(); i ++){
+            rowindex = rowindex + 1;
+            Contracttheme co = contracttheme.get(i);
+            co.preUpdate(tokenModel);
+            co.setRowindex(rowindex);
+            contractthemeMapper.updateByPrimaryKey(co);
+        }
     }
 
     @Override
-    public void insert(Contracttheme contracttheme, TokenModel tokenModel) throws Exception {
-        contracttheme.preInsert(tokenModel);
-        contracttheme.setContractthemeid(UUID.randomUUID().toString());
-        contractthemeMapper.insert(contracttheme);
+    public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
+        int rowindex = 0;
+        for(int i = 0; i < contracttheme.size(); i ++){
+            rowindex = rowindex + 1;
+            Contracttheme co = contracttheme.get(i);
+            co.preInsert(tokenModel);
+            co.setContractthemeid(UUID.randomUUID().toString());
+            co.setRowindex(rowindex);
+            contractthemeMapper.insert(co);
+        }
     }
 }
