@@ -208,6 +208,29 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     PetitionMapper.insert(petition);
                 }
+                //請求書作成
+                else if(rowindex.equals("7")){
+                    Award award = new Award();
+                    award.preInsert(tokenModel);
+                    award.setAward_id(UUID.randomUUID().toString());
+                    award.setContractnumber(contractnumber);
+                    //13
+                    award.setContracttype(contractapp.getContracttype());
+                    award.setCustojapanese(contractapp.getCustojapanese());
+                    award.setCustochinese(contractapp.getCustochinese());
+                    award.setPlacejapanese(contractapp.getPlacejapanese());
+                    award.setPlacechinese(contractapp.getPlacechinese());
+                    award.setDeployment(contractapp.getDeployment());
+                    award.setClaimdatetime(contractapp.getClaimdatetime());
+                    award.setDeliverydate(contractapp.getDeliverydate());
+                    award.setCurrencyposition(contractapp.getCurrencyposition());
+                    award.setClaimamount(contractapp.getClaimamount());
+                    award.setUser_id(contractapp.getUser_id());
+                    award.setRemarks(contractapp.getRemarks());
+                    award.setMaketype(contractapp.getMaketype());
+
+                    AwardMapper.insert(award);
+                }
                 contractapp.preUpdate(tokenModel);
                 contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
