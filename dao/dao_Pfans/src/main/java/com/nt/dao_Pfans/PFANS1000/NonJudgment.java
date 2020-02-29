@@ -57,28 +57,28 @@ public class NonJudgment extends BaseModel {
     @Column(name = "POSSIBLE")
     private String possible;
 
-    @Column(name = "weapon")
+    @Column(name = "WEAPON")
     private String weapon;
 
-    @Column(name = "weaponreson")
+    @Column(name = "WEAPONRESON")
     private String weaponreson;
 
-    @Column(name = "word")
+    @Column(name = "WORD")
     private String word;
 
-    @Column(name = "wordreson")
+    @Column(name = "WORDRESON")
     private String wordreson;
 
-    @Column(name = "specifi")
+    @Column(name = "SPECIFI")
     private String specifi;
 
-    @Column(name = "specifireson")
+    @Column(name = "SPECIFIRESON")
     private String specifireson;
 
-    @Column(name = "restricted")
+    @Column(name = "RESTRICTED")
     private String restricted;
 
-    @Column(name = "regulation")
+    @Column(name = "REGULATION")
     private String regulation;
 
     @Column(name = "TODAY")
