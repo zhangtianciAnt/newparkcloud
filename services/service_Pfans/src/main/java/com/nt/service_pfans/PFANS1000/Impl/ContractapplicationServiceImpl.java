@@ -93,6 +93,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     //6
                     quotation.setContracttype(contractapp.getContracttype());
                     quotation.setContractnumber(contractapp.getContractnumber());
+                    quotation.setTrusteejapanese(contractapp.getCustojapanese());
+                    quotation.setTrusteechinese(contractapp.getCustochinese());
+                    quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
+                    quotation.setEntrustedchinese(contractapp.getPlacechinese());
                     quotation.setDeployment(contractapp.getDeployment());
                     quotation.setCurrencyposition(contractapp.getCurrencyposition());
                     quotation.setClaimamount(contractapp.getClaimamount());
