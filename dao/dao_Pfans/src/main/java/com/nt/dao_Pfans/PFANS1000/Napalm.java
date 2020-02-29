@@ -78,7 +78,7 @@ public class Napalm extends BaseModel {
      * 開発開始日
      */
     @Column(name = "OPENINGDATE")
-    private String openingdate;
+    private Date openingdate;
 
     /**
      * 開発満了日

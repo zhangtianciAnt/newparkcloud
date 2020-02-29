@@ -21,11 +21,17 @@ public class Contracttheme extends BaseModel {
     @Column(name = "CONTRACTTHEME_ID")
     private String contractthemeid;
 
+    @Column(name = "YEARS")
+    private String years;
+
     @Column(name = "THEME")
     private String theme;
 
     @Column(name = "CENTER_ID")
     private String centerid;
+
+    @Column(name = "ENTRUSTCENTER_ID")
+    private String entrustcenter_id;
 
     @Column(name = "GROUP_ID")
     private String groupid;
@@ -135,5 +141,9 @@ public class Contracttheme extends BaseModel {
     @Column(name = "AMOUNT3")
     private String amount3;
 
+    @Column(name = "TYPE")
+    private String type;
 
+    @Column(name = "ROWINDEX")
+    private String rowindex;
 }

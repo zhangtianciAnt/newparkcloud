@@ -26,7 +26,6 @@ public class Contract extends BaseModel {
     /**
      * 契約番号
      */
-    @Id
     @Column(name = "CONTRACTNUMBER")
     private String contractnumber;
 
@@ -93,8 +92,8 @@ public class Contract extends BaseModel {
     /*
      * 通貨形式
      */
-    @Column(name = "CURRENCYFORMAT")
-    private String currencyformat;
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
 
     /**
      * 請求金額

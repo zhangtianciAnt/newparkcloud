@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -89,10 +90,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     quotation.preInsert(tokenModel);
                     quotation.setQuotationid(UUID.randomUUID().toString());
                     quotation.setContractnumber(contractnumber);
-                    //3
+
+                    //6
                     quotation.setContracttype(contractapp.getContracttype());
+                    quotation.setContractnumber(contractapp.getContractnumber());
+                    quotation.setTrusteejapanese(contractapp.getCustojapanese());
+                    quotation.setTrusteechinese(contractapp.getCustochinese());
+                    quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
+                    quotation.setEntrustedchinese(contractapp.getPlacechinese());
                     quotation.setDeployment(contractapp.getDeployment());
                     quotation.setCurrencyposition(contractapp.getCurrencyposition());
+                    quotation.setClaimamount(contractapp.getClaimamount());
+                    quotation.setLoadingjudge(contractapp.getLoadingjudge());
 
                     quotationMapper.insert(quotation);
                 }
@@ -102,30 +111,62 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     nonJudgment.preInsert(tokenModel);
                     nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
                     nonJudgment.setContractnumber(contractnumber);
+
+                    //8
+                    nonJudgment.setDecisionnumber(contractapp.getDecisionnumber());
+                    nonJudgment.setDeployment(contractapp.getDeployment());
                     nonJudgment.setContractnumber(contractapp.getContractnumber());
+                    nonJudgment.setCustoenglish(contractapp.getCustoenglish());
+                    nonJudgment.setVarto(contractapp.getVarto());
+                    nonJudgment.setClaimdatetime(contractapp.getClaimdatetime());
+                    nonJudgment.setOutnumber(contractapp.getOutnumber());
+                    nonJudgment.setProductnumber(contractapp.getProductnumber());
+
+
                     nonJudgmentMapper.insert(nonJudgment);
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
-//                    Contract contract = new Contract();
-//                    contract.preInsert(tokenModel);
-//                    contract.setContract_id(UUID.randomUUID().toString());
-//                    contract.setContractnumber(contractnumber);
-//                    contractMapper.insert(contract);
+                    Contract contract = new Contract();
+                    contract.preInsert(tokenModel);
+                    contract.setContract_id(UUID.randomUUID().toString());
+                    contract.setContractnumber(contractnumber);
+
+                    //4
+                    contract.setContracttype(contractapp.getContracttype());
+                    contract.setDepositjapanese(contractapp.getCustojapanese());
+                    contract.setDepositchinese(contractapp.getCustochinese());
+                    contract.setPrplacejapanese(contractapp.getPlacejapanese());
+                    contract.setPrplacechinese(contractapp.getPlacechinese());
+                    contract.setDeployment(contractapp.getDeployment());
+                    contract.setCurrencyposition(contractapp.getCurrencyposition());
+                    contract.setClaimamount(contractapp.getClaimamount());
+
+
+                    contractMapper.insert(contract);
                 }
-                //決裁書作成
+                //決裁書作成(受託)
                 else if(rowindex.equals("4")){
                     Award award = new Award();
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
                     award.setContractnumber(contractnumber);
+
+                    //13
                     award.setContracttype(contractapp.getContracttype());
+                    award.setCustojapanese(contractapp.getCustojapanese());
+                    award.setCustochinese(contractapp.getCustochinese());
+                    award.setPlacejapanese(contractapp.getPlacejapanese());
+                    award.setPlacechinese(contractapp.getPlacechinese());
                     award.setDeployment(contractapp.getDeployment());
+                    award.setClaimdatetime(contractapp.getClaimdatetime());
                     award.setDeliverydate(contractapp.getDeliverydate());
+                    award.setCurrencyposition(contractapp.getCurrencyposition());
                     award.setClaimamount(contractapp.getClaimamount());
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
-                    award.setMaketype(contractapp.getMaketype());
+                    award.setMaketype(rowindex);
+
                     AwardMapper.insert(award);
                 }
                 //納品書作成
@@ -134,6 +175,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.preInsert(tokenModel);
                     napalm.setNapalm_id(UUID.randomUUID().toString());
                     napalm.setContractnumber(contractnumber);
+
+                    //7
+                    napalm.setDepositjapanese(contractapp.getCustojapanese());
+                    napalm.setDepositenglish(contractapp.getCustochinese());
+                    napalm.setEntrustment(contractapp.getCustojapanese());
                     napalm.setDeployment(contractapp.getDeployment());
                     napalm.setClaimtype(contractapp.getClaimtype());
                     napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
@@ -141,6 +187,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.setCompletiondate(contractapp.getCompletiondate());
                     napalm.setClaimamount(contractapp.getClaimamount());
                     napalm.setLoadingjudge(contractapp.getLoadingjudge());
+
                     napalmMapper.insert(napalm);
                 }
                 //請求書作成
@@ -149,15 +196,57 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.preInsert(tokenModel);
                     petition.setPetition_id(UUID.randomUUID().toString());
                     petition.setContractnumber(contractnumber);
+
+                    //12
                     petition.setContracttype(contractapp.getContracttype());
+                    petition.setCustoenglish(contractapp.getCustoenglish());
+                    petition.setCustochinese(contractapp.getCustochinese());
+                    petition.setResponerglish(contractapp.getResponerglish());
+                    petition.setPlaceenglish(contractapp.getPlaceenglish());
+                    petition.setPlacechinese(contractapp.getPlacechinese());
+                    petition.setClaimdatetime(contractapp.getClaimdatetime());
                     petition.setBusinesscode(contractapp.getBusinesscode());
-//                    petition.setD1eliverydate(new Date());
+                    petition.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                    petition.setResponphone(contractapp.getResponphone());
                     petition.setClaimtype(contractapp.getClaimtype());
+                    petition.setCurrencyposition(contractapp.getCurrencyposition());
+
+//                    petition.setD1eliverydate(new Date());
+
+
                     PetitionMapper.insert(petition);
+                }
+                //請求書作成(委託)
+                else if(rowindex.equals("7")){
+                    Award award = new Award();
+                    award.preInsert(tokenModel);
+                    award.setAward_id(UUID.randomUUID().toString());
+                    award.setContractnumber(contractnumber);
+                    //13
+                    award.setContracttype(contractapp.getContracttype());
+                    award.setCustojapanese(contractapp.getCustojapanese());
+                    award.setCustochinese(contractapp.getCustochinese());
+                    award.setPlacejapanese(contractapp.getPlacejapanese());
+                    award.setPlacechinese(contractapp.getPlacechinese());
+                    award.setDeployment(contractapp.getDeployment());
+                    award.setClaimdatetime(contractapp.getClaimdatetime());
+                    award.setDeliverydate(contractapp.getDeliverydate());
+                    award.setCurrencyposition(contractapp.getCurrencyposition());
+                    award.setClaimamount(contractapp.getClaimamount());
+                    award.setUser_id(contractapp.getUser_id());
+                    award.setRemarks(contractapp.getRemarks());
+                    award.setMaketype(rowindex);
+
+                    AwardMapper.insert(award);
                 }
                 contractapp.preUpdate(tokenModel);
                 contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
         }
+    }
+
+    @Override
+    public List<?> getContractList(String contractId, TokenModel tokenModel) throws Exception {
+        return contractapplicationMapper.getContractList(contractId);
     }
 }

@@ -54,6 +54,33 @@ public class NonJudgment extends BaseModel {
     @Column(name = "TECHNICAL")
     private String technical;
 
+    @Column(name = "POSSIBLE")
+    private String possible;
+
+    @Column(name = "WEAPON")
+    private String weapon;
+
+    @Column(name = "WEAPONRESON")
+    private String weaponreson;
+
+    @Column(name = "WORD")
+    private String word;
+
+    @Column(name = "WORDRESON")
+    private String wordreson;
+
+    @Column(name = "SPECIFI")
+    private String specifi;
+
+    @Column(name = "SPECIFIRESON")
+    private String specifireson;
+
+    @Column(name = "RESTRICTED")
+    private String restricted;
+
+    @Column(name = "REGULATION")
+    private String regulation;
+
     @Column(name = "TODAY")
     private Date today;
 
@@ -125,10 +152,22 @@ public class NonJudgment extends BaseModel {
     @Column(name = "SUPPLIECOM")
     private String suppliecom;
 
+    @Column(name = "SUPPLIESOF")
+    private String suppliesof;
+
     @Column(name = "SUJUDEGRESULT")
     private String sujudegresult;
 
     @Column(name = "LIJUDEGRESULT")
     private String lijudegresult;
+
+    @Column(name = "JXJUDGENO")
+    private String jxjudgeno;
+
+    @Column(name = "GFJUDGENO")
+    private String gfjudgeno;
+
+    @Column(name = "LYJUDGENO")
+    private String lyjudgeno;
 
 }
