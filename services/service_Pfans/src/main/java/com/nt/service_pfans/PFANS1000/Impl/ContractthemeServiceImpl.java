@@ -21,56 +21,32 @@ public class ContractthemeServiceImpl implements ContractthemeService {
     private ContractthemeMapper contractthemeMapper;
 
     @Override
-    public List<Contracttheme> get(Contracttheme contracttheme) {
-        return contractthemeMapper.select(contracttheme);
-    }
-
-    @Override
-    public List<Contracttheme> one(Contracttheme contracttheme) throws Exception {
+    public List<Contracttheme> get(Contracttheme contracttheme) throws Exception {
         List<Contracttheme> conList = contractthemeMapper.select(contracttheme);
         conList = conList.stream().sorted(Comparator.comparing(Contracttheme::getRowindex)).collect(Collectors.toList());
         return conList;
     }
 
     @Override
-    public void update(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
-        int rowindex = 0;
-        for(int i = 0; i < contracttheme.size(); i ++){
-            rowindex = rowindex + 1;
-            Contracttheme co = contracttheme.get(i);
-            if(!co.getContractthemeid().equals("")){
-                co.preUpdate(tokenModel);
-                co.setRowindex(String.valueOf(rowindex));
-                contractthemeMapper.updateByPrimaryKey(co);
-            }
-            else{
-                co.preInsert(tokenModel);
-                co.setContractthemeid(UUID.randomUUID().toString());
-                co.setRowindex(String.valueOf(rowindex));
-                contractthemeMapper.insert(co);
-            }
-        }
-    }
-
-    @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
         Contracttheme con = new Contracttheme();
         con.setYears(contracttheme.get(0).getYears());
+        //数据库原有数据
         List<Contracttheme> conList = contractthemeMapper.select(con);
         int rowindex = 0;
         for(int i = 0; i < contracttheme.size(); i ++){
+            int ddeleteFlg = 0;
             rowindex = rowindex + 1;
             Contracttheme co = contracttheme.get(i);
             if(!co.getContractthemeid().equals("")){
                 if(conList.size() > 0){
-                    for (Contracttheme conlist : conList) {
-                        if(co.getContractthemeid().equals(conlist.getContractthemeid())){
+                    for(int j = 0; j < conList.size(); j ++){
+                        Contracttheme ct = conList.get(j);
+                        if(co.getContractthemeid().equals(ct.getContractthemeid())){
                             co.preUpdate(tokenModel);
                             co.setRowindex(String.valueOf(rowindex));
                             contractthemeMapper.updateByPrimaryKey(co);
-                        }
-                        else{
-                            contractthemeMapper.delete(conlist);
+                            conList.remove(j);
                         }
                     }
                 }
@@ -81,11 +57,17 @@ public class ContractthemeServiceImpl implements ContractthemeService {
                 }
             }
             else{
+                //添加新添加的数据
                 co.preInsert(tokenModel);
                 co.setContractthemeid(UUID.randomUUID().toString());
                 co.setRowindex(String.valueOf(rowindex));
                 contractthemeMapper.insert(co);
             }
+        }
+        //删除无用数据
+        for(int x = 0; x < conList.size(); x ++){
+            Contracttheme ct = conList.get(x);
+            contractthemeMapper.delete(ct);
         }
     }
 }

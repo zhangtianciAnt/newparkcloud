@@ -28,32 +28,13 @@ public class Pfans1040Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request)throws  Exception{
-        TokenModel tokenModel = tokenService.getToken(request);
-        Contracttheme contracttheme = new Contracttheme();
-        contracttheme.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(contractthemeService.get(contracttheme));
-
-    }
-
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    @RequestMapping(value = "/get",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Contracttheme contracttheme, HttpServletRequest request) throws Exception {
         if (contracttheme == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(contractthemeService.one(contracttheme));
-    }
-
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody List<Contracttheme> contracttheme, HttpServletRequest request) throws Exception{
-        if (contracttheme == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        contractthemeService.update(contracttheme,tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(contractthemeService.get(contracttheme));
     }
 
     @RequestMapping(value = "/insert",method={RequestMethod.POST})
