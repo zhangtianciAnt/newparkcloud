@@ -133,6 +133,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     //4
                     contract.setContracttype(contractapp.getContracttype());
+                    contract.setDepositjapanese(contractapp.getCustojapanese());
+                    contract.setDepositchinese(contractapp.getCustochinese());
+                    contract.setPrplacejapanese(contractapp.getPlacejapanese());
+                    contract.setPrplacechinese(contractapp.getPlacechinese());
                     contract.setDeployment(contractapp.getDeployment());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
                     contract.setClaimamount(contractapp.getClaimamount());
@@ -172,6 +176,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.setContractnumber(contractnumber);
 
                     //7
+                    napalm.setDepositjapanese(contractapp.getCustojapanese());
+                    napalm.setDepositenglish(contractapp.getCustochinese());
+                    napalm.setEntrustment(contractapp.getCustojapanese());
                     napalm.setDeployment(contractapp.getDeployment());
                     napalm.setClaimtype(contractapp.getClaimtype());
                     napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
