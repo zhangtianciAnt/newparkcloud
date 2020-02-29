@@ -1,8 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Communication;
 import com.nt.dao_Pfans.PFANS1000.Contracttheme;
-import com.nt.service_pfans.PFANS1000.CommunicationService;
 import com.nt.service_pfans.PFANS1000.ContractthemeService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -17,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/contracttheme")
-public class Pfans1039Controller {
+public class Pfans1040Controller {
 
-    //查找信息发布
+    //销售テーマ
     @Autowired
     private ContractthemeService contractthemeService;
 
@@ -44,11 +43,11 @@ public class Pfans1039Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(contractthemeService.One(contracttheme.getContractthemeid()));
+        return ApiResult.success(contractthemeService.get(contracttheme));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Contracttheme contracttheme, HttpServletRequest request) throws Exception{
+    public ApiResult update(@RequestBody List<Contracttheme> contracttheme, HttpServletRequest request) throws Exception{
         if (contracttheme == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -58,7 +57,7 @@ public class Pfans1039Controller {
     }
 
     @RequestMapping(value = "/insert",method={RequestMethod.POST})
-    public ApiResult insert(@RequestBody Contracttheme contracttheme, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody List<Contracttheme> contracttheme, HttpServletRequest request) throws Exception {
         if (contracttheme == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

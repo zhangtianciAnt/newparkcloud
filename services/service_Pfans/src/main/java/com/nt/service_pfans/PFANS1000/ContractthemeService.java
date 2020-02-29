@@ -13,9 +13,9 @@ public interface ContractthemeService {
     public Contracttheme One(String communication_id) throws Exception;
 
     //创建
-    public void insert(Contracttheme contracttheme, TokenModel tokenModel) throws Exception;
+    public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception;
 
     //修改
-    public void update(Contracttheme contracttheme, TokenModel tokenModel) throws Exception;
+    public void update(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception;
 
 }
