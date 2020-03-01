@@ -844,6 +844,11 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         return ApiResult.success();
     }
 
+    @Override
+    public ApiResult getInterConnProgressMap(TokenModel tokenModel) {
+        return ApiResult.success(interConnProgressMap.get(tokenModel.getToken()));
+    }
+
     /**
      * @return
      * @Method interConnClearProgress
