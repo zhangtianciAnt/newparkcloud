@@ -31,16 +31,16 @@ public class Othpersonfee extends BaseModel {
     private String detailed1;
 
     @Column(name = "COST1")
-    private Date cost1;
+    private String cost1;
 
     @Column(name = "UNIT1")
-    private Date unit1;
+    private String unit1;
 
     @Column(name = "AMOUNT1")
-    private Date amount1;
+    private String amount1;
 
     @Column(name = "DETAILED2")
-    private Date detailed2;
+    private String detailed2;
 
     @Column(name = "COST2")
     private String cost2;
