@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -37,7 +38,7 @@ public class Pfans1026Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody List<Contractapplication> contractapplication, HttpServletRequest request) throws Exception{
+    public ApiResult update(@RequestBody ContractapplicationVo contractapplication, HttpServletRequest request) throws Exception{
         if (contractapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -47,7 +48,7 @@ public class Pfans1026Controller {
     }
 
     @RequestMapping(value = "/insert",method={RequestMethod.POST})
-    public ApiResult insert(@RequestBody List<Contractapplication> contractapplication, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody ContractapplicationVo contractapplication, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         contractapplicationService.insert(contractapplication,tokenModel);
         return ApiResult.success();
