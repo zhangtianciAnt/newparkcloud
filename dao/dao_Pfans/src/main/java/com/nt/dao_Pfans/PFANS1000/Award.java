@@ -112,9 +112,6 @@ public class Award extends BaseModel {
     @Column(name = "MAKETYPE")
     private String maketype;
 
-    @Column(name = "PROJECTS")
-    private String projects;
-
     @Column(name = "EXCHANGERATE")
     private String exchangerate;
 
