@@ -878,7 +878,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // 获取互联检测结果
         DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-        Holder<ArrayOfint> interConnStatus = new Holder<>();
+        ArrayOfint intList = new ArrayOfint();
+        Holder<ArrayOfint> interConnStatus = new Holder<>(intList);
         Holder<String> resultFilePath = new Holder<>();
         Holder<Boolean> result = new Holder<>();
         port.interconnGetResult(interConnStatus, resultFilePath, result);
