@@ -837,6 +837,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                 preTestId = currTestId;
             } else if (!preTestId.equals(currTestId)) {
                 interConnProgress.put(preTestId, 100);
+                preTestId = currTestId;
             }
             interConnProgressMap.put(tokenModel.getToken(), interConnProgress);
             // 进程等待1秒钟，再次获取Progress
