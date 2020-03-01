@@ -127,6 +127,9 @@ public class Award extends BaseModel {
     @Column(name = "SCHEDULEDDATE")
     private Date scheduleddate;
 
+    @Column(name = "TABLECOMMUNT")
+    private String tablecommunt;
+
 
 
 
