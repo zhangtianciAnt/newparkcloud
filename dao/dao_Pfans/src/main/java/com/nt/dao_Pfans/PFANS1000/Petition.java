@@ -49,8 +49,16 @@ public class Petition extends BaseModel {
     @Column(name = "PJNAMECHINESE")
     private String pjnamechinese;
 
-    @Column(name = "CLAIMDATETIME")
+    @Column(name = "ClAIMDATETIME")
     private String claimdatetime;
+
+    @Column(name = "OPENINGDATE")
+    private Date openingdate;
+
+
+    @Column(name = "ENDDATE")
+    private Date enddate;
+
 
     @Column(name = "BUSINESSCODE")
     private String businesscode;
