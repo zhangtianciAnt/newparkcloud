@@ -314,6 +314,11 @@ public class PHINE20000Controller {
         return deviceinfoService.interConnGetProgress(tokenService.getToken(request));
     }
 
+    @RequestMapping(value = "/getInterConnProgressMap", method = {RequestMethod.GET})
+    public ApiResult getInterConnProgressMap(HttpServletRequest request) throws Exception {
+        return deviceinfoService.getInterConnProgressMap(tokenService.getToken(request));
+    }
+
     /**
      * @return
      * @Method interConnClearProgress

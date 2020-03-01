@@ -79,6 +79,8 @@ public interface DeviceinfoService {
     // 测试读写Step2.1:获取系统互联检测进度
     ApiResult interConnGetProgress(TokenModel tokenModel) throws Exception;
 
+    ApiResult getInterConnProgressMap(TokenModel tokenModel);
+
     // 测试读写Step2.2:清除系统互联检测进度
     ApiResult interConnClearProgress(TokenModel tokenModel) throws Exception;
 
