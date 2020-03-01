@@ -768,11 +768,11 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // endregion
 
         // region Step.2 调用WCF接口：开始系统互联检测
-        // 存储测试读写进度初始化
-        Map<String, Integer> interConnProgress = new HashMap<>();
-        // 测试初始化 TODO：测试时只有GT进度
-        interConnProgress.put("GT互联测试", 0);
-        interConnProgressMap.put(tokenModel.getToken(), interConnProgress);
+//        // 存储测试读写进度初始化
+//        Map<String, Integer> interConnProgress = new HashMap<>();
+//        // 测试初始化
+//        interConnProgress.put("GT互联测试", 0);
+//        interConnProgressMap.put(tokenModel.getToken(), interConnProgress);
         // 准备WCF接口参数
         ArrayOfDeviceSlotInfo arrayOfDeviceSlotInfo = new ArrayOfDeviceSlotInfo();
         arrayOfDeviceSlotInfo.setDeviceSlotInfo(deviceSlotInfoList);
