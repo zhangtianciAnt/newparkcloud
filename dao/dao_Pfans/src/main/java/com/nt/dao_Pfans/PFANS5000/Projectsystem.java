@@ -55,6 +55,12 @@ public class Projectsystem extends BaseModel {
     private String name;
 
     /**
+     * 外注人员ID
+     */
+    @Column(name = "SUPPLIERNAMEID")
+    private String suppliernameid;
+
+    /**
      * 职位
      */
     @Column(name = "POSITION")
