@@ -798,6 +798,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         while (progressing) {
             // 获取前回状态
             Map<String, Integer> interConnProgress = interConnProgressMap.get(tokenModel.getToken());
+            if (interConnProgress == null) {
+                interConnProgress = new HashMap<>();
+            }
             // 调用WCF接口：获取系统互联检测进度
             DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
             IDeviceService port = ss.getBasicHttpBindingIDeviceService();
