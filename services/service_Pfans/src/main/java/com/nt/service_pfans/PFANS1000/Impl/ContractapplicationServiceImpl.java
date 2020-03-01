@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     quotation.setClaimamount(contractapp.getClaimamount());
                     quotation.setLoadingjudge(contractapp.getLoadingjudge());
 
+                    if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
+                        try {
+                            quotation.setStartdate(sdf.parse(startAndEnd[0]));
+                        } catch (Exception e) {}
+                        try {
+                            quotation.setEnddate(sdf.parse(startAndEnd[1]));
+                        } catch (Exception e) {}
+                    }
+
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
@@ -202,6 +214,16 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.setPjnamejapanese(contractapp.getConjapanese());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
                     contract.setClaimamount(contractapp.getClaimamount());
+                    if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
+                        try {
+                            contract.setOpeningdate(sdf.parse(startAndEnd[0]));
+                        } catch (Exception e) {}
+                        try {
+                            contract.setEnddate(sdf.parse(startAndEnd[1]));
+                        } catch (Exception e) {}
+                    }
 
 
                     contractMapper.insert(contract);
@@ -255,6 +277,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.setCurrencyformat(contractapp.getCurrencyposition());
                     napalm.setContracttype(contractapp.getContracttype());
 
+                    if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
+                        try {
+                            napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
+                        } catch (Exception e) {}
+                        try {
+                            napalm.setEnddate(sdf.parse(startAndEnd[1]));
+                        } catch (Exception e) {}
+                    }
+
                     napalmMapper.insert(napalm);
                 }
                 //請求書作成
@@ -279,6 +312,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.setCurrencyposition(contractapp.getCurrencyposition());
                     petition.setPjnamechinese(contractapp.getConchinese());
                     petition.setPjnamejapanese(contractapp.getConjapanese());
+                    petition.setClaimamount(contractapp.getClaimamount());
 
 //                    petition.setD1eliverydate(new Date());
 
