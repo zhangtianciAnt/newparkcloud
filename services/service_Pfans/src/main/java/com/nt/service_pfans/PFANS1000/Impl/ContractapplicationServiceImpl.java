@@ -244,9 +244,4 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             }
         }
     }
-
-    @Override
-    public List<?> getContractList(String contractId, TokenModel tokenModel) throws Exception {
-        return contractapplicationMapper.getContractList(contractId);
-    }
 }

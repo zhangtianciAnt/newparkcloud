@@ -14,6 +14,4 @@ public interface ContractapplicationService {
     public void insert(List<Contractapplication> contractapplication, TokenModel tokenModel)throws Exception;
 
     public void insertBook(Contractapplication contractapplication, TokenModel tokenModel)throws Exception;
-
-    List<?> getContractList(String contractId, TokenModel tokenModel) throws Exception;
 }

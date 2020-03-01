@@ -60,13 +60,4 @@ public class Pfans1026Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "getContractList", method = {RequestMethod.GET})
-    public ApiResult getContractList(String contractId, HttpServletRequest request) throws Exception {
-        if (StringUtils.isEmpty(contractId)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(contractapplicationService.getContractList(contractId, tokenModel));
-
-    }
 }
