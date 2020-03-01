@@ -1,12 +1,12 @@
 
 package com.nt.service_PHINE.DeviceCommunication;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -66,7 +66,7 @@ public class ArrayOfint {
         return this._int;
     }
 
-    public vodi setInt(List<Integer> intList) {
+    public void setInt(List<Integer> intList) {
         _int = intList;
     }
 
