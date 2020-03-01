@@ -887,7 +887,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         List<Integer> statusList = interConnStatus.value.getInt();
         AtomicInteger idx = new AtomicInteger();
         interConnDetailVoList.forEach(item -> {
-            item.setStatus(statusList.get(idx.get()).toString());
+            item.setStatus(statusList.get(idx.get()).toString().equals("1") ? "LINK" : "NC");
             idx.getAndIncrement();
         });
         return ApiResult.success(resultFilePath.value, interConnDetailVoList);
