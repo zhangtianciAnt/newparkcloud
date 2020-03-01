@@ -61,6 +61,12 @@ public class Contractnumbercount extends BaseModel {
     private String claimamount;
 
     /**
+     * 通货单位
+     */
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
+
+    /**
      * 支払日
      */
     @Column(name = "SUPPORTDATE")
