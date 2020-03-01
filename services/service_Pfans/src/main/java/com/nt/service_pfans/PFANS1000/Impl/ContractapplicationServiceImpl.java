@@ -78,7 +78,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         //契约番号回数
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
+            int rowindex = 0;
             for (Contractnumbercount number : numberList) {
+                rowindex = rowindex + 1;
+                number.setRowindex(String.valueOf(rowindex));
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
@@ -112,7 +115,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         //契约番号回数
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
+            int rowindex = 0;
             for (Contractnumbercount number : numberList) {
+                rowindex = rowindex + 1;
+                number.setRowindex(String.valueOf(rowindex));
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);

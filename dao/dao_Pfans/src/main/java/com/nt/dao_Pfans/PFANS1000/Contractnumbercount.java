@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -82,5 +83,6 @@ public class Contractnumbercount extends BaseModel {
      * 顺序
      */
     @Column(name = "ROWINDEX")
-    private Integer rowindex;
+    @OrderBy("ASC")
+    private String rowindex;
 }
