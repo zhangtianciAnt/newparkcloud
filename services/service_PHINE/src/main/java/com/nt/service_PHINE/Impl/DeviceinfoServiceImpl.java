@@ -879,6 +879,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         ArrayOfint intList = new ArrayOfint();
+        intList.setInt(new ArrayList<Integer>(interConnDetailVoList.size()));
         Holder<ArrayOfint> interConnStatus = new Holder<>(intList);
         Holder<String> resultFilePath = new Holder<>();
         Holder<Boolean> result = new Holder<>();
