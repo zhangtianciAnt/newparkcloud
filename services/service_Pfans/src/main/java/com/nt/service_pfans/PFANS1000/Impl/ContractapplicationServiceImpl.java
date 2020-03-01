@@ -99,6 +99,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
                     quotation.setEntrustedchinese(contractapp.getPlacechinese());
                     quotation.setDeployment(contractapp.getDeployment());
+                    quotation.setPjchinese(contractapp.getConchinese());
+                    quotation.setPjjapanese(contractapp.getConjapanese());
                     quotation.setCurrencyposition(contractapp.getCurrencyposition());
                     quotation.setClaimamount(contractapp.getClaimamount());
                     quotation.setLoadingjudge(contractapp.getLoadingjudge());
@@ -139,6 +141,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.setPrplacejapanese(contractapp.getPlacejapanese());
                     contract.setPrplacechinese(contractapp.getPlacechinese());
                     contract.setDeployment(contractapp.getDeployment());
+                    contract.setPjnamechinese(contractapp.getConchinese());
+                    contract.setPjnamejapanese(contractapp.getConjapanese());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
                     contract.setClaimamount(contractapp.getClaimamount());
 
@@ -159,6 +163,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setPlacejapanese(contractapp.getPlacejapanese());
                     award.setPlacechinese(contractapp.getPlacechinese());
                     award.setDeployment(contractapp.getDeployment());
+                    award.setPjnamechinese(contractapp.getConchinese());
+                    award.setPjnamejapanese(contractapp.getConjapanese());
                     award.setClaimdatetime(contractapp.getClaimdatetime());
                     award.setDeliverydate(contractapp.getDeliverydate());
                     award.setCurrencyposition(contractapp.getCurrencyposition());
@@ -181,6 +187,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.setDepositenglish(contractapp.getCustochinese());
                     napalm.setEntrustment(contractapp.getCustojapanese());
                     napalm.setDeployment(contractapp.getDeployment());
+                    napalm.setPjnamechinese(contractapp.getConchinese());
+                    napalm.setPjnamejapanese(contractapp.getConjapanese());
                     napalm.setClaimtype(contractapp.getClaimtype());
                     napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
                     napalm.setDeliverydate(contractapp.getDeliverydate());
@@ -210,6 +218,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition.setResponphone(contractapp.getResponphone());
                     petition.setClaimtype(contractapp.getClaimtype());
                     petition.setCurrencyposition(contractapp.getCurrencyposition());
+                    petition.setPjnamechinese(contractapp.getConchinese());
+                    petition.setPjnamejapanese(contractapp.getConjapanese());
 
 //                    petition.setD1eliverydate(new Date());
 
@@ -229,6 +239,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setPlacejapanese(contractapp.getPlacejapanese());
                     award.setPlacechinese(contractapp.getPlacechinese());
                     award.setDeployment(contractapp.getDeployment());
+                    award.setPjnamechinese(contractapp.getConchinese());
+                    award.setPjnamejapanese(contractapp.getConjapanese());
                     award.setClaimdatetime(contractapp.getClaimdatetime());
                     award.setDeliverydate(contractapp.getDeliverydate());
                     award.setCurrencyposition(contractapp.getCurrencyposition());
