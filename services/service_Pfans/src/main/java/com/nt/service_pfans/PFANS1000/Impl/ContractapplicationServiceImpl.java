@@ -246,6 +246,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm.setCompletiondate(contractapp.getCompletiondate());
                     napalm.setClaimamount(contractapp.getClaimamount());
                     napalm.setLoadingjudge(contractapp.getLoadingjudge());
+                    napalm.setCurrencyformat(contractapp.getCurrencyposition());
 
                     napalmMapper.insert(napalm);
                 }
