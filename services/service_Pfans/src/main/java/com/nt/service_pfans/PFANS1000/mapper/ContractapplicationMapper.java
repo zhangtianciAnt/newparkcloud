@@ -10,5 +10,4 @@ import java.util.List;
 
 public interface ContractapplicationMapper extends MyMapper<Contractapplication>{
 
-    List<ContractVo> getContractList(@Param("contractId") String contractId);
 }
