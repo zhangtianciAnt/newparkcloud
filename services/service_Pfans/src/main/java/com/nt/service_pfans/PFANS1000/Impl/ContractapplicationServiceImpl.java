@@ -184,8 +184,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     //7
                     napalm.setDepositjapanese(contractapp.getCustojapanese());
-                    napalm.setDepositenglish(contractapp.getCustochinese());
-                    napalm.setEntrustment(contractapp.getCustojapanese());
+                    napalm.setDepositenglish(contractapp.getCustoenglish());
+                    napalm.setEntrustment(contractapp.getCustoabbreviation());
                     napalm.setDeployment(contractapp.getDeployment());
                     napalm.setPjnamechinese(contractapp.getConchinese());
                     napalm.setPjnamejapanese(contractapp.getConjapanese());
