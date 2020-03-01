@@ -100,6 +100,9 @@ public class Award extends BaseModel {
     @Column(name = "TOTAL")
     private String total;
 
+    @Column(name = "NUMBER")
+    private String number;
+
     @Column(name = "NUMBERMOTH")
     private String numbermoth;
 
@@ -118,6 +121,11 @@ public class Award extends BaseModel {
     @Column(name = "SARMB")
     private String sarmb;
 
+    @Column(name = "DRAFTINGDATE")
+    private Date draftingdate;
+
+    @Column(name = "SCHEDULEDDATE")
+    private Date scheduleddate;
 
 
 
