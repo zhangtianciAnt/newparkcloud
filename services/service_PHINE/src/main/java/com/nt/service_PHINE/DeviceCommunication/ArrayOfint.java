@@ -66,4 +66,8 @@ public class ArrayOfint {
         return this._int;
     }
 
+    public vodi setInt(List<Integer> intList) {
+        _int = intList;
+    }
+
 }
