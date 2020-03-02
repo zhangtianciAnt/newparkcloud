@@ -30,6 +30,12 @@ public class PurchaseDetails extends BaseModel {
     @Column(name = "PROCUREMENTPROJECT")
     private String procurementproject;
 
+    @Column(name = "INVOICENUMBER")
+    private String invoicenumber;
+
+    @Column(name = "DEPARTMENTNAME")
+    private String departmentname;
+
     @Column(name = "PROCUREMENTDETAILS")
     private String procurementdetails;
 

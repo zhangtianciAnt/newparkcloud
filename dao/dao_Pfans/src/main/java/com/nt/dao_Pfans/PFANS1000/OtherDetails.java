@@ -41,6 +41,15 @@ public class OtherDetails extends BaseModel {
     @Column(name = "RMB")
     private String rmb;
 
+    @Column(name = "INVOICENUMBER")
+    private String invoicenumber;
+
+    @Column(name = "DEPARTMENTNAME")
+    private String departmentname;
+
+    @Column(name = "SUBJECTNUMBER")
+    private String subjectnumber;
+
     @Column(name = "FOREIGNCURRENCY")
     private String foreigncurrency;
 
