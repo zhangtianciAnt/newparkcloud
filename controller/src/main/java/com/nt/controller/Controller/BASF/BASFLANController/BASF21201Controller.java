@@ -156,13 +156,12 @@ public class BASF21201Controller {
         }
     }
 
-    //获取考试题目
-//    @RequestMapping(value = "/getQuestions", method = {RequestMethod.GET})
-//    public ApiResult getQuestions(String programlistid, HttpServletRequest request) throws Exception {
-//        if (StringUtils.isBlank(programlistid)) {
-//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-//        }
-//        questionManageServices.update(questionManage, tokenModel);
-//        return ApiResult.success();
-//    }
+    //    获取考试题目
+    @RequestMapping(value = "/getQuestions", method = {RequestMethod.GET})
+    public ApiResult getQuestions(String startprogramid, HttpServletRequest request) throws Exception {
+        if (StringUtils.isBlank(startprogramid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(questionManageServices.getQuestions(startprogramid));
+    }
 }

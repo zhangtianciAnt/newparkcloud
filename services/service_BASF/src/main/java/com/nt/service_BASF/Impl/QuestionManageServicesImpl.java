@@ -1,12 +1,15 @@
 package com.nt.service_BASF.Impl;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.QuestionManage;
+import com.nt.dao_BASF.Startprogram;
 import com.nt.service_BASF.QuestionManageServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.QuestionManageMapper;
+import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -44,7 +48,7 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
     private QuestionManageMapper questionManageMapper;
 
     @Autowired
-    private ProgramlistMapper programlistMapper;
+    private StartprogramMapper startprogramMapper;
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
@@ -394,14 +398,16 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
     }
 
     //获取考试题目
-//    @Override
-//    public List<QuestionManage> getQuestions(String programlistid) throws Exception{
-//        Programlist programlist=new Programlist();
-//        programlist.setProgramlistid(programlistid);
-//        programlist=programlistMapper.selectOne(programlist);
-//        //出题数量
-//        int questionnum=programlist.getQuestionnum();
-//        //
-//    }
+    @Override
+    public Set<QuestionManage> getQuestions(String startprogramid) throws Exception {
+        Startprogram startprogram = new Startprogram();
+        startprogram.setStartprogramid(startprogramid);
+        startprogram = startprogramMapper.selectOne(startprogram);
+        QuestionManage questionManage = new QuestionManage();
+        questionManage.setProgramtpe(startprogram.getProgramlistid());
+        List<QuestionManage> questionManageList = questionManageMapper.select(questionManage);
+        Set<QuestionManage> questionManageSet = RandomUtil.randomEleSet(questionManageList, startprogram.getQuestionnum());
+        return questionManageSet;
+    }
 
 }

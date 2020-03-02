@@ -5,6 +5,7 @@ import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ProjectName: BASF应急平台
@@ -42,5 +43,5 @@ public interface QuestionManageServices {
     List<Object> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 
     //获取考试题目
-//    List<QuestionManage> getQuestions(String programlistid) throws Exception;
+    Set<QuestionManage> getQuestions(String startprogramid) throws Exception;
 }
