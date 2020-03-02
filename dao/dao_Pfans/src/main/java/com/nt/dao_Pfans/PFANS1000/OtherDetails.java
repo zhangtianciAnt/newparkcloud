@@ -50,6 +50,12 @@ public class OtherDetails extends BaseModel {
     @Column(name = "SUBJECTNUMBER")
     private String subjectnumber;
 
+    @Column(name = "ACCOUNTCODE")
+    private String accountcode;
+
+    @Column(name = "BUDGETCODING")
+    private String budgetcoding;
+
     @Column(name = "FOREIGNCURRENCY")
     private String foreigncurrency;
 
