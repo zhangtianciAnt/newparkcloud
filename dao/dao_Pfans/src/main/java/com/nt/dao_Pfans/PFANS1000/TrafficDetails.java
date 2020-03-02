@@ -36,6 +36,15 @@ public class TrafficDetails extends BaseModel {
     @Column(name = "VEHICLE")
     private String vehicle;
 
+    @Column(name = "INVOICENUMBER")
+    private String invoicenumber;
+
+    @Column(name = "COSTITEM")
+    private String costitem;
+
+    @Column(name = "DEPARTMENTNAME")
+    private String departmentname;
+
     @Column(name = "STARTINGPOINT")
     private String startingpoint;
 

@@ -1,13 +1,11 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.nt.dao_Pfans.PFANS1000.OtherDetails;
-import com.nt.dao_Pfans.PFANS1000.PublicExpense;
-import com.nt.dao_Pfans.PFANS1000.PurchaseDetails;
-import com.nt.dao_Pfans.PFANS1000.TrafficDetails;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.OtherDetailsMapper;
+import com.nt.service_pfans.PFANS1000.mapper.InvoiceMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PurchaseDetailsMapper;
 import com.nt.service_pfans.PFANS1000.mapper.TrafficDetailsMapper;
@@ -29,6 +27,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
+
+    @Autowired
+    private InvoiceMapper invoicemapper;
+
 
     @Autowired
     private TrafficDetailsMapper trafficDetailsMapper;
@@ -57,6 +59,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         List<TrafficDetails> trafficDetailslist = publicExpenseVo.getTrafficdetails();
         List<PurchaseDetails> purchaseDetailslist = publicExpenseVo.getPurchasedetails();
         List<OtherDetails> otherDetailslist=publicExpenseVo.getOtherdetails();
+        List<Invoice> invoicelist=publicExpenseVo.getInvoice();
         if (trafficDetailslist != null) {
             int rowundex = 0;
             for (TrafficDetails trafficDetails : trafficDetailslist) {
@@ -90,6 +93,17 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 otherDetailsMapper.insertSelective(otherDetails);
             }
         }
+        if (invoicelist != null) {
+            int rowundex = 0;
+            for (Invoice invoice : invoicelist) {
+                rowundex = rowundex + 1;
+                invoice.preInsert(tokenModel);
+                invoice.setInvoice_id(UUID.randomUUID().toString());
+                invoice.setPublicexpenseid(publicexpenseid);
+                invoice.setRowindex(rowundex);
+                invoicemapper.insertSelective(invoice);
+            }
+        }
     }
 
     //编辑
@@ -115,6 +129,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         other.setPublicexpenseid(spublicexpenseid);
         otherDetailsMapper.delete(other);
         List<OtherDetails> otherlist=publicExpenseVo.getOtherdetails();
+
+        Invoice invoice=new Invoice();
+        invoice.setPublicexpenseid(spublicexpenseid);
+        invoicemapper.delete(invoice);
+        List<Invoice> invoicelist=publicExpenseVo.getInvoice();
 
         if (trafficlist != null) {
             int rowundex = 0;
@@ -150,6 +169,17 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
         }
 
+        if (invoicelist != null) {
+            int rowundex = 0;
+            for (Invoice invoicel : invoicelist) {
+                rowundex = rowundex + 1;
+                invoicel.preInsert(tokenModel);
+                invoicel.setInvoice_id(UUID.randomUUID().toString());
+                invoicel.setPublicexpenseid(spublicexpenseid);
+                invoicel.setRowindex(rowundex);
+                invoicemapper.insertSelective(invoicel);
+            }
+        }
     }
 
     //按id查询
@@ -160,20 +190,25 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         TrafficDetails trafficDetails = new TrafficDetails();
         PurchaseDetails purchaseDetails=new PurchaseDetails();
         OtherDetails otherDetails=new OtherDetails();
+        Invoice invoice=new Invoice();
         trafficDetails.setPublicexpenseid(publicexpenseid);
         purchaseDetails.setPublicexpenseid(publicexpenseid);
         otherDetails.setPublicexpenseid(publicexpenseid);
+        invoice.setPublicexpenseid(publicexpenseid);
         List<TrafficDetails> trafficDetailslist = trafficDetailsMapper.select(trafficDetails);
         List<PurchaseDetails> purchaseDetailslist =purchaseDetailsMapper.select(purchaseDetails);
         List<OtherDetails> otherDetailslist=otherDetailsMapper.select(otherDetails);
+        List<Invoice> invoicelist=invoicemapper.select(invoice);
         trafficDetailslist = trafficDetailslist.stream().sorted(Comparator.comparing(TrafficDetails::getRowindex)).collect(Collectors.toList());
         purchaseDetailslist=purchaseDetailslist.stream().sorted(Comparator.comparing(PurchaseDetails::getAnnexno)).collect(Collectors.toList());
         otherDetailslist=otherDetailslist.stream().sorted(Comparator.comparing(OtherDetails::getAnnexno)).collect(Collectors.toList());
+        invoicelist=invoicelist.stream().sorted(Comparator.comparing(Invoice::getInvoicenumber)).collect(Collectors.toList());
         PublicExpense pub = publicExpenseMapper.selectByPrimaryKey(publicexpenseid);
         pubVo.setPublicexpense(pub);
         pubVo.setTrafficdetails(trafficDetailslist);
         pubVo.setPurchasedetails(purchaseDetailslist);
         pubVo.setOtherdetails(otherDetailslist);
+        pubVo.setInvoice(invoicelist);
         return pubVo;
     }
 
