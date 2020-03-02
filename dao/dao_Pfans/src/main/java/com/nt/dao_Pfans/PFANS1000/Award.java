@@ -112,6 +112,12 @@ public class Award extends BaseModel {
     @Column(name = "RATE")
     private String rate;
 
+    @Column(name = "OUTSOURCING")
+    private String outsourcing;
+
+    @Column(name = "PJRATE")
+    private String pjrate;
+
     @Column(name = "MAKETYPE")
     private String maketype;
 
