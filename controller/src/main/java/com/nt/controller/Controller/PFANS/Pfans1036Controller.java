@@ -42,12 +42,12 @@ public class Pfans1036Controller {
     }
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult insertBusinessplanVo(@RequestBody BusinessplanVo businessplanVo, HttpServletRequest request) throws Exception {
-        if (businessplanVo == null) {
+    public ApiResult insertBusinessplanVo(@RequestBody Businessplan businessplan, HttpServletRequest request) throws Exception {
+        if (businessplan == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        businessplanService.insertBusinessplanVo(businessplanVo, tokenModel);
+        businessplanService.insertBusinessplan(businessplan, tokenModel);
         return ApiResult.success();
     }
 

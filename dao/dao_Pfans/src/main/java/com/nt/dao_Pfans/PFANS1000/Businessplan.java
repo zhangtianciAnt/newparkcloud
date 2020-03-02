@@ -40,12 +40,6 @@ public class Businessplan extends BaseModel {
     @Column(name = "GROUP_ID")
     private String group_id;
 
-//    /**
-//     * チーム名ID
-//     */
-//    @Column(name = "TEAM_ID")
-//    private String team_id;
-
     @Column(name = "EQUIPMENT_NEWYEAR")
     private String equipment_newyear;
 

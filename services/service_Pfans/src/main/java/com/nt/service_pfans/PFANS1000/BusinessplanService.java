@@ -11,9 +11,9 @@ public interface BusinessplanService {
 
     List<Businessplan> get(Businessplan businessplan) throws Exception;
 
-    public BusinessplanVo selectById(String businessplanid) throws Exception;
+    public Businessplan selectById(String businessplanid) throws Exception;
 
-    public void insertBusinessplanVo(BusinessplanVo businessplanvo, TokenModel tokenModel) throws Exception;
+    public void insertBusinessplan(Businessplan businessplan, TokenModel tokenModel) throws Exception;
 
     public void updateBusinessplanVo(BusinessplanVo businessplanvo, TokenModel tokenModel) throws Exception;
 

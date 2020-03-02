@@ -40,30 +40,9 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public BusinessplanVo selectById(String businessplanid) throws Exception {
-        BusinessplanVo busVo = new BusinessplanVo();
-
-        Pieceworktotal pieceworktotal = new Pieceworktotal();
-        Totalplan totalplan = new Totalplan();
-        //Businessplandet businessplandet=new Businessplandet();
-
-        pieceworktotal.setBusinessplanid(businessplanid);
-        totalplan.setBusinessplanid(businessplanid);
-        //businessplandet.setBusinessplan_id(businessplanid);
-
-        List<Pieceworktotal> pieceworktotallist = pieceworktotalMapper.select(pieceworktotal);
-        List<Totalplan> totalplanlist = totalplanMapper.select(totalplan);
-        //List<Businessplandet> businessplandetList = businessplandetMapper.select(businessplandet);
-
-        pieceworktotallist = pieceworktotallist.stream().sorted(Comparator.comparing(Pieceworktotal::getRowindex)).collect(Collectors.toList());
-        totalplanlist = totalplanlist.stream().sorted(Comparator.comparing(Totalplan::getRowindex)).collect(Collectors.toList());
-        Businessplan Bus = businessplanMapper.selectByPrimaryKey(businessplanid);
-        busVo.setBusinessplan(Bus);
-        busVo.setPieceworktotal(pieceworktotallist);
-        busVo.setTotalplan(totalplanlist);
-        //busVo.setBusinessplandets(businessplandetList);
-
-        return busVo;
+    public Businessplan selectById(String businessplanid) throws Exception {
+        Businessplan businessplan = businessplanMapper.selectByPrimaryKey(businessplanid);
+        return businessplan;
     }
 
     @Override
@@ -106,44 +85,11 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public void insertBusinessplanVo(BusinessplanVo businessplanVo, TokenModel tokenModel) throws Exception {
+    public void insertBusinessplan(Businessplan businessplan, TokenModel tokenModel) throws Exception {
         String businessplanid = UUID.randomUUID().toString();
-        Businessplan businessplan = new Businessplan();
-        BeanUtils.copyProperties(businessplanVo.getBusinessplan(), businessplan);
-        businessplan.preInsert(tokenModel);
         businessplan.setBusinessplanid(businessplanid);
-        businessplanMapper.insertSelective(businessplan);
-        List<Pieceworktotal> pieceworktotallist = businessplanVo.getPieceworktotal();
-        List<Totalplan> totalplanlist = businessplanVo.getTotalplan();
-//        List<Businessplandet> businessplandetList = businessplanVo.getBusinessplandets();
-//        if(businessplandetList !=null){
-//            for(Businessplandet businessplandet : businessplandetList){
-//                businessplandet.setBusinessplandet_id(UUID.randomUUID().toString());
-//                businessplandet.setBusinessplan_id(businessplanid);
-//                businessplandetMapper.insertSelective(businessplandet);
-//            }
-//        }
-        if (pieceworktotallist != null) {
-            int rowindex = 0;
-            for (Pieceworktotal pieceworktotal : pieceworktotallist) {
-                rowindex = rowindex + 1;
-                pieceworktotal.preInsert(tokenModel);
-                pieceworktotal.setPieceworktotal_id(UUID.randomUUID().toString());
-                pieceworktotal.setBusinessplanid(businessplanid);
-                pieceworktotal.setRowindex(rowindex);
-                pieceworktotalMapper.insertSelective(pieceworktotal);
-            }
-        }
-        if (totalplanlist != null) {
-            int rowindex = 0;
-            for (Totalplan totalplan : totalplanlist) {
-                rowindex = rowindex + 1;
-                totalplan.preInsert(tokenModel);
-                totalplan.setTotalplan_id(UUID.randomUUID().toString());
-                totalplan.setBusinessplanid(businessplanid);
-                totalplan.setRowindex(rowindex);
-                totalplanMapper.insertSelective(totalplan);
-            }
-        }
+        businessplan.preInsert(tokenModel);
+        businessplanMapper.insert(businessplan);
+
     }
 }
