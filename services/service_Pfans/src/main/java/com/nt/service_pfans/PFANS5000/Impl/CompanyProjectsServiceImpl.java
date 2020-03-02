@@ -3,9 +3,11 @@ package com.nt.service_pfans.PFANS5000.Impl;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ProjectContractMapper projectcontractMapper;
     @Autowired
     private LogManagementMapper logManagementMapper;
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
 
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
@@ -78,7 +82,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         staffVo.setLogmanagement(logManagementList);
         return staffVo;
     }
-
+//
 //    //附表查询
 //    @Override
 //    public List<Projectsystem> select(String companyprojectsid) throws Exception {
@@ -170,6 +174,16 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectsystem.setCompanyprojects_id(companyprojectsid);
                 projectsystem.setRowindex(rowundex);
                 projectsystemMapper.insertSelective(projectsystem);
+
+                String suppliernameid = projectsystem.getSuppliernameid();
+                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                expatriatesinfor.setExpatriatesinfor_id(suppliernameid);
+                List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+                if(expatriatesinforList != null){
+                    expatriatesinfor.setProject_name(companyProjects.getProject_name());
+                    expatriatesinfor.setManagerid(companyProjects.getManagerid());
+                    expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+                }
             }
         }
         if (stageInformationList != null) {
@@ -194,6 +208,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(projectcontract);
             }
         }
+
+
+
     }
 
     /**
