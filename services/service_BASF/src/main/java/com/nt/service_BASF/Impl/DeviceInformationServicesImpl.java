@@ -3,8 +3,10 @@ package com.nt.service_BASF.Impl;
 import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.service_BASF.DeviceInformationServices;
+import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
@@ -34,6 +36,9 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
 
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;
+
+    @Autowired
+    private MapBox_MapLevelServices mapBox_mapLevelServices;
 
     @Autowired
     private ApplicationMapper applicationMapper;
@@ -158,7 +163,8 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
                 deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
             }
         }
-        return deviceinformationMapper.selectDeviceList(mapid, devicetype, devicetypesmall, devicename, pageindex, pagesize);
+        List<String> mapidList = mapBox_mapLevelServices.getChildrensStr(mapid);
+        return deviceinformationMapper.selectDeviceList(mapidList, devicetype, devicetypesmall, devicename, pageindex, pagesize);
 
     }
 }

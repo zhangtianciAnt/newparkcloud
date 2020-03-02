@@ -23,4 +23,14 @@
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <select id="selectChildrensStr" resultType="com.nt.dao_BASF.MapBox_MapLevel">
+        SELECT
+	m.id
+FROM
+	mapbox_maplevel AS m
+WHERE
+	m.`STATUS` = "0" AND
+	m.cascids LIKE #{mapid}
+    </select>
 </mapper>

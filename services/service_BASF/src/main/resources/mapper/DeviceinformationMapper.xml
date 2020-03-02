@@ -55,7 +55,11 @@
         WHERE
         `STATUS`="0"
         AND
-        mapid=#{mapid}
+        (
+        <foreach collection="mapid" item="item" separator="OR">
+            mapid=#{item}
+        </foreach>
+        )
         AND
         <if test="devicetype!=null">
             (

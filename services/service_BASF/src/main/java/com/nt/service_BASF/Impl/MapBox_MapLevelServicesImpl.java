@@ -4,6 +4,7 @@ import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,6 +112,22 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         }
         module.setChildren(childNodes);
         return module;
+    }
+
+    //通过sql获取子节点
+    @Override
+    public List<String> getChildrensStr(String mapid) throws Exception {
+        if (StringUtils.isNotEmpty(mapid)) {
+            List<MapBox_MapLevel> mapBox_mapLevels = mapBox_mapLevelMapper.selectChildrensStr("%" + mapid + "%");
+            List<String> childrensStr = new ArrayList<>();
+            for (MapBox_MapLevel mapBox_mapLevel : mapBox_mapLevels) {
+                childrensStr.add(mapBox_mapLevel.getId());
+            }
+            childrensStr.add(mapid);
+            return childrensStr;
+        } else {
+            return null;
+        }
     }
 
 

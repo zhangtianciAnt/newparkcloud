@@ -36,4 +36,7 @@ public interface MapBox_MapLevelServices {
     void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel) throws Exception;
 
     ;
+
+    //通过sql获取子节点
+    List<String> getChildrensStr(String mapid) throws Exception;
 }
