@@ -131,12 +131,12 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                     if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                         customerinfor.setPerscale("<50");  //改数据
                     }
-                    if(Integer.parseInt(person)>50 && Integer.parseInt(person)<100){
+                    if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
                         customerinfor.setPerscale("≥50");  //改数据
-                    } if(Integer.parseInt(person)>100 && Integer.parseInt(person)<500){
+                    } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
                         customerinfor.setPerscale("≥100");  //改数据
                     }
-                    if(Integer.parseInt(person)>500){
+                    if(Integer.parseInt(person)>=500){
                         customerinfor.setPerscale("≥500");  //改数据
                     }
                 }

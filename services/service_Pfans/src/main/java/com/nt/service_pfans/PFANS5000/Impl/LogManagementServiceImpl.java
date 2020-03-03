@@ -164,6 +164,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         logmanagement.setCreateby(customerInfo.getUserid());
+                        logmanagement.setOwner(customerInfo.getUserid());
                         logmanagement.setJobnumber(value.get(0).toString());
                     }
                     if (customerInfo == null) {

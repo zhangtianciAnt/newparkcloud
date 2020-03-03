@@ -152,8 +152,8 @@ public class Pfans5001Controller {
      * @返回值：List<CompanyProjectsVo2>
      */
     @RequestMapping(value="/getPjList", method={RequestMethod.GET})
-    public ApiResult getPjList(HttpServletRequest request) throws Exception {
+    public ApiResult getPjList(HttpServletRequest request,String flag) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyProjectsService.getPjList());
+        return ApiResult.success(companyProjectsService.getPjList(flag));
     }
 }

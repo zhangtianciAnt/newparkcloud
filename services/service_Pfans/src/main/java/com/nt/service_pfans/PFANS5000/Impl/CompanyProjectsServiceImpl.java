@@ -240,10 +240,22 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      * @return List<CompanyProjectsVo2>
      */
     @Override
-    public List<CompanyProjectsVo2> getPjList() throws Exception {
+    public List<CompanyProjectsVo2> getPjList(String flag) throws Exception {
         //项目表
         CompanyProjects companyProjects = new CompanyProjects();
         List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
+        if("0".equals(flag)){
+            companyProjectsList = companyProjectsList.stream().filter(item -> (
+                    "4".equals(item.getStatus()) ||
+                            "5".equals(item.getStatus()) ||
+                            "6".equals(item.getStatus()) ||
+                            "7".equals(item.getStatus()) ||
+                            "8".equals(item.getStatus())) ).collect(Collectors.toList());
+        }else{
+            companyProjectsList = companyProjectsList.stream().filter(item -> "9".equals(item.getStatus())).collect(Collectors.toList());
+        }
+
+
         //阶段信息表
         StageInformation stageInformation = new StageInformation();
         List<StageInformation> stageInformationList = stageinformationMapper.select(stageInformation);

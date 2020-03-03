@@ -4,11 +4,13 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.Contracttheme;
 import com.nt.service_pfans.PFANS1000.ContractthemeService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractthemeMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Comparator;
@@ -23,23 +25,40 @@ public class ContractthemeServiceImpl implements ContractthemeService {
 
     @Override
     public List<Contracttheme> get(Contracttheme contracttheme) throws Exception {
-        List<Contracttheme> conList = contractthemeMapper.select(contracttheme);
-        conList = conList.stream().sorted(Comparator.comparing(Contracttheme::getRowindex)).collect(Collectors.toList());
-        return conList;
+        return contractthemeMapper.select(contracttheme);
     }
 
     @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
+
+        if(contracttheme.get(0).getStatus().equals(AuthConstants.APPROVED_FLAG_YES) && contracttheme.get(0).getType().equals(AuthConstants.APPROVED_FLAG_NO)){
+            int rowindex = 0;
+            for(int i = 0; i < contracttheme.size(); i ++){
+                rowindex = rowindex + 1;
+                Contracttheme co = contracttheme.get(i);
+                co.setRowindex(String.valueOf(rowindex));
+                co.preUpdate(tokenModel);
+                contractthemeMapper.updateByPrimaryKey(co);
+
+                //添加新添加的数据(見通し)
+                co.preInsert(tokenModel);
+                co.setContractthemeid(UUID.randomUUID().toString());
+                co.setType("1");
+                contractthemeMapper.insert(co);
+            }
+            return;
+        }
+
         Contracttheme con = new Contracttheme();
         if(!StringUtils.isNullOrEmpty(contracttheme.get(0).getMonths())){
             con.setMonths(contracttheme.get(0).getMonths());
+            con.setType("1");
         }
         con.setYears(contracttheme.get(0).getYears());
         //数据库原有数据
         List<Contracttheme> conList = contractthemeMapper.select(con);
         int rowindex = 0;
         for(int i = 0; i < contracttheme.size(); i ++){
-            int ddeleteFlg = 0;
             rowindex = rowindex + 1;
             Contracttheme co = contracttheme.get(i);
             if(!co.getContractthemeid().equals("")){

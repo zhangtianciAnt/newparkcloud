@@ -39,8 +39,16 @@ public class PurchaseDetails extends BaseModel {
     @Column(name = "PROCUREMENTDETAILS")
     private String procurementdetails;
 
+    @Column(name = "BUDGETCODING")
+    private String budgetcoding;
+
+    @Column(name = "SUBJECTNUMBER")
+    private String subjectnumber;
+
     @Column(name = "RMB")
     private String rmb;
+
+
 
     @Column(name = "FOREIGNCURRENCY")
     private String foreigncurrency;
