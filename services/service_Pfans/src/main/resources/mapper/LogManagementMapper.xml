@@ -11,11 +11,16 @@
 		select * from logmanagement where HAS_PROJECT = '02' ;
 	</select>
 
-	<select id="getl" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-	select CREATEBY,log_date,sum(time_start)  as time_start
-	from logmanagement
-	where PROJECT_ID = #{PROJECT_ID}
-	group by CREATEBY,log_date
+	<select id="getTimestart" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo">
+	select  info.createby,group_concat(info.logdate) as logdate ,group_concat(info.timestart) as timestart
+	from  (
+		select createby,date_format(log_date,'%y-%m-%d') as logdate,sum(time_start) as timestart
+	 	from logmanagement
+	 	where project_id = #{project_id}
+	 	and confirmstatus = '0'
+		group by createby,log_date
+	 ) info
+	group by  info.createby
 	</select>
 
 </mapper>

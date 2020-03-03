@@ -65,14 +65,14 @@ public class Pfans5011Controller {
         return ApiResult.success(companyProjectsService.logmanageMentVo(companyProjects));
     }
 
-    @RequestMapping(value = "/getl", method = {RequestMethod.POST})
-    public ApiResult getl(@RequestBody String project_id, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getTimestart", method = {RequestMethod.GET})
+    public ApiResult getTimestart(String project_id, HttpServletRequest request) throws Exception {
         if (project_id == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(logmanagementService.getl(project_id));
+        return ApiResult.success(logmanagementService.getTimestart(project_id));
     }
-    
+
 //    /**
 //     *
 //     * 修改

@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
@@ -54,6 +55,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         query.addCriteria(Criteria.where("userid").is(logmanagement.getCreateby()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
     }
 
@@ -64,8 +66,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<LogManagement> getl(String project_id) throws Exception {
-        return logmanagementmapper.getl(project_id);
+    public List<LogmanagementStatusVo> getTimestart(String project_id) throws Exception {
+        return logmanagementmapper.getTimestart(project_id);
     }
 
     @Override
@@ -177,6 +179,8 @@ public class LogManagementServiceImpl implements LogManagementService {
                         Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
                         continue;
                     }
+                    //确认状态
+                    logmanagement.setConfirmstatus("0");
                     logmanagement.preInsert(tokenModel);
                     PersonalProjects personalprojects = new PersonalProjects();
                     List<PersonalProjects> personalprojectsList = personalprojectsMapper.select(personalprojects);

@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000;
 
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
@@ -19,7 +20,7 @@ public interface LogManagementService {
 
     public List<LogManagement> gettlist() throws Exception;
 
-    public List<LogManagement> getl(String project_id) throws Exception;
+    public List<LogmanagementStatusVo> getTimestart(String project_id) throws Exception;
 
 
     void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
