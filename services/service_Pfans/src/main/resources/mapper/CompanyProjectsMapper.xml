@@ -40,7 +40,7 @@
 		group by p.COMPANYPROJECTS_ID
 		) pp
 		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
-		where c.`STATUS` != '1'
+		where c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6'
 		order by c.`CREATEON` desc
 	</select>
 
