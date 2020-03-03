@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS5000.Impl;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
@@ -45,6 +46,46 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public List<CompanyProjects> list(CompanyProjects companyProjects) throws Exception {
         return companyprojectsMapper.select(companyProjects);
+    }
+
+    @Override
+    public LogmanageMentVo logmanageMentVo (CompanyProjects companyProjects) throws Exception {
+        double a= 0;
+        LogmanageMentVo logmanageMentVo = new LogmanageMentVo();
+
+        logmanageMentVo.setCompanyProjects(companyprojectsMapper.select(companyProjects));
+
+        for(CompanyProjects companyProjects1:logmanageMentVo.getCompanyProjects()){
+            LogManagement logManagement = new LogManagement();
+            logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
+            logmanageMentVo.setLogManagements(logManagementMapper.select(logManagement));
+            for(LogManagement logManagement1 : logmanageMentVo.getLogManagements()){
+                a = a+Double.parseDouble(logManagement1.getTime_start());
+            }
+
+        }
+
+
+
+//        List Result = new ArrayList<>();
+//        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
+//        for(CompanyProjects companyProjects1 : companyProjectsList){
+//            companyProjects1.getProject_name();
+//            companyProjects1.getCompanyprojects_id();
+//
+//            LogManagement logManagement = new LogManagement();
+//            logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
+//            List<LogManagement> logManagementList = logManagementMapper.select(logManagement);
+//            double a= 0;
+//            for(LogManagement logManagement1 : logManagementList){
+//                logManagement1.getStatus();
+//                a = a+Double.parseDouble(logManagement1.getTime_start());
+//            }
+//            Result.add(String.valueOf(a));
+//            Result.add(companyProjects1.getProject_name());
+//        }
+
+        return logmanageMentVo;
     }
 
     //按id查询

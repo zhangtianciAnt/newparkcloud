@@ -5,6 +5,7 @@ import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,8 @@ public interface CompanyProjectsService {
     void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception;
 
     public List<CompanyProjects> list(CompanyProjects companyprojects) throws Exception;
+
+    public  LogmanageMentVo logmanageMentVo(CompanyProjects companyprojects) throws Exception;
 
     //编辑
     void update(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception;
