@@ -10,4 +10,12 @@
 	<select id="gettlist" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
 		select * from logmanagement where HAS_PROJECT = '02' ;
 	</select>
+
+	<select id="getl" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+	select CREATEBY,log_date,sum(time_start)  as time_start
+	from logmanagement
+	where PROJECT_ID = #{PROJECT_ID}
+	group by CREATEBY,log_date
+	</select>
+
 </mapper>

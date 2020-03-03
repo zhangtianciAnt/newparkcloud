@@ -64,6 +64,11 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
+    public List<LogManagement> getl(String project_id) throws Exception {
+        return logmanagementmapper.getl(project_id);
+    }
+
+    @Override
     public List<LogManagement> gettlist() throws Exception {
         return logmanagementmapper.gettlist();
     }
