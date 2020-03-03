@@ -2,6 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_BASF.QuestionManage;
+import com.nt.dao_BASF.VO.ProgramtpeVo;
 import com.nt.service_BASF.QuestionManageServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -162,6 +163,11 @@ public class BASF21201Controller {
         if (StringUtils.isBlank(startprogramid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(questionManageServices.getQuestions(startprogramid));
+        ProgramtpeVo programtpeVo = questionManageServices.getQuestions(startprogramid);
+        if (programtpeVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        } else {
+            return ApiResult.success(programtpeVo);
+        }
     }
 }

@@ -6,6 +6,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.ProgramtpeVo;
 import com.nt.service_BASF.QuestionManageServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.QuestionManageMapper;
@@ -397,17 +398,29 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
         }
     }
 
-    //获取考试题目
+    //在线培训获取考试题目
     @Override
-    public Set<QuestionManage> getQuestions(String startprogramid) throws Exception {
+    public ProgramtpeVo getQuestions(String startprogramid) throws Exception {
         Startprogram startprogram = new Startprogram();
         startprogram.setStartprogramid(startprogramid);
         startprogram = startprogramMapper.selectOne(startprogram);
         QuestionManage questionManage = new QuestionManage();
         questionManage.setProgramtpe(startprogram.getProgramlistid());
         List<QuestionManage> questionManageList = questionManageMapper.select(questionManage);
-        Set<QuestionManage> questionManageSet = RandomUtil.randomEleSet(questionManageList, startprogram.getQuestionnum());
-        return questionManageSet;
+        if (questionManageList.size() == 0 || startprogram.getStandard() == null || startprogram.getStandard() <= 0) {
+            return null;
+        } else {
+            int questionnum = questionManageList.size();
+            if (questionnum > startprogram.getQuestionnum()) {
+                questionnum = startprogram.getQuestionnum();
+            }
+            Set<QuestionManage> questionManageSet = RandomUtil.randomEleSet(questionManageList, questionnum);
+            ProgramtpeVo programtpeVo = new ProgramtpeVo();
+            programtpeVo.setQuestionManageSet(questionManageSet);
+            programtpeVo.setStandard(startprogram.getStandard());
+            return programtpeVo;
+        }
+
     }
 
 }

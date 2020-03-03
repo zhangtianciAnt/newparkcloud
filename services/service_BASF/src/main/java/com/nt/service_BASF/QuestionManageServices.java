@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.QuestionManage;
+import com.nt.dao_BASF.VO.ProgramtpeVo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,5 +44,5 @@ public interface QuestionManageServices {
     List<Object> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 
     //获取考试题目
-    Set<QuestionManage> getQuestions(String startprogramid) throws Exception;
+    ProgramtpeVo getQuestions(String startprogramid) throws Exception;
 }
