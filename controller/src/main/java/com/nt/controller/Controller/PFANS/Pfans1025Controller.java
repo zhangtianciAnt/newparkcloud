@@ -3,12 +3,10 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.service_pfans.PFANS1000.AwardService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/award")
@@ -26,6 +29,11 @@ public class Pfans1025Controller {
     @Autowired
     private TokenService tokenService;
 
+    @RequestMapping(value = "/generateJxls", method = {RequestMethod.GET})
+    public ApiResult generateJxls(String awardid,HttpServletResponse response) throws Exception {
+        awardService.generateJxls(awardid,response);
+        return ApiResult.success();
+    }
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(Award award,HttpServletRequest request) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
