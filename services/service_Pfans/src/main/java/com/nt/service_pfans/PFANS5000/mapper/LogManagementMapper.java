@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000.mapper;
 
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
@@ -10,6 +11,12 @@ import java.util.List;
 
 public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
+
+    List<LogmanagementConfirmVo> getTimestart();
+
+    List<LogmanagementConfirmVo> getProjectList();
+
+    List<LogmanagementConfirmVo> getCenterList();
 
     List<LogmanagementStatusVo> getTimestart(@Param("project_id") String project_id);
 

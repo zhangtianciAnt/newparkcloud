@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
@@ -67,6 +68,19 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
+    public List<LogmanagementConfirmVo> getProjectList(String StrFlg) throws Exception {
+        List<LogmanagementConfirmVo> Result = new ArrayList<LogmanagementConfirmVo>();
+        if(StrFlg.equals("1")){
+            Result = logmanagementmapper.getProjectList();
+        }
+        else{
+            Result = logmanagementmapper.getCenterList();
+        }
+
+        return Result;
+    }
+
+    @Override
     public List<LogmanagementStatusVo> getTimestart(String project_id) throws Exception {
         return logmanagementmapper.getTimestart(project_id);
     }
@@ -89,7 +103,6 @@ public class LogManagementServiceImpl implements LogManagementService {
         return logmanagementmapper.gettlist();
     }
 
-
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
         logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
@@ -102,23 +115,6 @@ public class LogManagementServiceImpl implements LogManagementService {
         LogManagement log = logmanagementmapper.selectByPrimaryKey(logmanagement_id);
         return log;
     }
-
-//    @Override
-//    public List<LogManagement> getWeek(String companyprojectsid) throws Exception{
-//        LogManagement logManagement = new LogManagement();
-//        logManagement.setProject_id(companyprojectsid);
-//        List<LogManagement> logManagementList = logmanagementmapper.select(logManagement);
-//        if(logManagementList != null && logManagementList.size() > 0){
-//            for(int i = 0; i < logManagementList.size(); i++){
-//                Map columns = new HashMap();
-//                Date log_date = logManagementList.get(i).getLog_date();
-//                columns.put("log_date" , log_date);
-//                columns.put("time_" , week);
-//            }
-//        }
-//        return null;
-//    }
-
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
@@ -266,9 +262,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
-
     }
-
 
 }
 
