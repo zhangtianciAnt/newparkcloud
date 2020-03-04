@@ -39,4 +39,7 @@ public interface CompanyProjectsService {
     //PJ完了审批
     List<CompanyProjectsVo2> getPjList(String flag) throws Exception;
 
+    //获取外住人员所在的项目
+    List<CompanyProjects> getCompanyProject (String SyspName)throws Exception;
+
 }

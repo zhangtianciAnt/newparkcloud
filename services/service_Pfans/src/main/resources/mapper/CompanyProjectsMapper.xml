@@ -56,4 +56,9 @@
 		where c.status = '0'
 		order by a.createon desc
 	</select>
+
+	<select id="getCompanyProject" resultType="com.nt.dao_Pfans.PFANS5000.CompanyProjects">
+		select cp.PROJECT_NAME,cp.PROJECTTYPE,ps.name from companyprojects cp,projectsystem ps
+		where ps.name= #{SyspName} and cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+	</select>
 </mapper>
