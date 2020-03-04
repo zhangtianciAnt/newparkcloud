@@ -11,4 +11,6 @@ public interface AssetsMapper extends MyMapper<Assets> {
     String getMaxCode(@Param("Asstype") String Asstype,@Param("Bartype") String Bartype);
 
     List<Assets> selectList4Show(Assets assets);
+
+    List<String> getDepartment();
 }

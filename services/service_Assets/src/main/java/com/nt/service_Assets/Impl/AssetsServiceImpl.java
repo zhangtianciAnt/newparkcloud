@@ -116,7 +116,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public List<Assets> list(Assets assets) throws Exception {
-        return assetsMapper.selectList4Show(assets);
+        return assetsMapper.select(assets);
     }
 
     @Override
@@ -472,6 +472,11 @@ public class AssetsServiceImpl implements AssetsService {
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<String> getDepartment(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        return assetsMapper.getDepartment();
     }
 
 
