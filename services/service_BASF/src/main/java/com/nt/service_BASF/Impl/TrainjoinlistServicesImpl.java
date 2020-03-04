@@ -78,6 +78,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                     Trainjoinlist trainjoinlist1 = new Trainjoinlist();
                     trainjoinlist1.setStartprogramid(trainjoinlistVo.getStartprogramid());
                     trainjoinlist1.setPersonnelid(trainjoinlist.getPersonnelid());
+                    trainjoinlist1.setStatus("0");
                     if (trainjoinlistMapper.selectCount(trainjoinlist1) > 0) {
                         Trainjoinlist trainjoinlist2 = trainjoinlistMapper.selectOne(trainjoinlist1);
                         trainjoinlist2.preUpdate(tokenModel);
@@ -108,6 +109,21 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             for (Trainjoinlist trainjoinlist1 : trainjoinlistMapper.select(trainjoinlist)) {
                 trainjoinlistMapper.delete(trainjoinlist1);
             }
+        }
+    }
+
+    //检测是否参加过此培训
+    @Override
+    public boolean verifyTrai(Trainjoinlist trainjoinlist) throws Exception {
+        if (StringUtils.isNotEmpty(trainjoinlist.getPersonnelid()) && StringUtils.isNotEmpty(trainjoinlist.getStartprogramid())) {
+            trainjoinlist.setStatus("0");
+            int num = trainjoinlistMapper.selectCount(trainjoinlist);
+            if (num == 1)
+                return true;
+            else
+                return false;
+        } else {
+            return false;
         }
     }
 

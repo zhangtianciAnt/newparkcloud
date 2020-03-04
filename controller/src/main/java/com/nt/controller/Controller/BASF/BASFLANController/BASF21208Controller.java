@@ -1,18 +1,18 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -79,6 +79,15 @@ public class BASF21208Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(trainjoinlistServices.onlineInsert(trainjoinlistVo, tokenModel));
+    }
+
+    //检测是否参加过此培训
+    @PostMapping("/verifyTrai")
+    public ApiResult verifyTrai(@RequestBody Trainjoinlist trainjoinlist, HttpServletRequest request) throws Exception {
+        if (trainjoinlist == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(trainjoinlistServices.verifyTrai(trainjoinlist));
     }
 
     //excel成绩导入，更新培训参加名单成绩信息

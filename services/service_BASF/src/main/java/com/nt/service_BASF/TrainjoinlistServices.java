@@ -29,6 +29,9 @@ public interface TrainjoinlistServices {
     //根据培训列表id删除参加名单
     void delete(String startprogramid, TokenModel tokenModel) throws Exception;
 
+    //检测是否参加过此培训
+    boolean verifyTrai(Trainjoinlist trainjoinlist) throws Exception;
+
     //获取培训申请人员id名单
     ArrayList<String> joinlist(String startprogramid) throws Exception;
 
