@@ -115,10 +115,15 @@ public class AwardServiceImpl implements AwardService {
     }
 
     @Override
-    public void generateJxls(String awardid, HttpServletResponse response) throws Exception {
+    public void generateJxls(String awarded, HttpServletResponse response) throws Exception {
 //        AwardVo awardVo = new AwardVo();
-        Award award = awardMapper.selectByPrimaryKey(awardid);
+        Award award = awardMapper.selectByPrimaryKey(awarded);
         Map<String, Object> data = new HashMap<>();
+        String[] time = award.getClaimdatetime().split("~ ");
+        String startTime = time[0];
+        String endTime = time[1];
+        data.put("aa",startTime);
+        data.put("bb",endTime);
         data.put("award",award);
         ExcelOutPutUtil.OutPut("決裁書","decisionconsignment.xlsx",data,response);
     }

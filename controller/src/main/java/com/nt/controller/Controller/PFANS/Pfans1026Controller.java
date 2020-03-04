@@ -61,4 +61,10 @@ public class Pfans1026Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/existCheck",method={RequestMethod.GET})
+    public ApiResult existCheck(String contractNumber, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.existCheck(contractNumber));
+    }
+
 }

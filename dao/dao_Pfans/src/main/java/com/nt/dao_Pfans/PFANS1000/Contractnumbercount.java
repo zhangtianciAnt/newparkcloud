@@ -85,4 +85,10 @@ public class Contractnumbercount extends BaseModel {
     @Column(name = "ROWINDEX")
     @OrderBy("ASC")
     private String rowindex;
+
+    /**
+     * 請求番号
+     */
+    @Column(name = "CLAIMNUMBER")
+    private String claimnumber;
 }
