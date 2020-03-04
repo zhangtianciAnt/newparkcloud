@@ -72,6 +72,15 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.list(companyProjects));
     }
 
+//获取外住人员所在的项目
+    @RequestMapping(value="/getCompanyProject", method={RequestMethod.GET})
+    public ApiResult getCompanyProject(String SyspName, HttpServletRequest request) throws Exception {
+        if (SyspName == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.getCompanyProject(SyspName));
+    }
+
 
     /**
      *

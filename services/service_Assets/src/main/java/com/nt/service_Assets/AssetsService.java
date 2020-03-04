@@ -29,4 +29,6 @@ public interface AssetsService {
     public List<Assets> getAssetsnameList(Assets assets, HttpServletRequest request) throws Exception;
 
     List<String> importDate(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+
+    List<String> getDepartment(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 }

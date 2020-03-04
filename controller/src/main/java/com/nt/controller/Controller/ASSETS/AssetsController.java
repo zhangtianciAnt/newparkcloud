@@ -52,9 +52,8 @@ public class AssetsController {
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
+    public ApiResult list(HttpServletRequest request,@RequestBody Assets assets) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Assets assets = new Assets();
         assets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(assetsService.list(assets));
     }
@@ -103,6 +102,18 @@ public class AssetsController {
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(assetsService.importDate(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
+    @RequestMapping(value = "/getDepartment",method={RequestMethod.POST})
+    public ApiResult getDepartment(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(assetsService.getDepartment(request,tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {

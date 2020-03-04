@@ -123,15 +123,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         staffVo.setLogmanagement(logManagementList);
         return staffVo;
     }
-//
-//    //附表查询
-//    @Override
-//    public List<Projectsystem> select(String companyprojectsid) throws Exception {
-//        Projectsystem projectsystem = new Projectsystem();
-//        projectsystem.setCompanyprojects_id(companyprojectsid);
-//        List<Projectsystem> proList = projectsystemMapper.select(projectsystem);
-//        return proList;
-//    }
+
 
     //更新
     @Override
@@ -249,9 +241,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(projectcontract);
             }
         }
-
-
-
     }
 
     /**
@@ -356,5 +345,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             result.add(vo);
         }
         return result;
+    }
+
+    @Override
+    public List<CompanyProjects> getCompanyProject(String SyspName) throws Exception {
+
+        return companyprojectsMapper.getCompanyProject(SyspName);
     }
 }
