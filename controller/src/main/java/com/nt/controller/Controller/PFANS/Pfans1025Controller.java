@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.AwardDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.utils.*;
@@ -29,10 +30,17 @@ public class Pfans1025Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/generateJxls", method = {RequestMethod.GET})
-    public void generateJxls(String awarded,HttpServletResponse response) throws Exception {
-        awardService.generateJxls(awarded,response);
+    @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
+    public void generateJxls(@RequestBody AwardVo awardVo, HttpServletRequest request,HttpServletResponse response) throws Exception {
+        TokenModel tokenModel=tokenService.getToken(request);
+        AwardVo aw = awardService.selectById(awardVo.getAward().getAward_id());
+        List<AwardDetail> awalist= awardVo.getAwardDetail();
+        Map<String, Object> data = new HashMap<>();
+        data.put("aw",aw);
+        data.put("awalist",awalist);
+        ExcelOutPutUtil.OutPut(awardVo.getAward().getContractnumber().toUpperCase()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
     }
+
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(Award award,HttpServletRequest request) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
