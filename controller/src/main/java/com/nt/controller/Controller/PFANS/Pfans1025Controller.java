@@ -33,7 +33,7 @@ public class Pfans1025Controller {
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
     public void generateJxls(@RequestBody AwardVo awardVo, HttpServletRequest request,HttpServletResponse response) throws Exception {
         TokenModel tokenModel=tokenService.getToken(request);
-        AwardVo aw = awardService.selectById(awardVo.getAward().getAward_id());
+        Award aw = awardVo.getAward();
         List<AwardDetail> awalist= awardVo.getAwardDetail();
         Map<String, Object> data = new HashMap<>();
         data.put("aw",aw);
