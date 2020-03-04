@@ -120,6 +120,9 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 update.set("userinfo.resignation_date", formatter.format(staffexitprocedureVo.getStaffexitprocedure().getResignation_date()));
             }
+            if(staffexitprocedureVo.getStaffexitprocedure().getReason2()!=null){
+                update.set("userinfo.reason2",staffexitprocedureVo.getStaffexitprocedure().getReason2());
+            }
             update.set("userinfo.staffexitprocedure",staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
             UpdateResult user =  mongoTemplate.updateFirst(query, update, CustomerInfo.class);
     }

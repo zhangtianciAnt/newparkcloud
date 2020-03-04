@@ -334,6 +334,11 @@ public class CustomerInfo extends BaseModel {
         private String resignation_date;
 
         /**
+         * 退职理由
+         */
+        private String reason2;
+
+        /**
          * 离职申请
          */
         private String staffexitprocedure;
