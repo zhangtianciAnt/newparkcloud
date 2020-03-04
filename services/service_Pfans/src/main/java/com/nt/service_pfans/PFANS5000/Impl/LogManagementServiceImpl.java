@@ -13,6 +13,7 @@ import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
 import com.nt.utils.ApiResult;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,19 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
+    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo) throws Exception {
+        List<LogManagement> loglist = LogmanagementStatusVo.getLogmanagement();
+        String confirmstatus = LogmanagementStatusVo.getConfirmstatus();
+        String starttime = LogmanagementStatusVo.getStarttime();
+        String endtime = LogmanagementStatusVo.getEndtime();
+        if(loglist.size() > 0){
+            for(int i = 0;i < loglist.size(); i++){
+                String createby = loglist.get(i).getCreateby();
+                logmanagementmapper.updateTimestart(createby,confirmstatus,starttime,endtime);
+            }
+        }
+    }
+    @Override
     public List<LogManagement> gettlist() throws Exception {
         return logmanagementmapper.gettlist();
     }
@@ -78,6 +92,7 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
+        logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
         logmanagementmapper.updateByPrimaryKey(logmanagement);
     }

@@ -12,4 +12,7 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
     List<LogmanagementStatusVo> getTimestart(@Param("project_id") String project_id);
+
+    void updateTimestart(@Param("createby") String createby,@Param("confirmstatus") String confirmstatus,
+                            @Param("starttime") String starttime,@Param("endtime") String endtime);
 }

@@ -1,10 +1,12 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/companyprojects")
@@ -71,6 +74,15 @@ public class Pfans5011Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(logmanagementService.getTimestart(project_id));
+    }
+
+    @RequestMapping(value = "/updateTimestart", method = {RequestMethod.POST})
+    public ApiResult updateTimestart(@RequestBody LogmanagementStatusVo LogmanagementStatusVo,HttpServletRequest request) throws Exception {
+        if (LogmanagementStatusVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        logmanagementService.updateTimestart(LogmanagementStatusVo);
+        return ApiResult.success();
     }
 
 //    /**

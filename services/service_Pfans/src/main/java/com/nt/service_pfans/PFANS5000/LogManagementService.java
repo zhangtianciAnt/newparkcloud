@@ -22,6 +22,7 @@ public interface LogManagementService {
 
     public List<LogmanagementStatusVo> getTimestart(String project_id) throws Exception;
 
+    void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo)throws Exception;
 
     void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
 

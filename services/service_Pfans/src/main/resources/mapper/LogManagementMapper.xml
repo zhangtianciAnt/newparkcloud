@@ -23,4 +23,12 @@
 	group by  info.createby
 	</select>
 
+    <select id="updateTimestart">
+	 	update logmanagement set confirmstatus = #{confirmstatus}
+		where
+		createby = #{createby}
+	    and date_format(LOG_DATE, '%Y-%m-%d')
+	    between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
+	</select>
+
 </mapper>
