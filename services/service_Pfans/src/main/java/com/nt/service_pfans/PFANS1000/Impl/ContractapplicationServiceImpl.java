@@ -246,6 +246,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setLoadingjudge(contractapp.getLoadingjudge());
                         napalm.setCurrencyformat(contractapp.getCurrencyposition());
                         napalm.setContracttype(contractapp.getContracttype());
+                        napalm.setToto(contractapp.getVarto());
 
                         if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
