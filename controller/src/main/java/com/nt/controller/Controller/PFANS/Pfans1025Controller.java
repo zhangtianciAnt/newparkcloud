@@ -30,9 +30,8 @@ public class Pfans1025Controller {
     private TokenService tokenService;
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.GET})
-    public ApiResult generateJxls(String awardid,HttpServletResponse response) throws Exception {
-        awardService.generateJxls(awardid,response);
-        return ApiResult.success();
+    public void generateJxls(String awarded,HttpServletResponse response) throws Exception {
+        awardService.generateJxls(awarded,response);
     }
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(Award award,HttpServletRequest request) throws Exception{

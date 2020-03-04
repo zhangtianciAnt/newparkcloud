@@ -12,6 +12,6 @@ public interface AwardService {
       List<Award> get(Award award) throws Exception;
       AwardVo selectById(String award_id) throws Exception;
       void updateAwardVo(AwardVo awardVo,TokenModel tokenModel) throws Exception;
-      void generateJxls(String awardid, HttpServletResponse response) throws Exception ;
+      void generateJxls(String awarded, HttpServletResponse response) throws Exception ;
 
 }
