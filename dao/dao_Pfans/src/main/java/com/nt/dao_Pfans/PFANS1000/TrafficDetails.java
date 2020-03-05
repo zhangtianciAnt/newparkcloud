@@ -66,4 +66,6 @@ public class TrafficDetails extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    @Column(name = "TAXES")
+    private Integer taxes;
 }

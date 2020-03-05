@@ -132,5 +132,15 @@ public class AccommodationDetails extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    @Column(name = "INVOICENUMBER")
+    private String invoicenumber;
 
+    @Column(name = "DEPARTMENTNAME")
+    private String departmentname;
+
+    @Column(name = "COSTITEM")
+    private String costitem;
+
+    @Column(name = "TAXES")
+    private Integer taxes;
 }
