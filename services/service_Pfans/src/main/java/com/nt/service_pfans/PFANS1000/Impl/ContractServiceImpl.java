@@ -42,7 +42,7 @@ public class ContractServiceImpl implements ContractService {
             result.setNumberCount(contractnumbercountList);
         }
         // add end
-
+        result.setContract(contract);
         return result;
     }
 
