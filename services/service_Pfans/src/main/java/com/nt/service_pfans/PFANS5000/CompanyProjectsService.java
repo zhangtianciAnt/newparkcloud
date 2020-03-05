@@ -5,6 +5,7 @@ import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -40,6 +41,6 @@ public interface CompanyProjectsService {
     List<CompanyProjectsVo2> getPjList(String flag) throws Exception;
 
     //获取外住人员所在的项目
-    List<CompanyProjects> getCompanyProject (String SyspName)throws Exception;
+    List<CompanyProjectsVo3> getCompanyProject (String SyspName)throws Exception;
 
 }
