@@ -1,8 +1,10 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.AwardDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -30,11 +32,21 @@ public class Pfans1025Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private DictionaryService dictionaryService;
+
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
     public void generateJxls(@RequestBody AwardVo awardVo, HttpServletRequest request,HttpServletResponse response) throws Exception {
         TokenModel tokenModel=tokenService.getToken(request);
         Award aw = awardVo.getAward();
         List<AwardDetail> awalist= awardVo.getAwardDetail();
+        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
+        for(Dictionary item:dictionaryList){
+            if(item.getCode().equals(aw.getCurrencyposition())) {
+
+                aw.setCurrencyposition(item.getValue1());
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("aw",aw);
         data.put("awalist",awalist);
