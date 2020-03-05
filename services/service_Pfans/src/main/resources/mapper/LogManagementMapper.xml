@@ -28,6 +28,19 @@
 		where status = '4'
 	</select>
 
+	<select id="getunProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
+		select createby as projectid,sum(confirm) as confirm,sum(unconfirm) as unconfirm from (
+			select createby,
+					case when confirmstatus = '0' then sum(TIME_START) end  as confirm,
+					case when confirmstatus = '1' then sum(TIME_START) end  as unconfirm
+					from logmanagement
+					where status = '0'
+					and date_format(LOG_DATE, '%Y-%m') = #{StrDate}
+					group by createby,confirmstatus
+		) logm
+		group by createby
+	</select>
+
 	<select id="getCenterList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
 		select companyprojects_id as projectid,numbers,project_name as projectname,logm.confirm,logm.unconfirm from companyprojects
 		left join (

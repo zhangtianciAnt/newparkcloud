@@ -16,6 +16,8 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
 
     List<LogmanagementConfirmVo> getProjectList();
 
+    List<LogmanagementConfirmVo> getunProjectList(@Param("StrDate") String StrDate);
+
     List<LogmanagementConfirmVo> getCenterList();
 
     List<LogmanagementStatusVo> getTimestart(@Param("project_id") String project_id);
