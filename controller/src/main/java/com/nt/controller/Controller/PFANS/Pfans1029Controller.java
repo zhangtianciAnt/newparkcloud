@@ -34,11 +34,25 @@ public class Pfans1029Controller {
     public void downLoad(@RequestBody Contract contract, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
         ContractVo cv = contractService.One(contract.getContract_id());
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
-        for(Dictionary item:dictionaryList){
+        List<Dictionary> CurList = dictionaryService.getForSelect("HT006");
+        for(Dictionary item:CurList){
             if(item.getCode().equals(cv.getContract().getCurrencyposition())) {
 
                 cv.getContract().setCurrencyposition(item.getValue1());
+            }
+        }
+        List<Dictionary> redList = dictionaryService.getForSelect("PJ080");
+        for(Dictionary item:redList){
+            if(item.getCode().equals(cv.getContract().getRedelegate())) {
+
+                cv.getContract().setRedelegate(item.getValue1());
+            }
+        }
+        List<Dictionary> subList = dictionaryService.getForSelect("PJ010");
+        for(Dictionary item:subList){
+            if(item.getCode().equals(cv.getContract().getSubcontract())) {
+
+                cv.getContract().setSubcontract(item.getValue1());
             }
         }
         Map<String, Object> data = new HashMap<>();
