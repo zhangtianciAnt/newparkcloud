@@ -6,6 +6,7 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface NapalmService {
+
     List<Napalm> get(Napalm napalm)throws Exception;
 
     public Napalm One(String napalm_id)throws  Exception;

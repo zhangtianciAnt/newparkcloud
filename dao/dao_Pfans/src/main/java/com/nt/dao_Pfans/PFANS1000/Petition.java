@@ -59,7 +59,6 @@ public class Petition extends BaseModel {
     @Column(name = "ENDDATE")
     private Date enddate;
 
-
     @Column(name = "BUSINESSCODE")
     private String businesscode;
 
@@ -80,4 +79,8 @@ public class Petition extends BaseModel {
 
     @Column(name = "CURRENCYPOSITION")
     private String currencyposition;
+
+    @Column(name = "REMARKS")
+    private String remarks;
+
 }
