@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS5000.Impl;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
@@ -348,7 +349,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     @Override
-    public List<CompanyProjects> getCompanyProject(String SyspName) throws Exception {
+    public List<CompanyProjectsVo3> getCompanyProject(String SyspName) throws Exception {
 
         return companyprojectsMapper.getCompanyProject(SyspName);
     }

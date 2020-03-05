@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.AwardDetail;
@@ -11,6 +12,8 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,23 +39,25 @@ public class Pfans1025Controller {
     private DictionaryService dictionaryService;
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
-    public void generateJxls(@RequestBody AwardVo awardVo, HttpServletRequest request,HttpServletResponse response) throws Exception {
+    public void generateJxls(@RequestBody Award award, HttpServletRequest request,HttpServletResponse response) throws Exception {
         TokenModel tokenModel=tokenService.getToken(request);
-        Award aw = awardVo.getAward();
-        List<AwardDetail> awalist= awardVo.getAwardDetail();
-        List<Contractnumbercount> num = awardVo.getNumbercounts();
+        AwardVo  av = awardService.selectById(award.getAward_id());
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
-            if(item.getCode().equals(aw.getCurrencyposition())) {
+            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
 
-                aw.setCurrencyposition(item.getValue1());
+                av.getAward().setCurrencyposition(item.getValue1());
             }
         }
         Map<String, Object> data = new HashMap<>();
-        data.put("aw",aw);
-        data.put("awalist",awalist);
-        data.put("num",num);
-        ExcelOutPutUtil.OutPut(awardVo.getAward().getContractnumber().toUpperCase()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
+        data.put("aw",av.getAward());
+        data.put("alist",av.getAwardDetail());
+        data.put("num",av.getNumbercounts());
+        if(av.getAward().getMaketype().equals("4")){
+            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(受託)","juecaishu_shoutuo.xlsx",data,response);
+        } else {
+            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
+        }
     }
 
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
