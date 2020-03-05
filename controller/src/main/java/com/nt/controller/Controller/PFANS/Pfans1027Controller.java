@@ -64,17 +64,18 @@ public class Pfans1027Controller {
     @RequestMapping(value = "/downLoad", method = {RequestMethod.POST})
     public void downLoad(@RequestBody Quotation quotation, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
-        Quotation qu = quotationService.one(quotation.getQuotationid());
+        QuotationVo qu = quotationService.selectById(quotation.getQuotationid());
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
-            if(item.getCode().equals(qu.getCurrencyposition())) {
+            if(item.getCode().equals(qu.getQuotation().getCurrencyposition())) {
 
-                qu.setCurrencyposition(item.getValue1());
+                qu.getQuotation().setCurrencyposition(item.getValue1());
             }
         }
         Map<String, Object> data = new HashMap<>();
-        data.put("qu",qu);
-        ExcelOutPutUtil.OutPut(qu.getContractnumber().toUpperCase()+"_見積書(受託)","jianjishu_shoutuo.xlsx",data,response);
+        data.put("qu",qu.getQuotation());
+        data.put("ba1",qu.getNumbercounts());
+        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_見積書(受託)","jianjishu_shoutuo.xlsx",data,response);
     }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
