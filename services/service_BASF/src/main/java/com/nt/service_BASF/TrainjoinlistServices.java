@@ -23,6 +23,9 @@ public interface TrainjoinlistServices {
     //添加培训人员名单
     void insert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception;
 
+    //更新培训人员名单
+    void updata(Trainjoinlist trainjoinlist, TokenModel tokenModel) throws Exception;
+
     //在线培训添加培训人员名单
     String onlineInsert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception;
 

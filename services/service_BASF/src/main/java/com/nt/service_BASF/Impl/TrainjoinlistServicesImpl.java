@@ -2,11 +2,16 @@ package com.nt.service_BASF.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_BASF.Programlist;
+import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_BASF.TrainjoinlistServices;
+import com.nt.service_BASF.mapper.ProgramMapper;
+import com.nt.service_BASF.mapper.ProgramlistMapper;
+import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -45,6 +50,12 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     private TrainjoinlistMapper trainjoinlistMapper;
 
     @Autowired
+    private StartprogramMapper startprogramMapper;
+
+    @Autowired
+    private ProgramlistMapper programlistMapper;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     //添加培训人员名单
@@ -67,6 +78,14 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         }
     }
 
+    //    更新培训人员名单
+    @Override
+    public void updata(Trainjoinlist trainjoinlist, TokenModel tokenModel) throws Exception {
+        trainjoinlist.preUpdate(tokenModel);
+        trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
+    }
+
+
     //在线培训添加人员名单
     @Override
     public String onlineInsert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
@@ -87,11 +106,26 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                         trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist2);
                         return trainjoinlist2.getTrainjoinlistid();
                     } else {
+                        //培训人员添加
                         trainjoinlist.preInsert(tokenModel);
                         trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
                         trainjoinlist.setJointype("正常");
                         trainjoinlist.setNumber(1);
                         trainjoinlistMapper.insert(trainjoinlist);
+                        //培训清单培训人数添加
+                        try {
+                            Startprogram startprogram = new Startprogram();
+                            startprogram.setStartprogramid(trainjoinlistVo.getStartprogramid());
+                            startprogram = startprogramMapper.selectOne(startprogram);
+                            Programlist programlist = new Programlist();
+                            programlist.setProgramlistid(startprogram.getProgramlistid());
+                            programlist = programlistMapper.selectOne(programlist);
+                            programlist.setThispeople(String.valueOf(Integer.parseInt(programlist.getThispeople()) + 1));
+                            programlist.setNumberpeople(String.valueOf(Integer.parseInt(programlist.getNumberpeople()) + 1));
+                            programlistMapper.updateByPrimaryKeySelective(programlist);
+                        } catch (Exception e) {
+                            return trainjoinlist.getTrainjoinlistid();
+                        }
                         return trainjoinlist.getTrainjoinlistid();
                     }
 
