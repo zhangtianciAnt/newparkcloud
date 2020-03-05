@@ -144,10 +144,4 @@ public class QuotationServiceImpl implements QuotationService {
         }
     }
 
-    @Override
-    public Quotation one(String quotationid) throws Exception {
-
-        return quotationMapper.selectByPrimaryKey(quotationid);
-    }
-
 }
