@@ -3,13 +3,13 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.AwardDetail;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +40,7 @@ public class Pfans1025Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         Award aw = awardVo.getAward();
         List<AwardDetail> awalist= awardVo.getAwardDetail();
+        List<Contractnumbercount> num = awardVo.getNumbercounts();
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(aw.getCurrencyposition())) {
@@ -50,6 +51,7 @@ public class Pfans1025Controller {
         Map<String, Object> data = new HashMap<>();
         data.put("aw",aw);
         data.put("awalist",awalist);
+        data.put("num",num);
         ExcelOutPutUtil.OutPut(awardVo.getAward().getContractnumber().toUpperCase()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
     }
 
