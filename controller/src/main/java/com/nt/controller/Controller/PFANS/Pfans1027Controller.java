@@ -78,13 +78,4 @@ public class Pfans1027Controller {
         ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_見積書(受託)","jianjishu_shoutuo.xlsx",data,response);
     }
 
-    @RequestMapping(value = "/one", method = {RequestMethod.POST})
-    public ApiResult one(@RequestBody Quotation quotation,HttpServletRequest request) throws Exception{
-        if(quotation==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel=tokenService.getToken(request);
-        return ApiResult.success(quotationService.one(quotation.getQuotationid()));
-    }
-
 }
