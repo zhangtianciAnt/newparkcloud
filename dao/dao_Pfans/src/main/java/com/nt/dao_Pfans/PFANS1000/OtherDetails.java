@@ -65,5 +65,6 @@ public class OtherDetails extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
-
+    @Column(name = "TAXES")
+    private Integer taxes;
 }
