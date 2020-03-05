@@ -81,8 +81,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<LogmanagementStatusVo> getTimestart(String project_id) throws Exception {
-        return logmanagementmapper.getTimestart(project_id);
+    public List<LogmanagementStatusVo> getTimestart(String project_id,String starttime,String endtime) throws Exception {
+        return logmanagementmapper.getTimestart(project_id,starttime,endtime);
     }
 
     @Override

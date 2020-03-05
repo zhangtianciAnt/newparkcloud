@@ -102,11 +102,11 @@ public class Pfans5001Controller {
      * 查询工时确认
      */
     @RequestMapping(value = "/getTimestart", method = {RequestMethod.GET})
-    public ApiResult getTimestart(String project_id, HttpServletRequest request) throws Exception {
+    public ApiResult getTimestart(String project_id, String starttime,String endtime,HttpServletRequest request) throws Exception {
         if (project_id == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(logmanagementService.getTimestart(project_id));
+        return ApiResult.success(logmanagementService.getTimestart(project_id,starttime,endtime));
     }
 
     /**

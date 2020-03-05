@@ -16,8 +16,8 @@
 		left join (
 		select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
 		(select project_id,
-		case when confirmstatus = '0' then sum(TIME_START) end  as confirm,
-		case when confirmstatus = '1' then sum(TIME_START) end  as unconfirm
+		case when confirmstatus = '1' then sum(TIME_START) end  as confirm,
+		case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end  as unconfirm
 		from logmanagement
 		where status = '0'
 		group by project_id,confirmstatus
@@ -31,43 +31,29 @@
 	<select id="getunProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
 		select createby as projectid,sum(confirm) as confirm,sum(unconfirm) as unconfirm from (
 			select createby,
-					case when confirmstatus = '0' then sum(TIME_START) end  as confirm,
-					case when confirmstatus = '1' then sum(TIME_START) end  as unconfirm
+					case when confirmstatus = '1' then sum(TIME_START) end  as confirm,
+					case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end  as unconfirm
 					from logmanagement
 					where status = '0'
+					and project_id = ''
 					and date_format(LOG_DATE, '%Y-%m') = #{StrDate}
 					group by createby,confirmstatus
 		) logm
 		group by createby
 	</select>
 
-	<select id="getCenterList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
-		select companyprojects_id as projectid,numbers,project_name as projectname,logm.confirm,logm.unconfirm from companyprojects
-		left join (
-		select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
-		(select project_id,
-		case when confirmstatus = '0' then sum(TIME_START) end  as confirm,
-		case when confirmstatus = '1' then sum(TIME_START) end  as unconfirm
-		from logmanagement
-		where status = '0'
-		group by project_id,confirmstatus
-		) log
-		group by project_id
-		) logm
-		on logm.project_id = companyprojects.companyprojects_id
-		where status = '4'
-	</select>
-
 	<select id="getTimestart" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo">
-	select  info.createby,group_concat(info.logdate) as logdate ,group_concat(info.timestart) as timestart
-	from  (
-		select createby,date_format(log_date,'%Y-%m-%d') as logdate,sum(time_start) as timestart
-	 	from logmanagement
-	 	where project_id = #{project_id}
-	 	and confirmstatus = '0'
-		group by createby,log_date
-	 ) info
-	group by  info.createby
+		select  info.createby,group_concat(info.logdate) as logdate ,group_concat(info.timestart) as timestart
+		from  (
+			select createby,date_format(log_date,'%Y-%m-%d') as logdate,sum(time_start) as timestart
+			from logmanagement
+			where confirmstatus = '0'
+			and project_id = #{project_id}
+			and date_format(LOG_DATE, '%Y-%m-%d')
+	    	between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
+			group by createby,log_date
+		 ) info
+		group by  info.createby
 	</select>
 
     <select id="updateTimestart">

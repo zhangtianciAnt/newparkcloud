@@ -23,7 +23,7 @@ public interface LogManagementService {
 
     public List<LogmanagementConfirmVo> getProjectList(String strFlg,String StrDate) throws Exception;
 
-    public List<LogmanagementStatusVo> getTimestart(String project_id) throws Exception;
+    public List<LogmanagementStatusVo> getTimestart(String project_id,String starttime,String endtime) throws Exception;
 
     void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo)throws Exception;
 
