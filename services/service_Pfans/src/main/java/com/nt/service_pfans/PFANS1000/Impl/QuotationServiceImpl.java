@@ -4,15 +4,15 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.QuotationVo;
 import com.nt.service_pfans.PFANS1000.QuotationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,25 +143,11 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
     }
-//    @Override
-//    public void insert(QuotationVo quotationVo, TokenModel tokenModel) throws Exception {
-//        String quotationid = UUID.randomUUID().toString();
-//        Quotation quotation = new Quotation();
-//        BeanUtils.copyProperties(quotationVo.getQuotation(), quotation);
-//        quotation.preInsert(tokenModel);
-//        quotation.setQuotationid(quotationid);
-//        quotationMapper.insertSelective(quotation);
-//        List<Basicinformation> basicinformationlist = quotationVo.getBasicinformation();
-//        if (basicinformationlist != null) {
-//            int rowindex = 0;
-//            for (Basicinformation basicinformation : basicinformationlist) {
-//                rowindex = rowindex + 1;
-//                basicinformation.preInsert(tokenModel);
-//                basicinformation.setBasicinformationid(UUID.randomUUID().toString());
-//                basicinformation.setQuotationid(quotationid);
-//                basicinformation.setRowindex(rowindex);
-//                basicinformationMapper.insertSelective(basicinformation);
-//            }
-//        }
-//    }
+
+    @Override
+    public Quotation one(String quotationid) throws Exception {
+
+        return quotationMapper.selectByPrimaryKey(quotationid);
+    }
+
 }
