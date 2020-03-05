@@ -287,6 +287,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setPjnamejapanese(contractapp.getConjapanese());
                         petition.setClaimamount(number.getClaimamount());//請求金額
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
+                        petition.setRemarks(contractapp.getRemarks());//备注
                         PetitionMapper.insert(petition);
                     }
                 }

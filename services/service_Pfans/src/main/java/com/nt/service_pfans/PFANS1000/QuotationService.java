@@ -17,5 +17,4 @@ public interface QuotationService {
 
 //    void download(String quotationid, HttpServletResponse response) throws Exception ;
 
-    Quotation one(String quotationid) throws Exception;
 }
