@@ -5,6 +5,7 @@ import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ProjectName: BASF应急平台
@@ -29,6 +30,9 @@ public interface ProgramlistServices {
     void delete(Programlist programlist) throws Exception;
     //execl导入
     List<String> insert(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
+    //根据培训清单模板id获取培训资料(在线培训用)
+    Map<String, List<String>> videoOrPdfFile(String programlistid) throws Exception;
 
 
 }

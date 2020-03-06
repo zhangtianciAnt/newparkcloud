@@ -2,25 +2,19 @@ package com.nt.service_BASF.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.nt.dao_BASF.BASFUser;
 import com.nt.dao_BASF.Programlist;
-import com.nt.dao_BASF.Usergroup;
-import com.nt.dao_BASF.Usergroupdetailed;
-import com.nt.dao_BASF.VO.UsergroupVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_BASF.ProgramlistServices;
-import com.nt.service_BASF.UsergroupServices;
-import com.nt.service_BASF.mapper.BASFUserMapper;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
-import com.nt.service_BASF.mapper.UsergroupMapper;
-import com.nt.service_BASF.mapper.UsergroupdetailedMapper;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -29,13 +23,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.io.File;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -136,6 +127,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
     public void delete(Programlist programlist) throws Exception {
         programlistMapper.updateByPrimaryKeySelective(programlist);
     }
+
     /**
      * @param request
      * @param tokenModel
@@ -184,9 +176,9 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 //培训名称
                 programlist.setProgramname(value.get(0).toString());
                 //code分类
-                programlist.setProgramcode(code("BC038",value.get(1).toString()));
+                programlist.setProgramcode(code("BC038", value.get(1).toString()));
 
-                List<Programlist> pl =  programlistMapper.select(programlist);
+                List<Programlist> pl = programlistMapper.select(programlist);
 
                 Query query = new Query();
                 query.addCriteria(Criteria.where("userno").is(value.get(2).toString()));
@@ -197,11 +189,11 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     programlist.setProgramhard(_id);
                 }
                 //内部/外部
-                programlist.setInsideoutside(code("BC041",value.get(3).toString()));
+                programlist.setInsideoutside(code("BC041", value.get(3).toString()));
                 //强制/非强制
-                programlist.setMandatory(code("BC033",value.get(4).toString()));
+                programlist.setMandatory(code("BC033", value.get(4).toString()));
                 //培训形式（线上/线下）
-                programlist.setIsonline(code("BC032",value.get(5).toString()));
+                programlist.setIsonline(code("BC032", value.get(5).toString()));
                 //培训时长（即课时）
                 programlist.setThelength(Double.parseDouble(value.get(6).toString()));
                 //培训有效期（例：3个月）
@@ -222,13 +214,10 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 programlist.setApplydataurl("");
                 programlist.setTraindata("");
                 programlist.setTraindataurl("");
-                if(pl.size()>0)
-                {
+                if (pl.size() > 0) {
                     programlist.setProgramlistid(pl.get(0).getProgramlistid());
                     programlistMapper.updateByPrimaryKeySelective(programlist);
-                }
-                else
-                {
+                } else {
                     programlistMapper.insert(programlist);
                 }
 
@@ -242,13 +231,47 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
         }
     }
 
-    public String code(String pcode,String name){
+    public String code(String pcode, String name) {
         String code = "";
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode(pcode);
         dictionary.setValue1(name);
-        List<Dictionary> listDictionary =  dictionaryMapper.select(dictionary);
+        List<Dictionary> listDictionary = dictionaryMapper.select(dictionary);
         code = listDictionary.get(0).getCode();
         return code;
+    }
+
+    //根据培训清单模板id获取培训资料(在线培训用)
+    @Override
+    public Map<String, List<String>> videoOrPdfFile(String programlistid) throws Exception {
+        try {
+            Map<String, List<String>> filePath = new HashMap<String, List<String>>();
+            Programlist programlist = new Programlist();
+            programlist.setProgramlistid(programlistid);
+            programlist = programlistMapper.selectOne(programlist);
+            String url = programlist.getTraindataurl();
+            //存放视频路径
+            List<String> video = new ArrayList<>();
+            //存放pdf路径
+            List<String> pdf = new ArrayList<>();
+            if (StringUtils.isNotEmpty(url)) {
+                //名字和路径
+                String[] nameAndPath = url.substring(0, url.length() - 1).split(";");
+                //判断文件类型
+                for (String str : nameAndPath) {
+                    if (str.indexOf(".mp4") != -1) {
+                        video.add(str.split(",")[1]);
+                    } else if (str.indexOf(".pdf") != -1) {
+                        pdf.add(str.split(",")[1]);
+                    }
+                }
+                filePath.put("video", video);
+                filePath.put("pdf", pdf);
+                return filePath;
+            } else
+                return filePath;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -1,18 +1,13 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.TrainjoinlistServices;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,6 +30,10 @@ public class BASF21211Controller {
     @Autowired
     private TrainjoinlistServices trainjoinlistServices;
 
+    @Autowired
+    private ProgramlistServices programlistServices;
+
+    //更新培训参加人员
     @PostMapping("/upTrain")
     public ApiResult upTrain(@RequestBody Trainjoinlist trainjoinlist, HttpServletRequest request) throws Exception {
         if (trainjoinlist == null) {
@@ -43,5 +42,14 @@ public class BASF21211Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         trainjoinlistServices.updata(trainjoinlist, tokenModel);
         return ApiResult.success();
+    }
+
+    //根据培训清单模板id获取培训资料
+    @GetMapping("/videoOrPdfFile")
+    public ApiResult videoOrPdfFile(String programlistid, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(programlistid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(programlistServices.videoOrPdfFile(programlistid));
     }
 }
