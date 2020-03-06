@@ -11,4 +11,6 @@ public interface ContractService {
     public ContractVo One(String contract_id)throws  Exception;
 
     public void update(Contract contract, TokenModel tokenModel)throws  Exception;
+
+    public void create(Contract contract, TokenModel tokenModel)throws  Exception;
 }
