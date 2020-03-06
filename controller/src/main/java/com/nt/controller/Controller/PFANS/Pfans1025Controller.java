@@ -43,6 +43,7 @@ public class Pfans1025Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         AwardVo  av = awardService.selectById(award.getAward_id());
         String aa[] = award.getClaimdatetime().split(" ~ ");
+        String tableCom = award.getTablecommunt();
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(av.getAward().getCurrencyposition())) {
@@ -69,8 +70,11 @@ public class Pfans1025Controller {
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
         data.put("num",av.getNumbercounts());
-        data.put("statime",aa[0]);
-        data.put("endtime",aa[1]);
+        if(aa.length > 0){
+            data.put("statime",aa);
+        } else {
+            data.put("statime","");
+        }
         if(av.getAward().getMaketype().equals("4")){
             ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(受託)","juecaishu_shoutuo.xlsx",data,response);
         } else {
