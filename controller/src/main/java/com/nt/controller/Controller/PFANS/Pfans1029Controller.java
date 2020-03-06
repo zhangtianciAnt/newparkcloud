@@ -90,13 +90,5 @@ public class Pfans1029Controller {
     }
 
 
-    @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult createcontractApply(@RequestBody Contract contract, HttpServletRequest request) throws Exception {
-        if (contract == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        contractService.create(contract,tokenModel);
-        return ApiResult.success();
-    }
+
 }

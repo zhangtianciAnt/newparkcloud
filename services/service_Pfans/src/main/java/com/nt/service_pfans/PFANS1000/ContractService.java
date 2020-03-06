@@ -12,5 +12,4 @@ public interface ContractService {
 
     public void update(Contract contract, TokenModel tokenModel)throws  Exception;
 
-    public void create(Contract contract, TokenModel tokenModel)throws  Exception;
 }

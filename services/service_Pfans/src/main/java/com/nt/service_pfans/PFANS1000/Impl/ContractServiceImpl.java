@@ -52,8 +52,5 @@ public class ContractServiceImpl implements ContractService {
         contractMapper.updateByPrimaryKey(contract);
     }
 
-    @Override
-    public void create(Contract contract, TokenModel tokenModel) throws Exception {
-        contractMapper.insertSelective(contract);
-    }
+
 }
