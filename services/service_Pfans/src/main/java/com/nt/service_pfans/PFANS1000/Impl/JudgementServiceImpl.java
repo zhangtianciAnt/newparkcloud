@@ -40,7 +40,7 @@ public class JudgementServiceImpl implements JudgementService {
         //设备
         Unusedevice unusedevice = new Unusedevice();
 
-        unusedevice.setJudgement_id(judgementid);
+        unusedevice.setJudgementid(judgementid);
 
         Judgement judgement = judgementMapper.selectByPrimaryKey(judgementid);
 
@@ -61,14 +61,14 @@ public class JudgementServiceImpl implements JudgementService {
         List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
         if(unusedeviceList != null){
             Unusedevice unusedevice = new Unusedevice();
-            unusedevice.setJudgement_id(judgementid);
+            unusedevice.setJudgementid(judgementid);
             unusedeviceMapper.delete(unusedevice);
             int rowindex = 0;
             for(Unusedevice unu : unusedeviceList){
                 rowindex = rowindex + 1;
                 unu.preInsert(tokenModel);
                 unu.setUnusedeviceid(UUID.randomUUID().toString());
-                unu.setJudgement_id(judgementid);
+                unu.setJudgementid(judgementid);
                 unu.setRowindex(rowindex);
                 unusedeviceMapper.insertSelective(unu);
             }
@@ -91,7 +91,7 @@ public class JudgementServiceImpl implements JudgementService {
                 rowundex = rowundex + 1;
                 unu.preInsert(tokenModel);
                 unu.setUnusedeviceid(UUID.randomUUID().toString());
-                unu.setJudgement_id(judgementid);
+                unu.setJudgementid(judgementid);
                 unu.setRowindex(rowundex);
                 unusedeviceMapper.insertSelective(unu);
             }
