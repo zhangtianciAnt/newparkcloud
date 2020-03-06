@@ -45,8 +45,8 @@ public class pfans1038Controller {
     }
    //获取所有外驻人员
    @RequestMapping(value = "/getexpatriatesinfor", method = {RequestMethod.GET})
-   public ApiResult getExpatriatesinfor(HttpServletRequest request) throws Exception {
-       List<ExternalVo> externalVos =  personnelplanService.getExpatriatesinfor();
+   public ApiResult getExpatriatesinfor(HttpServletRequest request,@RequestParam String groupid) throws Exception {
+       List<ExternalVo> externalVos =  personnelplanService.getExpatriatesinfor(groupid);
        return ApiResult.success(externalVos);
    }
    //获取全部

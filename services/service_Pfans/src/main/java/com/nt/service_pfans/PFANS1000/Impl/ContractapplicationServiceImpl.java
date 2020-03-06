@@ -182,6 +182,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.setPjnamejapanese(contractapp.getConjapanese());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
                     contract.setClaimamount(contractapp.getClaimamount());
+                    contract.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
@@ -219,6 +220,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
                     award.setMaketype(rowindex);
+                    award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                     AwardMapper.insert(award);
                 }
@@ -247,6 +249,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setCurrencyformat(contractapp.getCurrencyposition());
                         napalm.setContracttype(contractapp.getContracttype());
                         napalm.setToto(contractapp.getVarto());
+                        napalm.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                         if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -288,6 +291,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setClaimamount(number.getClaimamount());//請求金額
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
                         petition.setRemarks(contractapp.getRemarks());//备注
+                        petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         PetitionMapper.insert(petition);
                     }
                 }
@@ -313,6 +317,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
                     award.setMaketype(rowindex);
+                    award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                     AwardMapper.insert(award);
                 }

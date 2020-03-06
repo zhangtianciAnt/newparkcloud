@@ -42,6 +42,8 @@ public class Pfans1025Controller {
     public void generateJxls(@RequestBody Award award, HttpServletRequest request,HttpServletResponse response) throws Exception {
         TokenModel tokenModel=tokenService.getToken(request);
         AwardVo  av = awardService.selectById(award.getAward_id());
+        String aa[] = award.getClaimdatetime().split(" ~ ");
+        String tableCom = award.getTablecommunt();
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(av.getAward().getCurrencyposition())) {
@@ -49,10 +51,30 @@ public class Pfans1025Controller {
                 av.getAward().setCurrencyposition(item.getValue1());
             }
         }
+        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
+        for(Dictionary item:planList){
+            if(item.getCode().equals(av.getAward().getPlan())) {
+
+                av.getAward().setPlan(item.getValue1());
+            }
+        }
+        List<Dictionary> valuationList = dictionaryService.getForSelect("HT005");
+        for(Dictionary item:valuationList){
+            if(item.getCode().equals(av.getAward().getValuation()) || item.getCode().equals(av.getAward().getIndividual())) {
+
+                av.getAward().setValuation(item.getValue1());
+                av.getAward().setIndividual(item.getValue1());
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
         data.put("num",av.getNumbercounts());
+        if(aa.length > 0){
+            data.put("statime",aa);
+        } else {
+            data.put("statime","");
+        }
         if(av.getAward().getMaketype().equals("4")){
             ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(受託)","juecaishu_shoutuo.xlsx",data,response);
         } else {

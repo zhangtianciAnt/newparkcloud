@@ -2,10 +2,12 @@ package com.nt.service_pfans.PFANS1000;
 
 
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
+import com.nt.dao_Pfans.PFANS1000.PersonPlanTable;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BusinessplanService {
 
@@ -17,4 +19,5 @@ public interface BusinessplanService {
 
     public void updateBusinessplanVo(BusinessplanVo businessplanvo, TokenModel tokenModel) throws Exception;
 
+    String[] getPersonPlan(int year, String groupid) throws Exception;
 }

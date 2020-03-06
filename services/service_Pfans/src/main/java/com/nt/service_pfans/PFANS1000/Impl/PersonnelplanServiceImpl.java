@@ -40,8 +40,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     }
 
     @Override
-    public List<ExternalVo> getExpatriatesinfor() {
-        List<ExternalVo> externalVos = personnelplanMapper.getExternal();
+    public List<ExternalVo> getExpatriatesinfor(String groupid) {
+        List<ExternalVo> externalVos = personnelplanMapper.getExternal(groupid);
         return externalVos;
     }
 

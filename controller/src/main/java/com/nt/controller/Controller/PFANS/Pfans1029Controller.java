@@ -34,17 +34,35 @@ public class Pfans1029Controller {
     public void downLoad(@RequestBody Contract contract, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
         ContractVo cv = contractService.One(contract.getContract_id());
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
-        for(Dictionary item:dictionaryList){
+        List<Dictionary> CurList = dictionaryService.getForSelect("HT006");
+        for(Dictionary item:CurList){
             if(item.getCode().equals(cv.getContract().getCurrencyposition())) {
 
                 cv.getContract().setCurrencyposition(item.getValue1());
             }
         }
+        List<Dictionary> redList = dictionaryService.getForSelect("PJ080");
+        for(Dictionary item:redList){
+            if(item.getCode().equals(cv.getContract().getRedelegate())) {
+
+                cv.getContract().setRedelegate(item.getValue1());
+            }
+        }
+        List<Dictionary> subList = dictionaryService.getForSelect("PJ010");
+        for(Dictionary item:subList){
+            if(item.getCode().equals(cv.getContract().getSubcontract())) {
+
+                cv.getContract().setSubcontract(item.getValue1());
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("cv",cv.getContract());
         data.put("ba1",cv.getNumberCount());
-        ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_技術契約書(受託)-jp(cn)","qiyueshu_shoutuo.xlsx",data,response);
+        if (cv.getContracttype().equals("HT008003") || cv.getContracttype().equals("HT008004") || cv.getContracttype().equals("HT008007") || cv.getContracttype().equals("HT008008")){
+            ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_役務契約書(受託)-jp(cn)","qiyueshu_yiwushoutuo.xlsx",data,response);
+        } else if (cv.getContracttype().equals("HT008001") || cv.getContracttype().equals("HT008002") || cv.getContracttype().equals("HT008005") || cv.getContracttype().equals("HT008006")){
+            ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_技術契約書(受託)-jp(cn)","qiyueshu_shoutuo.xlsx",data,response);
+        }
     }
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
@@ -74,4 +92,7 @@ public class Pfans1029Controller {
         contractService.update(contract,tokenModel);
         return ApiResult.success();
     }
+
+
+
 }
