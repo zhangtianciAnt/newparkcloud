@@ -78,7 +78,7 @@
         </if>
         <if test="devicename!=null">
             AND
-            devicename like #{devicename}
+            (devicename like #{devicename} OR detailedlocation like #{devicename})
         </if>
         ORDER BY
         d.CREATEON DESC

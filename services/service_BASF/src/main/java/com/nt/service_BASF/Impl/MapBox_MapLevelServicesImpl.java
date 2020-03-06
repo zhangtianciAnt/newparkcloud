@@ -1,7 +1,6 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.MapBox_MapLevel;
-import com.nt.dao_BASF.QuestionManage;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
 import com.nt.utils.StringUtils;
@@ -49,7 +48,8 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
     public List<MapBox_MapLevel> getall() throws Exception {
         MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
 
-        List<MapBox_MapLevel> moduleList  =  mapBox_mapLevelMapper.select(mapBox_mapLevel);
+//        List<MapBox_MapLevel> moduleList  =  mapBox_mapLevelMapper.select(mapBox_mapLevel);
+        List<MapBox_MapLevel> moduleList = mapBox_mapLevelMapper.getAll();
         // 生成树
         List<MapBox_MapLevel> result = getChildren(moduleList);
         return result;

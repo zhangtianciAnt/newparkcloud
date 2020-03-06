@@ -17,4 +17,6 @@ import java.util.List;
  */
 public interface MapBox_MapLevelMapper extends MyMapper<MapBox_MapLevel> {
     List<MapBox_MapLevel> selectChildrensStr(@Param("mapid") String mapid) throws Exception;
+
+    List<MapBox_MapLevel> getAll() throws Exception;
 }

@@ -33,4 +33,13 @@ WHERE
 	m.`STATUS` = "0" AND
 	m.cascids LIKE #{mapid}
     </select>
+
+    <select id="getAll" resultType="com.nt.dao_BASF.MapBox_MapLevel">
+       SELECT
+	*
+FROM
+	mapbox_maplevel
+ORDER BY
+	mapbox_maplevel.CREATEON ASC
+    </select>
 </mapper>
