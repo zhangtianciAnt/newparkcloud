@@ -3,6 +3,8 @@ package com.nt.service_pfans.PFANS5000.Impl;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
@@ -47,6 +49,46 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         return companyprojectsMapper.select(companyProjects);
     }
 
+    @Override
+    public LogmanageMentVo logmanageMentVo (CompanyProjects companyProjects) throws Exception {
+        double a= 0;
+        LogmanageMentVo logmanageMentVo = new LogmanageMentVo();
+
+        logmanageMentVo.setCompanyProjects(companyprojectsMapper.select(companyProjects));
+
+        for(CompanyProjects companyProjects1:logmanageMentVo.getCompanyProjects()){
+            LogManagement logManagement = new LogManagement();
+            logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
+            logmanageMentVo.setLogManagements(logManagementMapper.select(logManagement));
+            for(LogManagement logManagement1 : logmanageMentVo.getLogManagements()){
+                a = a+Double.parseDouble(logManagement1.getTime_start());
+            }
+
+        }
+
+
+
+//        List Result = new ArrayList<>();
+//        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
+//        for(CompanyProjects companyProjects1 : companyProjectsList){
+//            companyProjects1.getProject_name();
+//            companyProjects1.getCompanyprojects_id();
+//
+//            LogManagement logManagement = new LogManagement();
+//            logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
+//            List<LogManagement> logManagementList = logManagementMapper.select(logManagement);
+//            double a= 0;
+//            for(LogManagement logManagement1 : logManagementList){
+//                logManagement1.getStatus();
+//                a = a+Double.parseDouble(logManagement1.getTime_start());
+//            }
+//            Result.add(String.valueOf(a));
+//            Result.add(companyProjects1.getProject_name());
+//        }
+
+        return logmanageMentVo;
+    }
+
     //按id查询
     @Override
     public CompanyProjectsVo selectById(String companyprojectsid) throws Exception {
@@ -82,15 +124,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         staffVo.setLogmanagement(logManagementList);
         return staffVo;
     }
-//
-//    //附表查询
-//    @Override
-//    public List<Projectsystem> select(String companyprojectsid) throws Exception {
-//        Projectsystem projectsystem = new Projectsystem();
-//        projectsystem.setCompanyprojects_id(companyprojectsid);
-//        List<Projectsystem> proList = projectsystemMapper.select(projectsystem);
-//        return proList;
-//    }
+
 
     //更新
     @Override
@@ -208,9 +242,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(projectcontract);
             }
         }
-
-
-
     }
 
     /**
@@ -240,10 +271,22 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      * @return List<CompanyProjectsVo2>
      */
     @Override
-    public List<CompanyProjectsVo2> getPjList() throws Exception {
+    public List<CompanyProjectsVo2> getPjList(String flag) throws Exception {
         //项目表
         CompanyProjects companyProjects = new CompanyProjects();
         List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
+        if("0".equals(flag)){
+            companyProjectsList = companyProjectsList.stream().filter(item -> (
+                    "4".equals(item.getStatus()) ||
+                            "5".equals(item.getStatus()) ||
+                            "6".equals(item.getStatus()) ||
+                            "7".equals(item.getStatus()) ||
+                            "8".equals(item.getStatus())) ).collect(Collectors.toList());
+        }else{
+            companyProjectsList = companyProjectsList.stream().filter(item -> "9".equals(item.getStatus())).collect(Collectors.toList());
+        }
+
+
         //阶段信息表
         StageInformation stageInformation = new StageInformation();
         List<StageInformation> stageInformationList = stageinformationMapper.select(stageInformation);
@@ -303,5 +346,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             result.add(vo);
         }
         return result;
+    }
+
+    @Override
+    public List<CompanyProjectsVo3> getCompanyProject(String SyspName) throws Exception {
+
+        return companyprojectsMapper.getCompanyProject(SyspName);
     }
 }

@@ -40,7 +40,7 @@
 		group by p.COMPANYPROJECTS_ID
 		) pp
 		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
-		where c.`STATUS` != '1'
+		where c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6'
 		order by c.`CREATEON` desc
 	</select>
 
@@ -55,5 +55,13 @@
 		and a.status = '0'
 		where c.status = '0'
 		order by a.createon desc
+	</select>
+
+	<select id="getCompanyProject" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3">
+		select pp.project_name,pp.projecttype,pp.departmentid,pp.name,tt.mintime,tt.maxtime
+		from
+		(select cp.project_name,cp.projecttype,cp.departmentid,ps.name from companyprojects cp,projectsystem ps
+		where  cp.companyprojects_id = ps.companyprojects_id and ps.name = #{SyspName}) as pp,
+		(select min(lt.createon) mintime ,max(lt.createon) maxtime from logmanagement lt where createby = #{SyspName}) as tt
 	</select>
 </mapper>

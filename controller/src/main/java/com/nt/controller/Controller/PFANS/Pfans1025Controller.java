@@ -1,21 +1,30 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.AwardDetail;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.AwardService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/award")
@@ -25,6 +34,34 @@ public class Pfans1025Controller {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
+
+    @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
+    public void generateJxls(@RequestBody Award award, HttpServletRequest request,HttpServletResponse response) throws Exception {
+        TokenModel tokenModel=tokenService.getToken(request);
+        AwardVo  av = awardService.selectById(award.getAward_id());
+        String aa[] = award.getClaimdatetime().split(" ~ ");
+        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
+        for(Dictionary item:dictionaryList){
+            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
+
+                av.getAward().setCurrencyposition(item.getValue1());
+            }
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("aw",av.getAward());
+        data.put("alist",av.getAwardDetail());
+        data.put("num",av.getNumbercounts());
+        data.put("statime",aa[0]);
+        data.put("endtime",aa[1]);
+        if(av.getAward().getMaketype().equals("4")){
+            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(受託)","juecaishu_shoutuo.xlsx",data,response);
+        } else {
+            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
+        }
+    }
 
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(Award award,HttpServletRequest request) throws Exception{

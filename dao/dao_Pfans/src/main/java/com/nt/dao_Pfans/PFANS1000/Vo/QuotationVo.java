@@ -37,4 +37,5 @@ public class QuotationVo {
     private List<Fruit> fruit;
 
     private List<Contractnumbercount> numbercounts;
+
 }

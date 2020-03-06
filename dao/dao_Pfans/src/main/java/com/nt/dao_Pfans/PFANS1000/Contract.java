@@ -150,7 +150,7 @@ public class Contract extends BaseModel {
     private String redelegate;
 
     /**
-     * 再委託内容
+     * 再委託内容（和文）
      */
     @Column(name = "REDELEGATECONTENT")
     private String redelegatecontent;
@@ -166,4 +166,30 @@ public class Contract extends BaseModel {
      */
     @Column(name = "COMPANYLEADERCHINESE")
     private String companyleaderchinese;
+
+    /**
+     * その他特約事項（和文)
+     */
+    @Column(name = "OTHERTERMSJAPANESE")
+    private String othertermsjapanese;
+
+    /**
+     * その他特約事項（中文）
+     *
+     */
+    @Column(name = "OTHERTERMSCHINESE")
+    private String othertermschinese;
+
+    /**
+     * 再委託（中文）
+     */
+    @Column(name = "SUBCONTRACT")
+    private String subcontract;
+
+    /**
+     * 再委託内容（中文）
+     */
+    @Column(name = "SUBCONTRACTCONTENT")
+    private String subcontractcontent;
+
 }

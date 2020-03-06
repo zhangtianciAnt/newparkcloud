@@ -25,6 +25,9 @@ public class Invoice extends BaseModel {
     @Column(name = "PUBLICEXPENSE_ID")
     private String publicexpenseid;
 
+    @Column(name = "EVECTION_ID")
+    private String evectionid;
+
     @Column(name = "INVOICENUMBER")
     private String invoicenumber;
 

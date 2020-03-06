@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.Quotation;
 import com.nt.dao_Pfans.PFANS1000.Vo.QuotationVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface QuotationService {
@@ -14,6 +15,6 @@ public interface QuotationService {
 
     void update(QuotationVo quotationVo, TokenModel tokenModel) throws Exception;
 
-//    public void insert(QuotationVo quotationVo, TokenModel tokenModel)throws Exception;
+//    void download(String quotationid, HttpServletResponse response) throws Exception ;
 
 }
