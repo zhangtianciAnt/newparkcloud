@@ -83,4 +83,10 @@ public class Petition extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
+
 }
