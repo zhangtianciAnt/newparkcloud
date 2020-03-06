@@ -136,10 +136,9 @@ public class Award extends BaseModel {
     @Column(name = "TABLECOMMUNT")
     private String tablecommunt;
 
-
-
-
-
-
-
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
 }
