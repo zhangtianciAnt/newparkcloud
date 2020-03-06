@@ -12,13 +12,14 @@ import java.util.List;
 public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
-    List<LogmanagementConfirmVo> getTimestart();
-
     List<LogmanagementConfirmVo> getProjectList();
+
+    List<LogmanagementConfirmVo> getunProjectList(@Param("StrDate") String StrDate);
 
     List<LogmanagementConfirmVo> getCenterList();
 
-    List<LogmanagementStatusVo> getTimestart(@Param("project_id") String project_id);
+    List<LogmanagementStatusVo> getTimestart(@Param("project_id") String project_id,
+                            @Param("starttime") String starttime,@Param("endtime") String endtime);
 
     void updateTimestart(@Param("createby") String createby,@Param("confirmstatus") String confirmstatus,
                             @Param("starttime") String starttime,@Param("endtime") String endtime);

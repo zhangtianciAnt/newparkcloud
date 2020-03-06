@@ -192,4 +192,10 @@ public class Contract extends BaseModel {
     @Column(name = "SUBCONTRACTCONTENT")
     private String subcontractcontent;
 
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
+
 }
