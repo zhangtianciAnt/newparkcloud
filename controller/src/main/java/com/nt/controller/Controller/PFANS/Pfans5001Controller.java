@@ -119,8 +119,7 @@ public class Pfans5001Controller {
         if (createbylist == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        String createby = "'5d9db3ddc17b410f88165c28','5d9db445c17b410f88165c2a','5d9db556c17b410f88165c2e','5d9db83d9f25d42bf40917da','5d9ec2f8fa5658273c15ff55','5dcbd65717b134c94c267c88','5dedbf8cdcc0502b90fb3a30','5e0d72c36cf1380394b17409','5e0ee8a8c0911e1c24f1a57c','5e0eea33c0911e1c24f1a57e','5e158d1da76b6f1398044e1d','5e16fc07c5e52516b0ab5263','5e218b122c2b56787abe563c','5e23f7f99f25d407bcd1d9b2','5e54eaa379b4fe3170d145f5'";
-        String a = String.join(",", createbylist);
+        String createby = String.join(",", createbylist);
         return ApiResult.success(logmanagementService.getGroupTimestart(createby,starttime,endtime));
     }
 
