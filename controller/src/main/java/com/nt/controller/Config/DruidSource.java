@@ -1,9 +1,13 @@
 package com.nt.controller.Config;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.alibaba.druid.wall.WallConfig;
+import com.alibaba.druid.wall.WallFilter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -198,6 +202,11 @@ public class DruidSource {
     public DataSource dataSource()  {
         DruidDataSource datasource = new DruidDataSource();
 
+        //数据库批量修改
+        List filterList = new ArrayList();
+        filterList.add(wallFilter());
+        datasource.setProxyFilters(filterList);
+
         datasource.setUrl(dbUrl);
         datasource.setUsername(username);
         datasource.setPassword(password);
@@ -225,5 +234,23 @@ public class DruidSource {
 
 
         return datasource;
+    }
+
+
+    //数据库批量修改
+    @Bean
+    public WallFilter wallFilter() {
+        WallFilter wallFilter = new WallFilter();
+        wallFilter.setConfig(wallConfig());
+        return wallFilter;
+    }
+
+    //数据库批量修改
+    @Bean
+    public WallConfig wallConfig() {
+        WallConfig config = new WallConfig();
+        config.setMultiStatementAllow(true);
+        config.setNoneBaseStatementAllow(true);
+        return config;
     }
 }
