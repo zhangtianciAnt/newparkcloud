@@ -65,12 +65,6 @@ public class pfans1031Controller {
         Napalm na = napalmService.One(napalm.getNapalm_id());
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         List<Dictionary> dictionaryList1 = dictionaryService.getForSelect("HT012");
-        for(Dictionary item:dictionaryList){
-            if(item.getCode().equals(na.getCurrencyformat())) {
-
-                na.setCurrencyformat(item.getValue1());
-            }
-        }
         for(Dictionary item:dictionaryList1){
             if(item.getCode().equals(na.getToto())) {
 
@@ -80,12 +74,24 @@ public class pfans1031Controller {
         Map<String, Object> data = new HashMap<>();
         data.put("na",na);
         if(na.getContracttype().equals("HT008005") || na.getContracttype().equals("HT008006") || na.getContracttype().equals("HT008007") || na.getContracttype().equals("HT008008")){
-            ExcelOutPutUtil.OutPut(na.getContractnumber().toUpperCase()+"_"+"_納品書(国内受託)"+"_","napinshu_guonei.xlsx",data,response);
+            ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_"+na.getConjapanese().toUpperCase()+"_","napinshu_guonei.xlsx",data,response);
         } else if (na.getContracttype().equals("HT008001") || na.getContracttype().equals("HT008002") || na.getContracttype().equals("HT008003") || na.getContracttype().equals("HT008004")){
             if (na.getCurrencyformat().equals("HT006001")){
-                ExcelOutPutUtil.OutPut(na.getContractnumber().toUpperCase()+"_納品書(日本受託-RMB)","napinshu_rmb.xlsx",data,response);
+                for(Dictionary item:dictionaryList){
+                    if(item.getCode().equals(na.getCurrencyformat())) {
+
+                        na.setCurrencyformat(item.getValue1());
+                    }
+                }
+                ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_"+na.getConjapanese().toUpperCase()+"_","napinshu_rmb.xlsx",data,response);
             } else if (na.getCurrencyformat().equals("HT006002")){
-                ExcelOutPutUtil.OutPut(na.getContractnumber().toUpperCase()+"_納品書(日本受託-US$)","napinshu_us.xlsx",data,response);
+                for(Dictionary item:dictionaryList){
+                    if(item.getCode().equals(na.getCurrencyformat())) {
+
+                        na.setCurrencyformat(item.getValue1());
+                    }
+                }
+                ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_"+na.getConjapanese().toUpperCase()+"_","napinshu_us.xlsx",data,response);
             }
         }
     }
