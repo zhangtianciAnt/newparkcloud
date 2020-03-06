@@ -50,6 +50,21 @@ public class Pfans1025Controller {
                 av.getAward().setCurrencyposition(item.getValue1());
             }
         }
+        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
+        for(Dictionary item:planList){
+            if(item.getCode().equals(av.getAward().getPlan())) {
+
+                av.getAward().setPlan(item.getValue1());
+            }
+        }
+        List<Dictionary> valuationList = dictionaryService.getForSelect("HT005");
+        for(Dictionary item:valuationList){
+            if(item.getCode().equals(av.getAward().getValuation()) || item.getCode().equals(av.getAward().getIndividual())) {
+
+                av.getAward().setValuation(item.getValue1());
+                av.getAward().setIndividual(item.getValue1());
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
