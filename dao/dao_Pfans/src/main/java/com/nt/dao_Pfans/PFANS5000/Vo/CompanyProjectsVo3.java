@@ -23,7 +23,7 @@ public class CompanyProjectsVo3 {
     /**
      * 部门
      */
-    private String departmentid;
+    private String group_id;
 
     /**
      * 成果物状态
