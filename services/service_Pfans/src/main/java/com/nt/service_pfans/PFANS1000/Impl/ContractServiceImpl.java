@@ -51,4 +51,6 @@ public class ContractServiceImpl implements ContractService {
         contract.preUpdate(tokenModel);
         contractMapper.updateByPrimaryKey(contract);
     }
+
+
 }

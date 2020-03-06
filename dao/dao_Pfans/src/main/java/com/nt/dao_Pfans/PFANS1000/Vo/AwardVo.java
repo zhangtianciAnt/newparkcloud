@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,9 +19,11 @@ public class AwardVo {
 
     private Award award;
 
+    private ArrayList groupN;
+
     private List<AwardDetail> awardDetail;
 
-    private List<StaffDetail> staffDetails;
+    private List<StaffDetail> staffDetail;
 
     private List<Contractnumbercount> numbercounts;
 }

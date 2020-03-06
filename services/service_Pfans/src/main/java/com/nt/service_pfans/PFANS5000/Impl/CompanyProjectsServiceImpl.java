@@ -39,6 +39,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
 
+
+
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
         return companyprojectsMapper.select(companyprojects);
@@ -265,6 +267,17 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         return companyprojectsMapper.getList();
     }
 
+    @Override
+    public List<CompanyProjectsVo2> getList2(String flag) throws Exception {
+        if("0".equals(flag)){
+            return companyprojectsMapper.getList2();
+        }else{
+            return companyprojectsMapper.getList3();
+        }
+    }
+
+
+
     /**
      * PJ完了审批列表
      * @作者：zy
@@ -278,8 +291,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if("0".equals(flag)){
             companyProjectsList = companyProjectsList.stream().filter(item -> (
                     "4".equals(item.getStatus()) ||
-                            "5".equals(item.getStatus()) ||
-                            "6".equals(item.getStatus()) ||
                             "7".equals(item.getStatus()) ||
                             "8".equals(item.getStatus())) ).collect(Collectors.toList());
         }else{
