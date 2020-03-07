@@ -30,20 +30,21 @@ public class ContractthemeServiceImpl implements ContractthemeService {
 
     @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
-
-        if(contracttheme.get(0).getStatus().equals(AuthConstants.APPROVED_FLAG_YES) && contracttheme.get(0).getType().equals(AuthConstants.APPROVED_FLAG_NO)){
+        if(contracttheme.get(0).getStatus().equals(AuthConstants.APPROVED_FLAG_YES) && contracttheme.get(0).getType().equals(AuthConstants.LOG_TYPE_OPERATION)){
             int rowindex = 0;
             for(int i = 0; i < contracttheme.size(); i ++){
                 rowindex = rowindex + 1;
                 Contracttheme co = contracttheme.get(i);
-                co.setRowindex(String.valueOf(rowindex));
-                co.preUpdate(tokenModel);
-                contractthemeMapper.updateByPrimaryKey(co);
-
                 //添加新添加的数据(見通し)
                 co.preInsert(tokenModel);
+                co.setRowindex(String.valueOf(rowindex));
+                if(contracttheme.get(i).getContractthemeid().equals("")){
+                    co.setStatus(AuthConstants.APPROVED_FLAG_NO);
+                }
+                else{
+                    co.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                }
                 co.setContractthemeid(UUID.randomUUID().toString());
-                co.setType("1");
                 contractthemeMapper.insert(co);
             }
             return;
@@ -52,7 +53,6 @@ public class ContractthemeServiceImpl implements ContractthemeService {
         Contracttheme con = new Contracttheme();
         if(!StringUtils.isNullOrEmpty(contracttheme.get(0).getMonths())){
             con.setMonths(contracttheme.get(0).getMonths());
-            con.setType("1");
         }
         con.setYears(contracttheme.get(0).getYears());
         //数据库原有数据
