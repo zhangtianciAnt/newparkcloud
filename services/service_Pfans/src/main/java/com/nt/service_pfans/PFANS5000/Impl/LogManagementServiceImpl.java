@@ -86,7 +86,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<LogmanagementStatusVo> getGroupTimestart(String createby,String starttime,String endtime) throws Exception {
+    public List<LogmanagementStatusVo> getGroupTimestart(List<String> createby,String starttime,String endtime) throws Exception {
         return logmanagementmapper.getGroupTimestart(createby,starttime,endtime);
     }
 

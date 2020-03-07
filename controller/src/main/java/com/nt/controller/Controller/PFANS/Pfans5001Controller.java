@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -114,12 +116,14 @@ public class Pfans5001Controller {
      *
      * 查询共通工时确认
      */
-    @RequestMapping(value = "/getGroupTimestart", method = {RequestMethod.GET})
-    public ApiResult getGroupTimestart(List<String> createbylist, String starttime, String endtime, HttpServletRequest request) throws Exception {
-        if (createbylist == null) {
+    @RequestMapping(value = "/getGroupTimestart", method = {RequestMethod.POST})
+    public ApiResult getGroupTimestart(@RequestBody List<ArrayList> strData,HttpServletRequest request) throws Exception {
+        if (strData == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        String createby = String.join(",", createbylist);
+        List<String> createby = strData.get(0);
+        String starttime = strData.get(1).get(0).toString();
+        String endtime = strData.get(1).get(1).toString();
         return ApiResult.success(logmanagementService.getGroupTimestart(createby,starttime,endtime));
     }
 

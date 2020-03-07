@@ -63,7 +63,14 @@
 			from logmanagement
 			where confirmstatus = '0'
 			and project_id = ''
-			and createby in (#{createby})
+			<if test="createby != null and createby.size() > 0">
+				and (createby in
+				<foreach item="item" index="index" collection="createby"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				)
+			</if>
 			and date_format(LOG_DATE, '%Y-%m-%d')
 	    	between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
 			group by createby,log_date

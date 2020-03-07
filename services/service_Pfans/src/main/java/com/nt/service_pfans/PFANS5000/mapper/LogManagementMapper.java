@@ -21,7 +21,7 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogmanagementStatusVo> getTimestart(@Param("project_id") String project_id,
                             @Param("starttime") String starttime,@Param("endtime") String endtime);
 
-    List<LogmanagementStatusVo> getGroupTimestart(@Param("createby") String createby,
+    List<LogmanagementStatusVo> getGroupTimestart(@Param("createby") List<String> createby,
                                              @Param("starttime") String starttime,@Param("endtime") String endtime);
 
     void updateTimestart(@Param("createby") String createby,@Param("confirmstatus") String confirmstatus,
