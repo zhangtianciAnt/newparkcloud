@@ -34,6 +34,18 @@ public class BusinessCard extends BaseModel {
     private String userid;
 
     /**
+     * 申请人ID(英)
+     */
+    @Column(name = "EUSER_ID")
+    private String euser_id;
+
+    /**
+     * 部门(英)
+     */
+    @Column(name = "ECENTER")
+    private String ecenter;
+
+    /**
      * 所属グループID
      */
     @Column(name = "CENTER_ID")
@@ -56,6 +68,12 @@ public class BusinessCard extends BaseModel {
      */
     @Column(name = "OCCUPATIONAL")
     private String occupational;
+
+    /**
+     * 职称(英)
+     */
+    @Column(name = "EOCCUPATIONAL")
+    private String eoccupational;
 
     /**
      * 内线号

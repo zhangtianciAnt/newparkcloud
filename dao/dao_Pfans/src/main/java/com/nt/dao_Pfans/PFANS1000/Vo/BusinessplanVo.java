@@ -2,6 +2,7 @@ package com.nt.dao_Pfans.PFANS1000.Vo;
 
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 
+//import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Pieceworktotal;
 import com.nt.dao_Pfans.PFANS1000.Totalplan;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,11 @@ public class BusinessplanVo {
      * 人件費計画合計
      */
     private List<Pieceworktotal> pieceworktotal;
+
+    /**
+     * 事业计划详细
+     */
+//    private  List<Businessplandet> businessplandets;
 
     /**
      * 現時点人員

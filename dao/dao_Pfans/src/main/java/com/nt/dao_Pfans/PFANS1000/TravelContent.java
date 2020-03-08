@@ -30,10 +30,18 @@ public class TravelContent extends BaseModel {
     private String businessid;
 
     /**
-     * 申请日期
+     * 申请开始日期
      */
-    @Column(name = "TRAVELCONTENTDATE")
-    private Date travelcontentdate;
+    @Column(name = "TRAVELSTARTDATE")
+    private Date travelstartdate;
+
+
+
+    /**
+     * 申请结束日期
+     */
+    @Column(name = "TRAVELENDDATE")
+    private Date travelenddate;
 
 
     /**

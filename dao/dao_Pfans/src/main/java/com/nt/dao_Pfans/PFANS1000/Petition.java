@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -26,20 +27,21 @@ public class Petition extends BaseModel {
     @Column(name = "CONTRACTTYPE")
     private String contracttype;
 
-    @Column(name = "DEPOSITENGLISH")
-    private String depositenglish;
+    @Column(name = "CUSTOENGLISH")
+    private String custoenglish;
 
-    @Column(name = "DEPOSITCHINESE")
-    private String depositchinese;
+    @Column(name = "CUSTOCHINESE")
+    private String custochinese;
 
-    @Column(name = "DEREENGLISH")
-    private String dereenglish;
+    @Column(name = "RESPONERGLISH")
+    private String responerglish;
 
-    @Column(name = "PRPLACEENGLISH")
-    private String prplaceenglish;
+    @Column(name = "PLACEENGLISH")
+    private String placeenglish;
 
-    @Column(name = "PRPLACECHINESE")
-    private String prplacechinese;
+    @Column(name = "PLACECHINESE")
+    private String placechinese;
+
 
     @Column(name = "PJNAMEJAPANESE")
     private String pjnamejapanese;
@@ -47,20 +49,27 @@ public class Petition extends BaseModel {
     @Column(name = "PJNAMECHINESE")
     private String pjnamechinese;
 
-    @Column(name = "DEVELOPDATE")
-    private String developdate;
+    @Column(name = "ClAIMDATETIME")
+    private String claimdatetime;
+
+    @Column(name = "OPENINGDATE")
+    private Date openingdate;
+
+
+    @Column(name = "ENDDATE")
+    private Date enddate;
 
     @Column(name = "BUSINESSCODE")
     private String businesscode;
 
-    @Column(name = "DELIVERYDATE")
-    private String deliverydate;
+    @Column(name = "DELIVERYFINSHDATE")
+    private Date  deliveryfinshdate;
 
-    @Column(name = "CLAIMONEY")
-    private String claimoney;
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
 
-    @Column(name = "DEPOSITPHONE")
-    private String depositphone;
+    @Column(name = "RESPONPHONE")
+    private String responphone;
 
     @Column(name = "CLAIMNUMBER")
     private String claimnumber;
@@ -68,6 +77,16 @@ public class Petition extends BaseModel {
     @Column(name = "CLAIMTYPE")
     private String claimtype;
 
-    @Column(name = "CURRENCYFORMAT")
-    private String currencyformat;
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
+
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
+
 }

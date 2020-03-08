@@ -48,6 +48,9 @@ public class AwardDetail extends BaseModel {
     @Column(name = "AWARDMONEY")
     private String awardmoney;
 
+    @Column(name = "PROJECTS")
+    private String projects;
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 

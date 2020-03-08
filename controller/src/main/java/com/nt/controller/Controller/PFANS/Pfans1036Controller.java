@@ -10,10 +10,7 @@ import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,12 +39,12 @@ public class Pfans1036Controller {
     }
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult insertBusinessplanVo(@RequestBody BusinessplanVo businessplanVo, HttpServletRequest request) throws Exception {
-        if (businessplanVo == null) {
+    public ApiResult insertBusinessplanVo(@RequestBody Businessplan businessplan, HttpServletRequest request) throws Exception {
+        if (businessplan == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        businessplanService.insertBusinessplanVo(businessplanVo, tokenModel);
+        businessplanService.insertBusinessplan(businessplan, tokenModel);
         return ApiResult.success();
     }
 
@@ -59,6 +56,14 @@ public class Pfans1036Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         businessplanService.updateBusinessplanVo(businessplanVo, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getpersonplan", method = {RequestMethod.GET})
+    public ApiResult getPersonPlan(@RequestParam int year,@RequestParam String groupid, HttpServletRequest request) throws Exception {
+        if (groupid == "") {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(businessplanService.getPersonPlan(year, groupid));
     }
 
 }

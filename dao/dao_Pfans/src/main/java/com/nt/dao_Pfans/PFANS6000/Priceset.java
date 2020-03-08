@@ -41,7 +41,7 @@ public class Priceset extends BaseModel {
      *卒業年
      */
     @Column(name = "GRADUATION")
-    private String graduation;
+    private Date graduation;
 
     /**
      *会社名

@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -7,10 +8,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
 import com.nt.utils.ApiResult;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,18 +57,60 @@ public class LogManagementServiceImpl implements LogManagementService {
         query.addCriteria(Criteria.where("userid").is(logmanagement.getCreateby()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
     }
 
 
     @Override
     public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
-
         return logmanagementmapper.select(logmanagement);
     }
 
     @Override
+    public List<LogmanagementConfirmVo> getProjectList(String StrFlg,String strDate) throws Exception {
+        List<LogmanagementConfirmVo> Result = new ArrayList<LogmanagementConfirmVo>();
+        if(StrFlg.equals("1")){
+            Result = logmanagementmapper.getProjectList();
+        }
+        else{
+            Result = logmanagementmapper.getunProjectList(strDate);
+        }
+
+        return Result;
+    }
+
+    @Override
+    public List<LogmanagementStatusVo> getTimestart(String project_id,String starttime,String endtime) throws Exception {
+        return logmanagementmapper.getTimestart(project_id,starttime,endtime);
+    }
+
+    @Override
+    public List<LogmanagementStatusVo> getGroupTimestart(List<String> createby,String starttime,String endtime) throws Exception {
+        return logmanagementmapper.getGroupTimestart(createby,starttime,endtime);
+    }
+
+    @Override
+    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo) throws Exception {
+        List<LogManagement> loglist = LogmanagementStatusVo.getLogmanagement();
+        String confirmstatus = LogmanagementStatusVo.getConfirmstatus();
+        String starttime = LogmanagementStatusVo.getStarttime();
+        String endtime = LogmanagementStatusVo.getEndtime();
+        if(loglist.size() > 0){
+            for(int i = 0;i < loglist.size(); i++){
+                String createby = loglist.get(i).getCreateby();
+                logmanagementmapper.updateTimestart(createby,confirmstatus,starttime,endtime);
+            }
+        }
+    }
+    @Override
+    public List<LogManagement> gettlist() throws Exception {
+        return logmanagementmapper.gettlist();
+    }
+
+    @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
+        logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
         logmanagementmapper.updateByPrimaryKey(logmanagement);
     }
@@ -74,6 +120,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         LogManagement log = logmanagementmapper.selectByPrimaryKey(logmanagement_id);
         return log;
     }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
@@ -140,6 +187,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         logmanagement.setCreateby(customerInfo.getUserid());
+                        logmanagement.setOwner(customerInfo.getUserid());
                         logmanagement.setJobnumber(value.get(0).toString());
                     }
                     if (customerInfo == null) {
@@ -147,6 +195,8 @@ public class LogManagementServiceImpl implements LogManagementService {
                         Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
                         continue;
                     }
+                    //确认状态
+                    logmanagement.setConfirmstatus("0");
                     logmanagement.preInsert(tokenModel);
                     PersonalProjects personalprojects = new PersonalProjects();
                     List<PersonalProjects> personalprojectsList = personalprojectsMapper.select(personalprojects);
@@ -217,9 +267,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
-
     }
-
 
 }
 

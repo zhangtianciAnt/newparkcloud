@@ -1,9 +1,6 @@
 package com.nt.dao_Pfans.PFANS1000.Vo;
 
-import com.nt.dao_Pfans.PFANS1000.OtherDetails;
-import com.nt.dao_Pfans.PFANS1000.PublicExpense;
-import com.nt.dao_Pfans.PFANS1000.PurchaseDetails;
-import com.nt.dao_Pfans.PFANS1000.TrafficDetails;
+import com.nt.dao_Pfans.PFANS1000.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,4 +28,8 @@ public class PublicExpenseVo {
      * 其他费用明细
      * */
     private List<OtherDetails> otherdetails;
+    /*
+     * 发票信息
+     * */
+    private List<Invoice> invoice;
 }

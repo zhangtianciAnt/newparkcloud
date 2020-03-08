@@ -243,6 +243,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String budgetunit;
         /**
+         * 个人编码
+         */
+        private String personalcode;
+        /**
          * 職務
          */
         private String post;
@@ -328,6 +332,11 @@ public class CustomerInfo extends BaseModel {
          * 退职日
          */
         private String resignation_date;
+
+        /**
+         * 退职理由
+         */
+        private String reason2;
 
         /**
          * 离职申请

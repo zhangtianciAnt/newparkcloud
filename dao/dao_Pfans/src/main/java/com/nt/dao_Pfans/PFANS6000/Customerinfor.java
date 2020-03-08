@@ -143,4 +143,10 @@ public class Customerinfor extends BaseModel {
      */
     @Column(name = "UPLOADFILE")
     private String uploadfile;
+
+    /**
+     * 所属公司
+     */
+    @Column(name = "THECOMPANY")
+    private String thecompany;
 }

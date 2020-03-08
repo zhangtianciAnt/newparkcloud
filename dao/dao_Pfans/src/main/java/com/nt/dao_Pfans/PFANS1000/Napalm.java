@@ -78,7 +78,7 @@ public class Napalm extends BaseModel {
      * 開発開始日
      */
     @Column(name = "OPENINGDATE")
-    private String openingdate;
+    private Date openingdate;
 
     /**
      * 開発満了日
@@ -102,19 +102,19 @@ public class Napalm extends BaseModel {
      * 納品作成日
      */
     @Column(name = "DELIVERYFINSHDATE")
-    private String deliveryfinshdate;
+    private Date deliveryfinshdate;
 
     /**
      * 納品予定日
      */
     @Column(name = "DELIVERYDATE")
-    private String deliverydate;
+    private Date deliverydate;
 
     /**
      * 検収完了日
      */
     @Column(name = "COMPLETIONDATE")
-    private String completiondate;
+    private Date completiondate;
 
     /**
      * 通貨形式
@@ -169,5 +169,11 @@ public class Napalm extends BaseModel {
      */
     @Column(name = "DETERMINATION")
     private String determination;
+
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
 
 }

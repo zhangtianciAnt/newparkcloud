@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper">
+
+	<select id="getList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+		select
+		c.`COMPANYPROJECTS_ID`,
+		c.`PROJECT_NAME` as PROJECT_NAME,
+		c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+		c.`NUMBERS` as NUMBERS,
+		s.`PHASE` as phase,
+		s.`PRODUCTSTATUS` as productstatus,
+		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+		when s.`COMPANYPROJECTS_ID` != "" then '1'
+		ELSE '' END as phasestatus,
+		s.`ESTIMATEDWORK` as estimatedwork,
+		s.`ACTUALWORK` as actualwork,
+		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
+		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
+		else '2' end as contractstatus,
+		c.`STATUS` as status,
+		c.`COMPANYPROJECTS_ID`,
+		c.ENTRUST as ENTRUST,
+		c.WORK as WORK,
+		c.LEADERID as LEADERID,
+		c.FIELD as FIELD
+		from `companyprojects` c
+		left outer join `stageinformation` s
+		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+		and s.status = '0'
+		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
+		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
+		left join (
+		select p.COMPANYPROJECTS_ID,
+		max(substring(a.CLAIMDATETIME,1,10)) as stime,
+		min(substring(a.CLAIMDATETIME,14,10)) as etime
+		from projectcontract p
+		inner join contractapplication a
+		on a.contractnumber = p.CONTRACT
+		and a.status = '0' and p.status = '0'
+		group by p.COMPANYPROJECTS_ID
+		) pp
+		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+		where c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6'
+		order by c.`CREATEON` desc
+	</select>
+
+    <select id="getList2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+		select
+		c.`COMPANYPROJECTS_ID`,
+		c.`PROJECT_NAME` as PROJECT_NAME,
+		c.`NUMBERS` as NUMBERS,
+		s.`PHASE` as phase,
+		s.`PRODUCTSTATUS` as productstatus,
+		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+		when s.`COMPANYPROJECTS_ID` != "" then '1'
+		ELSE '' END as phasestatus,
+		s.`ESTIMATEDWORK` as estimatedwork,
+		s.`ACTUALWORK` as actualwork,
+		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
+		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
+		else '2' end as contractstatus,
+		c.`STATUS` as status,
+		c.`COMPANYPROJECTS_ID`,
+		c.ENTRUST as ENTRUST,
+		c.WORK as WORK,
+		c.LEADERID as LEADERID,
+		c.FIELD as FIELD
+		from `companyprojects` c
+		left outer join `stageinformation` s
+		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+		and s.status = '0'
+		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
+		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
+		left join (
+		select p.COMPANYPROJECTS_ID,
+		max(substring(a.CLAIMDATETIME,1,10)) as stime,
+		min(substring(a.CLAIMDATETIME,14,10)) as etime
+		from projectcontract p
+		inner join contractapplication a
+		on a.contractnumber = p.CONTRACT
+		and a.status = '0' and p.status = '0'
+		group by p.COMPANYPROJECTS_ID
+		) pp
+		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+		where
+		c.`STATUS` = '4' or c.`STATUS` = '7' or c.`STATUS` = '8'
+		order by c.`CREATEON` desc
+	</select>
+
+    <select id="getList3" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+		select
+		c.`COMPANYPROJECTS_ID`,
+		c.`PROJECT_NAME` as PROJECT_NAME,
+		c.`NUMBERS` as NUMBERS,
+		s.`PHASE` as phase,
+		s.`PRODUCTSTATUS` as productstatus,
+		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+		when s.`COMPANYPROJECTS_ID` != "" then '1'
+		ELSE '' END as phasestatus,
+		s.`ESTIMATEDWORK` as estimatedwork,
+		s.`ACTUALWORK` as actualwork,
+		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
+		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
+		else '2' end as contractstatus,
+		c.`STATUS` as status,
+		c.`COMPANYPROJECTS_ID`,
+		c.ENTRUST as ENTRUST,
+		c.WORK as WORK,
+		c.LEADERID as LEADERID,
+		c.FIELD as FIELD
+		from `companyprojects` c
+		left outer join `stageinformation` s
+		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+		and s.status = '0'
+		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
+		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
+		left join (
+		select p.COMPANYPROJECTS_ID,
+		max(substring(a.CLAIMDATETIME,1,10)) as stime,
+		min(substring(a.CLAIMDATETIME,14,10)) as etime
+		from projectcontract p
+		inner join contractapplication a
+		on a.contractnumber = p.CONTRACT
+		and a.status = '0' and p.status = '0'
+		group by p.COMPANYPROJECTS_ID
+		) pp
+		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+		where
+		c.`STATUS` = '9'
+		order by c.`CREATEON` desc
+	</select>
+
+	<select id="getListVo2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+		select a.CONTRACTNUMBER as contractnumber,c.COMPANYPROJECTS_ID as companyprojects_id
+		from companyprojects c
+		left outer join `projectcontract` p
+		on c.`COMPANYPROJECTS_ID` = p.`COMPANYPROJECTS_ID`
+		and p.status = '0'
+		left outer join contractapplication a
+		on a.CONTRACTAPPLICATION_ID = p.CONTRACT
+		and a.status = '0'
+		where c.status = '0'
+		order by a.createon desc
+	</select>
+
+	<select id="getCompanyProject" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3">
+		select pp.project_name,pp.projecttype,pp.group_id,pp.name,tt.mintime,tt.maxtime
+		from
+		(select cp.project_name,cp.projecttype,cp.group_id,ps.name from companyprojects cp,projectsystem ps
+		where  cp.companyprojects_id = ps.companyprojects_id and ps.name = #{SyspName}) as pp,
+		(select min(lt.createon) mintime ,max(lt.createon) maxtime from logmanagement lt where createby = #{SyspName}) as tt
+	</select>
+</mapper>

@@ -27,17 +27,17 @@ public class Award extends BaseModel {
     @Column(name = "CONTRACTTYPE")
     private String contracttype;
 
-    @Column(name = "ENTRUSTJAPANESE")
-    private String entrustjapanese;
+    @Column(name = "CUSTOJAPANESE")
+    private String custojapanese;
 
-    @Column(name = "ENTRUSTCHINESE")
-    private String entrustchinese;
+    @Column(name = "CUSTOCHINESE")
+    private String custochinese;
 
-    @Column(name = "ENPLACEJAPANESE")
-    private String enplacejapanese;
+    @Column(name = "PLACEJAPANESE")
+    private String placejapanese;
 
-    @Column(name = "ENPLACECHINESE")
-    private String enplacechinese;
+    @Column(name = "PLACECHINESE")
+    private String placechinese;
 
     @Column(name = "DEPLOYMENT")
     private String deployment;
@@ -48,14 +48,14 @@ public class Award extends BaseModel {
     @Column(name = "PJNAMECHINESE")
     private String pjnamechinese;
 
-    @Column(name = "DEVELOPDATE")
-    private String developdate;
+    @Column(name = "CLAIMDATETIME")
+    private String claimdatetime;
 
     @Column(name = "DELIVERYDATE")
     private Date deliverydate;
 
-    @Column(name = "CURRENCYFORMAT")
-    private String currencyformat;
+    @Column(name = "CURRENCYPOSITION")
+    private String currencyposition;
 
     @Column(name = "CLAIMAMOUNT")
     private String claimamount;
@@ -96,4 +96,49 @@ public class Award extends BaseModel {
     @Column(name = "PLAN")
     private String plan;
 
+
+    @Column(name = "TOTAL")
+    private String total;
+
+    @Column(name = "NUMBER")
+    private String number;
+
+    @Column(name = "NUMBERMOTH")
+    private String numbermoth;
+
+    @Column(name = "PRICE")
+    private String price;
+
+    @Column(name = "RATE")
+    private String rate;
+
+    @Column(name = "OUTSOURCING")
+    private String outsourcing;
+
+    @Column(name = "PJRATE")
+    private String pjrate;
+
+    @Column(name = "MAKETYPE")
+    private String maketype;
+
+    @Column(name = "EXCHANGERATE")
+    private String exchangerate;
+
+    @Column(name = "SARMB")
+    private String sarmb;
+
+    @Column(name = "DRAFTINGDATE")
+    private Date draftingdate;
+
+    @Column(name = "SCHEDULEDDATE")
+    private Date scheduleddate;
+
+    @Column(name = "TABLECOMMUNT")
+    private String tablecommunt;
+
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
 }

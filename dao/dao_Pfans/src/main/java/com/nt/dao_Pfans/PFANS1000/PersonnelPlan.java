@@ -15,10 +15,15 @@ import javax.persistence.Table;
 @Table(name = "personnelplan")
 public class PersonnelPlan extends BaseModel {
     private static final long serialVersionUID = 1L;
+
     @Id
     private String personnelplanid;
     //年份
     private int years;
+    //centerid
+    private String centerid;
+    //groupid
+    private String groupid;
     //种类
     private int type;
     //现实点人员
