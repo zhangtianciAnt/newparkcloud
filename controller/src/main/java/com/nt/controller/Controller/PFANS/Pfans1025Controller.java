@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.AwardDetail;
@@ -12,8 +11,6 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,13 +40,17 @@ public class Pfans1025Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         AwardVo  nu = awardService.selectById(av.getAward().getAward_id());
         String aa[] = av.getAward().getClaimdatetime().split(" ~ ");
-//        ArrayList<String> gn = av.setGroupN(av.getAward().getUser_id());
-        ArrayList<String> gn = av.getGroupN();
-//        for(String grn :gn ){
-//            if(grn.getGroupid.equals(av.getAward().getUser_id())){
-//                av.getAward().getUser_id(grn.getGroupname);
-//            }
-//        }
+       List<Map<String,String>> grouplist = (List<Map<String,String>>)av.getGroupN();
+       List<AwardDetail> adlist = av.getAwardDetail();
+        for (Map<String,String> user : grouplist) {
+            String groupid = user.get("groupid");
+            String groupname = user.get("groupname");
+            for(AwardDetail grn :adlist){
+                if(groupid.equals(grn.getDepart())){
+                    grn.setDepart(groupname);
+                }
+            }
+        }
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(av.getAward().getCurrencyposition())) {
