@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.ContractthemeMapper">
+	<select id="getContractthemeList" resultType="com.nt.dao_Pfans.PFANS1000.Contracttheme">
+		select co.*
+		from contracttheme co
+		where not exists (
+		select * from contracttheme con
+		where con.MONTHS= co.MONTHS
+		and con.status != co.status
+		and con.TYPE = #{type}
+		AND con.YEARS = #{years}
+		AND con.MONTHS IS NOT NULL
+		)
+		AND co.MONTHS IS NOT NULL
+		and co.type = #{type}
+		order by  co.CREATEON desc
+	</select>
+</mapper>

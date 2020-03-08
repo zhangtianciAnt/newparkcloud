@@ -25,17 +25,52 @@ public class ContractthemeServiceImpl implements ContractthemeService {
 
     @Override
     public List<Contracttheme> get(Contracttheme contracttheme) throws Exception {
-        return contractthemeMapper.select(contracttheme);
+        List<Contracttheme> colist = new ArrayList<Contracttheme>();
+        colist = contractthemeMapper.select(contracttheme);
+        if(colist.size() == 0){
+            if(contracttheme.getType().equals("2") || contracttheme.getType().equals("4")){
+                colist = contractthemeMapper.getContractthemeList(contracttheme.getType(),contracttheme.getYears());
+                if(colist.size() > 0){
+                    Contracttheme co = new Contracttheme();
+                    co.setType(colist.get(0).getType());
+                    co.setYears(colist.get(0).getYears());
+                    co.setMonths(colist.get(0).getMonths());
+                    colist = contractthemeMapper.select(co);
+                }
+            }
+        }
+        colist = colist.stream().sorted(Comparator.comparing(Contracttheme::getRowindex)).collect(Collectors.toList());
+        return colist;
     }
 
     @Override
     public void insert(List<Contracttheme> contracttheme, TokenModel tokenModel) throws Exception {
-        if(contracttheme.get(0).getStatus().equals(AuthConstants.APPROVED_FLAG_YES) && contracttheme.get(0).getType().equals(AuthConstants.LOG_TYPE_OPERATION)){
+        if(contracttheme.get(0).getStatus().equals(AuthConstants.APPROVED_FLAG_YES) &&
+                (contracttheme.get(0).getType().equals("2") || contracttheme.get(0).getType().equals("4"))){
+            //进行中
+            if(!StringUtils.isNullOrEmpty(contracttheme.get(0).getContractthemeid())){
+                Contracttheme con = new Contracttheme();
+                con.setContractthemeid(contracttheme.get(0).getContractthemeid());
+                //数据库原有数据
+                List<Contracttheme> conList = contractthemeMapper.select(con);
+                if(conList.size() > 0){
+                    if(conList.get(0).getStatus().equals(AuthConstants.WORK_FLAG_NO)){
+                        for(int i = 0; i < contracttheme.size(); i ++){
+                            Contracttheme co = contracttheme.get(i);
+                            //更新的数据(見通し)审批结束
+                            co.preUpdate(tokenModel);
+                            co.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                            contractthemeMapper.updateByPrimaryKey(co);
+                        }
+                        return;
+                    }
+                }
+            }
             int rowindex = 0;
             for(int i = 0; i < contracttheme.size(); i ++){
                 rowindex = rowindex + 1;
                 Contracttheme co = contracttheme.get(i);
-                //添加新添加的数据(見通し)
+                //新添加的数据(見通し)
                 co.preInsert(tokenModel);
                 co.setRowindex(String.valueOf(rowindex));
                 if(contracttheme.get(i).getContractthemeid().equals("")){
