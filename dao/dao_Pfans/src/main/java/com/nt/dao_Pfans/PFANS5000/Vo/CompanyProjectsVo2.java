@@ -16,6 +16,11 @@ public class CompanyProjectsVo2 {
     private String project_name;
 
     /**
+     * 项目名称
+     */
+    private String project_namejp;
+
+    /**
      * 项目编号
      */
     private String numbers;
