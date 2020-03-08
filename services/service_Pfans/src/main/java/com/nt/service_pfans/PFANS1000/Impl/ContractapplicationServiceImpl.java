@@ -263,6 +263,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         }
 
                         napalmMapper.insert(napalm);
+                        //更新纳品进步状况=纳品完了
+                        contractapp.preUpdate(tokenModel);
+                        contractapp.setDeliverycondition("HT009001");
+                        contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
                     }
                 }
                 //請求書作成
@@ -293,6 +297,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setRemarks(contractapp.getRemarks());//备注
                         petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         PetitionMapper.insert(petition);
+                        //更新请求进步状况=請求完了
+                        contractapp.preUpdate(tokenModel);
+                        contractapp.setClaimcondition("HT011001");
+                        contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
                     }
                 }
                 //決裁書作成(委託)

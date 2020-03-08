@@ -6,6 +6,7 @@
 		select
 		c.`COMPANYPROJECTS_ID`,
 		c.`PROJECT_NAME` as PROJECT_NAME,
+		c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
 		c.`NUMBERS` as NUMBERS,
 		s.`PHASE` as phase,
 		s.`PRODUCTSTATUS` as productstatus,

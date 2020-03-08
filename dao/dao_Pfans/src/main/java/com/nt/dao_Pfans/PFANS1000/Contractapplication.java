@@ -198,4 +198,10 @@ public class Contractapplication extends BaseModel {
     @Column(name = "ROWINDEX")
     private String rowindex;
 
+    @Column(name = "THEME")
+    private String theme;
+
+    @Column(name = "TEMAID")
+    private String temaid;
+
 }
