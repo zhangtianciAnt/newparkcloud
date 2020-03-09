@@ -66,6 +66,12 @@ public class Business extends BaseModel {
     private String level;
 
     /**
+     * 项目名称
+     */
+    @Column(name = "PROJECTNAME")
+    private String projectname;
+
+    /**
      * 出張先会社（出差公司）
      */
     @Column(name = "CONDOMINIUMCOMPANY")
