@@ -42,8 +42,14 @@ public class PublicExpense extends BaseModel {
     @Column(name = "MODULEID")
     private String moduleid;
 
+    @Column(name = "PROJECT_ID")
+    private String project_id;
+
     @Column(name = "ACCOUNTNUMBER")
     private String accountnumber;
+
+    @Column(name = "JUDGEMENT_NAME")
+    private String judgement_name;
 
     @Column(name = "REIMBURSEMENTDATE")
     private Date reimbursementdate;
