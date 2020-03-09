@@ -121,7 +121,6 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             programlist.setProgramlistid(startprogram.getProgramlistid());
                             programlist = programlistMapper.selectOne(programlist);
                             programlist.setThispeople(String.valueOf(Integer.parseInt(programlist.getThispeople()) + 1));
-                            programlist.setNumberpeople(String.valueOf(Integer.parseInt(programlist.getNumberpeople()) + 1));
                             programlistMapper.updateByPrimaryKeySelective(programlist);
                         } catch (Exception e) {
                             return trainjoinlist.getTrainjoinlistid();
@@ -225,6 +224,20 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         trainjoinlist.setStatus("0");
         trainjoinlist.setThroughtype("通过");
         return trainjoinlistMapper.selectCount(trainjoinlist);
+    }
+
+    //在线培训用，通过和不通过人数的和
+    @Override
+    public int throughAndNoThrough(String startprogramid) throws Exception {
+        Trainjoinlist trainjoinlist = new Trainjoinlist();
+        trainjoinlist.setStartprogramid(startprogramid);
+        trainjoinlist.setJointype("正常");
+        trainjoinlist.setStatus("0");
+        trainjoinlist.setThroughtype("通过");
+        int through = trainjoinlistMapper.selectCount(trainjoinlist);
+        trainjoinlist.setThroughtype("未通过");
+        int NoThrough = trainjoinlistMapper.selectCount(trainjoinlist);
+        return through + NoThrough;
     }
 
     //excel成绩文档导入

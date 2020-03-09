@@ -35,6 +35,11 @@ public class StartprogramVo {
     private int throughjoinnumber;
 
     /**
+     * 通过和不通过的人数和
+     */
+    private int throughAndNoThrough;
+
+    /**
      * 培训列表
      */
     private Startprogram startprogram;

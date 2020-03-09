@@ -50,6 +50,9 @@ public interface TrainjoinlistServices {
     //根据培训列表主键获取实际参加人数
     int actualjoinnumber(String startprogramid) throws Exception;
 
+    //在线培训用，通过和不通过人数的和
+    int throughAndNoThrough(String startprogramid) throws Exception;
+
     //根据培训主键获取实际参加通过的人数
     int throughjoinnumber(String startprogramid) throws Exception;
 

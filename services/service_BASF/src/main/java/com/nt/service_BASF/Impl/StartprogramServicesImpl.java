@@ -98,7 +98,8 @@ public class StartprogramServicesImpl implements StartprogramServices {
         programlist.setLastdate(startprogram.getActualstartdate());
         programlist.setThisdate(null);
         programlist.setNumber(String.valueOf(Integer.parseInt(programlist.getNumber()) + 1));
-        programlist.setNumberpeople(programlist.getNumberpeople() + trainjoinlistServices.actualjoinnumber(startprogramid));
+        programlist.setNumberpeople(String.valueOf(Integer.parseInt(programlist.getNumberpeople()) + trainjoinlistServices.actualjoinnumber(startprogramid)));
+        programlist.setThispeople("0");
         programlist.setProgramtype("BC039001");
         programlist.preUpdate(tokenModel);
         programlistMapper.updateByPrimaryKey(programlist);
@@ -120,6 +121,7 @@ public class StartprogramServicesImpl implements StartprogramServices {
             startprogramVo.setJoinnumber(trainjoinlistServices.joinnumber(startprogram1.getStartprogramid()));
             startprogramVo.setActualjoinnumber(trainjoinlistServices.actualjoinnumber(startprogram1.getStartprogramid()));
             startprogramVo.setThroughjoinnumber(trainjoinlistServices.throughjoinnumber(startprogram1.getStartprogramid()));
+            startprogramVo.setThroughAndNoThrough(trainjoinlistServices.throughAndNoThrough(startprogram1.getStartprogramid()));
             startprogramVoList.add(startprogramVo);
         }
         return startprogramVoList;
