@@ -14,16 +14,12 @@ import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.utils.dao.TokenModel;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -337,7 +333,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public void insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
+    public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
+        Map<String, Object> result = new HashMap<>();
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
@@ -353,6 +350,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+        result.put("contractapplication", cnList);
+
         //契约番号回数
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
@@ -371,6 +370,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+        result.put("contractnumbercount", numberList);
+        return result;
     }
 
     @Override
