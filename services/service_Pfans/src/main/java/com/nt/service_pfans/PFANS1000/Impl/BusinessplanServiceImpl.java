@@ -199,7 +199,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     private List<PersonPlanTable> getNextPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
-        if(!personnelPlan.getNewentry().equals("[{\"isoutside\":false}]")) {
+        if(!personnelPlan.getNewentry().equals("[{\"isoutside\":false,\"entermouth\":null}]")) {
+            int[] arr = new int[]{4,5,6,7,8,9,10,11,12,1,2,3};
             List<PersonPlanTable> _personPlanTables = deepCopy(personPlanTables);
             Calendar calendar = Calendar.getInstance();
             List<NewEmployed> employedList = JSON.parseArray(personnelPlan.getNewentry(), NewEmployed.class);
@@ -211,9 +212,11 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(employed.getEntermouth());
                         calendar.setTime(date);
                         calendar.add(Calendar.DATE, 1);
-                        int mouth = calendar.get(Calendar.MONTH) == 11 ? 12 : calendar.get(Calendar.MONTH) + 1;
-                        int count = (int) PropertyUtils.getSimpleProperty(pt, "amount" + mouth) + 1;
-                        PropertyUtils.setProperty(pt, "amount" + mouth, count);
+                        int mouth = getIndex(arr,calendar.get(Calendar.MONTH) + 1);
+                        for( int i = mouth ; i< arr.length ; i++){
+                            int count = (int) PropertyUtils.getSimpleProperty(pt, "amount" + arr[i]) + 1;
+                            PropertyUtils.setProperty(pt, "amount" + arr[i], count);
+                        }
                     }
                 }
                 BigDecimal payHour = pt.getPayhour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getPayhour());
@@ -274,4 +277,14 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         List<T> dest = (List<T>) in.readObject();
         return dest;
     }
+
+    public int getIndex(int[] arr, int value) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == value) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
 }
