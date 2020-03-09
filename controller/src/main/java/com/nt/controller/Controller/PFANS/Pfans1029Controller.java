@@ -58,7 +58,11 @@ public class Pfans1029Controller {
         Map<String, Object> data = new HashMap<>();
         data.put("cv",cv.getContract());
         data.put("ba1",cv.getNumberCount());
-        ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_技術契約書(受託)-jp(cn)","qiyueshu_shoutuo.xlsx",data,response);
+        if (cv.getContracttype().equals("HT008003") || cv.getContracttype().equals("HT008004") || cv.getContracttype().equals("HT008007") || cv.getContracttype().equals("HT008008")){
+            ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_役務契約書(受託)-jp(cn)","qiyueshu_yiwushoutuo.xlsx",data,response);
+        } else if (cv.getContracttype().equals("HT008001") || cv.getContracttype().equals("HT008002") || cv.getContracttype().equals("HT008005") || cv.getContracttype().equals("HT008006")){
+            ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_技術契約書(受託)-jp(cn)","qiyueshu_shoutuo.xlsx",data,response);
+        }
     }
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
@@ -88,4 +92,7 @@ public class Pfans1029Controller {
         contractService.update(contract,tokenModel);
         return ApiResult.success();
     }
+
+
+
 }

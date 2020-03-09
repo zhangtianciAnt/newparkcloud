@@ -14,16 +14,12 @@ import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.utils.dao.TokenModel;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -182,6 +178,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.setPjnamejapanese(contractapp.getConjapanese());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
                     contract.setClaimamount(contractapp.getClaimamount());
+                    contract.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
@@ -219,6 +216,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
                     award.setMaketype(rowindex);
+                    award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                     AwardMapper.insert(award);
                 }
@@ -247,6 +245,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setCurrencyformat(contractapp.getCurrencyposition());
                         napalm.setContracttype(contractapp.getContracttype());
                         napalm.setToto(contractapp.getVarto());
+                        napalm.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                         if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -260,6 +259,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         }
 
                         napalmMapper.insert(napalm);
+                        //更新纳品进步状况=纳品完了
+                        contractapp.preUpdate(tokenModel);
+                        contractapp.setDeliverycondition("HT009001");
+                        contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
                     }
                 }
                 //請求書作成
@@ -288,7 +291,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setClaimamount(number.getClaimamount());//請求金額
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
                         petition.setRemarks(contractapp.getRemarks());//备注
+                        petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         PetitionMapper.insert(petition);
+                        //更新请求进步状况=請求完了
+                        contractapp.preUpdate(tokenModel);
+                        contractapp.setClaimcondition("HT011001");
+                        contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
                     }
                 }
                 //決裁書作成(委託)
@@ -313,6 +321,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setUser_id(contractapp.getUser_id());
                     award.setRemarks(contractapp.getRemarks());
                     award.setMaketype(rowindex);
+                    award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                     AwardMapper.insert(award);
                 }
@@ -324,7 +333,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public void insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
+    public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
+        Map<String, Object> result = new HashMap<>();
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
@@ -340,6 +350,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+        result.put("contractapplication", cnList);
+
         //契约番号回数
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
@@ -358,6 +370,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+        result.put("contractnumbercount", numberList);
+        return result;
     }
 
     @Override

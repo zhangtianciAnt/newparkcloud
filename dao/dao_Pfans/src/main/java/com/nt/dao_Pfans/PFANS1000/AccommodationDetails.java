@@ -142,5 +142,5 @@ public class AccommodationDetails extends BaseModel {
     private String costitem;
 
     @Column(name = "TAXES")
-    private Integer taxes;
+    private String  taxes;
 }

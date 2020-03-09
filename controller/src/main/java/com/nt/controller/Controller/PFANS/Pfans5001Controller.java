@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/companyprojects")
@@ -107,6 +110,21 @@ public class Pfans5001Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(logmanagementService.getTimestart(project_id,starttime,endtime));
+    }
+
+    /**
+     *
+     * 查询共通工时确认
+     */
+    @RequestMapping(value = "/getGroupTimestart", method = {RequestMethod.POST})
+    public ApiResult getGroupTimestart(@RequestBody List<ArrayList> strData,HttpServletRequest request) throws Exception {
+        if (strData == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<String> createby = strData.get(0);
+        String starttime = strData.get(1).get(0).toString();
+        String endtime = strData.get(1).get(1).toString();
+        return ApiResult.success(logmanagementService.getGroupTimestart(createby,starttime,endtime));
     }
 
     /**
@@ -213,4 +231,10 @@ public class Pfans5001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getPjList(flag));
     }
+    @RequestMapping(value="/getList2", method={RequestMethod.GET})
+    public ApiResult getList2(HttpServletRequest request,String flag) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.getList2(flag));
+    }
+
 }

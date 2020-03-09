@@ -57,7 +57,7 @@ public class AwardServiceImpl implements AwardService {
         Award awa=awardMapper.selectByPrimaryKey(award_id);
         awavo.setAward(awa);
         awavo.setAwardDetail(awalist);
-        awavo.setStaffDetails(stafflist);
+        awavo.setStaffDetail(stafflist);
 
         if ( awa != null ) {
             Contractnumbercount contractnumbercount = new Contractnumbercount();
@@ -85,7 +85,7 @@ public class AwardServiceImpl implements AwardService {
         StaffDetail sta=new StaffDetail();
         sta.setAward_id(awardid);
         staffDetailMapper.delete(sta);
-        List<StaffDetail> stalist=awardVo.getStaffDetails();
+        List<StaffDetail> stalist=awardVo.getStaffDetail();
 
 
         if(awardDetails!=null){

@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.AwardDetail;
@@ -12,8 +11,6 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +36,21 @@ public class Pfans1025Controller {
     private DictionaryService dictionaryService;
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
-    public void generateJxls(@RequestBody Award award, HttpServletRequest request,HttpServletResponse response) throws Exception {
+    public void generateJxls(@RequestBody AwardVo av, HttpServletRequest request,HttpServletResponse response) throws Exception {
         TokenModel tokenModel=tokenService.getToken(request);
-        AwardVo  av = awardService.selectById(award.getAward_id());
-        String aa[] = award.getClaimdatetime().split(" ~ ");
+        AwardVo  nu = awardService.selectById(av.getAward().getAward_id());
+        String aa[] = av.getAward().getClaimdatetime().split(" ~ ");
+       List<Map<String,String>> grouplist = (List<Map<String,String>>)av.getGroupN();
+       List<AwardDetail> adlist = av.getAwardDetail();
+        for (Map<String,String> user : grouplist) {
+            String groupid = user.get("groupid");
+            String groupname = user.get("groupname");
+            for(AwardDetail grn :adlist){
+                if(groupid.equals(grn.getDepart())){
+                    grn.setDepart(groupname);
+                }
+            }
+        }
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(av.getAward().getCurrencyposition())) {
@@ -50,16 +58,35 @@ public class Pfans1025Controller {
                 av.getAward().setCurrencyposition(item.getValue1());
             }
         }
+        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
+        for(Dictionary item:planList){
+            if(item.getCode().equals(av.getAward().getPlan())) {
+
+                av.getAward().setPlan(item.getValue1());
+            }
+        }
+        List<Dictionary> valuationList = dictionaryService.getForSelect("HT005");
+        for(Dictionary item:valuationList){
+            if(item.getCode().equals(av.getAward().getValuation()) || item.getCode().equals(av.getAward().getIndividual())) {
+
+                av.getAward().setValuation(item.getValue1());
+                av.getAward().setIndividual(item.getValue1());
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
-        data.put("num",av.getNumbercounts());
-        data.put("statime",aa[0]);
-        data.put("endtime",aa[1]);
-        if(av.getAward().getMaketype().equals("4")){
-            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(受託)","juecaishu_shoutuo.xlsx",data,response);
+        data.put("num",nu.getNumbercounts());
+        data.put("sta",av.getStaffDetail());
+        if(aa.length > 0){
+            data.put("statime",aa);
         } else {
-            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
+            data.put("statime","");
+        }
+        if(av.getAward().getMaketype().equals("4")){
+            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_"+av.getAward().getConjapanese()+"_決裁書(受託)","juecaishu_shoutuo.xlsx",data,response);
+        } else {
+            ExcelOutPutUtil.OutPut(av.getAward().getContractnumber().toUpperCase()+"_"+av.getAward().getConjapanese()+"_決裁書(委託)","juecaishu_weituo.xlsx",data,response);
         }
     }
 
