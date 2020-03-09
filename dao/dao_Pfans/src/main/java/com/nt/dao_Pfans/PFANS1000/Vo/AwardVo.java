@@ -21,8 +21,6 @@ public class AwardVo {
 
     private ArrayList groupN;
 
-    private ArrayList userN;
-
     private List<AwardDetail> awardDetail;
 
     private List<StaffDetail> staffDetail;

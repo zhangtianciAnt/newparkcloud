@@ -40,11 +40,6 @@ public class Pfans1025Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         AwardVo  nu = awardService.selectById(av.getAward().getAward_id());
         String aa[] = av.getAward().getClaimdatetime().split(" ~ ");
-        //起案者user_id
-//       List<Map<String,String>> userlist = (List<Map<String,String>>)av.getUserN();
-//        for (Map<String,String> user : userlist) {
-//            Map<String,String> userid = Map.user.get("userinfo");
-//        }
        List<Map<String,String>> grouplist = (List<Map<String,String>>)av.getGroupN();
        List<AwardDetail> adlist = av.getAwardDetail();
         for (Map<String,String> user : grouplist) {
