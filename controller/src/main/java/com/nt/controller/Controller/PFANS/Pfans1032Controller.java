@@ -68,7 +68,7 @@ public class Pfans1032Controller {
         if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")){
             ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(国内受託)","qingqiushu_guonei.xlsx",data,response);
         } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")){
-            if(pd.getContracttype().equals("HT006001")){
+            if(pd.getCurrencyposition().equals("HT006001")){
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(pd.getCurrencyposition())) {
 
@@ -76,7 +76,7 @@ public class Pfans1032Controller {
                     }
                 }
                 ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(日本受託-RMB)","qingqiushu_ribenrmb.xlsx",data,response);
-            }else if(pd.getContracttype().equals("HT006002")){
+            }else if(pd.getCurrencyposition().equals("HT006002")){
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(pd.getCurrencyposition())) {
 
