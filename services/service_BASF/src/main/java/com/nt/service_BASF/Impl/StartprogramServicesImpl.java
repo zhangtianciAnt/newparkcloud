@@ -97,7 +97,7 @@ public class StartprogramServicesImpl implements StartprogramServices {
         Programlist programlist = programlistroServices.one(startprogram.getProgramlistid());
         programlist.setLastdate(startprogram.getActualstartdate());
         programlist.setThisdate(null);
-        programlist.setNumber(programlist.getNumber() + 1);
+        programlist.setNumber(String.valueOf(Integer.parseInt(programlist.getNumber()) + 1));
         programlist.setNumberpeople(programlist.getNumberpeople() + trainjoinlistServices.actualjoinnumber(startprogramid));
         programlist.setProgramtype("BC039001");
         programlist.preUpdate(tokenModel);

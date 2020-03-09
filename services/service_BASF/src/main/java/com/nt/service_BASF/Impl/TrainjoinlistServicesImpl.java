@@ -283,7 +283,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                 return result;
             }
             //判断是否是正确格式的成绩文件（方案二：检查表头是否正确）
-            if (list.get(0).size() < 8) {
+            if (list.get(0).size() < 9) {
                 errorCount += 1;
                 result.add("失败数：" + errorCount);
                 result.add("成绩文件表头格式不正确！");
@@ -302,7 +302,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                 List<Object> olist = list.get(i);
                 //判断这条数据列数是否足够
                 try {
-                    if (olist.size() < 7) {
+                    if (olist.size() < 9) {
                         result.add("成绩表" + k + "行数据异常，导入系统失败！");
                         errorCount += 1;
                         continue;
@@ -321,10 +321,15 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             trainjoinlist.setJointype(olist.get(6).toString());
                             try {
                                 trainjoinlist.setPerformance(olist.get(5).toString());
-                                trainjoinlist.setThroughtype(olist.get(7).toString());
                             } catch (Exception e) {
 
                             }
+                            try {
+                                trainjoinlist.setRemark(olist.get(8).toString());
+                            } catch (Exception e) {
+
+                            }
+                            trainjoinlist.setThroughtype(olist.get(7).toString());
                             trainjoinlist.preUpdate(tokenModel);
                             trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
                             successCount += 1;
