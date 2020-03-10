@@ -30,6 +30,11 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
+    public List<Business> getBuse() throws Exception {
+        return businessMapper.getBuse();
+    }
+
+    @Override
     public BusinessVo selectById(String businessid) throws Exception {
         BusinessVo busVo = new BusinessVo();
         TravelContent travelcontent = new TravelContent();
