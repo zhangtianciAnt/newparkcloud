@@ -120,6 +120,16 @@ public class ContractthemeServiceImpl implements ContractthemeService {
                         co.setStatus(AuthConstants.APPROVED_FLAG_YES);
                         co.setRowindex(String.valueOf(rowindex));
                         contractthemeMapper.insert(co);
+                        //下一年计划不为空的场合
+                        if(!co.getPersonnel1().equals("") || !co.getAmount1().equals("0")
+                            || !co.getPersonnel2().equals("") || !co.getAmount2().equals("0")
+                                || !co.getPersonnel3().equals("") || !co.getAmount3().equals("0")){
+                            co.preInsert(tokenModel);
+                            co.setContractthemeid(UUID.randomUUID().toString());
+                            co.setYears(String.valueOf(Integer.valueOf(co.getYears()) + 1));
+                            co.setMonths(co.getMonths());
+                            contractthemeMapper.insert(co);
+                        }
                     }
                     else{
                         co.preUpdate(tokenModel);
@@ -134,6 +144,14 @@ public class ContractthemeServiceImpl implements ContractthemeService {
                 co.setContractthemeid(UUID.randomUUID().toString());
                 co.setRowindex(String.valueOf(rowindex));
                 contractthemeMapper.insert(co);
+                //下一年计划不为空的场合
+                if(!co.getPersonnel1().equals("") || !co.getAmount1().equals("0")
+                        || !co.getPersonnel2().equals("") || !co.getAmount2().equals("0")
+                        || !co.getPersonnel3().equals("") || !co.getAmount3().equals("0")){
+                    co.setContractthemeid(UUID.randomUUID().toString());
+                    co.setYears(String.valueOf(Integer.valueOf(co.getYears()) + 1));
+                    contractthemeMapper.insert(co);
+                }
             }
         }
         //删除无用数据
