@@ -32,6 +32,11 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         return purchaseApplyMapper.select(purchaseApply);
     }
 
+    @Override
+    public List<PurchaseApply> selectPurchaseApply() throws Exception {
+        return purchaseApplyMapper.selectPurchaseApply();
+    }
+
     //按id查询
     @Override
     public PurchaseApplyVo selectById(String purchaseApplyid) throws Exception {
