@@ -5,11 +5,13 @@ import com.nt.dao_Pfans.PFANS1000.AwardDetail;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.StaffDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.AwardDetailMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS1000.mapper.StaffDetailMapper;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -38,6 +40,9 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     private ContractnumbercountMapper contractnumbercountMapper;
 
+    @Autowired
+    CompanyProjectsMapper companyProjectsMapper;
+
     @Override
     public List<Award> get(Award award) throws Exception {
         return awardMapper.select(award);
@@ -54,7 +59,22 @@ public class AwardServiceImpl implements AwardService {
         List<StaffDetail> stafflist=staffDetailMapper.select(staffdetail);
         awalist=awalist.stream().sorted(Comparator.comparing(AwardDetail::getRowindex)).collect(Collectors.toList());
         stafflist=stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
-        Award awa=awardMapper.selectByPrimaryKey(award_id);
+        Award awa = awardMapper.selectByPrimaryKey(award_id);
+        Award award = awardMapper.selectByPrimaryKey(award_id);
+        String name = "";
+        String [] companyProjectsid = award.getPjnamechinese().split(",");
+        if(companyProjectsid.length > 0){
+            for (int i = 0;i < companyProjectsid.length;i++){
+                CompanyProjects companyProjects = new CompanyProjects();
+                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
+                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+                if(comList.size() > 0){
+                    name = name + comList.get(0).getProject_name() + ",";
+                }
+            }
+            name = name.substring(0,name.length()-1);
+        }
+        award.setPjnamechinese(name);
         awavo.setAward(awa);
         awavo.setAwardDetail(awalist);
         awavo.setStaffDetail(stafflist);
