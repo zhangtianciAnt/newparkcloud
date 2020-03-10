@@ -30,40 +30,22 @@ public class TravelContent extends BaseModel {
     private String businessid;
 
     /**
-     * 申请开始日期
+     * 申请开始结束日期
      */
-    @Column(name = "DURINGDATE1")
-    private String duringdate1;
+    @Column(name = "DURINGDATE")
+    private String duringdate;
+
+    /**
+     * 地点
+     */
+    @Column(name = "place")
+    private String place;
 
     /**
      * 开始活动内容
      */
-    @Column(name = "CONTENT1")
-    private String content1;
-
-    /**
-     * 申请日期区间
-     */
-    @Column(name = "DURINGDATE2")
-    private String duringdate2;
-
-    /**
-     * 活动内容
-     */
-    @Column(name = "CONTENT2")
-    private String content2;
-
-    /**
-     * 申请结束日期
-     */
-    @Column(name = "DURINGDATE3")
-    private String duringdate3;
-
-    /**
-     * 结束活动内容
-     */
-    @Column(name = "CONTENT3")
-    private String content3;
+    @Column(name = "CONTENT")
+    private String content;
 
 
     /**
