@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -52,6 +53,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         Contractnumbercount number = new Contractnumbercount();
         number.setContractnumber(contractapplication.getContractnumber());
         List<Contractnumbercount> numberList = contractnumbercountMapper.select(number);
+        if ( numberList!=null && numberList.size()>1 ) {
+            numberList = numberList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+        }
         vo.setContractnumbercount(numberList);
         return vo;
     }

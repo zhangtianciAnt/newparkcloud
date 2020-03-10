@@ -83,6 +83,7 @@ public class JudgementServiceImpl implements JudgementService {
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
         judgement.preInsert(tokenModel);
         judgement.setJudgementid(judgementid);
+        judgement.setEquipment("1");
         judgementMapper.insertSelective(judgement);
         List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
         if(unusedeviceList != null){

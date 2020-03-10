@@ -31,6 +31,15 @@ public class pfans1038Controller {
     @Autowired
     private TokenService tokenService;
 
+    //获取
+    @RequestMapping(value = "/get", method = {RequestMethod.POST})
+    public ApiResult getPersonPlan(HttpServletRequest request, @RequestBody PersonnelPlan personnelPlan) throws Exception {
+        if (StringUtils.isEmpty(personnelPlan)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(personnelplanService.get(personnelPlan));
+    }
+
     //获取部门下用户
     @RequestMapping(value = "/getcustomer", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request, @RequestParam String id) throws Exception {

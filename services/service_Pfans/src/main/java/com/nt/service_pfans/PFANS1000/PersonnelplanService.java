@@ -17,4 +17,6 @@ public interface PersonnelplanService {
     PersonnelPlan getOne(String id);
     void update(PersonnelPlan personnelPlan, TokenModel tokenModel);
     void insert(PersonnelPlan personnelPlan, TokenModel tokenModel);
+
+    List<PersonnelPlan> get(PersonnelPlan personnelPlan);
 }

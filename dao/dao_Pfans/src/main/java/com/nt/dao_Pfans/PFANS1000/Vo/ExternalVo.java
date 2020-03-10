@@ -18,4 +18,8 @@ public class ExternalVo {
     //rn
     private String thisyear;
 
+    private String entermouth;
+
+    private String suppliernameid;
+
 }

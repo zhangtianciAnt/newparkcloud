@@ -70,4 +70,15 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
         personnelplanMapper.insert(personnelPlan);
     }
+
+    @Override
+    public List<PersonnelPlan> get(PersonnelPlan personnelPlan) {
+        personnelPlan.setStatus("0");
+      List<PersonnelPlan> personnelPlan1 =  personnelplanMapper.select(personnelPlan);
+      personnelPlan.setType(1);
+      if(personnelplanMapper.select(personnelPlan).size() > 0) {
+          personnelPlan1.addAll(personnelplanMapper.select(personnelPlan));
+      }
+      return  personnelPlan1;
+    }
 }

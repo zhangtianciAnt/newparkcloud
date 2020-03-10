@@ -28,4 +28,9 @@ public class EvectionVo {
     private List<OtherDetails> otherdetails;
 
     private List<Invoice> invoice;
+
+    /**
+     * 外币兑换
+     */
+    private List<Currencyexchange> currencyexchanges;
 }

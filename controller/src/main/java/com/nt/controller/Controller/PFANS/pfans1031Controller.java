@@ -60,9 +60,8 @@ public class pfans1031Controller {
     }
 
     @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
-    public void downLoad1(@RequestBody Napalm napalm, HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void downLoad1(@RequestBody Napalm na, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
-        Napalm na = napalmService.One(napalm.getNapalm_id());
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         List<Dictionary> dictionaryList1 = dictionaryService.getForSelect("HT012");
         for(Dictionary item:dictionaryList1){
