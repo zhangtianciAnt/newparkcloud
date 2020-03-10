@@ -60,16 +60,18 @@ public class Business extends BaseModel {
     private String businesstype;
 
     /**
+     * 项目名称
+     */
+    @Column(name = "COMPANYPROJECTSNAME")
+    private String companyprojectsname;
+
+    /**
      * 职员等级
      */
     @Column(name = "LEVEL")
     private String level;
 
-    /**
-     * 项目名称
-     */
-    @Column(name = "COMPANYPROJECTSNAME")
-    private String companyprojectsname;
+
 
     /**
      * 出張先会社（出差公司）
