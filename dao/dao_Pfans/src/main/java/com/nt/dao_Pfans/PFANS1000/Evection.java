@@ -170,5 +170,11 @@ public class Evection extends BaseModel {
     @Column(name = "JUDGEMENT")
     private String judgement;
 
+    /**
+     * 会社用美元汇率
+     */
+    @Column(name = "USEXCHANGERATE")
+    private String usexchangerate;
+
 
 }
