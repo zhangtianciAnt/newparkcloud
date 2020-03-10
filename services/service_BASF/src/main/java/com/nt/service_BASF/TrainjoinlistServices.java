@@ -61,4 +61,7 @@ public interface TrainjoinlistServices {
 
     //复训/到期人员列表（前端培训教育大屏用）
     List<OverduePersonnelListVo> overduepersonnellist() throws Exception;
+
+    //结果发布判断该培训是否存在人员通过状态为空
+    boolean isNotThroughtype(String startprogramid) throws Exception;
 }

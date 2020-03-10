@@ -4,6 +4,7 @@ import com.nt.dao_BASF.Emergencytemplate;
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.utils.MyMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,5 +22,8 @@ import java.util.List;
 public interface TrainjoinlistMapper extends MyMapper<Trainjoinlist> {
 
     List<OverduePersonnelListVo> OverduePersonnelList();
+
+    //结果发布判断该培训是否存在人员通过状态为空
+    int isNotThroughtype(@Param("startprogramid") String startprogramid) throws Exception;
 
 }

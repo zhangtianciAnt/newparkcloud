@@ -9,7 +9,6 @@ import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_BASF.TrainjoinlistServices;
-import com.nt.service_BASF.mapper.ProgramMapper;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
@@ -133,6 +132,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         }
         return null;
     }
+
     //根据培训列表id删除参加名单
     @Override
     public void delete(String startprogramid, TokenModel tokenModel) throws Exception {
@@ -309,13 +309,13 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             return result;
         }
         try {
-            //循环获取值班信息
+            //循环获取成绩信息
             for (int i = 1; i < list.size(); i++) {
                 k += 1;
                 List<Object> olist = list.get(i);
                 //判断这条数据列数是否足够
                 try {
-                    if (olist.size() < 9) {
+                    if (olist.size() < 8) {
                         result.add("成绩表" + k + "行数据异常，导入系统失败！");
                         errorCount += 1;
                         continue;
@@ -340,9 +340,18 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             try {
                                 trainjoinlist.setRemark(olist.get(8).toString());
                             } catch (Exception e) {
+                                trainjoinlist.setRemark("");
+                            }
+                            try {
+                                if (!olist.get(7).toString().trim().equals("通过") && !olist.get(7).toString().trim().equals("未通过")) {
+                                    result.add("成绩表" + k + "行数据异常，通过状态错误，导入系统失败！");
+                                    errorCount += 1;
+                                    continue;
+                                } else
+                                    trainjoinlist.setThroughtype(olist.get(7).toString());
+                            } catch (Exception e) {
 
                             }
-                            trainjoinlist.setThroughtype(olist.get(7).toString());
                             trainjoinlist.preUpdate(tokenModel);
                             trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
                             successCount += 1;
@@ -382,5 +391,17 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         }
         return overduePersonnelListVoList;
     }
+
+    //结果发布判断该培训是否存在人员通过状态为空
+    @Override
+    public boolean isNotThroughtype(String startprogramid) throws Exception {
+        int count = trainjoinlistMapper.isNotThroughtype(startprogramid);
+        if (count > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 }

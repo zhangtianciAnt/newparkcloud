@@ -49,4 +49,16 @@
         ORDER BY
         t.personnelid ASC
     </select>
+
+    <select id="isNotThroughtype" resultType="int">
+        SELECT
+        COUNT(trainjoinlistid)
+        FROM
+        trainjoinlist AS t
+        WHERE
+        t.startprogramid = #{startprogramid} AND
+        (t.throughtype &lt;> '通过' AND
+        t.throughtype &lt;> '未通过' OR
+        t.throughtype IS NULL)
+    </select>
 </mapper>
