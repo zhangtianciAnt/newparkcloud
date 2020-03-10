@@ -19,6 +19,10 @@ public class CommunicationServiceImpl implements CommunicationService {
     private CommunicationMapper communicationMapper;
 
     @Override
+    public List<Communication> selectCommunication() throws Exception {
+        return communicationMapper.selectCommunication();
+    }
+    @Override
     public List<Communication> getCommunication(Communication communication) {
 
         return communicationMapper.select(communication);

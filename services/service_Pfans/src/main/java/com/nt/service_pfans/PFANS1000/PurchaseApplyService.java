@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface PurchaseApplyService {
 
+    public List<PurchaseApply> selectPurchaseApply() throws Exception;
+
     //新建
     void insert(PurchaseApplyVo purchaseApplyVo, TokenModel tokenModel) throws Exception;
 

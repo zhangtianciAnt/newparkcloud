@@ -35,6 +35,15 @@ public class Pfans1004Controller {
             return ApiResult.success(judgementService.getJudgement(judgement));
     }
 
+    @RequestMapping(value = "/selectJudgement", method = {RequestMethod.POST})
+    public ApiResult selectJudgement(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
+        if (judgement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(judgementService.selectJudgement());
+    }
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
         if (judgement == null) {
