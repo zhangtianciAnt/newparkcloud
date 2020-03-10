@@ -68,8 +68,8 @@ public class Business extends BaseModel {
     /**
      * 项目名称
      */
-    @Column(name = "PROJECTNAME")
-    private String projectname;
+    @Column(name = "COMPANYPROJECTSNAME")
+    private String companyprojectsname;
 
     /**
      * 出張先会社（出差公司）
