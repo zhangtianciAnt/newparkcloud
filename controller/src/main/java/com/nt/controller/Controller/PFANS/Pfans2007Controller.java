@@ -31,6 +31,16 @@ public class Pfans2007Controller {
     private ToDoNoticeService toDoNoticeService;
 
 
+    @RequestMapping(value="/get",method = {RequestMethod.GET})
+    public ApiResult get(HttpServletRequest request) throws Exception{
+
+
+        TokenModel tokenModel = tokenService.getToken(request);
+        Bonussend bonussend = new Bonussend();
+//        bonussend.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(bonussendService.get(bonussend));
+    }
+
     @RequestMapping(value="/getListType",method = {RequestMethod.GET})
     public ApiResult getListType(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception{
         if (toDoNotice == null) {
