@@ -610,8 +610,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             attendance.setLeaveearlytime(null);
                                         }
                                     }
-                                    else if(ab.getErrortype().equals("PR013004")){//女性三期
-                                    }
                                     else if(ab.getErrortype().equals("PR013005")){//年休
                                         if(attendance.getAnnualrest() != null && !attendance.getAnnualrest().isEmpty()){
                                             strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getAnnualrest())));
@@ -666,16 +664,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                         attendance.setLongsickleave(strlengthtime);
                                     }
-                                    else if(ab.getErrortype().equals("PR013011")){//结婚休假
-//                                        if(attendance.getLongsickleave() != null && !attendance.getLongsickleave().isEmpty()){
-//                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getLongsickleave())));
-//                                        }
-//                                        else{
-//                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
-//                                        }
-//                                        attendance.setLongsickleave(strlengthtime);
-                                    }
-                                    else if(ab.getErrortype().equals("PR013012")){//産休（女）
+                                    else if(ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")){
+                                        //産休（女）//産休看護休暇（男）
                                         if(attendance.getNursingleave() != null && !attendance.getNursingleave().isEmpty()){
                                             strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getNursingleave())));
                                         }
@@ -693,15 +683,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                         attendance.setNursingleave(strlengthtime);
                                     }
-                                    else if(ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013015")
+                                    else if(ab.getErrortype().equals("PR013004") || ab.getErrortype().equals("PR013011")
+                                        || ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013015")
                                         || ab.getErrortype().equals("PR013016") || ab.getErrortype().equals("PR013017")
-                                        || ab.getErrortype().equals("PR013018") || ab.getErrortype().equals("PR013019")){//福利假期
-                                        //家长会假
-                                        //葬儀休暇
-                                        //妊娠檢查休暇
-                                        //哺乳休暇
-                                        //労災休暇
-                                        //其他休暇
+                                        || ab.getErrortype().equals("PR013018") || ab.getErrortype().equals("PR013019")){
+                                        //福利假期
+                                        //女性三期//结婚休假//家长会假//葬儀休暇//妊娠檢查休暇//哺乳休暇//労災休暇//其他休暇
                                         if(attendance.getWelfare() != null && !attendance.getWelfare().isEmpty()){
                                             strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getWelfare())));
                                         }

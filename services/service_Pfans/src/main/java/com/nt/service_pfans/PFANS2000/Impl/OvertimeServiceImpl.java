@@ -193,7 +193,8 @@ public class OvertimeServiceImpl implements OvertimeService {
                         String worktime = punchcardRecordlist.get(0).getWorktime();
                         //深夜加班時間
                         String overtimeHoursNight = null;
-                        if(overtime.getOvertimetype().equals("PR001002") || overtime.getOvertimetype().equals("PR001003")){//周末加班/法定日加班
+                        //周末加班/法定日加班
+                        if(overtime.getOvertimetype().equals("PR001002") || overtime.getOvertimetype().equals("PR001003")){
                             //打卡开始-结束时间
                             long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
                             //午休时间
@@ -236,6 +237,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 }
                             }
                         }
+                        //考勤管理
                         Attendance attendance = new Attendance();
                         attendance.setUser_id(overtime.getUserid());
                         attendance.setDates(overtime.getReserveovertimedate());
