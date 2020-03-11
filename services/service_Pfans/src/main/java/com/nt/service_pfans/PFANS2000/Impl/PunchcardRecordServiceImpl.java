@@ -168,11 +168,32 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                 punchcardrecord.setTime_start(punchcard.getTime_start());
                 punchcardrecord.setTime_end(punchcard.getTime_end());
+                punchcardrecord.setOwner(punchcard.getUser_id());
                 punchcardrecord.preInsert(tokenModel);
                 punchcardrecord.setRegion(punchcard.getRegion());
                 punchcardrecordMapper.insert(punchcardrecord);
-            }
 
+                //删除当天存在的考勤数据
+                Attendance attendance = new Attendance();
+                attendance.setUser_id(punchcard.getUser_id());
+                attendance.setDates(punchcard.getPunchcardrecord_date());
+                attendanceMapper.delete(attendance);
+
+                //创建考勤数据
+                if(Worktime >= 8){
+                    attendance.setNormal("8");
+                }
+                attendance.setCenter_id(punchcard.getCenter_id());
+                attendance.setGroup_id(punchcard.getGroup_id());
+                attendance.setTeam_id(punchcard.getTeam_id());
+                attendance.setYears(DateUtil.format(punchcard.getPunchcardrecord_date(),"YYYY").toString());
+                attendance.setMonths(DateUtil.format(punchcard.getPunchcardrecord_date(),"MM").toString());
+                attendance.setAttendanceid(UUID.randomUUID().toString());
+                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                attendance.setOwner(attendance.getUser_id());
+                attendance.preInsert(tokenModel);
+                saveAttendance(attendance,"1",tokenModel);
+            }
             methodAttendance(tokenModel);
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
@@ -184,6 +205,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     @Override
     public void methodAttendance(TokenModel tokenModel) throws Exception {
+
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
@@ -213,6 +235,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         String weekdaysovertime = null;
         //迟到/早退基本计算单位
         String lateearlyleave = null;
+        //事假基本计算单位
+        String compassionateleave = null;
         //旷工基本计算单位
         String absenteeism = null;
         //加班基本计算单位
@@ -238,6 +262,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             lateearlyleave = attendancesettinglist.get(0).getLateearlyleave();
             BigDecimal lateearlyleavehour = new BigDecimal(lateearlyleave).multiply(new BigDecimal(60 * 60 * 1000));
             lateearlyleave = String.valueOf(lateearlyleavehour.intValue());
+
+            //事假基本计算单位
+            compassionateleave = attendancesettinglist.get(0).getCompassionateleave();
             //旷工基本计算单位
             absenteeism = attendancesettinglist.get(0).getAbsenteeism();
             //加班基本计算单位
@@ -306,112 +333,107 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 }
                             }
                         }
-
-
                         //---------查询考勤表是否有数据start-------
                         Attendance attendance = new Attendance();
                         attendance.setUser_id(strUserid);
                         attendance.setDates(dateStart);
                         List<Attendance> attendancelist = attendanceMapper.select(attendance);
-                        Attendance attend = new Attendance();
                         if(attendancelist.size() > 0){
-                            attend = attendancelist.get(0);
-                        }
-                        //---------查询考勤表是否有数据end-------
+                            attendance = attendancelist.get(0);
 
-                        //---------处理昨日审批通过的加班申请start-------
-                        Overtime overtime = new Overtime();
-                        overtime.setUserid(strUserid);
-                        overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                        overtime.setReserveovertimedate(dateStart);
-                        List<Overtime> overtimelist = overtimeMapper.select(overtime);
-                        List<Overtime> ovList = new ArrayList<Overtime>();
-                        //筛选审批通过的数据
-                        for (Overtime ov : overtimelist){
-                            if(ov.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || ov.getStatus().equals("7")){
-                                ovList.add(ov);
+                            //---------处理昨日审批通过的加班申请start-------
+                            Overtime overtime = new Overtime();
+                            overtime.setUserid(strUserid);
+                            overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                            overtime.setReserveovertimedate(dateStart);
+                            List<Overtime> overtimelist = overtimeMapper.select(overtime);
+                            List<Overtime> ovList = new ArrayList<Overtime>();
+                            //筛选审批通过的数据
+                            for (Overtime ov : overtimelist){
+                                if(ov.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || ov.getStatus().equals("7")){
+                                    ovList.add(ov);
+                                }
                             }
-                        }
-                        if(ovList.size() > 0){
-                            for (Overtime Ot : ovList) {
-                                //予定加班時間
-                                reserveoverTime = Ot.getReserveovertime();
-                                BigDecimal reserveoverTimehour = new BigDecimal(reserveoverTime).multiply(new BigDecimal(60 * 60 * 1000));
-                                reserveoverTime = String.valueOf(reserveoverTimehour.intValue());
-                                //实际加班時間
-                                actualoverTime = Ot.getActualovertime();
-                                BigDecimal actualoverTimehour = new BigDecimal(actualoverTime).multiply(new BigDecimal(60 * 60 * 1000));
-                                actualoverTime = String.valueOf(actualoverTimehour.intValue());
-                                String overtimeHours = null;
-                                //加班后应该下班的时间
-                                String overtime_end = null;
-                                if(!actualoverTime.equals("0")){
-                                    //根据公司考勤设定上班开始时间与该员工弹性工作上班的时间的差的分钟数计算该员工实际的下班时间
-                                    long result1 = sdf.parse(closingtime_start).getTime() +
-                                            (Long.parseLong(weekdaysovertime)) + (Long.parseLong(actualoverTime));
-                                    Date d1 = new Date(result1);
-                                    overtime_end = sdf.format(d1).toString();
-                                    //实际加班时间
-                                    overtimeHours = String.valueOf(Double.valueOf(actualoverTime) / 60 / 60 / 1000);
-                                }
-                                else{
-                                    //根据公司考勤设定上班开始时间与该员工弹性工作上班的时间的差的分钟数计算该员工实际的下班时间
-                                    //1分钟=60*1000=60000毫秒
-                                    long result1 = sdf.parse(closingtime_start).getTime() +
-                                            (Long.parseLong(weekdaysovertime)) + (Long.parseLong(reserveoverTime));
-                                    Date d1 = new Date(result1);
-                                    overtime_end = sdf.format(d1).toString();
+                            if(ovList.size() > 0){
+                                for (Overtime Ot : ovList) {
                                     //予定加班時間
-                                    overtimeHours = String.valueOf(Double.valueOf(reserveoverTime) / 60 / 60 / 1000);
-                                }
-                                //深夜加班時間
-                                String overtimeHoursNight = null;
-                                if(Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003")){//周末加班/法定日加班
-                                    //打卡开始-结束时间
-                                    long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
-                                    //午休时间
-                                    long result2 = sdf.parse(lunchbreak_end).getTime() - sdf.parse(lunchbreak_start).getTime();
-                                    //打卡结束时间-公司考勤下班时间（判断周末晚餐时间）
-                                    //long result3 = sdf.parse(time_end).getTime() - sdf.parse(closingtime_start).getTime();
-                                    Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000;
-                                    if(Double.valueOf(overtimeHours) < Double.valueOf(result3)){
-                                        BigDecimal dovertimeHours = new BigDecimal(overtimeHours).multiply(new BigDecimal(60 * 60 * 1000));
-                                        long result5 = sdf.parse(workshift_start).getTime() + result2 + (Long.parseLong(String.valueOf(dovertimeHours.intValue())));
+                                    reserveoverTime = Ot.getReserveovertime();
+                                    BigDecimal reserveoverTimehour = new BigDecimal(reserveoverTime).multiply(new BigDecimal(60 * 60 * 1000));
+                                    reserveoverTime = String.valueOf(reserveoverTimehour.intValue());
+                                    //实际加班時間
+                                    actualoverTime = Ot.getActualovertime();
+                                    BigDecimal actualoverTimehour = new BigDecimal(actualoverTime).multiply(new BigDecimal(60 * 60 * 1000));
+                                    actualoverTime = String.valueOf(actualoverTimehour.intValue());
+                                    String overtimeHours = null;
+                                    //加班后应该下班的时间
+                                    String overtime_end = null;
+                                    if(!actualoverTime.equals("0")){
+                                        //根据公司考勤设定上班开始时间与该员工弹性工作上班的时间的差的分钟数计算该员工实际的下班时间
+                                        long result1 = sdf.parse(closingtime_start).getTime() +
+                                                (Long.parseLong(weekdaysovertime)) + (Long.parseLong(actualoverTime));
                                         Date d1 = new Date(result1);
-                                        //加班后应该下班的时间
                                         overtime_end = sdf.format(d1).toString();
-                                        //判斷是否是深夜加班并計算深夜加班的時常
-                                        if(Integer.valueOf(overtime_end) > Integer.valueOf(nightshift_start)){//考虑深夜*00
-                                            long result4 = sdf.parse(overtime_end).getTime() - sdf.parse(nightshift_start).getTime();
-                                            overtimeHoursNight = String.valueOf(Double.valueOf(String.valueOf(result4)) / 60 / 60 / 1000);
-                                            overtimeHours = String.valueOf(Double.valueOf(overtimeHours) - Double.valueOf(overtimeHoursNight));
-                                        }
+                                        //实际加班时间
+                                        overtimeHours = String.valueOf(Double.valueOf(actualoverTime) / 60 / 60 / 1000);
                                     }
                                     else{
-                                        //实际打卡记录的时间设定为加班时间。
-                                        overtimeHours = String.valueOf(result3);
+                                        //根据公司考勤设定上班开始时间与该员工弹性工作上班的时间的差的分钟数计算该员工实际的下班时间
+                                        //1分钟=60*1000=60000毫秒
+                                        long result1 = sdf.parse(closingtime_start).getTime() +
+                                                (Long.parseLong(weekdaysovertime)) + (Long.parseLong(reserveoverTime));
+                                        Date d1 = new Date(result1);
+                                        overtime_end = sdf.format(d1).toString();
+                                        //予定加班時間
+                                        overtimeHours = String.valueOf(Double.valueOf(reserveoverTime) / 60 / 60 / 1000);
                                     }
-                                }
-                                else{
-                                    //加班后应该下班的时间
-                                    if(!overtime_end.equals("")){
-                                        if(Integer.valueOf(overtime_end) <= Integer.valueOf(time_end)){
+                                    //深夜加班時間
+                                    String overtimeHoursNight = null;
+                                    //周末加班/法定日加班
+                                    if(Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003")){
+                                        //打卡开始-结束时间
+                                        long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
+                                        //午休时间
+                                        long result2 = sdf.parse(lunchbreak_end).getTime() - sdf.parse(lunchbreak_start).getTime();
+                                        //打卡结束时间-公司考勤下班时间（判断周末晚餐时间）
+                                        //long result3 = sdf.parse(time_end).getTime() - sdf.parse(closingtime_start).getTime();
+                                        Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000;
+                                        if(Double.valueOf(overtimeHours) < Double.valueOf(result3)){
+                                            BigDecimal dovertimeHours = new BigDecimal(overtimeHours).multiply(new BigDecimal(60 * 60 * 1000));
+                                            long result5 = sdf.parse(workshift_start).getTime() + result2 + (Long.parseLong(String.valueOf(dovertimeHours.intValue())));
+                                            Date d1 = new Date(result1);
+                                            //加班后应该下班的时间
+                                            overtime_end = sdf.format(d1).toString();
                                             //判斷是否是深夜加班并計算深夜加班的時常
                                             if(Integer.valueOf(overtime_end) > Integer.valueOf(nightshift_start)){//考虑深夜*00
-                                                long result1 = sdf.parse(overtime_end).getTime() - sdf.parse(nightshift_start).getTime();
-                                                overtimeHoursNight = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+                                                long result4 = sdf.parse(overtime_end).getTime() - sdf.parse(nightshift_start).getTime();
+                                                overtimeHoursNight = String.valueOf(Double.valueOf(String.valueOf(result4)) / 60 / 60 / 1000);
                                                 overtimeHours = String.valueOf(Double.valueOf(overtimeHours) - Double.valueOf(overtimeHoursNight));
                                             }
                                         }
                                         else{
-                                            //最后打卡记录的时间减去吃饭时间
-                                            long result1 = sdf.parse(time_end).getTime() - (Long.parseLong(weekdaysovertime)) - sdf.parse(closingtime_start).getTime();
-                                            overtimeHours = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+                                            //实际打卡记录的时间设定为加班时间。
+                                            overtimeHours = String.valueOf(result3);
                                         }
                                     }
-                                }
+                                    else{
+                                        //加班后应该下班的时间
+                                        if(!overtime_end.equals("")){
+                                            if(Integer.valueOf(overtime_end) <= Integer.valueOf(time_end)){
+                                                //判斷是否是深夜加班并計算深夜加班的時常
+                                                if(Integer.valueOf(overtime_end) > Integer.valueOf(nightshift_start)){//考虑深夜*00
+                                                    long result1 = sdf.parse(overtime_end).getTime() - sdf.parse(nightshift_start).getTime();
+                                                    overtimeHoursNight = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+                                                    overtimeHours = String.valueOf(Double.valueOf(overtimeHours) - Double.valueOf(overtimeHoursNight));
+                                                }
+                                            }
+                                            else{
+                                                //最后打卡记录的时间减去吃饭时间
+                                                long result1 = sdf.parse(time_end).getTime() - (Long.parseLong(weekdaysovertime)) - sdf.parse(closingtime_start).getTime();
+                                                overtimeHours = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+                                            }
+                                        }
+                                    }
 
-                                if(attendancelist.size() > 0){//有考勤的情况
                                     if(Ot.getOvertimetype().equals("PR001001")){//平日加班
                                         if(attendance.getOrdinaryindustry() != null && !attendance.getOrdinaryindustry().isEmpty()){
                                             overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(attendance.getOrdinaryindustry())));
@@ -444,7 +466,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             }
                                             attendance.setWeekendindustrynight(overtimeHoursNight);
                                         }
-                                        //进代休表
+                                        //进代休表111
                                     }
                                     else if(Ot.getOvertimetype().equals("PR001003")){//法定日加班
                                         if(attendance.getStatutoryresidue() != null && !attendance.getStatutoryresidue().isEmpty()){
@@ -483,162 +505,217 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         attendance.setWomensday(overtimeHours);
                                         //进代休表
                                     }
-                                    //saveAttendance(attend,"0",tokenModel);
+                                    //承认
+                                    Ot.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_YES);
+                                    Ot.preUpdate(tokenModel);
+                                    overtimeMapper.updateByPrimaryKey(Ot);
                                 }
-                                else{//有考勤的情况
-                                    if(Ot.getOvertimetype().equals("PR001001")){//平日加班
-                                        attendance.setOrdinaryindustry(overtimeHours);
-                                        if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
-                                            attendance.setOrdinaryindustrynight(overtimeHoursNight);
-                                        }
-                                    }
-                                    else if(Ot.getOvertimetype().equals("PR001002")){//周末加班
-                                        attendance.setWeekendindustry(overtimeHours);
-                                        if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
-                                            attendance.setWeekendindustrynight(overtimeHoursNight);
-                                        }
-                                        //进代休表
-                                    }
-                                    else if(Ot.getOvertimetype().equals("PR001003")){//法定日加班
-                                        attendance.setStatutoryresidue(overtimeHours);
-                                        if(overtimeHoursNight != null && !overtimeHoursNight.isEmpty()){
-                                            attendance.setStatutoryresiduenight(overtimeHoursNight);
-                                        }
-                                    }
-                                    else if(Ot.getOvertimetype().equals("PR001004")){//一齐年休日加班
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
-                                        attendance.setAnnualrestday(overtimeHours);
-
-                                    }
-                                    else if(Ot.getOvertimetype().equals("PR001005")){//会社特别休日加班
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
-                                        attendance.setSpecialday(overtimeHours);
-                                    }
-                                    else if(Ot.getOvertimetype().equals("PR001007")){//五四青年节
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
-                                        attendance.setYouthday(overtimeHours);
-                                        //进代休表
-                                    }
-                                    else if(Ot.getOvertimetype().equals("PR001008")){//妇女节
-                                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
-                                        attendance.setWomensday(overtimeHours);
-                                        //进代休表
-                                    }
-                                    //saveAttendance(attendance,"1",tokenModel);
-                                }
-
-                                //承认
-                                Ot.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_YES);
-                                Ot.preUpdate(tokenModel);
-                                overtimeMapper.updateByPrimaryKey(Ot);
                             }
-                        }
-                        //---------处理昨日审批通过的加班申请end-------
-                        //正常的打卡记录
-                        if(sdf.parse(time_start).getTime() <= sdf.parse(workshift_start).getTime()
-                            && sdf.parse(closingtime_start).getTime() <= sdf.parse(time_end).getTime()){
-                            attendance.setNormal(workinghours);
-                        }
-                        else //异常打卡的情况
-                        {
-                            attendance.setAbsenteeism("0");
-                            //一条卡达记录记录的请路况
-                            if(sdf.parse(time_start).getTime() == sdf.parse(time_end).getTime()){
-                                attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+
+                            //---------处理昨日审批通过的加班申请end-------
+
+                            //正常的打卡记录
+                            if(sdf.parse(time_start).getTime() <= sdf.parse(workshift_start).getTime()
+                                && sdf.parse(closingtime_start).getTime() <= sdf.parse(time_end).getTime()){
+                                attendance.setNormal(workinghours);
                             }
-                            //迟到
-                            if(sdf.parse(time_start).getTime() != sdf.parse(time_end).getTime() &&
-                                    sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()){
-                                //迟到的时间
-                                long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
-                                //应该补的时间
-                                Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
-                                //迟到的小时
-                                Double Dhourresult = strunit / 60 / 60 / 1000;
-                                if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){
-                                    //迟到小于15分钟的处理（算旷工半天）
-                                    attendance.setAbsenteeism(absenteeism);
-                                    attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
+                            else //异常打卡的情况
+                            {
+                                attendance.setAbsenteeism("0");
+                                //一条卡达记录记录的请路况
+                                if(sdf.parse(time_start).getTime() == sdf.parse(time_end).getTime()){
+                                    attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
                                 }
-                                else{//迟到大于15分钟算旷工
-                                    if(Dhourresult <= Double.valueOf(absenteeism)){//迟到半天
+                                //迟到
+                                if(sdf.parse(time_start).getTime() != sdf.parse(time_end).getTime() &&
+                                        sdf.parse(time_start).getTime() > sdf.parse(workshift_start).getTime()){
+                                    //迟到的时间
+                                    long result = sdf.parse(time_start).getTime() - sdf.parse(workshift_start).getTime();
+                                    //应该补的时间
+                                    Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
+                                    //迟到的小时
+                                    Double Dhourresult = strunit / 60 / 60 / 1000;
+                                    if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){
+                                        //迟到小于15分钟的处理（算旷工半天）
                                         attendance.setAbsenteeism(absenteeism);
                                         attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
                                     }
-                                    else{//迟到大于半天
-                                        attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
-                                        attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
+                                    else{//迟到大于15分钟算旷工
+                                        if(Dhourresult <= Double.valueOf(absenteeism)){//迟到半天
+                                            attendance.setAbsenteeism(absenteeism);
+                                            attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
+                                        }
+                                        else{//迟到大于半天
+                                            attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                                            attendance.setLatetime(String.valueOf(df.format(Dhourresult)));
+                                        }
                                     }
                                 }
-                            }
-                            //早退
-                            if(sdf.parse(time_start).getTime() != sdf.parse(time_end).getTime() &&
-                                    sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
-                                long result = sdf.parse(closingtime_start).getTime() - sdf.parse(time_end).getTime();
-                                //应该补的时间
-                                Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
-                                //早退的小时
-                                Double Dhourresult = strunit / 60 / 60 / 1000;
-                                if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){
-                                    //早退小于15分钟的处理（算旷工半天）
-                                    attendance.setAbsenteeism(String.valueOf(Double.valueOf(attendance.getAbsenteeism()) + Double.valueOf(absenteeism)));
-                                    attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
-                                }
-                                else{//早退大于15分钟算旷工
-                                    if(Dhourresult <= Double.valueOf(absenteeism)){//早退半天
+                                //早退
+                                if(sdf.parse(time_start).getTime() != sdf.parse(time_end).getTime() &&
+                                        sdf.parse(closingtime_start).getTime() > sdf.parse(time_end).getTime()){
+                                    long result = sdf.parse(closingtime_start).getTime() - sdf.parse(time_end).getTime();
+                                    //应该补的时间
+                                    Double strunit = getUnit(Double.valueOf(result),Double.valueOf(lateearlyleave));
+                                    //早退的小时
+                                    Double Dhourresult = strunit / 60 / 60 / 1000;
+                                    if(Integer.valueOf(lateearlyleave) > Integer.valueOf(String.valueOf(result))){
+                                        //早退小于15分钟的处理（算旷工半天）
                                         attendance.setAbsenteeism(String.valueOf(Double.valueOf(attendance.getAbsenteeism()) + Double.valueOf(absenteeism)));
                                         attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
                                     }
-                                    else{//早退大于半天
-                                        attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
-                                        attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
+                                    else{//早退大于15分钟算旷工
+                                        if(Dhourresult <= Double.valueOf(absenteeism)){//早退半天
+                                            attendance.setAbsenteeism(String.valueOf(Double.valueOf(attendance.getAbsenteeism()) + Double.valueOf(absenteeism)));
+                                            attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
+                                        }
+                                        else{//早退大于半天
+                                            attendance.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                                            attendance.setLeaveearlytime(String.valueOf(df.format(Dhourresult)));
+                                        }
                                     }
                                 }
                             }
 
-                        }
+                            //---------处理昨日审批通过的异常考勤申请start-------
+                            AbNormal abnormal = new AbNormal();
+                            abnormal.setUser_id(strUserid);
+                            abnormal.setOccurrencedate(dateStart);
+                            abnormal.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                            List<AbNormal> abNormallist = abNormalMapper.select(abnormal);
+                            if(abNormallist.size() > 0){
+                                for(AbNormal ab : abNormallist){
+                                    String strlengthtime = ab.getLengthtime();
+                                    if(ab.getErrortype().equals("PR013002")){//迟到
+                                        if(Double.valueOf(strlengthtime) >= Double.valueOf(attendance.getLatetime())){
+                                            attendance.setLate(strlengthtime);
+                                            if(Double.valueOf(attendance.getLatetime()) > Double.valueOf(absenteeism)){
+                                                attendance.setAbsenteeism(absenteeism);
+                                            }
+                                            else{
+                                                attendance.setAbsenteeism("");
+                                            }
+                                            attendance.setLatetime(null);
+                                        }
+                                    }
+                                    else if(ab.getErrortype().equals("PR013003")){//早退
+                                        if(Double.valueOf(strlengthtime) >= Double.valueOf(attendance.getLeaveearlytime())){
+                                            attendance.setLeaveearly(strlengthtime);
+                                            if(Double.valueOf(attendance.getLeaveearlytime()) > Double.valueOf(absenteeism)){
+                                                attendance.setAbsenteeism(absenteeism);
+                                            }
+                                            else{
+                                                attendance.setAbsenteeism("");
+                                            }
+                                            attendance.setLeaveearlytime(null);
+                                        }
+                                    }
+                                    else if(ab.getErrortype().equals("PR013004")){//女性三期
+                                    }
+                                    else if(ab.getErrortype().equals("PR013005")){//年休
+                                        if(attendance.getAnnualrest() != null && !attendance.getAnnualrest().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getAnnualrest())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setAnnualrest(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013006")){//代休-周末
+                                        if(attendance.getDaixiu() != null && !attendance.getDaixiu().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getDaixiu())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setDaixiu(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013007")){//代休-特殊
+                                        if(attendance.getDaixiu() != null && !attendance.getDaixiu().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getDaixiu())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setDaixiu(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013008")){//事休
+                                        if(attendance.getCompassionateleave() != null && !attendance.getCompassionateleave().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getCompassionateleave())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setCompassionateleave(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013009")){//短期病休
+                                        if(attendance.getShortsickleave() != null && !attendance.getShortsickleave().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getShortsickleave())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setShortsickleave(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013010")){//長期病休
+                                        if(attendance.getLongsickleave() != null && !attendance.getLongsickleave().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getLongsickleave())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setLongsickleave(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013011")){//结婚休假
+//                                        if(attendance.getLongsickleave() != null && !attendance.getLongsickleave().isEmpty()){
+//                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getLongsickleave())));
+//                                        }
+//                                        else{
+//                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+//                                        }
+//                                        attendance.setLongsickleave(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013012")){//産休（女）
+                                        if(attendance.getNursingleave() != null && !attendance.getNursingleave().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getNursingleave())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setNursingleave(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013012")){//産休看護休暇（男）
+                                        if(attendance.getNursingleave() != null && !attendance.getNursingleave().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getNursingleave())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setNursingleave(strlengthtime);
+                                    }
+                                    else if(ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013015")
+                                        || ab.getErrortype().equals("PR013016") || ab.getErrortype().equals("PR013017")
+                                        || ab.getErrortype().equals("PR013018") || ab.getErrortype().equals("PR013019")){//福利假期
+                                        //家长会假
+                                        //葬儀休暇
+                                        //妊娠檢查休暇
+                                        //哺乳休暇
+                                        //労災休暇
+                                        //其他休暇
+                                        if(attendance.getWelfare() != null && !attendance.getWelfare().isEmpty()){
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(attendance.getWelfare())));
+                                        }
+                                        else{
+                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime)));
+                                        }
+                                        attendance.setWelfare(strlengthtime);
+                                    }
 
-                        //---------处理昨日审批通过的异常考勤申请start-------
-                        AbNormal abnormal = new AbNormal();
-                        abnormal.setUser_id(strUserid);
-                        abnormal.setOccurrencedate(dateStart);
-                        abnormal.setStatus("4");
-                        List<AbNormal> abNormallist = abNormalMapper.select(abnormal);
-                        if(abNormallist.size() > 0){
-                            for(AbNormal ab : abNormallist){
-                                String strlengthtime = ab.getLengthtime();
-                                if(ab.getErrortype().equals("PR013002")){//迟到
-                                    if(Double.valueOf(strlengthtime) >= Double.valueOf(attendance.getLatetime())){
-                                        attendance.setLate(strlengthtime);
-                                        if(Double.valueOf(attendance.getLatetime()) > Double.valueOf(absenteeism)){
-                                            attendance.setAbsenteeism(absenteeism);
-                                        }
-                                        else{
-                                            attendance.setAbsenteeism("");
-                                        }
-                                        attendance.setLatetime(null);
-                                    }
-                                }
-                                else if(ab.getErrortype().equals("PR013003")){//早退
-                                    if(Double.valueOf(strlengthtime) >= Double.valueOf(attendance.getLeaveearlytime())){
-                                        attendance.setLeaveearly(strlengthtime);
-                                        if(Double.valueOf(attendance.getLeaveearlytime()) > Double.valueOf(absenteeism)){
-                                            attendance.setAbsenteeism(absenteeism);
-                                        }
-                                        else{
-                                            attendance.setAbsenteeism("");
-                                        }
-                                        attendance.setLeaveearlytime(null);
-                                    }
                                 }
                             }
-                        }
-                        //---------处理昨日审批通过的异常考勤申请end-------
+                            //---------处理昨日审批通过的异常考勤申请end-------
 
-                        if(attendancelist.size() > 0){
-                            saveAttendance(attendance,"0",tokenModel);
-                        }
-                        else{
+                            //更新考勤表
                             if(attendance.getAbsenteeism() != null){
                                 if(attendance.getAbsenteeism().equals("")){
                                     attendance.setAbsenteeism(null);
@@ -650,14 +727,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                 }
                             }
-                            attendance.setCenter_id(strCenter_id);
-                            attendance.setGroup_id(strGroup_id);
-                            attendance.setTeam_id(strTeam_id);
-                            attendance.setYears(DateUtil.format(dateStart,"YYYY").toString());
-                            attendance.setMonths(DateUtil.format(dateStart,"MM").toString());
-                            attendance.setUser_id(strUserid);
-                            attendance.setActual(worktime);
-                            saveAttendance(attendance,"1",tokenModel);
+                            saveAttendance(attendance,"0",tokenModel);
                         }
                     }
                     //---------不定时考勤人员(非不定时考勤人员才计算)end-------
@@ -666,16 +736,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             //------------------------------查询本次打卡记录导入的数据end-------------
         }
     }
-
+    //考勤管理
     public void saveAttendance(Attendance attendance,String Flg,TokenModel tokenModel) throws Exception {
         if(Flg.equals("0")){//更新
             attendance.preUpdate(tokenModel);
             attendanceMapper.updateByPrimaryKey(attendance);
         }
         else{//新建
-            attendance.setAttendanceid(UUID.randomUUID().toString());
-            attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-            attendance.setOwner(attendance.getUser_id());
             attendance.preInsert(tokenModel);
             attendanceMapper.insert(attendance);
         }
