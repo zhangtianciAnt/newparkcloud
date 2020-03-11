@@ -35,6 +35,11 @@ public class JudgementServiceImpl implements JudgementService {
     }
 
     @Override
+    public List<Judgement> selectJudgement() throws Exception {
+        return judgementMapper.selectJudgement();
+    }
+
+    @Override
     public JudgementVo One(String judgementid) throws Exception {
         JudgementVo judgVo = new JudgementVo();
         //设备

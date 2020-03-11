@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface JudgementService {
+    public List<Judgement> selectJudgement() throws Exception;
 
     List<Judgement> getJudgement(Judgement judgement) throws Exception;
 

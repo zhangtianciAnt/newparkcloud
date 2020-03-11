@@ -9,6 +9,8 @@ public interface LoanApplicationService {
 
     List<LoanApplication> getLoanApplication(LoanApplication loanapplication)throws Exception;
 
+    List<LoanApplication> getLoapp()throws Exception;
+
     public LoanApplication One(String loanapplication_id)throws  Exception;
 
     public void insert(LoanApplication loanapplication, TokenModel tokenModel)throws  Exception;

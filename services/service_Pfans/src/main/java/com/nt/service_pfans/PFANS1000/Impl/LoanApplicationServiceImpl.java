@@ -24,6 +24,11 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
+    public List<LoanApplication> getLoapp() throws Exception {
+        return loanapplicationMapper.getLoapp();
+    }
+
+    @Override
     public LoanApplication One(String loanapplication_id) throws Exception {
         return loanapplicationMapper.selectByPrimaryKey(loanapplication_id);
     }

@@ -37,6 +37,15 @@ public class Pfans1005Controller {
         return ApiResult.success(purchaseApplyService.get(purchaseApply));
     }
 
+    @RequestMapping(value = "/selectPurchaseApply", method = {RequestMethod.POST})
+    public ApiResult selectPurchaseApply(@RequestBody PurchaseApply purchaseapply, HttpServletRequest request) throws Exception {
+        if (purchaseapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(purchaseApplyService.selectPurchaseApply());
+    }
+
     /**
      * 新建
      */
