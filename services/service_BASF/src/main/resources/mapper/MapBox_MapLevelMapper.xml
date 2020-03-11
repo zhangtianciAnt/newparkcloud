@@ -35,10 +35,12 @@ WHERE
     </select>
 
     <select id="getAll" resultType="com.nt.dao_BASF.MapBox_MapLevel">
-       SELECT
+      SELECT
 	*
 FROM
 	mapbox_maplevel
+WHERE
+	mapbox_maplevel.`STATUS` = "0"
 ORDER BY
 	mapbox_maplevel.CREATEON ASC
     </select>
