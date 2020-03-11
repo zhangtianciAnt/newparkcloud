@@ -325,26 +325,21 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if(attendancelist.size() > 0){
                 for (Attendance ad : attendancelist) {
                     //if (ad.getUser_id().equals("5e0ee8a8c0911e1c24f1a57c")) {
-//                        WorkingDay workDay = new WorkingDay();
-//                        workDay.setYears(DateUtil.format(new Date(),"YYYY").toString());
-//                        workDay.setWorkingdate(sf1ymd.parse(sf1ymd.format(new Date())));
-//                        List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
-//                        //判断当前天是 青年节，妇女节
-//                        if(sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "03-08") || sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "05-04"))
-//                        {
-//                            ad.setNormal("4");
-//                        }else
-//                        {
-//                            if(workingDaysList.size()>0)
-//                            {
-//                                String type = null;
-//                                type = workingDaysList.stream().filter((WorkingDay wd) -> ids.contains(sf1ymd.format(dateStart).toString())).collect(Collectors.toList());
-//                                if(workingDaysList.get(0).getType())
-//                                {
-//
-//                                }
-//                            }
-//                        }
+                        WorkingDay workDay = new WorkingDay();
+                        workDay.setYears(DateUtil.format(new Date(),"YYYY").toString());
+                        workDay.setWorkingdate(sf1ymd.parse(sf1ymd.format(dateStart)));
+                        List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
+                        //判断当前天是 青年节，妇女节 ,工作日表中的数据
+                        if(sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "03-08") || sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "05-04"))
+                        {
+                            ad.setNormal("4");
+                        }else
+                        {
+                            if(workingDaysList.size()>0)
+                            {
+                                ad.setNormal("0");
+                            }
+                        }
 
                         CustomerInfo customer =new CustomerInfo();
                         Query query = new Query();
@@ -779,14 +774,17 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
                                     }
-                                    else if (sdf.parse(customerInfo.getUserinfo().getEnddate()).getTime() > sdf.parse(dateStart.toString()).getTime())
+                                    else
                                     {
-                                        ad.setTshortsickleave(ad.getShortsickleave());
-                                        ad.setTlongsickleave(ad.getLongsickleave());
-                                        ad.setTabsenteeism(ad.getAbsenteeism());
-                                        ad.setShortsickleave(null);
-                                        ad.setLongsickleave(null);
-                                        ad.setAbsenteeism(null);
+                                        if (sdf.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
+                                        {
+                                            ad.setTshortsickleave(ad.getShortsickleave());
+                                            ad.setTlongsickleave(ad.getLongsickleave());
+                                            ad.setTabsenteeism(ad.getAbsenteeism());
+                                            ad.setShortsickleave(null);
+                                            ad.setLongsickleave(null);
+                                            ad.setAbsenteeism(null);
+                                        }
                                     }
                                     saveAttendance(ad, "0", tokenModel);
                                 }
@@ -927,7 +925,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
                                 }
-                                else if (sdf.parse(customerInfo.getUserinfo().getEnddate()).getTime() > sdf.parse(dateStart.toString()).getTime())
+                                else if (sdf.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
                                 {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
@@ -935,6 +933,22 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setShortsickleave(null);
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
+                                }
+                                if(workingDaysList.size()>0)
+                                {
+                                    ad.setNormal(null);
+                                    ad.setAbsenteeism(null);
+                                    ad.setOrdinaryindustry(null);
+                                    ad.setShortsickleave(null);
+                                    ad.setLongsickleave(null);
+                                    ad.setCompassionateleave(null);
+                                    ad.setAnnualrest(null);
+                                    ad.setDaixiu(null);
+                                    ad.setNursingleave(null);
+                                    ad.setWelfare(null);
+                                    ad.setTshortsickleave(null);
+                                    ad.setTlongsickleave(null);
+                                    ad.setTabsenteeism(null);
                                 }
                                 saveAttendance(ad, "0", tokenModel);
                             }
