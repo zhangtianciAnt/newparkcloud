@@ -26,6 +26,12 @@ public class Bonussend extends BaseModel {
     private String bonussend_id;
 
     /**
+     * 年度
+     */
+    @Column(name = "YEARS")
+    private String years;
+
+    /**
      * 工号
      */
     @Column(name = "JOBNUMBER")
