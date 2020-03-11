@@ -1416,10 +1416,12 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         }
         expatriatesinforMapper.insert(expatriatesinfor);
         Priceset priceset = new Priceset();
+        priceset.preInsert(tokenModel);
         priceset.setPricesetid(UUID.randomUUID().toString());
         priceset.setUser_id(expatriatesinfor.getCooperuserid());
         priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());
+        priceset.setStatus("0");
         pricesetMapper.insert(priceset);
     }
 

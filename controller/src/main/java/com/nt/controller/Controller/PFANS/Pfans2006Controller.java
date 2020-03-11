@@ -1,15 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS2000.Bonus;
-import com.nt.dao_Pfans.PFANS2000.InterviewRecord;
+import com.nt.dao_Pfans.PFANS2000.Bonussend;
 import com.nt.dao_Pfans.PFANS2000.Wages;
-import com.nt.service_pfans.PFANS2000.InterviewRecordService;
 import com.nt.service_pfans.PFANS2000.WagesService;
 import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
-import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +31,9 @@ public class Pfans2006Controller {
 
     @RequestMapping(value = "/getBonusList", method = {RequestMethod.GET})
     public ApiResult BonusList(String userid,HttpServletRequest request) throws Exception {
-        Bonus bonus =new Bonus();
-        bonus.setBename(userid);
-        return ApiResult.success(wagesService.bonusList(bonus));
+        Bonussend bonussend =new Bonussend();
+        bonussend.setUser_id(userid);
+        return ApiResult.success(wagesService.bonusList(bonussend));
     }
 
 
