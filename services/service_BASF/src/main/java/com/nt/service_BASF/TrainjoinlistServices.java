@@ -59,7 +59,7 @@ public interface TrainjoinlistServices {
     //excel文档导入
     List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 
-    //复训/到期人员列表（前端培训教育大屏用）
+    //即将到期人员列表（前端培训教育大屏用）
     List<OverduePersonnelListVo> overduepersonnellist() throws Exception;
 
     //结果发布判断该培训是否存在人员通过状态为空

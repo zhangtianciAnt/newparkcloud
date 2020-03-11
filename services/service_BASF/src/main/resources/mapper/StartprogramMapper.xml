@@ -107,21 +107,18 @@ left join startprogram sp
 on tj.startprogramid = sp.startprogramid
     </select>
 
-    <!--    未来三个月培训信息-->
+    <!--    大屏培训信息推送列表-->
     <select id="getFutureProgram" resultType="com.nt.dao_BASF.Startprogram">
-        SELECT
+       SELECT
         s.programname,
-        s.expirationdate,
+        s.starttheorydate,
         s.insideoutside,
         s.isonline
         FROM
         startprogram AS s
         WHERE
         s.`STATUS` = '0'
-        AND s.programtype = 'BC039001'
-        AND DATEDIFF(
-        s.expirationdate,
-        CURRENT_DATE ()) >= 0
-        AND DATEDIFF( s.expirationdate, date_add( CURRENT_DATE (), INTERVAL 3 MONTH ) )&lt;= 0
+        AND s.programtype = 'BC039002'
+            AND DATEDIFF(s.starttheorydate,CURRENT_DATE ()) > 0
     </select>
 </mapper>

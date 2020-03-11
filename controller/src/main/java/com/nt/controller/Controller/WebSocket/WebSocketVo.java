@@ -77,7 +77,7 @@ public class WebSocketVo {
     private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();
     //获取培训即将到期人员列表
     private List<OverduePersonnelListVo> overduePersonnelListVoList = new ArrayList<>();
-    //获取未来三个月培训信息
+    //大屏培训信息推送列表
     private List<Startprogram> futureProgramList = new ArrayList<>();
     //获取风险判研信息
     private Riskassessment riskassessment = new Riskassessment();

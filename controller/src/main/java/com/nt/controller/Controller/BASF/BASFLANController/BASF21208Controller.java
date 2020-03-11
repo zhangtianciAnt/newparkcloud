@@ -103,7 +103,7 @@ public class BASF21208Controller {
         }
     }
 
-    //复训/到期人员列表（前端培训教育大屏用）
+    //即将到期人员列表（前端培训教育大屏用）
     @RequestMapping(value = "/overduepersonnellist", method = {RequestMethod.POST})
     public ApiResult overduepersonnellist(HttpServletRequest request) throws Exception {
         return ApiResult.success(trainjoinlistServices.overduepersonnellist());

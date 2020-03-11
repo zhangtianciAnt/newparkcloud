@@ -56,6 +56,6 @@ public interface StartprogramServices {
     //获取培训教育人员详细
     List<TrainEducationPerVo>getTrainEducationPerInfo() throws Exception;
 
-    //获取未来三个月培训信息推送列表
+    //大屏培训信息推送列表
     List<Startprogram> getFutureProgram() throws Exception;
 }

@@ -339,7 +339,7 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASF90800_GetFutureProgram() throws Exception {
-        //获取未来三个月培训信息
+        //大屏培训信息推送列表
         webSocketVo.setFutureProgramList(startprogramServices.getFutureProgram());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }

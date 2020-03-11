@@ -31,6 +31,9 @@ public class OverduePersonnelListVo {
     //    姓名
     private String customername;
 
+    //部门
+    private String departmentname;
+
     //    培训名称
     private String programname;
 

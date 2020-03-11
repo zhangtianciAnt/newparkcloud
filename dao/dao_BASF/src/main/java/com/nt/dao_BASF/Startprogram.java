@@ -82,6 +82,9 @@ public class Startprogram extends BaseModel {
     //培训费用
     private String money;
 
+    //到期提醒提前时间（月）
+    private Integer remindtime;
+
     //初训/复训
     private String isfirst;
 

@@ -15,6 +15,7 @@ import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -69,7 +70,6 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                     trainjoinlist.setStartprogramid(trainjoinlistVo.getStartprogramid());
                     trainjoinlist.preInsert(tokenModel);
                     trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
-                    trainjoinlist.setJointype("正常");
                     trainjoinlist.setNumber(1);
                     trainjoinlistMapper.insert(trainjoinlist);
                 }
@@ -244,6 +244,8 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        //当前的培训参加名单的id
+        String trainjoinlistid = "";
         //存放消息
         List<String> result = new ArrayList<>();
         //存放成绩信息list
@@ -315,7 +317,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                 List<Object> olist = list.get(i);
                 //判断这条数据列数是否足够
                 try {
-                    if (olist.size() < 8) {
+                    if (olist.size() < 7) {
                         result.add("成绩表" + k + "行数据异常，导入系统失败！");
                         errorCount += 1;
                         continue;
@@ -354,6 +356,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             }
                             trainjoinlist.preUpdate(tokenModel);
                             trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
+                            trainjoinlistid = trainjoinlist.getTrainjoinlistid();
                             successCount += 1;
                         }
                     }
@@ -366,30 +369,32 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             }
             result.add("失败数：" + errorCount);
             result.add("成功数：" + successCount);
+            upActualProgramlist(trainjoinlistid);
             return result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
 
-    //复训/到期人员列表（前端培训教育大屏用）
+    //导入excerl后更新培训计划清单的本次培训人数
+    private void upActualProgramlist(String trainjoinlistid) throws Exception {
+        if (StringUtils.isNotEmpty(trainjoinlistid)) {
+            Startprogram startprogram = startprogramMapper.selectByPrimaryKey(trainjoinlistMapper.selectByPrimaryKey(trainjoinlistid).getStartprogramid());
+            int actualjoinnumber = actualjoinnumber(startprogram.getStartprogramid());
+            Programlist programlist = new Programlist();
+            programlist.setProgramlistid(startprogram.getProgramlistid());
+            programlist.setThispeople(Integer.toString(actualjoinnumber));
+            programlistMapper.updateByPrimaryKeySelective(programlist);
+        } else {
+            return;
+        }
+    }
+
+    //即将到期人员列表（前端培训教育大屏用）
     @Override
     public List<OverduePersonnelListVo> overduepersonnellist() throws Exception {
-        List<OverduePersonnelListVo> overduePersonnelListVoList = trainjoinlistMapper.OverduePersonnelList();
-        for (int i = 0; i < overduePersonnelListVoList.size(); i++) {
-            //填充过期日期
-            overduePersonnelListVoList.get(i).setDueDate(new java.sql.Date(overduePersonnelListVoList.get(i).getActualstartdate().getTime() + 86400000L * 30 * (Integer.valueOf(overduePersonnelListVoList.get(i).getValidity()).intValue())));
-            //填充姓名
-            Query query = new Query();
-            query.addCriteria(Criteria.where("userid").is(overduePersonnelListVoList.get(i).getPersonnelid()));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                if (StringUtils.isNotBlank(customerInfo.getUserinfo().getCustomername())) {
-                    overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
-                }
-            }
-        }
-        return overduePersonnelListVoList;
+        List<OverduePersonnelListVo> listVos = new ArrayList<>();
+        return listVos;
     }
 
     //结果发布判断该培训是否存在人员通过状态为空
