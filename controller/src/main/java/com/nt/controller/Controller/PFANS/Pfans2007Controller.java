@@ -41,7 +41,7 @@ public class Pfans2007Controller {
         return ApiResult.success(bonussendService.get(bonussend));
     }
 
-    @RequestMapping(value="/getListType",method = {RequestMethod.GET})
+    @RequestMapping(value="/getListType",method = {RequestMethod.POST})
     public ApiResult getListType(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception{
         if (toDoNotice == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));

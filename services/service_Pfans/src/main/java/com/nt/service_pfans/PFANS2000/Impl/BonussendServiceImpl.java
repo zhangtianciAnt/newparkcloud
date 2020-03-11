@@ -100,7 +100,7 @@ public class BonussendServiceImpl implements BonussendService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
-            for (int i = 1; i <= list.size(); i++) {
+            for (int i = 1; i < list.size(); i++) {
                 Bonussend bonussend = new Bonussend();
                 List<Object> value = list.get(k);
                 k++;
@@ -132,14 +132,14 @@ public class BonussendServiceImpl implements BonussendService {
 //                            continue;
 //                        }
 //                    }
-//                    Query query = new Query();
-//                    String jobnumber = value.get(2).toString();
-//                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
-//                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                    if (customerInfo != null) {
-//                        bonussend.setUser_id(customerInfo.getUserid());
-//                        bonussend.setUsername(customerInfo.getUserid());
-//                    }
+                    Query query = new Query();
+                    String jobnumber = value.get(2).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        bonussend.setUser_id(customerInfo.getUserid());
+                        bonussend.setUsername(customerInfo.getUserid());
+                    }
 //                    if (customerInfo == null) {
 //                        error = error + 1;
 //                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
