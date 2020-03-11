@@ -23,3 +23,5 @@ services/service_PHINE/target/
 services/service_VerificationCode/target/
 services/service_WorkFlow/target/
 utils/target/
+dao/dao_Pfans/target/
+services/service_Pfans/target/
