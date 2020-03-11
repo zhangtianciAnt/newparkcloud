@@ -2,12 +2,9 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.Retire;
-import com.nt.dao_Pfans.PFANS2000.Wages;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.WagesService;
-import com.nt.service_pfans.PFANS2000.mapper.InductionMapper;
-import com.nt.service_pfans.PFANS2000.mapper.RetireMapper;
-import com.nt.service_pfans.PFANS2000.mapper.WagesMapper;
+import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,6 +31,12 @@ public class WagesServiceImpl implements WagesService {
     private InductionMapper inductionMapper;
     @Autowired
     private RetireMapper retireMapper;
+    @Autowired
+    private GivingMapper givingMapper;
+    @Autowired
+    private BonussendMapper bonussendMapper;
+
+
 
     @Override
     public List<Wages> select(TokenModel tokenModel) {
@@ -131,4 +134,34 @@ public class WagesServiceImpl implements WagesService {
         }
         return workDays;
     }
+
+    @Override
+    public List<Wages> wagesList(Wages wages) throws Exception {
+        List<Wages> listw = wagesMapper.select(wages);
+        for(Wages wages1 : listw){
+            if(wages1.getGiving_id() != null){
+                Giving giving = new Giving();
+                giving.setGiving_id(wages1.getGiving_id());
+                List<Giving> givingList = givingMapper.select(giving);
+                for(Giving giving1 : givingList) {
+                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
+                    wages1.setGiving_id(giving1.getMonths());
+                    }
+                }
+
+            }
+        }
+
+        return listw;
+    }
+
+    @Override
+    public List<Bonussend> bonusList(Bonussend bonussend) throws Exception {
+
+        return bonussendMapper.select(bonussend);
+    }
+
+
+
+
 }

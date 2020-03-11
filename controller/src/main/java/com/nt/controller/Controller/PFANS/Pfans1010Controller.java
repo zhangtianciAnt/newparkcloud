@@ -39,6 +39,15 @@ public class Pfans1010Controller {
 
     }
 
+    @RequestMapping(value = "/selectCommunication", method = {RequestMethod.POST})
+    public ApiResult selectCommunication(@RequestBody  Communication communication, HttpServletRequest request) throws Exception {
+        if (communication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(communicationService.selectCommunication());
+    }
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Communication communication, HttpServletRequest request) throws Exception {
         if (communication == null) {

@@ -64,20 +64,12 @@ public class Pfans1013Controller {
         evectionService.updateEvectionVo(evectionVo, tokenModel);
         return ApiResult.success();
     }
-    @RequestMapping(value="/getBusiness" ,method = {RequestMethod.POST})
-    public ApiResult getBusiness(@RequestBody Business business, HttpServletRequest request) throws Exception{
-        if(business==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel=tokenService.getToken(request);
-        return ApiResult.success(businessService.get(business));
+    @RequestMapping(value="/getBusiness" ,method = {RequestMethod.GET})
+    public ApiResult getBusiness(HttpServletRequest request) throws Exception{
+        return ApiResult.success(businessService.getBuse());
     }
-    @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.POST})
-    public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
-        if (loanapplication==null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel=tokenService.getToken(request);
-        return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
+    @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.GET})
+    public ApiResult getLoanApplication(HttpServletRequest request) throws Exception {
+        return ApiResult.success(loanapplicationService.getLoapp());
     }
 }
