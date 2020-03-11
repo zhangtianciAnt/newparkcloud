@@ -2,10 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.Bonus;
-import com.nt.dao_Pfans.PFANS2000.Giving;
-import com.nt.dao_Pfans.PFANS2000.Retire;
-import com.nt.dao_Pfans.PFANS2000.Wages;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.WagesService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -37,7 +34,9 @@ public class WagesServiceImpl implements WagesService {
     @Autowired
     private GivingMapper givingMapper;
     @Autowired
-    private BonusMapper bonusMapper;
+    private BonussendMapper bonussendMapper;
+
+
 
     @Override
     public List<Wages> select(TokenModel tokenModel) {
@@ -157,10 +156,12 @@ public class WagesServiceImpl implements WagesService {
     }
 
     @Override
-    public List<Bonus> bonusList(Bonus bonus) throws Exception {
+    public List<Bonussend> bonusList(Bonussend bonussend) throws Exception {
 
-        return bonusMapper.select(bonus);
+        return bonussendMapper.select(bonussend);
     }
+
+
 
 
 }
