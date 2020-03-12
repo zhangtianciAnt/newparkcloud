@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper">
-    <select id="selectAbNormal"  resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
-        select * from abnormal
+    <select id="selectAbNormal" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+        ABNORMAL_ID abnormalid,
+        CENTER_ID centerid,
+        GROUP_ID groupid,
+        TEAM_ID  teamid,
+        USER_ID  user_id,
+        APPLICATION_DATE applicationdate,
+        ERROR_TYPE errortype,
+        OCCURRENCE_DATE occurrencedate,
+        FINISHED_DATE finisheddate,
+        PERIOD_START  periodstart,
+        PERIOD_END  periodend,
+        CAUSE  cause,
+        UPLOADFILE uploadfile,
+        RECOGNITIONSTATE recognitionstate,
+        LENGTHTIME lengthtime,
+        HOSPITAL hospital,
+        EDATE edate,
+        RELATION relation,
+        ENCLOSUREEXPLAIN enclosureexplain
+        from abnormal
         where abnormal.occurrence_date &lt;= #{now}
         and abnormal.FINISHED_DATE &gt;= #{now}
         or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
         and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
+        or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
+        and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW()))
     </select>
     <select id="selectAbNormal1"  resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         SELECT

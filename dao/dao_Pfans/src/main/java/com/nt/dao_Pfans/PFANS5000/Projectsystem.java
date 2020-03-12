@@ -31,7 +31,7 @@ public class Projectsystem extends BaseModel {
     private String companyprojects_id;
 
     /**
-     * 社内外协区分
+     * 社内外协区分(0为社内1为外协)
      */
     @Column(name = "TYPE")
     private String type;

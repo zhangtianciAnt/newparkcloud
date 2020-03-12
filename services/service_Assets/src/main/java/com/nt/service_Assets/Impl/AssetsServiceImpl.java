@@ -171,7 +171,7 @@ public class AssetsServiceImpl implements AssetsService {
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            String[] qitazican = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,通関資料管理番号,型号,价格,HSコード,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,設備写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考".split(",");
+            String[] qitazican = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,通関資料管理番号,型号,价格,HS编码,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,设备写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考,部门".split(",");
             String[] gudingzichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,PC管理号,使用部门,部门代码,购入时间,价格,帐面净值,型号,备注".split(",");
             String[] buwaizichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,资产说明,序列号,启用日期,成本,标签号,型号,地点,使用部门,部门代码,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认".split(",");
 
@@ -432,7 +432,7 @@ public class AssetsServiceImpl implements AssetsService {
                          * (17列 - 24列)： INVOICEと一致性, 設備写真あるか, 輸出部門担当者,実施日, 动作状况, 現場担当者, 実施日，備考
                          * ------- 以下列用for循环添加 ----------（outparams1..14）
                          * （25列 - 33列）動作状況	,現場実施者,実施日,INVOICEとの一致性，入荷写真との一致性，梱包状況，現場担当者，輸出部門担当者，実施日
-                         * （34列 - 38列）最終確認，現場TL，輸出部門TL，実施日，備考
+                         * （34列 - 39列）最終確認，現場TL，輸出部門TL，実施日，備考，部门
                          *
                          */
                         String[] qitaCols = ("pcno,model,price,no,purchasetime,activitiondate,remarks,customer,controlno,machinename," +//(7-16)
@@ -442,6 +442,7 @@ public class AssetsServiceImpl implements AssetsService {
                         for ( int i = 1; i<=14; i++) {
                             qitaList.add("outparams" + i);
                         }
+                        qitaList.add("usedepartment");
                         qitaCols = qitaList.toArray(new String[qitaList.size()]);
                         int start = 7;
                         setOrderedValues(start, assets, qitaCols, value);

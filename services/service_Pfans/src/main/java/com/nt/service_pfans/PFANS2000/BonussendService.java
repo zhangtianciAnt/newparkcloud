@@ -14,4 +14,5 @@ public interface BonussendService {
 
     List<Bonussend> List(Bonussend bonussend,TokenModel tokenModel) throws Exception;
 
+    List<Bonussend> get(Bonussend bonussend) throws Exception;
 }
