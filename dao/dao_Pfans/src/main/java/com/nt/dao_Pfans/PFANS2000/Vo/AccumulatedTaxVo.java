@@ -25,11 +25,25 @@ public class AccumulatedTaxVo {
     private String october;
     private String november;
     private String december;
-    private String sumThis;
     /**
-     * 当月応発工資（工资总额(纳税+免税)+只納税）
+     * 年间累计税金
+     */
+    private String sumThis;
+
+    /**
+     * 年度应纳税总额
      */
     private String shouldwages;
+
+    /**
+     * 年度应纳付税金
+     */
+    private String shouldtax;
+
+    /**
+     * 還付差額
+     */
+    private String balance;
 
     private Integer rowindex;
 
