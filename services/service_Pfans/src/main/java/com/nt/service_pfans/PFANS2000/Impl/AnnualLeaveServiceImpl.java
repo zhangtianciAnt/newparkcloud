@@ -1,14 +1,18 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
+import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
+import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.ReplacerestMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Component
@@ -47,6 +55,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Autowired
     private WorkingDayMapper workingDayMapper;
 
+    @Autowired
+    private AbNormalMapper abNormalMapper;
+
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
@@ -60,9 +72,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
-               if(customer.getUserid().equals("5e16fc07c5e52516b0ab5263")){
+//                if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
                     insertannualLeave(customer);
-               }
+//                }
             }
         }
         //会社特别休日加班
@@ -139,9 +151,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     break;
                 }
             }
+        }else {
+            enterdaystartCal = "1980-02-29T16:00:00.000Z";
         }
         //仕事开始年月日
         String workdaystartCal = customer.getUserinfo().getWorkday();
+
         if (StringUtil.isNotEmpty(workdaystartCal)) {
             int year = getYears(workdaystartCal);
             //本年度法定年休（期初）
@@ -155,12 +170,101 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("15"));
             }
         }
+
+        //员工入职/离职时，年休计算
+        //离社年月日
+        String resignationDateendCal = customer.getUserinfo().getResignation_date();
+        //事业年度开始（4月1日）
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        Calendar calendar_a = Calendar.getInstance();
+        calendar_a.setTime(new Date());
+        calendar_a.add(Calendar.DAY_OF_YEAR,-1);
+        DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
+        DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
+        BigDecimal day_Annual_Leave = BigDecimal.ZERO;
+        //Ⅰ.途中入职：本事业年度在职期间/12个月*15天
+        if(StringUtil.isEmpty(resignationDateendCal))
+        {
+            if(sf1.parse(enterdaystartCal.replace("Z"," UTC").toString()).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal.replace("Z"," UTC").toString()).compareTo(calendar_a.getTime())<=0)
+            {
+                //入职日
+                calendar.setTime(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")));
+                day_Annual_Leave = dateLeave(calendar,calendar_a).multiply(new BigDecimal(String.valueOf(15)));
+                anniversary = day_Annual_Leave.intValue();
+            }
+        }
+
+        //Ⅱ.途中离职：本事业年度在职期间/12个月*当年年休天数
+        if(StringUtil.isNotEmpty(resignationDateendCal))
+        {
+            if(sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")).compareTo(calendar.getTime())>=0 && sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")).compareTo(calendar_a.getTime())<=0)
+            {
+                //离职日
+                calendar_a.setTime(sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")));
+                day_Annual_Leave = dateLeave(calendar,calendar_a).multiply(new BigDecimal(String.valueOf(anniversary)));
+                anniversary = day_Annual_Leave.intValue();
+                if(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")).compareTo(calendar_a.getTime())<=0)
+                {
+                    //入职日
+                    calendar.setTime(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")));
+                    //离职日
+                    calendar_a.setTime(sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")));
+                    day_Annual_Leave = dateLeave(calendar,calendar_a).multiply(new BigDecimal(String.valueOf(anniversary)));
+                    anniversary = day_Annual_Leave.intValue();
+                }
+            }
+        }
+
+        //有以下情形的，不能享受该事业年度的年休：
+        //1年以上10年未满  因病休假2个月以上的
+        if (StringUtil.isNotEmpty(workdaystartCal)) {
+            int year = getYears(workdaystartCal);
+            int hours = 0;
+            AbNormal abNormal = new AbNormal();
+            abNormal.setUser_id(customer.getUserid());
+            abNormal.setStatus("4");
+            List<AbNormal> abNormalList = abNormalMapper.select(abNormal);
+            if(abNormalList!=null)
+            {
+                for(AbNormal abNormalinfo : abNormalList)
+                {
+                    if(abNormalinfo.getErrortype().equals("PR013010") || abNormalinfo.getErrortype().equals("PR013009"))//病休
+                    {
+                        hours = hours + Double.valueOf(abNormalinfo.getLengthtime()).intValue();
+                    }
+                }
+
+                if(year >= 1 && year < 10){
+                    if( hours/8 >=60)
+                    {
+                        anniversary=0;
+                        annual_leave_thisyear = BigDecimal.ZERO;
+                    }
+                }
+                if(year >= 10 && year < 20){
+                    if(hours/8 >=90)
+                    {
+                        anniversary=0;
+                        annual_leave_thisyear = BigDecimal.ZERO;
+                    }
+                }
+                if(year >= 20){
+                    if(hours/8 >=120)
+                    {
+                        anniversary=0;
+                        annual_leave_thisyear = BigDecimal.ZERO;
+                    }
+                }
+            }
+        }
+
         //本年度福利年休（期初）
         if(anniversary > 0){
             if (StringUtil.isNotEmpty(customer.getUserinfo().getRestyear())) {
                 paid_leave_thisyear = paid_leave_thisyear.add(new BigDecimal(String.valueOf(anniversary))).subtract(annual_leave_thisyear);
             }
         }
+
         //法定年假(本年度)
         annualLeave.setAnnual_leave_thisyear(annual_leave_thisyear);
         //法定年假扣除(本年度)
@@ -173,11 +277,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeaveMapper.insertSelective(annualLeave);
 
         //更新人员信息
-        //CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
         //今年年休数
         customer.getUserinfo().setAnnualyear(String.valueOf(anniversary));
         //去年年休数(残)
-        //userInfo.setAnnuallastyear(String.valueOf(paid_leave_thisyear));
+        customer.getUserinfo().setAnnuallastyear(String.valueOf(remaining_paid_leave_lastyear.add(remaining_annual_leave_lastyear)));
         //今年福利年休数
         customer.getUserinfo().setWelfareyear(String.valueOf(paid_leave_thisyear));
         //去年福利年休数(残)
@@ -187,7 +290,23 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //去年法定年休数(残)
         customer.getUserinfo().setRestlastyear(String.valueOf(remaining_annual_leave_lastyear));
         mongoTemplate.save(customer);
+    }
 
+    public BigDecimal dateLeave(Calendar startCal,Calendar endCal) throws Exception {
+        int year_leave = endCal.get(Calendar.YEAR)-startCal.get(Calendar.YEAR);
+        int month_leave = endCal.get(Calendar.MONTH)-startCal.get(Calendar.MONTH);
+        int day_leave = endCal.get(Calendar.DAY_OF_MONTH)-startCal.get(Calendar.DAY_OF_MONTH);
+        if(day_leave<0)
+        {
+            month_leave--;
+            day_leave = day_leave+30;
+        }
+        if(month_leave<0)
+        {
+            month_leave= month_leave+12;
+            year_leave--;
+        }
+        return (new BigDecimal(String.valueOf(month_leave)).add((new BigDecimal(String.valueOf(day_leave))).divide(new BigDecimal(String.valueOf(30)),3,RoundingMode.HALF_UP))).divide(new BigDecimal(String.valueOf(12)),3,RoundingMode.HALF_UP);
     }
 
     public int getYears(String startCal) throws Exception {

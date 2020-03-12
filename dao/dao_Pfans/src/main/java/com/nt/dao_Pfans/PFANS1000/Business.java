@@ -21,7 +21,7 @@ public class Business extends BaseModel {
      */
     @Id
     @Column(name = "BUSINESS_ID")
-    private String businessid;
+    private String business_id;
 
     /**
      * 申请人ID

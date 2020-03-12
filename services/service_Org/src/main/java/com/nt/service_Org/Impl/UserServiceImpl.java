@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：_id
      */
     @Override
-    public String addAccountCustomer(UserVo userVo) throws Exception {
+    public CustomerInfo addAccountCustomer(UserVo userVo) throws Exception {
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
         mongoTemplate.save(userAccount);
@@ -181,9 +181,9 @@ public class UserServiceImpl implements UserService {
             customerInfo.setUserid(_id);
             customerInfo.setUserinfo(userInfo);
             mongoTemplate.save(customerInfo);
-            return _id;
+            return customerInfo;
         } else {
-            return "";
+            return new CustomerInfo();
         }
     }
 
