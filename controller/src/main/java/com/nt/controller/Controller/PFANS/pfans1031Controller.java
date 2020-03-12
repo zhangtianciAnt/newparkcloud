@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.service_Org.DictionaryService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +90,7 @@ public class pfans1031Controller {
                     if(item.getCode().equals(na.getCurrencyformat())) {
 
                         na.setCurrencyformat(item.getValue1());
+
                     }
                 }
                 ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(日本受託‐技術開発-US$)","napinshu_us.xlsx",data,response);

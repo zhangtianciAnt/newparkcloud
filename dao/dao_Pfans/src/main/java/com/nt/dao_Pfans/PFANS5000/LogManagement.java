@@ -75,7 +75,6 @@ public class LogManagement extends BaseModel {
     @Column(name = "JOBNUMBER")
     private String jobnumber;
 
-
     @Column(name = "CONFIRMSTATUS")
     private String confirmstatus;
 

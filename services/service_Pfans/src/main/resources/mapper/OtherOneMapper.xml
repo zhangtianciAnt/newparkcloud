@@ -3,12 +3,12 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.OtherOneMapper">
     <insert id="insertOtherOne" parameterType="com.nt.dao_Pfans.PFANS2000.OtherOne">
          insert into otherone (otherone_id ,giving_id,department_id,user_id,sex,workdate,reststart,restend,attendance,other1,
-        basedata,startdate,enddate,vacation,handsupport,`type`)
+        basedata,startdate,enddate,vacation,handsupport,`type`,rowindex)
          values
      <foreach collection="otherones" index="index" item="item" separator=",">
          (#{item.otherone_id},#{item.giving_id},#{item.department_id},#{item.user_id},#{item.sex},#{item.workdate},
          #{item.reststart},#{item.restend},#{item.attendance},#{item.other1},#{item.basedata},#{item.startdate},#{item.enddate},
-         #{item.vacation},#{item.handsupport},#{item.type})
+         #{item.vacation},#{item.handsupport},#{item.type},#{item.rowindex})
      </foreach>
     </insert>
 
