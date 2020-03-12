@@ -15,4 +15,9 @@ public interface AppreciationService {
 
     List<String> importUserappreciation(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
+    List<Appreciation> get(Appreciation appreciation) throws Exception;
+
+    void update (Appreciation appreciation,TokenModel tokenModel) throws Exception;
+
+    void insert(Appreciation appreciation,TokenModel tokenModel) throws Exception;
 }

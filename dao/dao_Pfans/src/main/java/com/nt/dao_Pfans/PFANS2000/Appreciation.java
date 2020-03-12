@@ -21,7 +21,7 @@ public class Appreciation extends BaseModel {
     @Id
     @Column(name = "APPRECIATION_ID")
     private String appreciation_id;
-    
+
     @Column(name = "GIVING_ID")
     private String giving_id;
 
@@ -57,4 +57,19 @@ public class Appreciation extends BaseModel {
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
+
+    @Column(name = "YEARS")
+    private String years;
+
+    @Column(name = "MONTHS")
+    private String months;
+
+    @Column(name = "CENTER_ID")
+    private String center_id;
+
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    @Column(name = "TEAM_ID")
+    private String team_id;
 }

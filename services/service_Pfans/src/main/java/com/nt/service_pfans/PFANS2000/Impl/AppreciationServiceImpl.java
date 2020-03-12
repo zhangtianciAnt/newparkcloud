@@ -133,4 +133,23 @@ public class AppreciationServiceImpl implements AppreciationService {
             throw new LogicalException(e.getMessage());
         }
     }
+
+    @Override
+    public List<Appreciation> get(Appreciation appreciation) throws Exception {
+        return appreciationMapper.select(appreciation);
+    }
+
+    @Override
+    public void update(Appreciation appreciation,TokenModel tokenModel) throws Exception {
+        appreciation.preUpdate(tokenModel);
+        appreciationMapper.updateByPrimaryKey(appreciation);
+    }
+
+    @Override
+    public void insert(Appreciation appreciation,TokenModel tokenModel) throws Exception {
+        String appreciationid = UUID.randomUUID().toString();
+        appreciation.setAppreciation_id(appreciationid);
+        appreciation.preInsert(tokenModel);
+        appreciationMapper.insertSelective(appreciation);
+    }
 }
