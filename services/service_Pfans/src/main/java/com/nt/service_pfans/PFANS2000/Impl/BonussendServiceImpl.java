@@ -69,7 +69,6 @@ public class BonussendServiceImpl implements BonussendService {
             f = File.createTempFile("tmp", null);
 //            上传文件
             file.transferTo(f);
-            ;
 //            使用Excel读文件
             ExcelReader reader = ExcelUtil.getReader(f);
 //            创建集合存入读的文件

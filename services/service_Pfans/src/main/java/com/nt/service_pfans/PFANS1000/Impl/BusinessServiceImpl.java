@@ -53,7 +53,7 @@ public class BusinessServiceImpl implements BusinessService {
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preUpdate(tokenModel);
         businessMapper.updateByPrimaryKey(business);
-        String businessid = business.getBusinessid();
+        String businessid = business.getBusiness_id();
         TravelContent travel = new TravelContent();
         travel.setBusinessid(businessid);
         travelcontentMapper.delete(travel);
@@ -77,7 +77,7 @@ public class BusinessServiceImpl implements BusinessService {
         Business business = new Business();
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preInsert(tokenModel);
-        business.setBusinessid(businessid);
+        business.setBusiness_id(businessid);
         businessMapper.insertSelective(business);
         List<TravelContent> travelcontentlist = businessVo.getTravelcontent();
         if (travelcontentlist != null) {

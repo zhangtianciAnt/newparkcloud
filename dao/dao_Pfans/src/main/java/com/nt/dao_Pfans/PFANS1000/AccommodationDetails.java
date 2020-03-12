@@ -29,6 +29,15 @@ public class AccommodationDetails extends BaseModel {
     @Column(name = "EVECTION_ID")
     private String evectionid;
 
+    @Column(name = "NEXTDAY")
+    private String nextday;
+
+    @Column(name = "BUDGETCODING")
+    private String budgetcoding;
+
+    @Column(name = "SUBJECTNUMBER")
+    private String subjectnumber;
+
     /**
      * 日期
      */
