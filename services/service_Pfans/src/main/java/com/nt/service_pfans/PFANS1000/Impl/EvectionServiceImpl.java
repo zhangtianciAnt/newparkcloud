@@ -1,15 +1,9 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.nt.dao_Pfans.PFANS1000.AccommodationDetails;
-import com.nt.dao_Pfans.PFANS1000.Evection;
-import com.nt.dao_Pfans.PFANS1000.OtherDetails;
-import com.nt.dao_Pfans.PFANS1000.TrafficDetails;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.service_pfans.PFANS1000.EvectionService;
-import com.nt.service_pfans.PFANS1000.mapper.AccommodationDetailsMapper;
-import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
-import com.nt.service_pfans.PFANS1000.mapper.OtherDetailsMapper;
-import com.nt.service_pfans.PFANS1000.mapper.TrafficDetailsMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +28,11 @@ public class EvectionServiceImpl implements EvectionService {
     @Autowired
     private OtherDetailsMapper otherdetailsMapper;
 
+    @Autowired
+    private InvoiceMapper invoicemapper;
+    @Autowired
+    private CurrencyexchangeMapper currencyexchangeMapper;
+
     @Override
     public List<Evection> get(Evection evection) throws Exception {
         return evectionMapper.select(evection);
@@ -45,20 +44,30 @@ public class EvectionServiceImpl implements EvectionService {
         TrafficDetails trafficdetails = new TrafficDetails();
         AccommodationDetails accommodationdetails = new AccommodationDetails();
         OtherDetails otherdetails = new OtherDetails();
+        Invoice invoice=new Invoice();
+        Currencyexchange currencyexchange=new Currencyexchange();
         trafficdetails.setEvectionid(evectionid);
         accommodationdetails.setEvectionid(evectionid);
         otherdetails.setEvectionid(evectionid);
+        invoice.setEvectionid(evectionid);
+        currencyexchange.setEvectionid(evectionid);
         List<TrafficDetails> trafficdetailslist = trafficdetailsMapper.select(trafficdetails);
         List<AccommodationDetails> accommodationdetailslist = accommodationdetailsMapper.select(accommodationdetails);
         List<OtherDetails> otherdetailslist = otherdetailsMapper.select(otherdetails);
+        List<Invoice> invoicelist=invoicemapper.select(invoice);
+        List<Currencyexchange> currencyexchangeList = currencyexchangeMapper.select(currencyexchange);
         trafficdetailslist = trafficdetailslist.stream().sorted(Comparator.comparing(TrafficDetails::getRowindex)).collect(Collectors.toList());
         accommodationdetailslist = accommodationdetailslist.stream().sorted(Comparator.comparing(AccommodationDetails::getRowindex)).collect(Collectors.toList());
         otherdetailslist = otherdetailslist.stream().sorted(Comparator.comparing(OtherDetails::getRowindex)).collect(Collectors.toList());
+        invoicelist=invoicelist.stream().sorted(Comparator.comparing(Invoice::getInvoicenumber)).collect(Collectors.toList());
+        currencyexchangeList = currencyexchangeList.stream().sorted(Comparator.comparing(Currencyexchange::getRowindex)).collect(Collectors.toList());
         Evection Eve = evectionMapper.selectByPrimaryKey(evectionid);
         eveVo.setEvection(Eve);
         eveVo.setTrafficdetails(trafficdetailslist);
         eveVo.setAccommodationdetails(accommodationdetailslist);
         eveVo.setOtherdetails(otherdetailslist);
+        eveVo.setInvoice(invoicelist);
+        eveVo.setCurrencyexchanges(currencyexchangeList);
         return eveVo;
     }
 
@@ -85,6 +94,16 @@ public class EvectionServiceImpl implements EvectionService {
         otherdetailsMapper.delete(other);
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
 
+        Invoice invoice=new Invoice();
+        invoice.setEvectionid(evectionid);
+        invoicemapper.delete(invoice);
+        List<Invoice> invoicelist=evectionVo.getInvoice();
+
+        Currencyexchange currencyexchange = new Currencyexchange();
+        currencyexchange.setEvectionid(evectionid);
+        currencyexchangeMapper.delete(currencyexchange);
+        List<Currencyexchange> currencyexchangeList = evectionVo.getCurrencyexchanges();
+
         if (trafficdetailslist != null) {
             int rowindex = 0;
             for (TrafficDetails trafficdetails : trafficdetailslist) {
@@ -117,6 +136,28 @@ public class EvectionServiceImpl implements EvectionService {
                 otherdetails.setRowindex(rowindex);
                 otherdetailsMapper.insertSelective(otherdetails);
 
+            }
+        }
+        if (invoicelist != null) {
+            int rowundex = 0;
+            for (Invoice invoicel : invoicelist) {
+                rowundex = rowundex + 1;
+                invoicel.preInsert(tokenModel);
+                invoicel.setInvoice_id(UUID.randomUUID().toString());
+                invoicel.setEvectionid(evectionid);
+                invoicel.setRowindex(rowundex);
+                invoicemapper.insertSelective(invoicel);
+            }
+        }
+        if (currencyexchangeList != null) {
+            int rowundex = 0;
+            for (Currencyexchange curr : currencyexchangeList) {
+                rowundex = rowundex + 1;
+                curr.preInsert(tokenModel);
+                curr.setCurrencyexchangeid(UUID.randomUUID().toString());
+                curr.setEvectionid(evectionid);
+                curr.setRowindex(rowundex);
+                currencyexchangeMapper.insertSelective(curr);
             }
         }
 
@@ -133,6 +174,8 @@ public class EvectionServiceImpl implements EvectionService {
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
         List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
+        List<Invoice> invoicelist=evectionVo.getInvoice();
+        List<Currencyexchange> currencyexchangeList = evectionVo.getCurrencyexchanges();
 
         if (trafficdetailslist != null) {
             int rowindex = 0;
@@ -169,6 +212,30 @@ public class EvectionServiceImpl implements EvectionService {
                 otherdetailsMapper.insertSelective(otherdetails);
             }
         }
+
+        if (invoicelist != null) {
+            int rowundex = 0;
+            for (Invoice invoice : invoicelist) {
+                rowundex = rowundex + 1;
+                invoice.preInsert(tokenModel);
+                invoice.setInvoice_id(UUID.randomUUID().toString());
+                invoice.setEvectionid(evectionid);
+                invoice.setRowindex(rowundex);
+                invoicemapper.insertSelective(invoice);
+            }
+        }
+        if (currencyexchangeList != null) {
+            int rowundex = 0;
+            for (Currencyexchange curr : currencyexchangeList) {
+                rowundex = rowundex + 1;
+                curr.preInsert(tokenModel);
+                curr.setCurrencyexchangeid(UUID.randomUUID().toString());
+                curr.setEvectionid(evectionid);
+                curr.setRowindex(rowundex);
+                currencyexchangeMapper.insertSelective(curr);
+            }
+        }
+
     }
 
 }

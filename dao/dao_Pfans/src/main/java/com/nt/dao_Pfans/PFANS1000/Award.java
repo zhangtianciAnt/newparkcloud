@@ -100,6 +100,9 @@ public class Award extends BaseModel {
     @Column(name = "TOTAL")
     private String total;
 
+    @Column(name = "NUMBER")
+    private String number;
+
     @Column(name = "NUMBERMOTH")
     private String numbermoth;
 
@@ -109,11 +112,14 @@ public class Award extends BaseModel {
     @Column(name = "RATE")
     private String rate;
 
+    @Column(name = "OUTSOURCING")
+    private String outsourcing;
+
+    @Column(name = "PJRATE")
+    private String pjrate;
+
     @Column(name = "MAKETYPE")
     private String maketype;
-
-    @Column(name = "PROJECTS")
-    private String projects;
 
     @Column(name = "EXCHANGERATE")
     private String exchangerate;
@@ -121,11 +127,18 @@ public class Award extends BaseModel {
     @Column(name = "SARMB")
     private String sarmb;
 
+    @Column(name = "DRAFTINGDATE")
+    private Date draftingdate;
 
+    @Column(name = "SCHEDULEDDATE")
+    private Date scheduleddate;
 
+    @Column(name = "TABLECOMMUNT")
+    private String tablecommunt;
 
-
-
-
-
+    /**
+     * 契約概要（/開発タイトル）和文
+     */
+    @Column(name = "CONJAPANESE")
+    private String conjapanese;
 }

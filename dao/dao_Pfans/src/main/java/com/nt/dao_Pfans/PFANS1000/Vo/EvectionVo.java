@@ -1,9 +1,6 @@
 package com.nt.dao_Pfans.PFANS1000.Vo;
 
-import com.nt.dao_Pfans.PFANS1000.AccommodationDetails;
-import com.nt.dao_Pfans.PFANS1000.Evection;
-import com.nt.dao_Pfans.PFANS1000.OtherDetails;
-import com.nt.dao_Pfans.PFANS1000.TrafficDetails;
+import com.nt.dao_Pfans.PFANS1000.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +27,10 @@ public class EvectionVo {
      */
     private List<OtherDetails> otherdetails;
 
+    private List<Invoice> invoice;
 
+    /**
+     * 外币兑换
+     */
+    private List<Currencyexchange> currencyexchanges;
 }

@@ -27,11 +27,11 @@ public class StaffDetail extends BaseModel {
     @Column(name = "ATTF")
     private String attf;
 
-    @Column(name = " BUDGETCODE")
-    private String  budgetcode;
+    @Column(name = "BUDGETCODE")
+    private String budgetcode;
 
-    @Column(name = " DEPART")
-    private String  depart;
+    @Column(name = "DEPART")
+    private String depart;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;

@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Judgement;
+import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -34,6 +35,15 @@ public class Pfans1004Controller {
             return ApiResult.success(judgementService.getJudgement(judgement));
     }
 
+    @RequestMapping(value = "/selectJudgement", method = {RequestMethod.POST})
+    public ApiResult selectJudgement(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
+        if (judgement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(judgementService.selectJudgement());
+    }
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
         if (judgement == null) {
@@ -44,22 +54,22 @@ public class Pfans1004Controller {
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateJudgement(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception{
-        if (judgement == null) {
+    public ApiResult updateJudgement(@RequestBody JudgementVo judgementVo, HttpServletRequest request) throws Exception{
+        if (judgementVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.updateJudgement(judgement,tokenModel);
+        judgementService.updateJudgement(judgementVo,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult create(@RequestBody JudgementVo judgementVo, HttpServletRequest request) throws Exception {
+        if (judgementVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.insert(judgement,tokenModel);
+        judgementService.insert(judgementVo,tokenModel);
         return ApiResult.success();
     }
 

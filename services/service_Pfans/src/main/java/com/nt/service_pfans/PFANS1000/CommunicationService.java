@@ -6,6 +6,7 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface CommunicationService {
+    public List<Communication> selectCommunication() throws Exception;
 
     //查看
     List<Communication> getCommunication(Communication communication)throws Exception;

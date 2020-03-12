@@ -1,10 +1,6 @@
 package com.nt.dao_Pfans.PFANS1000.Vo;
 
-import com.nt.dao_Pfans.PFANS1000.Quotation;
-import com.nt.dao_Pfans.PFANS1000.Basicinformation;
-import com.nt.dao_Pfans.PFANS1000.Personfee;
-import com.nt.dao_Pfans.PFANS1000.Othpersonfee;
-import com.nt.dao_Pfans.PFANS1000.Fruit;
+import com.nt.dao_Pfans.PFANS1000.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,4 +35,7 @@ public class QuotationVo {
      *見積書受託（成果物）
      */
     private List<Fruit> fruit;
+
+    private List<Contractnumbercount> numbercounts;
+
 }

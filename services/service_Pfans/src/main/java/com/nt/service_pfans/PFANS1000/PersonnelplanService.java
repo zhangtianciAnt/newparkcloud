@@ -12,9 +12,11 @@ import java.util.List;
 public interface PersonnelplanService {
     List<CustomerInfo> SelectCustomer(String id);
     List<Supplierinfor> getExternal();
-    List<ExternalVo> getExpatriatesinfor();
+    List<ExternalVo> getExpatriatesinfor(String groupid);
     List<PersonnelPlan> getAll();
     PersonnelPlan getOne(String id);
     void update(PersonnelPlan personnelPlan, TokenModel tokenModel);
     void insert(PersonnelPlan personnelPlan, TokenModel tokenModel);
+
+    List<PersonnelPlan> get(PersonnelPlan personnelPlan);
 }

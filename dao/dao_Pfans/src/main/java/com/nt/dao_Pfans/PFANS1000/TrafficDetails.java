@@ -36,6 +36,21 @@ public class TrafficDetails extends BaseModel {
     @Column(name = "VEHICLE")
     private String vehicle;
 
+    @Column(name = "INVOICENUMBER")
+    private String invoicenumber;
+
+    @Column(name = "COSTITEM")
+    private String costitem;
+
+    @Column(name = "DEPARTMENTNAME")
+    private String departmentname;
+
+    @Column(name = "BUDGETCODING")
+    private String budgetcoding;
+
+    @Column(name = "SUBJECTNUMBER")
+    private String subjectnumber;
+
     @Column(name = "STARTINGPOINT")
     private String startingpoint;
 
@@ -51,4 +66,6 @@ public class TrafficDetails extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    @Column(name = "TAXES")
+    private String taxes;
 }

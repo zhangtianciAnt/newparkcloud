@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.PurchaseApplyMapper">
+	<select id="selectPurchaseApply" resultType="com.nt.dao_Pfans.PFANS1000.PurchaseApply">
+select * from purchaseapply where `STATUS` = '4' and CREATEON>DATE_SUB(CURDATE(), INTERVAL 3 MONTH) ORDER BY CREATEON DESC
+	</select>
+</mapper>

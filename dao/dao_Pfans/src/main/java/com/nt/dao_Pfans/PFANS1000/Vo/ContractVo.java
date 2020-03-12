@@ -10,5 +10,6 @@ import java.util.List;
 @Data
 public class ContractVo extends Contract {
 
+    private Contract contract;
     List<Contractnumbercount> numberCount;
 }

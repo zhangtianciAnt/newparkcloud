@@ -67,10 +67,22 @@ public class Supplierinfor extends BaseModel {
     private String vendornum;
 
     /**
-     * 所属公司
+     * 收款方全称
      */
-    @Column(name = "THECOMPANY")
-    private String thecompany;
+    @Column(name = "PAYEENAME")
+    private String payeename;
+
+    /**
+     * 收款方银行账号
+     */
+    @Column(name = "PAYEEBANKACCOUNTNUMBER")
+    private String payeebankaccountnumber;
+
+    /**
+     * 收款方开户行
+     */
+    @Column(name = "PAYEEBANKACCOUNT")
+    private String payeebankaccount;
 
     /**
      * 中文(项目联络人)
