@@ -1,8 +1,7 @@
 package com.nt.dao_Pfans.PFANS5000.Vo;
 
-import com.nt.dao_Pfans.PFANS2000.Citation;
-import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS5000.*;
+import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,4 +32,8 @@ public class CompanyProjectsVo {
      * 项目合同
      */
     private List<ProjectContract> projectcontract;
+    /**
+     * 委托信息
+     */
+    private List<Delegainformation> delegainformation;
 }
