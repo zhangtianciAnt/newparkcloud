@@ -15,4 +15,6 @@ public interface WorkingDayMapper extends MyMapper<WorkingDay> {
     List<WorkingDay> getDataList(@Param("THIS_YEAR") String this_year, @Param("LAST_YEAR") String last_year);
 
     String getHoliday(@Param("year") int year,@Param("mouth") int mouth,@Param("day") int day);
+
+    Integer getHolidayExceptWeekend(@Param("start") Date start,@Param("end") Date end);
 }

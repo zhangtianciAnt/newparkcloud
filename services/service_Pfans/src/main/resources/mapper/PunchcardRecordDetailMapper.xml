@@ -12,8 +12,7 @@
       time_start,
       time_end,
       region,
-      ( worktime - weekdaysovertime -
-      TIME_TO_SEC(timediff(TIME_FORMAT(lunchbreak_end,'%H:%i'),TIME_FORMAT(lunchbreak_start,'%H:%i')))  / 60 / 60) AS worktime
+      worktime
      FROM
      (
      SELECT
@@ -43,6 +42,5 @@
      ORDER BY
         cast( punchcardrecord_date AS date )
      ) newpunchcardrecord
-     LEFT JOIN attendancesetting ON STATUS = '0'
 	</select>
 </mapper>
