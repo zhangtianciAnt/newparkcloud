@@ -72,9 +72,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
-                if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
+//                if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
                     insertannualLeave(customer);
-                }
+//                }
             }
         }
         //会社特别休日加班
@@ -151,6 +151,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     break;
                 }
             }
+        }else {
+            enterdaystartCal = "1980-02-29T16:00:00.000Z";
         }
         //仕事开始年月日
         String workdaystartCal = customer.getUserinfo().getWorkday();
