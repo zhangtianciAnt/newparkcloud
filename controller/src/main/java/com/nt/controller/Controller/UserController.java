@@ -163,7 +163,8 @@ public class UserController {
         CustomerInfo info = new CustomerInfo();
         if (userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
             userVo.getUserAccount().preUpdate(tokenModel);
-            userService.addAccountCustomer(userVo);
+            info = userService.addAccountCustomer(userVo);
+            id = info.getUserid();
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
             info = userService.addAccountCustomer(userVo);
