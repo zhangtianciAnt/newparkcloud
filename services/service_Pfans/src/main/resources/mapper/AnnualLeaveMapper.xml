@@ -13,4 +13,26 @@
             WHERE annualleave_id =  #{item.annualleave_id}
         </foreach>
     </update>
+    <select id="getDataList"  resultType="com.nt.dao_Pfans.PFANS2000.AnnualLeave">
+       select
+        USER_ID user_id,
+        CENTER_ID center_id,
+        GROUP_ID group_id,
+        TEAM_ID team_id,
+        ANNUAL_LEAVE_LASTYEAR annual_leave_lastyear,
+        PAID_LEAVE_LASTYEAR paid_leave_lastyear,
+        DEDUCT_ANNUAL_LEAVE_LASTYEAR deduct_annual_leave_lastyear,
+        DEDUCT_PAID_LEAVE_LASTYEAR deduct_paid_leave_lastyear,
+        REMAINING_ANNUAL_LEAVE_LASTYEAR remaining_annual_leave_lastyear,
+        REMAINING_PAID_LEAVE_LASTYEAR remaining_paid_leave_lastyear,
+        ANNUAL_LEAVE_THISYEAR annual_leave_thisyear,
+        PAID_LEAVE_THISYEAR paid_leave_thisyear,
+        DEDUCT_ANNUAL_LEAVE_THISYEAR deduct_annual_leave_thisyear,
+        DEDUCT_PAID_LEAVE_THISYEAR deduct_paid_leave_thisyear,
+        REMAINING_ANNUAL_LEAVE_THISYEAR remaining_annual_leave_thisyear,
+        REMAINING_PAID_LEAVE_THISYEAR remaining_paid_leave_thisyear
+        from annulleaveView
+    </select>
+
+
 </mapper>

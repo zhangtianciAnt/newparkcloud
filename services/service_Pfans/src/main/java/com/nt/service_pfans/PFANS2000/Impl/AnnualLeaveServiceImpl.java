@@ -62,8 +62,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
-    public List<AnnualLeave> getDataList(AnnualLeave annualLeave) {
-        return annualLeaveMapper.select(annualLeave);
+    public List<AnnualLeave> getDataList() {
+        return annualLeaveMapper.getDataList();
     }
 
     //事业年度开始跑系统服务（4月1日）
@@ -72,9 +72,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
-//                if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
+ //               if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
                     insertannualLeave(customer);
-//                }
+  //              }
             }
         }
         //会社特别休日加班

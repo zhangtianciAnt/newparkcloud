@@ -14,11 +14,10 @@ public interface AnnualLeaveService {
     /**
      * 获取休假列表
      *
-     * @param annualLeave
      * @return
      * @throws Exception
      */
-    List<AnnualLeave> getDataList(AnnualLeave annualLeave) throws Exception;
+    List<AnnualLeave> getDataList() throws Exception;
 
     /**
      * 数据做成

@@ -11,10 +11,9 @@ public interface AnnualLeaveMapper extends MyMapper<AnnualLeave> {
     /**
      * 获取休假列表
      *
-     * @param annualLeave
      * @return
      */
-    List<AnnualLeave> getDataList(AnnualLeave annualLeave);
+    List<AnnualLeave> getDataList();
 
    void updateAnnualYear(@Param("annualLeaves") List<AnnualLeave> annualLeaves);
 }
