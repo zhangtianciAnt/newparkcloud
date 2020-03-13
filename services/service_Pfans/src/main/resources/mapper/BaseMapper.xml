@@ -14,11 +14,7 @@
 
     <select id="selectBaseType"  resultType="com.nt.dao_Pfans.PFANS2000.Base">
         SELECT MAX(TEMP.type) type,TEMP.USER_ID FROM (
-        SELECT USER_ID,'1' type
-        FROM induction
-        WHERE MONTH(NOW()) = MONTH(WORDDATE)
-        UNION ALL
-        SELECT USER_ID,'2'
+        SELECT USER_ID,'2' type
         FROM abnormal
         where
         (ERROR_TYPE = 'PR013012')
@@ -29,7 +25,7 @@
         or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
         and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
         UNION ALL
-        SELECT USER_ID,'3'
+        SELECT USER_ID,'3' type
         FROM abnormal
         where
         (ERROR_TYPE = 'PR013013')
@@ -39,15 +35,8 @@
         and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
         or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
         and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
-        UNION ALL
-        SELECT USER_ID,'4'
-        FROM retire
-        WHERE MONTH(NOW()) = MONTH(RETIREDATE)
         ) TEMP
         GROUP BY TEMP.USER_ID
-
-
-
     </select>
 </mapper>
 
