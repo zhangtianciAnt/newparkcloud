@@ -11,4 +11,6 @@ public interface LunarbonusService {
 
     List<Lunarbonus> getList(Lunarbonus lunarbonus) throws Exception;
 
+    public void insert(Lunarbonus lunarbonus, TokenModel tokenModel)throws Exception;
+
 }
