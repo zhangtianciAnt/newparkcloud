@@ -1,0 +1,20 @@
+package com.nt.dao_Pfans.PFANS1000.Vo;
+
+
+import com.nt.dao_Pfans.PFANS1000.TotalCost;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TotalCostVo {
+
+
+    private List<TotalCost> totalcost;
+}

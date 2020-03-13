@@ -4,6 +4,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Org.DictionaryService;
@@ -64,6 +65,19 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         return publicExpenseMapper.select(publicExpense);
     }
 
+    @Override
+    public  List<TotalCost> gettotalcost(TotalCostVo totalcostvo) throws Exception {
+        List<TotalCost> listvo = new ArrayList<TotalCost>();
+        TotalCost totalcost = new TotalCost();
+        List<TotalCost> totalcostlist = totalcostvo.getTotalcost();
+        for(TotalCost totalList:totalcostlist){
+            totalcost.setPublicexpenseid(totalList.getPublicexpenseid());
+            List<TotalCost> listVo = totalCostMapper.select(totalcost);
+            listVo = listVo.stream().sorted(Comparator.comparing(TotalCost::getNumber)).collect(Collectors.toList());
+            listvo.addAll(0,listVo);
+        }
+        return listvo;
+    }
     //新建
     @Override
     public void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
