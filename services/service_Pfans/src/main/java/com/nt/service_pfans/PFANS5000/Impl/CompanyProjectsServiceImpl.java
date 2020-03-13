@@ -361,7 +361,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Override
     public List<CompanyProjectsVo3> getCompanyProject(String SyspName) throws Exception {
-
         return companyprojectsMapper.getCompanyProject(SyspName);
     }
 }

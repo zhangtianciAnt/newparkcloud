@@ -80,7 +80,7 @@ public class Expatriatesinfor extends BaseModel {
     private String operationform;
 
     /**
-     * 作業形態
+     *
      */
     @Column(name = "GROUP_ID")
     private String group_id;
