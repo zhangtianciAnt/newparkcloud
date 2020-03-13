@@ -59,11 +59,13 @@ public class BASF11101Controller {
         }
     }
 
+    //获取风险研判数据
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         return ApiResult.success(riskassessmentServices.getData());
     }
 
+    //风险研判承诺公告更新
     @RequestMapping(value = "/noticeUpdata", method = {RequestMethod.GET})
     public ApiResult noticeUpdata(String notice, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
