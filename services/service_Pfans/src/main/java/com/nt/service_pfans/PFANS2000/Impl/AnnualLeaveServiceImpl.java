@@ -1,6 +1,10 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.CommonResponse;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
@@ -13,6 +17,7 @@ import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.ReplacerestMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.dao.AccessToken;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +27,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestTemplate;
+import com.nt.utils.ApiResult;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +64,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Autowired
     private AbNormalMapper abNormalMapper;
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -67,14 +76,14 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //事业年度开始跑系统服务（4月1日）
-    //@Scheduled(cron="59 * * * * ?")
+    //@Scheduled(cron="10 * * * * ?")
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
- //               if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
+                if(customer.getUserid().equals("5dad92f0cfe3561ca0486632")){
                     insertannualLeave(customer);
-  //              }
+                }
             }
         }
         //会社特别休日加班
@@ -421,6 +430,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         Double _annualRest = Math.floor(annualRest.doubleValue());
         map.put(_annualRest,annualDays.size());
         return map;
+    }
+
+    //事业年度开始跑系统服务（4月1日）
+    //@Scheduled(cron="20 * * * * ?")
+    public void insertattendance() throws Exception {
+//        Query query = new Query();
+//        String books[] = new String[2];
+//        books[0] = "5e69d4a515d3ce3938f4202d";
+//        books[1] = "5e69cfe4fb5a67819039703d";
+//        query.addCriteria(Criteria.where("userid").nin(books));
+//        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
+        //CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//        if (customerInfo != null) {
+//        }
+//        if (customerInfo == null) {
+//        }
+
+
+//        String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01";
+        // 請求接口
+//        ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
+        //JSONObject jsonObject = JSON.parseObject(getresult.getData());
+//        Object jsonObject = JSON.toJSON(getresult.getData());
+//        String a = "1";
+        //JSONObject jsonobject =  JSONObject.get(getresult.getData());
+//                JSONObject jsonobject = JSONObject.getObj(getresult.getData());
+//        basiccompanyinfo = (Basiccompanyinfo) JSONObject.toBean(jsonobject, Basiccompanyinfo.class);
+//        basiccompanyinfo.setName(customernamechange.getNewname());
+
+//        if (getresult.getCode() == 0) {
+//            //JSONObject jsonObject = JSON.parseObject(getresult.getData(), AccessToken.class);
+//            ArrayList folderList = (ArrayList) getresult.getData();
+//            for (int i = 0; i < folderList.size(); i++) {
+//                String res = folderList.get(i).toString();
+//                JSONObject string_to_json = JSONUtil.parseObj(res);
+//                String a = "1";
+//                String b = "1";
+//            }
+//        }
     }
 
 }
