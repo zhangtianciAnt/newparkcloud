@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface LunardetailService {
 
-    List<Lunardetail> getOne(Lunardetail lunardetail) throws  Exception;
+    List<Lunardetail> getLunardetail(Lunardetail lunardetail) throws  Exception;
 
 }

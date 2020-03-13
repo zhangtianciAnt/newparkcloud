@@ -36,7 +36,7 @@ public class LunardetailServiceImpl implements LunardetailService {
 
     //获取详细一览
     @Override
-    public List<Lunardetail> getOne(Lunardetail lunardetail) throws Exception {
+    public List<Lunardetail> getLunardetail(Lunardetail lunardetail) throws Exception {
         return lunardetailMapper.select(lunardetail);
     }
 }

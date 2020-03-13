@@ -54,12 +54,12 @@ public class Pfans2027Controller {
     }
 
     //编辑
-    @RequestMapping(value = "/selectById", method = {RequestMethod.POST})
+    @RequestMapping(value = "/getLunardetail", method = {RequestMethod.POST})
     public ApiResult selectById(@RequestBody Lunardetail lunardetail, HttpServletRequest request) throws Exception {
         if(lunardetail==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(lunardetailService.getOne(lunardetail));
+        return ApiResult.success(lunardetailService.getLunardetail(lunardetail));
     }
 
 
