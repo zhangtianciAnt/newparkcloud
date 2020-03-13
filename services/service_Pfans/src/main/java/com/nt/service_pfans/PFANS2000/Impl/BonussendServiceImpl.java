@@ -23,9 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -39,17 +41,21 @@ public class BonussendServiceImpl implements BonussendService {
     private BonussendMapper bonussendMapper;
 
     @Override
-    public List<Bonussend> get(Bonussend bonussend) {
-        return bonussendMapper.select(bonussend);
+    public void update(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception {
+        for (Bonussend bo : bonussend){
+            bo.preInsert(tokenModel);
+            bonussendMapper.updateByPrimaryKey(bo);
+        }
     }
 
     @Override
-    public List<Bonussend> getListType(Bonussend bonussend) {
+    public List<Bonussend> inserttodo(Bonussend bonussend) {
         return bonussendMapper.select(bonussend);
     }
 
     @Override
     public List<Bonussend> List(Bonussend bonussend, TokenModel tokenModel) throws Exception {
+
         return bonussendMapper.select(bonussend);
     }
 

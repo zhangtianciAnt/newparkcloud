@@ -68,12 +68,6 @@ public class CasgiftApply extends BaseModel {
     private Date application_date;
 
     /**
-     * 受验前资格
-     */
-    @Column(name = "QUALIFICATIONS")
-    private String qualifications;
-
-    /**
      * 申请金额（元）
      */
     @Column(name = "AMOUNTMONEY")
