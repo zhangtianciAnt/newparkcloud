@@ -29,9 +29,6 @@ public interface CompanyProjectsService {
     //按id查询
     CompanyProjectsVo selectById(String companyprojectsid) throws Exception;
 
-//    //    //附表查询
-//    List<Projectsystem> select(String companyprojectsid) throws Exception;
-
     List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception;
 
     //现场管理list

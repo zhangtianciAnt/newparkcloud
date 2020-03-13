@@ -55,9 +55,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     public LogmanageMentVo logmanageMentVo (CompanyProjects companyProjects) throws Exception {
         double a= 0;
         LogmanageMentVo logmanageMentVo = new LogmanageMentVo();
-
         logmanageMentVo.setCompanyProjects(companyprojectsMapper.select(companyProjects));
-
         for(CompanyProjects companyProjects1:logmanageMentVo.getCompanyProjects()){
             LogManagement logManagement = new LogManagement();
             logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
@@ -65,29 +63,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             for(LogManagement logManagement1 : logmanageMentVo.getLogManagements()){
                 a = a+Double.parseDouble(logManagement1.getTime_start());
             }
-
         }
-
-
-
-//        List Result = new ArrayList<>();
-//        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
-//        for(CompanyProjects companyProjects1 : companyProjectsList){
-//            companyProjects1.getProject_name();
-//            companyProjects1.getCompanyprojects_id();
-//
-//            LogManagement logManagement = new LogManagement();
-//            logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
-//            List<LogManagement> logManagementList = logManagementMapper.select(logManagement);
-//            double a= 0;
-//            for(LogManagement logManagement1 : logManagementList){
-//                logManagement1.getStatus();
-//                a = a+Double.parseDouble(logManagement1.getTime_start());
-//            }
-//            Result.add(String.valueOf(a));
-//            Result.add(companyProjects1.getProject_name());
-//        }
-
         return logmanageMentVo;
     }
 
