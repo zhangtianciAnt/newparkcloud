@@ -2,10 +2,9 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 
 import cn.hutool.core.date.DateUtil;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
-import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
+import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,12 +28,10 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     private ProjectsystemMapper projectsystemMapper;
     @Autowired
     private DelegainformationMapper delegainformationMapper;
-    @Autowired
-    private CompanyProjectsService companyprojectsservice;
 
     @Override
-    public List<Delegainformation> getDelegainformation(Delegainformation delegainformation) throws Exception {
-        return delegainformationMapper.select(delegainformation);
+    public List<DelegainformationVo> getDelegainformation() throws Exception {
+        return delegainformationMapper.getDelegainformation();
     }
 
 
@@ -70,9 +66,8 @@ public class DelegainformationServiceImpl implements DeleginformationService {
             delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
             delegainformation.setCompanyprojects_id(projectsystemListObtain.get(i).getCompanyprojects_id());
             delegainformation.setProjectsystem_id(projectsystemListObtain.get(i).getProjectsystem_id());
-            delegainformation.setCompany(projectsystemListObtain.get(i).getCompany());
-            delegainformation.setSuppliernameid(projectsystemListObtain.get(i).getSuppliernameid());
-
+            delegainformation.setAdmissiontime(projectsystemListObtain.get(i).getAdmissiontime());
+            delegainformation.setExittime(projectsystemListObtain.get(i).getExittime());
             //社内外协区分， 1为外协
             if(projectsystemListObtain.get(i).getType().equals("1")){
                 //退场时间不为空

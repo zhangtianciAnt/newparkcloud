@@ -1,22 +1,19 @@
-package com.nt.dao_Pfans.PFANS6000;
+package com.nt.dao_Pfans.PFANS6000.Vo;
 
-import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.nt.dao_Pfans.PFANS6000.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "delegainformation")
-public class Delegainformation extends BaseModel {
-    private static final long serialVersionUID = 1L;
-
+public class DelegainformationVo {
     /**
      * 委托信息(活用情报)
      */
@@ -36,17 +33,6 @@ public class Delegainformation extends BaseModel {
     @Column(name = "PROJECTSYSTEM_ID")
     private String projectsystem_id;
 
-    /**
-     * 入场时间
-     */
-    @Column(name = "ADMISSIONTIME")
-    private Date admissiontime;
-
-    /**
-     * 退场时间
-     */
-    @Column(name = "EXITTIME")
-    private Date exittime;
 
     /**
      * 四月
@@ -133,4 +119,69 @@ public class Delegainformation extends BaseModel {
     @Column(name = "YEAR")
     private String year;
 
+    /**
+     * 协力公司
+     */
+    @Column(name = "COMPANY")
+    private String company;
+
+    /**
+     * 外注人员ID
+     */
+    @Column(name = "SUPPLIERNAMEID")
+    private String suppliernameid;
+
+    /**
+     * 项目名称(中)
+     */
+    @Column(name = "PROJECT_NAME")
+    private String project_name;
+
+    /**
+     * 项目经理(PM)
+     */
+    @Column(name = "MANAGERID")
+    private String managerid;
+
+    /**
+     * 作業形態
+     */
+    @Column(name = "OPERATIONFORM")
+    private String operationform;
+
+    /**
+     * 作業分類
+     */
+    @Column(name = "JOBCLASSIFICATION")
+    private String jobclassification;
+
+    /**
+     * 所有技術
+     */
+    @Column(name = "ALLTECHNOLOGY")
+    private String alltechnology;
+
+    /**
+     * 現場評価
+     */
+    @Column(name = "SITEVALUATION")
+    private String sitevaluation;
+
+    /**
+     * 退场理由
+     */
+    @Column(name = "EXITREASON")
+    private String exitreason;
+
+    /**
+     * 業務影響
+     */
+    @Column(name = "BUSINESSIMPACT")
+    private String businessimpact;
+
+    /**
+     * 対策
+     */
+    @Column(name = "COUNTERMEASURE")
+    private String countermeasure;
 }

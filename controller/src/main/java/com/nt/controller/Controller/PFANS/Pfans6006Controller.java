@@ -39,8 +39,6 @@ public class Pfans6006Controller {
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult getDelegainformation(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Delegainformation delegainformation = new Delegainformation();
-        delegainformation.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(deleginformationservice.getDelegainformation(delegainformation));
+        return ApiResult.success(deleginformationservice.getDelegainformation());
     }
 }
