@@ -63,5 +63,16 @@ public class Pfans2027Controller {
     }
 
 
+    @RequestMapping(value="/update",method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody Lunardetail lunardetail, HttpServletRequest request) throws Exception{
+        if (lunardetail == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        lunardetailService.update(lunardetail,tokenModel);
+        return ApiResult.success();
+    }
+
+
 
 }

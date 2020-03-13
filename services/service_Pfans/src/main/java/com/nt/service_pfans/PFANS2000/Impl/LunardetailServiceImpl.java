@@ -39,4 +39,9 @@ public class LunardetailServiceImpl implements LunardetailService {
     public List<Lunardetail> getLunardetail(Lunardetail lunardetail) throws Exception {
         return lunardetailMapper.select(lunardetail);
     }
+
+    @Override
+    public void update(Lunardetail lunardetail, TokenModel tokenModel) throws Exception {
+        lunardetailMapper.updateByPrimaryKey(lunardetail);
+    }
 }
