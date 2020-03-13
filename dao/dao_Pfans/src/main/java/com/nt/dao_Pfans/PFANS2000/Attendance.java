@@ -85,21 +85,13 @@ public class Attendance extends BaseModel {
      */
     @Column(name = "WEEKENDINDUSTRY")
     private String weekendindustry;
-    /**
-     * 周末深夜残業
-     */
-    @Column(name = "WEEKENDINDUSTRYNIGHT")
-    private String weekendindustrynight;
+
     /**
      * 法定节假日残業
      */
     @Column(name = "STATUTORYRESIDUE")
     private String statutoryresidue;
-    /**
-     * 法定节假日深夜残業
-     */
-    @Column(name = "STATUTORYRESIDUENIGHT")
-    private String statutoryresiduenight;
+
     /**
      * 一齐年休日出勤
      */
