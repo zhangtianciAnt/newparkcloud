@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,5 +44,13 @@ public class LunarbonusServiceImpl implements LunarbonusService {
     @Override
     public List<Lunarbonus> getList(Lunarbonus lunarbonus) throws Exception {
         return lunarbonusMapper.select(lunarbonus);
+    }
+
+    @Override
+    public void insert(Lunarbonus lunarbonus, TokenModel tokenModel) throws Exception {
+        lunarbonus.preInsert(tokenModel);
+        lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
+        lunarbonus.setEvaluationday(new Date());
+        lunarbonusMapper.insert(lunarbonus);
     }
 }
