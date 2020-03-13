@@ -75,6 +75,8 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 Date date = new Date();
                 String da = sf.format(date);
 
+                lunardetail.preInsert(tokenModel);
+                lunardetail.setLunardetail_id(UUID.randomUUID().toString());
                 lunardetail.setSubjectmon(lunarbonus.getSubjectmon());
                 lunardetail.setEvaluatenum(lunarbonus.getEvaluatenum());
                 lunardetail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
