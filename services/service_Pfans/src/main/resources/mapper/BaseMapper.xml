@@ -12,8 +12,13 @@
      </foreach>
     </insert>
 
-    <select id="selectBaseType"  resultType="com.nt.dao_Pfans.PFANS2000.Base">
+    <select id="selectBaseType" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Base">
         SELECT MAX(TEMP.type) type,TEMP.USER_ID FROM (
+        SELECT USER_ID,'1' type
+        FROM induction
+        where
+        GIVING_ID = #{givingid}
+        UNION ALL
         SELECT USER_ID,'2' type
         FROM abnormal
         where
@@ -35,6 +40,11 @@
         and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
         or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
         and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
+        UNION ALL
+        SELECT USER_ID,'4' type
+        FROM retire
+        where
+        GIVING_ID = #{givingid}
         ) TEMP
         GROUP BY TEMP.USER_ID
     </select>
