@@ -73,8 +73,6 @@ public class WebSocketVo {
     //在厂人员列表
     private List<SqlAPBCardHolder> selectapbcardList = new ArrayList<>();
 
-    //获取培训教育人员详细
-    private List<TrainEducationPerVo> trainEducationPerList = new ArrayList<>();
     //获取培训即将到期人员列表
     private List<OverduePersonnelListVo> overduePersonnelListVoList = new ArrayList<>();
     //大屏培训信息推送列表

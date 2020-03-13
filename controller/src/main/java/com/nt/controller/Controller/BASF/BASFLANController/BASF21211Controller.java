@@ -2,6 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.service_BASF.ProgramlistServices;
+import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -33,6 +34,9 @@ public class BASF21211Controller {
     @Autowired
     private ProgramlistServices programlistServices;
 
+    @Autowired
+    private StartprogramServices startprogramServices;
+
     //更新培训参加人员
     @PostMapping("/upTrain")
     public ApiResult upTrain(@RequestBody Trainjoinlist trainjoinlist, HttpServletRequest request) throws Exception {
@@ -51,5 +55,14 @@ public class BASF21211Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(programlistServices.videoOrPdfFile(programlistid));
+    }
+
+    //根据姓名（或员工号、卡号）和年份查询某人员培训信息（培训教育大屏用）
+    @GetMapping("/getTrainEducationPerInfo")
+    public ApiResult getTrainEducationPerInfo(String year, String parameter, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(year) || StringUtils.isEmpty(parameter)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(startprogramServices.getTrainEducationPerInfo(year, parameter));
     }
 }

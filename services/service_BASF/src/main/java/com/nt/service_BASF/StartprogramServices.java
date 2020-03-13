@@ -47,14 +47,16 @@ public interface StartprogramServices {
     void delete(Startprogram startprogram, TokenModel tokenModel) throws Exception;
 
     //by人员id查询培训项目
-    List<Startprogram> selectbyuserid(String userid,String selecttype) throws Exception;
+    List<Startprogram> selectbyuserid(String userid, String selecttype) throws Exception;
 
     //获取强制的通过/未通过
-    List<PassingRateVo>getMandatoryInfo() throws Exception;
+    List<PassingRateVo> getMandatoryInfo() throws Exception;
+
     //获取非强制的通过/未通过
-    List<PassingRateVo>getIsMandatoryInfo() throws Exception;
-    //获取培训教育人员详细
-    List<TrainEducationPerVo>getTrainEducationPerInfo() throws Exception;
+    List<PassingRateVo> getIsMandatoryInfo() throws Exception;
+
+    //根据姓名（或员工号、卡号）和年份查询某人员培训信息（培训教育大屏用）
+    TrainEducationPerVo getTrainEducationPerInfo(String year, String parameter) throws Exception;
 
     //大屏培训信息推送列表
     List<Startprogram> getFutureProgram() throws Exception;

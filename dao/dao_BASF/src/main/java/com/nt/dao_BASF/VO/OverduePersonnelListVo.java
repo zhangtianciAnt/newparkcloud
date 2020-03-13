@@ -37,12 +37,6 @@ public class OverduePersonnelListVo {
     //    培训名称
     private String programname;
 
-    //    培训开班日期
-    private Date actualstartdate;
-
-    //    培训有效期
-    private String validity;
-
     //    培训到期日
     private Date dueDate;
 }

@@ -25,27 +25,32 @@
         t.trainjoinlistid,
         t.personnelid,
         t.customername,
+        t.departmentname,
         s.programname,
-        s.actualstartdate,
-        s.validity
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS dueDate
         FROM
         trainjoinlist AS t
-        INNER JOIN startprogram AS s ON t.startprogramid = s.startprogramid
+        INNER JOIN
+        startprogram AS s
+        ON
+        t.startprogramid = s.startprogramid
         WHERE
+        t.`STATUS` = '0'
+        AND
         t.startprogramid IN (
         SELECT
         s.startprogramid
         FROM
         startprogram AS s
         WHERE
-        DATEDIFF(
-        date_add( s.actualstartdate, INTERVAL validity MONTH ),
-        CURRENT_DATE ()) &lt;= 30
-        AND DATEDIFF( date_add( s.actualstartdate, INTERVAL validity MONTH ), CURRENT_DATE () )> 0
-        )
-        AND s.validity &lt;> '0'
-        AND t.`STATUS` = '0'
+        s.`STATUS` = "0"
+        AND s.starttheorydate &lt;> ""
+        AND s.starttheorydate IS NOT NULL
         AND s.programtype = 'BC039004'
+        AND DATEDIFF(
+        DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
+        CURRENT_DATE ()) =0
+        )
         ORDER BY
         t.personnelid ASC
     </select>

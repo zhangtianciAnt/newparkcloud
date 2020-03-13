@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,66 +96,43 @@ public class MultiThreadScheduleTask {
         int FK = 0;
         int CBS = 0;
         int ZALL = 0;
-        if(apblist.size()>0)
-        {
-            for(int i = 0;i<apblist.size();i++)
-            {
+        if (apblist.size() > 0) {
+            for (int i = 0; i < apblist.size(); i++) {
                 String lastAPBName = ((SqlAPBCardHolder) apblist.get(i)).getLastapbname();
                 String DepartmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                if(lastAPBName.indexOf("厂外") < 0 )
-                {
+                if (lastAPBName.indexOf("厂外") < 0) {
                     SqlViewDepartment sqlviewdepartment1 = sqlUserInfoMapper.selectdepartmentid(DepartmentID);
-                    if(sqlviewdepartment1.getDepartmentpeid().indexOf("-1")==0)
-                    {
+                    if (sqlviewdepartment1.getDepartmentpeid().indexOf("-1") == 0) {
                         String name1 = sqlviewdepartment1.getName();
-                        if("'访客','送货员','临时工作人员','VIP'".indexOf(name1) > 0)
-                        {
+                        if ("'访客','送货员','临时工作人员','VIP'".indexOf(name1) > 0) {
                             FK = FK + 1;
-                        }
-                        else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name1) > 0)
-                        {
+                        } else if ("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name1) > 0) {
                             YG = YG + 1;
-                        }
-                        else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name1) > 0)
-                        {
+                        } else if ("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name1) > 0) {
                             CBS = CBS + 1;
                         }
-                    }
-                    else{
+                    } else {
                         SqlViewDepartment sqlviewdepartment2 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment1.getDepartmentpeid());
 
-                        if(sqlviewdepartment2.getDepartmentpeid().indexOf("-1")==0)
-                        {
+                        if (sqlviewdepartment2.getDepartmentpeid().indexOf("-1") == 0) {
                             String name2 = sqlviewdepartment2.getName();
-                            if("'访客','送货员','临时工作人员','VIP'".indexOf(name2) > 0)
-                            {
+                            if ("'访客','送货员','临时工作人员','VIP'".indexOf(name2) > 0) {
                                 FK = FK + 1;
-                            }
-                            else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name2) > 0)
-                            {
+                            } else if ("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name2) > 0) {
                                 YG = YG + 1;
-                            }
-                            else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name2) > 0)
-                            {
+                            } else if ("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name2) > 0) {
                                 CBS = CBS + 1;
                             }
-                        }
-                        else{
+                        } else {
                             SqlViewDepartment sqlviewdepartment3 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment2.getDepartmentpeid());
 
-                            if(sqlviewdepartment3.getDepartmentpeid().indexOf("-1")==0)
-                            {
+                            if (sqlviewdepartment3.getDepartmentpeid().indexOf("-1") == 0) {
                                 String name3 = sqlviewdepartment3.getName();
-                                if("'访客','送货员','临时工作人员','VIP'".indexOf(name3) > 0)
-                                {
+                                if ("'访客','送货员','临时工作人员','VIP'".indexOf(name3) > 0) {
                                     FK = FK + 1;
-                                }
-                                else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name3) > 0)
-                                {
+                                } else if ("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name3) > 0) {
                                     YG = YG + 1;
-                                }
-                                else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name3) > 0)
-                                {
+                                } else if ("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name3) > 0) {
                                     CBS = CBS + 1;
                                 }
                             }
@@ -305,6 +281,7 @@ public class MultiThreadScheduleTask {
         webSocketVo.setEmergencyplanList(emergencyplanServices.list());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASF10803_GetResponseinformationInfo() throws Exception {
@@ -312,19 +289,12 @@ public class MultiThreadScheduleTask {
         webSocketVo.setResponseinformationList(responseinformationServices.list());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASFSQL60001_GetSelectapbcard() throws Exception {
         //在厂人员列表
         webSocketVo.setSelectapbcardList(sqluserinfoservices.selectapbcard());
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90800_GetTrainEducationPerInfo() throws Exception {
-        // 获取培训教育人员详细
-        webSocketVo.setTrainEducationPerList(startprogramServices.getTrainEducationPerInfo());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

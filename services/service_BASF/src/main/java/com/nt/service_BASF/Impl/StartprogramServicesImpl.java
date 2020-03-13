@@ -5,6 +5,7 @@ import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.dao_BASF.VO.TrainEducationPerVo;
+import com.nt.dao_BASF.VO.TrainEducationPerVo2;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -136,8 +138,8 @@ public class StartprogramServicesImpl implements StartprogramServices {
 
     //by人员id查询培训项目
     @Override
-    public List<Startprogram>  selectbyuserid(String userid,String selecttype) throws Exception {
-        return startprogramMapper.selectbyuserid(userid,selecttype);
+    public List<Startprogram> selectbyuserid(String userid, String selecttype) throws Exception {
+        return startprogramMapper.selectbyuserid(userid, selecttype);
     }
 
     @Override
@@ -150,26 +152,67 @@ public class StartprogramServicesImpl implements StartprogramServices {
         return startprogramMapper.getIsMandatoryInfo();
     }
 
+    //根据姓名（或员工号、卡号）和年份查询某人员培训信息（培训教育大屏用）
     @Override
-    public List<TrainEducationPerVo> getTrainEducationPerInfo() throws Exception {
+    public TrainEducationPerVo getTrainEducationPerInfo(String year, String parameter) throws Exception {
 
-        List<TrainEducationPerVo> tdpvo = startprogramMapper.getTrainEducationPerInfo();
-
-        for(int i = 0;i<tdpvo.size();i++)
-        {
-            String userid = tdpvo.get(i).getPersonnelid();
-            Query query = new Query();
-            query.addCriteria(Criteria.where("_id").is(userid));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-
-            if(customerInfo!=null)
-            {
-                tdpvo.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
-                tdpvo.get(i).setDocumentnumber(customerInfo.getUserinfo().getDocumentnumber());
-                tdpvo.get(i).setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        TrainEducationPerVo tepv = new TrainEducationPerVo();
+        //用户数据
+        List<CustomerInfo> customerInfoName;
+        List<CustomerInfo> customerInfoJobnumber = new ArrayList<>();
+        List<CustomerInfo> customerInfoDocumentnumber = new ArrayList<>();
+        //根据传来的参数判断查找唯一数据
+        //按姓名
+        Query queryName = new Query();
+        queryName.addCriteria(Criteria.where("userinfo.customername").is(parameter));
+        customerInfoName = mongoTemplate.find(queryName, CustomerInfo.class);
+        if (customerInfoName.size() != 1) {
+            //如不唯一  按员工号
+            Query queryJobnumber = new Query();
+            queryJobnumber.addCriteria(Criteria.where("userinfo.jobnumber").is(parameter));
+            customerInfoJobnumber = mongoTemplate.find(queryJobnumber, CustomerInfo.class);
+            if (customerInfoJobnumber.size() != 1) {
+                //如不唯一 按卡号（use id）
+                Query queryDocumentnumber = new Query();
+                queryDocumentnumber.addCriteria(Criteria.where("userinfo.documentnumber").is(parameter));
+                customerInfoDocumentnumber = mongoTemplate.find(queryDocumentnumber, CustomerInfo.class);
             }
         }
-        return tdpvo;
+        //如果存在唯一数据
+        if (customerInfoName.size() == 1 || customerInfoJobnumber.size() == 1 || customerInfoDocumentnumber.size() == 1) {
+            tepv.setState(true);
+            if (customerInfoName.size() == 1) {
+                tepv.setPersonnelid(customerInfoName.get(0).get_id());
+                tepv.setCustomername(customerInfoName.get(0).getUserinfo().getCustomername());
+                tepv.setJobnumber(customerInfoName.get(0).getUserinfo().getJobnumber());
+                tepv.setDocumentnumber(customerInfoName.get(0).getUserinfo().getDocumentnumber());
+            } else if (customerInfoJobnumber.size() == 1) {
+                tepv.setPersonnelid(customerInfoJobnumber.get(0).get_id());
+                tepv.setCustomername(customerInfoJobnumber.get(0).getUserinfo().getCustomername());
+                tepv.setJobnumber(customerInfoJobnumber.get(0).getUserinfo().getJobnumber());
+                tepv.setDocumentnumber(customerInfoJobnumber.get(0).getUserinfo().getDocumentnumber());
+            } else if (customerInfoDocumentnumber.size() == 1) {
+                tepv.setPersonnelid(customerInfoDocumentnumber.get(0).get_id());
+                tepv.setCustomername(customerInfoDocumentnumber.get(0).getUserinfo().getCustomername());
+                tepv.setJobnumber(customerInfoDocumentnumber.get(0).getUserinfo().getJobnumber());
+                tepv.setDocumentnumber(customerInfoDocumentnumber.get(0).getUserinfo().getDocumentnumber());
+            }
+            tepv.setThelengthSum(startprogramMapper.getTrainThelength(year, tepv.getPersonnelid()));
+            tepv.setStartprograms(startprogramMapper.getTrainEducationPerInfo(year, tepv.getPersonnelid()));
+            tepv.setDepartmentname(startprogramMapper.getDepartmentname(year, tepv.getPersonnelid()));
+            return tepv;
+
+        }
+        //不存在唯一数据
+        else {
+            tepv.setState(false);
+            return tepv;
+        }
+    }
+
+    //查找对应的培训信息（培训教育大屏用）
+    private List<TrainEducationPerVo2> startprograms(String year, String personnelid) throws Exception {
+        return startprogramMapper.getTrainEducationPerInfo(year, personnelid);
     }
 
     //大屏培训信息推送列表
@@ -177,7 +220,6 @@ public class StartprogramServicesImpl implements StartprogramServices {
     public List<Startprogram> getFutureProgram() throws Exception {
         return startprogramMapper.getFutureProgram();
     }
-
 
 
 }

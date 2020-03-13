@@ -393,8 +393,19 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     //即将到期人员列表（前端培训教育大屏用）
     @Override
     public List<OverduePersonnelListVo> overduepersonnellist() throws Exception {
-        List<OverduePersonnelListVo> listVos = new ArrayList<>();
-        return listVos;
+        List<OverduePersonnelListVo> overduePersonnelListVoList = trainjoinlistMapper.OverduePersonnelList();
+        for (int i = 0; i < overduePersonnelListVoList.size(); i++) {
+            //填充姓名
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(overduePersonnelListVoList.get(i).getPersonnelid()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                if (StringUtils.isNotBlank(customerInfo.getUserinfo().getCustomername())) {
+                    overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+                }
+            }
+        }
+        return overduePersonnelListVoList;
     }
 
     //结果发布判断该培训是否存在人员通过状态为空
