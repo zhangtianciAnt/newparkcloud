@@ -16,4 +16,5 @@ public interface BonussendService {
 
     public void update(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception;
 
+    public void updateSend(String id) throws Exception;
 }

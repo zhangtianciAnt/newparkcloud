@@ -49,6 +49,13 @@ public class BonussendServiceImpl implements BonussendService {
     }
 
     @Override
+    public void updateSend(String id) throws Exception {
+        Bonussend bonussend = bonussendMapper.selectByPrimaryKey(id);
+        bonussend.setSent("1");
+        bonussendMapper.updateByPrimaryKeySelective(bonussend);
+    }
+
+    @Override
     public List<Bonussend> inserttodo(Bonussend bonussend) {
         return bonussendMapper.select(bonussend);
     }

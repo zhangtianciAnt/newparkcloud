@@ -49,6 +49,9 @@ public class Pfans2007Controller {
         toDoNotice.preInsert(tokenModel);
         toDoNotice.setOwner(tokenModel.getUserId());
         toDoNoticeService.save(toDoNotice);
+
+        bonussendService.updateSend(toDoNotice.getDataid());
+
         return ApiResult.success();
 //        // 创建代办
 //        ToDoNotice toDoNotice = new ToDoNotice();
@@ -79,11 +82,9 @@ public class Pfans2007Controller {
     }
 
     @RequestMapping(value = "/List", method = {RequestMethod.POST})
-    public ApiResult List(HttpServletRequest request) throws Exception {
+    public ApiResult List(HttpServletRequest request,@RequestBody Bonussend bonussend ) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Bonussend bonussend = new Bonussend();
-        //bonussend.setYears("2020");
-//        bonussend.setOwners(tokenModel.getOwnerList());
+        bonussend.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(bonussendService.List(bonussend,tokenModel));
     }
 
