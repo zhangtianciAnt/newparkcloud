@@ -85,16 +85,41 @@ public class Base extends BaseModel {
     private String registered;
 
     /**
-     * 2019年6月
+     * 上月月工资
      */
     @Column(name = "LASTMONTH")
     private String lastmonth;
 
     /**
-     * 2019年7月
+     * 上月基本工资
+     */
+    @Column(name = "LASTMONTHBASIC")
+    private String lastmonthbasic;
+
+    /**
+     * 上月职责工资
+     */
+    @Column(name = "LASTMONTHDUTY")
+    private String lastmonthduty;
+
+    /**
+     * 本月月工资
      */
     @Column(name = "THISMONTH")
     private String thismonth;
+
+    /**
+     * 当月基本工资
+     */
+    @Column(name = "THISMONTHBASIC")
+    private String thismonthbasic;
+
+    /**
+     * 当月职责工资
+     */
+    @Column(name = "THISMONTHDUTY")
+    private String thismonthduty;
+
 
     /**
      * 養老・失業・工傷基数
