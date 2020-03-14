@@ -120,6 +120,11 @@ public class Base extends BaseModel {
     @Column(name = "THISMONTHDUTY")
     private String thismonthduty;
 
+    /**
+     * 3月前基本工资
+     */
+    @Column(name = "TMABASIC")
+    private String tmabasic;
 
     /**
      * 養老・失業・工傷基数
