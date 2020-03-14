@@ -70,6 +70,7 @@ public class Pfans2002Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        interviewRecord.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(interviewrecordService.getInterviewRecord(interviewRecord));
     }
 
