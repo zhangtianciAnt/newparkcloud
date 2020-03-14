@@ -259,6 +259,11 @@ public class CustomerInfo extends BaseModel {
          * ランク
          */
         private String rank;
+
+        /**
+         * 职级类型
+         */
+        private String occupationtype;
         /**
          * 劳动合同类型
          */
