@@ -312,6 +312,14 @@ public class CustomerInfo extends BaseModel {
          */
         private String salary;
         /**
+         * 基本
+         */
+        private String basic;
+        /**
+         * 职责
+         */
+        private String duty;
+        /**
          * 采用决裁
          */
         private String caution;
@@ -621,6 +629,8 @@ public class CustomerInfo extends BaseModel {
         private String date;
         private String before;
         private String after;
+        private String basic;
+        private String duty;
         private String remark;
     }
 
