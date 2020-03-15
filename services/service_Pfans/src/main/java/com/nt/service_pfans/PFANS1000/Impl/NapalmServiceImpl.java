@@ -42,7 +42,9 @@ public class NapalmServiceImpl implements NapalmService {
                     name = name + comList.get(0).getProject_name() + ",";
                 }
             }
-            name = name.substring(0,name.length()-1);
+            if(!name.equals("")){
+                name = name.substring(0,name.length()-1);
+            }
         }
         napalm.setPjnamechinese(name);
         return napalm;

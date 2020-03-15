@@ -10,6 +10,6 @@ public interface LunardetailService {
 
     List<Lunardetail> getLunardetail(Lunardetail lunardetail) throws  Exception;
 
-    void update(Lunardetail lunardetail, TokenModel tokenModel) throws Exception;
+    void update(List<Lunardetail> lunardetailList, TokenModel tokenModel) throws Exception;
 
 }

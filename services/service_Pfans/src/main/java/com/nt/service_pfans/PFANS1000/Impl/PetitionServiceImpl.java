@@ -43,7 +43,9 @@ public class PetitionServiceImpl implements PetitionService {
                     name = name + comList.get(0).getProject_name() + ",";
                 }
             }
-            name = name.substring(0,name.length()-1);
+            if(!name.equals("")){
+                name = name.substring(0,name.length()-1);
+            }
         }
         petition.setPjnamechinese(name);
         return petition;

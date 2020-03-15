@@ -75,6 +75,7 @@ public class Pfans1009Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        assets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(assetsService.getAssetsnameList(assets, request));
 
     }

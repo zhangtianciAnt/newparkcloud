@@ -34,6 +34,7 @@ public class Pfans1026Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        contractapplication.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 

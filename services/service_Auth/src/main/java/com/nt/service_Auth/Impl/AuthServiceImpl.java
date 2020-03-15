@@ -2,6 +2,8 @@ package com.nt.service_Auth.Impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.mongodb.BasicDBObject;
+import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
@@ -28,6 +30,37 @@ public class AuthServiceImpl implements AuthService {
         List<String> result = new ArrayList<String>();
         List<String> roleIds = new ArrayList<String>();
         String actionId = "";
+        //登录人所在组织的所有人GBB
+        List<String> resultTeam = new ArrayList<String>();
+        String flg = "0";
+        //根据人员查询所在组织的所有人人
+        Query cusquery = new Query();
+        cusquery.addCriteria(Criteria.where("userid").is(useraccountid));
+        CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
+        List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
+        String teamid = cus.getUserinfo().getTeamid();
+        String groupid = cus.getUserinfo().getGroupid();
+        String centerid = cus.getUserinfo().getCenterid();
+        if(!StringUtils.isNullOrEmpty(teamid)){
+            Query cusqueryteamid = new Query();
+            cusqueryteamid.addCriteria(Criteria.where("userinfo.teamid").is(teamid));
+            cuslist = mongoTemplate.find(cusqueryteamid, CustomerInfo.class);
+        }
+        else if(!StringUtils.isNullOrEmpty(groupid)){
+            Query cusquerygroupid = new Query();
+            cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(groupid));
+            cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+        }
+        else if(!StringUtils.isNullOrEmpty(centerid)){
+            Query cusquerycenterid = new Query();
+            cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
+            cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+        }
+        if(cuslist.size() > 0){
+            for(CustomerInfo cusinfo : cuslist){
+                resultTeam.add(cusinfo.getUserid());
+            }
+        }
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(useraccountid));
@@ -68,11 +101,20 @@ public class AuthServiceImpl implements AuthService {
                         if (auth == -1) {
                             return result;
                         }
+                        if (auth == 5) {
+                            flg = "1";
+                            return resultTeam;
+                        }
                         continue;
                     }
                 }
             }
-            result.add(useraccountid);
+            if(flg.equals("1")){
+                result = resultTeam;
+            }
+            else{
+                result.add(useraccountid);
+            }
             return result;
         }
         result.add("XXXXX");
