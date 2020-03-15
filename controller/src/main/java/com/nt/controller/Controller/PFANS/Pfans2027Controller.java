@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/Getlunarbonus")
@@ -64,12 +65,12 @@ public class Pfans2027Controller {
 
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Lunardetail lunardetail, HttpServletRequest request) throws Exception{
-        if (lunardetail == null) {
+    public ApiResult update(@RequestBody List<Lunardetail> Lunardetaillist, HttpServletRequest request) throws Exception{
+        if (Lunardetaillist == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        lunardetailService.update(lunardetail,tokenModel);
+        lunardetailService.update(Lunardetaillist,tokenModel);
         return ApiResult.success();
     }
 

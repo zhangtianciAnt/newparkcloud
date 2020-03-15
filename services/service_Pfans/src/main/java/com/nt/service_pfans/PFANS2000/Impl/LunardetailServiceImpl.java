@@ -41,7 +41,11 @@ public class LunardetailServiceImpl implements LunardetailService {
     }
 
     @Override
-    public void update(Lunardetail lunardetail, TokenModel tokenModel) throws Exception {
-        lunardetailMapper.updateByPrimaryKey(lunardetail);
+    public void update(List<Lunardetail> lunardetailList, TokenModel tokenModel) throws Exception {
+//        lunardetailMapper.updateByPrimaryKey(lunardetail);
+        for(int i = 0; i < lunardetailList.size(); i++){
+            Lunardetail lunardetail = lunardetailList.get(i);
+            lunardetailMapper.updateByPrimaryKey(lunardetail);
+        }
     }
 }
