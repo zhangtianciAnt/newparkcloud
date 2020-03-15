@@ -3,36 +3,46 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper">
     <update id="updateAnnualYear" parameterType="com.nt.dao_Pfans.PFANS2000.AnnualLeave">
         <foreach collection="annualLeaves" index="index" item="item" separator=";">
-           update annualleave
-           <set>
-               deduct_annual_leave_lastyear = #{item.deduct_annual_leave_lastyear},deduct_paid_leave_lastyear = #{item.deduct_paid_leave_lastyear},
-               remaining_annual_leave_lastyear = #{item.remaining_annual_leave_lastyear},remaining_paid_leave_lastyear = #{item.remaining_paid_leave_lastyear},
-               deduct_annual_leave_thisyear = #{item.deduct_annual_leave_thisyear},deduct_paid_leave_thisyear = #{item.deduct_paid_leave_thisyear},
-               remaining_annual_leave_thisyear = #{item.remaining_annual_leave_thisyear},remaining_paid_leave_thisyear = #{item.remaining_paid_leave_thisyear}
-           </set>
-            WHERE annualleave_id =  #{item.annualleave_id}
+            update annualleave
+            <set>
+                deduct_annual_leave_lastyear = #{item.deduct_annual_leave_lastyear},deduct_paid_leave_lastyear =
+                #{item.deduct_paid_leave_lastyear},
+                remaining_annual_leave_lastyear = #{item.remaining_annual_leave_lastyear},remaining_paid_leave_lastyear
+                = #{item.remaining_paid_leave_lastyear},
+                deduct_annual_leave_thisyear = #{item.deduct_annual_leave_thisyear},deduct_paid_leave_thisyear =
+                #{item.deduct_paid_leave_thisyear},
+                remaining_annual_leave_thisyear = #{item.remaining_annual_leave_thisyear},remaining_paid_leave_thisyear
+                = #{item.remaining_paid_leave_thisyear}
+            </set>
+            WHERE annualleave_id = #{item.annualleave_id}
         </foreach>
     </update>
-    <select id="getDataList"  resultType="com.nt.dao_Pfans.PFANS2000.AnnualLeave">
-       select
+    <select id="getDataList" resultType="com.nt.dao_Pfans.PFANS2000.AnnualLeave">
+        select
         USER_ID user_id,
         CENTER_ID center_id,
         GROUP_ID group_id,
         TEAM_ID team_id,
-        ANNUAL_LEAVE_LASTYEAR annual_leave_lastyear,
-        PAID_LEAVE_LASTYEAR paid_leave_lastyear,
-        DEDUCT_ANNUAL_LEAVE_LASTYEAR deduct_annual_leave_lastyear,
-        DEDUCT_PAID_LEAVE_LASTYEAR deduct_paid_leave_lastyear,
         REMAINING_ANNUAL_LEAVE_LASTYEAR remaining_annual_leave_lastyear,
-        REMAINING_PAID_LEAVE_LASTYEAR remaining_paid_leave_lastyear,
         ANNUAL_LEAVE_THISYEAR annual_leave_thisyear,
-        PAID_LEAVE_THISYEAR paid_leave_thisyear,
         DEDUCT_ANNUAL_LEAVE_THISYEAR deduct_annual_leave_thisyear,
-        DEDUCT_PAID_LEAVE_THISYEAR deduct_paid_leave_thisyear,
-        REMAINING_ANNUAL_LEAVE_THISYEAR remaining_annual_leave_thisyear,
-        REMAINING_PAID_LEAVE_THISYEAR remaining_paid_leave_thisyear
+        REMAINING_ANNUAL_LEAVE_THISYEAR remaining_annual_leave_thisyear
         from annulleaveView
+        <if test="userid!=null and userid !=''">
+            where USER_ID = #{userid}
+        </if>
     </select>
 
-
+    <select id="getrest" resultType="com.nt.dao_Pfans.PFANS2000.Vo.restViewVo">
+        select
+        APPLICATION_DATE applicationdate,
+        USER_ID userid,
+        RESTDAYS restdays
+        from restView
+        <if test="userid!=null and userid !=''">
+            where USER_ID = #{userid}
+        </if>
+        order by
+        RESTDAYS
+    </select>
 </mapper>

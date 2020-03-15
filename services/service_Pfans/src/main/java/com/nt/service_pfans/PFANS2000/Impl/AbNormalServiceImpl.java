@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.AuthConstants;
@@ -12,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.time.Duration;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -29,6 +28,8 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Autowired
     private ReplacerestMapper replacerestMapper;
 
+    @Autowired
+    private AnnualLeaveMapper annualLeaveMapper;
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
@@ -124,6 +125,51 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public AbNormal One(String abnormalid) throws Exception {
         return abNormalMapper.selectByPrimaryKey(abnormalid);
+    }
+
+    @Override
+    public Map<String, String> cklength(AbNormal abNormal) throws Exception {
+        Map<String, String> rst = new HashMap<String, String>();
+        double lengths = 1;
+        if("1".equals(abNormal.getLengthtime()) || "2".equals(abNormal.getLengthtime())){
+            lengths = 0.5;
+        }
+
+        if("PR013005".equals(abNormal.getErrortype())){
+            List<AnnualLeave> list = annualLeaveMapper.getDataList(abNormal.getUser_id());
+            if(list.size() > 0 ){
+                if(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() >= lengths){
+                    rst.put("dat","");
+                    rst.put("can","yes");
+                }else{
+                    rst.put("dat","");
+                    rst.put("can","no");
+                }
+            }else{
+                rst.put("dat","");
+                rst.put("can","no");
+            }
+        }else if("PR013006".equals(abNormal.getErrortype())){
+            List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());
+            double rest = 0;
+            String dat="";
+            for(restViewVo item:list){
+                if(Double.parseDouble(item.getRestdays()) != 0){
+                    lengths = lengths - Double.parseDouble(item.getRestdays());
+                    dat += dat + "," + item.getApplicationdate();
+                    if(lengths <= 0){
+                        dat = dat.substring(1,dat.length());
+                        rst.put("dat",dat);
+                        rst.put("can","yes");
+                        return rst;
+                    }
+                }
+            }
+            rst.put("dat","");
+            rst.put("can","no");
+        }
+
+        return rst;
     }
 
     //代休添加

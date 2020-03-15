@@ -72,7 +72,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Override
     public List<AnnualLeave> getDataList() {
-        return annualLeaveMapper.getDataList();
+        return annualLeaveMapper.getDataList("");
     }
 
     //事业年度开始跑系统服务（4月1日）
