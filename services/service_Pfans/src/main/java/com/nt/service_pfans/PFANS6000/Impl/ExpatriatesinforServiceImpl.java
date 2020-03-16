@@ -42,6 +42,11 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     }
 
     @Override
+    public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
+        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+    }
+
+    @Override
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         String yes = "是";
         String no = "否";
@@ -64,7 +69,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         priceset.setCompany(expatriatesinfor.getSuppliername());
         priceset.setStatus("0");
         pricesetMapper.insert(priceset);
-
     }
 
 
@@ -72,6 +76,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         expatriatesinfor.preInsert(tokenModel);
         expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
+        expatriatesinfor.setExits("1");
         expatriatesinforMapper.insert(expatriatesinfor);
     }
 
