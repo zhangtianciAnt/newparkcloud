@@ -54,10 +54,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         lunarbonus.preInsert(tokenModel);
         lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
         lunarbonus.setEvaluationday(new Date());
-
-
-//        lunardetailVo.setLunarbonus(lunarbonus);
-//        lunarbonusMapper.insert(lunardetailVo);
+        lunarbonusMapper.insert(lunarbonus);
 
         Examinationobject examinationobject = examinationobjectMapper.selectByPrimaryKey(lunardetailVo.getExaminationobject_id());
 
