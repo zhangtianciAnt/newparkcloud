@@ -20,14 +20,14 @@ import java.util.List;
 public interface VehicleinformationMapper extends MyMapper<Vehicleinformation> {
 
     //获取在场车辆信息一览
-    List<InsideVehicleinformationVo> getInsideList();
+    List<InsideVehicleinformationVo> getInsideList() throws Exception;
 
     //获取车辆出入统计
-    List<VehicleAccessStatisticsVo> getAccessStatistics();
+    List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception;
 
     //获取当日入场车辆信息
-    List<Vehicleinformation> getDailyVehicleInfo();
+    List<Vehicleinformation> getDailyVehicleInfo() throws Exception;
 
     //获取在场车辆类别统计
-    List<InsideVehicleTypeVo> getInsideVehicleType();
+    List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception;
 }

@@ -11,8 +11,8 @@ public interface FirealarmMapper extends MyMapper<Firealarm> {
 
 
     //获取当月接警数据
-    List<FireAlarmStatisticsVo> getFireAlarmStatistics();
+    List<FireAlarmStatisticsVo> getFireAlarmStatistics() throws Exception;
 
     //获取接警事件记录
-    List<FireAlarmVo> getFireAlarm();
+    List<FireAlarmVo> getFireAlarm() throws Exception;
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @Component(value = "TrainjoinlistMapper")
 public interface TrainjoinlistMapper extends MyMapper<Trainjoinlist> {
 
-    List<OverduePersonnelListVo> OverduePersonnelList();
+    List<OverduePersonnelListVo> OverduePersonnelList() throws Exception;
 
     //结果发布判断该培训是否存在人员通过状态为空
     int isNotThroughtype(@Param("startprogramid") String startprogramid) throws Exception;

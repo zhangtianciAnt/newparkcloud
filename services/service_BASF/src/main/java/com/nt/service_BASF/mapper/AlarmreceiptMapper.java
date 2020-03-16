@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AlarmreceiptMapper extends MyMapper<Alarmreceipt> {
     //
-    List<AlarmreceiptVo> selectAlarmreceiptVoList(@Param("alarmreceipttype") String alarmreceipttype);
+    List<AlarmreceiptVo> selectAlarmreceiptVoList(@Param("alarmreceipttype") String alarmreceipttype) throws Exception;
 
-    AlarmreceiptVo selectAlarmreceiptVo(@Param("alarmreceiptid") String alarmreceiptid);
+    AlarmreceiptVo selectAlarmreceiptVo(@Param("alarmreceiptid") String alarmreceiptid) throws Exception;
 }

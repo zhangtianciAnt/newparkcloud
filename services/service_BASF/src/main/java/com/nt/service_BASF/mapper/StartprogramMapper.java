@@ -25,7 +25,7 @@ public interface StartprogramMapper extends MyMapper<Startprogram> {
     List<Startprogram> selectbyuserid(@Param("userid") String userid, @Param("selecttype") String selecttype) throws Exception;
 
     //获取强制的通过/未通过
-    List<PassingRateVo> getMandatoryInfo();
+    List<PassingRateVo> getMandatoryInfo() throws Exception;
 
     //获取非强制的通过/未通过
     List<PassingRateVo> getIsMandatoryInfo();
@@ -40,6 +40,6 @@ public interface StartprogramMapper extends MyMapper<Startprogram> {
     String getDepartmentname(@Param("year") String year, @Param("parameter") String parameter) throws Exception;
 
     //大屏培训信息推送列表
-    List<Startprogram> getFutureProgram();
+    List<Startprogram> getFutureProgram() throws Exception;
 
 }

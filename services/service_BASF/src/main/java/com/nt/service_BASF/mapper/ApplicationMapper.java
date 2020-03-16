@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component(value = "ApplicationMapper")
 public interface ApplicationMapper extends MyMapper<Application> {
-    List<ApplicationVo> selectApplicationVoList();
+    List<ApplicationVo> selectApplicationVoList() throws Exception;
 
-    List<Application> selectBarricades();
+    List<Application> selectBarricades() throws Exception;
 }
