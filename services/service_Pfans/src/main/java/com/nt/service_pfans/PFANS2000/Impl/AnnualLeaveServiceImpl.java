@@ -444,13 +444,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         Object obj = JSON.toJSON(getresult.getData());
         if (obj != null) {
             //打卡时间
-            String recordTime = obj.get(0).getString("recordTime");
-            //员工编号
-            String staffNo = obj.get(0).getString("staffNo");
-            //员工姓名
-            String staffName = obj.get(0).getString("staffName");
-            //员工部门
-            String departmentName = obj.get(0).getString("departmentName");
+//            String recordTime = obj.get(0).getString("recordTime");
+//            //员工编号
+//            String staffNo = obj.get(0).getString("staffNo");
+//            //员工姓名
+//            String staffName = obj.get(0).getString("staffName");
+//            //员工部门
+//            String departmentName = obj.get(0).getString("departmentName");
         }
     }
 
