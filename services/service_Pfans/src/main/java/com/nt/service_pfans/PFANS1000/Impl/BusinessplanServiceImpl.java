@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
@@ -18,6 +19,10 @@ import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +35,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
+@EnableScheduling
 public class BusinessplanServiceImpl implements BusinessplanService {
 
     @Autowired
@@ -40,6 +46,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private PieceworktotalMapper pieceworktotalMapper;
     @Autowired
     private PersonnelplanMapper personnelplanMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
     //@Autowired
     //private BusinessplandetMapper businessplandetMapper;
 
@@ -258,6 +266,15 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         return new ArrayList<PersonPlanTable>();
     }
 
+    //@Scheduled(cron ="0 0 0 1 * ?") 每月1号执行
+    private void setPLActual(){
+       OrgTree orgTree =  mongoTemplate.findOne(new Query(), OrgTree.class);
+       List<OrgTree> groupOrg = getGroupTree(orgTree);
+
+       String salary = businessplanMapper.getMonthSalary();
+
+    }
+
     private BigDecimal AllAdd(BigDecimal... number) {
         BigDecimal count = new BigDecimal(0);
         for (BigDecimal bd :
@@ -267,7 +284,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         return count;
     }
 
-    public static <T> List<T> deepCopy(List<T> src) throws IOException, ClassNotFoundException {
+    private static <T> List<T> deepCopy(List<T> src) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
         out.writeObject(src);
@@ -275,10 +292,13 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         ObjectInputStream in = new ObjectInputStream(byteIn);
         @SuppressWarnings("unchecked")
         List<T> dest = (List<T>) in.readObject();
+        out.close();
+        in.close();
+        byteOut.close();
         return dest;
     }
 
-    public int getIndex(int[] arr, int value) {
+    private int getIndex(int[] arr, int value) {
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == value) {
                 return i;
@@ -287,4 +307,14 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         return 0;
     }
 
+    //获取第二层 type=2 groupOrg
+    private List<OrgTree> getGroupTree(OrgTree orgTree){
+        List<OrgTree> orgTreeList = new ArrayList<>();
+      List<OrgTree>  orgTrees =  orgTree.getOrgs();
+        for (OrgTree org:
+                orgTrees ) {
+            orgTreeList.addAll(org.getOrgs());
+        }
+      return  orgTreeList;
+    }
 }

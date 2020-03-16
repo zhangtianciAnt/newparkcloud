@@ -167,4 +167,10 @@ public class Base extends BaseModel {
      */
     @Column(name = "JOBNUMBER")
     private String jobnumber;
+
+    /**
+     * GROUP ID
+     */
+    @Column(name = "GROUPID")
+    private String groupid;
 }
