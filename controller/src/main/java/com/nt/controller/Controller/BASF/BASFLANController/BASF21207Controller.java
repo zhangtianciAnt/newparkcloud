@@ -1,7 +1,6 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
-import com.nt.dao_BASF.Devicetrainer;
 import com.nt.dao_BASF.Programlist;
 import com.nt.service_BASF.DevicetrainerServices;
 import com.nt.service_BASF.ProgramlistServices;
@@ -9,10 +8,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,6 +46,13 @@ public class BASF21207Controller {
     public ApiResult list(@RequestBody Programlist programlist, HttpServletRequest request) throws Exception {
         return ApiResult.success(programlistroServices.list(programlist));
     }
+
+    //获取培训计划清单增强
+    @PostMapping("/listEnhance")
+    public ApiResult listEnhance(HttpServletRequest request) throws Exception {
+        return ApiResult.success(programlistroServices.listEnhance());
+    }
+
     /**
      * @param programlistid
      * @param request

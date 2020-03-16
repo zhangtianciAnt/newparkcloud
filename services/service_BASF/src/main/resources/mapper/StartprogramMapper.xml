@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_BASF.mapper.StartprogramMapper">
     <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Startprogram">
-    <id column="startprogramid" property="startprogramid" jdbcType="VARCHAR"/>
+        <id column="startprogramid" property="startprogramid" jdbcType="VARCHAR"/>
         <result column="programlistid" property="programlistid" jdbcType="VARCHAR"/>
         <result column="programname" property="programname" jdbcType="VARCHAR"/>
         <result column="informpeople" property="informpeople" jdbcType="VARCHAR"/>
@@ -47,13 +47,12 @@
         and
         status = 0)
 
-        <if test="selecttype == 'abouttoexpire'">
-            and
-            programtype in ('BC039004')
-            and
-            DATEDIFF(date_add(actualstartdate,INTERVAL validity MONTH),CURRENT_DATE()) &lt;= 30
-            and
-            DATEDIFF(date_add(actualstartdate,INTERVAL validity MONTH),CURRENT_DATE() )>0
+        <if test="selecttype == 'Abouttoexpire'">
+            AND starttheorydate &lt;> ""
+            AND starttheorydate IS NOT NULL
+            AND programtype in ('BC039004')
+            AND DATEDIFF(DATE_SUB( DATE_ADD( starttheorydate, INTERVAL validity MONTH ), INTERVAL remindtime MONTH
+            ),CURRENT_DATE ()) =0
         </if>
         <if test="selecttype == 'enrolment'">
             /* and

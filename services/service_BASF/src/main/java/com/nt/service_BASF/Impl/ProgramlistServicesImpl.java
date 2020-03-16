@@ -3,10 +3,13 @@ package com.nt.service_BASF.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Programlist;
+import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.ProgramlistEnhanceVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
+import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -45,6 +48,10 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
 
     @Autowired
     private ProgramlistMapper programlistMapper;
+
+    @Autowired
+    private StartprogramMapper startprogramMapper;
+
     @Autowired
     private DictionaryMapper dictionaryMapper;
     @Autowired
@@ -62,6 +69,35 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
     @Override
     public List<Programlist> list(Programlist programlist) throws Exception {
         return programlistMapper.select(programlist);
+    }
+
+    //获取培训计划清单增强
+    @Override
+    public List<ProgramlistEnhanceVo> listEnhance() throws Exception {
+        //这个增强查询，用于查询出该培训计划清单的培训是否已经发送过通知
+        List<Programlist> programlists = programlistMapper.select(new Programlist());
+        List<ProgramlistEnhanceVo> programlistEnhanceVos = new ArrayList<>();
+        for (Programlist programlist : programlists) {
+            ProgramlistEnhanceVo programlistEnhanceVo = new ProgramlistEnhanceVo();
+            programlistEnhanceVo.setvalue(programlist);
+            programlistEnhanceVos.add(programlistEnhanceVo);
+        }
+        for (ProgramlistEnhanceVo programlistEnhanceVo : programlistEnhanceVos) {
+            Startprogram startprogram = new Startprogram();
+            startprogram.setProgramlistid(programlistEnhanceVo.getProgramlistid());
+            startprogram.setProgramtype("BC039001");//BC039001 可开班
+            if (startprogramMapper.selectCount(startprogram) > 0) {
+                programlistEnhanceVo.setNotification("已通知");
+            } else {
+                programlistEnhanceVo.setNotification("未通知");
+            }
+            startprogram.setProgramtype("BC039002");//BC039002 进行中
+            if (startprogramMapper.selectCount(startprogram) > 0) {
+                programlistEnhanceVo.setNotification("已通知");
+            }
+
+        }
+        return programlistEnhanceVos;
     }
 
     /**
