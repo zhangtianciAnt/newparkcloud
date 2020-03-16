@@ -1,12 +1,11 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS2000.Bonussend;
 import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
-import com.nt.dao_Pfans.PFANS2000.Wages;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
+import com.nt.service_pfans.PFANS2000.ExaminationobjectService;
 import com.nt.service_pfans.PFANS2000.LunarbonusService;
 import com.nt.service_pfans.PFANS2000.LunardetailService;
-import com.nt.service_pfans.PFANS2000.WagesService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -35,22 +34,31 @@ public class Pfans2027Controller {
     @Autowired
     private LunardetailService lunardetailService;
 
+    @Autowired
+    private ExaminationobjectService examinationobjectService;
+
     @RequestMapping(value = "/getList", method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request) throws Exception {
 //        TokenModel tokenModel = tokenService.getToken(request);
 //        wagesService.select(tokenModel);
-        Lunarbonus lunarbonus = new Lunarbonus();
-        return ApiResult.success(lunarbonusService.getList(lunarbonus));
+        return ApiResult.success(lunarbonusService.getList());
+    }
+//考课对象List
+    @RequestMapping(value = "/getExaminationobject", method = {RequestMethod.GET})
+    public ApiResult getExaminationobject(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        wagesService.select(tokenModel);
+        return ApiResult.success(examinationobjectService.getList());
     }
 
     //新建
     @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Lunarbonus lunarbonus, HttpServletRequest request) throws Exception {
-        if (lunarbonus == null) {
+    public ApiResult create(@RequestBody LunardetailVo lunardetailVo, HttpServletRequest request) throws Exception {
+        if (lunardetailVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        lunarbonusService.insert(lunarbonus,tokenModel);
+        lunarbonusService.insert(lunardetailVo,tokenModel);
         return ApiResult.success();
     }
 
@@ -60,7 +68,22 @@ public class Pfans2027Controller {
         if(lunardetail==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(lunardetailService.getLunardetail(lunardetail));
+        LunardetailVo lunardetailVo = new LunardetailVo();
+        Lunarbonus lunarbonus = new Lunarbonus();
+        lunarbonus.setLunarbonus_id(lunardetail.getLunarbonus_id());
+        lunardetailVo.setLunarbonus(lunarbonus);
+
+        return ApiResult.success(lunardetailService.getLunardetail(lunardetailVo));
+    }
+
+    //获取详情状态
+    @RequestMapping(value = "/getLunardetail", method = {RequestMethod.GET})
+    public ApiResult selStatus(String ids, HttpServletRequest request) throws Exception {
+        if(ids==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+
+        return ApiResult.success(lunardetailService.getExam(ids));
     }
 
 
