@@ -11,4 +11,6 @@ import java.util.List;
 public interface BusinessplanMapper extends MyMapper<Businessplan> {
     @Select("select value2 as code,value3 as money46,value4 as money73,value5 as payhour,value6 as overtimehour from dictionary where value1 = #{groupid}")
     List<PersonPlanTable> selectPersonTable(@Param("groupid") String groupid);
+
+    String getMonthSalary();
 }
