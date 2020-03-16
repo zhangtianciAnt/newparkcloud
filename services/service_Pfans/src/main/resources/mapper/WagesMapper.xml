@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.WagesMapper">
+    <select id="selectWage"  resultType="com.nt.dao_Pfans.PFANS2000.Wages">
+     select
+     temp1.department_id, #部门
+     temp1.user_id,   #名字
+     IF(temp1.workdate="",null,temp1.workdate) as workdate,#入社年月
+     temp1.sex,#性別
+     temp1.onlychild,#独生子女
+     temp1.type,#入/退職/産休
+     temp1.bonus,#奨金計上
+     temp1.sociology,#1999年前社会人
+     temp1.registered,#大連戸籍
+     temp1.pension,#養老・失業・工傷保険基数
+     temp1.medical,#医療・生育保険基数
+     temp1.accumulation,#住房公积金基数
+     temp1.lastmonth,#上月基本給
+     temp1.thismonth,#本月基本給
+     temp1.birthrest,#産休出勤日数(看護休暇日数)
+     temp1.thismonthbasic,#本月入/退職/産休基本給
+     temp1.shortillness,#短病欠時数
+     temp1.longillness,#长病欠時数
+     temp1.owediligence,#欠勤時数
+     temp1.owingcontrol,#病欠/欠勤控除
+     temp1.actualamount,#基本給实际金额
+     temp1.housingsubsidy,#住房补助
+     temp1.lunchsubsidy,#午餐补助
+     temp1.overtimesubsidy,#加班补助
+     temp1.other1,#其他1
+     temp1.total1, #小计1(基本給+补助)
+     temp1.traffic,#交通补助
+     temp1.washingtheory,#女性洗理费
+     temp1.other2,#其他2
+     temp1.appreciation,#月度賞与
+     temp1.total2, #小计2
+     temp1.taxestotal,#纳税工资总额(小计1+2)
+     temp1.heating,#采暖费
+     temp1.onlychildmoney,#独生子女费
+     temp1.total3,#小计3
+     temp1.totalwages, #工资总额(纳税+免税)
+     temp1.endowmentinsurance,#养老保险
+     temp1.medicalinsurance,#医疗保险
+     temp1.unemploymentinsurance,#失业保险
+     temp1.socialinsurance,#个人社会保险(専項控除)
+     temp1.accumulationfund,#个人住房公积金(専項控除)
+     temp1.disciplinarycontrol,#个人社会保险费+公积金(専項控除)合计
+     temp1.thismonthterm,#専項控除累計（当月まで）
+     temp1.thismonthadditional,#附加控除累計（当月まで）
+     temp1.thismonthdutyfree,#免税分累計（当月まで）
+     temp1.lastdutyfree,		#年間累計税金（先月まで）50
+     temp1.housingmoneys,#住房公积金应纳税金额
+     temp1.other4,#其他4公司负担社保（24元）
+     temp1.other5,#其他5（保険：福祉）
+     temp1.shouldwages,#当月応発工資（工资总额(纳税+免税)+只納税）
+     temp1.shouldcumulative,#累計応発工資（当月含）
+     temp1.shouldpaytaxes, #累計应纳税所得额
+     IF(ROUND(IFNULL(temp1.shouldpaytaxes*
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0.03
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 0.1
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 0.2
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 0.25
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 0.3
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 0.35
+     WHEN (temp1.shouldpaytaxes >960000) then 0.45 END -
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 2520
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 16920
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 31920
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 52920
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 85920
+     WHEN (temp1.shouldpaytaxes >960000) then 181920 END
+     -temp1.lastdutyfree,0),2)&lt;0,0,ROUND(IFNULL(temp1.shouldpaytaxes*
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0.03
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 0.1
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 0.2
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 0.25
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 0.3
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 0.35
+     WHEN (temp1.shouldpaytaxes >960000) then 0.45 END -
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 2520
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 16920
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 31920
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 52920
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 85920
+     WHEN (temp1.shouldpaytaxes >960000) then 181920 END
+     -temp1.lastdutyfree,0),2)) as thismonthadjustment, #本月应扣缴所得税
+     ROUND(temp1.totalwages-temp1.disciplinarycontrol-IF(ROUND(IFNULL(temp1.shouldpaytaxes*
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0.03
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 0.1
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 0.2
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 0.25
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 0.3
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 0.35
+     WHEN (temp1.shouldpaytaxes >960000) then 0.45 END -
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 2520
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 16920
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 31920
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 52920
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 85920
+     WHEN (temp1.shouldpaytaxes >960000) then 181920 END
+     -temp1.lastdutyfree,0),2)&lt;0,0,ROUND(IFNULL(temp1.shouldpaytaxes*
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0.03
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 0.1
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 0.2
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 0.25
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 0.3
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 0.35
+     WHEN (temp1.shouldpaytaxes >960000) then 0.45 END -
+     CASE WHEN (temp1.shouldpaytaxes >0 and temp1.shouldpaytaxes&lt;=36000 ) then 0
+     WHEN (temp1.shouldpaytaxes >36000 and temp1.shouldpaytaxes&lt;=144000 ) then 2520
+     WHEN (temp1.shouldpaytaxes >144000 and temp1.shouldpaytaxes&lt;=300000 ) then 16920
+     WHEN (temp1.shouldpaytaxes >300000 and temp1.shouldpaytaxes&lt;=420000 ) then 31920
+     WHEN (temp1.shouldpaytaxes >420000 and temp1.shouldpaytaxes&lt;660000 ) then 52920
+     WHEN (temp1.shouldpaytaxes >660000 and temp1.shouldpaytaxes&lt;=960000 ) then 85920
+     WHEN (temp1.shouldpaytaxes >960000) then 181920 END
+     -temp1.lastdutyfree,0),2)),2) as realwages, #当月实发工资
+     temp1.comendowmentinsurance, #养老保险
+     temp1.commedicalinsurance, #医疗保险
+     temp1.comunemploymentinsurance, #失业保险
+     temp1.cominjuryinsurance, #工伤保险
+     temp1.combirthinsurance, #生育保险
+     temp1.comheating, #暖房费
+     temp1.comaccumulationfund, #住房公积金
+     temp1.total, #总计
+     (temp1.total1 + temp1.appreciation) as labourunionbase, #工会经费基数
+     ROUND((temp1.total1 + temp1.appreciation)*0.02,2) as labourunionfunds,#工会经费
+     ROUND(temp1.totalwages+temp1.other4+temp1.other5+temp1.total+ROUND((temp1.total1 + temp1.appreciation)*0.02,2),2) as comtotalwages,#工资总额(纳税+免税)+福祉+公司負担+工会経費总计
+     (IF(temp1.bonus=1,ROUND(temp1.thismonth*3.6/12,0),IF(temp1.bonus=2,ROUND(temp1.thismonth*5/12,0),0))-temp1.appreciation) as bonusmoney,#計上奨金
+     (ROUND(temp1.totalwages+temp1.other4+temp1.other5+temp1.total+ROUND((temp1.total1 + temp1.appreciation)*0.02,2),2)+IF(temp1.bonus=1,ROUND(temp1.thismonth*3.6/12,0),IF(temp1.bonus=2,ROUND(temp1.thismonth*5/12,0),0))-temp1.appreciation) as totalbonus#总计+計上奨金
+     from (select temp.*,(temp.actualamount+temp.housingsubsidy+temp.lunchsubsidy+temp.overtimesubsidy+temp.other1) as total1, #小计1(基本給+补助)
+     (temp.traffic+temp.washingtheory+temp.other2+temp.appreciation) as total2, #小计2
+     (temp.actualamount+temp.housingsubsidy+temp.lunchsubsidy+temp.overtimesubsidy+temp.other1+temp.traffic+temp.washingtheory+temp.other2+temp.appreciation) as taxestotal,#纳税工资总额(小计1+2)
+     (temp.actualamount+temp.housingsubsidy+temp.lunchsubsidy+temp.overtimesubsidy+temp.other1+temp.traffic+temp.washingtheory+temp.other2+temp.appreciation+temp.total3) as totalwages, #工资总额(纳税+免税)
+     (select SUM(IF(MONTH(wages.CREATEON)=11,0,wages.thismonthadjustment)) from wages where wages.USER_ID = temp.USER_ID and wages.CREATEON = YEAR(now()))as lastdutyfree,		#年間累計税金（先月まで）50
+     (temp.actualamount+temp.housingsubsidy+temp.lunchsubsidy+temp.overtimesubsidy+temp.other1+temp.traffic+temp.washingtheory+temp.other2+temp.appreciation+temp.total3+temp.housingmoneys+temp.other4+temp.other5) as shouldwages,#当月応発工資（工资总额(纳税+免税)+只納税）
+     NULL as shouldcumulative,#累計応発工資（当月含）
+     IF(temp.user_id!=NULL,IF(YEAR(temp.workdate)=YEAR(now()),ROUND((temp.actualamount+temp.housingsubsidy+temp.lunchsubsidy+temp.overtimesubsidy+temp.other1+temp.traffic+temp.washingtheory+temp.other2+temp.appreciation+temp.total3+temp.housingmoneys+temp.other4+temp.other5)-
+     5000*(MONTH(now())-MONTH(temp.workdate)+1)-temp.thismonthterm-temp.thismonthadditional-temp.thismonthdutyfree,2),ROUND((temp.actualamount+temp.housingsubsidy+temp.lunchsubsidy+temp.overtimesubsidy+temp.other1+temp.traffic+temp.washingtheory+temp.other2+temp.appreciation+
+     temp.total3+temp.housingmoneys+temp.other4+temp.other5)-5000*MONTH(now())-temp.thismonthterm-temp.thismonthadditional-temp.thismonthdutyfree,2)),0) as shouldpaytaxes #累計应纳税所得额
+     from (select base.department_id,base.USER_ID,base.workdate,base.TYPE,base.sex,base.ONLYCHILD,base.bonus,base.sociology,base.registered,base.pension,base.medical,base.accumulation,base.lastmonth,base.thismonth,
+     case when base.TYPE = 2 then otherone.attendance
+     when base.TYPE = 3 then otherone.vacation
+     end birthrest,
+     case when base.TYPE = 2 then ROUND(base.THISMONTH/21.75*(otherone.attendance),2)
+     when base.TYPE = 3 then ROUND(base.THISMONTH-base.LASTMONTH/21.75*(otherone.vacation) ,2)
+     when base.TYPE = 0 then induction.give
+     when base.TYPE = 1 then retire.give
+     end thismonthbasic,
+     (IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)) as shortillness,
+     (IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)) as longillness,
+     lackattendance.thisdiligence as owediligence,
+     IFNULL((lackattendance.give),0) as owingcontrol,
+     IF(base.type = null,(base.thismonth + IFNULL(lackattendance.give,0)),(case when base.TYPE = 2 then ROUND(base.THISMONTH/21.75*otherone.attendance,2)
+     when base.TYPE = 3 then ROUND(base.THISMONTH-base.LASTMONTH/21.75*otherone.vacation ,2)
+     when base.TYPE = 0 then induction.give
+     when base.TYPE = 1 then (retire.give) END + IFNULL((lackattendance.give),0))) as actualamount,
+     IF((base.TYPE = 0 AND (base.thismonth = base.lastmonth or base.lastmonth = 0)),ROUND(base.THISMONTH/0.9*0.01,2),ROUND(base.THISMONTH*0.01,2)) as housingsubsidy,
+     IF(base.user_id = null,0,ROUND(case when base.TYPE = 3 then 105-105/21.75*otherone.vacation - 105/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     WHEN base.TYPE = 2 then 105/21.75*otherone.attendance-105/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     WHEN base.TYPE = 0 then induction.lunch-105/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     WHEN base.TYPE = 1 then retire.lunch-105/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     ELSE 105*(168-IFNULL(lackattendance.THISSHORTDEFICIENCY,0)-IFNULL(lackattendance.lastchronicdeficiency,0)-IFNULL(lackattendance.thischronicdeficiency,0)-IFNULL(lackattendance.thisdiligence,0))/168 END,2)) as lunchsubsidy,
+     IFNULL(residual.SUBSIDY,0) as overtimesubsidy,
+     IF(base.TYPE = 2,otherone.other1,0) as other1,
+     IF(base.user_id = null,0,ROUND(case when base.TYPE = 3 then 84-84/21.75*otherone.vacation - 84/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     WHEN base.TYPE = 2 then 84/21.75*otherone.attendance-84/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     WHEN base.TYPE = 0 then induction.traffic-84/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     WHEN base.TYPE = 1 then retire.traffic-105/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
+     ELSE 84*(168-IFNULL(lackattendance.THISSHORTDEFICIENCY,0)-IFNULL(lackattendance.lastchronicdeficiency,0)-IFNULL(lackattendance.thischronicdeficiency,0))/168 END,2)) as traffic,
+     IF((base.SEX = 1 and base.THISMONTH!=0),35,0) as washingtheory,
+     IFNULL(othertwo2.moneys,0) as other2,
+     IFNULL(appreciation.amount,0) as appreciation,
+     IF(base.THISMONTH!=0,base.heating,0) as heating,
+     IF(base.onlychild = 0,5,0) as onlychildmoney,
+     ROUND(IF(base.THISMONTH!=0,base.heating,0) + IF(base.onlychild = 0,5,0) ,2) as total3,
+     ROUND(base.pension*0.08 ,2) as endowmentinsurance,
+     ROUND(base.pension*0.08 ,2) as medicalinsurance,
+     ROUND(base.pension*0.005 ,2) as unemploymentinsurance,
+     (ROUND(base.pension*0.08 ,2) + ROUND(base.pension*0.08 ,2) + ROUND(base.pension*0.005 ,2)) as socialinsurance,
+     ROUND(base.accumulation * 0.1,2) as accumulationfund,
+     (ROUND(base.pension*0.08 ,2) + ROUND(base.pension*0.08 ,2) + ROUND(base.pension*0.005 ,2)+ ROUND(base.accumulation * 0.1,2)) as disciplinarycontrol,
+     (select SUM(IFNULL(wages.thismonthterm,0)) from wages where base.USER_ID = wages.USER_ID and YEAR(wages.CREATEON) = YEAR(now())) as thismonthterm,
+     IFNULL(additional.total,0) as thismonthadditional,
+     (select SUM(IFNULL(wages.total3,0)) from wages where base.USER_ID = wages.USER_ID and YEAR(wages.CREATEON) = YEAR(now())) as thismonthdutyfree,
+     IF(base.sociology=0,IF((ROUND(base.accumulation * 0.1,2)*2-0.12*2)>0,(ROUND(base.accumulation * 0.1,2)*2-0.12*2),0),
+     (IF(ROUND(base.accumulation * 0.1,2)>0.25,(ROUND(base.accumulation * 0.1,2)-0.25),0)+IF(ROUND(base.accumulation * 0.1,2)>0.15,
+     (ROUND(base.accumulation * 0.1,2)-0.15),0))) as housingmoneys,
+     IFNULL(otherfour.total,0) as other4,
+     IFNULL(otherfive.total,0) as other5,
+     ROUND(base.pension *0.16,2)as comendowmentinsurance,
+     ROUND(base.medical *0.08,2)as commedicalinsurance,
+     ROUND(base.pension *0.005,2)as comunemploymentinsurance,
+     ROUND(base.pension *0.004,2)as cominjuryinsurance,
+     ROUND(base.pension *0.012,2)as combirthinsurance,
+     ROUND(base.pension *0.16,2)as comheating,
+     ROUND(base.pension *0.16,2)as comaccumulationfund,
+     ROUND(base.pension *0.16,2)as total
+     from base
+     LEFT JOIN otherone
+     on base.USER_ID = otherone.USER_ID
+     and otherone.status = '0'
+     and otherone.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN othertwo2
+     on base.USER_ID = othertwo2.USER_ID
+     and othertwo2.status = '0'
+     and othertwo2.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN induction
+     on base.USER_ID = induction.USER_ID
+     and induction.status = '0'
+     and induction.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN retire
+     on base.USER_ID = retire.USER_ID
+     and retire.status = '0'
+     and retire.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN lackattendance
+     on base.USER_ID = lackattendance.USER_ID
+     and lackattendance.status = '0'
+     and lackattendance.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN residual
+     on base.USER_ID = residual.USER_ID
+     and residual.status = '0'
+     and residual.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN appreciation
+     on base.USER_ID = appreciation.USER_ID
+     and appreciation.status = '0'
+     and appreciation.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN additional
+     on base.USER_ID = additional.USER_ID
+     and additional.status = '0'
+     and additional.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN otherfour
+     on base.USER_ID = otherfour.USER_ID
+     and otherfour.status = '0'
+     and otherfour.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     LEFT JOIN otherfive
+     on base.USER_ID = otherfive.USER_ID
+     and otherfive.status = '0'
+     and otherfive.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c'
+     where base.status = '0'
+     and base.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c')temp)temp1
+    </select>
+ <select id="lastMonthWage"  resultType="java.lang.String">
+   select USER_ID from wages
+   where YEAR(wages.CREATEON) = #{year}
+   and MONTH(wages.CREATEON) = #{month}
+ </select>
+</mapper>
