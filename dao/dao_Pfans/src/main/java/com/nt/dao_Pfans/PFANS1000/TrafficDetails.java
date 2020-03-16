@@ -30,8 +30,14 @@ public class TrafficDetails extends BaseModel {
     @Column(name = "TRAFFICDATE")
     private Date trafficdate;
 
+    @Column(name = "PLSUMMARY")
+    private String  plsummary;
+
     @Column(name = "REGION")
     private String region;
+
+    @Column(name = "ACCOUNTCODE")
+    private String accountcode;
 
     @Column(name = "VEHICLE")
     private String vehicle;

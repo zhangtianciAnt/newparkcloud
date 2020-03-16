@@ -42,5 +42,19 @@ public class GivingVo {
 
     private List<Additional> addiTional;
 
+    // 2020/03/11 add by myt start
+    private List<Induction> entryVo;
+
+    private List<Retire> retireVo;
+
+    private String yearOfLastMonth;
+
+    private String monthOfLastMonth;
+
+    private String yearOfThisMonth;
+
+    private String monthOfThisMonth;
+    // 2020/03/11 add by myt end
+
     private String strFlg;
 }

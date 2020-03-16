@@ -400,41 +400,24 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //事业年度开始跑系统服务（4月1日）
     //@Scheduled(cron="20 * * * * ?")
+    //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半
+    //@Scheduled(cron="0 0 0 1 4 ? *")//正式时间每年4月1日零时执行
     public void insertattendance() throws Exception {
-//        Query query = new Query();
-//        String books[] = new String[2];
-//        books[0] = "5e69d4a515d3ce3938f4202d";
-//        books[1] = "5e69cfe4fb5a67819039703d";
-//        query.addCriteria(Criteria.where("userid").nin(books));
-//        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
-        //CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//        if (customerInfo != null) {
-//        }
-//        if (customerInfo == null) {
-//        }
 
-
-//        String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01";
-        // 請求接口
-//        ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
-        //JSONObject jsonObject = JSON.parseObject(getresult.getData());
-//        Object jsonObject = JSON.toJSON(getresult.getData());
-//        String a = "1";
-        //JSONObject jsonobject =  JSONObject.get(getresult.getData());
-//                JSONObject jsonobject = JSONObject.getObj(getresult.getData());
-//        basiccompanyinfo = (Basiccompanyinfo) JSONObject.toBean(jsonobject, Basiccompanyinfo.class);
-//        basiccompanyinfo.setName(customernamechange.getNewname());
-
-//        if (getresult.getCode() == 0) {
-//            //JSONObject jsonObject = JSON.parseObject(getresult.getData(), AccessToken.class);
-//            ArrayList folderList = (ArrayList) getresult.getData();
-//            for (int i = 0; i < folderList.size(); i++) {
-//                String res = folderList.get(i).toString();
-//                JSONObject string_to_json = JSONUtil.parseObj(res);
-//                String a = "1";
-//                String b = "1";
-//            }
-//        }
+        String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01";
+        //請求接口
+        ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
+        Object obj = JSON.toJSON(getresult.getData());
+        if (obj != null) {
+            //打卡时间
+//            String recordTime = obj.get(0).getString("recordTime");
+//            //员工编号
+//            String staffNo = obj.get(0).getString("staffNo");
+//            //员工姓名
+//            String staffName = obj.get(0).getString("staffName");
+//            //员工部门
+//            String departmentName = obj.get(0).getString("departmentName");
+        }
     }
 
 }

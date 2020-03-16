@@ -20,6 +20,6 @@ FROM
 	INNER JOIN projectsystem b ON a.PROJECTSYSTEM_ID = b.PROJECTSYSTEM_ID
 	INNER JOIN companyprojects c ON a.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
 	INNER JOIN expatriatesinfor d ON b.SUPPLIERNAMEID = d.SUPPLIERNAMEID
-    </select>
+</select>
 </mapper>
 
