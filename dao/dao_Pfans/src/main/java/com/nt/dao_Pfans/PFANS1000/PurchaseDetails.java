@@ -36,6 +36,12 @@ public class PurchaseDetails extends BaseModel {
     @Column(name = "DEPARTMENTNAME")
     private String departmentname;
 
+    @Column(name = "PLSUMMARY")
+    private String  plsummary;
+
+    @Column(name = "ACCOUNTCODE")
+    private String accountcode;
+
     @Column(name = "PROCUREMENTDETAILS")
     private String procurementdetails;
 
