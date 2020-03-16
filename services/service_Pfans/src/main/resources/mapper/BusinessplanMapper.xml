@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper">
+    <select id="getMonthSalary" resultType="java.lang.String">
+select  ifnull(wages.total1,0) +
+        ifnull(wages.bonusmoney,0)  +
+        ifnull(wages.comendowmentinsurance,0) +
+        ifnull(wages.commedicalinsurance,0) +
+        ifnull(wages.comunemploymentinsurance,0) +
+        ifnull(wages.cominjuryinsurance,0)  +
+        ifnull(wages.combirthinsurance,0)  +
+        ifnull(wages.comheating,0) +
+        ifnull(wages.comaccumulationfund,0)+
+        ifnull(wages.total1,0) as total
+        from giving
+         left join wages
+                   on giving.GIVING_ID = wages.giving_id
+                       and groupid =#{groupid}
+        where left(months,4) = year(now())
+        and right(months,2) = month(now())
+    </select>
+</mapper>
+
