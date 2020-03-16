@@ -121,4 +121,7 @@ public class Bonussend extends BaseModel {
     @Column(name = "SENT")
     private String sent;
 
+    @Column(name = "ROWINDEX")
+    private String rowindex;
+
 }

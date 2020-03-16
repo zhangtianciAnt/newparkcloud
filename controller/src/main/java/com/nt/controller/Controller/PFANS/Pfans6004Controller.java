@@ -40,13 +40,6 @@ public class Pfans6004Controller {
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
-    @RequestMapping(value = "/getexpatriatesinforthisyear", method = {RequestMethod.GET})
-    public ApiResult getexpatriatesinforthisyear(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-        expatriatesinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(expatriatesinforService.getexpatriatesinforthisyear(expatriatesinfor));
-    }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getexpatriatesinforApplyOne(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
@@ -67,15 +60,7 @@ public class Pfans6004Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/updateexpatriatesinfor", method = {RequestMethod.POST})
-    public ApiResult updateexpatriatesinfor(@RequestBody List<Expatriatesinfor> expatriatesinfor, HttpServletRequest request) throws Exception {
-        if (expatriatesinfor == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        expatriatesinforService.updateexpatriatesinfor(expatriatesinfor,tokenModel);
-        return ApiResult.success();
-    }
+
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult createexpatriatesinforApply(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
@@ -86,15 +71,6 @@ public class Pfans6004Controller {
         expatriatesinforService.createexpatriatesinforApply(expatriatesinfor, tokenModel);
         return ApiResult.success();
     }
-//    @RequestMapping(value = "/setexpatriatesinforApply", method = {RequestMethod.POST})
-//    public ApiResult setexpatriatesinforApply(@RequestBody List<Expatriatesinfor> expatriatesinfor, HttpServletRequest request) throws Exception {
-//        if (expatriatesinfor == null) {
-//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-//        }
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        expatriatesinforService.setexpatriatesinforApply(expatriatesinfor,tokenModel);
-//        return ApiResult.success();
-//    }
 
     @RequestMapping(value = "/getSupplierNameList", method = {RequestMethod.POST})
     public ApiResult getSupplierNameList(@RequestBody Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {

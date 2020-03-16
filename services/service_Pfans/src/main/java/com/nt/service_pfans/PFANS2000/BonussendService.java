@@ -8,11 +8,13 @@ import java.util.List;
 
 public interface BonussendService {
 
-    List<Bonussend> getListType(Bonussend bonussend) throws Exception;
+    List<Bonussend> inserttodo(Bonussend bonussend) throws Exception;
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
     List<Bonussend> List(Bonussend bonussend,TokenModel tokenModel) throws Exception;
 
-    List<Bonussend> get(Bonussend bonussend) throws Exception;
+    public void update(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception;
+
+    public void updateSend(String id) throws Exception;
 }

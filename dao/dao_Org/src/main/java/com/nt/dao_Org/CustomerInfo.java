@@ -259,6 +259,11 @@ public class CustomerInfo extends BaseModel {
          * ランク
          */
         private String rank;
+
+        /**
+         * 职级类型
+         */
+        private String occupationtype;
         /**
          * 劳动合同类型
          */
@@ -311,6 +316,14 @@ public class CustomerInfo extends BaseModel {
          * 給料
          */
         private String salary;
+        /**
+         * 基本
+         */
+        private String basic;
+        /**
+         * 职责
+         */
+        private String duty;
         /**
          * 采用决裁
          */
@@ -621,6 +634,8 @@ public class CustomerInfo extends BaseModel {
         private String date;
         private String before;
         private String after;
+        private String basic;
+        private String duty;
         private String remark;
     }
 

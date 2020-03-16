@@ -132,4 +132,10 @@ public class AbNormal extends BaseModel {
      */
     @Column(name = "RECOGNITIONSTATE")
     private String recognitionstate;
+
+    /**
+     * 代休扣除月份
+     */
+    @Column(name = "RESTDATE")
+    private String restdate;
 }

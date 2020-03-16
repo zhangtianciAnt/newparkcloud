@@ -30,11 +30,6 @@ public class Supplierinfor extends BaseModel {
     @Column(name = "SUPCHINESE")
     private String supchinese;
 
-    /**
-     * 中文(客户信息详情ID)
-     */
-    @Column(name = "SUPCHINESEID")
-    private String supchineseid;
 
     /**
      * 日文(客户信息详情)

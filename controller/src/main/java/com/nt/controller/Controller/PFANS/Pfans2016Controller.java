@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.utils.*;
@@ -62,4 +63,11 @@ public class Pfans2016Controller {
         return ApiResult.success(abNormalService.One(abNormal.getAbnormalid()));
     }
 
+    @RequestMapping(value = "/cklength", method = {RequestMethod.POST})
+    public ApiResult cklength(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(abNormalService.cklength(abNormal));
+    }
 }

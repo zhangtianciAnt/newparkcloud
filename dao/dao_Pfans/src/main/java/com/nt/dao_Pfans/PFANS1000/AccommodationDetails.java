@@ -42,7 +42,7 @@ public class AccommodationDetails extends BaseModel {
      * 日期
      */
     @Column(name = "ACCOMMODATIONDATE")
-    private Date accommodationdate;
+    private String accommodationdate;
 
     /**
      * 活动内容

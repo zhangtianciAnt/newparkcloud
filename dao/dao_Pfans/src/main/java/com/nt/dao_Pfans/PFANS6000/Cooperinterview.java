@@ -25,11 +25,6 @@ public class Cooperinterview extends BaseModel {
     @Column(name = "COOPERINTERVIEW_ID")
     private String cooperinterview_id;
 
-    /**
-     * 姓名id
-     */
-    @Column(name = "COOPERUSERID")
-    private String cooperuserid;
 
     /**
      * 姓名
@@ -60,12 +55,6 @@ public class Cooperinterview extends BaseModel {
      */
     @Column(name = "AGE")
     private String age;
-
-    /**
-     * 供应商名称
-     */
-    @Column(name = "SUPPLIERNAME")
-    private String suppliername;
 
     /**
      * 毕业院校
@@ -136,6 +125,6 @@ public class Cooperinterview extends BaseModel {
     /**
      * 供应商UUID
      */
-    @Column(name = "SUPPLIERNAMEID")
-    private String suppliernameid;
+    @Column(name = "SUPPLIERINFOR_ID")
+    private String supplierinfor_id;
 }
