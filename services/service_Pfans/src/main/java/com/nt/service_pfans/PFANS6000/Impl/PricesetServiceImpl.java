@@ -63,8 +63,6 @@ public class PricesetServiceImpl implements PricesetService {
                     String AssesstimeStYear_s = (pricesetList.get(j).getAssesstime().substring(0, 4));
                     String AssesstimeStMonth_s = (pricesetList.get(j).getAssesstime().substring(5, 7));
                     String AssesstimeSt_s = AssesstimeStYear_s + AssesstimeStMonth_s;
-
-
                     //如果月份相同，直接修改
                     if(AssesstimeUp_s.equals(AssesstimeSt_s)){
                         price.preUpdate(tokenModel);
@@ -75,7 +73,6 @@ public class PricesetServiceImpl implements PricesetService {
                         pricesetOld.setStatus("1");
                         pricesetOld.preUpdate(tokenModel);
                         pricesetMapper.updateByPrimaryKeySelective(pricesetOld);
-
                         price.preInsert(tokenModel);
                         price.setPricesetid(UUID.randomUUID().toString());
                         price.setStatus("0");
