@@ -43,14 +43,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
-        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-    }
-
-
-    @Override
-    public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
-        expatriatesinfor.preInsert(tokenModel);
-        expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
         String yes = "是";
         String no = "否";
         if (expatriatesinfor.getOperationform().equals("BP024001")) {
@@ -63,15 +55,24 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setDistriobjects(no);
             expatriatesinfor.setVenuetarget(no);
         }
-        expatriatesinforMapper.insert(expatriatesinfor);
+        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         Priceset priceset = new Priceset();
         priceset.preInsert(tokenModel);
         priceset.setPricesetid(UUID.randomUUID().toString());
-        priceset.setUser_id(expatriatesinfor.getCooperuserid());
+        priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
         priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());
         priceset.setStatus("0");
         pricesetMapper.insert(priceset);
+
+    }
+
+
+    @Override
+    public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
+        expatriatesinfor.preInsert(tokenModel);
+        expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
+        expatriatesinforMapper.insert(expatriatesinfor);
     }
 
     @Override

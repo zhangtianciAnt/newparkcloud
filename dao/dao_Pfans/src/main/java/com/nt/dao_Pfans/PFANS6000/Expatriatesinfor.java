@@ -146,84 +146,6 @@ public class Expatriatesinfor extends BaseModel {
     private String exits;
 
     /**
-     * 一月
-     */
-    @Column(name = "JANUARY")
-    private String january;
-
-    /**
-     * 二月
-     */
-    @Column(name = "FEBRUARY")
-    private String february;
-
-    /**
-     * 三月
-     */
-    @Column(name = "MARCH")
-    private String march;
-
-    /**
-     * 四月
-     */
-    @Column(name = "APRIL")
-        private String april;
-
-    /**
-     * 五月
-     */
-    @Column(name = "MAY")
-    private String may;
-
-    /**
-     * 六月
-     */
-    @Column(name = "JUNE")
-    private String june;
-
-    /**
-     * 七月
-     */
-    @Column(name = "JULY")
-    private String july;
-
-    /**
-     * 八月
-     */
-    @Column(name = "AUGUST")
-    private String august;
-
-    /**
-     * 九月
-     */
-    @Column(name = "SEPTEMBER")
-    private String september;
-
-    /**
-     * 十月
-     */
-    @Column(name = "OCTOBER")
-    private String october;
-
-    /**
-     * 十一月
-     */
-    @Column(name = "NOVEMBER")
-    private String november;
-
-    /**
-     * 十二月
-     */
-    @Column(name = "DECEMBER")
-    private String december;
-
-    /**
-     * 勤続月数
-     */
-    @Column(name = "MONTHLENGTH")
-    private String monthlength;
-
-    /**
      * 备注
      */
     @Column(name = "REMARKS")
@@ -278,16 +200,46 @@ public class Expatriatesinfor extends BaseModel {
     private String post;
 
     /**
-     * 姓名ID
-     */
-    @Column(name = "COOPERUSERID")
-    private String cooperuserid;
-
-    /**
      * 供应商ID
      */
-    @Column(name = "SUPPLIERNAMEID")
-    private String suppliernameid;
+    @Column(name = "SUPPLIERINFOR_ID")
+    private String supplierinfor_id;
+
+    /**
+     * 联系方式
+     */
+    @Column(name = "CONTACTINFORMATION")
+    private String contactinformation;
+
+    /**
+     * 出生日期
+     */
+    @Column(name = "BIRTH")
+    private String birth;
+
+    /**
+     * 经验特长
+     */
+    @Column(name = "SPECIALITY")
+    private String speciality;
+
+    /**
+     * 面试部门
+     */
+    @Column(name = "INTERVIEWDEP")
+    private String interviewdep;
+
+    /**
+     * 面试结果
+     */
+    @Column(name = "RESULT")
+    private String result;
+
+    /**
+     * 入职与否
+     */
+    @Column(name = "WHETHERENTRY")
+    private String whetherentry;
 
 
 }
