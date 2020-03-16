@@ -77,7 +77,7 @@ public class Pfans2027Controller {
     }
 
     //获取详情状态
-    @RequestMapping(value = "/getLunardetail", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getStatus", method = {RequestMethod.GET})
     public ApiResult selStatus(String ids, HttpServletRequest request) throws Exception {
         if(ids==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
