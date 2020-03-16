@@ -50,6 +50,16 @@ public class Pfans6004Controller {
         return ApiResult.success(expatriatesinforService.getexpatriatesinforApplyOne(expatriatesinfor.getExpatriatesinfor_id()));
     }
 
+    @RequestMapping(value = "/updateinfor", method = {RequestMethod.POST})
+    public ApiResult updateinforApply(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
+        if (expatriatesinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        expatriatesinforService.updateinforApply(expatriatesinfor, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult updateexpatriatesinforApply(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
         if (expatriatesinfor == null) {
@@ -59,7 +69,6 @@ public class Pfans6004Controller {
         expatriatesinforService.updateexpatriatesinforApply(expatriatesinfor, tokenModel);
         return ApiResult.success();
     }
-
 
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})

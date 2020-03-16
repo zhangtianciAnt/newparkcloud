@@ -12,6 +12,8 @@ public interface ExpatriatesinforService {
 
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception;
 
+    public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
+
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
 
 
