@@ -131,6 +131,9 @@ public class Lunardetail extends BaseModel {
     @Column(name = "EVALUATIONDAY")
     private String evaluationday;
 
+    @Column(name = "EXAMINATIONOBJECT_ID")
+    private String examinationobject_id;
+
 
 
 

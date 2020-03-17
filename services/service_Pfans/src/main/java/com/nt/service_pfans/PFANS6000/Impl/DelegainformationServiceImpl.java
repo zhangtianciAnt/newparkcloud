@@ -374,17 +374,17 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                         jobNub_str = df.format(jobNub_obj);
                                         delegainformation.setOctober(jobNub_str);
                                         //仅入场时间为10月份
-                                    }else if(admissiontimeMonth_s.equals("10")){
+                                    }else if (admissiontimeMonth_s.equals("10")) {
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ad_b / 31);
                                         jobNub_str = df.format(jobNub_obj);
                                         delegainformation.setOctober(jobNub_str);
                                         //仅退场时间为10月份
-                                    }else if(exitimeMonth_s.equals("01")){
+                                    } else if (exitimeMonth_s.equals("10")) {
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ex / 31);
                                         jobNub_str = df.format(jobNub_obj);
                                         delegainformation.setOctober(jobNub_str);
                                         //入退场都不为10月份
-                                    }else{
+                                    } else {
                                         delegainformation.setOctober("1.00");
                                     }
                                 }else if(m == 11){
@@ -475,17 +475,17 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                     if(admissiontimeMonth_s.equals("03") && admissiontimeMonth_s.equals(exitimeMonth_s)){
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_same / 31);
                                         jobNub_str = df.format(jobNub_obj);
-                                        delegainformation.setFebruary(jobNub_str);
+                                        delegainformation.setMarch(jobNub_str);
                                         //仅入场时间为3月份
                                     }else if(admissiontimeMonth_s.equals("03")){
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ad_b / 31);
                                         jobNub_str = df.format(jobNub_obj);
-                                        delegainformation.setFebruary(jobNub_str);
+                                        delegainformation.setMarch(jobNub_str);
                                         //仅退场时间为3月份
                                     }else if(exitimeMonth_s.equals("03")){
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ex / 31);
                                         jobNub_str = df.format(jobNub_obj);
-                                        delegainformation.setFebruary(jobNub_str);
+                                        delegainformation.setMarch(jobNub_str);
                                         //入退场都不为3月份
                                     }else{
                                         delegainformation.setFebruary("1.00");
