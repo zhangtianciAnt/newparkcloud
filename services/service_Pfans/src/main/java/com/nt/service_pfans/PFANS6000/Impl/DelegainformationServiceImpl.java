@@ -39,7 +39,6 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 
     @Override
     public void createDeleginformation(Delegainformation delegainformation , TokenModel tokenModel) throws Exception{
-        delegainformationMapper.delete(delegainformation);
         //工具
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         DecimalFormat df = new DecimalFormat("0.00");
@@ -65,15 +64,15 @@ public class DelegainformationServiceImpl implements DeleginformationService {
         List<Projectsystem> projectsystemListObtain = projectsystemMapper.select(projectsystem);
         //对存入集合的数据进行操作
         for(int i = 0; i < projectsystemListObtain.size(); i ++){
-            delegainformation.preInsert(tokenModel);
-            delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
-            delegainformation.setCompanyprojects_id(projectsystemListObtain.get(i).getCompanyprojects_id());
-            delegainformation.setProjectsystem_id(projectsystemListObtain.get(i).getProjectsystem_id());
-            delegainformation.setAdmissiontime(projectsystemListObtain.get(i).getAdmissiontime());
-            delegainformation.setExittime(projectsystemListObtain.get(i).getExittime());
-            delegainformation.setSupplierinfor_id(projectsystemListObtain.get(i).getSuppliernameid());
             //社内外协区分， 1为外协
             if(projectsystemListObtain.get(i).getType().equals("1")){
+                delegainformation.preInsert(tokenModel);
+                delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
+                delegainformation.setCompanyprojects_id(projectsystemListObtain.get(i).getCompanyprojects_id());
+                delegainformation.setProjectsystem_id(projectsystemListObtain.get(i).getProjectsystem_id());
+                delegainformation.setAdmissiontime(projectsystemListObtain.get(i).getAdmissiontime());
+                delegainformation.setExittime(projectsystemListObtain.get(i).getExittime());
+                delegainformation.setSupplierinfor_id(projectsystemListObtain.get(i).getSuppliernameid());
                 //获取该员工的入场时间
                 Date admissiontime_d = projectsystemListObtain.get(i).getAdmissiontime();
                 //获取员工的退场时间
@@ -83,7 +82,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 String exitimeMonth_s = DateUtil.format(exitime_d, "MM");
                 String exitimeDay_s = DateUtil.format(exitime_d, "dd");
                 //退场时间不为空
-                if(projectsystemListObtain.get(i).getExittime() != null) {
+                if (projectsystemListObtain.get(i).getExittime() != null) {
                     if (aprilFirst_d.before(admissiontime_d) && exitime_d.before(marchLast_d)) {
                         //本事业年度都在此工作
                         delegainformation.setApril("1.00");
@@ -449,22 +448,33 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                     }
                                 }else if(m == 2){
                                     //入退场月份都为2月份
-                                    if(admissiontimeMonth_s.equals("02") && admissiontimeMonth_s.equals(exitimeMonth_s)){
+                                    if(admissiontimeMonth_s.equals("02") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
                                         workDay_i = Integer.parseInt(exitimeDay_s) - Integer.parseInt(admissiontimeDay_s) + 1;
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
                                         jobNub_str = df.format(jobNub_obj);
                                         jobNub_dbe = Double.valueOf(jobNub_str);
+                                        if (jobNub_dbe > 1.00) {
+                                            jobNub_str = "1.00";
+                                        }
                                         delegainformation.setFebruary(jobNub_str);
                                         //仅入场时间为2月份
-                                    }else if(admissiontimeMonth_s.equals("02")){
+                                    }else if(admissiontimeMonth_s.equals("02")) {
                                         workDay_i = 28 - Integer.parseInt(admissiontimeDay_s);
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
                                         jobNub_str = df.format(jobNub_obj);
+                                        jobNub_dbe = Double.valueOf(jobNub_str);
+                                        if (jobNub_dbe > 1.00) {
+                                            jobNub_str = "1.00";
+                                        }
                                         delegainformation.setFebruary(jobNub_str);
                                         //仅退场时间为2月份
-                                    }else if(exitimeMonth_s.equals("02")){
+                                    }else if(exitimeMonth_s.equals("02")) {
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ex / 28);
                                         jobNub_str = df.format(jobNub_obj);
+                                        jobNub_dbe = Double.valueOf(jobNub_str);
+                                        if (jobNub_dbe > 1.00) {
+                                            jobNub_str = "1.00";
+                                        }
                                         delegainformation.setFebruary(jobNub_str);
                                         //入退场都不为2月份
                                     }else{
