@@ -40,7 +40,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ExpatriatesinforMapper expatriatesinforMapper;
 
 
-
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
         return companyprojectsMapper.select(companyprojects);
@@ -52,11 +51,28 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     @Override
-    public LogmanageMentVo logmanageMentVo (CompanyProjects companyProjects) throws Exception {
-        double a= 0;
+    public List<CompanyProjects> getPjnameList(CompanyProjects companyProjects) throws Exception {
+        List<CompanyProjects> companyProjectList2 = new ArrayList<>();
+        List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
+        for (int i = 0; i < companyProjectsList.size(); i++) {
+            if (companyProjectsList.get(i).getEntrust() != null && companyProjectsList.get(i).getDeployment() != null) {
+                companyProjects.setProject_name(companyProjectsList.get(i).getProject_name());
+                companyProjects.setManagerid(companyProjectsList.get(i).getManagerid());
+                companyProjects.setEntrust(companyProjectsList.get(i).getEntrust());
+                companyProjects.setDeployment(companyProjectsList.get(i).getDeployment());
+                companyProjectList2.add(companyProjects);
+            }
+        }
+        return companyProjectList2;
+    }
+
+
+    @Override
+    public LogmanageMentVo logmanageMentVo(CompanyProjects companyProjects) throws Exception {
+        double a = 0;
         LogmanageMentVo logmanageMentVo = new LogmanageMentVo();
         logmanageMentVo.setCompanyProjects(companyprojectsMapper.select(companyProjects));
-        for(CompanyProjects companyProjects1:logmanageMentVo.getCompanyProjects()){
+        for (CompanyProjects companyProjects1 : logmanageMentVo.getCompanyProjects()) {
             LogManagement logManagement = new LogManagement();
             logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
             logmanageMentVo.setLogManagements(logManagementMapper.select(logManagement));
