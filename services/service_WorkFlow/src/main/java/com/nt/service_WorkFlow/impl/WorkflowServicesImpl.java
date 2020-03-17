@@ -173,20 +173,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setDataid(startWorkflowVo.getDataId());
         workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
-        workflowinstance.setTenantid(startWorkflowVo.getTenantId());
-        workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//        workflowinstance.setTenantid(startWorkflowVo.getTenantId());
+//        workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
         if (Workflowinstancelist.size() > 0) {
             Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
             workflownodeinstance.setWorkflowinstanceid(Workflowinstancelist.get(0).getWorkflowinstanceid());
-            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
+//            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
             List<Workflownodeinstance> Workflownodeinstancelist = workflownodeinstanceMapper
                     .select(workflownodeinstance);
             for (Workflownodeinstance item : Workflownodeinstancelist) {
                 Workflowstep workflowstep = new Workflowstep();
                 workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-                workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//                workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                 workflowstep.setItemid(startWorkflowVo.getUserId());
                 List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
 
