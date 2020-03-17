@@ -393,6 +393,9 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
         List<Base> bases = new ArrayList<>();
         Dictionary dictionary = new Dictionary();
         Calendar cal = Calendar.getInstance();
@@ -1276,7 +1279,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
     //计算其他1 当月应出勤天数-lxx
-    public int getDaysforOtherOne(Date start, Date end) {
+    private int getDaysforOtherOne(Date start, Date end) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, 0);
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -1302,7 +1305,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
     //获取工作日-lxx
-    public int getWorkDaysExceptWeekend(Date start, Date end) {
+    private int getWorkDaysExceptWeekend(Date start, Date end) {
         int workDays = 0;
 //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
         Calendar calStar = Calendar.getInstance();
