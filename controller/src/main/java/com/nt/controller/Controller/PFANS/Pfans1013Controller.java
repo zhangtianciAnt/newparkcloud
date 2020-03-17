@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Evection;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
@@ -68,6 +69,15 @@ public class Pfans1013Controller {
     public ApiResult getBusiness(HttpServletRequest request) throws Exception{
         return ApiResult.success(businessService.getBuse());
     }
+
+    @RequestMapping(value="/gettravelcostvo" ,method = {RequestMethod.POST})
+    public ApiResult gettravelcostvo(@RequestBody TravelCostVo travelcostvo, HttpServletRequest request) throws Exception{
+        if(travelcostvo==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(evectionService.gettravelcost(travelcostvo));
+    }
+
     @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.GET})
     public ApiResult getLoanApplication(HttpServletRequest request) throws Exception {
         return ApiResult.success(loanapplicationService.getLoapp());

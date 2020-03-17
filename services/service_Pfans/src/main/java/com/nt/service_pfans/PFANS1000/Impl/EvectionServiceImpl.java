@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -33,9 +35,26 @@ public class EvectionServiceImpl implements EvectionService {
     @Autowired
     private CurrencyexchangeMapper currencyexchangeMapper;
 
+    @Autowired
+    private TravelCostMapper travelcostmapper;
+
     @Override
     public List<Evection> get(Evection evection) throws Exception {
         return evectionMapper.select(evection);
+    }
+
+    @Override
+    public  List<TravelCost> gettravelcost(TravelCostVo travelcostvo) throws Exception {
+        List<TravelCost> Listvo = new ArrayList<TravelCost>();
+        TravelCost travelcost = new TravelCost();
+        List<TravelCost> travelcostlist = travelcostvo.getTravelcost();
+        for(TravelCost travelList:travelcostlist){
+            travelcost.setPublicexpenseid(travelList.getPublicexpenseid());
+            List<TravelCost> ListVo = travelcostmapper.select(travelcost);
+            ListVo = ListVo.stream().sorted(Comparator.comparing(TravelCost::getNumber)).collect(Collectors.toList());
+            Listvo.addAll(0,ListVo);
+        }
+        return Listvo;
     }
 
     @Override
