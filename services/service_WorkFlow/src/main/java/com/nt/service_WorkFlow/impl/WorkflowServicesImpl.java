@@ -126,10 +126,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Map<String, Object> rst = new HashMap<String, Object>();
         Workflow workflow = new Workflow();
         workflow.setFormid(startWorkflowVo.getMenuUrl());
-        workflow.setTenantid(startWorkflowVo.getTenantId());
+//        workflow.setTenantid(startWorkflowVo.getTenantId());
         workflow.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 
-        workflow = RequestUtils.CurrentPageOwnerList(tokenModel, workflow);
+//        workflow = RequestUtils.CurrentPageOwnerList(tokenModel, workflow);
 
         List<Workflow> Workflowlist = workflowMapper.select(workflow);
         if (Workflowlist.size() > 0) {
@@ -210,7 +210,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Boolean rst = false;
         Workflow workflow = new Workflow();
         workflow.setFormid(startWorkflowVo.getMenuUrl());
-        workflow.setTenantid(startWorkflowVo.getTenantId());
+//        workflow.setTenantid(startWorkflowVo.getTenantId());
         rst = workflowMapper.select(workflow).size() > 0;
         if (rst) {
             Workflowinstance workflowinstance = new Workflowinstance();
@@ -734,8 +734,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setDataid(startWorkflowVo.getDataId());
         workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
-        workflowinstance.setOwner(startWorkflowVo.getUserId());
-        workflowinstance.setTenantid(startWorkflowVo.getTenantId());
+//        workflowinstance.setOwner(startWorkflowVo.getUserId());
+//        workflowinstance.setTenantid(startWorkflowVo.getTenantId());
         workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
         if (Workflowinstancelist.size() > 0) {
