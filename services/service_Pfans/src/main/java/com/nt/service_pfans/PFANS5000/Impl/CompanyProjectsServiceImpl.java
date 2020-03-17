@@ -1,14 +1,17 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
+import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
+import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +42,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private LogManagementMapper logManagementMapper;
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
+    @Autowired
+    private DelegainformationMapper delegainformationMapper;
 
 
     @Override
@@ -76,8 +82,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             LogManagement logManagement = new LogManagement();
             logManagement.setProject_id(companyProjects1.getCompanyprojects_id());
             logmanageMentVo.setLogManagements(logManagementMapper.select(logManagement));
-            for(LogManagement logManagement1 : logmanageMentVo.getLogManagements()){
-                a = a+Double.parseDouble(logManagement1.getTime_start());
+            for (LogManagement logManagement1 : logmanageMentVo.getLogManagements()) {
+                a = a + Double.parseDouble(logManagement1.getTime_start());
             }
         }
         return logmanageMentVo;
@@ -181,6 +187,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     //新建
     @Override
     public void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+        String initial_s_01 = "0401";
+        int thatYear_i = Integer.parseInt(thisYear_s) + 1;
+        String thatYear_s = String.valueOf(thatYear_i);
+        String initial_s_02 = "0331";
+        //今年四月一号
+        String aprilFirst_s = thisYear_s + initial_s_01;
+        Date aprilFirst_d = sdf.parse(aprilFirst_s);
+        //明年3月31日
+        String marchLast_s = thatYear_s + initial_s_02;
+        Date marchLast_d = sdf.parse(marchLast_s);
+
         String companyprojectsid = UUID.randomUUID().toString();
         CompanyProjects companyProjects = new CompanyProjects();
         BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
@@ -203,15 +222,518 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectsystem.setRowindex(rowundex);
                 projectsystemMapper.insertSelective(projectsystem);
 
+                //外驻
                 String suppliernameid = projectsystem.getSuppliernameid();
                 Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
                 expatriatesinfor.setExpatriatesinfor_id(suppliernameid);
                 List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
-                if(expatriatesinforList != null){
+                if (expatriatesinforList != null) {
                     expatriatesinfor.setProject_name(companyProjects.getProject_name());
                     expatriatesinfor.setManagerid(companyProjects.getManagerid());
                     expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
                 }
+
+                //入退场都不为空
+                Delegainformation delegainformation = new Delegainformation();
+                delegainformation.preInsert(tokenModel);
+                delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
+                delegainformation.setCompanyprojects_id(companyprojectsid);
+                delegainformation.setProjectsystem_id(projectsystem.getProjectsystem_id());
+                delegainformation.setAdmissiontime(projectsystem.getAdmissiontime());
+                delegainformation.setExittime(projectsystem.getExittime());
+                delegainformation.setSupplierinfor_id(projectsystem.getSuppliernameid());
+                String admissiontimeMonth_s = DateUtil.format(delegainformation.getAdmissiontime(), "MM");
+                String exitimeMonth_s = DateUtil.format(delegainformation.getExittime(), "MM");
+                if (projectsystem.getAdmissiontime() != null && projectsystem.getExittime() != null && projectsystem.getType().equals("1")) {
+                    if (aprilFirst_d.before(delegainformation.getAdmissiontime()) && delegainformation.getExittime().before(marchLast_d)) {
+                        //本事业年度都在此工作
+                        delegainformation.setApril("1.00");
+                        delegainformation.setMay("1.00");
+                        delegainformation.setJune("1.00");
+                        delegainformation.setJuly("1.00");
+                        delegainformation.setAugust("1.00");
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (delegainformation.getAdmissiontime().after(aprilFirst_d) && delegainformation.getExittime().after(marchLast_d)) {
+                        //4月1号之后入场，明年3月末之后退场
+                        delegainformation.setYear(thisYear_s);
+                        if (admissiontimeMonth_s.equals("04")) {
+                            delegainformation.setApril("1.00");
+                            delegainformation.setMay("1.00");
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("05")) {
+                            delegainformation.setMay("1.00");
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("06")) {
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("07")) {
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("08")) {
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("09")) {
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("10")) {
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("11")) {
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("12")) {
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("01")) {
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("02")) {
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
+                        } else if (admissiontimeMonth_s.equals("03")) {
+                            delegainformation.setMarch("1");
+                        }
+                        //4月一号之后入场，3月末之前退场
+                    } else if (delegainformation.getAdmissiontime().after(aprilFirst_d) && delegainformation.getExittime().before(marchLast_d)) {
+                        for (int m = 1; m < 13; m++) {
+                            if (m >= Integer.parseInt(admissiontimeMonth_s) && m <= Integer.parseInt(exitimeMonth_s)) {
+                                if (m == 4) {
+                                    //入退场月份都为4月份
+                                    if (admissiontimeMonth_s.equals("04") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setApril("1");
+                                        //仅入场时间为4月份
+                                    } else if (admissiontimeMonth_s.equals("04")) {
+                                        delegainformation.setApril("1");
+                                        //仅退场时间为4月份
+                                    } else if (exitimeMonth_s.equals("04")) {
+                                        delegainformation.setApril("1");
+                                        //入退场都不为4月份
+                                    } else {
+                                        delegainformation.setApril("1.00");
+                                    }
+                                } else if (m == 5) {
+                                    //入退场月份都为5月份
+                                    if (admissiontimeMonth_s.equals("05") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setMay("1");
+                                        //仅入场时间为5月份
+                                    } else if (admissiontimeMonth_s.equals("05")) {
+                                        delegainformation.setMay("1");
+                                        //仅退场时间为5月份
+                                    } else if (exitimeMonth_s.equals("05")) {
+                                        delegainformation.setMay("1");
+                                        //入退场都不为5月份
+                                    } else {
+                                        delegainformation.setMay("1");
+                                    }
+                                } else if (m == 6) {
+                                    //入退场月份都为6月份
+                                    if (admissiontimeMonth_s.equals("06") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setJune("1");
+                                        //仅入场时间为6月份
+                                    } else if (admissiontimeMonth_s.equals("06")) {
+                                        delegainformation.setJune("1");
+                                        //仅退场时间为6月份
+                                    } else if (exitimeMonth_s.equals("06")) {
+                                        delegainformation.setJune("1");
+                                        //入退场都不为6月份
+                                    } else {
+                                        delegainformation.setJune("1");
+                                    }
+                                } else if (m == 7) {
+                                    //入退场月份都为7月份
+                                    if (admissiontimeMonth_s.equals("07") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setJuly("1");
+                                        //仅入场时间为7月份
+                                    } else if (admissiontimeMonth_s.equals("07")) {
+                                        delegainformation.setJuly("1");
+                                        //仅退场时间为7月份
+                                    } else if (exitimeMonth_s.equals("07")) {
+                                        delegainformation.setJuly("1");
+                                        //入退场都不为7月份
+                                    } else {
+                                        delegainformation.setJuly("1");
+                                    }
+                                } else if (m == 8) {
+                                    //入退场月份都为8月份
+                                    if (admissiontimeMonth_s.equals("08") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setAugust("1");
+                                        //仅入场时间为8月份
+                                    } else if (admissiontimeMonth_s.equals("08")) {
+                                        delegainformation.setAugust("1");
+                                        //仅退场时间为8月份
+                                    } else if (exitimeMonth_s.equals("08")) {
+                                        delegainformation.setAugust("1");
+                                        //入退场都不为8月份
+                                    } else {
+                                        delegainformation.setAugust("1");
+                                    }
+                                } else if (m == 9) {
+                                    //入退场月份都为9月份
+                                    if (admissiontimeMonth_s.equals("09") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setSeptember("1");
+                                        //仅入场时间为9月份
+                                    } else if (admissiontimeMonth_s.equals("09")) {
+                                        delegainformation.setSeptember("1");
+                                        //仅退场时间为9月份
+                                    } else if (exitimeMonth_s.equals("09")) {
+                                        delegainformation.setSeptember("1");
+                                        //入退场都不为9月份
+                                    } else {
+                                        delegainformation.setSeptember("1");
+                                    }
+                                } else if (m == 10) {
+                                    //入退场月份都为10月份
+                                    if (admissiontimeMonth_s.equals("10") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setOctober("1");
+                                        //仅入场时间为10月份
+                                    } else if (admissiontimeMonth_s.equals("10")) {
+                                        delegainformation.setOctober("1");
+                                        //仅退场时间为10月份
+                                    } else if (exitimeMonth_s.equals("10")) {
+                                        delegainformation.setOctober("1");
+                                        //入退场都不为10月份
+                                    } else {
+                                        delegainformation.setOctober("1");
+                                    }
+                                } else if (m == 11) {
+                                    //入退场月份都为11月份
+                                    if (admissiontimeMonth_s.equals("11") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setNovember("1");
+                                        //仅入场时间为11月份
+                                    } else if (admissiontimeMonth_s.equals("11")) {
+                                        delegainformation.setNovember("1");
+                                        //仅退场时间为11月份
+                                    } else if (exitimeMonth_s.equals("11")) {
+                                        delegainformation.setNovember("1");
+                                        //入退场都不为11月份
+                                    } else {
+                                        delegainformation.setNovember("1");
+                                    }
+                                } else if (m == 12) {
+                                    //入退场月份都为12月份
+                                    if (admissiontimeMonth_s.equals("12") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setDecember("1");
+                                        //仅入场时间为12月份
+                                    } else if (admissiontimeMonth_s.equals("12")) {
+                                        delegainformation.setDecember("1");
+                                        //仅退场时间为12月份
+                                    } else if (exitimeMonth_s.equals("12")) {
+                                        delegainformation.setDecember("1");
+                                        //入退场都不为12月份
+                                    } else {
+                                        delegainformation.setDecember("1");
+                                    }
+                                } else if (m == 1) {
+                                    //入退场月份都为1月份
+                                    if (admissiontimeMonth_s.equals("01") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setJanuary("1");
+                                        //仅入场时间为1月份
+                                    } else if (admissiontimeMonth_s.equals("01")) {
+                                        delegainformation.setJanuary("1");
+                                        //仅退场时间为1月份
+                                    } else if (exitimeMonth_s.equals("01")) {
+                                        delegainformation.setJanuary("1");
+                                        //入退场都不为1月份
+                                    } else {
+                                        delegainformation.setJanuary("1");
+                                    }
+                                } else if (m == 2) {
+                                    //入退场月份都为2月份
+                                    if (admissiontimeMonth_s.equals("02") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setFebruary("1");
+                                        //仅入场时间为2月份
+                                    } else if (admissiontimeMonth_s.equals("02")) {
+                                        delegainformation.setFebruary("1");
+                                        //仅退场时间为2月份
+                                    } else if (exitimeMonth_s.equals("02")) {
+                                        delegainformation.setFebruary("1");
+                                        //入退场都不为2月份
+                                    } else {
+                                        delegainformation.setFebruary("1");
+                                    }
+                                } else if (m == 3) {
+                                    //入退场月份都为3月份
+                                    if (admissiontimeMonth_s.equals("03") && admissiontimeMonth_s.equals(exitimeMonth_s)) {
+                                        delegainformation.setMarch("1");
+                                        //仅入场时间为3月份
+                                    } else if (admissiontimeMonth_s.equals("03")) {
+                                        delegainformation.setMarch("1");
+                                        //仅退场时间为3月份
+                                    } else if (exitimeMonth_s.equals("03")) {
+                                        delegainformation.setMarch("1");
+                                        //入退场都不为3月份
+                                    } else {
+                                        delegainformation.setFebruary("1");
+                                    }
+                                }
+                            }
+                        }
+                    } else if (delegainformation.getAdmissiontime().before(aprilFirst_d) && delegainformation.getExittime().before(marchLast_d)) {
+                        delegainformation.setYear(thisYear_s);
+                        if (exitimeMonth_s.equals("04")) {
+                            delegainformation.setApril("1.00");
+                            delegainformation.setMay("1.00");
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("05")) {
+                            delegainformation.setMay("1.00");
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("06")) {
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("07")) {
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("08")) {
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("09")) {
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("10")) {
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("11")) {
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("12")) {
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("01")) {
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("02")) {
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (exitimeMonth_s.equals("03")) {
+                            delegainformation.setMarch("1.00");
+                        }
+                    }
+                } else if (projectsystem.getAdmissiontime() != null && projectsystem.getType().equals("1")) {
+                    if (aprilFirst_d.after(delegainformation.getAdmissiontime())) {
+                        delegainformation.setApril("1");
+                        delegainformation.setMay("1");
+                        delegainformation.setJune("1");
+                        delegainformation.setJuly("1");
+                        delegainformation.setAugust("1");
+                        delegainformation.setSeptember("1");
+                        delegainformation.setOctober("1");
+                        delegainformation.setNovember("1");
+                        delegainformation.setDecember("1");
+                        delegainformation.setJanuary("1");
+                        delegainformation.setFebruary("1");
+                        delegainformation.setMarch("1");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.before(delegainformation.getAdmissiontime()) && marchLast_d.after(delegainformation.getAdmissiontime())) {
+                        delegainformation.setYear(thisYear_s);
+                        if (admissiontimeMonth_s.equals("04")) {
+                            delegainformation.setApril("1.00");
+                            delegainformation.setMay("1.00");
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("05")) {
+                            delegainformation.setMay("1.00");
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("06")) {
+                            delegainformation.setJune("1.00");
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("07")) {
+                            delegainformation.setJuly("1.00");
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("08")) {
+                            delegainformation.setAugust("1.00");
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("09")) {
+                            delegainformation.setSeptember("1.00");
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("10")) {
+                            delegainformation.setOctober("1.00");
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("11")) {
+                            delegainformation.setNovember("1.00");
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("12")) {
+                            delegainformation.setDecember("1.00");
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("01")) {
+                            delegainformation.setJanuary("1.00");
+                            delegainformation.setFebruary("1.00");
+                            delegainformation.setMarch("1.00");
+                        } else if (admissiontimeMonth_s.equals("02")) {
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
+                        } else if (admissiontimeMonth_s.equals("03")) {
+                            delegainformation.setMarch("1");
+                        }
+                    }
+                }
+                delegainformationMapper.insert(delegainformation);
             }
         }
         if (stageInformationList != null) {
@@ -240,6 +762,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     /**
      * 开发计划查询列表
+     *
      * @param stageInformation
      * @return
      * @throws Exception
@@ -251,8 +774,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     /**
      * 现场管理列表
-     * @作者：zy
+     *
      * @return List<CompanyProjectsVo2>
+     * @作者：zy
      */
     @Override
     public List<CompanyProjectsVo2> getSiteList() throws Exception {
@@ -261,31 +785,31 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Override
     public List<CompanyProjectsVo2> getList2(String flag) throws Exception {
-        if("0".equals(flag)){
+        if ("0".equals(flag)) {
             return companyprojectsMapper.getList2();
-        }else{
+        } else {
             return companyprojectsMapper.getList3();
         }
     }
 
 
-
     /**
      * PJ完了审批列表
-     * @作者：zy
+     *
      * @return List<CompanyProjectsVo2>
+     * @作者：zy
      */
     @Override
     public List<CompanyProjectsVo2> getPjList(String flag) throws Exception {
         //项目表
         CompanyProjects companyProjects = new CompanyProjects();
         List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyProjects);
-        if("0".equals(flag)){
+        if ("0".equals(flag)) {
             companyProjectsList = companyProjectsList.stream().filter(item -> (
                     "4".equals(item.getStatus()) ||
                             "7".equals(item.getStatus()) ||
-                            "8".equals(item.getStatus())) ).collect(Collectors.toList());
-        }else{
+                            "8".equals(item.getStatus()))).collect(Collectors.toList());
+        } else {
             companyProjectsList = companyProjectsList.stream().filter(item -> "9".equals(item.getStatus())).collect(Collectors.toList());
         }
 
@@ -296,42 +820,42 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         //合同表，获取该项目下最新的合同的契约番号
         List<CompanyProjectsVo2> listVo2 = companyprojectsMapper.getListVo2();
         Map<String, String> mapVo2 = new HashMap<>();
-        for ( CompanyProjectsVo2 vo2 : listVo2 ) {
+        for (CompanyProjectsVo2 vo2 : listVo2) {
             String key = vo2.getCompanyprojects_id();
             String value = vo2.getContractnumber();
-            if ( !mapVo2.containsKey(key) ) {
+            if (!mapVo2.containsKey(key)) {
                 mapVo2.put(key, value);
             }
         }
         //获取该项目下阶段信息最小的实际开始时间，最大的结束时间
         Map<String, StageInformation> map = new HashMap<>();
-        for ( StageInformation info : stageInformationList ) {
+        for (StageInformation info : stageInformationList) {
             String key = info.getCompanyprojects_id();
-            if ( !map.containsKey(key) ) {
+            if (!map.containsKey(key)) {
                 map.put(key, info);
             } else {
                 StageInformation oldVo = map.get(key);
                 Date oStart = oldVo.getActualstarttime();
                 Date oEnd = oldVo.getActualendtime();
 
-                if(info.getActualstarttime() != null) {
-                    if ( info.getActualstarttime().before(oStart) ) {
+                if (info.getActualstarttime() != null) {
+                    if (info.getActualstarttime().before(oStart)) {
                         oldVo.setActualstarttime(info.getActualstarttime());
                     }
                 }
-                if(info.getActualendtime() != null ){
-                    if ( info.getActualendtime().after(oEnd)) {
+                if (info.getActualendtime() != null) {
+                    if (info.getActualendtime().after(oEnd)) {
                         oldVo.setActualendtime(info.getActualendtime());
                     }
                 }
             }
         }
         List<CompanyProjectsVo2> result = new ArrayList<>();
-        for ( CompanyProjects projects : companyProjectsList) {
+        for (CompanyProjects projects : companyProjectsList) {
             CompanyProjectsVo2 vo = new CompanyProjectsVo2();
             vo.setCompanyprojects_id(projects.getCompanyprojects_id());
             //契约番号
-            if ( mapVo2.containsKey(projects.getCompanyprojects_id()) ) {
+            if (mapVo2.containsKey(projects.getCompanyprojects_id())) {
                 vo.setContractnumber(mapVo2.get(projects.getCompanyprojects_id()));
             }
             vo.setEntrust(projects.getEntrust());//委托元
@@ -342,7 +866,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             vo.setStatus(projects.getStatus());//审批状态
             vo.setWork(projects.getWork());//受托工数
             StageInformation info = map.get(projects.getCompanyprojects_id());
-            if ( info!=null ) {
+            if (info != null) {
                 vo.setActualstarttime(info.getActualstarttime());
                 vo.setActualendtime(info.getActualendtime());
             }
