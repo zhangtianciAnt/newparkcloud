@@ -158,4 +158,8 @@ public class AccommodationDetails extends BaseModel {
      */
     @Column(name = "PLSUMMARY")
     private String  plsummary;
+
+    @Column(name = "ACCOUNTCODE")
+    private String  accountcode;
+
 }
