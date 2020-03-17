@@ -177,65 +177,218 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> insert(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        //存放消息
+        List<String> result = new ArrayList<>();
+        //临时文件
+        File f = null;
+        //插入成功数
+        int successCount = 0;
+        //插入失败数
+        int errorCount = 0;
+        //excel集合
+        List<List<Object>> list;
+        //当前执行行数
+        int k = 1;
         try {
-            List<Programlist> listVo = new ArrayList<Programlist>();
-            List<String> Result = new ArrayList<String>();
+            //转换成文件
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
-            File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在读取并存储为临时文件时发生未知异常！");
+            return result;
+        }
+        try {
+            //读取excel临时文件
             ExcelReader reader = ExcelUtil.getReader(f);
-            List<List<Object>> list = reader.read();
+            //读取到的excel集合
+            list = reader.read();
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在读取Excel临时文件时发生未知异常！");
+            return result;
+        }
+        try {
+            //判断是否是空文件
+            if (list == null) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
+                result.add("空文件，请上传正确的培训清单导入模板文件");
+                return result;
+            }
+            //判断是否是正确格式的成绩文件(方案一：检查行数是否足够)
+            if (list.size() < 2) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
+                result.add("培训清单导入模板文件格式不正确！");
+                return result;
+            }
+            //判断是否是正确格式的培训清单导入模板文件（方案二：检查表头是否正确）
+            if (list.get(0).size() < 12) {
+                errorCount += 1;
+                result.add("失败数：" + errorCount);
+                result.add("成绩文件表头格式不正确！");
+                return result;
+            }
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("成绩文件格式不正确！");
+            return result;
+        }
+        try {
             List<Object> model = new ArrayList<Object>();
-            model.add("培训名称");
-            model.add("Code分类");
-            model.add("负责人工号");
-            model.add("内部/外部");
-            model.add("强制/非强制");
-            model.add("线上/线下");
-            model.add("培训时长");
-            model.add("培训有效期");
-            model.add("培训费用");
+            model.add("培训名称*");
+            model.add("Code分类*");
+            model.add("负责人员工号*");
+            model.add("内部/外部*");
+            model.add("强制/非强制*");
+            model.add("线上/线下*");
+            model.add("合格判定标准（%）(线上培训用)");
+            model.add("出题数量（线上培训用）");
+            model.add("培训时长(时)");
+            model.add("培训有效期(月)*");
+            model.add("培训费用(元)");
+            model.add("到期提醒提前时间（月）");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
-                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+                    result.add("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+                    errorCount += 1;
                 }
             }
-
-            int accesscount = 0;
-            int error = 0;
-
+            if (errorCount > 0) {
+                result.add("失败数：" + errorCount);
+                return result;
+            }
+        } catch (Exception e) {
+            errorCount += 1;
+            result.add("失败数：" + errorCount);
+            result.add("系统在验证列标题时发生未知异常！");
+            return result;
+        }
+        try {
             for (int i = 1; i < list.size(); i++) {
+                k += 1;
                 Programlist programlist = new Programlist();
                 List<Object> value = list.get(i);
-                //培训名称
-                programlist.setProgramname(value.get(0).toString());
-                //code分类
-                programlist.setProgramcode(code("BC038", value.get(1).toString()));
-
-                List<Programlist> pl = programlistMapper.select(programlist);
-
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userno").is(value.get(2).toString()));
-                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                if (userAccountlist.size() > 0) {
-                    String _id = userAccountlist.get(0).get_id();
-                    //负责人工号
-                    programlist.setProgramhard(_id);
+                try {
+                    //培训名称
+                    programlist.setProgramname(value.get(0).toString());
+                    Programlist p1 = programlistMapper.selectOne(programlist);
+                    if (p1.getProgramlistid() != null) {
+                        programlist.setProgramlistid(p1.getProgramlistid());
+                    }
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行培训名称异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
                 }
-                //内部/外部
-                programlist.setInsideoutside(code("BC041", value.get(3).toString()));
-                //强制/非强制
-                programlist.setMandatory(code("BC033", value.get(4).toString()));
-                //培训形式（线上/线下）
-                programlist.setIsonline(code("BC032", value.get(5).toString()));
-                //培训时长（即课时）
-                programlist.setThelength(Double.parseDouble(value.get(6).toString()));
-                //培训有效期（例：3个月）
-                programlist.setValidity(value.get(7).toString());
-                //培训费用
-                programlist.setMoney(value.get(8).toString());
+                try {
+                    //code分类
+                    programlist.setProgramcode(code("BC038", value.get(1).toString()));
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行Code分类异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("jobnumber").is(value.get(2).toString()));
+                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                    if (userAccountlist.size() == 1) {
+                        String _id = userAccountlist.get(0).get_id();
+                        //负责人工号
+                        programlist.setProgramhard(_id);
+                    } else {
+                        result.add("培训清单导入模板" + k + "行负责人员工号对应多人，导入系统失败！");
+                        errorCount += 1;
+                        continue;
+                    }
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行负责人员工号异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //内部/外部
+                    programlist.setInsideoutside(code("BC041", value.get(3).toString()));
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行内部/外部异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //强制/非强制
+                    programlist.setMandatory(code("BC033", value.get(4).toString()));
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行强制/非强制异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //培训形式（线上/线下）
+                    programlist.setIsonline(code("BC032", value.get(5).toString()));
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行线上/线下异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //合格判定标准（%）
+                    if (value.get(5).toString().trim().equals("线上")) {
+                        programlist.setStandard(Integer.parseInt(value.get(6).toString()));
+                    }
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行合格判定标准（%）异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //出题数量
+                    if (value.get(5).toString().trim().equals("线上")) {
+                        programlist.setQuestionnum(Integer.parseInt(value.get(7).toString()));
+                    }
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行出题数量异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //培训时长（时）
+                    programlist.setThelength(Double.parseDouble(value.get(8).toString()));
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行培训时长异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //培训有效期
+                    programlist.setValidity(value.get(9).toString());
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行培训有效期异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //培训费用
+                    programlist.setMoney(value.get(10).toString());
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行培训费用异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
+                try {
+                    //到期提醒提前时间（月）
+                    programlist.setRemindtime(Integer.parseInt(value.get(11).toString()));
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行到期提醒提前时间异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
                 //累计培训次数
                 programlist.setNumber("0");
                 //本次培训人数
@@ -244,24 +397,29 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 programlist.setNumberpeople("0");
                 //培训状态
                 programlist.setProgramtype("BC039001");
-                programlist.preInsert(tokenModel);
-                programlist.setProgramlistid(UUID.randomUUID().toString());
                 programlist.setApplydata("");
                 programlist.setApplydataurl("");
                 programlist.setTraindata("");
                 programlist.setTraindataurl("");
-                if (pl.size() > 0) {
-                    programlist.setProgramlistid(pl.get(0).getProgramlistid());
-                    programlistMapper.updateByPrimaryKeySelective(programlist);
-                } else {
-                    programlistMapper.insert(programlist);
+                try {
+                    if (StringUtils.isNotEmpty(programlist.getProgramlistid())) {
+                        programlist.preUpdate(tokenModel);
+                        programlistMapper.updateByPrimaryKeySelective(programlist);
+                    } else {
+                        programlist.preInsert(tokenModel);
+                        programlist.setProgramlistid(UUID.randomUUID().toString());
+                        programlistMapper.insert(programlist);
+                    }
+                    successCount += 1;
+                } catch (Exception e) {
+                    result.add("培训清单导入模板" + k + "行存储到数据库异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
                 }
-
-                accesscount = accesscount + 1;
             }
-            Result.add("失败数：" + error);
-            Result.add("成功数：" + accesscount);
-            return Result;
+            result.add("失败数：" + errorCount);
+            result.add("成功数：" + successCount);
+            return result;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
