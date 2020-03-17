@@ -38,7 +38,37 @@
 
     <select id="selectbyuserid" resultType="com.nt.dao_BASF.Startprogram">
 
-        select * from startprogram
+        select
+        startprogram.startprogramid,
+        startprogram.programlistid,
+        startprogram.programname,
+        startprogram.informpeople,
+        startprogram.starttheorydate,
+        startprogram.theorysite,
+        startprogram.startoperationdate,
+        startprogram.operationsite,
+        startprogram.expirationdate,
+        startprogram.materialsexpirationdate,
+        startprogram.informperson,
+        startprogram.programcode,
+        startprogram.programhard,
+        startprogram.insideoutside,
+        startprogram.mandatory,
+        startprogram.isonline,
+        startprogram.thelength,
+        startprogram.validity,
+        startprogram.money,
+        startprogram.remindtime,
+        startprogram.isfirst,
+        startprogram.applydata,
+        startprogram.applydataurl,
+        startprogram.standard,
+        startprogram.questionnum,
+        startprogram.programtype,
+        startprogram.actualstartdate,
+        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        DATE_ADD( starttheorydate, INTERVAL validity MONTH ) AS MODIFYON
+        from startprogram
         where
         startprogramid in (
         select startprogramid from trainjoinlist
