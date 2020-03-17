@@ -184,4 +184,16 @@ public class DelegainformationVo {
      */
     @Column(name = "COUNTERMEASURE")
     private String countermeasure;
+
+    /**
+     * 配赋对象
+     */
+    @Column(name = "DISTRIOBJECTS")
+    private String distriobjects;
+
+    /**
+     * 社内对象
+     */
+    @Column(name = "VENUETARGET")
+    private String venuetarget;
 }

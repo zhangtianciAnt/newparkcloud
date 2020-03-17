@@ -298,7 +298,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 if(("PJ069").equals(insertInfo.getRemark().substring(0, 5))){
                     insertInfo.setRemark(userName + costItemTrafficMap.getOrDefault(insertInfo.getRemark(), ""));
                 }else if(insertInfo.getRemark().length() > 9){
-                    String projectDetailName = "";
+                        String projectDetailName = "";
                     if(("PJ006").equals(insertInfo.getRemark().substring(0,5))){
                         projectDetailName = procurementProject6Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
                     }else if(("PJ007").equals(insertInfo.getRemark().substring(0,5))){

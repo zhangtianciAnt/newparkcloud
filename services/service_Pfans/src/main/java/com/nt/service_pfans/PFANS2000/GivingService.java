@@ -17,7 +17,7 @@ public interface GivingService {
 
     void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
 
-    void insertAttendance(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertLackattendance(String  givingid,TokenModel tokenModel)throws Exception;
 
     void insertResidual(String  givingid,TokenModel tokenModel)throws Exception;
 

@@ -2,9 +2,11 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
@@ -37,6 +39,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 
     @Override
     public void createDeleginformation(Delegainformation delegainformation , TokenModel tokenModel) throws Exception{
+        delegainformationMapper.delete(delegainformation);
         //工具
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         DecimalFormat df = new DecimalFormat("0.00");
@@ -68,18 +71,19 @@ public class DelegainformationServiceImpl implements DeleginformationService {
             delegainformation.setProjectsystem_id(projectsystemListObtain.get(i).getProjectsystem_id());
             delegainformation.setAdmissiontime(projectsystemListObtain.get(i).getAdmissiontime());
             delegainformation.setExittime(projectsystemListObtain.get(i).getExittime());
+            delegainformation.setSupplierinfor_id(projectsystemListObtain.get(i).getSuppliernameid());
             //社内外协区分， 1为外协
             if(projectsystemListObtain.get(i).getType().equals("1")){
+                //获取该员工的入场时间
+                Date admissiontime_d = projectsystemListObtain.get(i).getAdmissiontime();
+                //获取员工的退场时间
+                Date exitime_d = projectsystemListObtain.get(i).getExittime();
+                String admissiontimeMonth_s = DateUtil.format(admissiontime_d, "MM");
+                String admissiontimeDay_s = DateUtil.format(admissiontime_d, "dd");
+                String exitimeMonth_s = DateUtil.format(exitime_d, "MM");
+                String exitimeDay_s = DateUtil.format(exitime_d, "dd");
                 //退场时间不为空
                 if(projectsystemListObtain.get(i).getExittime() != null) {
-                    //获取该员工的入场时间
-                    Date admissiontime_d = projectsystemListObtain.get(i).getAdmissiontime();
-                    //获取员工的退场时间
-                    Date exitime_d = projectsystemListObtain.get(i).getExittime();
-                    String admissiontimeMonth_s = DateUtil.format(admissiontime_d, "MM");
-                    String admissiontimeDay_s = DateUtil.format(admissiontime_d, "dd");
-                    String exitimeMonth_s = DateUtil.format(exitime_d, "MM");
-                    String exitimeDay_s = DateUtil.format(exitime_d, "dd");
                     if (aprilFirst_d.before(admissiontime_d) && exitime_d.before(marchLast_d)) {
                         //本事业年度都在此工作
                         delegainformation.setApril("1.00");
@@ -370,17 +374,17 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                         jobNub_str = df.format(jobNub_obj);
                                         delegainformation.setOctober(jobNub_str);
                                         //仅入场时间为10月份
-                                    }else if(admissiontimeMonth_s.equals("10")){
+                                    }else if (admissiontimeMonth_s.equals("10")) {
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ad_b / 31);
                                         jobNub_str = df.format(jobNub_obj);
                                         delegainformation.setOctober(jobNub_str);
                                         //仅退场时间为10月份
-                                    }else if(exitimeMonth_s.equals("01")){
+                                    } else if (exitimeMonth_s.equals("10")) {
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ex / 31);
                                         jobNub_str = df.format(jobNub_obj);
                                         delegainformation.setOctober(jobNub_str);
                                         //入退场都不为10月份
-                                    }else{
+                                    } else {
                                         delegainformation.setOctober("1.00");
                                     }
                                 }else if(m == 11){
@@ -471,17 +475,17 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                     if(admissiontimeMonth_s.equals("03") && admissiontimeMonth_s.equals(exitimeMonth_s)){
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_same / 31);
                                         jobNub_str = df.format(jobNub_obj);
-                                        delegainformation.setFebruary(jobNub_str);
+                                        delegainformation.setMarch(jobNub_str);
                                         //仅入场时间为3月份
                                     }else if(admissiontimeMonth_s.equals("03")){
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ad_b / 31);
                                         jobNub_str = df.format(jobNub_obj);
-                                        delegainformation.setFebruary(jobNub_str);
+                                        delegainformation.setMarch(jobNub_str);
                                         //仅退场时间为3月份
                                     }else if(exitimeMonth_s.equals("03")){
                                         BigDecimal jobNub_obj = new BigDecimal((float) workDay_i_ex / 31);
                                         jobNub_str = df.format(jobNub_obj);
-                                        delegainformation.setFebruary(jobNub_str);
+                                        delegainformation.setMarch(jobNub_str);
                                         //入退场都不为3月份
                                     }else{
                                         delegainformation.setFebruary("1.00");
@@ -489,6 +493,163 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                 }
                             }
                         }
+                    }
+                } else {//退场时间为空
+                    if (aprilFirst_d.before(admissiontime_d)) {
+                        delegainformation.setApril("1.00");
+                        delegainformation.setMay("1.00");
+                        delegainformation.setJune("1.00");
+                        delegainformation.setJuly("1.00");
+                        delegainformation.setAugust("1.00");
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("04")) {
+                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setApril(jobNub_str);
+                        delegainformation.setMay("1.00");
+                        delegainformation.setJune("1.00");
+                        delegainformation.setJuly("1.00");
+                        delegainformation.setAugust("1.00");
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("05")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setMay(jobNub_str);
+                        delegainformation.setJune("1.00");
+                        delegainformation.setJuly("1.00");
+                        delegainformation.setAugust("1.00");
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("06")) {
+                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setJune(jobNub_str);
+                        delegainformation.setJuly("1.00");
+                        delegainformation.setAugust("1.00");
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("07")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setJuly(jobNub_str);
+                        delegainformation.setAugust("1.00");
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("08")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setAugust(jobNub_str);
+                        delegainformation.setSeptember("1.00");
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("09")) {
+                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setSeptember(jobNub_str);
+                        delegainformation.setOctober("1.00");
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("10")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setOctober(jobNub_str);
+                        delegainformation.setNovember("1.00");
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("11")) {
+                        workDay_i = 30 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 30);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setNovember(jobNub_str);
+                        delegainformation.setDecember("1.00");
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("12")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setDecember(jobNub_str);
+                        delegainformation.setJanuary("1.00");
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("01")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setJanuary(jobNub_str);
+                        delegainformation.setFebruary("1.00");
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("02")) {
+                        workDay_i = 28 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 28);
+                        jobNub_str = df.format(jobNub_obj);
+                        jobNub_dbe = Double.valueOf(jobNub_str);
+                        if (jobNub_dbe > 1.00) {
+                            jobNub_str = "1.00";
+                        }
+                        delegainformation.setFebruary(jobNub_str);
+                        delegainformation.setMarch("1.00");
+                        delegainformation.setYear(thisYear_s);
+                    } else if (aprilFirst_d.after(admissiontime_d) && admissiontimeMonth_s.equals("03")) {
+                        workDay_i = 31 - Integer.parseInt(admissiontimeDay_s) + 1;
+                        BigDecimal jobNub_obj = new BigDecimal((float) workDay_i / 31);
+                        jobNub_str = df.format(jobNub_obj);
+                        delegainformation.setMarch(jobNub_str);
+                        delegainformation.setYear(thisYear_s);
                     }
                 }
             }

@@ -21,8 +21,8 @@ public class Induction extends BaseModel {
     private String induction_id;
     private String giving_id;
     private String user_id;
-    private String lastmouth;
-    private String thismouth;
+    private String lastmonth;
+    private String thismonth;
     private Date worddate;
     private Date startdate;
     private String attendance;
