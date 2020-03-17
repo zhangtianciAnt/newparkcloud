@@ -1196,11 +1196,11 @@ public class GivingServiceImpl implements GivingService {
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
 
             // 本月短病欠
-            lackattendance.setThisdiligence(String.valueOf(attendanceList.stream()
+            lackattendance.setThisshortdeficiency(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
 
             // 本月长病欠
-            lackattendance.setThisdiligence(String.valueOf(attendanceList.stream()
+            lackattendance.setThischronicdeficiency(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
 
             // 本月合计
