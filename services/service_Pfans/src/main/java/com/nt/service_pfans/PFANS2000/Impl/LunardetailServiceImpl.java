@@ -40,16 +40,19 @@ public class LunardetailServiceImpl implements LunardetailService {
     @Override
     public List<Lunardetail> getLunardetail(LunardetailVo lunardetailVo) throws Exception {
         Lunardetail lunardetail = new Lunardetail();
+        lunardetail.setLunarbonus_id(lunardetailVo.getLunarbonus_id());
+        lunardetail.setEvaluatenum(lunardetailVo.getEvaluatenum());
+        lunardetail.setSubjectmon(lunardetailVo.getSubjectmon());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
-//        String evaluationday = simpleDateFormat.format(lunardetailVo.getLunarbonus().getEvaluationday());
-//        lunardetail.setEvaluationday(evaluationday);
-//        lunardetail.setSubjectmon(lunardetailVo.getLunarbonus().getSubjectmon());
-//        lunardetail.setEvaluatenum(lunardetailVo.getLunarbonus().getEvaluatenum());
+        String evaluationday = simpleDateFormat.format(lunardetailVo.getEvaluationday());
+        lunardetail.setEvaluationday(evaluationday);
+        lunardetail.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
 
-        Examinationproject examinationproject = new Examinationproject();
-        examinationproject.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
-        List<Examinationproject> list =  examinationprojectMapper.select(examinationproject);
+//
+//        Examinationproject examinationproject = new Examinationproject();
+//        examinationproject.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
+//        List<Examinationproject> list =  examinationprojectMapper.select(examinationproject);
 
         return lunardetailMapper.select(lunardetail);
     }
