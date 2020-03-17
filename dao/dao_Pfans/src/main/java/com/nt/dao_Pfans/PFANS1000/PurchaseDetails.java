@@ -39,6 +39,10 @@ public class PurchaseDetails extends BaseModel {
     @Column(name = "PLSUMMARY")
     private String  plsummary;
 
+    @Column(name = "TAXES")
+    private String  taxes;
+
+
     @Column(name = "ACCOUNTCODE")
     private String accountcode;
 

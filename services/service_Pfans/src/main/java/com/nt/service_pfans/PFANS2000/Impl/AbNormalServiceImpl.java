@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
@@ -131,8 +132,16 @@ public class AbNormalServiceImpl implements AbNormalService {
     public Map<String, String> cklength(AbNormal abNormal) throws Exception {
         Map<String, String> rst = new HashMap<String, String>();
         double lengths = 1;
+        double relengths = 1;
+
         if("1".equals(abNormal.getLengthtime()) || "2".equals(abNormal.getLengthtime())){
             lengths = 0.5;
+        }
+        if(StrUtil.isNotBlank(abNormal.getRelengthtime())) {
+            if ("1".equals(abNormal.getRelengthtime()) || "2".equals(abNormal.getRelengthtime())) {
+                relengths = 0.5;
+            }
+            lengths = relengths - lengths;
         }
 
         if("PR013005".equals(abNormal.getErrortype())){
@@ -150,21 +159,28 @@ public class AbNormalServiceImpl implements AbNormalService {
                 rst.put("can","no");
             }
         }else if("PR013006".equals(abNormal.getErrortype())){
-            List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());
-            double rest = 0;
-            String dat="";
-            for(restViewVo item:list){
-                if(Double.parseDouble(item.getRestdays()) != 0){
-                    lengths = lengths - Double.parseDouble(item.getRestdays());
-                    dat += dat + "," + item.getApplicationdate();
-                    if(lengths <= 0){
-                        dat = dat.substring(1,dat.length());
-                        rst.put("dat",dat);
-                        rst.put("can","yes");
-                        return rst;
+
+                List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());
+                String dat="";
+                for(restViewVo item:list){
+                    if(Double.parseDouble(item.getRestdays()) != 0){
+                        if(lengths >= 0){
+                            lengths = lengths - Double.parseDouble(item.getRestdays());
+                            dat += dat + "," + item.getApplicationdate();
+                            if(lengths <= 0){
+                                dat = dat.substring(1,dat.length());
+                                rst.put("dat",dat);
+                                rst.put("can","yes");
+                                return rst;
+                            }
+                        }else{
+                            rst.put("dat","");
+                            rst.put("can","yes");
+                        }
                     }
                 }
-            }
+
+
             rst.put("dat","");
             rst.put("can","no");
         }

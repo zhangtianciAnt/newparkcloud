@@ -127,4 +127,5 @@ public class Cooperinterview extends BaseModel {
      */
     @Column(name = "SUPPLIERINFOR_ID")
     private String supplierinfor_id;
+
 }
