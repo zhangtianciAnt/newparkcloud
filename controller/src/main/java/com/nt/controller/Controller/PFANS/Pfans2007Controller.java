@@ -30,19 +30,18 @@ public class Pfans2007Controller {
     @Autowired
     private ToDoNoticeService toDoNoticeService;
 
-
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request) throws Exception{
-
-
+    @RequestMapping(value="/update",method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody List<Bonussend> bonussend, HttpServletRequest request) throws Exception{
+        if (bonussend == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
-        Bonussend bonussend = new Bonussend();
-//        bonussend.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(bonussendService.get(bonussend));
+        bonussendService.update(bonussend,tokenModel);
+        return ApiResult.success();
     }
 
-    @RequestMapping(value="/getListType",method = {RequestMethod.POST})
-    public ApiResult getListType(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception{
+    @RequestMapping(value="/inserttodo",method = {RequestMethod.POST})
+    public ApiResult inserttodo(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception{
         if (toDoNotice == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -50,6 +49,9 @@ public class Pfans2007Controller {
         toDoNotice.preInsert(tokenModel);
         toDoNotice.setOwner(tokenModel.getUserId());
         toDoNoticeService.save(toDoNotice);
+
+        bonussendService.updateSend(toDoNotice.getDataid());
+
         return ApiResult.success();
 //        // 创建代办
 //        ToDoNotice toDoNotice = new ToDoNotice();
@@ -80,10 +82,10 @@ public class Pfans2007Controller {
     }
 
     @RequestMapping(value = "/List", method = {RequestMethod.POST})
-    public ApiResult List(HttpServletRequest request) throws Exception {
+    public ApiResult List(HttpServletRequest request,@RequestBody Bonussend bonussend ) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Bonussend bonussend = new Bonussend();
         bonussend.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(bonussendService.List(bonussend,tokenModel));
     }
+
 }

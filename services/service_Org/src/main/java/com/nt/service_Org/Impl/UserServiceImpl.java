@@ -1,14 +1,13 @@
 package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
+import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
@@ -18,11 +17,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -110,7 +113,7 @@ public class UserServiceImpl implements UserService {
         if (userAccountlist.size() <= 0) {
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
         } else {
-            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale,"");
+            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "");
         }
 
     }
@@ -164,7 +167,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：_id
      */
     @Override
-    public String addAccountCustomer(UserVo userVo) throws Exception {
+    public CustomerInfo addAccountCustomer(UserVo userVo) throws Exception {
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
         mongoTemplate.save(userAccount);
@@ -181,9 +184,9 @@ public class UserServiceImpl implements UserService {
             customerInfo.setUserid(_id);
             customerInfo.setUserinfo(userInfo);
             mongoTemplate.save(customerInfo);
-            return _id;
+            return customerInfo;
         } else {
-            return "";
+            return new CustomerInfo();
         }
     }
 
@@ -445,5 +448,165 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getAllCustomerInfo() {
         return mongoTemplate.findAll(CustomerInfo.class);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public List<String> importUser(HttpServletRequest request) throws Exception {
+        try {
+            List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
+            List<String> Result = new ArrayList<String>();
+            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+            File f = null;
+            f = File.createTempFile("tmp", null);
+            file.transferTo(f);
+            ExcelReader reader = ExcelUtil.getReader(f);
+            List<List<Object>> list = reader.read();
+            List<Object> model = new ArrayList<Object>();
+            model.add("姓名");
+            model.add("性别");
+            model.add("AD域账号");
+            model.add("生年月日");
+            model.add("国籍");
+            model.add("民族");
+            model.add("户籍");
+            model.add("住所");
+            model.add("最终毕业学校");
+            model.add("专业");
+            model.add("最终学位");
+            model.add("最终学历");
+            model.add("毕业年月日");
+            model.add("身份证号码");
+            model.add("婚姻状况");
+            model.add("仕事开始年月日");
+            model.add("center");
+            model.add("group");
+            model.add("team");
+            model.add("社員ID");
+            model.add("预算单位");
+            model.add("奖金记上区分");
+            model.add("职务");
+            model.add("类别");
+            model.add("Rank");
+            model.add("入社时间");
+            model.add("银行账号");
+            List<Object> key = list.get(0);
+            for (int i = 0; i < key.size(); i++) {
+                if (!key.get(i).toString().trim().equals(model.get(i))) {
+                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+                }
+            }
+            int accesscount = 0;
+            int error = 0;
+            for (int i = 2; i < list.size(); i++) {
+                CustomerInfo customerInfo = new CustomerInfo();
+                UserAccount useraccount = new UserAccount();
+//            CustomerInfo.UserInfo getUserinfo = new CustomerInfo.UserInfo();
+                CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
+                List<Object> value = list.get(i);
+                if (value != null && !value.isEmpty()) {
+                    if(value.get(0) != null){
+                        userinfo.setCustomername(value.get(0).toString());
+                    }
+                    if(value.get(1) != null) {
+                        userinfo.setSex(value.get(1).toString());
+                    }
+                    if(value.get(2) != null) {
+                        userinfo.setAdfield(value.get(2).toString());
+                    }
+                    if(value.get(2) != null) {
+                        useraccount.setAccount(value.get(2).toString());
+                    }
+                    if(value.get(2) != null) {
+                        useraccount.setPassword(value.get(2).toString());
+                    }
+                    if(value.get(3) != null) {
+                        userinfo.setBirthday(value.get(3).toString());
+                    }
+                    if(value.get(4) != null) {
+                        userinfo.setNationality(value.get(4).toString());
+                    }
+                    if(value.get(5) != null) {
+                        userinfo.setNation(value.get(5).toString());
+                    }
+                    if(value.get(6) != null) {
+                        userinfo.setRegister(value.get(6).toString());
+                    }
+                    if(value.get(7) != null) {
+                        userinfo.setAddress(value.get(7).toString());
+                    }
+                    if(value.get(8) != null) {
+                        userinfo.setGraduation(value.get(8).toString());
+                    }
+                    if(value.get(9) != null) {
+                        userinfo.setSpecialty(value.get(9).toString());
+                    }
+                    if(value.get(10) != null) {
+                        userinfo.setDegree(value.get(10).toString());
+                    }
+                    if(value.get(11) != null) {
+                        userinfo.setEducational(value.get(11).toString());
+                    }
+                    if(value.get(12) != null) {
+                        userinfo.setGraduationday(value.get(12).toString());
+                    }
+                    if(value.get(13) != null) {
+                        userinfo.setIdnumber(value.get(13).toString());
+                    }
+                    if(value.get(14) != null) {
+                        userinfo.setMarital(value.get(14).toString());
+                    }
+                    if(value.get(15) != null) {
+                        userinfo.setWorkday(value.get(15).toString());
+                    }
+                    if(value.get(16) != null){
+                        userinfo.setCenterid(value.get(16).toString());
+                    }
+                    if(value.get(17) != null) {
+                            userinfo.setGroupid(value.get(17).toString());
+                        }
+                    if(value.get(18) != null) {
+                            userinfo.setTeamid(value.get(18).toString());
+                        }
+                    if(value.get(19) != null) {
+                        userinfo.setJobnumber(value.get(19).toString());
+                    }
+                    if(value.get(20) != null) {
+                        userinfo.setBudgetunit(value.get(20).toString());
+                    }
+                    if(value.get(21) != null) {
+                        userinfo.setDifference(value.get(21).toString());
+                    }
+                    if(value.get(22) != null) {
+                        userinfo.setPost(value.get(22).toString());
+                    }
+                    if(value.get(23) != null) {
+                        userinfo.setType(value.get(23).toString());
+                    }
+                    if(value.get(24) != null) {
+                        userinfo.setRank(value.get(24).toString());
+                    }
+                    if(value.get(25) != null) {
+                        userinfo.setEnterday(value.get(25).toString());
+                    }
+                    if(value.get(26) != null) {
+                        userinfo.setSeatnumber(value.get(26).toString());
+                    }
+                }
+
+                UserVo uservo = new UserVo();
+                customerInfo.setUserinfo(userinfo);
+                uservo.setCustomerInfo(customerInfo);
+                listVo.add(customerInfo);
+                uservo.setUserAccount(useraccount);
+                addAccountCustomer(uservo);
+                accesscount = accesscount + 1;
+            }
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
     }
 }

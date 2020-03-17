@@ -1,7 +1,9 @@
 package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Evection;
+import com.nt.dao_Pfans.PFANS1000.TravelCost;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.List;
 public interface EvectionService {
 
     List<Evection> get(Evection evection) throws Exception;
+
+    List<TravelCost> gettravelcost(TravelCostVo travelcostvo) throws Exception;
 
      EvectionVo selectById(String evectionid) throws Exception;
 

@@ -19,7 +19,9 @@ public interface CompanyProjectsService {
 
     public List<CompanyProjects> list(CompanyProjects companyprojects) throws Exception;
 
-    public  LogmanageMentVo logmanageMentVo(CompanyProjects companyprojects) throws Exception;
+    public List<CompanyProjects> getPjnameList(CompanyProjects companyprojects) throws Exception;
+
+    public LogmanageMentVo logmanageMentVo(CompanyProjects companyprojects) throws Exception;
 
     //编辑
     void update(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception;
@@ -28,9 +30,6 @@ public interface CompanyProjectsService {
 
     //按id查询
     CompanyProjectsVo selectById(String companyprojectsid) throws Exception;
-
-//    //    //附表查询
-//    List<Projectsystem> select(String companyprojectsid) throws Exception;
 
     List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception;
 

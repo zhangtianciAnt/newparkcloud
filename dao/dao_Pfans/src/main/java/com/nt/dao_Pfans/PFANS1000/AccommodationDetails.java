@@ -29,11 +29,20 @@ public class AccommodationDetails extends BaseModel {
     @Column(name = "EVECTION_ID")
     private String evectionid;
 
+    @Column(name = "NEXTDAY")
+    private String nextday;
+
+    @Column(name = "BUDGETCODING")
+    private String budgetcoding;
+
+    @Column(name = "SUBJECTNUMBER")
+    private String subjectnumber;
+
     /**
      * 日期
      */
     @Column(name = "ACCOMMODATIONDATE")
-    private Date accommodationdate;
+    private String accommodationdate;
 
     /**
      * 活动内容
@@ -143,4 +152,14 @@ public class AccommodationDetails extends BaseModel {
 
     @Column(name = "TAXES")
     private String  taxes;
+
+    /**
+     *PL摘要内容
+     */
+    @Column(name = "PLSUMMARY")
+    private String  plsummary;
+
+    @Column(name = "ACCOUNTCODE")
+    private String  accountcode;
+
 }

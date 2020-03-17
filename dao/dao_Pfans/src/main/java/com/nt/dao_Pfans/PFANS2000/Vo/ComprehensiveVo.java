@@ -40,7 +40,23 @@ public class ComprehensiveVo {
     private String month12wages;
     private String month12appreciation;
 
+    /**
+     * 年度賞与（当年度）
+     */
+    private String totalbonus1;
 
+    /**
+     * 累计月度赏与
+     */
+    private String appreciationtotal;
 
+    /**
+     * 累计年间收入(不含12月)
+     */
+    private String totalwithout12;
 
+    /**
+     * 累计年间收入
+     */
+    private String totalwithin12;
 }

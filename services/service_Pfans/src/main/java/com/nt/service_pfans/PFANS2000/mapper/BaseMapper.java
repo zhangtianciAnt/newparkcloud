@@ -9,4 +9,6 @@ import java.util.List;
 public interface BaseMapper extends MyMapper<Base> {
     int insertBase(@Param("bases") List<Base> bases);
 
+    //获取基数 type -lxx
+    List<Base> selectBaseType(@Param("givingid") String givingid);
 }

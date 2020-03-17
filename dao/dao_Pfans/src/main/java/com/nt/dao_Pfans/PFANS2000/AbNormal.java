@@ -132,4 +132,40 @@ public class AbNormal extends BaseModel {
      */
     @Column(name = "RECOGNITIONSTATE")
     private String recognitionstate;
+
+    /**
+     * 代休扣除月份
+     */
+    @Column(name = "RESTDATE")
+    private String restdate;
+
+    /**
+     * 开始日
+     */
+    @Column(name = "RE_OCCURRENCE_DATE")
+    private Date reoccurrencedate;
+
+    /**
+     * 完了日
+     */
+    @Column(name = "RE_FINISHED_DATE")
+    private Date refinisheddate;
+
+    /**
+     * 时间段（开始）
+     */
+    @Column(name = "RE_PERIOD_START")
+    private Date reperiodstart;
+
+    /**
+     * 时间段（结束）
+     */
+    @Column(name = "RE_PERIOD_END")
+    private Date reperiodend;
+
+    /**
+     * 时间长度
+     */
+    @Column(name = "RE_LENGTHTIME")
+    private String relengthtime;
 }

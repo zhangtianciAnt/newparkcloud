@@ -160,18 +160,33 @@ public class UserController {
     public ApiResult addAccountCustomer(@RequestBody UserVo userVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         String id = "";
+        CustomerInfo info = new CustomerInfo();
         if (userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
             userVo.getUserAccount().preUpdate(tokenModel);
-            annualLeaveService.insertNewAnnualRest(userVo,id);
-            userService.addAccountCustomer(userVo);
+            info = userService.addAccountCustomer(userVo);
+            id = info.getUserid();
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
-            id = userService.addAccountCustomer(userVo);
-            annualLeaveService.insertNewAnnualRest(userVo,id);
+            info = userService.addAccountCustomer(userVo);
+            annualLeaveService.insertannualLeave(info);
+            id = info.getUserid();
         }
 
 
         return ApiResult.success(id);
+    }
+
+    @RequestMapping(value = "/importUser", method = {RequestMethod.POST})
+    public ApiResult importUser( HttpServletRequest request) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            CustomerInfo info = new CustomerInfo();
+            return ApiResult.success(userService.importUser(request));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 
     /**

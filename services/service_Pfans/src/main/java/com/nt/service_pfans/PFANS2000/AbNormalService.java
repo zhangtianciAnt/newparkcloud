@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AbNormalService {
 
@@ -16,4 +17,7 @@ public interface AbNormalService {
 
     //根据id获取数据
     AbNormal One(String abnormalid) throws Exception;
+
+    //根据id获取数据
+    Map<String,String> cklength(AbNormal abNormal) throws Exception;
 }

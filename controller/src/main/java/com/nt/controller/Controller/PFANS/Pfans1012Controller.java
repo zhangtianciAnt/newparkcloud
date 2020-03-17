@@ -3,7 +3,9 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
+import com.nt.dao_Pfans.PFANS1000.TotalCost;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
@@ -71,14 +73,27 @@ public class Pfans1012Controller {
         publicExpenseService.update(publicExpenseVo,tokenModel);
         return ApiResult.success();
     }
-    @RequestMapping(value="/getJudgement" ,method = {RequestMethod.POST})
-    public ApiResult getJudgement(@RequestBody Judgement judgement,HttpServletRequest request) throws Exception{
-    if(judgement==null){
+    @RequestMapping(value="/gettotalcost" ,method = {RequestMethod.POST})
+    public ApiResult gettotalcost(@RequestBody TotalCostVo totalcostvo, HttpServletRequest request) throws Exception{
+    if(totalcostvo==null){
         return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
     }
-    TokenModel tokenModel=tokenService.getToken(request);
-    return ApiResult.success(judgementService.getJudgement(judgement));
+    return ApiResult.success(publicExpenseService.gettotalcost(totalcostvo));
     }
+
+
+
+    @RequestMapping(value="/getJudgement" ,method = {RequestMethod.POST})
+    public ApiResult getJudgement(@RequestBody Judgement judgement,HttpServletRequest request) throws Exception{
+        if(judgement==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(judgementService.getJudgement(judgement));
+    }
+
+
+
     @RequestMapping(value="/getLoanApplication" ,method = {RequestMethod.POST})
     public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication==null) {

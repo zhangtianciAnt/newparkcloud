@@ -24,20 +24,26 @@ public class TotalCost extends BaseModel {
     private String totalcost_id;
 
     /**
+     * id
+     */
+    @Column(name = "PUBLICEXPENSEID")
+    private String publicexpenseid;
+
+    /**
      * 发票编号
      */
     @Column(name = "INVOICENUMBER")
     private String invoicenumber;
     /**
-     * 行号
+     * 发票日期
      */
     @Column(name = "INVOICEDATE")
     private Date invoicedate;
     /**
-     * 发票日期
+     * 行号
      */
     @Column(name = "NUMBER")
-    private String number;
+    private Integer number;
     /**
      * 条件日期
      */

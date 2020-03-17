@@ -236,7 +236,6 @@ public class DruidSource {
         return datasource;
     }
 
-
     //数据库批量修改
     @Bean
     public WallFilter wallFilter() {

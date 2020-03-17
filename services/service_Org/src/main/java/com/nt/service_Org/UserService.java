@@ -8,6 +8,7 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public interface UserService {
     void upCustomerInfo(CustomerInfo customerInfo) throws Exception;
 
     // 添加用户及用户信息
-    String addAccountCustomer(UserVo userVo) throws Exception;
+    CustomerInfo addAccountCustomer(UserVo userVo) throws Exception;
 
     // 根据orgid获取用户及用户信息列表
     List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception;
@@ -81,4 +82,5 @@ public interface UserService {
 
     List<CustomerInfo> getAllCustomerInfo();
 
+    List<String> importUser(HttpServletRequest request) throws Exception ;
 }

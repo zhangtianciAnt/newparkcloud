@@ -3,13 +3,50 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.BaseMapper">
     <insert id="insertBase" parameterType="com.nt.dao_Pfans.PFANS2000.Base">
          insert into base (base_id ,giving_id,department_id,user_id,rn,sex,onlychild,`type`,bonus,sociology,registered,
-        lastmonth,thismonth,pension,medical,accumulation,heating,workdate)
+        lastmonth,thismonth,pension,medical,accumulation,heating,workdate,rowindex,thismonthbasic,thismonthduty,lastmonthbasic,lastmonthduty,tmabasic,groupid)
          values
      <foreach collection="bases" index="index" item="item" separator=",">
          (#{item.base_id},#{item.giving_id},#{item.department_id},#{item.user_id},#{item.rn},#{item.sex},#{item.onlychild},
          #{item.type},#{item.bonus},#{item.sociology},#{item.registered},#{item.lastmonth},#{item.thismonth},#{item.pension},
-         #{item.medical},#{item.accumulation},#{item.heating},#{item.workdate})
+         #{item.medical},#{item.accumulation},#{item.heating},#{item.workdate},#{item.rowindex},#{item.thismonthbasic},#{item.thismonthduty},#{item.lastmonthbasic},#{item.lastmonthduty},#{item.tmabasic},#{item.groupid})
      </foreach>
     </insert>
+
+    <select id="selectBaseType" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Base">
+        SELECT MAX(TEMP.type) type,TEMP.USER_ID FROM (
+        SELECT USER_ID,'1' type
+        FROM induction
+        where
+        GIVING_ID = #{givingid}
+        UNION ALL
+        SELECT USER_ID,'2' type
+        FROM abnormal
+        where
+        (ERROR_TYPE = 'PR013012')
+        and (abnormal.occurrence_date &lt;= NOW()
+        and abnormal.FINISHED_DATE &gt;= NOW()
+        or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
+        and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
+        or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
+        and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
+        UNION ALL
+        SELECT USER_ID,'3' type
+        FROM abnormal
+        where
+        (ERROR_TYPE = 'PR013013')
+        and (abnormal.occurrence_date &lt;= NOW()
+        and abnormal.FINISHED_DATE &gt;= NOW()
+        or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
+        and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
+        or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
+        and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
+        UNION ALL
+        SELECT USER_ID,'4' type
+        FROM retire
+        where
+        GIVING_ID = #{givingid}
+        ) TEMP
+        GROUP BY TEMP.USER_ID
+    </select>
 </mapper>
 
