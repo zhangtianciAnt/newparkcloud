@@ -152,4 +152,10 @@ public class AccommodationDetails extends BaseModel {
 
     @Column(name = "TAXES")
     private String  taxes;
+
+    /**
+     *PL摘要内容
+     */
+    @Column(name = "PLSUMMARY")
+    private String  plsummary;
 }
