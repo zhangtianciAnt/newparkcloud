@@ -292,4 +292,15 @@ public class CompanyProjects extends BaseModel {
     @Column(name = "CARON")
     private String caron;
 
+    /**
+     * 委托元分类
+     */
+    @Column(name = "TOOLSTYPE")
+    private String toolstype;
+
+    /**
+     * 内采委托元
+     */
+    @Column(name = "TOOLSORGS")
+    private String toolsorgs;
 }
