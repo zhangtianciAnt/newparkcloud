@@ -126,17 +126,17 @@ public class Attendance extends BaseModel {
     @Column(name = "WOMENSDAY")
     private String womensday;
     /**
-     * 短病假
+     * 正式短病假
      */
     @Column(name = "SHORTSICKLEAVE")
     private String shortsickleave;
     /**
-     * 长病假
+     * 正式长病假
      */
     @Column(name = "LONGSICKLEAVE")
     private String longsickleave;
     /**
-     * 事假
+     * 正式事假
      */
     @Column(name = "COMPASSIONATELEAVE")
     private String compassionateleave;
@@ -161,22 +161,22 @@ public class Attendance extends BaseModel {
     @Column(name = "WELFARE")
     private String welfare;
     /**
-     * 迟到
+     * 正式迟到
      */
     @Column(name = "LATE")
     private String late;
     /**
-     * 迟到时间
+     * 正式迟到时间
      */
     @Column(name = "LATETIME")
     private String latetime;
     /**
-     * 早退
+     * 正式早退
      */
     @Column(name = "LEAVEEARLY")
     private String leaveearly;
     /**
-     * 早退时间
+     * 正式早退时间
      */
     @Column(name = "LEAVEEARLYTIME")
     private String leaveearlytime;
@@ -190,4 +190,52 @@ public class Attendance extends BaseModel {
      */
     @Column(name = "RECOGNITIONSTATE")
     private String recognitionstate;
+
+    /**
+     * 试用短病假
+     */
+    @Column(name = "TSHORTSICKLEAVE")
+    private String tshortsickleave;
+
+    /**
+     * 试用长病假
+     */
+    @Column(name = "TLONGSICKLEAVE")
+    private String tlongsickleave;
+
+    /**
+     * 试用事假
+     */
+    @Column(name = "TCOMPASSIONATELEAVE")
+    private String tcompassionateleave;
+
+    /**
+     * 试用迟到
+     */
+    @Column(name = "TLATE")
+    private String tlate;
+
+    /**
+     * 试用迟到时间
+     */
+    @Column(name = "TLATETIME")
+    private String tlatetime;
+
+    /**
+     * 试用早退
+     */
+    @Column(name = "TLEAVEEARLY")
+    private String tleaveearly;
+
+    /**
+     * 试用早退时间
+     */
+    @Column(name = "TLEAVEEARLYTIME")
+    private String tleaveearlytime;
+
+    /**
+     * 试用无故旷工
+     */
+    @Column(name = "TABSENTEEISM")
+    private String tabsenteeism;
 }
