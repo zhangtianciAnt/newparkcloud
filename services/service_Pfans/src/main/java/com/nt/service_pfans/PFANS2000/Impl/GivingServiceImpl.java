@@ -281,7 +281,9 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
-
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
         List<OtherOne> otherOnes = new ArrayList<>();
         DecimalFormat df = new DecimalFormat("#.00");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -852,6 +854,9 @@ public class GivingServiceImpl implements GivingService {
      * @Param [appreciationlist]
      **/
     private List<Appreciation> appreciationCalc(List<Appreciation> appreciationlist) {
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
         for (Appreciation appreciation : appreciationlist) {
             // 获取用户信息
             CustomerInfo customerInfo = customerInfos.stream().filter(item -> item.getUserid().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0);
@@ -1358,6 +1363,9 @@ public class GivingServiceImpl implements GivingService {
     // 2020/03/11 add by myt start
     // 入职
     public List<Induction> getInduction(String givingId) throws Exception {
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
         List<Induction> inductions = new ArrayList<>();
         // 今月日期
         Calendar thisMonthDate = Calendar.getInstance();
