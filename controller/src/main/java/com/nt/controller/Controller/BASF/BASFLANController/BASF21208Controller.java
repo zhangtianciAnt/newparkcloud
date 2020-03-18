@@ -109,7 +109,7 @@ public class BASF21208Controller {
         return ApiResult.success(trainjoinlistServices.overduepersonnellist());
     }
 
-    //结果发布判断该培训是否存在人员通过状态为空
+    //结果发布判断该培训是否存在正常参加人员通过状态为空
     @GetMapping("/isNotThroughtype")
     public ApiResult isNotThroughtype(String startprogramid, HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(startprogramid)) {

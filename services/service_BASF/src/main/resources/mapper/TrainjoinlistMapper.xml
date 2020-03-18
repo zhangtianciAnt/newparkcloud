@@ -62,6 +62,7 @@
         trainjoinlist AS t
         WHERE
         t.startprogramid = #{startprogramid} AND
+        t.jointype='正常' AND
         (t.throughtype &lt;> '通过' AND
         t.throughtype &lt;> '未通过' OR
         t.throughtype IS NULL)
