@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS5000.Vo;
 
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import lombok.AllArgsConstructor;
@@ -36,4 +37,9 @@ public class CompanyProjectsVo {
      * 委托信息
      */
     private List<Delegainformation> delegainformation;
+    /**
+     * 委托元为内采的合同
+     */
+    private List<Contractnumbercount> contractnumbercount;
+
 }

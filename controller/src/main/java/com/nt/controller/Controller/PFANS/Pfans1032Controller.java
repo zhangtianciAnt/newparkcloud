@@ -62,9 +62,15 @@ public class Pfans1032Controller {
     public void downLoad1(@RequestBody Petition petition, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
         Petition pd = petitionService.one(petition.getPetition_id());
+        String pp[] = petition.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         Map<String, Object> data = new HashMap<>();
         data.put("pd",pd);
+        if(pp.length > 0){
+            data.put("statime",pp);
+        } else {
+            data.put("statime","");
+        }
         if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")){
             ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(国内受託)","qingqiushu_guonei.xlsx",data,response);
         } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")){

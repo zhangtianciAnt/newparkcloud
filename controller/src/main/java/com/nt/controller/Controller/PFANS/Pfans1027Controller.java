@@ -65,6 +65,7 @@ public class Pfans1027Controller {
     public void downLoad(@RequestBody Quotation quotation, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
         QuotationVo qu = quotationService.selectById(quotation.getQuotationid());
+        String qq[] = quotation.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(qu.getQuotation().getCurrencyposition())) {
@@ -74,8 +75,13 @@ public class Pfans1027Controller {
         }
         Map<String, Object> data = new HashMap<>();
         data.put("qu",qu.getQuotation());
-        data.put("ba1",qu.getNumbercounts());
-        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_見積書(受託)","jianjishu_shoutuo.xlsx",data,response);
+        data.put("num",qu.getNumbercounts());
+        if(qq.length > 0){
+            data.put("statime",qq);
+        } else {
+            data.put("statime","");
+        }
+        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_报价单","jianjishu_shoutuo.xlsx",data,response);
     }
 
 }

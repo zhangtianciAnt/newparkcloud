@@ -1,18 +1,19 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Pfans.PFANS2000.Examinationobject;
+import com.nt.dao_Pfans.PFANS2000.Lunarbasic;
 import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
 import com.nt.service_pfans.PFANS2000.LunarbonusService;
 import com.nt.service_pfans.PFANS2000.mapper.ExaminationobjectMapper;
+import com.nt.service_pfans.PFANS2000.mapper.LunarbasicMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunarbonusMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class LunarbonusServiceImpl implements LunarbonusService {
 
 
@@ -39,6 +40,8 @@ public class LunarbonusServiceImpl implements LunarbonusService {
     @Autowired
     private ExaminationobjectMapper examinationobjectMapper;
 
+    @Autowired
+    private LunarbasicMapper lunarbasicMapper;
 
     //获取一览
     @Override
@@ -60,50 +63,45 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         lunarbonus.setUser_id(lunardetailVo.getUser_id());
         lunarbonusMapper.insert(lunarbonus);
 
-        Examinationobject examinationobject = examinationobjectMapper.selectByPrimaryKey(lunardetailVo.getExaminationobject_id());
-        String a = examinationobject.getRn();
-        String[] strArray = a.split(",");
-        for(int w = 0 ; w < strArray.length ; w++) {
+        Query query = new Query();
+        List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+        for (CustomerInfo customerInfo : CustomerInfoList) {
             Lunardetail lunardetail = new Lunardetail();
-            Query query = new Query();
-            query.addCriteria(Criteria.where("userinfo.rank").is(strArray[w]));
-//            query.addCriteria(Criteria.where("userinfo.rank").is(examinationobject.getRn()));
-//        CustomerInfo customerInfo = mongoTemplate.find(query, CustomerInfo.class);
-            List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-            for (CustomerInfo customerInfo : CustomerInfoList) {
-                if (customerInfo != null) {
+            if (customerInfo != null) {
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy");
+                Date date = new Date();
+                String da = sf.format(date);
 
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy");
-                    Date date = new Date();
-                    String da = sf.format(date);
-
-                    lunardetail.preInsert(tokenModel);
-                    lunardetail.setLunardetail_id(UUID.randomUUID().toString());
-                    lunardetail.setSubjectmon(lunarbonus.getSubjectmon());
-                    lunardetail.setEvaluatenum(lunarbonus.getEvaluatenum());
-                    lunardetail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
-                    lunardetail.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
-
-                    lunardetail.setEvaluationday(da);
-                    lunardetail.setUser_id(customerInfo.getUserid());
-                    lunardetail.setRn(customerInfo.getUserinfo().getRank());
-                    lunardetail.setEnterday(customerInfo.getUserinfo().getEnterday());
-                    lunardetail.setGroup_id(customerInfo.getUserinfo().getGroupid());
-                    lunardetail.setSalary(customerInfo.getUserinfo().getSalary());
-                    lunardetail.setTeam_id(customerInfo.getUserinfo().getTeamid());
-                    lunardetail.setDifference(customerInfo.getUserinfo().getDifference());
-                    lunardetailMapper.insert(lunardetail);
-                }
+                lunardetail.preInsert(tokenModel);
+                lunardetail.setLunardetail_id(UUID.randomUUID().toString());
+                lunardetail.setSubjectmon(lunarbonus.getSubjectmon());
+                lunardetail.setEvaluatenum(lunarbonus.getEvaluatenum());
+                lunardetail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
+                lunardetail.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
+                lunardetail.setEvaluationday(da);
+                lunardetail.setUser_id(customerInfo.getUserid());
+                lunardetail.setRn(customerInfo.getUserinfo().getRank());
+                lunardetail.setEnterday(customerInfo.getUserinfo().getEnterday());
+                lunardetail.setGroup_id(customerInfo.getUserinfo().getGroupid());
+                lunardetail.setSalary(customerInfo.getUserinfo().getSalary());
+                lunardetail.setTeam_id(customerInfo.getUserinfo().getTeamid());
+                lunardetail.setDifference(customerInfo.getUserinfo().getDifference());
+                lunardetailMapper.insert(lunardetail);
             }
         }
-
-
-
     }
 
     //获取详情列表初始数据
     @Override
-    public Lunarbonus getOne(String id) throws Exception {
-        return lunarbonusMapper.selectByPrimaryKey(id);
+    public LunarAllVo getOne(String id) throws Exception {
+        LunarAllVo LunarAllVo = new LunarAllVo();
+        LunarAllVo.setLunarbonus(lunarbonusMapper.selectByPrimaryKey(id));
+        Lunardetail lunardetailCondition = new Lunardetail();
+        lunardetailCondition.setLunarbonus_id(id);
+        LunarAllVo.setLunardetail(lunardetailMapper.select(lunardetailCondition));
+        Lunarbasic lunarbasicConditon = new Lunarbasic();
+        lunarbasicConditon.setLunarbonus_id(id);
+        LunarAllVo.setLunarbasic(lunarbasicMapper.select(lunarbasicConditon));
+        return LunarAllVo ;
     }
 }

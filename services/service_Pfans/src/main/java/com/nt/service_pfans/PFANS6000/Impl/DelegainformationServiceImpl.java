@@ -27,7 +27,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 
     @Override
     public List<DelegainformationVo> getDelegainformation() throws Exception {
-        return delegainformationMapper.getDelegainformation();
+        return delegainformationMapper.getinfo();
     }
 
     @Override

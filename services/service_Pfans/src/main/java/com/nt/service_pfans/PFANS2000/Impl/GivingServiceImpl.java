@@ -103,9 +103,6 @@ public class GivingServiceImpl implements GivingService {
     private WorkingDayMapper workingDayMapper;
 
     @Autowired
-    private AttendanceSettingMapper attendanceSettingMapper;
-
-    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
@@ -123,7 +120,7 @@ public class GivingServiceImpl implements GivingService {
         now.set(Calendar.DAY_OF_MONTH, 1);
         Query query = new Query();
         Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").orOperator(Criteria.where("userinfo.resignation_date")
-                .gte(sf.format(now.getTime())),Criteria.where("userinfo.resignation_date").is(null),Criteria.where("userinfo.resignation_date").is(""));
+                .gte(sf.format(now.getTime())), Criteria.where("userinfo.resignation_date").is(null), Criteria.where("userinfo.resignation_date").is(""));
         query.addCriteria(criteria);
         customerInfos = mongoTemplate.find(query, CustomerInfo.class);
     }
@@ -140,8 +137,13 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setGiving(giving);
 
         // region 专项控除 By SKAIXX
-        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
+        List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary();
         givingVo.setDisciplinaryVo(disciplinary);
+        // 专项控除数据需要插入到专项控除表中
+        disciplinary.forEach(item -> {
+            item.setDisciplinary_id(UUID.randomUUID().toString());
+            disciplinaryMapper.insert(item);
+        });
         // endregion
 
         OtherOne otherOne = new OtherOne();
@@ -184,7 +186,6 @@ public class GivingServiceImpl implements GivingService {
         Lackattendance lackattendance = new Lackattendance();
         lackattendance.setGiving_id(giving_id);
         List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
-        lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
         givingVo.setLackattendance(lackattendancellist);
         // endregion
 
@@ -231,12 +232,36 @@ public class GivingServiceImpl implements GivingService {
             BigDecimal taxFree = new BigDecimal(taxDictionary.getValue3());
             BigDecimal shouldTax = shouldwages.multiply(taxRate).subtract(taxFree);
             shouldTax = shouldTax.setScale(2, RoundingMode.HALF_UP);
-            tmpVo.setShouldtax(shouldTax.toString());
+            tmpVo.setShouldtax(shouldTax.toPlainString());
 
             // 還付差額 = 年度応納付税金-年間累計税金-12月的税金
             tmpVo.setBalance(shouldTax.subtract(new BigDecimal(tmpVo.getSumThis()))
                     .subtract(new BigDecimal(tmpVo.getDecember()))
-                    .setScale(2, RoundingMode.HALF_UP).toString());
+                    .setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // region 累计税金数据插入到累计税金表中
+            Accumulatedtax accumulatedtax = new Accumulatedtax();
+            accumulatedtax.setAccumulatedtax_id(UUID.randomUUID().toString());
+            accumulatedtax.setGiving_id(giving_id);
+            accumulatedtax.setUser_id1(tmpVo.getUser_id());
+            accumulatedtax.setTaxesmonth1(tmpVo.getJanuary());
+            accumulatedtax.setTaxesmonth2(tmpVo.getFebruary());
+            accumulatedtax.setTaxesmonth3(tmpVo.getMarch());
+            accumulatedtax.setTaxesmonth4(tmpVo.getApril());
+            accumulatedtax.setTaxesmonth5(tmpVo.getMay());
+            accumulatedtax.setTaxesmonth6(tmpVo.getJune());
+            accumulatedtax.setTaxesmonth7(tmpVo.getJuly());
+            accumulatedtax.setTaxesmonth8(tmpVo.getAugust());
+            accumulatedtax.setTaxesmonth9(tmpVo.getSeptember());
+            accumulatedtax.setTaxesmonth10(tmpVo.getOctober());
+            accumulatedtax.setTaxesmonth11(tmpVo.getNovember());
+            accumulatedtax.setTaxesmonth12(tmpVo.getDecember());
+            accumulatedtax.setYeartaxes(tmpVo.getSumThis());                // 年间累计税金
+            accumulatedtax.setTaxamount(shouldwages.toPlainString());       // 年度应纳税总额
+            accumulatedtax.setTaxpaid(shouldTax.toPlainString());           // 年度应纳付税金
+            accumulatedtax.setDifference(tmpVo.getBalance());               // 还付差额
+            accumulatedTaxMapper.insert(accumulatedtax);
+            // endregion
         }
         givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
         // endregion
@@ -244,11 +269,70 @@ public class GivingServiceImpl implements GivingService {
         // region 免税 By SKAIXX
         List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
         givingVo.setDutyfreeVo(dutyfreeVolist);
+        // region 免税数据插入到免税表中
+        dutyfreeVolist.forEach(item -> {
+            Dutyfree dutyfree = new Dutyfree();
+            dutyfree.setDutyfree_id(UUID.randomUUID().toString());
+            dutyfree.setGiving_id(giving_id);
+            dutyfree.setUser_id(item.getUser_id());
+            dutyfree.setTaxesmonth1(item.getJanuary());
+            dutyfree.setTaxesmonth2(item.getFebruary());
+            dutyfree.setTaxesmonth3(item.getMarch());
+            dutyfree.setTaxesmonth4(item.getApril());
+            dutyfree.setTaxesmonth5(item.getMay());
+            dutyfree.setTaxesmonth6(item.getJune());
+            dutyfree.setTaxesmonth7(item.getJuly());
+            dutyfree.setTaxesmonth8(item.getAugust());
+            dutyfree.setTaxesmonth9(item.getSeptember());
+            dutyfree.setTaxesmonth10(item.getOctober());
+            dutyfree.setTaxesmonth11(item.getNovember());
+            dutyfree.setTaxesmonth12(item.getDecember());
+            dutyfree.setCumulative(item.getTotal());    // 累计年间控除
+            dutyfreeMapper.insert(dutyfree);
+        });
+        // endregion
         // endregion
 
         // region 综合收入 By SKAIXX
         List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
         givingVo.setComprehensiveVo(comprehensiveVolist);
+        // region 综合收入数据插入到综合收入表中
+        comprehensiveVolist.forEach(item -> {
+            Comprehensive comprehensive = new Comprehensive();
+            comprehensive.setComprehensiveId(UUID.randomUUID().toString());
+            comprehensive.setGivingId(giving_id);
+            comprehensive.setUserId(item.getUser_id());
+            comprehensive.setYearswages(item.getTotalbonus1());
+            comprehensive.setMonth1Wages(item.getMonth1wages());
+            comprehensive.setMonth1Appreciation(item.getMonth1appreciation());
+            comprehensive.setMonth2Wages(item.getMonth2wages());
+            comprehensive.setMonth2Appreciation(item.getMonth2appreciation());
+            comprehensive.setMonth3Wages(item.getMonth3wages());
+            comprehensive.setMonth3Appreciation(item.getMonth3appreciation());
+            comprehensive.setMonth4Wages(item.getMonth4wages());
+            comprehensive.setMonth4Appreciation(item.getMonth4appreciation());
+            comprehensive.setMonth5Wages(item.getMonth5wages());
+            comprehensive.setMonth5Appreciation(item.getMonth5appreciation());
+            comprehensive.setMonth6Wages(item.getMonth6wages());
+            comprehensive.setMonth6Appreciation(item.getMonth6appreciation());
+            comprehensive.setMonth7Wages(item.getMonth7wages());
+            comprehensive.setMonth7Appreciation(item.getMonth7appreciation());
+            comprehensive.setMonth8Wages(item.getMonth8wages());
+            comprehensive.setMonth8Appreciation(item.getMonth8appreciation());
+            comprehensive.setMonth9Wages(item.getMonth9wages());
+            comprehensive.setMonth9Appreciation(item.getMonth9appreciation());
+            comprehensive.setMonth10Wages(item.getMonth10wages());
+            comprehensive.setMonth10Appreciation(item.getMonth10appreciation());
+            comprehensive.setMonth11Wages(item.getMonth11wages());
+            comprehensive.setMonth11Appreciation(item.getMonth11appreciation());
+            comprehensive.setMonth12Wages(item.getMonth12wages());
+            comprehensive.setMonth12Appreciation(item.getMonth12appreciation());
+            comprehensive.setTotalwages(item.getAppreciationtotal());
+            comprehensive.setYearstotal12(item.getTotalwithout12());
+            comprehensive.setYearstotal(item.getTotalwithin12());
+            comprehensiveMapper.insert(comprehensive);
+        });
+        // endregion
         // endregion
 
         // 2020/03/11 add by myt start
@@ -501,12 +585,251 @@ public class GivingServiceImpl implements GivingService {
                 /*group id -lxx*/
                 base.setGroupid(customer.getUserinfo().getGroupid());
                 /*group id -lxx*/
+                /*试用期截止日 -lxx*/
+                base.setEnddate(customer.getUserinfo().getEnddate());
+                /*试用期截止日 -lxx*/
+                /*试用正式天数计算 -lxx*/
+                Map<String, String> map = suitAndDaysCalc(customer.getUserinfo());
+                base.setLastmonthdays(map.get("lastMonthDays"));
+                base.setLastmonthsuitdays(map.get("lastMonthSuitDays"));
+                base.setThismonthdays(map.get("thisMonthDays"));
+                base.setThismonthsuitdays(map.get("thisMonthSuitDays"));
+                /*试用正式天数计算 -lxx*/
                 bases.add(base);
             }
         }
         if (bases.size() > 0) {
             baseMapper.insertBase(bases);
         }
+    }
+
+    /**
+     * @return
+     * @Method suitAndDaysCalc
+     * @Author LXX
+     * @Description 试用正式天数计算
+     * @Date 2020/3/18 9:45
+     * @Param userinfo
+     **/
+    private Map<String, String> suitAndDaysCalc(CustomerInfo.UserInfo userinfo) throws Exception {
+        Integer thisMonthDays = 0;
+        Integer thisMonthSuitDays = 0;
+        Integer lastMonthDays = 0;
+        Integer lastMonthSuitDays = 0;
+
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        //当月日期1号
+        Calendar calNowOne = Calendar.getInstance();
+        calNowOne.add(Calendar.MONTH, 0);
+        calNowOne.set(Calendar.DAY_OF_MONTH, 1);
+        //当月日期月末
+        Calendar calNowLast = Calendar.getInstance();
+        calNowLast.set(Calendar.DAY_OF_MONTH, calNowLast.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //上月日期月末
+        Calendar calLast = Calendar.getInstance();
+        calLast.add(Calendar.MONTH, -1);
+        calLast.set(Calendar.DAY_OF_MONTH, calLast.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //上月日期1号
+        Calendar calLastOne = Calendar.getInstance();
+        calLastOne.add(Calendar.MONTH, -1);
+        calLastOne.set(Calendar.DAY_OF_MONTH, 1);
+        //入职日
+        Calendar calEnterDay = Calendar.getInstance();
+        calEnterDay.setTime(sf.parse(userinfo.getEnterday()));
+        //退职日
+        Calendar calResignationDate = Calendar.getInstance();
+        if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
+            calResignationDate.setTime(sf.parse(userinfo.getResignation_date()));
+        } else {
+            calResignationDate.setTime(calNowLast.getTime());
+        }
+
+        //试用期截止日是空值
+        if (StringUtils.isEmpty(userinfo.getEnddate())) {
+            //入职日是当月
+            if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                //上月试用天数
+                lastMonthSuitDays = 0;
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+            //入职日是上月
+            else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                //上月试用天数
+                lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+            //其他
+            else {
+                //上月试用天数
+                lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+        }
+        //试用期截止日不是空值
+        else {
+            //试用最后日
+            Calendar calSuitDate = Calendar.getInstance();
+            calSuitDate.setTime(sf.parse(userinfo.getEnddate()));
+            calSuitDate.add(Calendar.DATE, -1);
+            //试用截止日
+            Calendar calOfficialDate = Calendar.getInstance();
+            calOfficialDate.setTime(sf.parse(userinfo.getEnddate()));
+            //试用截止日大于本月末日
+            if (calOfficialDate.getTime().getTime() > calNowLast.getTime().getTime()) {
+                //入职日是当月
+                if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = 0;
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+                //入职日是上月
+                else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+                //其他
+                else {
+                    //上月试用天数
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+            }
+            //试用截止日小于上月月初日
+            else if (calOfficialDate.getTime().getTime() < calLastOne.getTime().getTime()) {
+                //上月试用天数
+                lastMonthSuitDays = 0;
+                //上月正式天数
+                lastMonthDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                //本月试用天数
+                thisMonthSuitDays = 0;
+                //本月正式天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+            }
+            //试用截止日是上月
+            else if (calLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
+                //上月试用天数
+                //上月1日/入职日期 取大值
+                Date tempStart = calLastOne.getTime();
+                if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
+                    tempStart = calEnterDay.getTime();
+                }
+                lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
+                //上月正式天数
+                lastMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //本月试用天数
+                thisMonthSuitDays = 0;
+                //本月正式天数
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+            }
+            //试用截止日是本月
+            else if (calNowLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calNowLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
+                //入职日是当月
+                if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = 0;
+                    //本月试用天数
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calSuitDate.getTime());
+                }
+                //入职不是当月
+                else {
+                    //上月试用天数
+                    //上月1日/入职日期 取大值
+                    Date tempStart = calLastOne.getTime();
+                    if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
+                        tempStart = calEnterDay.getTime();
+                    }
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calLast.getTime());
+                    //本月试用天数
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                }
+
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月正式天数
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), temp);
+            }
+        }
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
+        map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
+        map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
+        map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        return map;
     }
 
     @Override
@@ -988,8 +1311,8 @@ public class GivingServiceImpl implements GivingService {
             String restYear = String.valueOf(cal.get(Calendar.YEAR));
             String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
 
-            if (restViewVoList.size() > 0 ) {
-                residual.setLastreplace(String.valueOf(restViewVoList.stream().filter(subItem -> subItem.getApplicationdate().equals(restYear+restMonth)).mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+            if (restViewVoList.size() > 0) {
+                residual.setLastreplace(String.valueOf(restViewVoList.stream().filter(subItem -> subItem.getApplicationdate().equals(restYear + restMonth)).mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
             } else {
                 residual.setLastreplace("0");
             }
@@ -1023,7 +1346,7 @@ public class GivingServiceImpl implements GivingService {
             totalh += Double.parseDouble(residual.getThislegal());
 
             // 本月代休(3か月前)
-            if (restViewVoList.size() > 0 ) {
+            if (restViewVoList.size() > 0) {
                 residual.setThisreplace(residual.getLastreplace());
             } else {
                 residual.setThisreplace("0");
@@ -1038,7 +1361,7 @@ public class GivingServiceImpl implements GivingService {
             String date3 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
             String date4 = currentYear + currentMonth;
 
-            if (restViewVoList.size() > 0 ) {
+            if (restViewVoList.size() > 0) {
                 residual.setThisreplace3(String.valueOf(restViewVoList.stream().
                         filter(subItem -> subItem.getApplicationdate().equals(date1) ||
                                 subItem.getApplicationdate().equals(date2) ||
@@ -1111,7 +1434,7 @@ public class GivingServiceImpl implements GivingService {
             // 法定加班费 300%
             total += Double.parseDouble(residual.getLastlegal()) * salaryPerHour * 3.0d;
             // 代休加班费 200%
-            total += isOverR8 ? 0d: Double.parseDouble(residual.getLastreplace()) * 8 * salaryPerHour * 2.0d;
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastreplace()) * 8 * salaryPerHour * 2.0d;
         } else {    // 当月加班费计算
             // 小时工资 = 月工资÷21.75天÷8小时
             double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
@@ -1122,7 +1445,7 @@ public class GivingServiceImpl implements GivingService {
             // 法定加班费 300%
             total += Double.parseDouble(residual.getThislegal()) * salaryPerHour * 3.0d;
             // 代休加班费 200% (本月代休加班费 = 3个月之内的代休产生的加班费)
-            total += isOverR8 ? 0d: Double.parseDouble(residual.getThisreplace3()) * 8 * salaryPerHour * 2.0d;
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getThisreplace3()) * 8 * salaryPerHour * 2.0d;
         }
         return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
@@ -1177,17 +1500,38 @@ public class GivingServiceImpl implements GivingService {
             attendance.setMonths(preMonth);
             List<Attendance> attendanceList = attendanceMapper.select(attendance);
 
-            // 前月欠勤
-            lackattendance.setLastdiligence(String.valueOf(attendanceList.stream()
+            // 欠勤-试用
+            lackattendance.setLastdiligencetry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()));
+
+            // 短病欠-试用
+            lackattendance.setLastshortdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()));
+
+            // 长病欠-试用
+            lackattendance.setLastchronicdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()));
+
+            // 欠勤-正式
+            lackattendance.setLastdiligenceformal(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
 
-            // 前月短病欠
-            lackattendance.setLastshortdeficiency(String.valueOf(attendanceList.stream()
+            // 短病欠-正式
+            lackattendance.setLastshortdeficiencyformal(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
 
-            // 前月长病欠
-            lackattendance.setLastchronicdeficiency(String.valueOf(attendanceList.stream()
+            // 长病欠-正式
+            lackattendance.setLastchronicdeficiencyformal(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
+
+            // 欠勤
+            lackattendance.setLastdiligence(lackSumCalc(lackattendance.getLastdiligencetry(), lackattendance.getLastdiligenceformal()));
+
+            // 短病欠
+            lackattendance.setLastshortdeficiency(lackSumCalc(lackattendance.getLastshortdeficiencyformal(), lackattendance.getLastshortdeficiencytry()));
+
+            // 长病欠
+            lackattendance.setLastchronicdeficiency(lackSumCalc(lackattendance.getLastchronicdeficiencytry(), lackattendance.getLastchronicdeficiencyformal()));
 
             // 前月合计
             lackattendance.setLasttotal(lackAttendanceCalc(item, lackattendance, "pre"));
@@ -1199,17 +1543,38 @@ public class GivingServiceImpl implements GivingService {
             attendance.setMonths(currentMonth);
             attendanceList = attendanceMapper.select(attendance);
 
-            // 本月欠勤
-            lackattendance.setThisdiligence(String.valueOf(attendanceList.stream()
+            // 欠勤-试用
+            lackattendance.setThisdiligencetry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()));
+
+            // 短病欠-试用
+            lackattendance.setThisshortdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()));
+
+            // 长病欠-试用
+            lackattendance.setThischronicdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()));
+
+            // 欠勤-正式
+            lackattendance.setThisdiligenceformal(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
 
-            // 本月短病欠
-            lackattendance.setThisshortdeficiency(String.valueOf(attendanceList.stream()
+            // 短病欠-正式
+            lackattendance.setThisshortdeficiencyformal(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
 
-            // 本月长病欠
-            lackattendance.setThischronicdeficiency(String.valueOf(attendanceList.stream()
+            // 长病欠-正式
+            lackattendance.setThischronicdeficiencyformal(String.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
+
+            // 欠勤
+            lackattendance.setThisdiligence(lackSumCalc(lackattendance.getThisdiligencetry(), lackattendance.getThisdiligenceformal()));
+
+            // 短病欠
+            lackattendance.setThisshortdeficiency(lackSumCalc(lackattendance.getThisshortdeficiencytry(), lackattendance.getThisshortdeficiencyformal()));
+
+            // 长病欠
+            lackattendance.setThischronicdeficiency(lackSumCalc(lackattendance.getThischronicdeficiencytry(), lackattendance.getThischronicdeficiencyformal()));
 
             // 本月合计
             lackattendance.setThistotal(lackAttendanceCalc(item, lackattendance, "current"));
@@ -1227,7 +1592,19 @@ public class GivingServiceImpl implements GivingService {
     }
 
     /**
-     * @return
+     * @return java.lang.String
+     * @Method lackSumCalc
+     * @Author SKAIXX
+     * @Description 欠勤试用与正式合计计算
+     * @Date 2020/3/18 16:03
+     * @Param [val1, val2]
+     **/
+    private String lackSumCalc(String val1, String val2) {
+        return String.valueOf(Double.parseDouble(ifNull(val1)) + Double.parseDouble(ifNull(val2)));
+    }
+
+    /**
+     * @return java.lang.String
      * @Method lackAttendanceCalc
      * @Author SKAIXX
      * @Description 合计欠勤计算
@@ -1236,7 +1613,7 @@ public class GivingServiceImpl implements GivingService {
      **/
     private String lackAttendanceCalc(Base base, Lackattendance lackattendance, String mode) {
         double total = 0d;  // 总欠勤费
-        // 前月小时工资 = 月工资÷21.75天÷8小时
+        // 前月正式小时工资 = 月工资÷21.75天÷8小时
         double preSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getLastmonth()) / 21.75d / 8d)
                 .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
@@ -1258,32 +1635,56 @@ public class GivingServiceImpl implements GivingService {
                 .setScale(2, RoundingMode.HALF_UP).doubleValue();
 
         if ("pre".equals(mode)) {   // 前月欠勤费用
-            // 欠勤费用
-            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastdiligence()) * preSalaryPerHour)
+            // 欠勤费用-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastdiligenceformal()) * preSalaryPerHour)
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
-            // 短病欠
-            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastshortdeficiency()) * preSalaryPerHour
+            // 欠勤费用-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastdiligencetry()) * preSalaryPerHour * 0.9d)
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 短病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastshortdeficiencyformal()) * preSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2()))
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
-            // 长病欠
-            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastchronicdeficiency()) * longSalary)
+            // 短病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastshortdeficiencytry()) * preSalaryPerHour * 0.9d
+                    * Double.parseDouble(shortDictionary.getValue2()))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 长病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastchronicdeficiencyformal()) * longSalary)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+            // 长病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastchronicdeficiencytry()) * longSalary * 0.9d)
                     .setScale(0, RoundingMode.HALF_UP).doubleValue();
         } else {    // 当月欠勤费用
-            // 欠勤费用
-            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligence()) * currentSalaryPerHour)
+            // 欠勤费用-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligenceformal()) * currentSalaryPerHour)
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
-            // 短病欠
-            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiency()) * currentSalaryPerHour
+            // 欠勤费用-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligencetry()) * currentSalaryPerHour * 0.9d)
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 短病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencyformal()) * currentSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2()))
                     .setScale(2, RoundingMode.HALF_UP).doubleValue();
-            // 长病欠
-            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiency()) * longSalary)
+            // 短病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencytry()) * currentSalaryPerHour * 0.9d
+                    * Double.parseDouble(shortDictionary.getValue2()))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 长病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencyformal()) * longSalary)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+            // 长病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencytry()) * longSalary * 0.9d)
                     .setScale(0, RoundingMode.HALF_UP).doubleValue();
         }
         return String.valueOf(total);
     }
 
-    //计算其他1 当月应出勤天数-lxx
+    //计算 其他1 当月应出勤天数-lxx
     private int getDaysforOtherOne(Date start, Date end) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, 0);
@@ -1312,20 +1713,21 @@ public class GivingServiceImpl implements GivingService {
     //获取工作日-lxx
     private int getWorkDaysExceptWeekend(Date start, Date end) {
         int workDays = 0;
-//        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
-        Calendar calStar = Calendar.getInstance();
-        calStar.setTime(start);
-        Calendar calEnd = Calendar.getInstance();
-        calEnd.setTime(end);
-        for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-            if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
-                workDays++;
+        if (end.getTime() > start.getTime()) {
+            //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
+            Calendar calStar = Calendar.getInstance();
+            calStar.setTime(start);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(end);
+            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+                    workDays++;
+                }
             }
         }
-
         return workDays;
     }
 
@@ -1344,6 +1746,7 @@ public class GivingServiceImpl implements GivingService {
             }
         }
     }
+
     // 退职表插入数据
     public void insertRetire(String givingid, TokenModel tokenModel) throws Exception {
         int rowundex = 1;

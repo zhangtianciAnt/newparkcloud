@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ApiResult defaultErrorHandler(HttpServletRequest req, Exception e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
         try {
             if(e instanceof LogicalException){
                 return ApiResult.fail(e.getMessage());
