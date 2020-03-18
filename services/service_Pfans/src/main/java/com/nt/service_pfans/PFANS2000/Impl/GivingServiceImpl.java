@@ -1231,7 +1231,7 @@ public class GivingServiceImpl implements GivingService {
             } else {
                 return dictionaryList.get(i);
             }
-            if (currentVal <= salary && nextVal > salary) {
+            if ((currentVal < salary || salary == 0d) && nextVal >= salary) {
                 return dictionaryList.get(i);
             }
         }
@@ -1307,12 +1307,15 @@ public class GivingServiceImpl implements GivingService {
             // 从代休视图获取该员工所有代休
             List<restViewVo> restViewVoList = annualLeaveMapper.getrest(item.getUser_id());
             // 获取3个月之前的代休
-            cal.add(Calendar.MONTH, -4);
+            cal.add(Calendar.MONTH, -5);
             String restYear = String.valueOf(cal.get(Calendar.YEAR));
             String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
 
             if (restViewVoList.size() > 0) {
-                residual.setLastreplace(String.valueOf(restViewVoList.stream().filter(subItem -> subItem.getApplicationdate().equals(restYear + restMonth)).mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                residual.setLastreplace(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate()
+                                .equals(restYear + restMonth))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
             } else {
                 residual.setLastreplace("0");
             }
@@ -1346,8 +1349,15 @@ public class GivingServiceImpl implements GivingService {
             totalh += Double.parseDouble(residual.getThislegal());
 
             // 本月代休(3か月前)
+            cal.add(Calendar.MONTH, 1);
+            String currentRestYear = String.valueOf(cal.get(Calendar.YEAR));
+            String currentRestMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
             if (restViewVoList.size() > 0) {
-                residual.setThisreplace(residual.getLastreplace());
+                residual.setThisreplace(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate()
+                                .equals(currentRestYear + currentRestMonth))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
             } else {
                 residual.setThisreplace("0");
             }
@@ -1434,20 +1444,62 @@ public class GivingServiceImpl implements GivingService {
             // 法定加班费 300%
             total += Double.parseDouble(residual.getLastlegal()) * salaryPerHour * 3.0d;
             // 代休加班费 200%
-            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastreplace()) * 8 * salaryPerHour * 2.0d;
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastreplace()) * 8d * salaryPerHour * 2.0d;
         } else {    // 当月加班费计算
             // 小时工资 = 月工资÷21.75天÷8小时
             double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 前月小时工资
+            double lastSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getLastmonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(residual.getThisweekdays()) * salaryPerHour * 1.5d;
             // 休日加班费 200%
             total += isOverR8 ? 0d : Double.parseDouble(residual.getThisrestDay()) * salaryPerHour * 2.0d;
             // 法定加班费 300%
             total += Double.parseDouble(residual.getThislegal()) * salaryPerHour * 3.0d;
-            // 代休加班费 200% (本月代休加班费 = 3个月之内的代休产生的加班费)
-            total += isOverR8 ? 0d : Double.parseDouble(residual.getThisreplace3()) * 8 * salaryPerHour * 2.0d;
+            // 代休加班费 200% (本月代休加班费 = (3个月前代休+3个月之内的代休) * 前月小时工资 * 200%)
+            total += isOverR8 ? 0d : (Double.parseDouble(residual.getThisreplace3()) + Double.parseDouble(residual.getThisreplace())) * 8d * lastSalaryPerHour * 2.0d;
         }
         return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    /**
+     * @return com.nt.dao_Pfans.PFANS2000.Residual
+     * @Method thisMonthOvertimeChange
+     * @Author SKAIXX
+     * @Description 本月加班数据变更时，重新计算加班费合计
+     * @Date 2020/3/18 19:02
+     * @Param [base, residual]
+     **/
+    @Override
+    public Residual thisMonthOvertimeChange(GivingVo givingVo, TokenModel tokenModel) {
+
+        String userId = tokenModel.getUserId();
+        Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Residual residual = givingVo.getResidual().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        double total = 0d;  // 总加班费
+
+        // 判断员工当月级别是否为R8及以上
+        boolean isOverR8 = false;
+        String rn = StringUtils.isEmpty(base.getRn()) ? "PR021001" : base.getRn();
+        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
+            isOverR8 = true;
+        }
+
+        // 小时工资 = 月工资÷21.75天÷8小时
+        double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 前月小时工资
+        double lastSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getLastmonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 平日加班费 150%
+        total += isOverR8 ? 0d : Double.parseDouble(residual.getThisweekdays()) * salaryPerHour * 1.5d;
+        // 休日加班费 200%
+        total += isOverR8 ? 0d : Double.parseDouble(residual.getThisrestDay()) * salaryPerHour * 2.0d;
+        // 法定加班费 300%
+        total += Double.parseDouble(residual.getThislegal()) * salaryPerHour * 3.0d;
+        // 代休加班费 200% (本月代休加班费 = (3个月前代休+3个月之内的代休) * 前月小时工资 * 200%)
+        total += isOverR8 ? 0d : (Double.parseDouble(residual.getThisreplace3()) + Double.parseDouble(residual.getThisreplace())) * 8d * lastSalaryPerHour * 2.0d;
+
+        residual.setThistotaly(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        return residual;
     }
 
     /**

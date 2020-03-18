@@ -6,6 +6,7 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
+import com.nt.dao_Pfans.PFANS1000.Vo.ActualPL;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
@@ -103,7 +104,9 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     @Override
     public String[] getPersonPlan(int year, String groupid) throws Exception {
-        String[] personTable = new String[3];
+        String[] personTable = new String[4];
+
+        List<ActualPL> actualPl = businessplanMapper.getAcutal(groupid,year + "-04-01", (year + 1) + "-03-31");
         List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
         PersonnelPlan personnelPlan = new PersonnelPlan();
         personnelPlan.setYears(year);
@@ -135,10 +138,12 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             personTable[0] = JSON.toJSONString(nowPersonTable);
             personTable[1] = JSON.toJSONString(nextPersonTable);
             personTable[2] = JSON.toJSONString(personPlan);
+            personTable[3] = JSON.toJSONString(actualPl);
         } else {
             personTable[0] = "";
             personTable[1] = "";
             personTable[2] = "";
+            personTable[3] = JSON.toJSONString(actualPl);
         }
         return personTable;
     }
@@ -264,15 +269,6 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             return _personPlanTables;
         }
         return new ArrayList<PersonPlanTable>();
-    }
-
-    //@Scheduled(cron ="0 0 0 1 * ?") 每月1号执行
-    private void setPLActual(){
-       OrgTree orgTree =  mongoTemplate.findOne(new Query(), OrgTree.class);
-       List<OrgTree> groupOrg = getGroupTree(orgTree);
-
-       String salary = businessplanMapper.getMonthSalary();
-
     }
 
     private BigDecimal AllAdd(BigDecimal... number) {
