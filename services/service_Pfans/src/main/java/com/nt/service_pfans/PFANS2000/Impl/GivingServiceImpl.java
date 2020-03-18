@@ -119,7 +119,7 @@ public class GivingServiceImpl implements GivingService {
         Calendar now = Calendar.getInstance();
         now.set(Calendar.DAY_OF_MONTH, 1);
         Query query = new Query();
-        Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").and("userid").is("5e6c847b70be0f29bc00600f").orOperator(Criteria.where("userinfo.resignation_date")
+        Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").orOperator(Criteria.where("userinfo.resignation_date")
                 .gte(sf.format(now.getTime())), Criteria.where("userinfo.resignation_date").is(null), Criteria.where("userinfo.resignation_date").is(""));
         query.addCriteria(criteria);
         customerInfos = mongoTemplate.find(query, CustomerInfo.class);
