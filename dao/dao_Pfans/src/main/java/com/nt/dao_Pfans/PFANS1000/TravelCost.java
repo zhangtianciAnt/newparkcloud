@@ -26,8 +26,8 @@ public class TravelCost extends BaseModel {
     /**
      * id
      */
-    @Column(name = "PUBLICEXPENSEID")
-    private String publicexpenseid;
+    @Column(name = "EVECTION_ID")
+    private String evectionid;
 
     /**
      * 发票编号
