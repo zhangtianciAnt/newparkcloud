@@ -12,4 +12,6 @@ public interface LunarbonusService {
 
     public void insert(LunardetailVo LunardetailVo, TokenModel tokenModel)throws Exception;
 
+    public Lunarbonus getOne(String id)throws Exception;
+
 }

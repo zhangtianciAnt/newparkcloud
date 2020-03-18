@@ -96,6 +96,15 @@ public class Pfans2027Controller {
         return ApiResult.success();
     }
 
+    //获取详情下拉列表初始
+    @RequestMapping(value = "/getOne", method = {RequestMethod.GET})
+    public ApiResult getOne(String lunarbonus_id, HttpServletRequest request) throws Exception {
+        if(lunarbonus_id==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(lunarbonusService.getOne(lunarbonus_id));
+    }
+
 
 
 }

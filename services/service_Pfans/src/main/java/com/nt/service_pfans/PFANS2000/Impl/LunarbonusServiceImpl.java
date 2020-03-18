@@ -54,40 +54,56 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         lunarbonus.preInsert(tokenModel);
         lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
         lunarbonus.setEvaluationday(new Date());
+        lunarbonus.setSubjectmon(lunardetailVo.getSubjectmon());
+        lunarbonus.setEvaluatenum(lunardetailVo.getEvaluatenum());
+        lunarbonus.setSubject(lunardetailVo.getSubjectmon());
+        lunarbonus.setUser_id(lunardetailVo.getUser_id());
         lunarbonusMapper.insert(lunarbonus);
 
         Examinationobject examinationobject = examinationobjectMapper.selectByPrimaryKey(lunardetailVo.getExaminationobject_id());
-
-        Lunardetail lunardetail = new Lunardetail();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userinfo.rank").is(examinationobject.getRn()));
+        String a = examinationobject.getRn();
+        String[] strArray = a.split(",");
+        for(int w = 0 ; w < strArray.length ; w++) {
+            Lunardetail lunardetail = new Lunardetail();
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userinfo.rank").is(strArray[w]));
+//            query.addCriteria(Criteria.where("userinfo.rank").is(examinationobject.getRn()));
 //        CustomerInfo customerInfo = mongoTemplate.find(query, CustomerInfo.class);
-        List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-        for(CustomerInfo customerInfo: CustomerInfoList){
-            if (customerInfo != null) {
+            List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+            for (CustomerInfo customerInfo : CustomerInfoList) {
+                if (customerInfo != null) {
 
-                SimpleDateFormat sf = new SimpleDateFormat("yyyy");
-                Date date = new Date();
-                String da = sf.format(date);
+                    SimpleDateFormat sf = new SimpleDateFormat("yyyy");
+                    Date date = new Date();
+                    String da = sf.format(date);
 
-                lunardetail.preInsert(tokenModel);
-                lunardetail.setLunardetail_id(UUID.randomUUID().toString());
-                lunardetail.setSubjectmon(lunarbonus.getSubjectmon());
-                lunardetail.setEvaluatenum(lunarbonus.getEvaluatenum());
-                lunardetail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
-                lunardetail.setEvaluationday(da);
-                lunardetail.setUser_id(customerInfo.getUserid());
-                lunardetail.setRn(customerInfo.getUserinfo().getRank());
-                lunardetail.setEnterday(customerInfo.getUserinfo().getEnterday());
-                lunardetail.setGroup_id(customerInfo.getUserinfo().getGroupid());
-                lunardetail.setSalary(customerInfo.getUserinfo().getSalary());
-                lunardetail.setTeam_id(customerInfo.getUserinfo().getTeamid());
-                lunardetail.setDifference(customerInfo.getUserinfo().getDifference());
-                lunardetailMapper.insert(lunardetail);
+                    lunardetail.preInsert(tokenModel);
+                    lunardetail.setLunardetail_id(UUID.randomUUID().toString());
+                    lunardetail.setSubjectmon(lunarbonus.getSubjectmon());
+                    lunardetail.setEvaluatenum(lunarbonus.getEvaluatenum());
+                    lunardetail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
+                    lunardetail.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
+
+                    lunardetail.setEvaluationday(da);
+                    lunardetail.setUser_id(customerInfo.getUserid());
+                    lunardetail.setRn(customerInfo.getUserinfo().getRank());
+                    lunardetail.setEnterday(customerInfo.getUserinfo().getEnterday());
+                    lunardetail.setGroup_id(customerInfo.getUserinfo().getGroupid());
+                    lunardetail.setSalary(customerInfo.getUserinfo().getSalary());
+                    lunardetail.setTeam_id(customerInfo.getUserinfo().getTeamid());
+                    lunardetail.setDifference(customerInfo.getUserinfo().getDifference());
+                    lunardetailMapper.insert(lunardetail);
+                }
             }
         }
 
 
 
+    }
+
+    //获取详情列表初始数据
+    @Override
+    public Lunarbonus getOne(String id) throws Exception {
+        return lunarbonusMapper.selectByPrimaryKey(id);
     }
 }
