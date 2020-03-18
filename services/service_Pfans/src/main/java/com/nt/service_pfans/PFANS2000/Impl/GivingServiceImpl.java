@@ -122,8 +122,8 @@ public class GivingServiceImpl implements GivingService {
         Calendar now = Calendar.getInstance();
         now.set(Calendar.DAY_OF_MONTH, 1);
         Query query = new Query();
-        Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").orOperator(Criteria.where("userinfo.resignation_date")
-                .gte(sf.format(now.getTime())),Criteria.where("userinfo.resignation_date").is(null),Criteria.where("userinfo.resignation_date").is(""));
+        Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").and("userid").is("5e6c847b70be0f29bc00600f").orOperator(Criteria.where("userinfo.resignation_date")
+                .gte(sf.format(now.getTime())), Criteria.where("userinfo.resignation_date").is(null), Criteria.where("userinfo.resignation_date").is(""));
         query.addCriteria(criteria);
         customerInfos = mongoTemplate.find(query, CustomerInfo.class);
     }
@@ -501,12 +501,251 @@ public class GivingServiceImpl implements GivingService {
                 /*group id -lxx*/
                 base.setGroupid(customer.getUserinfo().getGroupid());
                 /*group id -lxx*/
+                /*试用期截止日 -lxx*/
+                base.setEnddate(customer.getUserinfo().getEnddate());
+                /*试用期截止日 -lxx*/
+                /*试用正式天数计算 -lxx*/
+                Map<String, String> map = suitAndDaysCalc(customer.getUserinfo());
+                base.setLastmonthdays(map.get("lastMonthDays"));
+                base.setLastmonthsuitdays(map.get("lastMonthSuitDays"));
+                base.setThismonthdays(map.get("thisMonthDays"));
+                base.setThismonthsuitdays(map.get("thisMonthSuitDays"));
+                /*试用正式天数计算 -lxx*/
                 bases.add(base);
             }
         }
         if (bases.size() > 0) {
             baseMapper.insertBase(bases);
         }
+    }
+
+    /**
+     * @return
+     * @Method suitAndDaysCalc
+     * @Author LXX
+     * @Description 试用正式天数计算
+     * @Date 2020/3/18 9:45
+     * @Param userinfo
+     **/
+    private Map<String, String> suitAndDaysCalc(CustomerInfo.UserInfo userinfo) throws Exception {
+        Integer thisMonthDays = 0;
+        Integer thisMonthSuitDays = 0;
+        Integer lastMonthDays = 0;
+        Integer lastMonthSuitDays = 0;
+
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        //当月日期1号
+        Calendar calNowOne = Calendar.getInstance();
+        calNowOne.add(Calendar.MONTH, 0);
+        calNowOne.set(Calendar.DAY_OF_MONTH, 1);
+        //当月日期月末
+        Calendar calNowLast = Calendar.getInstance();
+        calNowLast.set(Calendar.DAY_OF_MONTH, calNowLast.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //上月日期月末
+        Calendar calLast = Calendar.getInstance();
+        calLast.add(Calendar.MONTH, -1);
+        calLast.set(Calendar.DAY_OF_MONTH, calLast.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //上月日期1号
+        Calendar calLastOne = Calendar.getInstance();
+        calLastOne.add(Calendar.MONTH, -1);
+        calLastOne.set(Calendar.DAY_OF_MONTH, 1);
+        //入职日
+        Calendar calEnterDay = Calendar.getInstance();
+        calEnterDay.setTime(sf.parse(userinfo.getEnterday()));
+        //退职日
+        Calendar calResignationDate = Calendar.getInstance();
+        if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
+            calResignationDate.setTime(sf.parse(userinfo.getResignation_date()));
+        } else {
+            calResignationDate.setTime(calNowLast.getTime());
+        }
+
+        //试用期截止日是空值
+        if (StringUtils.isEmpty(userinfo.getEnddate())) {
+            //入职日是当月
+            if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                //上月试用天数
+                lastMonthSuitDays = 0;
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+            //入职日是上月
+            else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                //上月试用天数
+                lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+            //其他
+            else {
+                //上月试用天数
+                lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+        }
+        //试用期截止日不是空值
+        else {
+            //试用最后日
+            Calendar calSuitDate = Calendar.getInstance();
+            calSuitDate.setTime(sf.parse(userinfo.getEnddate()));
+            calSuitDate.add(Calendar.DATE, -1);
+            //试用截止日
+            Calendar calOfficialDate = Calendar.getInstance();
+            calOfficialDate.setTime(sf.parse(userinfo.getEnddate()));
+            //试用截止日大于本月末日
+            if (calOfficialDate.getTime().getTime() > calNowLast.getTime().getTime()) {
+                //入职日是当月
+                if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = 0;
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+                //入职日是上月
+                else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+                //其他
+                else {
+                    //上月试用天数
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+            }
+            //试用截止日小于上月月初日
+            else if (calOfficialDate.getTime().getTime() < calLastOne.getTime().getTime()) {
+                //上月试用天数
+                lastMonthSuitDays = 0;
+                //上月正式天数
+                lastMonthDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                //本月试用天数
+                thisMonthSuitDays = 0;
+                //本月正式天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+            }
+            //试用截止日是上月
+            else if (calLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
+                //上月试用天数
+                //上月1日/入职日期 取大值
+                Date tempStart = calLastOne.getTime();
+                if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
+                    tempStart = calEnterDay.getTime();
+                }
+                lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
+                //上月正式天数
+                lastMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //本月试用天数
+                thisMonthSuitDays = 0;
+                //本月正式天数
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+            }
+            //试用截止日是本月
+            else if (calNowLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calNowLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
+                //入职日是当月
+                if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = 0;
+                    //本月试用天数
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calSuitDate.getTime());
+                }
+                //入职不是当月
+                else {
+                    //上月试用天数
+                    //上月1日/入职日期 取大值
+                    Date tempStart = calLastOne.getTime();
+                    if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
+                        tempStart = calEnterDay.getTime();
+                    }
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calLast.getTime());
+                    //本月试用天数
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                }
+
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月正式天数
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), temp);
+            }
+        }
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
+        map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
+        map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
+        map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        return map;
     }
 
     @Override
@@ -988,8 +1227,8 @@ public class GivingServiceImpl implements GivingService {
             String restYear = String.valueOf(cal.get(Calendar.YEAR));
             String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
 
-            if (restViewVoList.size() > 0 ) {
-                residual.setLastreplace(String.valueOf(restViewVoList.stream().filter(subItem -> subItem.getApplicationdate().equals(restYear+restMonth)).mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+            if (restViewVoList.size() > 0) {
+                residual.setLastreplace(String.valueOf(restViewVoList.stream().filter(subItem -> subItem.getApplicationdate().equals(restYear + restMonth)).mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
             } else {
                 residual.setLastreplace("0");
             }
@@ -1023,7 +1262,7 @@ public class GivingServiceImpl implements GivingService {
             totalh += Double.parseDouble(residual.getThislegal());
 
             // 本月代休(3か月前)
-            if (restViewVoList.size() > 0 ) {
+            if (restViewVoList.size() > 0) {
                 residual.setThisreplace(residual.getLastreplace());
             } else {
                 residual.setThisreplace("0");
@@ -1038,7 +1277,7 @@ public class GivingServiceImpl implements GivingService {
             String date3 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
             String date4 = currentYear + currentMonth;
 
-            if (restViewVoList.size() > 0 ) {
+            if (restViewVoList.size() > 0) {
                 residual.setThisreplace3(String.valueOf(restViewVoList.stream().
                         filter(subItem -> subItem.getApplicationdate().equals(date1) ||
                                 subItem.getApplicationdate().equals(date2) ||
@@ -1111,7 +1350,7 @@ public class GivingServiceImpl implements GivingService {
             // 法定加班费 300%
             total += Double.parseDouble(residual.getLastlegal()) * salaryPerHour * 3.0d;
             // 代休加班费 200%
-            total += isOverR8 ? 0d: Double.parseDouble(residual.getLastreplace()) * 8 * salaryPerHour * 2.0d;
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastreplace()) * 8 * salaryPerHour * 2.0d;
         } else {    // 当月加班费计算
             // 小时工资 = 月工资÷21.75天÷8小时
             double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
@@ -1122,7 +1361,7 @@ public class GivingServiceImpl implements GivingService {
             // 法定加班费 300%
             total += Double.parseDouble(residual.getThislegal()) * salaryPerHour * 3.0d;
             // 代休加班费 200% (本月代休加班费 = 3个月之内的代休产生的加班费)
-            total += isOverR8 ? 0d: Double.parseDouble(residual.getThisreplace3()) * 8 * salaryPerHour * 2.0d;
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getThisreplace3()) * 8 * salaryPerHour * 2.0d;
         }
         return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
@@ -1283,7 +1522,7 @@ public class GivingServiceImpl implements GivingService {
         return String.valueOf(total);
     }
 
-    //计算其他1 当月应出勤天数-lxx
+    //计算 其他1 当月应出勤天数-lxx
     private int getDaysforOtherOne(Date start, Date end) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, 0);
@@ -1312,20 +1551,21 @@ public class GivingServiceImpl implements GivingService {
     //获取工作日-lxx
     private int getWorkDaysExceptWeekend(Date start, Date end) {
         int workDays = 0;
-//        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
-        Calendar calStar = Calendar.getInstance();
-        calStar.setTime(start);
-        Calendar calEnd = Calendar.getInstance();
-        calEnd.setTime(end);
-        for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-            if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
-                workDays++;
+        if (end.getTime() > start.getTime()) {
+            //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
+            Calendar calStar = Calendar.getInstance();
+            calStar.setTime(start);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(end);
+            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+                    workDays++;
+                }
             }
         }
-
         return workDays;
     }
 
@@ -1344,6 +1584,7 @@ public class GivingServiceImpl implements GivingService {
             }
         }
     }
+
     // 退职表插入数据
     public void insertRetire(String givingid, TokenModel tokenModel) throws Exception {
         int rowundex = 1;
