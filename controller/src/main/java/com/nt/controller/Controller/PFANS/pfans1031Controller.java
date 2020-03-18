@@ -64,7 +64,7 @@ public class pfans1031Controller {
     @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
     public void downLoad1(@RequestBody Napalm na, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
-        String pp[] = na.getClaimdatetime().split(" ~ ");
+        String nn[] = na.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         List<Dictionary> dictionaryList1 = dictionaryService.getForSelect("HT012");
         for(Dictionary item:dictionaryList1){
@@ -75,6 +75,11 @@ public class pfans1031Controller {
         }
         Map<String, Object> data = new HashMap<>();
         data.put("na",na);
+        if(nn.length > 0){
+            data.put("statime",nn);
+        } else {
+            data.put("statime","");
+        }
         if(na.getContracttype().equals("HT008005") || na.getContracttype().equals("HT008006") || na.getContracttype().equals("HT008007") || na.getContracttype().equals("HT008008")){
             ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(国内受託)","napinshu_guonei.xlsx",data,response);
         } else if (na.getContracttype().equals("HT008001") || na.getContracttype().equals("HT008002") || na.getContracttype().equals("HT008003") || na.getContracttype().equals("HT008004")){

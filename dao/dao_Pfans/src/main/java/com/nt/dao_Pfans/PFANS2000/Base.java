@@ -178,25 +178,25 @@ public class Base extends BaseModel {
      * 上月试用天数
      */
     @Column(name = "LASTMONTHSUITDAYS")
-    private Integer lastmonthsuitdays;
+    private String lastmonthsuitdays;
 
     /**
      * 上月正式天数
      */
     @Column(name = "LASTMONTHDAYS")
-    private Integer lastmonthdays;
+    private String lastmonthdays;
 
     /**
      * 本月试用天数
      */
     @Column(name = "THISMONTHSUITDAYS")
-    private Integer thismonthsuitdays;
+    private String thismonthsuitdays;
 
     /**
      * 本月正式天数
      */
     @Column(name = "THISMONTHDAYS")
-    private Integer thismonthdays;
+    private String thismonthdays;
 
     /**
      * 试用期截止日
