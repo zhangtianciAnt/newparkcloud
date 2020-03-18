@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.ProgramlistEnhanceVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_BASF.ProgramlistServices;
@@ -230,7 +231,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
             if (list.get(0).size() < 12) {
                 errorCount += 1;
                 result.add("失败数：" + errorCount);
-                result.add("成绩文件表头格式不正确！");
+                result.add("表头格式不正确！");
                 return result;
             }
         } catch (Exception e) {
@@ -252,7 +253,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
             model.add("培训时长(时)");
             model.add("培训有效期(月)*");
             model.add("培训费用(元)");
-            model.add("到期提醒提前时间（月）");
+            model.add("到期提醒提前时间（月）*");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -267,7 +268,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
         } catch (Exception e) {
             errorCount += 1;
             result.add("失败数：" + errorCount);
-            result.add("系统在验证列标题时发生未知异常！");
+            result.add("系统在验证列标题时发生异常,请检查文件！");
             return result;
         }
         try {
@@ -279,11 +280,11 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //培训名称
                     programlist.setProgramname(value.get(0).toString());
                     Programlist p1 = programlistMapper.selectOne(programlist);
-                    if (p1.getProgramlistid() != null) {
+                    if (p1 != null && p1.getProgramlistid() != null) {
                         programlist.setProgramlistid(p1.getProgramlistid());
                     }
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行培训名称异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行培训名称异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -291,25 +292,29 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //code分类
                     programlist.setProgramcode(code("BC038", value.get(1).toString()));
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行Code分类异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行Code分类异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
                 try {
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("jobnumber").is(value.get(2).toString()));
-                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                    if (userAccountlist.size() == 1) {
-                        String _id = userAccountlist.get(0).get_id();
+                    Query queryJobnumber = new Query();
+                    queryJobnumber.addCriteria(Criteria.where("userinfo.jobnumber").is(value.get(2).toString()));
+                    List<CustomerInfo> customerInfoJobnumber = mongoTemplate.find(queryJobnumber, CustomerInfo.class);
+                    if (customerInfoJobnumber.size() == 1) {
+                        String _id = customerInfoJobnumber.get(0).get_id();
                         //负责人工号
                         programlist.setProgramhard(_id);
+                    } else if (customerInfoJobnumber.size() == 0) {
+                        result.add("培训清单导入模板第" + k + "行负责人员工号不存在，导入系统失败！");
+                        errorCount += 1;
+                        continue;
                     } else {
-                        result.add("培训清单导入模板" + k + "行负责人员工号对应多人，导入系统失败！");
+                        result.add("培训清单导入模板第" + k + "行负责人员工号对应多人，导入系统失败！");
                         errorCount += 1;
                         continue;
                     }
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行负责人员工号异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行负责人员工号异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -317,7 +322,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //内部/外部
                     programlist.setInsideoutside(code("BC041", value.get(3).toString()));
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行内部/外部异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行内部/外部异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -325,7 +330,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //强制/非强制
                     programlist.setMandatory(code("BC033", value.get(4).toString()));
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行强制/非强制异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行强制/非强制异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -333,7 +338,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //培训形式（线上/线下）
                     programlist.setIsonline(code("BC032", value.get(5).toString()));
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行线上/线下异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行线上/线下异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -343,7 +348,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                         programlist.setStandard(Integer.parseInt(value.get(6).toString()));
                     }
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行合格判定标准（%）异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行合格判定标准（%）异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -353,7 +358,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                         programlist.setQuestionnum(Integer.parseInt(value.get(7).toString()));
                     }
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行出题数量异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行出题数量异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -361,15 +366,16 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //培训时长（时）
                     programlist.setThelength(Double.parseDouble(value.get(8).toString()));
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行培训时长异常，导入系统失败！");
+                    programlist.setThelength(0.0);
+                    /*result.add("培训清单导入模板第" + k + "行培训时长异常，导入系统失败！");
                     errorCount += 1;
-                    continue;
+                    continue;*/
                 }
                 try {
                     //培训有效期
                     programlist.setValidity(value.get(9).toString());
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行培训有效期异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行培训有效期异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -377,15 +383,16 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     //培训费用
                     programlist.setMoney(value.get(10).toString());
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行培训费用异常，导入系统失败！");
+                    programlist.setMoney("0");
+                    /*result.add("培训清单导入模板第" + k + "行培训费用异常，导入系统失败！");
                     errorCount += 1;
-                    continue;
+                    continue;*/
                 }
                 try {
                     //到期提醒提前时间（月）
                     programlist.setRemindtime(Integer.parseInt(value.get(11).toString()));
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行到期提醒提前时间异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行到期提醒提前时间异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -404,7 +411,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                 try {
                     if (StringUtils.isNotEmpty(programlist.getProgramlistid())) {
                         programlist.preUpdate(tokenModel);
-                        programlistMapper.updateByPrimaryKeySelective(programlist);
+                        programlistMapper.updateByPrimaryKey(programlist);
                     } else {
                         programlist.preInsert(tokenModel);
                         programlist.setProgramlistid(UUID.randomUUID().toString());
@@ -412,7 +419,7 @@ public class ProgramlistServicesImpl implements ProgramlistServices {
                     }
                     successCount += 1;
                 } catch (Exception e) {
-                    result.add("培训清单导入模板" + k + "行存储到数据库异常，导入系统失败！");
+                    result.add("培训清单导入模板第" + k + "行存储到数据库异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
