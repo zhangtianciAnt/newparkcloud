@@ -83,7 +83,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             int rowindex = 0;
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
-                number.setRowindex(String.valueOf(rowindex));
+                number.setRowindex(rowindex);
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
@@ -362,7 +362,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             int rowindex = 0;
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
-                number.setRowindex(String.valueOf(rowindex));
+                number.setRowindex(rowindex);
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);

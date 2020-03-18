@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
@@ -9,6 +10,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
@@ -44,6 +46,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ExpatriatesinforMapper expatriatesinforMapper;
     @Autowired
     private DelegainformationMapper delegainformationMapper;
+    @Autowired
+    private ContractnumbercountMapper contractnumbercountMapper;
 
 
     @Override
@@ -101,6 +105,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         ProjectContract projectcontract = new ProjectContract();
         //日志管理
         LogManagement logManagement = new LogManagement();
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        Contractnumbercount contractnumbercount = new Contractnumbercount();
+        contractnumbercount.setCompanyprojectsid(companyprojectsid);
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
+        contractnumbercountList = contractnumbercountList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+        staffVo.setContractnumbercount(contractnumbercountList);
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
 
         projectsystem.setCompanyprojects_id(companyprojectsid);
         stageInformation.setCompanyprojects_id(companyprojectsid);
@@ -182,6 +193,24 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(pro);
             }
         }
+
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        List<Contractnumbercount> contractnumbercountList = companyProjectsVo.getContractnumbercount();
+        if (contractnumbercountList.size() > 0) {
+            Contractnumbercount contractnumbercount = new Contractnumbercount();
+            contractnumbercount.setCompanyprojectsid(companyprojectsid);
+            contractnumbercountMapper.delete(contractnumbercount);
+            int rowindex = 0;
+            for (Contractnumbercount info : contractnumbercountList) {
+                rowindex = rowindex + 1;
+                info.preInsert(tokenModel);
+                info.setContractnumbercount_id(UUID.randomUUID().toString());
+                info.setCompanyprojectsid(companyprojectsid);
+                info.setRowindex(rowindex);
+                contractnumbercountMapper.insertSelective(info);
+            }
+        }
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
     }
 
     //新建
@@ -212,6 +241,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
         //项目合同
         List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        List<Contractnumbercount> contractnumbercountList = companyProjectsVo.getContractnumbercount();
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
         if (projectsystemList != null) {
             int rowundex = 0;
             for (Projectsystem projectsystem : projectsystemList) {
@@ -758,6 +790,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(projectcontract);
             }
         }
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        if (contractnumbercountList.size() > 0) {
+            int rowindex = 0;
+            for (Contractnumbercount contractnumbercount : contractnumbercountList) {
+                rowindex = rowindex + 1;
+                contractnumbercount.preInsert(tokenModel);
+                contractnumbercount.setContractnumbercount_id(UUID.randomUUID().toString());
+                contractnumbercount.setCompanyprojectsid(companyprojectsid);
+                contractnumbercount.setRowindex(rowindex);
+                contractnumbercountMapper.insertSelective(contractnumbercount);
+            }
+        }
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
     }
 
     /**
