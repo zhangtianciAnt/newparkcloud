@@ -2,8 +2,10 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.QuotationVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.QuotationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -37,6 +39,9 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     private ContractnumbercountMapper contractnumbercountMapper;
 
+    @Autowired
+    CompanyProjectsMapper companyProjectsMapper;
+
     @Override
     public List<Quotation> get(Quotation quotation)  throws Exception{
         return quotationMapper.select(quotation);
@@ -53,22 +58,36 @@ public class QuotationServiceImpl implements QuotationService {
         personfee.setQuotationid(quotationid);
         othpersonfee.setQuotationid(quotationid);
         fruit.setQuotationid(quotationid);
-//        List<Basicinformation> basicinformationlist = basicinformationMapper.select(basicinformation);
         List<Personfee> personfeelist = personfeeMapper.select(personfee);
         List<Othpersonfee> othpersonfeelist = othpersonfeeMapper.select(othpersonfee);
         List<Fruit> fruitlist = fruitMapper.select(fruit);
-//        basicinformationlist = basicinformationlist.stream().sorted(Comparator.comparing(Basicinformation::getRowindex)).collect(Collectors.toList());
         personfeelist = personfeelist.stream().sorted(Comparator.comparing(Personfee::getRowindex)).collect(Collectors.toList());
         othpersonfeelist = othpersonfeelist.stream().sorted(Comparator.comparing(Othpersonfee::getRowindex)).collect(Collectors.toList());
         fruitlist = fruitlist.stream().sorted(Comparator.comparing(Fruit::getRowindex)).collect(Collectors.toList());
         Quotation quo = quotationMapper.selectByPrimaryKey(quotationid);
+        Quotation quotation = quotationMapper.selectByPrimaryKey(quotationid);
+        String name = "";
+        String [] companyProjectsid = quotation.getPjchinese().split(",");
+        if(companyProjectsid.length > 0){
+            for (int i = 0;i < companyProjectsid.length;i++){
+                CompanyProjects companyProjects = new CompanyProjects();
+                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
+                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+                if(comList.size() > 0){
+                    name = name + comList.get(0).getProject_name() + ",";
+                }
+            }
+            if(!name.equals("")){
+                name = name.substring(0,name.length()-1);
+            }
+        }
+        quotation.setPjchinese(name);
         asseVo.setQuotation(quo);
-//        asseVo.setBasicinformation(basicinformationlist);
         asseVo.setPersonfee(personfeelist);
         asseVo.setOthpersonfee(othpersonfeelist);
         asseVo.setFruit(fruitlist);
 
-        if ( asseVo!=null ) {
+        if ( asseVo != null ) {
             Contractnumbercount contractnumbercount = new Contractnumbercount();
             contractnumbercount.setContractnumber(quo.getContractnumber());
             List<Contractnumbercount> list = contractnumbercountMapper.select(contractnumbercount);
