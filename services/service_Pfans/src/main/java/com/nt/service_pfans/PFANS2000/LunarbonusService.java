@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -12,6 +13,6 @@ public interface LunarbonusService {
 
     public void insert(LunardetailVo LunardetailVo, TokenModel tokenModel)throws Exception;
 
-    public Lunarbonus getOne(String id)throws Exception;
+    public LunarAllVo getOne(String id)throws Exception;
 
 }

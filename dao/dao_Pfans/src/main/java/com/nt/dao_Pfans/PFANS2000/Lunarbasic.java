@@ -56,4 +56,13 @@ public class Lunarbasic extends BaseModel {
 
     @Column(name = "R83RATE")
     private String r83rate;
+
+    @Column(name = "TITLE1")
+    private String title1;
+
+    @Column(name = "TITLE2")
+    private String title2;
+
+    @Column(name = "CODE")
+    private String code;
 }
