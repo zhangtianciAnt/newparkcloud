@@ -296,7 +296,43 @@ public class GivingServiceImpl implements GivingService {
         // region 综合收入 By SKAIXX
         List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
         givingVo.setComprehensiveVo(comprehensiveVolist);
-        // Todo By Skaixx At 2020/3/18 :  综合收入数据插入到综合收入表中（综合收入表暂时没有）
+        // region 综合收入数据插入到综合收入表中
+        comprehensiveVolist.forEach(item -> {
+            Comprehensive comprehensive = new Comprehensive();
+            comprehensive.setComprehensiveId(UUID.randomUUID().toString());
+            comprehensive.setGivingId(giving_id);
+            comprehensive.setUserId(item.getUser_id());
+            comprehensive.setYearswages(item.getTotalbonus1());
+            comprehensive.setMonth1Wages(item.getMonth1wages());
+            comprehensive.setMonth1Appreciation(item.getMonth1appreciation());
+            comprehensive.setMonth2Wages(item.getMonth2wages());
+            comprehensive.setMonth2Appreciation(item.getMonth2appreciation());
+            comprehensive.setMonth3Wages(item.getMonth3wages());
+            comprehensive.setMonth3Appreciation(item.getMonth3appreciation());
+            comprehensive.setMonth4Wages(item.getMonth4wages());
+            comprehensive.setMonth4Appreciation(item.getMonth4appreciation());
+            comprehensive.setMonth5Wages(item.getMonth5wages());
+            comprehensive.setMonth5Appreciation(item.getMonth5appreciation());
+            comprehensive.setMonth6Wages(item.getMonth6wages());
+            comprehensive.setMonth6Appreciation(item.getMonth6appreciation());
+            comprehensive.setMonth7Wages(item.getMonth7wages());
+            comprehensive.setMonth7Appreciation(item.getMonth7appreciation());
+            comprehensive.setMonth8Wages(item.getMonth8wages());
+            comprehensive.setMonth8Appreciation(item.getMonth8appreciation());
+            comprehensive.setMonth9Wages(item.getMonth9wages());
+            comprehensive.setMonth9Appreciation(item.getMonth9appreciation());
+            comprehensive.setMonth10Wages(item.getMonth10wages());
+            comprehensive.setMonth10Appreciation(item.getMonth10appreciation());
+            comprehensive.setMonth11Wages(item.getMonth11wages());
+            comprehensive.setMonth11Appreciation(item.getMonth11appreciation());
+            comprehensive.setMonth12Wages(item.getMonth12wages());
+            comprehensive.setMonth12Appreciation(item.getMonth12appreciation());
+            comprehensive.setTotalwages(item.getAppreciationtotal());
+            comprehensive.setYearstotal12(item.getTotalwithout12());
+            comprehensive.setYearstotal(item.getTotalwithin12());
+            comprehensiveMapper.insert(comprehensive);
+        });
+        // endregion
         // endregion
 
         // 2020/03/11 add by myt start
