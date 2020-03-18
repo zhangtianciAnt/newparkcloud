@@ -64,6 +64,7 @@ public class pfans1031Controller {
     @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
     public void downLoad1(@RequestBody Napalm na, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
+        String pp[] = na.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         List<Dictionary> dictionaryList1 = dictionaryService.getForSelect("HT012");
         for(Dictionary item:dictionaryList1){

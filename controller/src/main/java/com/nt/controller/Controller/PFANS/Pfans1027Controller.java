@@ -75,7 +75,7 @@ public class Pfans1027Controller {
         Map<String, Object> data = new HashMap<>();
         data.put("qu",qu.getQuotation());
         data.put("ba1",qu.getNumbercounts());
-        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_見積書(受託)","jianjishu_shoutuo.xlsx",data,response);
+        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_报价单","jianjishu_shoutuo.xlsx",data,response);
     }
 
 }
