@@ -3,7 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper">
     <select id="getDelegainformation" resultType="com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo">
              SELECT
-	a.*,
+-- 	a.*,
 	b.COMPANY,
 	c.PROJECT_NAME,
 	c.MANAGERID,
