@@ -35,6 +35,19 @@ public class DelegainformationVo {
 
 
     /**
+     * 入场时间
+     */
+    @Column(name = "ADMISSIONTIME")
+    private String admissiontime;
+
+    /**
+     * 退场时间
+     */
+    @Column(name = "EXITIME")
+    private String exitime;
+
+
+    /**
      * 四月
      */
     @Column(name = "APRIL")
@@ -128,8 +141,8 @@ public class DelegainformationVo {
     /**
      * 外注人员ID
      */
-    @Column(name = "SUPPLIERNAMEID")
-    private String suppliernameid;
+    @Column(name = "SUPPLIERINFOR_ID")
+    private String supplierinfor_id;
 
     /**
      * 项目名称(中)
