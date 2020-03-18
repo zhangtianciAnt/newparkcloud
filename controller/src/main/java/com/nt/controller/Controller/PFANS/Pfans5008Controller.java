@@ -128,6 +128,8 @@ public class Pfans5008Controller {
         try{
             TokenModel tokenModel = tokenService.getToken(request);
             return ApiResult.success(logmanagementService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
