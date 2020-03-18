@@ -17,6 +17,7 @@ public class VariousfundsServiceImpl implements VariousfundsService {
 
     @Autowired
     private VariousfundsMapper variousfundsMapper;
+
     @Override
     public List<Variousfunds> getvariousfunds(Variousfunds variousfunds) throws Exception {
         return variousfundsMapper.select(variousfunds);

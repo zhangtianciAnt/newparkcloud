@@ -173,4 +173,34 @@ public class Base extends BaseModel {
      */
     @Column(name = "GROUPID")
     private String groupid;
+
+    /**
+     * 上月试用天数
+     */
+    @Column(name = "LASTMONTHSUITDAYS")
+    private String lastmonthsuitdays;
+
+    /**
+     * 上月正式天数
+     */
+    @Column(name = "LASTMONTHDAYS")
+    private String lastmonthdays;
+
+    /**
+     * 本月试用天数
+     */
+    @Column(name = "THISMONTHSUITDAYS")
+    private String thismonthsuitdays;
+
+    /**
+     * 本月正式天数
+     */
+    @Column(name = "THISMONTHDAYS")
+    private String thismonthdays;
+
+    /**
+     * 试用期截止日
+     */
+    @Column(name = "ENDDATE")
+    private String enddate;
 }

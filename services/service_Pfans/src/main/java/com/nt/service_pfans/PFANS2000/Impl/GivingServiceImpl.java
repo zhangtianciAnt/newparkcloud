@@ -3,11 +3,12 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
-import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.*;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -100,16 +103,26 @@ public class GivingServiceImpl implements GivingService {
     private WorkingDayMapper workingDayMapper;
 
     @Autowired
-    private AttendanceSettingMapper attendanceSettingMapper;
+    private MongoTemplate mongoTemplate;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private AnnualLeaveMapper annualLeaveMapper;
 
     private static List<CustomerInfo> customerInfos;
 
+    // 日期基数
+    private static final double dateBase = 21.75;
+
     @PostConstruct
-    public void init(){
-        customerInfos = mongoTemplate.find(new Query(Criteria.where("status").is("0")), CustomerInfo.class);
+    public void init() {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar now = Calendar.getInstance();
+        now.set(Calendar.DAY_OF_MONTH, 1);
+        Query query = new Query();
+        Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").orOperator(Criteria.where("userinfo.resignation_date")
+                .gte(sf.format(now.getTime())), Criteria.where("userinfo.resignation_date").is(null), Criteria.where("userinfo.resignation_date").is(""));
+        query.addCriteria(criteria);
+        customerInfos = mongoTemplate.find(query, CustomerInfo.class);
     }
 
     /**
@@ -118,168 +131,366 @@ public class GivingServiceImpl implements GivingService {
      */
     @Override
     public GivingVo List(String giving_id) throws Exception {
-        insertOtherOne(null,null);
+        GivingVo givingVo = new GivingVo();
         Giving giving = new Giving();
-        return null;
-//        GivingVo givingVo = new GivingVo();
+        giving.setGiving_id(giving_id);
+        givingVo.setGiving(giving);
 
-//        giving.setGiving_id(giving_id);
-//        givingVo.setGiving(giving);
-//
-//        List<DisciplinaryVo> disciplinary = disciplinaryMapper.getdisciplinary();
-//        givingVo.setDisciplinaryVo(disciplinary);
-//
-//        OtherOne otherOne = new OtherOne();
-//        otherOne.setGiving_id(giving_id);
-//        List<OtherOne> otherOnelist = otherOneMapper.select(otherOne);
-//        otherOnelist = otherOnelist.stream().sorted(Comparator.comparing(OtherOne::getRowindex)).collect(Collectors.toList());
-//        givingVo.setOtherOne(otherOnelist);
-//
-//        OtherTwo othertwo = new OtherTwo();
-//        othertwo.setGiving_id(giving_id);
-//        List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
-//        othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
-//        givingVo.setOtherTwo(othertwolist);
-//
-//        Appreciation appreciation = new Appreciation();
-//        appreciation.setGiving_id(giving_id);
-//        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-//        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
-//        givingVo.setAppreciation(appreciationlist);
-//
-//        OtherFive otherfive = new OtherFive();
-//        otherfive.setGiving_id(giving_id);
-//        List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
-//        otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
-//        givingVo.setOtherFive(otherfivelist);
-//
-//        Additional additional = new Additional();
-//        additional.setGiving_id(giving_id);
-//        List<Additional> additionallist = additionalMapper.select(additional);
-//        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
-//        givingVo.setAddiTional(additionallist);
-//
-//        Lackattendance lackattendance = new Lackattendance();
-//        lackattendance.setGiving_id(giving_id);
-//        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
-//        lackattendancellist = lackattendancellist.stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
-//        givingVo.setLackattendance(lackattendancellist);
-//
-//        Residual residua = new Residual();
-//        residua.setGiving_id(giving_id);
-//        List<Residual> residualllist = residualMapper.select(residua);
-//        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
-//        givingVo.setResidual(residualllist);
-//
-//        OtherFour otherfour = new OtherFour();
-//        otherfour.setGiving_id(giving_id);
-//        List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
-//        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
-//        givingVo.setOtherFour(otherfourlist);
-//
-//        Base base = new Base();
-//        base.setGiving_id(giving_id);
-//        List<Base> baselist = baseMapper.select(base);
-//        //baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
-//        givingVo.setBase(baselist);
-//
-//        Contrast contrast = new Contrast();
-//        contrast.setGiving_id(giving_id);
-//        List<Contrast> contrastList = contrastMapper.select(contrast);
-//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
-//        givingVo.setContrast(contrastList);
-//
-//        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
-//        givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
-//
-//        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
-//        givingVo.setDutyfreeVo(dutyfreeVolist);
-//
-//        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
-//        givingVo.setComprehensiveVo(comprehensiveVolist);
-//
-//        return givingVo;
+        // region 专项控除 By SKAIXX
+        List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary();
+        givingVo.setDisciplinaryVo(disciplinary);
+        // 专项控除数据需要插入到专项控除表中
+        disciplinary.forEach(item -> {
+            item.setDisciplinary_id(UUID.randomUUID().toString());
+            disciplinaryMapper.insert(item);
+        });
+        // endregion
+
+        OtherOne otherOne = new OtherOne();
+        otherOne.setGiving_id(giving_id);
+        List<OtherOne> otherOnelist = otherOneMapper.select(otherOne);
+        otherOnelist = otherOnelist.stream().sorted(Comparator.comparing(OtherOne::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherOne(otherOnelist);
+
+        OtherTwo othertwo = new OtherTwo();
+        othertwo.setGiving_id(giving_id);
+        List<OtherTwo> othertwolist = othertwoMapper.select(othertwo);
+        othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherTwo(othertwolist);
+
+        // region 月度赏与 By SKAIXX
+        Appreciation appreciation = new Appreciation();
+        appreciation.setGiving_id(giving_id);
+        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        // 月度赏与计算
+        appreciationlist = appreciationCalc(appreciationlist);
+        givingVo.setAppreciation(appreciationlist);
+        // endregion
+
+        OtherFive otherfive = new OtherFive();
+        otherfive.setGiving_id(giving_id);
+        List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
+        otherfivelist = otherfivelist.stream().sorted(Comparator.comparing(OtherFive::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherFive(otherfivelist);
+
+        // region 附加控除 By SKAIXX
+        Additional additional = new Additional();
+        additional.setGiving_id(giving_id);
+        List<Additional> additionallist = additionalMapper.select(additional);
+        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
+        givingVo.setAddiTional(additionallist);
+        // endregion
+
+        // region 欠勤 By SKAIXX
+        Lackattendance lackattendance = new Lackattendance();
+        lackattendance.setGiving_id(giving_id);
+        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
+        givingVo.setLackattendance(lackattendancellist);
+        // endregion
+
+        // region 残业 By SKAIXX
+        Residual residua = new Residual();
+        residua.setGiving_id(giving_id);
+        List<Residual> residualllist = residualMapper.select(residua);
+        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
+        givingVo.setResidual(residualllist);
+        // endregion
+
+        OtherFour otherfour = new OtherFour();
+        otherfour.setGiving_id(giving_id);
+        List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
+        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
+        givingVo.setOtherFour(otherfourlist);
+
+        Base base = new Base();
+        base.setGiving_id(giving_id);
+        List<Base> baselist = baseMapper.select(base);
+        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        givingVo.setBase(baselist);
+
+        Contrast contrast = new Contrast();
+        contrast.setGiving_id(giving_id);
+        List<Contrast> contrastList = contrastMapper.select(contrast);
+        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        givingVo.setContrast(contrastList);
+
+        // region 累计税金 By SKAIXX
+        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
+        // 获取全年综合收入适用税率
+        Dictionary taxDictionary = new Dictionary();
+        taxDictionary.setPcode("PR048");    // 全年综合收入适用税率
+        List<Dictionary> taxDictionaryList = dictionaryMapper.getDictionary(taxDictionary);
+
+        // 计算年度应纳付税金
+        for (AccumulatedTaxVo tmpVo : accumulatedTaxVolist) {
+            taxDictionary = getTaxRate(Double.parseDouble(tmpVo.getShouldwages()), taxDictionaryList);
+
+            // 年度应纳付税金 = 年度応納税総額*税率 - 速算扣除   (计算结果保留两位小数)
+            BigDecimal shouldwages = new BigDecimal(tmpVo.getShouldwages());
+            BigDecimal taxRate = new BigDecimal(taxDictionary.getValue2());
+            BigDecimal taxFree = new BigDecimal(taxDictionary.getValue3());
+            BigDecimal shouldTax = shouldwages.multiply(taxRate).subtract(taxFree);
+            shouldTax = shouldTax.setScale(2, RoundingMode.HALF_UP);
+            tmpVo.setShouldtax(shouldTax.toPlainString());
+
+            // 還付差額 = 年度応納付税金-年間累計税金-12月的税金
+            tmpVo.setBalance(shouldTax.subtract(new BigDecimal(tmpVo.getSumThis()))
+                    .subtract(new BigDecimal(tmpVo.getDecember()))
+                    .setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // region 累计税金数据插入到累计税金表中
+            Accumulatedtax accumulatedtax = new Accumulatedtax();
+            accumulatedtax.setAccumulatedtax_id(UUID.randomUUID().toString());
+            accumulatedtax.setGiving_id(giving_id);
+            accumulatedtax.setUser_id1(tmpVo.getUser_id());
+            accumulatedtax.setTaxesmonth1(tmpVo.getJanuary());
+            accumulatedtax.setTaxesmonth2(tmpVo.getFebruary());
+            accumulatedtax.setTaxesmonth3(tmpVo.getMarch());
+            accumulatedtax.setTaxesmonth4(tmpVo.getApril());
+            accumulatedtax.setTaxesmonth5(tmpVo.getMay());
+            accumulatedtax.setTaxesmonth6(tmpVo.getJune());
+            accumulatedtax.setTaxesmonth7(tmpVo.getJuly());
+            accumulatedtax.setTaxesmonth8(tmpVo.getAugust());
+            accumulatedtax.setTaxesmonth9(tmpVo.getSeptember());
+            accumulatedtax.setTaxesmonth10(tmpVo.getOctober());
+            accumulatedtax.setTaxesmonth11(tmpVo.getNovember());
+            accumulatedtax.setTaxesmonth12(tmpVo.getDecember());
+            accumulatedtax.setYeartaxes(tmpVo.getSumThis());                // 年间累计税金
+            accumulatedtax.setTaxamount(shouldwages.toPlainString());       // 年度应纳税总额
+            accumulatedtax.setTaxpaid(shouldTax.toPlainString());           // 年度应纳付税金
+            accumulatedtax.setDifference(tmpVo.getBalance());               // 还付差额
+            accumulatedTaxMapper.insert(accumulatedtax);
+            // endregion
+        }
+        givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
+        // endregion
+
+        // region 免税 By SKAIXX
+        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
+        givingVo.setDutyfreeVo(dutyfreeVolist);
+        // region 免税数据插入到免税表中
+        dutyfreeVolist.forEach(item -> {
+            Dutyfree dutyfree = new Dutyfree();
+            dutyfree.setDutyfree_id(UUID.randomUUID().toString());
+            dutyfree.setGiving_id(giving_id);
+            dutyfree.setUser_id(item.getUser_id());
+            dutyfree.setTaxesmonth1(item.getJanuary());
+            dutyfree.setTaxesmonth2(item.getFebruary());
+            dutyfree.setTaxesmonth3(item.getMarch());
+            dutyfree.setTaxesmonth4(item.getApril());
+            dutyfree.setTaxesmonth5(item.getMay());
+            dutyfree.setTaxesmonth6(item.getJune());
+            dutyfree.setTaxesmonth7(item.getJuly());
+            dutyfree.setTaxesmonth8(item.getAugust());
+            dutyfree.setTaxesmonth9(item.getSeptember());
+            dutyfree.setTaxesmonth10(item.getOctober());
+            dutyfree.setTaxesmonth11(item.getNovember());
+            dutyfree.setTaxesmonth12(item.getDecember());
+            dutyfree.setCumulative(item.getTotal());    // 累计年间控除
+            dutyfreeMapper.insert(dutyfree);
+        });
+        // endregion
+        // endregion
+
+        // region 综合收入 By SKAIXX
+        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
+        givingVo.setComprehensiveVo(comprehensiveVolist);
+        // region 综合收入数据插入到综合收入表中
+        comprehensiveVolist.forEach(item -> {
+            Comprehensive comprehensive = new Comprehensive();
+            comprehensive.setComprehensiveId(UUID.randomUUID().toString());
+            comprehensive.setGivingId(giving_id);
+            comprehensive.setUserId(item.getUser_id());
+            comprehensive.setYearswages(item.getTotalbonus1());
+            comprehensive.setMonth1Wages(item.getMonth1wages());
+            comprehensive.setMonth1Appreciation(item.getMonth1appreciation());
+            comprehensive.setMonth2Wages(item.getMonth2wages());
+            comprehensive.setMonth2Appreciation(item.getMonth2appreciation());
+            comprehensive.setMonth3Wages(item.getMonth3wages());
+            comprehensive.setMonth3Appreciation(item.getMonth3appreciation());
+            comprehensive.setMonth4Wages(item.getMonth4wages());
+            comprehensive.setMonth4Appreciation(item.getMonth4appreciation());
+            comprehensive.setMonth5Wages(item.getMonth5wages());
+            comprehensive.setMonth5Appreciation(item.getMonth5appreciation());
+            comprehensive.setMonth6Wages(item.getMonth6wages());
+            comprehensive.setMonth6Appreciation(item.getMonth6appreciation());
+            comprehensive.setMonth7Wages(item.getMonth7wages());
+            comprehensive.setMonth7Appreciation(item.getMonth7appreciation());
+            comprehensive.setMonth8Wages(item.getMonth8wages());
+            comprehensive.setMonth8Appreciation(item.getMonth8appreciation());
+            comprehensive.setMonth9Wages(item.getMonth9wages());
+            comprehensive.setMonth9Appreciation(item.getMonth9appreciation());
+            comprehensive.setMonth10Wages(item.getMonth10wages());
+            comprehensive.setMonth10Appreciation(item.getMonth10appreciation());
+            comprehensive.setMonth11Wages(item.getMonth11wages());
+            comprehensive.setMonth11Appreciation(item.getMonth11appreciation());
+            comprehensive.setMonth12Wages(item.getMonth12wages());
+            comprehensive.setMonth12Appreciation(item.getMonth12appreciation());
+            comprehensive.setTotalwages(item.getAppreciationtotal());
+            comprehensive.setYearstotal12(item.getTotalwithout12());
+            comprehensive.setYearstotal(item.getTotalwithin12());
+            comprehensiveMapper.insert(comprehensive);
+        });
+        // endregion
+        // endregion
+
+        // 2020/03/11 add by myt start
+        // 查询入职信息表
+        Induction induction = new Induction();
+        induction.setGiving_id(giving_id);
+        List<Induction> inductionList = inductionMapper.select(induction);
+        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
+        givingVo.setEntryVo(inductionList);
+        Calendar nowDate = Calendar.getInstance();
+        Calendar lastDate = Calendar.getInstance();
+        lastDate.add(Calendar.MONTH, -1);
+        // 设置上个月的年份和月份
+        givingVo.setYearOfLastMonth(String.valueOf(lastDate.get(Calendar.YEAR)));
+        givingVo.setMonthOfLastMonth(String.valueOf(lastDate.get(Calendar.MONTH) + 1));
+        // 设置当月的年份和月份
+        givingVo.setYearOfThisMonth(String.valueOf(nowDate.get(Calendar.YEAR)));
+        givingVo.setMonthOfThisMonth(String.valueOf(nowDate.get(Calendar.MONTH) + 1));
+
+        // 查询离职信息表
+        Retire retire = new Retire();
+        retire.setGiving_id(giving_id);
+        List<Retire> retireList = retireMapper.select(retire);
+        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
+        givingVo.setRetireVo(retireList);
+        // 2020/03/11 add by myt end
+
+        return givingVo;
     }
+
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
-
-//        List<OtherOne> otherOnes = new ArrayList<>();
-//        DecimalFormat df = new DecimalFormat("#.00");
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//        long endMillisecond = format.parse("2012-08-31").getTime();
-//        AbNormal abNormal = new AbNormal();
-//        abNormal.setStatus("4");
-//        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
+        List<OtherOne> otherOnes = new ArrayList<>();
+        DecimalFormat df = new DecimalFormat("#.00");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        long endMillisecond = format.parse("2012-08-31").getTime();
+        long otherOneTime = format.parse("2012-03-31").getTime();
+        AbNormal abNormal = new AbNormal();
+        abNormal.setStatus("4");
+        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
 //        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
-//        if (abNormalinfo.size() > 0) {
-//            int rowindex = 0;
-//            for (AbNormal abNor : abNormalinfo) {
-//                if (abNor.getError_type().equals("PR013012") || abNor.getError_type().equals("PR013013")) {
-//                    boolean bool = true;
-//                   for(OtherOne otherOne :otherOnes){
-//                       if(otherOne.getUser_id().equals(abNor.getUser_id())){
-//                          // otherOne.
-//                            // otherOne.setOther1();
-//                       }
-//                   }
-//
-//                         OtherOne otherOne = new OtherOne();
-//                        String beginTime = "";
-//                        rowindex = rowindex + 1;
-//                        String otherOneid = UUID.randomUUID().toString();
-//                        // otherOne.preInsert(tokenModel);
-//                        otherOne.setOtherone_id(otherOneid);
-//                        otherOne.setGiving_id(givingid);
-//                        otherOne.setUser_id(abNor.getUser_id());
-//
-//                        List<CustomerInfo> cust = customerInfos.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
-//
-//                        if (cust.size() > 0) {
-//                            otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
-//                            otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
-//                            otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
-//                            beginTime = cust.get(0).getUserinfo().getEnterday();
-//                        }
-//                        if (abNor.getError_type().equals("PR013012")) {
-//                            otherOne.setReststart(abNor.getOccurrence_date());
-//                            otherOne.setRestend(abNor.getFinished_date());
-//                            otherOne.setAttendance("-1");
-//                            otherOne.setOther1("-1");
-//                            otherOne.setBasedata("2");
-//                            otherOne.setType("1");
-//                        } else if (abNor.getError_type().equals("PR013013")) {
-//                            otherOne.setStartdate(abNor.getOccurrence_date());
-//                            otherOne.setEnddate(abNor.getFinished_date());
-//                            double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
-//                            String strLengthtime = String.valueOf(intLengthtime);
-//                            otherOne.setVacation(df.format(intLengthtime));
-//                            long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime).getTime();
-//                            if (beginMillisecond >= endMillisecond) {
-//                                otherOne.setHandsupport(strLengthtime);
-//                            } else {
-//                                otherOne.setHandsupport("0");
-//                            }
-//                            otherOne.setType("2");
-//                        }
-//                        otherOne.setRowindex(rowindex);
-//                        otherOnes.add(otherOne);
-//                    }
-//
+        /*根据字典获取 納付率.全社社会保険基数（元） -lxx*/
+//        Dictionary dictionary = new Dictionary();
+//        dictionary.setPcode("PR043");
+//        List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+//        BigDecimal R2019 = new BigDecimal(0);
+//        BigDecimal R2018 = new BigDecimal(0);
+//        for (Dictionary diction : dictionarylist) {
+//            if (diction.getCode().equals("PR043005")) {
+//                 R2019 = new BigDecimal(diction.getValue2());
+//            } else if (diction.getCode().equals("PR043006")) {
+//                 R2018 = new BigDecimal(diction.getValue2());
 //            }
 //        }
-//        if(otherOnes.size() > 0){
-//            otherOneMapper.insertOtherOne(otherOnes);
-//        }
+        /*根据字典获取納付率.全社社会保険基数（元） -lxx*/
+        /*base 数据检索 -lxx*/
+//        Base baseQuery = new Base();
+//        baseQuery.setGiving_id(givingid);
+//        List<Base> baseList = baseMapper.select(baseQuery);
+        /*base 数据检索 -lxx*/
+        if (abNormalinfo.size() > 0) {
+            int rowindex = 0;
+            int rowindexMan = 0;
+            for (AbNormal abNor : abNormalinfo) {
+                if (abNor.getErrortype().equals("PR013012") || abNor.getErrortype().equals("PR013013")) {
+                    boolean bool = true;
+                    for (OtherOne otherOne : otherOnes) {
+                        if (otherOne.getUser_id().equals(abNor.getUser_id())) {
+                            // otherOne.
+                            // otherOne.setOther1();
+                        }
+                    }
+
+                    OtherOne otherOne = new OtherOne();
+                    String beginTime = "";
+                    String otherOneid = UUID.randomUUID().toString();
+                    // otherOne.preInsert(tokenModel);
+                    otherOne.setOtherone_id(otherOneid);
+                    otherOne.setGiving_id(givingid);
+                    otherOne.setUser_id(abNor.getUser_id());
+
+                    List<CustomerInfo> cust = customerInfos.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
+
+                    if (cust.size() > 0) {
+                        otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
+                        otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
+                        otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
+                        beginTime = cust.get(0).getUserinfo().getEnterday();
+                    }
+                    if (abNor.getErrortype().equals("PR013012")) {
+                        rowindex = rowindex + 1;
+                        otherOne.setRowindex(rowindex);
+                        otherOne.setReststart(abNor.getOccurrencedate());
+                        otherOne.setRestend(abNor.getFinisheddate());
+                        Integer days = getDaysforOtherOne(abNor.getOccurrencedate(), abNor.getFinisheddate());
+                        otherOne.setAttendance(days.toString());
+                        /*其他1 -lxx*/
+                        //IF 入社日<=2012/3/31
+//                        otherOne.setOther1("0");
+//                        if(cust.size() > 0){
+//                            if(format.parse(cust.get(0).getUserinfo().getEnterday()).getTime() <= otherOneTime){
+//                                for (Base baseinfo : baseList) {
+//                                    if(baseinfo.getUser_id().equals(abNor.getUser_id())){
+//                                        BigDecimal b2019 = (new BigDecimal(baseinfo.getMedical()).subtract(R2019)).multiply(new BigDecimal(0.15/21.75*(21.75 - days))).setScale(2, RoundingMode.HALF_UP);
+//                                        BigDecimal b2018 = (new BigDecimal(baseinfo.getMedical()).subtract(R2018)).multiply(new BigDecimal(0.15/21.75*(21.75 - days))).setScale(2, RoundingMode.HALF_UP);
+//                                        otherOne.setOther1(b2018.toPlainString() + "," + b2019.toPlainString());
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                        }
+                        /*其他1 -lxx*/
+                        otherOne.setBasedata("2");
+                        otherOne.setType("1");
+                    } else if (abNor.getErrortype().equals("PR013013")) {
+                        rowindexMan = rowindexMan + 1;
+                        otherOne.setRowindex(rowindexMan);
+                        otherOne.setStartdate(abNor.getOccurrencedate());
+                        otherOne.setEnddate(abNor.getFinisheddate());
+                        Integer days = getDaysforOtherOne(abNor.getOccurrencedate(), abNor.getFinisheddate());
+                        otherOne.setVacation(days.toString());
+                        double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
+                        String strLengthtime = String.valueOf(intLengthtime);
+                        long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime).getTime();
+                        if (beginMillisecond >= endMillisecond) {
+                            otherOne.setHandsupport(days.toString());
+                        } else {
+                            otherOne.setHandsupport("0");
+                        }
+                        otherOne.setType("2");
+                    }
+                    otherOnes.add(otherOne);
+                }
+
+            }
+        }
+        if (otherOnes.size() > 0) {
+            otherOneMapper.insertOtherOne(otherOnes);
+        }
     }
 
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
         List<Base> bases = new ArrayList<>();
         Dictionary dictionary = new Dictionary();
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
+        /*获取基数 type-lxx*/
+        List<Base> baseType = baseMapper.selectBaseType(givingid);
+        /*获取基数 type-lxx*/
         String R9 = null;
         String R8 = null;
         String R7 = null;
@@ -292,6 +503,8 @@ public class GivingServiceImpl implements GivingService {
                 R7 = diction.getValue2();
             }
         }
+
+        Calendar calendar = Calendar.getInstance();
         if (customerInfos.size() > 0) {
             int rowindex = 0;
             for (CustomerInfo customer : customerInfos) {
@@ -306,6 +519,14 @@ public class GivingServiceImpl implements GivingService {
                 base.setJobnumber(customer.getUserinfo().getJobnumber());  //工号
                 base.setRn(customer.getUserinfo().getRank());  //RN
                 base.setSex(customer.getUserinfo().getSex());  //性别
+                /*设置type lxx */
+                for (Base basetype : baseType) {
+                    if (basetype.getUser_id().equals(customer.getUserid())) {
+                        base.setType(basetype.getType());
+                        break;
+                    }
+                }
+                /*设置type lxx */
                 if (customer.getUserinfo().getChildren() != null) {
                     base.setOnlychild("1");  //独生子女
                 } else {
@@ -323,13 +544,23 @@ public class GivingServiceImpl implements GivingService {
                     }
                 }
                 //大連戸籍
-                if (customer.getUserinfo().getRegister() == "大连") {
+                if (("大连").equals(customer.getUserinfo().getRegister())) {
                     base.setRegistered("1");
                 } else {
                     base.setRegistered("2");
                 }
-                base.setLastmonth(getSalary(customer,0)); //上月工资
-                base.setThismonth(getSalary(customer,1)); //本月工资
+                /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
+                //上月工资
+                base.setLastmonthbasic(getSalaryBasicAndDuty(customer, 0).get("thisMonthBasic"));
+                base.setLastmonthduty(getSalaryBasicAndDuty(customer, 0).get("thisMonthDuty"));
+                //本月工资
+                base.setThismonthbasic(getSalaryBasicAndDuty(customer, 1).get("thisMonthBasic"));
+                base.setThismonthduty(getSalaryBasicAndDuty(customer, 1).get("thisMonthDuty"));
+                //3月前基数
+                base.setTmabasic(getSalaryBasicAndDuty(customer, -2).get("thisMonth"));
+                /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
+                base.setLastmonth(getSalary(customer, 0)); //上月工资
+                base.setThismonth(getSalary(customer, 1)); //本月工资
                 base.setPension(notNull(customer.getUserinfo().getOldageinsurance())); //養老・失業・工傷基数
                 base.setMedical(notNull(customer.getUserinfo().getMedicalinsurance())); //医療・生育基数
                 base.setAccumulation(notNull(customer.getUserinfo().getHouseinsurance()));  //公积金基数
@@ -337,1248 +568,268 @@ public class GivingServiceImpl implements GivingService {
                 if (customer.getUserinfo().getRank() != null && customer.getUserinfo().getRank().length() > 0) {
                     String strRank = customer.getUserinfo().getRank().substring(2);
                     int rank = Integer.parseInt(strRank);
+                    /*rank修改 lxx */
                     if (rank >= 21009) {
                         base.setHeating(R9);
-                    } else if (customer.getUserinfo().getRank() == "PR021008") {
+                    } else if (rank <= 21008 && rank >= 21006) {
                         base.setHeating(R8);
-                    } else if (rank <= 21007) {
+                    } else if (rank <= 21005) {
                         base.setHeating(R7);
                     }
+                    /*rank修改 lxx */
                 }
+
                 //入社日
                 base.setWorkdate(customer.getUserinfo().getEnterday());
                 base.setRowindex(rowindex);
+                /*group id -lxx*/
+                base.setGroupid(customer.getUserinfo().getGroupid());
+                /*group id -lxx*/
+                /*试用期截止日 -lxx*/
+                base.setEnddate(customer.getUserinfo().getEnddate());
+                /*试用期截止日 -lxx*/
+                /*试用正式天数计算 -lxx*/
+                Map<String, String> map = suitAndDaysCalc(customer.getUserinfo());
+                base.setLastmonthdays(map.get("lastMonthDays"));
+                base.setLastmonthsuitdays(map.get("lastMonthSuitDays"));
+                base.setThismonthdays(map.get("thisMonthDays"));
+                base.setThismonthsuitdays(map.get("thisMonthSuitDays"));
+                /*试用正式天数计算 -lxx*/
                 bases.add(base);
             }
         }
-        if(bases.size() > 0){
+        if (bases.size() > 0) {
             baseMapper.insertBase(bases);
         }
     }
 
+    /**
+     * @return
+     * @Method suitAndDaysCalc
+     * @Author LXX
+     * @Description 试用正式天数计算
+     * @Date 2020/3/18 9:45
+     * @Param userinfo
+     **/
+    private Map<String, String> suitAndDaysCalc(CustomerInfo.UserInfo userinfo) throws Exception {
+        Integer thisMonthDays = 0;
+        Integer thisMonthSuitDays = 0;
+        Integer lastMonthDays = 0;
+        Integer lastMonthSuitDays = 0;
 
-    @Override
-    public void insertResidual(String givingid, TokenModel tokenModel) throws Exception {
-        Residual residual = new Residual();
-        Base base = new Base();
-        base.setGiving_id(givingid);
-        List<Base> baselist = baseMapper.select(base);
-        for (Base b : baselist) {
-            Calendar cal = Calendar.getInstance();
-            String years = String.valueOf(cal.get(cal.YEAR));
-            String months = String.valueOf(cal.get(cal.MONTH) + 1);
-            String user_id = b.getUser_id();
-            List<Attendance> AttendanceList = givingMapper.selectAttendance(user_id, years, months);
-            int rowundex = 0;
-            for (Attendance attendance : AttendanceList) {
-                double one = 0d;
-                double two = 0d;
-                double three = 0d;
-                double four = 0d;
-                double Lasttotaly = 0d;
-                double Thistotaly = 0d;
-                rowundex = rowundex + 1;
-                DecimalFormat df = new DecimalFormat(".00");
-                residual.setRowindex(rowundex);
-                residual.setResidual_id(UUID.randomUUID().toString());
-                residual.setGiving_id(givingid);
-                residual.setUser_id(attendance.getUser_id());
-                residual.setRn(b.getRn());
-                Retire retire = new Retire();
-                retire.setUser_id(attendance.getUser_id());
-                List<Retire> retirelist = retireMapper.select(retire);
-                if (retirelist.size() != 0) {
-                    residual.setRemarks("退职");
-                    residual.setThisweekdays(attendance.getOrdinaryindustry());
-                    residual.setThisrestDay(attendance.getWeekendindustry());
-                    residual.setThislegal(attendance.getStatutoryresidue());
-                    residual.setThislatenight(attendance.getOrdinaryindustrynight());
-                    residual.setThisrestlatenight(attendance.getWeekendindustrynight());
-                    residual.setThislegallatenight(attendance.getStatutoryresiduenight());
-                    int i = 0;
-                    int o = 0;
-                    int m = 0;
-                    int n = 0;
-                    int z = 0;
-                    int k = 0;
-                    double Daixiu1 = 0d;
-                    double Daixiu2 = 0d;
-                    double Daixiu3 = 0d;
-                    double Daixiu4 = 0d;
-                    double Daixiu5 = 0d;
-                    double Daixiu6 = 0d;
-                    double Daixiu7 = 0d;
-                    double Thisreplace3 = 0d;
-                    String months1;
-                    String years1;
-                    if (cal.get(cal.MONTH) == 1) {
-                        months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 3) {
-                        months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 4) {
-                        months1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                        years1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        months1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                        years1 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance atten = new Attendance();
-                    atten.setUser_id(attendance.getUser_id());
-                    atten.setYears(years1);
-                    atten.setMonths(months1);
-                    List<Attendance> Attendancelist = attendanceMapper.select(atten);
-                    for (Attendance attendancelist : Attendancelist) {
-                        if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
-                            i = i + 1;
-                        }
-                    }
-                    String months2;
-                    String years2;
-                    if (cal.get(cal.MONTH) == 1) {
-                        months2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                        years2 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        months2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                        years2 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance a = new Attendance();
-                    a.setUser_id(attendance.getUser_id());
-                    a.setYears(years2);
-                    a.setMonths(months2);
-                    List<Attendance> Attendancelist1 = attendanceMapper.select(a);
-                    for (Attendance attendancelist1 : Attendancelist1) {
-                        if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
-                            o = o + 1;
-                        }
-                    }
-                    List<Attendance> attendanceList = givingMapper.selectAttendance(user_id, years2, months2);
-                    for (Attendance A : attendanceList) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu1 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu1 = 0;
-                        }
-                    }
-                    String months3;
-                    String years3;
-                    if (cal.get(cal.MONTH) == 1) {
-                        months3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        years3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        months3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                        years3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        months3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                        years3 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance a1 = new Attendance();
-                    a1.setUser_id(attendance.getUser_id());
-                    a1.setYears(years3);
-                    a1.setMonths(months3);
-                    List<Attendance> Attendancelist2 = attendanceMapper.select(a1);
-                    for (Attendance attendancelist2 : Attendancelist2) {
-                        if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
-                            m = m + 1;
-                        }
-                    }
-                    List<Attendance> attendanceList1 = givingMapper.selectAttendance(user_id, years3, months3);
-                    for (Attendance A : attendanceList1) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu2 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu2 = 0;
-                        }
-                    }
-                    String months4;
-                    String years4;
-                    if (cal.get(cal.MONTH) == 1) {
-                        months4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        years4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        months4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        years4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else if (cal.get(cal.MONTH) == 3) {
-                        months4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                        years4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                    } else {
-                        months4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                        years4 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance a2 = new Attendance();
-                    a2.setUser_id(attendance.getUser_id());
-                    a2.setYears(years4);
-                    a2.setMonths(months4);
-                    List<Attendance> Attendancelist3 = attendanceMapper.select(a2);
-                    for (Attendance attendancelist3 : Attendancelist3) {
-                        if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
-                            n = n + 1;
-                        }
-                    }
-                    List<Attendance> attendanceList2 = givingMapper.selectAttendance(user_id, years4, months4);
-                    for (Attendance A : attendanceList2) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu3 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu3 = 0;
-                        }
-                    }
-                    String months5 = String.valueOf(cal.get(cal.MONTH));
-                    Attendance a3 = new Attendance();
-                    a3.setUser_id(attendance.getUser_id());
-                    a3.setYears(years);
-                    a3.setMonths(months5);
-                    List<Attendance> Attendancelist4 = attendanceMapper.select(a3);
-                    for (Attendance attendancelist4 : Attendancelist4) {
-                        if (Double.valueOf(attendancelist4.getWeekendindustry()) >= 8.0) {
-                            z = z + 1;
-                        }
-                    }
-                    List<Attendance> attendanceList5 = givingMapper.selectAttendance(user_id, years, months5);
-                    for (Attendance A : attendanceList5) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu4 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu4 = 0;
-                        }
-                    }
-                    String months6;
-                    String years6;
-                    if (cal.get(cal.MONTH) == 12) {
-                        months6 = String.valueOf(cal.get(cal.MONTH) - 11);
-                        years6 = String.valueOf(cal.get(cal.YEAR) + 1);
-                    } else {
-                        months6 = String.valueOf(cal.get(cal.MONTH) + 1);
-                        years6 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    Attendance a4 = new Attendance();
-                    a4.setUser_id(attendance.getUser_id());
-                    a4.setYears(years6);
-                    a4.setMonths(months6);
-                    List<Attendance> Attendancelist5 = attendanceMapper.select(a4);
-                    for (Attendance attendancelist5 : Attendancelist5) {
-                        if (Double.valueOf(attendancelist5.getWeekendindustry()) >= 8.0) {
-                            k = k + 1;
-                        }
-                    }
-                    List<Attendance> attendanceList6 = givingMapper.selectAttendance(user_id, years6, months6);
-                    for (Attendance A : attendanceList6) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu5 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu5 = 0;
-                        }
-                    }
-                    String months7;
-                    String years7;
-                    if (cal.get(cal.MONTH) == 12) {
-                        months7 = String.valueOf(cal.get(cal.MONTH) - 10);
-                        years7 = String.valueOf(cal.get(cal.YEAR) + 1);
-                    } else if (cal.get(cal.MONTH) == 11) {
-                        months7 = String.valueOf(cal.get(cal.MONTH) - 10);
-                        years7 = String.valueOf(cal.get(cal.YEAR) + 1);
-                    } else {
-                        months7 = String.valueOf(cal.get(cal.MONTH) + 2);
-                        years7 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    List<Attendance> attendanceList7 = givingMapper.selectAttendance(user_id, years7, months7);
-                    for (Attendance A : attendanceList7) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu6 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu6 = 0;
-                        }
-                    }
-                    String months8;
-                    String years8;
-                    if (cal.get(cal.MONTH) == 12) {
-                        months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8 = String.valueOf(cal.get(cal.YEAR) + 1);
-                    } else if (cal.get(cal.MONTH) == 11) {
-                        months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8 = String.valueOf(cal.get(cal.YEAR) + 1);
-                    } else if (cal.get(cal.MONTH) == 10) {
-                        months8 = String.valueOf(cal.get(cal.MONTH) - 9);
-                        years8 = String.valueOf(cal.get(cal.YEAR) + 1);
-                    } else {
-                        months8 = String.valueOf(cal.get(cal.MONTH) + 3);
-                        years8 = String.valueOf(cal.get(cal.YEAR));
-                    }
-                    List<Attendance> attendanceList8 = givingMapper.selectAttendance(user_id, years8, months8);
-                    for (Attendance A : attendanceList8) {
-                        if (A.getDaixiu() != null) {
-                            Daixiu7 = Double.valueOf(A.getDaixiu());
-                        } else {
-                            Daixiu7 = 0;
-                        }
-                    }
-                    Thisreplace3 = (z * 8 - (Daixiu6 + Daixiu5 + Daixiu7)) +
-                            (n * 8 - (Daixiu1 + Daixiu2 + Daixiu4)) +
-                            (m * 8 - (Daixiu1 + Daixiu5 + Daixiu4)) +
-                            (o * 8 - (Daixiu6 + Daixiu5 + Daixiu4));
-                    residual.setThisreplace(String.valueOf(i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)));
-                    residual.setThisreplace3(String.valueOf(Thisreplace3));
-                    double Ordinaryindustry = 0d;
-                    double Weekendindustry = 0d;
-                    double Statutoryresidue = 0d;
-                    double Ordinaryindustrynight = 0d;
-                    double Weekendindustrynight = 0d;
-                    double Statutoryresiduenight = 0d;
-                    double Thistotalh = 0d;
-                    if (attendance.getOrdinaryindustry() == null) {
-                        Ordinaryindustry = 0;
-                    } else {
-                        Ordinaryindustry = Double.valueOf(attendance.getOrdinaryindustry());
-                    }
-                    if (attendance.getWeekendindustry() == null) {
-                        Weekendindustry = 0;
-                    } else {
-                        Weekendindustry = Double.valueOf(attendance.getWeekendindustry());
-                    }
-                    if (attendance.getStatutoryresidue() == null) {
-                        Statutoryresidue = 0;
-                    } else {
-                        Statutoryresidue = Double.valueOf(attendance.getStatutoryresidue());
-                    }
-                    if (attendance.getOrdinaryindustrynight() == null) {
-                        Ordinaryindustrynight = 0;
-                    } else {
-                        Ordinaryindustrynight = Double.valueOf(attendance.getOrdinaryindustrynight());
-                    }
-                    if (attendance.getWeekendindustrynight() == null) {
-                        Weekendindustrynight = 0;
-                    } else {
-                        Weekendindustrynight = Double.valueOf(attendance.getWeekendindustrynight());
-                    }
-                    if (attendance.getStatutoryresiduenight() == null) {
-                        Statutoryresiduenight = 0;
-                    } else {
-                        Statutoryresiduenight = Double.valueOf(attendance.getStatutoryresiduenight());
-                    }
-                    Thistotalh = Ordinaryindustry + Weekendindustry + Statutoryresidue + Ordinaryindustrynight + Weekendindustrynight + Statutoryresiduenight + (i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) + Thisreplace3;
-                    residual.setThistotalh(String.valueOf(Thistotalh));
-                    double after = 0d;
-                    double after3 = 0d;
-                    Query query = new Query();
-                    String XDate;
-                    String XMonths;
-                    String XYears;
-                    if (cal.get(cal.MONTH) == 1) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else if (cal.get(cal.MONTH) == 2) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else if (cal.get(cal.MONTH) == 3) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else if (cal.get(cal.MONTH) == 4) {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                        XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    } else {
-                        XMonths = String.valueOf(cal.get(cal.MONTH) - 4);
-                        XYears = String.valueOf(cal.get(cal.YEAR));
-                        XDate = String.valueOf(cal.get(cal.DATE));
-                    }
-                    String XData;
-                    if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
-                        XData = XYears + "-0" + XMonths + "-0" + XDate;
-                    } else if (Integer.parseInt(XMonths) < 10) {
-                        XData = XYears + "-0" + XMonths + "-" + XDate;
-                    } else if (Integer.parseInt(XDate) < 10) {
-                        XData = XYears + "-" + XMonths + "-0" + XDate;
-                    } else {
-                        XData = XYears + "-" + XMonths + "-" + XDate;
-                    }
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                    String Date = sf.format(new Date());
-                    query.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        if (customerInfo.getUserinfo().getGridData() != null) {
-                            List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                            for (CustomerInfo.Personal personal : customerInfo1) {
-                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
-                                    after = Double.valueOf(personal.getAfter());
-                                    break;
-                                }
-                            }
-                            for (CustomerInfo.Personal personal : customerInfo1) {
-                                if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
-                                    after3 = Double.valueOf(personal.getAfter());
-                                    break;
-                                }
-                            }
-                        } else {
-                            after = 0;
-                            after3 = 0;
-                        }
-                    }
-                    double weekendindustry = 0d;
-                    double ordinaryindustry = 0d;
-                    double statutoryresidue = 0d;
-                    double SYJB = 0d;
-                    Dictionary dictionary = new Dictionary();
-                    List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                    for (Dictionary diction : dictionarylist) {
-                        if (diction.getCode().equals("PR049006")) {
-                            ordinaryindustry = Double.valueOf(diction.getValue2());
-                        }
-                        if (diction.getCode().equals("PR049007")) {
-                            weekendindustry = Double.valueOf(diction.getValue2());
-                        }
-                        if (diction.getCode().equals("PR049008")) {
-                            statutoryresidue = Double.valueOf(diction.getValue2());
-                        }
-                        if (diction.getCode().equals("PR049009")) {
-                            SYJB = Double.valueOf(diction.getValue2());
-                        }
-                    }
-                    one = Double.valueOf(Ordinaryindustry * ordinaryindustry + Ordinaryindustrynight * ordinaryindustry * SYJB);
-                    two = Double.valueOf(Weekendindustry * weekendindustry + Weekendindustrynight * weekendindustry * SYJB);
-                    three = Double.valueOf(Statutoryresidue * statutoryresidue + Statutoryresiduenight * statutoryresidue * SYJB) * (after / 21.75 / 8);
-                    four = Double.valueOf((i * 8 - (Daixiu1 + Daixiu2 + Daixiu3)) * weekendindustry) * (after3 / 21.75 / 8);
-                    Thistotaly = one + two + three + four;
-                    residual.setThistotaly(df.format(Thistotaly));
-                    String months10 = String.valueOf(cal.get(cal.MONTH));
-                    List<Attendance> AttendanceList1 = givingMapper.selectAttendance(user_id, years, months10);
-                    for (Attendance Attendance1 : AttendanceList1) {
-                        residual.setLastweekdays(Attendance1.getOrdinaryindustry());
-                        residual.setLastrestDay(Attendance1.getWeekendindustry());
-                        residual.setLastlegal(Attendance1.getStatutoryresidue());
-                        residual.setLastlatenight(Attendance1.getOrdinaryindustrynight());
-                        residual.setLastrestlatenight(Attendance1.getWeekendindustrynight());
-                        residual.setLastlegallatenight(Attendance1.getStatutoryresiduenight());
-                        int Xi = 0;
-                        int Xo = 0;
-                        int Xm = 0;
-                        int Xn = 0;
-                        double XDaixiu1 = 0d;
-                        double XDaixiu2 = 0d;
-                        double XDaixiu3 = 0d;
-                        String Xmonths1;
-                        String Xyears1;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 3) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 4) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance atten1 = new Attendance();
-                        atten1.setUser_id(Attendance1.getUser_id());
-                        atten1.setYears(Xyears1);
-                        atten1.setMonths(Xmonths1);
-                        List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
-                        for (Attendance attendancelist : Attendancelist11) {
-                            if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
-                                Xi = Xi + 1;
-                            }
-                        }
-                        String Xmonths2;
-                        String Xyears2;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                            Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                            Xyears2 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance Xa = new Attendance();
-                        Xa.setUser_id(Attendance1.getUser_id());
-                        Xa.setYears(Xyears2);
-                        Xa.setMonths(Xmonths2);
-                        List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
-                        for (Attendance attendancelist1 : XAttendancelist1) {
-                            if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
-                                Xo = Xo + 1;
-                            }
-                        }
-                        List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
-                        for (Attendance A : XattendanceList) {
-                            if (A.getDaixiu() != null) {
-                                XDaixiu1 = Double.valueOf(A.getDaixiu());
-                            } else {
-                                XDaixiu1 = 0;
-                            }
-                        }
-                        String Xmonths3;
-                        String Xyears3;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                            Xyears3 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance Xa1 = new Attendance();
-                        Xa1.setUser_id(Attendance1.getUser_id());
-                        Xa1.setYears(Xyears3);
-                        Xa1.setMonths(Xmonths3);
-                        List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
-                        for (Attendance attendancelist2 : XAttendancelist2) {
-                            if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
-                                Xm = Xm + 1;
-                            }
-                        }
-                        List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, Xyears3, Xmonths3);
-                        for (Attendance A : XattendanceList1) {
-                            if (A.getDaixiu() != null) {
-                                XDaixiu2 = Double.valueOf(A.getDaixiu());
-                            } else {
-                                XDaixiu2 = 0;
-                            }
-                        }
-                        String Xmonths4;
-                        String Xyears4;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 3) {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance Xa2 = new Attendance();
-                        Xa2.setUser_id(Attendance1.getUser_id());
-                        Xa2.setYears(Xyears4);
-                        Xa2.setMonths(Xmonths4);
-                        List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
-                        for (Attendance attendancelist3 : XAttendancelist3) {
-                            if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
-                                Xn = Xn + 1;
-                            }
-                        }
-                        List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, Xyears4, Xmonths4);
-                        for (Attendance A : XattendanceList2) {
-                            if (A.getDaixiu() != null) {
-                                XDaixiu3 = Double.valueOf(A.getDaixiu());
-                            } else {
-                                XDaixiu3 = 0;
-                            }
-                        }
-                        residual.setLastreplace(String.valueOf(Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
-                        double XOrdinaryindustry = 0d;
-                        double XWeekendindustry = 0d;
-                        double XStatutoryresidue = 0d;
-                        double XOrdinaryindustrynight = 0d;
-                        double XWeekendindustrynight = 0d;
-                        double XStatutoryresiduenight = 0d;
-                        double XLasttotalh = 0d;
-                        if (Attendance1.getOrdinaryindustry() == null) {
-                            XOrdinaryindustry = 0;
-                        } else {
-                            XOrdinaryindustry = Double.valueOf(Attendance1.getOrdinaryindustry());
-                        }
-                        if (Attendance1.getWeekendindustry() == null) {
-                            XWeekendindustry = 0;
-                        } else {
-                            XWeekendindustry = Double.valueOf(Attendance1.getWeekendindustry());
-                        }
-                        if (Attendance1.getStatutoryresidue() == null) {
-                            XStatutoryresidue = 0;
-                        } else {
-                            XStatutoryresidue = Double.valueOf(Attendance1.getStatutoryresidue());
-                        }
-                        if (Attendance1.getOrdinaryindustrynight() == null) {
-                            XOrdinaryindustrynight = 0;
-                        } else {
-                            XOrdinaryindustrynight = Double.valueOf(Attendance1.getOrdinaryindustrynight());
-                        }
-                        if (Attendance1.getWeekendindustrynight() == null) {
-                            XWeekendindustrynight = 0;
-                        } else {
-                            XWeekendindustrynight = Double.valueOf(Attendance1.getWeekendindustrynight());
-                        }
-                        if (Attendance1.getStatutoryresiduenight() == null) {
-                            XStatutoryresiduenight = 0;
-                        } else {
-                            XStatutoryresiduenight = Double.valueOf(Attendance1.getStatutoryresiduenight());
-                        }
-                        XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
-                        residual.setLasttotalh(String.valueOf(XLasttotalh));
-                        double After = 0d;
-                        double After3 = 0d;
-                        String XDate1;
-                        String XMonths1;
-                        String XYears1;
-                        String XData1;
-                        if (cal.get(cal.MONTH) == 1) {
-                            XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1 = String.valueOf(cal.get(cal.DATE));
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1 = String.valueOf(cal.get(cal.DATE));
-                        } else if (cal.get(cal.MONTH) == 3) {
-                            XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1 = String.valueOf(cal.get(cal.DATE));
-                        } else if (cal.get(cal.MONTH) == 4) {
-                            XMonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate1 = String.valueOf(cal.get(cal.DATE));
-                        } else {
-                            XMonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                            XYears1 = String.valueOf(cal.get(cal.YEAR));
-                            XDate1 = String.valueOf(cal.get(cal.DATE));
-                        }
-                        if (Integer.parseInt(XMonths1) < 10 && Integer.parseInt(XDate1) < 10) {
-                            XData1 = XYears1 + "-0" + XMonths1 + "-0" + XDate1;
-                        } else if (Integer.parseInt(XMonths1) < 10) {
-                            XData1 = XYears1 + "-0" + XMonths + "-" + XDate1;
-                        } else if (Integer.parseInt(XDate1) < 10) {
-                            XData1 = XYears1 + "-" + XMonths1 + "-0" + XDate1;
-                        } else {
-                            XData1 = XYears1 + "-" + XMonths1 + "-" + XDate1;
-                        }
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                        String Date1 = sf1.format(new Date());
-                        Query query1 = new Query();
-                        query1.addCriteria(Criteria.where("userid").is(attendance.getUser_id()));
-                        CustomerInfo customerInfo1 = mongoTemplate.findOne(query1, CustomerInfo.class);
-                        if (customerInfo1 != null) {
-                            if (customerInfo.getUserinfo().getGridData() != null) {
-                                List<CustomerInfo.Personal> customerInfoList = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                                for (CustomerInfo.Personal personal : customerInfoList) {
-                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date1.replace("-", ""))) {
-                                        After = Double.valueOf(personal.getAfter());
-                                        break;
-                                    }
-                                }
-                                for (CustomerInfo.Personal personal : customerInfoList) {
-                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData1.replace("-", ""))) {
-                                        After3 = Double.valueOf(personal.getAfter());
-                                        break;
-                                    }
-                                }
-                            } else {
-                                After = 0;
-                                After3 = 0;
-                            }
-                        }
-                        double xweekendindustry = 0d;
-                        double xordinaryindustry = 0d;
-                        double xstatutoryresidue = 0d;
-                        double xSYJB = 0d;
-                        Dictionary xdictionary = new Dictionary();
-                        List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
-                        for (Dictionary diction : xdictionarylist) {
-                            if (diction.getCode().equals("PR049006")) {
-                                xordinaryindustry = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049007")) {
-                                xweekendindustry = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049008")) {
-                                xstatutoryresidue = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049009")) {
-                                xSYJB = Double.valueOf(diction.getValue2());
-                            }
-                        }
-                        one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
-                        two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
-                        three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB) * (After / 21.75 / 8);
-                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry) * (After3 / 21.75 / 8);
-                        Lasttotaly = one + two + three + four;
-                        residual.setLasttotaly(df.format(Lasttotaly));
-                    }
-                    if (Lasttotaly + Thistotaly == 0.0) {
-                        residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
-                    } else {
-                        residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
-                    }
-                } else {
-                    String months10 = String.valueOf(cal.get(cal.MONTH));
-                    List<Attendance> AttendanceList1 = givingMapper.selectAttendance(user_id, years, months10);
-                    for (Attendance attendance1 : AttendanceList1) {
-                        residual.setRemarks("-");
-                        residual.setLastweekdays(attendance1.getOrdinaryindustry());
-                        residual.setLastrestDay(attendance1.getWeekendindustry());
-                        residual.setLastlegal(attendance1.getStatutoryresidue());
-                        residual.setLastlatenight(attendance1.getOrdinaryindustrynight());
-                        residual.setLastrestlatenight(attendance1.getWeekendindustrynight());
-                        residual.setLastlegallatenight(attendance1.getStatutoryresiduenight());
-                        int Xi = 0;
-                        int Xo = 0;
-                        int Xm = 0;
-                        int Xn = 0;
-                        double XDaixiu1 = 0d;
-                        double XDaixiu2 = 0d;
-                        double XDaixiu3 = 0d;
-                        String Xmonths1;
-                        String Xyears1;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 3) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 4) {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) + 8);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths1 = String.valueOf(cal.get(cal.MONTH) - 4);
-                            Xyears1 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance atten1 = new Attendance();
-                        atten1.setUser_id(attendance1.getUser_id());
-                        atten1.setYears(Xyears1);
-                        atten1.setMonths(Xmonths1);
-                        List<Attendance> Attendancelist11 = attendanceMapper.select(atten1);
-                        for (Attendance attendancelist : Attendancelist11) {
-                            if (Double.valueOf(attendancelist.getWeekendindustry()) >= 8.0) {
-                                Xi = Xi + 1;
-                            }
-                        }
-                        String Xmonths2;
-                        String Xyears2;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths2 = String.valueOf(cal.get(cal.MONTH) + 11);
-                            Xyears2 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths2 = String.valueOf(cal.get(cal.MONTH) - 1);
-                            Xyears2 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance Xa = new Attendance();
-                        Xa.setUser_id(attendance1.getUser_id());
-                        Xa.setYears(Xyears2);
-                        Xa.setMonths(Xmonths2);
-                        List<Attendance> XAttendancelist1 = attendanceMapper.select(Xa);
-                        for (Attendance attendancelist1 : XAttendancelist1) {
-                            if (Double.valueOf(attendancelist1.getWeekendindustry()) >= 8.0) {
-                                Xo = Xo + 1;
-                            }
-                        }
-                        List<Attendance> XattendanceList = givingMapper.selectAttendance(user_id, Xyears2, Xmonths2);
-                        for (Attendance A : XattendanceList) {
-                            if (A.getDaixiu() != null) {
-                                XDaixiu1 = Double.valueOf(A.getDaixiu());
-                            } else {
-                                XDaixiu1 = 0;
-                            }
-                        }
-                        String Xmonths3;
-                        String Xyears3;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) + 10);
-                            Xyears3 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths3 = String.valueOf(cal.get(cal.MONTH) - 2);
-                            Xyears3 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance Xa1 = new Attendance();
-                        Xa1.setUser_id(attendance1.getUser_id());
-                        Xa1.setYears(Xyears3);
-                        Xa1.setMonths(Xmonths3);
-                        List<Attendance> XAttendancelist2 = attendanceMapper.select(Xa1);
-                        for (Attendance attendancelist2 : XAttendancelist2) {
-                            if (Double.valueOf(attendancelist2.getWeekendindustry()) >= 8.0) {
-                                Xm = Xm + 1;
-                            }
-                        }
-                        List<Attendance> XattendanceList1 = givingMapper.selectAttendance(user_id, Xyears3, Xmonths3);
-                        for (Attendance A : XattendanceList1) {
-                            if (A.getDaixiu() != null) {
-                                XDaixiu2 = Double.valueOf(A.getDaixiu());
-                            } else {
-                                XDaixiu2 = 0;
-                            }
-                        }
-                        String Xmonths4;
-                        String Xyears4;
-                        if (cal.get(cal.MONTH) == 1) {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else if (cal.get(cal.MONTH) == 3) {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) + 9);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR) - 1);
-                        } else {
-                            Xmonths4 = String.valueOf(cal.get(cal.MONTH) - 3);
-                            Xyears4 = String.valueOf(cal.get(cal.YEAR));
-                        }
-                        Attendance Xa2 = new Attendance();
-                        Xa2.setUser_id(attendance1.getUser_id());
-                        Xa2.setYears(Xyears4);
-                        Xa2.setMonths(Xmonths4);
-                        List<Attendance> XAttendancelist3 = attendanceMapper.select(Xa2);
-                        for (Attendance attendancelist3 : XAttendancelist3) {
-                            if (Double.valueOf(attendancelist3.getWeekendindustry()) >= 8.0) {
-                                Xn = Xn + 1;
-                            }
-                        }
-                        List<Attendance> XattendanceList2 = givingMapper.selectAttendance(user_id, Xyears4, Xmonths4);
-                        for (Attendance A : XattendanceList2) {
-                            if (A.getDaixiu() != null) {
-                                XDaixiu3 = Double.valueOf(A.getDaixiu());
-                            } else {
-                                XDaixiu3 = 0;
-                            }
-                        }
-                        residual.setLastreplace(String.valueOf(Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)));
-                        double XOrdinaryindustry = 0d;
-                        double XWeekendindustry = 0d;
-                        double XStatutoryresidue = 0d;
-                        double XOrdinaryindustrynight = 0d;
-                        double XWeekendindustrynight = 0d;
-                        double XStatutoryresiduenight = 0d;
-                        double XLasttotalh = 0d;
-                        if (attendance1.getOrdinaryindustry() == null) {
-                            XOrdinaryindustry = 0;
-                        } else {
-                            XOrdinaryindustry = Double.valueOf(attendance1.getOrdinaryindustry());
-                        }
-                        if (attendance1.getWeekendindustry() == null) {
-                            XWeekendindustry = 0;
-                        } else {
-                            XWeekendindustry = Double.valueOf(attendance1.getWeekendindustry());
-                        }
-                        if (attendance1.getStatutoryresidue() == null) {
-                            XStatutoryresidue = 0;
-                        } else {
-                            XStatutoryresidue = Double.valueOf(attendance1.getStatutoryresidue());
-                        }
-                        if (attendance1.getOrdinaryindustrynight() == null) {
-                            XOrdinaryindustrynight = 0;
-                        } else {
-                            XOrdinaryindustrynight = Double.valueOf(attendance1.getOrdinaryindustrynight());
-                        }
-                        if (attendance1.getWeekendindustrynight() == null) {
-                            XWeekendindustrynight = 0;
-                        } else {
-                            XWeekendindustrynight = Double.valueOf(attendance1.getWeekendindustrynight());
-                        }
-                        if (attendance1.getStatutoryresiduenight() == null) {
-                            XStatutoryresiduenight = 0;
-                        } else {
-                            XStatutoryresiduenight = Double.valueOf(attendance1.getStatutoryresiduenight());
-                        }
-                        XLasttotalh = XOrdinaryindustry + XWeekendindustry + XStatutoryresidue + XOrdinaryindustrynight + XWeekendindustrynight + XStatutoryresiduenight + (Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3));
-                        residual.setLasttotalh(String.valueOf(XLasttotalh));
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        //当月日期1号
+        Calendar calNowOne = Calendar.getInstance();
+        calNowOne.add(Calendar.MONTH, 0);
+        calNowOne.set(Calendar.DAY_OF_MONTH, 1);
+        //当月日期月末
+        Calendar calNowLast = Calendar.getInstance();
+        calNowLast.set(Calendar.DAY_OF_MONTH, calNowLast.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //上月日期月末
+        Calendar calLast = Calendar.getInstance();
+        calLast.add(Calendar.MONTH, -1);
+        calLast.set(Calendar.DAY_OF_MONTH, calLast.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //上月日期1号
+        Calendar calLastOne = Calendar.getInstance();
+        calLastOne.add(Calendar.MONTH, -1);
+        calLastOne.set(Calendar.DAY_OF_MONTH, 1);
+        //入职日
+        Calendar calEnterDay = Calendar.getInstance();
+        calEnterDay.setTime(sf.parse(userinfo.getEnterday()));
+        //退职日
+        Calendar calResignationDate = Calendar.getInstance();
+        if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
+            calResignationDate.setTime(sf.parse(userinfo.getResignation_date()));
+        } else {
+            calResignationDate.setTime(calNowLast.getTime());
+        }
 
-                        double after = 0d;
-                        double after3 = 0d;
-                        Query query = new Query();
-                        String XDate;
-                        String XMonths;
-                        String XYears;
-                        if (cal.get(cal.MONTH) == 1) {
-                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate = String.valueOf(cal.get(cal.DATE));
-                        } else if (cal.get(cal.MONTH) == 2) {
-                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate = String.valueOf(cal.get(cal.DATE));
-                        } else if (cal.get(cal.MONTH) == 3) {
-                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate = String.valueOf(cal.get(cal.DATE));
-                        } else if (cal.get(cal.MONTH) == 4) {
-                            XMonths = String.valueOf(cal.get(cal.MONTH) + 8);
-                            XYears = String.valueOf(cal.get(cal.YEAR) - 1);
-                            XDate = String.valueOf(cal.get(cal.DATE));
-                        } else {
-                            XMonths = String.valueOf(cal.get(cal.MONTH) - 4);
-                            XYears = String.valueOf(cal.get(cal.YEAR));
-                            XDate = String.valueOf(cal.get(cal.DATE));
-                        }
-                        String XData;
-                        if (Integer.parseInt(XMonths) < 10 && Integer.parseInt(XDate) < 10) {
-                            XData = XYears + "-0" + XMonths + "-0" + XDate;
-                        } else if (Integer.parseInt(XMonths) < 10) {
-                            XData = XYears + "-0" + XMonths + "-" + XDate;
-                        } else if (Integer.parseInt(XDate) < 10) {
-                            XData = XYears + "-" + XMonths + "-0" + XDate;
-                        } else {
-                            XData = XYears + "-" + XMonths + "-" + XDate;
-                        }
-                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                        String Date = sf.format(new Date());
-                        query.addCriteria(Criteria.where("userid").is(attendance1.getUser_id()));
-                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (customerInfo != null) {
-                            if (customerInfo.getUserinfo().getGridData() != null) {
-                                List<CustomerInfo.Personal> customerInfo1 = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                                for (CustomerInfo.Personal personal : customerInfo1) {
-                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(Date.replace("-", ""))) {
-                                        after = Double.valueOf(personal.getAfter());
-                                        break;
-                                    }
-                                }
-                                for (CustomerInfo.Personal personal : customerInfo1) {
-                                    if (Integer.parseInt(personal.getDate().replace("-", "")) <= Integer.parseInt(XData.replace("-", ""))) {
-                                        after3 = Double.valueOf(personal.getAfter());
-                                        break;
-                                    }
-                                }
-                            } else {
-                                after = 0;
-                                after3 = 0;
-                            }
-                        }
-                        double xweekendindustry = 0d;
-                        double xordinaryindustry = 0d;
-                        double xstatutoryresidue = 0d;
-                        double xSYJB = 0d;
-                        Dictionary xdictionary = new Dictionary();
-                        List<Dictionary> xdictionarylist = dictionaryMapper.select(xdictionary);
-                        for (Dictionary diction : xdictionarylist) {
-                            if (diction.getCode().equals("PR049006")) {
-                                xordinaryindustry = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049007")) {
-                                xweekendindustry = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049008")) {
-                                xstatutoryresidue = Double.valueOf(diction.getValue2());
-                            }
-                            if (diction.getCode().equals("PR049009")) {
-                                xSYJB = Double.valueOf(diction.getValue2());
-                            }
-                        }
-                        one = Double.valueOf(XOrdinaryindustry * xordinaryindustry + XOrdinaryindustrynight * xordinaryindustry * xSYJB);
-                        two = Double.valueOf(XWeekendindustry * xweekendindustry + XWeekendindustrynight * xweekendindustry * xSYJB);
-                        three = Double.valueOf(XStatutoryresidue * xstatutoryresidue + XStatutoryresiduenight * xstatutoryresidue * xSYJB) * (after / 21.75 / 8);
-                        four = Double.valueOf((Xi * 8 - (XDaixiu1 + XDaixiu2 + XDaixiu3)) * xweekendindustry) * (after3 / 21.75 / 8);
-                        Lasttotaly = one + two + three + four;
-                        residual.setLasttotaly(df.format(Lasttotaly));
-                        if (Lasttotaly + Thistotaly == 0.0) {
-                            residual.setSubsidy(String.valueOf(Lasttotaly + Thistotaly));
-                        } else {
-                            residual.setSubsidy(df.format(Lasttotaly + Thistotaly));
-                        }
-                    }
-                    residual.preInsert(tokenModel);
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(user_id));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        residual.setJobnumber(customerInfo.getUserinfo().getJobnumber());
-                    }
+        //试用期截止日是空值
+        if (StringUtils.isEmpty(userinfo.getEnddate())) {
+            //入职日是当月
+            if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                //上月试用天数
+                lastMonthSuitDays = 0;
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
                 }
-                residualMapper.insert(residual);
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+            //入职日是上月
+            else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                //上月试用天数
+                lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+            //其他
+            else {
+                //上月试用天数
+                lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月试用天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                //本月正式天数
+                thisMonthDays = 0;
+            }
+        }
+        //试用期截止日不是空值
+        else {
+            //试用最后日
+            Calendar calSuitDate = Calendar.getInstance();
+            calSuitDate.setTime(sf.parse(userinfo.getEnddate()));
+            calSuitDate.add(Calendar.DATE, -1);
+            //试用截止日
+            Calendar calOfficialDate = Calendar.getInstance();
+            calOfficialDate.setTime(sf.parse(userinfo.getEnddate()));
+            //试用截止日大于本月末日
+            if (calOfficialDate.getTime().getTime() > calNowLast.getTime().getTime()) {
+                //入职日是当月
+                if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = 0;
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+                //入职日是上月
+                else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+                //其他
+                else {
+                    //上月试用天数
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                    //上月正式天数
+                    lastMonthDays = 0;
+                    //本月试用天数
+                    //本月末日/退职日期 取小值
+                    Date temp = calResignationDate.getTime();
+                    if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                        temp = calNowLast.getTime();
+                    }
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    //本月正式天数
+                    thisMonthDays = 0;
+                }
+            }
+            //试用截止日小于上月月初日
+            else if (calOfficialDate.getTime().getTime() < calLastOne.getTime().getTime()) {
+                //上月试用天数
+                lastMonthSuitDays = 0;
+                //上月正式天数
+                lastMonthDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                //本月试用天数
+                thisMonthSuitDays = 0;
+                //本月正式天数
+                //本月末日/退职日期 取小值
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+            }
+            //试用截止日是上月
+            else if (calLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
+                //上月试用天数
+                //上月1日/入职日期 取大值
+                Date tempStart = calLastOne.getTime();
+                if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
+                    tempStart = calEnterDay.getTime();
+                }
+                lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
+                //上月正式天数
+                lastMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //本月试用天数
+                thisMonthSuitDays = 0;
+                //本月正式天数
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+            }
+            //试用截止日是本月
+            else if (calNowLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calNowLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
+                //入职日是当月
+                if (calNowOne.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calNowOne.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
+                    //上月试用天数
+                    lastMonthSuitDays = 0;
+                    //本月试用天数
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calSuitDate.getTime());
+                }
+                //入职不是当月
+                else {
+                    //上月试用天数
+                    //上月1日/入职日期 取大值
+                    Date tempStart = calLastOne.getTime();
+                    if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
+                        tempStart = calEnterDay.getTime();
+                    }
+                    lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calLast.getTime());
+                    //本月试用天数
+                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                }
 
+                //上月正式天数
+                lastMonthDays = 0;
+                //本月正式天数
+                Date temp = calResignationDate.getTime();
+                if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
+                    temp = calNowLast.getTime();
+                }
+                thisMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), temp);
             }
         }
 
-    }
-
-    @Override
-    public void insertAttendance(String givingid, TokenModel tokenModel) throws Exception {
-        Lackattendance lackattendance = new Lackattendance();
-        Base base = new Base();
-        base.setGiving_id(givingid);
-        List<Base> baselist = baseMapper.select(base);
-        for (Base b : baselist) {
-            Calendar cal = Calendar.getInstance();
-            String years = String.valueOf(cal.get(cal.YEAR));
-            String months = String.valueOf(cal.get(cal.MONTH) + 1);
-            String user_id = b.getUser_id();
-            List<Attendance> AttendanceList = givingMapper.selectAttendance(user_id, years, months);
-            int rowundex = 0;
-            double one = 0d;
-            double two = 0d;
-            double three = 0d;
-            double Lasttotal = 0d;
-            double thistotal = 0d;
-            for (Attendance attendance : AttendanceList) {
-                double Shortsickleave = 0d;
-                double DLZD = 0d;
-                Dictionary dictionary = new Dictionary();
-                List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
-                for (Dictionary diction : dictionarylist) {
-                    if (diction.getCode().equals("PR047001")) {
-                        DLZD = Double.valueOf(diction.getValue2());
-                    }
-                    if (diction.getCode().equals("PR049005")) {
-                        Shortsickleave = Double.valueOf(diction.getValue2());
-                    }
-                }
-                rowundex = rowundex + 1;
-                lackattendance.setRowindex(rowundex);
-                lackattendance.setLackattendance_id(UUID.randomUUID().toString());
-                lackattendance.setGiving_id(givingid);
-                lackattendance.setUser_id(attendance.getUser_id());
-                Retire retire = new Retire();
-                retire.setUser_id(attendance.getUser_id());
-                List<Retire> retirelist = retireMapper.select(retire);
-                DecimalFormat df = new DecimalFormat(".00");
-                if (retirelist.size() != 0) {
-                    lackattendance.setRemarks("退职");
-                    lackattendance.setThisshortdeficiency(attendance.getShortsickleave());
-                    lackattendance.setThischronicdeficiency(attendance.getLongsickleave());
-                    Base ba = new Base();
-                    ba.setUser_id(attendance.getUser_id());
-                    List<Base> Baselist = baseMapper.select(ba);
-                    for (Base B : Baselist) {
-                        double Late = 0d;
-                        double Leaveearly = 0d;
-                        double Absenteeism = 0d;
-                        double Thismonth = 0d;
-                        double Thisdiligence = 0d;
-                        if (B.getThismonth() == null || Double.valueOf(B.getThismonth()) == 0.0) {
-                            Thismonth = 0;
-                        } else {
-                            Thismonth = Integer.parseInt(B.getThismonth());
-                        }
-                        if (attendance.getLate() == null) {
-                            Late = 0;
-                        } else {
-                            Late = Integer.parseInt(attendance.getLate());
-                        }
-                        if (attendance.getLeaveearly() == null) {
-                            Leaveearly = 0;
-                        } else {
-                            Leaveearly = Integer.parseInt(attendance.getLeaveearly());
-                        }
-                        if (attendance.getAbsenteeism() == null) {
-                            Absenteeism = 0;
-                        } else {
-                            Absenteeism = Integer.parseInt(attendance.getAbsenteeism());
-                        }
-                        if (attendance.getShortsickleave() == null) {
-                            two = 0;
-                        } else {
-                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendance.getShortsickleave()));
-                        }
-                        if (attendance.getLongsickleave() == null) {
-                            three = 0;
-                        } else {
-                            three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
-                        }
-
-                        Thisdiligence = Late + Leaveearly + Absenteeism;
-                        lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
-                        one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
-                        thistotal = one - two - three;
-
-                        if (thistotal == 0.0) {
-                            lackattendance.setThistotal(String.valueOf(thistotal));
-                        } else {
-                            lackattendance.setThistotal(df.format(thistotal));
-                        }
-
-                        String Years = String.valueOf(cal.get(cal.YEAR));
-                        String Months = String.valueOf(cal.get(cal.MONTH));
-                        String User_id = b.getUser_id();
-                        List<Attendance> Attendancelist = givingMapper.selectAttendance(User_id, Years, Months);
-                        for (Attendance attendan : Attendancelist) {
-                            lackattendance.setLastshortdeficiency(attendan.getShortsickleave());
-                            lackattendance.setLastchronicdeficiency(attendan.getLongsickleave());
-                            Base bas = new Base();
-                            bas.setUser_id(attendan.getUser_id());
-                            List<Base> BaseList = baseMapper.select(bas);
-                            for (Base Ba : BaseList) {
-                                double late = 0d;
-                                double leaveearly = 0d;
-                                double absenteeism = 0d;
-                                double Lastmonth = 0d;
-                                double Lastdiligence = 0d;
-                                if (Ba.getLastmonth() == null || Double.valueOf(Ba.getLastmonth()) == 0.0) {
-                                    Lastmonth = 0;
-                                } else {
-                                    Lastmonth = Integer.parseInt(Ba.getLastmonth());
-                                }
-                                if (attendan.getLate() == null) {
-                                    late = 0;
-                                } else {
-                                    late = Integer.parseInt(attendan.getLate());
-                                }
-                                if (attendan.getLeaveearly() == null) {
-                                    leaveearly = 0;
-                                } else {
-                                    leaveearly = Integer.parseInt(attendan.getLeaveearly());
-                                }
-                                if (attendan.getAbsenteeism() == null) {
-                                    absenteeism = 0;
-                                } else {
-                                    absenteeism = Integer.parseInt(attendan.getAbsenteeism());
-                                }
-                                if (attendan.getShortsickleave() == null) {
-                                    two = 0;
-                                } else {
-                                    two = Double.valueOf(Lastmonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendan.getShortsickleave()));
-                                }
-                                if (attendan.getLongsickleave() == null) {
-                                    three = 0;
-                                } else {
-                                    three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendan.getLongsickleave()));
-                                }
-                                Lastdiligence = late + leaveearly + absenteeism;
-                                lackattendance.setLastdiligence(String.valueOf(Lastdiligence));
-                                one = Double.valueOf(Lastdiligence * Lastmonth / 21.75 / 8);
-                                Lasttotal = one - two - three;
-                                if (Lasttotal == 0.0) {
-                                    lackattendance.setLasttotal(String.valueOf(Lasttotal));
-                                } else {
-                                    lackattendance.setLasttotal(df.format(Lasttotal));
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    lackattendance.setRemarks("-");
-                    lackattendance.setThisshortdeficiency(attendance.getShortsickleave());
-                    lackattendance.setThischronicdeficiency(attendance.getLongsickleave());
-                    Base ba = new Base();
-                    ba.setUser_id(attendance.getUser_id());
-                    List<Base> Baselist = baseMapper.select(ba);
-                    for (Base B : Baselist) {
-                        double Late = 0d;
-                        double Leaveearly = 0d;
-                        double Absenteeism = 0d;
-                        double Thismonth = 0d;
-                        double Thisdiligence = 0d;
-                        if (B.getThismonth() == null || Double.valueOf(B.getThismonth()) == 0.0) {
-                            Thismonth = 0;
-                        } else {
-                            Thismonth = Integer.parseInt(B.getThismonth());
-                        }
-                        if (attendance.getLate() == null) {
-                            Late = 0;
-                        } else {
-                            Late = Integer.parseInt(attendance.getLate());
-                        }
-                        if (attendance.getLeaveearly() == null) {
-                            Leaveearly = 0;
-                        } else {
-                            Leaveearly = Integer.parseInt(attendance.getLeaveearly());
-                        }
-                        if (attendance.getAbsenteeism() == null) {
-                            Absenteeism = 0;
-                        } else {
-                            Absenteeism = Integer.parseInt(attendance.getAbsenteeism());
-                        }
-                        if (attendance.getShortsickleave() == null) {
-                            two = 0;
-                        } else {
-                            two = Double.valueOf(Thismonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendance.getShortsickleave()));
-                        }
-                        if (attendance.getLongsickleave() == null) {
-                            three = 0;
-                        } else {
-                            three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendance.getLongsickleave()));
-                        }
-                        Thisdiligence = Late + Leaveearly + Absenteeism;
-                        lackattendance.setThisdiligence(String.valueOf(Thisdiligence));
-                        one = Double.valueOf(Thisdiligence * Thismonth / 21.75 / 8);
-                        thistotal = one - two - three;
-                        if (thistotal == 0.0) {
-                            lackattendance.setThistotal(String.valueOf(thistotal));
-                        } else {
-                            lackattendance.setThistotal(df.format(thistotal));
-                        }
-                        String Years = String.valueOf(cal.get(cal.YEAR));
-                        String Months = String.valueOf(cal.get(cal.MONTH));
-                        String User_id = b.getUser_id();
-                        List<Attendance> Attendancelist = givingMapper.selectAttendance(User_id, Years, Months);
-                        for (Attendance attendan : Attendancelist) {
-                            lackattendance.setLastshortdeficiency(attendan.getShortsickleave());
-                            lackattendance.setLastchronicdeficiency(attendan.getLongsickleave());
-                            Base bas = new Base();
-                            bas.setUser_id(attendan.getUser_id());
-                            List<Base> BaseList = baseMapper.select(bas);
-                            for (Base Ba : BaseList) {
-                                double late = 0d;
-                                double leaveearly = 0d;
-                                double absenteeism = 0d;
-                                double Lastmonth = 0d;
-                                double Lastdiligence = 0d;
-                                if (Ba.getLastmonth() == null || Double.valueOf(Ba.getLastmonth()) == 0.0) {
-                                    Lastmonth = 0;
-                                } else {
-                                    Lastmonth = Integer.parseInt(Ba.getLastmonth());
-                                }
-                                if (attendan.getLate() == null) {
-                                    late = 0;
-                                } else {
-                                    late = Integer.parseInt(attendan.getLate());
-                                }
-                                if (attendan.getLeaveearly() == null) {
-                                    leaveearly = 0;
-                                } else {
-                                    leaveearly = Integer.parseInt(attendan.getLeaveearly());
-                                }
-                                if (attendan.getAbsenteeism() == null) {
-                                    absenteeism = 0;
-                                } else {
-                                    absenteeism = Integer.parseInt(attendan.getAbsenteeism());
-                                }
-                                if (attendan.getShortsickleave() == null) {
-                                    two = 0;
-                                } else {
-                                    two = Double.valueOf(Lastmonth / 21.75 / 8 * Shortsickleave * Integer.parseInt(attendan.getShortsickleave()));
-                                }
-                                if (attendan.getLongsickleave() == null) {
-                                    three = 0;
-                                } else {
-                                    three = Double.valueOf(DLZD / 21.75 / 8 * Integer.parseInt(attendan.getLongsickleave()));
-                                }
-                                Lastdiligence = late + leaveearly + absenteeism;
-                                lackattendance.setLastdiligence(String.valueOf(Lastdiligence));
-                                one = Double.valueOf(Lastdiligence * Lastmonth / 21.75 / 8);
-                                Lasttotal = one - two - three;
-                                if (Lasttotal == 0.0) {
-                                    lackattendance.setLasttotal(String.valueOf(Lasttotal));
-                                } else {
-                                    lackattendance.setLasttotal(df.format(Lasttotal));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (thistotal + Lasttotal == 0.0) {
-                    lackattendance.setGive(String.valueOf(thistotal + Lasttotal));
-                } else {
-                    lackattendance.setGive(df.format(thistotal + Lasttotal));
-                }
-                lackattendance.preInsert(tokenModel);
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userid").is(user_id));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    lackattendance.setJobnumber(customerInfo.getUserinfo().getJobnumber());
-                }
-                lackattendanceMapper.insert(lackattendance);
-            }
-        }
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
+        map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
+        map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
+        map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        return map;
     }
 
     @Override
@@ -1681,14 +932,23 @@ public class GivingServiceImpl implements GivingService {
         Base base = new Base();
         Contrast contrast = new Contrast();
         OtherOne otherOne = new OtherOne();
+        // 2020/03/14 add by myt start
+        Induction induction = new Induction();
+        Retire retire = new Retire();
+        // 2020/03/14 add by myt end
         if (givinglist.size() != 0) {
             base.setGiving_id(givinglist.get(0).getGiving_id());
             baseMapper.delete(base);
             contrast.setGiving_id(givinglist.get(0).getGiving_id());
             contrastMapper.delete(contrast);
-
             otherOne.setGiving_id(givinglist.get(0).getGiving_id());
             otherOneMapper.delete(otherOne);
+            // 2020/03/14 add by myt start
+            induction.setGiving_id(givinglist.get(0).getGiving_id());
+            inductionMapper.delete(induction);
+            retire.setGiving_id(givinglist.get(0).getGiving_id());
+            retireMapper.delete(retire);
+            // 2020/03/14 add by myt end
         }
         giving = new Giving();
         giving.setMonths(strTemp);
@@ -1703,12 +963,16 @@ public class GivingServiceImpl implements GivingService {
         giving.setMonths(sf1.format(new Date()));
 
         givingMapper.insert(giving);
+        // 2020/03/11 add by myt start
+        insertInduction(givingid, tokenModel);
+        insertRetire(givingid, tokenModel);
+        // 2020/03/14 add by myt end
         insertBase(givingid, tokenModel);
-//        insertContrast(givingid, tokenModel);
-//        insertOtherTwo(givingid, tokenModel);
-//        insertOtherOne(givingid, tokenModel);
-//        insertAttendance(givingid, tokenModel);
-//        insertResidual(givingid, tokenModel);
+        insertContrast(givingid, tokenModel);
+        insertOtherTwo(givingid, tokenModel);
+        insertOtherOne(givingid, tokenModel);
+        insertLackattendance(givingid, tokenModel);
+        insertResidual(givingid, tokenModel);
     }
 
     @Override
@@ -1756,166 +1020,12 @@ public class GivingServiceImpl implements GivingService {
         }
     }
 
-    //入职
-    public List<CustomerInfo> getInduction(String givingId) throws ParseException {
-        List<Induction> inductions = new ArrayList<>();
-        Calendar now = Calendar.getInstance();
-        Calendar _now = Calendar.getInstance();
-        Query query = new Query();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        DecimalFormat df = new DecimalFormat("#.00");
-        _now.add(Calendar.MONTH,-1);
-        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
-        long mouthStart = sf.parse((now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-01")).getTime();
-        long mouthEnd = sf.parse((now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)).getTime();
-        List<String> userids = wagesMapper.lastMonthWage(now.get(Calendar.YEAR),Integer.parseInt(getMouth(sf.format(_now.getTime()))));
-        if (customerInfos.size() > 0) {
-            customerInfos.forEach(customerInfo -> {
-                Induction induction = new Induction();
-                induction.setGiving_id(givingId);
-                try {
-                     if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
-                        //3.上月工资结算时点过后入职没发工资的人
-                        Date enterDay = sf.parse(customerInfo.getUserinfo().getEnterday());
-                        induction.setThismouth(getSalary(customerInfo, 1));  //本月基本工资
-                        induction.setLastmouth(getSalary(customerInfo, 0)); //上月基本工资
-                        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));//入社日
-                        //正社员工開始日(无)
-                        Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnterday());
-                        int lastDays = getIndutionDays(map.get("year"), map.get("mouth"), map.get("day"));
-                        induction.setTrial(lastDays + "");//先月出勤日数
-                        int thisDay = getWorkDays(now.get(Calendar.YEAR),Integer.parseInt(getMouth(sf.format(now.getTime()))),0);
-                        induction.setTrial(thisDay + "");//今月試用社員出勤日数
-                        //給料
-                        induction.setLunch(df.format(105/21.5*thisDay + 105));//午餐补助
-                        induction.setTraffic(df.format(84/21.5*thisDay + 84));//交通补助
-                        inductions.add(induction);
-                    }
-                     else if (customerInfo.getUserinfo().getEnterday() != "" && customerInfo.getUserinfo().getEnterday() != null) {
-                        Date enterDay = sf.parse(customerInfo.getUserinfo().getEnterday());
-                        //1.抓取本月入职(入社日判断)
-                        if (enterDay.getTime() >= mouthStart && enterDay.getTime() <= mouthEnd) {
-                            induction.setThismouth(getSalary(customerInfo, 1));  //本月基本工资
-                            induction.setLastmouth("0"); //上月基本工资
-                            induction.setWorddate(enterDay);//入社日
-                            //正社员工開始日(无)
-                            induction.setAttendance("0");//先月出勤日数
-                            Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnterday());
-                            int days = getIndutionDays(map.get("year"), map.get("mouth"), map.get("day"));
-                            induction.setTrial(days + "");//今月試用社員出勤日数
-                            induction.setGive(df.format(Double.valueOf(getSalary(customerInfo, 1)) - Double.valueOf(getSalary(customerInfo, 1)) / 21.75 * days * 0.1));//給料
-                            induction.setLunch(df.format(105 / 21.75 * days));//午餐补助
-                            induction.setTraffic(df.format(84 / 21.75 * days));//交通补助
-                            inductions.add(induction);
-                        }
-                    } else if (customerInfo.getUserinfo().getEnddate() != "" && customerInfo.getUserinfo().getEnddate() != null) {
-                        //2.本月转正或未转正的人
-                        Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
-                        if ( endDate.getTime() >= mouthStart ) {
-                            Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnddate());
-                            int days = getWorkDays(map.get("year"), map.get("mouth"), map.get("day"));
-                            induction.setThismouth(getSalary(customerInfo, 1));  //本月基本工资
-                            induction.setLastmouth(getSalary(customerInfo, 0)); //上月基本工资
-                            induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));//入社日
-                            induction.setLunch(df.format(105));//午餐补助
-                            induction.setTraffic(df.format(84));//交通补助
-                            induction.setAttendance("0");//先月出勤日数
-                            if ( endDate.getTime() <= mouthEnd ) { //本月转正
-                                induction.setStartdate(endDate);//正社员工開始日
-                                induction.setTrial(days + "");//今月試用社員出勤日数
-                                induction.setGive(df.format(Double.valueOf(getSalary(customerInfo, 1)) / 21.75 * days * 0.1));//給料
-                            } else {  //本月未转正
-                                induction.setTrial(getWorkDays(map.get("year"), map.get("mouth"),0) + "");//今月試用社員出勤日数
-                                induction.setGive(getSalary(customerInfo, 1));//給料
-                            }
-                            inductions.add(induction);
-                        }
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-
-
-        return null;
-    }
-
-
-    //退职
-    public void getRetire(String givingId) {
-        List<Retire> retires = new ArrayList<>();
-        Query query = new Query();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        DecimalFormat df = new DecimalFormat("#.00");
-        Calendar now = Calendar.getInstance();
-        Calendar last = Calendar.getInstance();
-        last.add(Calendar.MONTH, 1);
-        now.add(Calendar.MONTH, -1);
-        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Criteria criteria = Criteria.where("userinfo.resignation_date")
-                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)
-                .lte(last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")
-                .and("status").is("0");
-        query.addCriteria(criteria);
-        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
-        if (customerInfos.size() > 0) {
-            customerInfos.forEach(customerInfo -> {
-                String thisMouth = "0";
-                Retire retire = new Retire();
-                retire.setGiving_id(givingId);
-                retire.setRetire_id(customerInfo.getUserid());
-                Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getResignation_date());
-                retire.setAttendance(getWorkDays(map.get("year"), map.get("mouth"), map.get("day")) + "");
-                try {
-                    if (customerInfo.getUserinfo().getResignation_date() != null && !customerInfo.getUserinfo().getResignation_date().equals("")) {
-                        retire.setRetiredate(sf.parse(customerInfo.getUserinfo().getResignation_date()));
-                    }
-                    if (customerInfo.getUserinfo().getGridData() != null) {
-                        List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                                .collect(Collectors.toList());
-
-                        for (CustomerInfo.Personal personal : personals) {
-                            if (sf.parse(personal.getDate()).getTime() < sf.parse((last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")).getTime()) {
-                                thisMouth = personal.getAfter();
-                                break;
-                            }
-                        }
-                    }
-                    int day = getWorkDays(map.get("year"), map.get("mouth"), map.get("day"));
-                    int allDay = getWorkDays(map.get("year"), map.get("mouth"), 0);
-                    //IF(今月出勤日数="全月",ROUND(基数.当月基本工资,2),IF(今月出勤日数<>"",ROUND(基数.当月基本工资/21.75*今月出勤日数,2),0))
-                    if (day == allDay) {
-                        retire.setGive(df.format(Double.valueOf(thisMouth)));
-                    } else if (Integer.parseInt(retire.getAttendance()) != 0) {
-                        retire.setGive(df.format(Double.valueOf(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(retire.getAttendance())))));
-                    }
-                    //IF(今月出勤日数="全月",纳付率.食堂手当,ROUND(纳付率.食堂手当/21.75*今月出勤日数,2)
-                    if (day == allDay) {
-                        retire.setLunch("105");
-                    } else {
-                        retire.setLunch(df.format(105 / 21.75 * Integer.parseInt(retire.getAttendance())));
-                    }
-                    //IF(今月出勤日数="全月",纳付率.交通手当,ROUND(纳付率.交通手当/21.75*今月出勤日数,2))
-                    if (day == allDay) {
-                        retire.setLunch("84");
-                    } else {
-                        retire.setLunch(df.format(84 / 21.75 * Integer.parseInt(retire.getAttendance())));
-                    }
-                    retires.add(retire);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
-
-
     public String getMouth(String mouth) {
         String _mouth = mouth.substring(5, 7);
         return _mouth;
     }
-   //从1-day
+
+    //从1-day
     public int getWorkDays(int theYear, int theMonth, int theDay) {
         int workDays = 0;
         String holi = workingDayMapper.getHoliday(theYear, theMonth, theDay);
@@ -1931,6 +1041,7 @@ public class GivingServiceImpl implements GivingService {
         }
         return (workDays - Integer.parseInt(holi));
     }
+
     //day-月末
     public int getIndutionDays(int theYear, int theMonth, int theDay) {
         int workDays = 0;
@@ -1979,32 +1090,59 @@ public class GivingServiceImpl implements GivingService {
         return thisMouth;
     }
 
-    public String notNull(String data){
-        if(data==null||data.equals("")){
-            return  "0";
+    public Map<String, String> getSalaryBasicAndDuty(CustomerInfo customerInfo, int addMouth) throws ParseException {
+        String thisMonth = "0";
+        String thisMonthBasic = "0";
+        String thisMonthDuty = "0";
+        Calendar time = Calendar.getInstance();
+        time.add(Calendar.MONTH, addMouth);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        if (customerInfo.getUserinfo().getGridData() != null) {
+            List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                    .collect(Collectors.toList());
+
+            for (CustomerInfo.Personal personal : personals) {
+                if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+                    thisMonth = personal.getAfter();
+                    thisMonthBasic = personal.getBasic();
+                    thisMonthDuty = personal.getDuty();
+                    break;
+                }
+            }
         }
-        return  data;
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("thisMonth", thisMonth);
+        map.put("thisMonthBasic", thisMonthBasic);
+        map.put("thisMonthDuty", thisMonthDuty);
+        return map;
     }
 
-    public  Map<String, Integer> getYMD(Date date){
+    public String notNull(String data) {
+        if (data == null || data.equals("")) {
+            return "0";
+        }
+        return data;
+    }
+
+    public Map<String, Integer> getYMD(Date date) {
         Map<String, Integer> map = new HashMap<String, Integer>();
         Calendar calder = Calendar.getInstance();
         calder.setTime(date);
         int year = calder.get(Calendar.YEAR);
-        int month=calder.get(Calendar.MONTH);
+        int month = calder.get(Calendar.MONTH);
         int day = calder.get(Calendar.DAY_OF_MONTH);
-        int yearMonth = year*100 + month;
+        int yearMonth = year * 100 + month;
         int lastDay = calder.getActualMaximum(Calendar.DAY_OF_MONTH);
         map.put("day", day);
         map.put("year", year);
         map.put("month", month);
         map.put("yearMonth", yearMonth);
         map.put("lastDay", lastDay);
-        return  map;
+        return map;
     }
 
     //根据产修算出当月产假日数
-    public double getWorkDays(AbNormal abNormal,AttendanceSetting attendanceSetting){
+    public double getWorkDays(AbNormal abNormal, AttendanceSetting attendanceSetting) {
 //        double lengthTime = Double.valueOf(abNormal.getLengthtime());
 //        DecimalFormat df = new DecimalFormat("#.00");
 //        Map<String, Integer> start= getYMD(abNormal.getOccurrence_date());
@@ -2027,10 +1165,938 @@ public class GivingServiceImpl implements GivingService {
 //                return 0;
 //            }
 //        }
-        return  0;
+        return 0;
     }
 
-//    public double getAttend(AttendanceSetting attendanceSetting){
-//
-//    }
+    /**
+     * @return
+     * @Method appreciationCalc
+     * @Author SKAIXX
+     * @Description 月度赏与计算
+     * @Date 2020/3/16 14:28
+     * @Param [appreciationlist]
+     **/
+    private List<Appreciation> appreciationCalc(List<Appreciation> appreciationlist) {
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
+        for (Appreciation appreciation : appreciationlist) {
+            // 获取用户信息
+            CustomerInfo customerInfo = customerInfos.stream().filter(item -> item.getUserid().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0);
+            // 判断该员工是否为技术职
+            boolean isTech = customerInfo.getUserinfo().getOccupationtype().equals("PR055001");
+            // 获取给与标准
+            Dictionary rankDic = new Dictionary();
+            rankDic.setCode(customerInfo.getUserinfo().getRank());
+            rankDic = dictionaryMapper.select(rankDic).get(0);
+
+            // 获取评价奖金百分比
+            Dictionary commentaryDic = new Dictionary();
+            commentaryDic.setCode(appreciation.getCommentary());
+            commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
+            if (isTech) {   // 技术职
+                // 奖金计算
+                // 月赏与
+                double monthAppreciation = BigDecimal.valueOf(Double.parseDouble(rankDic.getValue3()) * 1.8d / 12d)
+                        .setScale(0, RoundingMode.HALF_UP).doubleValue();
+                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                        * Double.parseDouble(commentaryDic.getValue3())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+            } else {    // 事务职
+                // 奖金计算
+                // 月赏与
+                double monthAppreciation = BigDecimal.valueOf(Double.parseDouble(rankDic.getValue2()) * 1.8d / 12d)
+                        .setScale(0, RoundingMode.HALF_UP).doubleValue();
+                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                        * Double.parseDouble(commentaryDic.getValue2())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+            }
+        }
+        return appreciationlist;
+    }
+
+    /**
+     * @return com.nt.dao_Org.Dictionary
+     * @Method getTaxRate
+     * @Author SKAIXX
+     * @Description 通过年度应纳税总额求出税率及速算扣除额
+     * @Date 2020/3/12 13:47
+     * @Param [salary, dictionaryList]
+     **/
+    private Dictionary getTaxRate(double salary, List<Dictionary> dictionaryList) {
+        double currentVal = 0;
+        double nextVal = 0;
+        for (int i = 0; i < dictionaryList.size(); i++) {
+            currentVal = Double.parseDouble(dictionaryList.get(i).getValue1());
+            if (i != dictionaryList.size() - 1) {
+                nextVal = Double.parseDouble(dictionaryList.get(i + 1).getValue1());
+            } else {
+                return dictionaryList.get(i);
+            }
+            if ((currentVal < salary || salary == 0d) && nextVal >= salary) {
+                return dictionaryList.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return void
+     * @Method insertResidual
+     * @Author SKAIXX
+     * @Description 残业计算
+     * @Date 2020/3/13 15:51
+     * @Param [givingid, tokenModel]
+     **/
+    @Override
+    public void insertResidual(String givingid, TokenModel tokenModel) throws Exception {
+        // region 获取当月与前月
+        Calendar cal = Calendar.getInstance();
+
+        // 当月
+        String currentYear = String.valueOf(cal.get(Calendar.YEAR));
+        String currentMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+        // 前月
+        cal.add(Calendar.MONTH, -1);
+        String preYear = String.valueOf(cal.get(Calendar.YEAR));
+        String preMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+        // endregion
+
+        // 获取基数表数据
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        List<Base> baseList = baseMapper.select(base);
+
+        // 以基数表数据为单位循环插入残业数据
+        baseList.forEach(item -> {
+            Residual residual = new Residual();
+            // 名字
+            residual.setUser_id(item.getUser_id());
+            // Rn
+            residual.setRn(item.getRn());
+            residual.setGiving_id(givingid);
+            residual.setResidual_id(UUID.randomUUID().toString());
+
+            // 本月是否已退职(员工ID如果在退职表里存在，则视为已退职)
+            Retire retire = new Retire();
+            retire.setUser_id(item.getUser_id());
+            boolean isResign = retireMapper.select(retire).size() > 0;
+
+            double totalh = 0d; // 合计加班小时
+
+            // 获取前月勤怠表数据
+            Attendance attendance = new Attendance();
+            attendance.setUser_id(item.getUser_id());
+            attendance.setYears(preYear);
+            attendance.setMonths(preMonth);
+            List<Attendance> attendanceList = attendanceMapper.select(attendance);
+
+            // region 前月残业数据
+            // 平日加班（150%）
+            residual.setLastweekdays(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()));
+            totalh += Double.parseDouble(residual.getLastweekdays());
+
+            // 休日加班（200%）
+            residual.setLastrestDay(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()));
+            totalh += Double.parseDouble(residual.getLastrestDay());
+
+            // 法定加班（300%）
+            residual.setLastlegal(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()));
+            totalh += Double.parseDouble(residual.getLastlegal());
+
+            // 代休
+            // 从代休视图获取该员工所有代休
+            List<restViewVo> restViewVoList = annualLeaveMapper.getrest(item.getUser_id());
+            // 获取3个月之前的代休
+            cal.add(Calendar.MONTH, -5);
+            String restYear = String.valueOf(cal.get(Calendar.YEAR));
+            String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+            if (restViewVoList.size() > 0) {
+                residual.setLastreplace(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate()
+                                .equals(restYear + restMonth))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+            } else {
+                residual.setLastreplace("0");
+            }
+
+            // 合计(H)
+            residual.setLasttotalh(String.valueOf(totalh));
+
+            // 合计(元)
+            residual.setLasttotaly(overtimeCalc(item, residual, "pre"));
+            // endregion
+
+            // 获取本月勤怠表数据
+            attendance = new Attendance();
+            attendance.setUser_id(item.getUser_id());
+            attendance.setYears(currentYear);
+            attendance.setMonths(currentMonth);
+            attendanceList = attendanceMapper.select(attendance);
+            totalh = 0d;
+
+            // region 本月残业数据
+            // 平日加班（150%）
+            residual.setThisweekdays(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()));
+            totalh += Double.parseDouble(residual.getThisweekdays());
+
+            // 休日加班（200%）
+            residual.setThisrestDay(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()));
+            totalh += Double.parseDouble(residual.getThisrestDay());
+
+            // 法定加班（300%）
+            residual.setThislegal(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()));
+            totalh += Double.parseDouble(residual.getThislegal());
+
+            // 本月代休(3か月前)
+            cal.add(Calendar.MONTH, 1);
+            String currentRestYear = String.valueOf(cal.get(Calendar.YEAR));
+            String currentRestMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+            if (restViewVoList.size() > 0) {
+                residual.setThisreplace(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate()
+                                .equals(currentRestYear + currentRestMonth))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+            } else {
+                residual.setThisreplace("0");
+            }
+
+            // 本月代休（3か月以内）
+            cal.add(Calendar.MONTH, 1);
+            String date1 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+            cal.add(Calendar.MONTH, 1);
+            String date2 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+            cal.add(Calendar.MONTH, 1);
+            String date3 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+            String date4 = currentYear + currentMonth;
+
+            if (restViewVoList.size() > 0) {
+                residual.setThisreplace3(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate().equals(date1) ||
+                                subItem.getApplicationdate().equals(date2) ||
+                                subItem.getApplicationdate().equals(date3) ||
+                                subItem.getApplicationdate().equals(date4))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+            } else {
+                residual.setThisreplace3("0");
+            }
+
+            // 合计(H)
+            residual.setThistotalh(String.valueOf(totalh));
+
+            // 合计(元)
+            residual.setThistotaly(overtimeCalc(item, residual, "current"));
+            // endregion
+
+            // 备考
+            residual.setRemarks(isResign ? "退职" : "-");
+
+            // 加班补助
+            residual.setSubsidy(String.valueOf(Double.parseDouble(residual.getLasttotaly()) + Double.parseDouble(residual.getThistotaly())));
+
+            residual.preInsert(tokenModel);
+            residualMapper.insert(residual);
+        });
+    }
+
+    /**
+     * @return
+     * @Method ifNull
+     * @Author SKAIXX
+     * @Description 数值Null替换
+     * @Date 2020/3/14 14:15
+     * @Param [val]
+     **/
+    private String ifNull(String val) {
+        if (!StringUtils.isEmpty(val)) {
+            return val;
+        }
+        return "0";
+    }
+
+    /**
+     * @return
+     * @Method overtimeCalc
+     * @Author SKAIXX
+     * @Description 加班费计算
+     * @Date 2020/3/16 10:50
+     * @Param [base, residual, mode]
+     **/
+    private String overtimeCalc(Base base, Residual residual, String mode) {
+
+        double total = 0d;  // 总加班费
+
+        // 判断员工当月级别是否为R8及以上
+        boolean isOverR8 = false;
+        String rn = StringUtils.isEmpty(base.getRn()) ? "PR021001" : base.getRn();
+        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
+            isOverR8 = true;
+        }
+
+        if ("pre".equals(mode)) {   // 前月加班费计算
+            // 小时工资 = 月工资÷21.75天÷8小时
+            double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getTmabasic()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 平日加班费 150%
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastweekdays()) * salaryPerHour * 1.5d;
+            // 休日加班费 200%
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastrestDay()) * salaryPerHour * 2.0d;
+            // 法定加班费 300%
+            total += Double.parseDouble(residual.getLastlegal()) * salaryPerHour * 3.0d;
+            // 代休加班费 200%
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getLastreplace()) * 8d * salaryPerHour * 2.0d;
+        } else {    // 当月加班费计算
+            // 小时工资 = 月工资÷21.75天÷8小时
+            double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 前月小时工资
+            double lastSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getLastmonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 平日加班费 150%
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getThisweekdays()) * salaryPerHour * 1.5d;
+            // 休日加班费 200%
+            total += isOverR8 ? 0d : Double.parseDouble(residual.getThisrestDay()) * salaryPerHour * 2.0d;
+            // 法定加班费 300%
+            total += Double.parseDouble(residual.getThislegal()) * salaryPerHour * 3.0d;
+            // 代休加班费 200% (本月代休加班费 = (3个月前代休+3个月之内的代休) * 前月小时工资 * 200%)
+            total += isOverR8 ? 0d : (Double.parseDouble(residual.getThisreplace3()) + Double.parseDouble(residual.getThisreplace())) * 8d * lastSalaryPerHour * 2.0d;
+        }
+        return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    /**
+     * @return com.nt.dao_Pfans.PFANS2000.Residual
+     * @Method thisMonthOvertimeChange
+     * @Author SKAIXX
+     * @Description 本月加班数据变更时，重新计算加班费合计
+     * @Date 2020/3/18 19:02
+     * @Param [base, residual]
+     **/
+    @Override
+    public Residual thisMonthOvertimeChange(GivingVo givingVo, TokenModel tokenModel) {
+
+        String userId = tokenModel.getUserId();
+        Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Residual residual = givingVo.getResidual().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        double total = 0d;  // 总加班费
+
+        // 判断员工当月级别是否为R8及以上
+        boolean isOverR8 = false;
+        String rn = StringUtils.isEmpty(base.getRn()) ? "PR021001" : base.getRn();
+        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
+            isOverR8 = true;
+        }
+
+        // 小时工资 = 月工资÷21.75天÷8小时
+        double salaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 前月小时工资
+        double lastSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getLastmonth()) / 21.75d / 8d).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 平日加班费 150%
+        total += isOverR8 ? 0d : Double.parseDouble(residual.getThisweekdays()) * salaryPerHour * 1.5d;
+        // 休日加班费 200%
+        total += isOverR8 ? 0d : Double.parseDouble(residual.getThisrestDay()) * salaryPerHour * 2.0d;
+        // 法定加班费 300%
+        total += Double.parseDouble(residual.getThislegal()) * salaryPerHour * 3.0d;
+        // 代休加班费 200% (本月代休加班费 = (3个月前代休+3个月之内的代休) * 前月小时工资 * 200%)
+        total += isOverR8 ? 0d : (Double.parseDouble(residual.getThisreplace3()) + Double.parseDouble(residual.getThisreplace())) * 8d * lastSalaryPerHour * 2.0d;
+
+        residual.setThistotaly(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        return residual;
+    }
+
+    /**
+     * @return
+     * @Method insertLackattendance
+     * @Author SKAIXX
+     * @Description 欠勤数据插入
+     * @Date 2020/3/16 8:52
+     * @Param [givingid, tokenModel]
+     **/
+    @Override
+    public void insertLackattendance(String givingid, TokenModel tokenModel) throws Exception {
+        // region 获取基数表数据
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        List<Base> baseList = baseMapper.select(base);
+        // endregion
+
+        // region 获取当月与前月
+        Calendar cal = Calendar.getInstance();
+
+        // 当月
+        String currentYear = String.valueOf(cal.get(Calendar.YEAR));
+        String currentMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+        // 前月
+        cal.add(Calendar.MONTH, -1);
+        String preYear = String.valueOf(cal.get(Calendar.YEAR));
+        String preMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+        // endregion
+
+        // 以基数表数据为单位循环插入欠勤数据
+        baseList.forEach(item -> {
+
+            // 本月是否已退职(员工ID如果在退职表里存在，则视为已退职)
+            Retire retire = new Retire();
+            retire.setUser_id(item.getUser_id());
+            boolean isResign = retireMapper.select(retire).size() > 0;
+
+            Lackattendance lackattendance = new Lackattendance();
+
+            lackattendance.setLackattendance_id(UUID.randomUUID().toString());
+            lackattendance.setGiving_id(givingid);
+            lackattendance.setUser_id(item.getUser_id());
+
+            // 取得前月欠勤数据
+            Attendance attendance = new Attendance();
+            attendance.setUser_id(item.getUser_id());
+            attendance.setYears(preYear);
+            attendance.setMonths(preMonth);
+            List<Attendance> attendanceList = attendanceMapper.select(attendance);
+
+            // 欠勤-试用
+            lackattendance.setLastdiligencetry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()));
+
+            // 短病欠-试用
+            lackattendance.setLastshortdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()));
+
+            // 长病欠-试用
+            lackattendance.setLastchronicdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()));
+
+            // 欠勤-正式
+            lackattendance.setLastdiligenceformal(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
+
+            // 短病欠-正式
+            lackattendance.setLastshortdeficiencyformal(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
+
+            // 长病欠-正式
+            lackattendance.setLastchronicdeficiencyformal(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
+
+            // 欠勤
+            lackattendance.setLastdiligence(lackSumCalc(lackattendance.getLastdiligencetry(), lackattendance.getLastdiligenceformal()));
+
+            // 短病欠
+            lackattendance.setLastshortdeficiency(lackSumCalc(lackattendance.getLastshortdeficiencyformal(), lackattendance.getLastshortdeficiencytry()));
+
+            // 长病欠
+            lackattendance.setLastchronicdeficiency(lackSumCalc(lackattendance.getLastchronicdeficiencytry(), lackattendance.getLastchronicdeficiencyformal()));
+
+            // 前月合计
+            lackattendance.setLasttotal(lackAttendanceCalc(item, lackattendance, "pre"));
+
+            // 获取本月考勤数据
+            attendance = new Attendance();
+            attendance.setUser_id(item.getUser_id());
+            attendance.setYears(currentYear);
+            attendance.setMonths(currentMonth);
+            attendanceList = attendanceMapper.select(attendance);
+
+            // 欠勤-试用
+            lackattendance.setThisdiligencetry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()));
+
+            // 短病欠-试用
+            lackattendance.setThisshortdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()));
+
+            // 长病欠-试用
+            lackattendance.setThischronicdeficiencytry(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()));
+
+            // 欠勤-正式
+            lackattendance.setThisdiligenceformal(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
+
+            // 短病欠-正式
+            lackattendance.setThisshortdeficiencyformal(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
+
+            // 长病欠-正式
+            lackattendance.setThischronicdeficiencyformal(String.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
+
+            // 欠勤
+            lackattendance.setThisdiligence(lackSumCalc(lackattendance.getThisdiligencetry(), lackattendance.getThisdiligenceformal()));
+
+            // 短病欠
+            lackattendance.setThisshortdeficiency(lackSumCalc(lackattendance.getThisshortdeficiencytry(), lackattendance.getThisshortdeficiencyformal()));
+
+            // 长病欠
+            lackattendance.setThischronicdeficiency(lackSumCalc(lackattendance.getThischronicdeficiencytry(), lackattendance.getThischronicdeficiencyformal()));
+
+            // 本月合计
+            lackattendance.setThistotal(lackAttendanceCalc(item, lackattendance, "current"));
+
+            // 备考
+            lackattendance.setRemarks(isResign ? "退职" : "-");
+
+            // 控除给料
+            lackattendance.setGive(String.valueOf(Double.parseDouble(lackattendance.getLasttotal())
+                    + Double.parseDouble(lackattendance.getThistotal())));
+
+            lackattendance.preInsert(tokenModel);
+            lackattendanceMapper.insert(lackattendance);
+        });
+    }
+
+    /**
+     * @return java.lang.String
+     * @Method lackSumCalc
+     * @Author SKAIXX
+     * @Description 欠勤试用与正式合计计算
+     * @Date 2020/3/18 16:03
+     * @Param [val1, val2]
+     **/
+    private String lackSumCalc(String val1, String val2) {
+        return String.valueOf(Double.parseDouble(ifNull(val1)) + Double.parseDouble(ifNull(val2)));
+    }
+
+    /**
+     * @return java.lang.String
+     * @Method lackAttendanceCalc
+     * @Author SKAIXX
+     * @Description 合计欠勤计算
+     * @Date 2020/3/16 9:45
+     * @Param [base, lackattendance]
+     **/
+    private String lackAttendanceCalc(Base base, Lackattendance lackattendance, String mode) {
+        double total = 0d;  // 总欠勤费
+        // 前月正式小时工资 = 月工资÷21.75天÷8小时
+        double preSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getLastmonth()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 当月小时工资 = 月工资÷21.75天÷8小时
+        double currentSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 获取短病欠扣除比例
+        Dictionary shortDictionary = new Dictionary();
+        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
+        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+
+        // 获取长病欠
+        Dictionary longDictionary = new Dictionary();
+        longDictionary.setCode("PR047001");     // 大連社会最低賃金
+        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+        // 长病欠小时工资
+        double longSalary = BigDecimal.valueOf(Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        if ("pre".equals(mode)) {   // 前月欠勤费用
+            // 欠勤费用-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastdiligenceformal()) * preSalaryPerHour)
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 欠勤费用-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastdiligencetry()) * preSalaryPerHour * 0.9d)
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 短病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastshortdeficiencyformal()) * preSalaryPerHour
+                    * Double.parseDouble(shortDictionary.getValue2()))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 短病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastshortdeficiencytry()) * preSalaryPerHour * 0.9d
+                    * Double.parseDouble(shortDictionary.getValue2()))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 长病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastchronicdeficiencyformal()) * longSalary)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+            // 长病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getLastchronicdeficiencytry()) * longSalary * 0.9d)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+        } else {    // 当月欠勤费用
+            // 欠勤费用-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligenceformal()) * currentSalaryPerHour)
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 欠勤费用-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligencetry()) * currentSalaryPerHour * 0.9d)
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 短病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencyformal()) * currentSalaryPerHour
+                    * Double.parseDouble(shortDictionary.getValue2()))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+            // 短病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencytry()) * currentSalaryPerHour * 0.9d
+                    * Double.parseDouble(shortDictionary.getValue2()))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            // 长病欠-正式
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencyformal()) * longSalary)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+            // 长病欠-试用
+            total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencytry()) * longSalary * 0.9d)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+        }
+        return String.valueOf(total);
+    }
+
+    //计算 其他1 当月应出勤天数-lxx
+    private int getDaysforOtherOne(Date start, Date end) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 0);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+        int monthDays = getWorkDaysExceptWeekend(cal.getTime(), calEnd.getTime());
+        Date statrd = new Date();
+        Date endd = new Date();
+
+        if (start.getTime() < cal.getTime().getTime()) {
+            statrd = cal.getTime();
+        } else {
+            statrd = start;
+        }
+        if (end.getTime() > calEnd.getTime().getTime()) {
+            endd = calEnd.getTime();
+        } else {
+            endd = end;
+        }
+        int restDays = getWorkDaysExceptWeekend(statrd, endd);
+
+        return (monthDays - restDays);
+    }
+
+    //获取工作日-lxx
+    private int getWorkDaysExceptWeekend(Date start, Date end) {
+        int workDays = 0;
+        if (end.getTime() > start.getTime()) {
+            //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
+            Calendar calStar = Calendar.getInstance();
+            calStar.setTime(start);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(end);
+            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+                    workDays++;
+                }
+            }
+        }
+        return workDays;
+    }
+
+    // 2020/03/11 add by myt start
+    // 入职表插入数据
+    public void insertInduction(String givingid, TokenModel tokenModel) throws Exception {
+        int rowundex = 1;
+        List<Induction> inductionList = getInduction(givingid);
+        if (inductionList.size() > 0) {
+            for (Induction induction : inductionList) {
+                induction.setInduction_id(UUID.randomUUID().toString());
+                induction.preInsert(tokenModel);
+                induction.setRowindex(rowundex);
+                inductionMapper.insert(induction);
+                rowundex++;
+            }
+        }
+    }
+
+    // 退职表插入数据
+    public void insertRetire(String givingid, TokenModel tokenModel) throws Exception {
+        int rowundex = 1;
+        List<Retire> retireList = getRetire(givingid);
+        if (retireList.size() > 0) {
+            for (Retire retire : retireList) {
+                retire.setRetire_id(UUID.randomUUID().toString());
+                retire.preInsert(tokenModel);
+                retire.setRowindex(rowundex);
+                retireMapper.insert(retire);
+                rowundex++;
+            }
+        }
+    }
+    // 2020/03/11 add by myt end
+
+    // 2020/03/11 add by myt start
+    // 入职
+    public List<Induction> getInduction(String givingId) throws Exception {
+        /*获取 customerInfos-lxx*/
+        init();
+        /*获取 customerInfos-lxx*/
+        List<Induction> inductions = new ArrayList<>();
+        // 今月日期
+        Calendar thisMonthDate = Calendar.getInstance();
+        // 上月日期
+        Calendar lastMonthDate = Calendar.getInstance();
+        lastMonthDate.add(Calendar.MONTH, -1);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        int lastDay = thisMonthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+        long mouthStart = sf.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sf.format(thisMonthDate.getTime())) + "-01")).getTime();
+        long mouthEnd = sf.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sf.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
+        // 保留小数点后两位四舍五入
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        // 正社员工開始日
+        String staffStartDate = "";
+        // 納付率表抽取相关数据
+        Dictionary dictionary = new Dictionary();
+        dictionary.setPcode("PR042");
+        List<Dictionary> subsidyList = dictionaryMapper.select(dictionary);
+        // 食事手当
+        int lunchSubsidy = 0;
+        // 交通費
+        int trafficSubsidy = 0;
+        for (Dictionary diction : subsidyList) {
+            if (diction.getCode().equals("PR042002")) {
+                lunchSubsidy = Integer.parseInt(diction.getValue2());
+            } else if (diction.getCode().equals("PR042003")) {
+                trafficSubsidy = Integer.parseInt(diction.getValue2());
+            }
+        }
+        dictionary.setPcode("PR049");
+        List<Dictionary> proportionList = dictionaryMapper.select(dictionary);
+        // 试用期工资扣除比例
+        double wageDeductionProportion = 0.0d;
+        for (Dictionary diction : proportionList) {
+            if (diction.getCode().equals("PR049010")) {
+                wageDeductionProportion = Double.parseDouble(diction.getValue2());
+            }
+        }
+        // 抽取上月发工资的人员
+        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(lastMonthDate.getTime()))));
+        if (customerInfos.size() > 0) {
+            for (CustomerInfo customerInfo : customerInfos) {
+                Induction induction = new Induction();
+                induction.setGiving_id(givingId);
+                // 上月工资结算时点过后入职没发工资的人
+                if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
+                    induction.setUser_id(customerInfo.getUserid());// 用户ID
+                    induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());// 工号
+                    // 入社日
+                    Date enterDay = sf.parse(customerInfo.getUserinfo().getEnterday());
+                    induction.setWorddate(enterDay);
+                    // 本月基本工资
+                    String thisMonthSalary = getSalary(customerInfo, 1);
+                    induction.setThismonth(thisMonthSalary);
+                    // 上月基本工资
+                    String lastMonthSalary = getSalary(customerInfo, 0);
+                    induction.setLastmonth(lastMonthSalary);
+                    // 上月工资结算后入职的员工（本月入职）
+                    if (enterDay.getTime() >= mouthStart && enterDay.getTime() <= mouthEnd) {
+                        // 正社员工開始日(无)
+                        induction.setAttendance("0");// 先月出勤日数
+                        // 今月试用期间的出勤日数（当月应当出勤日数）
+                        Calendar calStart = Calendar.getInstance();
+                        calStart.set(Calendar.DAY_OF_MONTH, 1);
+                        Calendar calEnd = Calendar.getInstance();
+                        calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
+                        induction.setTrial(String.valueOf(trialAttendanceDays));
+                        // 給料
+                        calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, 0, trialAttendanceDays, wageDeductionProportion, df);
+                        // 午餐和交通补助
+                        calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, 0, trialAttendanceDays, df);
+                    } else {
+                        // 上月工资结算后入职的员工（上月入职）
+                        // 正社员工開始日(无)
+                        // 先月出勤日数
+                        Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnterday());
+                        Calendar calLastStart = Calendar.getInstance();
+                        calLastStart.add(Calendar.MONTH, -1);
+                        calLastStart.set(Calendar.DAY_OF_MONTH, map.get("day"));
+                        Calendar calLastEnd = Calendar.getInstance();
+                        calLastEnd.add(Calendar.MONTH, -1);
+                        calLastEnd.set(Calendar.DAY_OF_MONTH, calLastEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        int lastAttendanceDays = getWorkDaysExceptWeekend(calLastStart.getTime(), calLastEnd.getTime());
+                        induction.setAttendance(String.valueOf(lastAttendanceDays));
+                        // 今月试用期间的出勤日数（当月应当出勤日数）
+                        Calendar calStart = Calendar.getInstance();
+                        calStart.set(Calendar.DAY_OF_MONTH, 1);
+                        Calendar calEnd = Calendar.getInstance();
+                        calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
+                        induction.setTrial(String.valueOf(trialAttendanceDays));
+                        // 給料
+                        calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, lastAttendanceDays, trialAttendanceDays, wageDeductionProportion, df);
+                        // 午餐和交通补助
+                        calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, lastAttendanceDays, trialAttendanceDays, df);
+                    }
+                    inductions.add(induction);
+                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                    // 本月转正或未转正的人
+                    // 转正日期
+                    Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
+                    if (endDate.getTime() >= mouthStart) {
+                        induction.setUser_id(customerInfo.getUserid()); // 用户ID
+                        induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());// 工号
+                        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));//入社日
+                        // 本月基本工资
+                        String thisMonthSalary = getSalary(customerInfo, 1);
+                        induction.setThismonth(thisMonthSalary);
+                        // 上基本工资
+                        String lastMonthSalary = getSalary(customerInfo, 0);
+                        induction.setLastmonth(lastMonthSalary);
+                        // 先月出勤日数
+                        Calendar calLastStart = Calendar.getInstance();
+                        calLastStart.add(Calendar.MONTH, -1);
+                        calLastStart.set(Calendar.DAY_OF_MONTH, 1);
+                        Calendar calLastEnd = Calendar.getInstance();
+                        calLastEnd.add(Calendar.MONTH, -1);
+                        calLastEnd.set(Calendar.DAY_OF_MONTH, calLastEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        int lastAttendanceDays = getWorkDaysExceptWeekend(calLastStart.getTime(), calLastEnd.getTime());
+                        induction.setAttendance(String.valueOf(lastAttendanceDays));
+                        // 本月转正
+                        if (endDate.getTime() <= mouthEnd) {
+                            // 正社员工開始日
+                            staffStartDate = endDate.toString();
+                            induction.setStartdate(endDate);
+                            // 今月试用期间的出勤日数（当月应当出勤日数）
+                            Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnddate());
+                            Calendar calStart = Calendar.getInstance();
+                            calStart.set(Calendar.DAY_OF_MONTH, map.get("day"));
+                            Calendar calEnd = Calendar.getInstance();
+                            calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                            int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
+                            induction.setTrial(String.valueOf(trialAttendanceDays));
+                            // 給料
+                            calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, lastAttendanceDays, trialAttendanceDays, wageDeductionProportion, df);
+                            // 午餐和交通补助
+                            calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, lastAttendanceDays, trialAttendanceDays, df);
+                        } else {
+                            // 本月未转正
+                            // 正社员工開始日(无)
+                            // 今月试用期间的出勤日数（当月应当出勤日数）
+                            Calendar calStart = Calendar.getInstance();
+                            calStart.set(Calendar.DAY_OF_MONTH, 1);
+                            Calendar calEnd = Calendar.getInstance();
+                            calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                            int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
+                            induction.setTrial(String.valueOf(trialAttendanceDays));
+                            // 給料
+                            calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, lastAttendanceDays, trialAttendanceDays, wageDeductionProportion, df);
+                            // 午餐和交通补助
+                            calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, lastAttendanceDays, trialAttendanceDays, df);
+                        }
+                        inductions.add(induction);
+                    }
+                }
+            }
+        }
+        return inductions;
+    }
+
+    // 计算午餐和交通补助(入职)
+    private void calculateSubsidy(Induction induction, String lastMonthSalary, int lunchSubsidy, int trafficSubsidy,
+                                  int lastAttendanceDays, int trialAttendanceDays, DecimalFormat df) {
+        // 午餐和交通补助
+        if (Integer.valueOf(lastMonthSalary) != 0) {
+            induction.setLunch(df.format(lunchSubsidy / dateBase * lastAttendanceDays + lunchSubsidy));// 午餐补助
+            induction.setTraffic(df.format(trafficSubsidy / dateBase * lastAttendanceDays + trafficSubsidy));// 交通补助
+        } else {
+            induction.setLunch(df.format(lunchSubsidy / dateBase * trialAttendanceDays));// 午餐补助
+            induction.setTraffic(df.format(trafficSubsidy / dateBase * trialAttendanceDays));// 交通补助
+        }
+    }
+
+    // 计算給料(入职)
+    private void calculateSalary(Induction induction, String staffStartDate, String lastMonthSalary, String thisMonthSalary,
+                                 int lastAttendanceDays, int trialAttendanceDays, double wageDeductionProportion, DecimalFormat df) {
+        if (StringUtils.isNotEmpty(staffStartDate)) {
+            induction.setGive(df.format(Double.valueOf(thisMonthSalary) - (Double.valueOf(thisMonthSalary) / dateBase * trialAttendanceDays * wageDeductionProportion)));
+        } else {
+            if (lastAttendanceDays > 0) {
+                induction.setGive(df.format(Double.valueOf(lastMonthSalary) / dateBase * lastAttendanceDays + Double.valueOf(thisMonthSalary)));
+            } else {
+                if (trialAttendanceDays > 0) {
+                    induction.setGive(df.format(Double.valueOf(thisMonthSalary) / dateBase * trialAttendanceDays));
+                } else {
+                    induction.setGive(thisMonthSalary);
+                }
+            }
+        }
+    }
+
+    //退职
+    public List<Retire> getRetire(String givingId) throws Exception {
+        List<Retire> retires = new ArrayList<>();
+        Query query = new Query();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        // 保留小数点后两位四舍五入
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        Calendar now = Calendar.getInstance();
+        Calendar last = Calendar.getInstance();
+        last.add(Calendar.MONTH, 1);
+        now.add(Calendar.MONTH, -1);
+        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 納付率表抽取相关数据
+        Dictionary dictionary = new Dictionary();
+        dictionary.setPcode("PR042");
+        List<Dictionary> subsidyList = dictionaryMapper.select(dictionary);
+        // 食事手当
+        int lunchSubsidy = 0;
+        // 交通費
+        int trafficSubsidy = 0;
+        for (Dictionary diction : subsidyList) {
+            if (diction.getCode().equals("PR042002")) {
+                lunchSubsidy = Integer.parseInt(diction.getValue2());
+            } else if (diction.getCode().equals("PR042003")) {
+                trafficSubsidy = Integer.parseInt(diction.getValue2());
+            }
+        }
+        // 查询退职人员信息
+        Criteria criteria = Criteria.where("userinfo.resignation_date")
+                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)
+                .lte(last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")
+                .and("status").is("0");
+        query.addCriteria(criteria);
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        if (customerInfos.size() > 0) {
+            for (CustomerInfo customerInfo : customerInfos) {
+                Retire retire = new Retire();
+                retire.setGiving_id(givingId);
+                // 用户名字
+                retire.setUser_id(customerInfo.getUserid());
+                // 工号
+                retire.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+                // 退职日
+                String resignationDate = customerInfo.getUserinfo().getResignation_date();
+                retire.setRetiredate(sf.parse(resignationDate));
+                // 今月出勤日数
+                Map<String, Integer> map = getYMD(resignationDate);
+                Calendar calStart = Calendar.getInstance();
+                calStart.set(Calendar.DAY_OF_MONTH, 1);
+                Calendar calEnd = Calendar.getInstance();
+                calEnd.set(Calendar.DAY_OF_MONTH, map.get("day"));
+                int attendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
+                retire.setAttendance(String.valueOf(attendanceDays));
+                // 当月基本工资
+                String thisMonthSalary = getSalary(customerInfo, 1);
+                // 计算全勤天数
+                Calendar calAttendanceStart = Calendar.getInstance();
+                calAttendanceStart.set(Calendar.DAY_OF_MONTH, 1);
+                Calendar calAttendanceEnd = Calendar.getInstance();
+                calAttendanceEnd.set(Calendar.DAY_OF_MONTH, calAttendanceEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                int allAttendanceDay = getWorkDaysExceptWeekend(calAttendanceStart.getTime(), calAttendanceEnd.getTime());
+                // 給料
+                if (attendanceDays == allAttendanceDay) {
+                    retire.setGive(df.format(Double.valueOf(thisMonthSalary)));
+                } else {
+                    retire.setGive(df.format(Double.valueOf(thisMonthSalary) / dateBase * attendanceDays));
+                }
+                // 午餐补助
+                if (attendanceDays == allAttendanceDay) {
+                    retire.setLunch(df.format(lunchSubsidy));
+                } else {
+                    retire.setLunch(df.format(lunchSubsidy / dateBase * attendanceDays));
+                }
+                // 交通补助
+                if (attendanceDays == allAttendanceDay) {
+                    retire.setTraffic(df.format(trafficSubsidy));
+                } else {
+                    retire.setTraffic(df.format(trafficSubsidy / dateBase * attendanceDays));
+                }
+                retires.add(retire);
+            }
+        }
+        return retires;
+    }
 }

@@ -34,13 +34,27 @@ public class GivingVo {
 
     private List<AccumulatedTaxVo> accumulatedTaxVo;
 
-    private List<DisciplinaryVo> DisciplinaryVo;
+    private List<Disciplinary> DisciplinaryVo;
 
     private List<DutyfreeVo> dutyfreeVo;
 
     private List<ComprehensiveVo> comprehensiveVo;
 
     private List<Additional> addiTional;
+
+    // 2020/03/11 add by myt start
+    private List<Induction> entryVo;
+
+    private List<Retire> retireVo;
+
+    private String yearOfLastMonth;
+
+    private String monthOfLastMonth;
+
+    private String yearOfThisMonth;
+
+    private String monthOfThisMonth;
+    // 2020/03/11 add by myt end
 
     private String strFlg;
 }

@@ -54,6 +54,9 @@ public class Securitydetail extends BaseModel {
     @Column(name = "FBBUILDING")
     private String fbbuilding;
 
+    @Column(name = "SHOWROOM")
+    private String Showroom;
+
     @Column(name = "ENTRYMANAGER")
     private String entrymanager;
 

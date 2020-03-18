@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
@@ -55,11 +56,14 @@ public class AbNormalServiceImpl implements AbNormalService {
             }
             //旷工基本计算单位
             String absenteeism = null;
+            //工作时间
+            String workinghours = null;
             AttendanceSetting attendancesetting = new AttendanceSetting();
             List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
             if(attendancesettinglist.size() > 0){
                 //旷工基本计算单位
                 absenteeism = attendancesettinglist.get(0).getAbsenteeism();
+                workinghours = attendancesettinglist.get(0).getWorkinghours();
             }
             Attendance attendance = new Attendance();
             attendance.setUser_id(abNormal.getUser_id());
@@ -68,30 +72,21 @@ public class AbNormalServiceImpl implements AbNormalService {
             DecimalFormat df = new DecimalFormat("######0.00");
             if(attendancelist.size() > 0){
                 for (Attendance attend : attendancelist) {
-                    if(abNormal.getErrortype().equals("PR013002")){//迟到
-                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
-                            attend.setLate(abNormal.getLengthtime());
-                            attend.setLatetime("");
-                            attend.setAbsenteeism(absenteeism);
-                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                    if(abNormal.getErrortype().equals("PR013001")){//外出
+                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getAbsenteeism())){
+                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(workinghours)){
+                                attend.setNormal(workinghours);
+                                attend.setAbsenteeism("");
                             }
-                        }
-                    }
-                    else if(abNormal.getErrortype().equals("PR013003")){//早退
-                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLeaveearlytime())){
-                            attend.setLeaveearly(abNormal.getLengthtime());
-                            attend.setLeaveearlytime("");
-                            attend.setAbsenteeism(absenteeism);
-                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                            else{
+                                attend.setNormal(abNormal.getLengthtime());
                             }
                         }
                     }
                     else if(abNormal.getErrortype().equals("PR013005")){//年休
                         attend.setAnnualrest(abNormal.getLengthtime());
                     }
-                    else if(abNormal.getErrortype().equals("PR013008")){//事休/事假
+                    else if(abNormal.getErrortype().equals("PR013008")){//事休
                         attend.setCompassionateleave(abNormal.getLengthtime());
                     }
                     else if(abNormal.getErrortype().equals("PR013009")){//短期病休
@@ -100,7 +95,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     else if(abNormal.getErrortype().equals("PR013010")){//長期病休
                         attend.setLongsickleave(abNormal.getLengthtime());
                     }
-                    else if(abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")){//産休（女）産休看護休暇（男）
+                    else if(abNormal.getErrortype().equals("PR013012")){//産休（女）
                         attend.setNursingleave(abNormal.getLengthtime());
                     }
                     else if(abNormal.getErrortype().equals("PR013004")
@@ -131,8 +126,16 @@ public class AbNormalServiceImpl implements AbNormalService {
     public Map<String, String> cklength(AbNormal abNormal) throws Exception {
         Map<String, String> rst = new HashMap<String, String>();
         double lengths = 1;
+        double relengths = 1;
+
         if("1".equals(abNormal.getLengthtime()) || "2".equals(abNormal.getLengthtime())){
             lengths = 0.5;
+        }
+        if(StrUtil.isNotBlank(abNormal.getRelengthtime())) {
+            if ("1".equals(abNormal.getRelengthtime()) || "2".equals(abNormal.getRelengthtime())) {
+                relengths = 0.5;
+            }
+            lengths = relengths - lengths;
         }
 
         if("PR013005".equals(abNormal.getErrortype())){
@@ -150,21 +153,28 @@ public class AbNormalServiceImpl implements AbNormalService {
                 rst.put("can","no");
             }
         }else if("PR013006".equals(abNormal.getErrortype())){
-            List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());
-            double rest = 0;
-            String dat="";
-            for(restViewVo item:list){
-                if(Double.parseDouble(item.getRestdays()) != 0){
-                    lengths = lengths - Double.parseDouble(item.getRestdays());
-                    dat += dat + "," + item.getApplicationdate();
-                    if(lengths <= 0){
-                        dat = dat.substring(1,dat.length());
-                        rst.put("dat",dat);
-                        rst.put("can","yes");
-                        return rst;
+
+                List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());
+                String dat="";
+                for(restViewVo item:list){
+                    if(Double.parseDouble(item.getRestdays()) != 0){
+                        if(lengths >= 0){
+                            lengths = lengths - Double.parseDouble(item.getRestdays());
+                            dat += dat + "," + item.getApplicationdate();
+                            if(lengths <= 0){
+                                dat = dat.substring(1,dat.length());
+                                rst.put("dat",dat);
+                                rst.put("can","yes");
+                                return rst;
+                            }
+                        }else{
+                            rst.put("dat","");
+                            rst.put("can","yes");
+                        }
                     }
                 }
-            }
+
+
             rst.put("dat","");
             rst.put("can","no");
         }

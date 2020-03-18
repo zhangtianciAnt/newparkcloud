@@ -1,16 +1,18 @@
 package com.nt.service_pfans.PFANS2000;
 
-import com.nt.dao_Pfans.PFANS2000.Bonussend;
 import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
 import com.nt.utils.dao.TokenModel;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface LunarbonusService {
 
-    List<Lunarbonus> getList(Lunarbonus lunarbonus) throws Exception;
+    List<Lunarbonus> getList() throws Exception;
 
-    public void insert(Lunarbonus lunarbonus, TokenModel tokenModel)throws Exception;
+    public void insert(LunardetailVo LunardetailVo, TokenModel tokenModel)throws Exception;
+
+    public LunarAllVo getOne(String id)throws Exception;
 
 }

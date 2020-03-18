@@ -30,6 +30,18 @@
         or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
         and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW()))
     </select>
+    <select id="selectAbNormalThisYear" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+        ERROR_TYPE errortype,
+        LENGTHTIME lengthtime
+        from abnormal
+        where abnormal.occurrence_date >= #{occurrencedate}
+        and abnormal.occurrence_date &lt;= #{finisheddate}
+        and abnormal.FINISHED_DATE &gt;= #{occurrencedate}
+        and abnormal.FINISHED_DATE &lt;= #{finisheddate}
+        and abnormal.user_id = #{user_id}
+        and abnormal.status = #{status}
+    </select>
     <select id="selectAbNormal1"  resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         SELECT
          SUM(lengthtime) AS lengthtime

@@ -31,9 +31,20 @@ public class OtherDetails extends BaseModel {
     @Column(name = "OTHERDETAILSDATE")
     private Date otherdetailsdate;
 
+    @Column(name = "PLSUMMARY")
+    private String  plsummary;
 
     @Column(name = "COSTITEM")
     private String costitem;
+
+    @Column(name = "CURRENCYRATE")
+    private String  currencyrate;
+
+    @Column(name = "CURRENCY")
+    private String  currency;
+
+    @Column(name = "TORMB")
+    private String  tormb;
 
     @Column(name = "REMARKS")
     private String remarks;

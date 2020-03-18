@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -61,12 +62,14 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setVenuetarget(no);
         }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+        String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
         Priceset priceset = new Priceset();
         priceset.preInsert(tokenModel);
         priceset.setPricesetid(UUID.randomUUID().toString());
         priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
         priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());
+        priceset.setAssesstime(thisDate);
         priceset.setStatus("0");
         pricesetMapper.insert(priceset);
     }
