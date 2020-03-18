@@ -69,7 +69,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             DecimalFormat df = new DecimalFormat("######0.00");
             if(attendancelist.size() > 0){
                 for (Attendance attend : attendancelist) {
-                    if(abNormal.getErrortype().equals("PR013002")){//迟到
+                    if(abNormal.getErrortype().equals("PR013001")){//外出
                         if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
                             attend.setLate(abNormal.getLengthtime());
                             attend.setLatetime("");
@@ -79,20 +79,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                             }
                         }
                     }
-                    else if(abNormal.getErrortype().equals("PR013003")){//早退
-                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLeaveearlytime())){
-                            attend.setLeaveearly(abNormal.getLengthtime());
-                            attend.setLeaveearlytime("");
-                            attend.setAbsenteeism(absenteeism);
-                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
-                            }
-                        }
-                    }
                     else if(abNormal.getErrortype().equals("PR013005")){//年休
                         attend.setAnnualrest(abNormal.getLengthtime());
                     }
-                    else if(abNormal.getErrortype().equals("PR013008")){//事休/事假
+                    else if(abNormal.getErrortype().equals("PR013008")){//事休
                         attend.setCompassionateleave(abNormal.getLengthtime());
                     }
                     else if(abNormal.getErrortype().equals("PR013009")){//短期病休
@@ -101,7 +91,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     else if(abNormal.getErrortype().equals("PR013010")){//長期病休
                         attend.setLongsickleave(abNormal.getLengthtime());
                     }
-                    else if(abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")){//産休（女）産休看護休暇（男）
+                    else if(abNormal.getErrortype().equals("PR013012")){//産休（女）
                         attend.setNursingleave(abNormal.getLengthtime());
                     }
                     else if(abNormal.getErrortype().equals("PR013004")

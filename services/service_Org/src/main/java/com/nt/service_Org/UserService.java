@@ -8,6 +8,7 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -81,4 +82,5 @@ public interface UserService {
 
     List<CustomerInfo> getAllCustomerInfo();
 
+    List<String> importUser(HttpServletRequest request) throws Exception ;
 }

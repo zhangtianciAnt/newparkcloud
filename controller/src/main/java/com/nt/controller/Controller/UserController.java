@@ -176,6 +176,19 @@ public class UserController {
         return ApiResult.success(id);
     }
 
+    @RequestMapping(value = "/importUser", method = {RequestMethod.POST})
+    public ApiResult importUser( HttpServletRequest request) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            CustomerInfo info = new CustomerInfo();
+            return ApiResult.success(userService.importUser(request));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
     /**
      * @方法名：getAccountCustomer
      * @描述：根据orgid获取用户账号及用户信息
