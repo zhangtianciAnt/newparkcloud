@@ -112,7 +112,7 @@ public class EvectionServiceImpl implements EvectionService {
         String year = new SimpleDateFormat("yy",Locale.CHINESE).format(Calendar.getInstance().getTime());
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DATE);
-        
+
         // 发票日期，条件日期
         Date date = new Date();
         SimpleDateFormat myFormatter = new SimpleDateFormat("ddMMMyyyy", Locale.ENGLISH);
@@ -152,6 +152,7 @@ public class EvectionServiceImpl implements EvectionService {
 
         List<Object> needMergeList = new ArrayList<>();
         if(trafficDetailslist.size() > 0){
+            needMergeList.addAll(trafficDetailslist);
         } else {
             // 其他
             needMergeList.addAll(accommodationdetailslist);
