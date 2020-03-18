@@ -157,44 +157,52 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         for ( Dictionary d : dictionaryList ) {
             taxRateMap.put(d.getCode(), d.getValue1());
         }
-        //交通说明字典
-        List<com.nt.dao_Org.Dictionary> dictionaryList4 = dictionaryService.getForSelect("PJ069");
-        Map<String, String> costItemTrafficMap = new HashMap<>();
-        for ( Dictionary d : dictionaryList4 ) {
-            costItemTrafficMap.put(d.getCode(), d.getValue1());
-        }
-        //采购说明字典
-        List<com.nt.dao_Org.Dictionary> dictionaryList1 = dictionaryService.getForSelect("PJ007");
-        Map<String, String> procurementDetailsMap = new HashMap<>();
-        for ( Dictionary d : dictionaryList1 ) {
-            procurementDetailsMap.put(d.getCode(), d.getValue1());
-        }
-        List<com.nt.dao_Org.Dictionary> dictionaryList2 = dictionaryService.getForSelect("PJ005");
-        Map<String, String> procurementProjectMap = new HashMap<>();
-        for ( Dictionary d : dictionaryList2 ) {
-            procurementProjectMap.put(d.getCode(), d.getValue1());
-        }
-        List<com.nt.dao_Org.Dictionary> dictionaryList6 = dictionaryService.getForSelect("PJ006");
-        Map<String, String> procurementProject6Map = new HashMap<>();
-        for ( Dictionary d : dictionaryList6 ) {
-            procurementProject6Map.put(d.getCode(), d.getValue1());
-        }
-        List<com.nt.dao_Org.Dictionary> dictionaryList8 = dictionaryService.getForSelect("PJ008");
-        Map<String, String> procurementProject8Map = new HashMap<>();
-        for ( Dictionary d : dictionaryList8 ) {
-            procurementProject8Map.put(d.getCode(), d.getValue1());
-        }
-        //其他说明字典
-        List<com.nt.dao_Org.Dictionary> dictionaryList3 = dictionaryService.getForSelect("PJ057");
-        Map<String, String> costItemMap = new HashMap<>();
-        for ( Dictionary d : dictionaryList3 ) {
-            costItemMap.put(d.getCode(), d.getValue1());
+//        //交通说明字典
+//        List<com.nt.dao_Org.Dictionary> dictionaryList4 = dictionaryService.getForSelect("PJ069");
+//        Map<String, String> costItemTrafficMap = new HashMap<>();
+//        for ( Dictionary d : dictionaryList4 ) {
+//            costItemTrafficMap.put(d.getCode(), d.getValue1());
+//        }
+//        //采购说明字典
+//        List<com.nt.dao_Org.Dictionary> dictionaryList1 = dictionaryService.getForSelect("PJ007");
+//        Map<String, String> procurementDetailsMap = new HashMap<>();
+//        for ( Dictionary d : dictionaryList1 ) {
+//            procurementDetailsMap.put(d.getCode(), d.getValue1());
+//        }
+//        List<com.nt.dao_Org.Dictionary> dictionaryList2 = dictionaryService.getForSelect("PJ005");
+//        Map<String, String> procurementProjectMap = new HashMap<>();
+//        for ( Dictionary d : dictionaryList2 ) {
+//            procurementProjectMap.put(d.getCode(), d.getValue1());
+//        }
+//        List<com.nt.dao_Org.Dictionary> dictionaryList6 = dictionaryService.getForSelect("PJ006");
+//        Map<String, String> procurementProject6Map = new HashMap<>();
+//        for ( Dictionary d : dictionaryList6 ) {
+//            procurementProject6Map.put(d.getCode(), d.getValue1());
+//        }
+//        List<com.nt.dao_Org.Dictionary> dictionaryList8 = dictionaryService.getForSelect("PJ008");
+//        Map<String, String> procurementProject8Map = new HashMap<>();
+//        for ( Dictionary d : dictionaryList8 ) {
+//            procurementProject8Map.put(d.getCode(), d.getValue1());
+//        }
+//        //其他说明字典
+//        List<com.nt.dao_Org.Dictionary> dictionaryList3 = dictionaryService.getForSelect("PJ057");
+//        Map<String, String> costItemMap = new HashMap<>();
+//        for ( Dictionary d : dictionaryList3 ) {
+//            costItemMap.put(d.getCode(), d.getValue1());
+//        }
+        //科目名字典
+        Map<String, String> accountCodeMap = new HashMap<>();
+        for( int i = 0; i<26; i++ ) {
+            List<com.nt.dao_Org.Dictionary> dictionaryListAccount = dictionaryService.getForSelect("PJ" + (112 + i));
+            for ( Dictionary d : dictionaryListAccount ) {
+                accountCodeMap.put(d.getCode(), d.getValue1());
+            }
         }
 
         Map<String, Object> mergeResult = null;
         Map<String, Float> specialMap = new HashMap<>();
         for ( Invoice invoice : invoicelist ) {
-            if ( SPECIAL_KEY.equals(invoice.getInvoicetype()) ) {
+            if ( SPECIAL_KEY.equals(invoice.getInvoicetype())) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if ( rate <= 0 ) {
@@ -203,9 +211,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 specialMap.put(invoice.getInvoicenumber(), rate);
             }
             // 合计发票金额（含税）
-            specialMap.put(TOTAL_TAX,
-                    specialMap.getOrDefault(TOTAL_TAX, 0f) + getFloatValue(invoice.getInvoiceamount()));
+//            specialMap.put(TOTAL_TAX,
+//                    specialMap.getOrDefault(TOTAL_TAX, 0f) + getFloatValue(invoice.getInvoiceamount()));
         }
+        // 总金额改为人民币支出
+        specialMap.put(TOTAL_TAX, Float.parseFloat(publicExpenseVo.getPublicexpense().getRmbexpenditure()) + Float.parseFloat(publicExpenseVo.getPublicexpense().getForeigncurrency()));
         if ( specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0 ) {
             throw new Exception("发票合计金额不能为0");
         }
@@ -249,23 +259,23 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 cost.setBudgetcoding(getProperty(o, "budgetcoding"));
                 cost.setSubjectnumber(getProperty(o, "subjectnumber"));
                 //发票说明
-                String procurementDetails = "";
-                String procurementProject = "";
-                String costitem = "";
-                procurementDetails = getProperty(o, "procurementdetails");
-                if(procurementDetails != ""){
-                    procurementProject = getProperty(o, "procurementproject");
-                    if(procurementProject != ""){
-                        cost.setRemark(procurementDetails + procurementProject);
-                    }else {
-                        cost.setRemark(procurementDetails);
-                    }
-                }
-                costitem = getProperty(o, "costitem");
-                if(costitem != ""){
-                    cost.setRemark(costitem);
-                }
-
+//                String procurementDetails = "";
+//                String procurementProject = "";
+//                String costitem = "";
+//                procurementDetails = getProperty(o, "procurementdetails");
+//                if(procurementDetails != ""){
+//                    procurementProject = getProperty(o, "procurementproject");
+//                    if(procurementProject != ""){
+//                        cost.setRemark(procurementDetails + procurementProject);
+//                    }else {
+//                        cost.setRemark(procurementDetails);
+//                    }
+//                }
+//                costitem = getProperty(o, "costitem");
+//                if(costitem != ""){
+//                    cost.setRemark(costitem);
+//                }
+                cost.setRemark(getProperty(o, "accountcode"));
                 csvList.add(cost);
             }
         }
@@ -295,27 +305,28 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
             //发票说明
             if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
-                if(("PJ069").equals(insertInfo.getRemark().substring(0, 5))){
-                    insertInfo.setRemark(userName + costItemTrafficMap.getOrDefault(insertInfo.getRemark(), ""));
-                }else if(insertInfo.getRemark().length() > 9){
-                        String projectDetailName = "";
-                    if(("PJ006").equals(insertInfo.getRemark().substring(0,5))){
-                        projectDetailName = procurementProject6Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
-                    }else if(("PJ007").equals(insertInfo.getRemark().substring(0,5))){
-                        projectDetailName = procurementDetailsMap.getOrDefault(insertInfo.getRemark().substring(0,8), "");
-                    }else if(("PJ008").equals(insertInfo.getRemark().substring(0,5))){
-                        projectDetailName = procurementProject8Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
-                    }
-                    insertInfo.setRemark(userName + procurementProjectMap.getOrDefault(insertInfo.getRemark().substring(8,16), "") + projectDetailName);
-                }else {
-                    if(("PJ057").equals(insertInfo.getRemark().substring(0, 5))){
-                        insertInfo.setRemark(userName + costItemMap.getOrDefault(insertInfo.getRemark(), ""));
-                    }else {
-                        if((("PJ007").equals(insertInfo.getRemark().substring(0, 5)))){
-                            insertInfo.setRemark(userName + procurementDetailsMap.getOrDefault(insertInfo.getRemark(), ""));
-                        }
-                    }
-                }
+                insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+//                if(("PJ069").equals(insertInfo.getRemark().substring(0, 5))){
+//                    insertInfo.setRemark(userName + costItemTrafficMap.getOrDefault(insertInfo.getRemark(), ""));
+//                }else if(insertInfo.getRemark().length() > 9){
+//                        String projectDetailName = "";
+//                    if(("PJ006").equals(insertInfo.getRemark().substring(0,5))){
+//                        projectDetailName = procurementProject6Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
+//                    }else if(("PJ007").equals(insertInfo.getRemark().substring(0,5))){
+//                        projectDetailName = procurementDetailsMap.getOrDefault(insertInfo.getRemark().substring(0,8), "");
+//                    }else if(("PJ008").equals(insertInfo.getRemark().substring(0,5))){
+//                        projectDetailName = procurementProject8Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
+//                    }
+//                    insertInfo.setRemark(userName + procurementProjectMap.getOrDefault(insertInfo.getRemark().substring(8,16), "") + projectDetailName);
+//                }else {
+//                    if(("PJ057").equals(insertInfo.getRemark().substring(0, 5))){
+//                        insertInfo.setRemark(userName + costItemMap.getOrDefault(insertInfo.getRemark(), ""));
+//                    }else {
+//                        if((("PJ007").equals(insertInfo.getRemark().substring(0, 5)))){
+//                            insertInfo.setRemark(userName + procurementDetailsMap.getOrDefault(insertInfo.getRemark(), ""));
+//                        }
+//                    }
+//                }
             }
 
             String no=String.format("%2d", rowindex).replace(" ", "0");
@@ -357,8 +368,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
+            String isRmb = getProperty(detail, "rmb");
             String mergeKey;
-            if ( specialMap.containsKey(keyNo) ) {
+            if ( specialMap.containsKey(keyNo) && Float.parseFloat(isRmb) > 0 ) {
                 mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
             } else {
                 mergeKey = budgetcoding + " ... " + subjectnumber;
@@ -382,8 +394,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, inputType);
             totalTax = totalTax + money;
+            String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
-            if ( specialMap.containsKey(keyNo) ) {
+            if ( specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0 ) {
                 List<TotalCost> taxList = (List<TotalCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, taxList);
                 float rate = specialMap.get(keyNo);
@@ -399,22 +412,23 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                     taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
-                    String procurementDetails = "";
-                    String procurementProject = "";
-                    String costitem = "";
-                    procurementDetails = getProperty(detail, "procurementdetails");
-                    if(procurementDetails != ""){
-                        procurementProject = getProperty(detail, "procurementproject");
-                        if(procurementProject != ""){
-                            taxCost.setRemark(procurementDetails + procurementProject);
-                        }else {
-                            taxCost.setRemark(procurementDetails);
-                        }
-                    }
-                    costitem = getProperty(detail, "costitem");
-                    if(costitem != ""){
-                        taxCost.setRemark(costitem);
-                    }
+//                    String procurementDetails = "";
+//                    String procurementProject = "";
+//                    String costitem = "";
+//                    procurementDetails = getProperty(detail, "procurementdetails");
+//                    if(procurementDetails != ""){
+//                        procurementProject = getProperty(detail, "procurementproject");
+//                        if(procurementProject != ""){
+//                            taxCost.setRemark(procurementDetails + procurementProject);
+//                        }else {
+//                            taxCost.setRemark(procurementDetails);
+//                        }
+//                    }
+//                    costitem = getProperty(detail, "costitem");
+//                    if(costitem != ""){
+//                        taxCost.setRemark(costitem);
+//                    }
+                    taxCost.setRemark(getProperty(detail, "accountcode"));
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
@@ -425,18 +439,19 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
                         padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
                         //发票说明
-                        if(procurementDetails != ""){
-                            procurementProject = getProperty(detail, "procurementproject");
-                            if(procurementProject != ""){
-                                padding.setRemark(procurementDetails + procurementProject);
-                            }else {
-                                padding.setRemark(procurementDetails);
-                            }
-                        }
-                        costitem = getProperty(detail, "costitem");
-                        if(costitem != ""){
-                            taxCost.setRemark(costitem);
-                        }
+//                        if(procurementDetails != ""){
+//                            procurementProject = getProperty(detail, "procurementproject");
+//                            if(procurementProject != ""){
+//                                padding.setRemark(procurementDetails + procurementProject);
+//                            }else {
+//                                padding.setRemark(procurementDetails);
+//                            }
+//                        }
+//                        costitem = getProperty(detail, "costitem");
+//                        if(costitem != ""){
+//                            taxCost.setRemark(costitem);
+//                        }
+                        padding.setRemark(getProperty(detail, "accountcode"));
                         List<TotalCost> paddingList = (List<TotalCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
                         paddingList.add(padding);
                         resultMap.put(PADDING_KEY, paddingList);
