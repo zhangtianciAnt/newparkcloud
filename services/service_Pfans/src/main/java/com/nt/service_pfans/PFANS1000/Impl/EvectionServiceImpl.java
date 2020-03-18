@@ -49,7 +49,7 @@ public class EvectionServiceImpl implements EvectionService {
         TravelCost travelcost = new TravelCost();
         List<TravelCost> travelcostlist = travelcostvo.getTravelcost();
         for(TravelCost travelList:travelcostlist){
-            travelcost.setPublicexpenseid(travelList.getPublicexpenseid());
+//            travelcost.setPublicexpenseid(travelList.getPublicexpenseid());
             List<TravelCost> ListVo = travelcostmapper.select(travelcost);
             ListVo = ListVo.stream().sorted(Comparator.comparing(TravelCost::getNumber)).collect(Collectors.toList());
             Listvo.addAll(0,ListVo);
