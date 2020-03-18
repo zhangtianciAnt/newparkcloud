@@ -1231,7 +1231,7 @@ public class GivingServiceImpl implements GivingService {
             } else {
                 return dictionaryList.get(i);
             }
-            if (currentVal <= salary && nextVal > salary) {
+            if ((currentVal < salary || salary == 0d) && nextVal >= salary) {
                 return dictionaryList.get(i);
             }
         }
