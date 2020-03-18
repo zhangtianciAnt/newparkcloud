@@ -482,6 +482,9 @@ public class UserServiceImpl implements UserService {
             model.add("center");
             model.add("group");
             model.add("team");
+            model.add("center");
+            model.add("group");
+            model.add("team");
             model.add("社員ID");
             model.add("预算单位");
             model.add("奖金记上区分");
@@ -563,34 +566,43 @@ public class UserServiceImpl implements UserService {
                         userinfo.setCenterid(value.get(16).toString());
                     }
                     if(value.get(17) != null) {
-                            userinfo.setGroupid(value.get(17).toString());
-                        }
+                        userinfo.setGroupid(value.get(17).toString());
+                    }
                     if(value.get(18) != null) {
-                            userinfo.setTeamid(value.get(18).toString());
-                        }
+                        userinfo.setTeamid(value.get(18).toString());
+                    }
                     if(value.get(19) != null) {
-                        userinfo.setJobnumber(value.get(19).toString());
+                        userinfo.setCentername(value.get(19).toString());
                     }
                     if(value.get(20) != null) {
-                        userinfo.setBudgetunit(value.get(20).toString());
+                        userinfo.setGroupname(value.get(20).toString());
                     }
                     if(value.get(21) != null) {
-                        userinfo.setDifference(value.get(21).toString());
+                        userinfo.setTeamname(value.get(21).toString());
                     }
                     if(value.get(22) != null) {
-                        userinfo.setPost(value.get(22).toString());
+                        userinfo.setJobnumber(value.get(22).toString());
                     }
                     if(value.get(23) != null) {
-                        userinfo.setType(value.get(23).toString());
+                        userinfo.setBudgetunit(value.get(23).toString());
                     }
                     if(value.get(24) != null) {
-                        userinfo.setRank(value.get(24).toString());
+                        userinfo.setDifference(value.get(24).toString());
                     }
                     if(value.get(25) != null) {
-                        userinfo.setEnterday(value.get(25).toString());
+                        userinfo.setPost(value.get(25).toString());
                     }
                     if(value.get(26) != null) {
-                        userinfo.setSeatnumber(value.get(26).toString());
+                        userinfo.setType(value.get(26).toString());
+                    }
+                    if(value.get(27) != null) {
+                        userinfo.setRank(value.get(27).toString());
+                    }
+                    if(value.get(28) != null) {
+                        userinfo.setEnterday(value.get(28).toString());
+                    }
+                    if(value.get(29) != null) {
+                        userinfo.setSeatnumber(value.get(29).toString());
                     }
                 }
 
