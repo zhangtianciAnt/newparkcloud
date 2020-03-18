@@ -519,9 +519,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (org.get_id().equals(orgId)) {
             return org;
         } else {
-            for (OrgTree item : org.getOrgs()) {
-                return getCurrentOrg(item, orgId);
+            if(org.getOrgs() !=null){
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or =  getCurrentOrg(item, orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
             }
+
         }
         return org;
     }
