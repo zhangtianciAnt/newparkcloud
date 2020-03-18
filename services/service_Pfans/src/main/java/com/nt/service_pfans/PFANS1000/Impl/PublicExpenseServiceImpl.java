@@ -202,7 +202,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         Map<String, Object> mergeResult = null;
         Map<String, Float> specialMap = new HashMap<>();
         for ( Invoice invoice : invoicelist ) {
-            if ( SPECIAL_KEY.equals(invoice.getInvoicetype()) ) {
+            if ( SPECIAL_KEY.equals(invoice.getInvoicetype())) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if ( rate <= 0 ) {
@@ -215,7 +215,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //                    specialMap.getOrDefault(TOTAL_TAX, 0f) + getFloatValue(invoice.getInvoiceamount()));
         }
         // 总金额改为人民币支出
-        specialMap.put(TOTAL_TAX, Float.parseFloat(publicExpenseVo.getPublicexpense().getRmbexpenditure()));
+        specialMap.put(TOTAL_TAX, Float.parseFloat(publicExpenseVo.getPublicexpense().getRmbexpenditure()) + Float.parseFloat(publicExpenseVo.getPublicexpense().getForeigncurrency()));
         if ( specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0 ) {
             throw new Exception("发票合计金额不能为0");
         }
@@ -368,8 +368,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
+            String isRmb = getProperty(detail, "rmb");
             String mergeKey;
-            if ( specialMap.containsKey(keyNo) ) {
+            if ( specialMap.containsKey(keyNo) && Float.parseFloat(isRmb) > 0 ) {
                 mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
             } else {
                 mergeKey = budgetcoding + " ... " + subjectnumber;
@@ -393,8 +394,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, inputType);
             totalTax = totalTax + money;
+            String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
-            if ( specialMap.containsKey(keyNo) ) {
+            if ( specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0 ) {
                 List<TotalCost> taxList = (List<TotalCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, taxList);
                 float rate = specialMap.get(keyNo);
