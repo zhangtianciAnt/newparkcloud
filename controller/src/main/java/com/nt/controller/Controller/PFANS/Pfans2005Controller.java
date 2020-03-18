@@ -215,7 +215,6 @@ public class Pfans2005Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        givingService.thisMonthOvertimeChange(givingVo, tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(givingService.thisMonthOvertimeChange(givingVo, tokenModel));
     }
 }
