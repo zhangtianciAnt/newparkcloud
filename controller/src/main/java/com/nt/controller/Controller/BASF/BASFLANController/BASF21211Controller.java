@@ -44,7 +44,7 @@ public class BASF21211Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        trainjoinlistServices.updata(trainjoinlist, tokenModel);
+        trainjoinlistServices.updataOnline(trainjoinlist, tokenModel);
         return ApiResult.success();
     }
 

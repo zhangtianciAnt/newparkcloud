@@ -15,7 +15,6 @@ import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -84,6 +83,21 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
     }
 
+    //在线培训更新人员
+    @Override
+    public void updataOnline(Trainjoinlist trainjoinlist, TokenModel tokenModel) throws Exception {
+        Trainjoinlist trainjoinlist1 = new Trainjoinlist();
+        trainjoinlist1.setTrainjoinlistid(trainjoinlist.getTrainjoinlistid());
+        trainjoinlist1 = trainjoinlistMapper.selectOne(trainjoinlist1);
+        if (trainjoinlist1.getNumber() == null) {
+            trainjoinlist.setNumber(1);
+        } else {
+            trainjoinlist.setNumber(trainjoinlist1.getNumber() + 1);
+        }
+        trainjoinlist.preUpdate(tokenModel);
+        trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist);
+    }
+
 
     //在线培训添加人员名单
     @Override
@@ -101,7 +115,6 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                         Trainjoinlist trainjoinlist2 = trainjoinlistMapper.selectOne(trainjoinlist1);
                         trainjoinlist2.preUpdate(tokenModel);
                         trainjoinlist2.setJointype("正常");
-                        trainjoinlist2.setNumber(trainjoinlist2.getNumber() + 1);
                         trainjoinlistMapper.updateByPrimaryKeySelective(trainjoinlist2);
                         return trainjoinlist2.getTrainjoinlistid();
                     } else {
@@ -109,7 +122,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                         trainjoinlist.preInsert(tokenModel);
                         trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
                         trainjoinlist.setJointype("正常");
-                        trainjoinlist.setNumber(1);
+                        trainjoinlist.setNumber(0);
                         trainjoinlistMapper.insert(trainjoinlist);
                         //培训清单培训人数添加
                         try {
