@@ -188,5 +188,11 @@ public class Evection extends BaseModel {
     @Column(name = "REIMBURSEMENTDATE")
     private Date reimbursementdate;
 
+    /**
+     * 个人编码
+     */
+    @Column(name = "PERSONALCODE")
+    private Date personalcode;
+
 
 }
