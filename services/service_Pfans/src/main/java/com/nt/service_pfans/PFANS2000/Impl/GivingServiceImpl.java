@@ -1941,28 +1941,30 @@ public class GivingServiceImpl implements GivingService {
         List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(lastMonthDate.getTime()))));
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
+                // 退职日是本月的时候跳出循环（该员工的給料和补助在退职处理中计算）
+                if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
+                    Date resignationDate = sf.parse(customerInfo.getUserinfo().getResignation_date());
+                    if (resignationDate.getTime() >= mouthStart && resignationDate.getTime() <= mouthEnd) {
+                        continue;
+                    }
+                }
                 Induction induction = new Induction();
                 induction.setGiving_id(givingId);
                 // 上月工资结算时点过后入职没发工资的人
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
-                    // 计算給料和补助
-                    calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sf, df);
-                    inductions.add(induction);
-                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
-                    // 本月转正或未转正的人
-                    // 转正日期
-                    Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
-                    if (endDate.getTime() >= mouthStart) {
+                    if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                        // 转正日期
+                        Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
                         // 本月转正
-                        if (endDate.getTime() <= mouthEnd) {
+                        if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
                             // 正社员工開始日
                             staffStartDate = endDate.toString();
                             induction.setStartdate(endDate);
                         }
-                        // 计算給料和补助
-                        calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sf, df);
-                        inductions.add(induction);
                     }
+                    // 计算給料和补助
+                    calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sf, df);
+                    inductions.add(induction);
                 }
             }
         }
@@ -2067,7 +2069,7 @@ public class GivingServiceImpl implements GivingService {
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 retire.setRetiredate(sf.parse(resignationDate));
                 // 计算出勤日数
-                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                Map<String,String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
                 // 本月正式工作日数
                 double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
                 // 本月试用工作日数
