@@ -211,7 +211,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //1年以上10年未满  因病休假2个月以上的
         if (StringUtil.isNotEmpty(workdaystartCal)) {
             int year = getYears(workdaystartCal);
-            int hours = 0;
+            BigDecimal hours = BigDecimal.ZERO;
             AbNormal abNormal = new AbNormal();
             abNormal.setUser_id(customer.getUserid());
             abNormal.setStatus("4");
@@ -230,26 +230,57 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             {
                 for(AbNormal abNormalinfo : abNormalList)
                 {
+                    calendar.setTime(new Date());
+                    calendar.add(Calendar.YEAR,-1);
+                    calendar_a.setTime(new Date());
+                    calendar_a.add(Calendar.DAY_OF_YEAR,-1);
+
+                    DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
+                    DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
                     if(abNormalinfo.getErrortype().equals("PR013010") || abNormalinfo.getErrortype().equals("PR013009"))//病休
                     {
-                        hours = hours + Double.valueOf(abNormalinfo.getLengthtime()).intValue();
+                        if(abNormalinfo.getOccurrencedate().compareTo(calendar.getTime())>=0 && abNormalinfo.getOccurrencedate().compareTo(calendar_a.getTime())<=0
+                                && abNormalinfo.getFinisheddate().compareTo(calendar.getTime())>=0 && abNormalinfo.getFinisheddate().compareTo(calendar_a.getTime())<=0)
+                        {
+                            hours = hours.add(BigDecimal.valueOf(Double.valueOf(abNormalinfo.getLengthtime())));
+                        }
+                        else if(abNormalinfo.getOccurrencedate().compareTo(calendar.getTime())>=0 && abNormalinfo.getOccurrencedate().compareTo(calendar_a.getTime())<=0)
+                        {
+                            //开始日
+                            calendar.setTime(abNormalinfo.getPeriodstart());
+                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
+                            hours = hours.add(BigDecimal.valueOf(days*8));
+
+                        }
+                        else
+                        {
+                            //终了日
+                            calendar_a.setTime(abNormalinfo.getPeriodend());
+                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
+                            hours = hours.add(BigDecimal.valueOf(days*8));
+                        }
                     }
                 }
-
+                BigDecimal eight =new  BigDecimal(0);
+                hours.divide(BigDecimal.valueOf(8));
                 if(year >= 1 && year < 10){
-                    if( hours/8 >=60)
+                    if( hours.divide(BigDecimal.valueOf(8)).compareTo( BigDecimal.valueOf(60))>-1)
                     {
                         annual_leave_thisyear = BigDecimal.ZERO;
                     }
                 }
                 if(year >= 10 && year < 20){
-                    if(hours/8 >=90)
+                    if( hours.divide(BigDecimal.valueOf(8)).compareTo( BigDecimal.valueOf(90))>-1)
                     {
                         annual_leave_thisyear = BigDecimal.ZERO;
                     }
                 }
                 if(year >= 20){
-                    if(hours/8 >=120)
+                    if( hours.divide(BigDecimal.valueOf(8)).compareTo( BigDecimal.valueOf(120))>-1)
                     {
                         annual_leave_thisyear = BigDecimal.ZERO;
                     }
