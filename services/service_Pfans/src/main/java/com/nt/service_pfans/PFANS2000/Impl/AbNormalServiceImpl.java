@@ -56,11 +56,14 @@ public class AbNormalServiceImpl implements AbNormalService {
             }
             //旷工基本计算单位
             String absenteeism = null;
+            //工作时间
+            String workinghours = null;
             AttendanceSetting attendancesetting = new AttendanceSetting();
             List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
             if(attendancesettinglist.size() > 0){
                 //旷工基本计算单位
                 absenteeism = attendancesettinglist.get(0).getAbsenteeism();
+                workinghours = attendancesettinglist.get(0).getWorkinghours();
             }
             Attendance attendance = new Attendance();
             attendance.setUser_id(abNormal.getUser_id());
@@ -70,12 +73,13 @@ public class AbNormalServiceImpl implements AbNormalService {
             if(attendancelist.size() > 0){
                 for (Attendance attend : attendancelist) {
                     if(abNormal.getErrortype().equals("PR013001")){//外出
-                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getLatetime())){
-                            attend.setLate(abNormal.getLengthtime());
-                            attend.setLatetime("");
-                            attend.setAbsenteeism(absenteeism);
-                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(absenteeism)){
-                                attend.setAbsenteeism(String.valueOf(Double.valueOf(absenteeism) * 2));
+                        if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(attend.getAbsenteeism())){
+                            if(Double.valueOf(abNormal.getLengthtime()) >= Double.valueOf(workinghours)){
+                                attend.setNormal(workinghours);
+                                attend.setAbsenteeism("");
+                            }
+                            else{
+                                attend.setNormal(abNormal.getLengthtime());
                             }
                         }
                     }

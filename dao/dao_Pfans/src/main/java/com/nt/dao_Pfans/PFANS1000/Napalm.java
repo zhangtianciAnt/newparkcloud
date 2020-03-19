@@ -176,4 +176,9 @@ public class Napalm extends BaseModel {
     @Column(name = "CONJAPANESE")
     private String conjapanese;
 
+    /**
+     *
+     */
+    @Column(name = "CLAIMDATETIME")
+    private String claimdatetime;
 }

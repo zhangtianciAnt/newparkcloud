@@ -18,6 +18,8 @@ public class LunardetailVo {
 
     private String lunarbonus_id;
 
+    private String group_id;
+
     private Date evaluationday;
 
     private String subjectmon;

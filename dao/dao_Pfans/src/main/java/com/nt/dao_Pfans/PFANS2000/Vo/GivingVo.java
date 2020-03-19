@@ -34,7 +34,7 @@ public class GivingVo {
 
     private List<AccumulatedTaxVo> accumulatedTaxVo;
 
-    private List<DisciplinaryVo> DisciplinaryVo;
+    private List<Disciplinary> DisciplinaryVo;
 
     private List<DutyfreeVo> dutyfreeVo;
 

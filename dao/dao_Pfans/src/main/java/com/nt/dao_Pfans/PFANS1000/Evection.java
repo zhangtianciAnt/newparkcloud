@@ -182,5 +182,17 @@ public class Evection extends BaseModel {
     @Column(name = "PROJECT_ID")
     private String project_id;
 
+    /**
+     * 报销日
+     */
+    @Column(name = "REIMBURSEMENTDATE")
+    private Date reimbursementdate;
+
+    /**
+     * 个人编码
+     */
+    @Column(name = "PERSONALCODE")
+    private Date personalcode;
+
 
 }

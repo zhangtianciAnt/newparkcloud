@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
@@ -9,6 +10,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
@@ -44,6 +46,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ExpatriatesinforMapper expatriatesinforMapper;
     @Autowired
     private DelegainformationMapper delegainformationMapper;
+    @Autowired
+    private ContractnumbercountMapper contractnumbercountMapper;
 
 
     @Override
@@ -101,6 +105,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         ProjectContract projectcontract = new ProjectContract();
         //日志管理
         LogManagement logManagement = new LogManagement();
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        Contractnumbercount contractnumbercount = new Contractnumbercount();
+        contractnumbercount.setCompanyprojectsid(companyprojectsid);
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
+        contractnumbercountList = contractnumbercountList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+        staffVo.setContractnumbercount(contractnumbercountList);
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
 
         projectsystem.setCompanyprojects_id(companyprojectsid);
         stageInformation.setCompanyprojects_id(companyprojectsid);
@@ -182,6 +193,24 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(pro);
             }
         }
+
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        List<Contractnumbercount> contractnumbercountList = companyProjectsVo.getContractnumbercount();
+        if (contractnumbercountList.size() > 0) {
+            Contractnumbercount contractnumbercount = new Contractnumbercount();
+            contractnumbercount.setCompanyprojectsid(companyprojectsid);
+            contractnumbercountMapper.delete(contractnumbercount);
+            int rowindex = 0;
+            for (Contractnumbercount info : contractnumbercountList) {
+                rowindex = rowindex + 1;
+                info.preInsert(tokenModel);
+                info.setContractnumbercount_id(UUID.randomUUID().toString());
+                info.setCompanyprojectsid(companyprojectsid);
+                info.setRowindex(rowindex);
+                contractnumbercountMapper.insertSelective(info);
+            }
+        }
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
     }
 
     //新建
@@ -212,6 +241,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
         //项目合同
         List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        List<Contractnumbercount> contractnumbercountList = companyProjectsVo.getContractnumbercount();
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
         if (projectsystemList != null) {
             int rowundex = 0;
             for (Projectsystem projectsystem : projectsystemList) {
@@ -247,107 +279,107 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 if (projectsystem.getAdmissiontime() != null && projectsystem.getExittime() != null && projectsystem.getType().equals("1")) {
                     if (aprilFirst_d.before(delegainformation.getAdmissiontime()) && delegainformation.getExittime().before(marchLast_d)) {
                         //本事业年度都在此工作
-                        delegainformation.setApril("1.00");
-                        delegainformation.setMay("1.00");
-                        delegainformation.setJune("1.00");
-                        delegainformation.setJuly("1.00");
-                        delegainformation.setAugust("1.00");
-                        delegainformation.setSeptember("1.00");
-                        delegainformation.setOctober("1.00");
-                        delegainformation.setNovember("1.00");
-                        delegainformation.setDecember("1.00");
-                        delegainformation.setJanuary("1.00");
-                        delegainformation.setFebruary("1.00");
-                        delegainformation.setMarch("1.00");
+                        delegainformation.setApril("1");
+                        delegainformation.setMay("1");
+                        delegainformation.setJune("1");
+                        delegainformation.setJuly("1");
+                        delegainformation.setAugust("1");
+                        delegainformation.setSeptember("1");
+                        delegainformation.setOctober("1");
+                        delegainformation.setNovember("1");
+                        delegainformation.setDecember("1");
+                        delegainformation.setJanuary("1");
+                        delegainformation.setFebruary("1");
+                        delegainformation.setMarch("1");
                         delegainformation.setYear(thisYear_s);
                     } else if (delegainformation.getAdmissiontime().after(aprilFirst_d) && delegainformation.getExittime().after(marchLast_d)) {
                         //4月1号之后入场，明年3月末之后退场
                         delegainformation.setYear(thisYear_s);
                         if (admissiontimeMonth_s.equals("04")) {
-                            delegainformation.setApril("1.00");
-                            delegainformation.setMay("1.00");
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setApril("1");
+                            delegainformation.setMay("1");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("05")) {
-                            delegainformation.setMay("1.00");
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setMay("1");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("06")) {
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("07")) {
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("08")) {
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("09")) {
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("10")) {
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("11")) {
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("12")) {
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("01")) {
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("02")) {
                             delegainformation.setFebruary("1");
                             delegainformation.setMarch("1");
@@ -370,7 +402,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                         delegainformation.setApril("1");
                                         //入退场都不为4月份
                                     } else {
-                                        delegainformation.setApril("1.00");
+                                        delegainformation.setApril("1");
                                     }
                                 } else if (m == 5) {
                                     //入退场月份都为5月份
@@ -532,95 +564,95 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                     } else if (delegainformation.getAdmissiontime().before(aprilFirst_d) && delegainformation.getExittime().before(marchLast_d)) {
                         delegainformation.setYear(thisYear_s);
                         if (exitimeMonth_s.equals("04")) {
-                            delegainformation.setApril("1.00");
-                            delegainformation.setMay("1.00");
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setApril("1");
+                            delegainformation.setMay("1");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("05")) {
-                            delegainformation.setMay("1.00");
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setMay("1");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("06")) {
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("07")) {
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("08")) {
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("09")) {
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("10")) {
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("11")) {
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("12")) {
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("01")) {
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("02")) {
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (exitimeMonth_s.equals("03")) {
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setMarch("1");
                         }
                     }
                 } else if (projectsystem.getAdmissiontime() != null && projectsystem.getType().equals("1")) {
@@ -641,90 +673,90 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                     } else if (aprilFirst_d.before(delegainformation.getAdmissiontime()) && marchLast_d.after(delegainformation.getAdmissiontime())) {
                         delegainformation.setYear(thisYear_s);
                         if (admissiontimeMonth_s.equals("04")) {
-                            delegainformation.setApril("1.00");
-                            delegainformation.setMay("1.00");
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setApril("1");
+                            delegainformation.setMay("1");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("05")) {
-                            delegainformation.setMay("1.00");
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setMay("1");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("06")) {
-                            delegainformation.setJune("1.00");
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJune("1");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("07")) {
-                            delegainformation.setJuly("1.00");
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJuly("1");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("08")) {
-                            delegainformation.setAugust("1.00");
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setAugust("1");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("09")) {
-                            delegainformation.setSeptember("1.00");
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setSeptember("1");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("10")) {
-                            delegainformation.setOctober("1.00");
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setOctober("1");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("11")) {
-                            delegainformation.setNovember("1.00");
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setNovember("1");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("12")) {
-                            delegainformation.setDecember("1.00");
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setDecember("1");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("01")) {
-                            delegainformation.setJanuary("1.00");
-                            delegainformation.setFebruary("1.00");
-                            delegainformation.setMarch("1.00");
+                            delegainformation.setJanuary("1");
+                            delegainformation.setFebruary("1");
+                            delegainformation.setMarch("1");
                         } else if (admissiontimeMonth_s.equals("02")) {
                             delegainformation.setFebruary("1");
                             delegainformation.setMarch("1");
@@ -758,6 +790,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 projectcontractMapper.insertSelective(projectcontract);
             }
         }
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
+        if (contractnumbercountList.size() > 0) {
+            int rowindex = 0;
+            for (Contractnumbercount contractnumbercount : contractnumbercountList) {
+                rowindex = rowindex + 1;
+                contractnumbercount.preInsert(tokenModel);
+                contractnumbercount.setContractnumbercount_id(UUID.randomUUID().toString());
+                contractnumbercount.setCompanyprojectsid(companyprojectsid);
+                contractnumbercount.setRowindex(rowindex);
+                contractnumbercountMapper.insertSelective(contractnumbercount);
+            }
+        }
+        //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
     }
 
     /**
