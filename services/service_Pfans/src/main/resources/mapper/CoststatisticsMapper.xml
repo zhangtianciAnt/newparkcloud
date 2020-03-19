@@ -3,12 +3,26 @@
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper">
 
 	<select id="getExpatriatesinfor" parameterType="com.nt.dao_Pfans.PFANS6000.Coststatistics" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
-		select exp.`EXPNAME` as BPNAME,
+		/*select exp.`EXPNAME` as BPNAME,
 		sum(exp.`JANUARY`) as MANHOUR1, sum(exp.FEBRUARY) as MANHOUR2, sum(exp.MARCH) as MANHOUR3, sum(exp.APRIL) as MANHOUR4, sum(exp.MAY) as MANHOUR5, sum(exp.JUNE) as MANHOUR6,
 		sum(exp.`JULY`) as MANHOUR7, sum(exp.AUGUST) as MANHOUR8, sum(exp.SEPTEMBER) as MANHOUR9, sum(exp.OCTOBER) as MANHOUR10, sum(exp.NOVEMBER) as MANHOUR11, sum(exp.DECEMBER) as MANHOUR12
 		from expatriatesinfor exp
 		where exp.`STATUS` = '0'
-		group by exp.`EXPNAME`
+		group by exp.`EXPNAME`*/
+		select exp.EXPATRIATESINFOR_ID as BPNAME,sum(df.`JANUARY`) as MANHOUR1, sum(df.FEBRUARY) as MANHOUR2,
+			sum(df.MARCH) as MANHOUR3, sum(df.APRIL) as MANHOUR4, sum(df.MAY) as MANHOUR5, sum(df.JUNE) as MANHOUR6,
+			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
+			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12
+		from delegainformation df
+		inner join companyprojects cp
+		on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+		inner join projectsystem ps
+		on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+		and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+		inner join expatriatesinfor exp
+		on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+		where df.status = '0'
+		group by exp.EXPATRIATESINFOR_ID
 	</select>
 
 	<insert id="insertAll" parameterType="java.util.List">
