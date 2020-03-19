@@ -178,7 +178,7 @@ public class EvectionServiceImpl implements EvectionService {
                 cost.setBudgetcoding(getProperty(o, "budgetcoding"));
                 cost.setSubjectnumber(getProperty(o, "subjectnumber"));
                 //发票说明
-                cost.setRemark(getProperty(o, "accountcode"));
+                cost.setRemarks(getProperty(o, "accountcode"));
                 csvList.add(cost);
             }
         }
@@ -203,13 +203,12 @@ public class EvectionServiceImpl implements EvectionService {
             //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
             insertInfo.setInvoicedate(date);
             insertInfo.setConditiondate(date);
-//再确认
-//            insertInfo.setVendorcode(evectionVo.getEvection().getPayeecode());//供应商编号
-//            insertInfo.setCurrency(evectionVo.getEvection().getCurrency());//币种
+            insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
+            insertInfo.setCurrency(evectionVo.getEvection().getCurrency());//币种
             insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
             //发票说明
-            if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
-                insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+            if(insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null ){
+                insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
             }
 
             String no=String.format("%2d", rowindex).replace(" ", "0");
@@ -294,7 +293,7 @@ public class EvectionServiceImpl implements EvectionService {
                     taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                     taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
-                    taxCost.setRemark(getProperty(detail, "accountcode"));
+                    taxCost.setRemarks(getProperty(detail, "accountcode"));
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
@@ -305,7 +304,7 @@ public class EvectionServiceImpl implements EvectionService {
                         padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
                         padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
                         //发票说明
-                        padding.setRemark(getProperty(detail, "accountcode"));
+                        padding.setRemarks(getProperty(detail, "accountcode"));
                         List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
                         paddingList.add(padding);
                         resultMap.put(PADDING_KEY, paddingList);
