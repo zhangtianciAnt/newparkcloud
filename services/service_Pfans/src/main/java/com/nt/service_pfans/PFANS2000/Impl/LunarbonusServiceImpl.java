@@ -86,6 +86,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 lunardetail.setSalary(customerInfo.getUserinfo().getSalary());
                 lunardetail.setTeam_id(customerInfo.getUserinfo().getTeamid());
                 lunardetail.setDifference(customerInfo.getUserinfo().getDifference());
+                lunardetail.setOccupationtype(customerInfo.getUserinfo().getOccupationtype());
                 lunardetailMapper.insert(lunardetail);
             }
         }
