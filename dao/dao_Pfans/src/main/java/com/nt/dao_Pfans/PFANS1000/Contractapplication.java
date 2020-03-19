@@ -204,4 +204,6 @@ public class Contractapplication extends BaseModel {
     @Column(name = "TEMAID")
     private String temaid;
 
+    @Column(name = "QINGREMARKS")
+    private String qingremarks;
 }
