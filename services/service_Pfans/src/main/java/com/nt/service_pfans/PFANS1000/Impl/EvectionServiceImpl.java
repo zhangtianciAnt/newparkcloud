@@ -151,12 +151,12 @@ public class EvectionServiceImpl implements EvectionService {
         }
 
         List<Object> needMergeList = new ArrayList<>();
-        if(trafficDetailslist.size() > 0){
+        if(trafficDetailslist.size() > 0 || accommodationdetailslist.size() > 0
+                || otherDetailslist.size() > 0){
             needMergeList.addAll(trafficDetailslist);
-        } else {
-            // 其他
             needMergeList.addAll(accommodationdetailslist);
             needMergeList.addAll(otherDetailslist);
+//            needMergeList.addAll(currencyexchangeList);
         }
         mergeResult = mergeDetailList(needMergeList, specialMap);
 
@@ -166,7 +166,7 @@ public class EvectionServiceImpl implements EvectionService {
         List<TravelCost> paddingList = (List<TravelCost>) mergeResult.getOrDefault(PADDING_KEY, new ArrayList<>());
         String inputType = (String) mergeResult.get(INPUT_TYPE_KEY);
         for ( Object o : mergeResult.values() ) {
-            if ( o instanceof  TrafficDetails || o instanceof PurchaseDetails || o instanceof OtherDetails ) {
+            if ( o instanceof  TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
                 String money = getProperty(o, inputType);
                 TravelCost cost = new TravelCost();
                 if ( FIELD_RMB.equals(inputType) ) {
