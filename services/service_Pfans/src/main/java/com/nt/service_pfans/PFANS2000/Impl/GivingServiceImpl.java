@@ -504,7 +504,11 @@ public class GivingServiceImpl implements GivingService {
             }
         }
 
-        Calendar calendar = Calendar.getInstance();
+        /*RN基本工资 -lxx*/
+        Dictionary dictionaryForRn = new Dictionary();
+        dictionaryForRn.setPcode("PR021");
+        List<Dictionary> dictionarylistForRn = dictionaryMapper.select(dictionaryForRn);
+        /*RN基本工资 -lxx*/
         if (customerInfos.size() > 0) {
             int rowindex = 0;
             for (CustomerInfo customer : customerInfos) {
@@ -577,6 +581,18 @@ public class GivingServiceImpl implements GivingService {
                         base.setHeating(R7);
                     }
                     /*rank修改 lxx */
+
+                    /*RN基本工资 -lxx*/
+                    for (Dictionary diction : dictionarylistForRn) {
+                        if (diction.getCode().equals(customer.getUserinfo().getRank())) {
+                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
+                                base.setRnbasesalary(diction.getValue4());
+                            } else {
+                                base.setRnbasesalary(diction.getValue5());
+                            }
+                        }
+                    }
+                    /*RN基本工资 -lxx*/
                 }
 
                 //入社日
@@ -964,15 +980,15 @@ public class GivingServiceImpl implements GivingService {
 
         givingMapper.insert(giving);
         // 2020/03/11 add by myt start
-        insertInduction(givingid, tokenModel);
-        insertRetire(givingid, tokenModel);
+//        insertInduction(givingid, tokenModel);
+//        insertRetire(givingid, tokenModel);
         // 2020/03/14 add by myt end
         insertBase(givingid, tokenModel);
         insertContrast(givingid, tokenModel);
         insertOtherTwo(givingid, tokenModel);
         insertOtherOne(givingid, tokenModel);
-        insertLackattendance(givingid, tokenModel);
-        insertResidual(givingid, tokenModel);
+//        insertLackattendance(givingid, tokenModel);
+//        insertResidual(givingid, tokenModel);
     }
 
     @Override
@@ -1518,8 +1534,8 @@ public class GivingServiceImpl implements GivingService {
         double total = 0d;  // 总欠勤费
 
         String userId = tokenModel.getUserId();
-        Lackattendance lackattendance = givingVo.getLackattendance().stream().filter(item->item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
-        Base base = givingVo.getBase().stream().filter(item->item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Lackattendance lackattendance = givingVo.getLackattendance().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
 
         // 当月小时工资 = 月工资÷21.75天÷8小时
         double currentSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d)
@@ -2051,7 +2067,7 @@ public class GivingServiceImpl implements GivingService {
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 retire.setRetiredate(sf.parse(resignationDate));
                 // 计算出勤日数
-                Map<String,String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
                 // 本月正式工作日数
                 double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
                 // 本月试用工作日数
