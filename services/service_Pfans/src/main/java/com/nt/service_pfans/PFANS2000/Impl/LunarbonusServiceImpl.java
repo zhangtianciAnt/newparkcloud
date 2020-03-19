@@ -19,9 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -102,7 +104,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         LunarAllVo.setLunardetail(lunardetailMapper.select(lunardetailCondition));
         Lunarbasic lunarbasicConditon = new Lunarbasic();
         lunarbasicConditon.setLunarbonus_id(id);
-        LunarAllVo.setLunarbasic(lunarbasicMapper.select(lunarbasicConditon));
+        LunarAllVo.setLunarbasic(lunarbasicMapper.select(lunarbasicConditon).stream().sorted(Comparator.comparing(Lunarbasic::getIndex)).collect(Collectors.toList()));
         return LunarAllVo ;
     }
 }
