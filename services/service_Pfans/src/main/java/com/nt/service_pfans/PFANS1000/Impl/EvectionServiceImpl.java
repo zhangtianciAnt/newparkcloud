@@ -156,9 +156,8 @@ public class EvectionServiceImpl implements EvectionService {
             needMergeList.addAll(trafficDetailslist);
             needMergeList.addAll(accommodationdetailslist);
             needMergeList.addAll(otherDetailslist);
-//            needMergeList.addAll(currencyexchangeList);
         }
-        mergeResult = mergeDetailList(needMergeList, specialMap);
+        mergeResult = mergeDetailList(needMergeList, specialMap, currencyexchangeList);
 
 
         List<TravelCost> csvList = new ArrayList<>();
@@ -227,6 +226,7 @@ public class EvectionServiceImpl implements EvectionService {
      */
     private static final String TAX_KEY = "__TAX_KEY__";
     private static final String PADDING_KEY = "__PADDING_KEY__";
+    private static final String CURRENCY_KEY = "__CURRENCY_KEY__";
     private static final String INPUT_TYPE_KEY = "__INPUT_TYPE_KEY__";
     private static final DecimalFormat FNUM = new DecimalFormat("##0.00");
 
@@ -235,7 +235,7 @@ public class EvectionServiceImpl implements EvectionService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap) throws Exception {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         if ( detailList.size() <= 0 ) {
             throw new Exception("明细不能为空");
@@ -311,7 +311,23 @@ public class EvectionServiceImpl implements EvectionService {
                     }
                 }
             }
-
+            //计算汇兑损失
+//            if(currencyexchangeList != null){
+//                String curBefore = detail;
+//                String curRear = currencyexchangeList;
+//                float diff = getFloatValue(curBefore) - getFloatValue(curRear);
+//                if ( diff!=0 ) {
+//                    TravelCost cur = new TravelCost();
+//                    cur.setLineamount(diff+"");
+//                    cur.setBudgetcoding(getProperty(detail, "budgetcoding"));
+//                    cur.setSubjectnumber(getProperty(detail, "subjectnumber"));
+//                    //发票说明
+//                    cur.setRemarks(getProperty(detail, "accountcode"));
+//                    List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(CURRENCY_KEY, new ArrayList<>());
+//                    paddingList.add(cur);
+//                    resultMap.put(CURRENCY_KEY, inputType);
+//                }
+//            }
         }
         if ( totalTax != specialMap.get(TOTAL_TAX) ) {
             throw new Exception("发票合计金额与明细不匹配。");
