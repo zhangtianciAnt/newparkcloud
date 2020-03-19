@@ -1316,6 +1316,7 @@ public class GivingServiceImpl implements GivingService {
                         filter(subItem -> subItem.getApplicationdate()
                                 .equals(restYear + restMonth))
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getLastreplace());
             } else {
                 residual.setLastreplace("0");
             }
@@ -1358,6 +1359,7 @@ public class GivingServiceImpl implements GivingService {
                         filter(subItem -> subItem.getApplicationdate()
                                 .equals(currentRestYear + currentRestMonth))
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getThisreplace());
             } else {
                 residual.setThisreplace("0");
             }
@@ -1378,6 +1380,7 @@ public class GivingServiceImpl implements GivingService {
                                 subItem.getApplicationdate().equals(date3) ||
                                 subItem.getApplicationdate().equals(date4))
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
                 residual.setThisreplace3("0");
             }
