@@ -7,11 +7,10 @@
 		where
 			ASSESSTIME >= str_to_date(#{startTime}, '%Y-%m-%d')
 			and ASSESSTIME <= str_to_date(#{endTime}, '%Y-%m-%d')
-			and status = '0'
 		UNION ALL
 		(
 			select b.USER_ID, b.ASSESSTIME, b.TOTALUNIT from (
-			select USER_ID, max(ASSESSTIME) as ASSESSTIME from priceset  where ASSESSTIME < str_to_date(#{startTime}, '%Y-%m-%d') and status = '0' group by USER_ID order by USER_ID, ASSESSTIME
+			select USER_ID, max(ASSESSTIME) as ASSESSTIME from priceset  where ASSESSTIME < str_to_date(#{startTime}, '%Y-%m-%d') group by USER_ID order by USER_ID, ASSESSTIME
 			) a
 			inner join priceset b
 			on a.USER_ID = b.USER_ID and a.ASSESSTIME = b.ASSESSTIME

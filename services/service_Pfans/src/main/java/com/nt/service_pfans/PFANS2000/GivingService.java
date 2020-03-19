@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Pfans.PFANS2000.Giving;
+import com.nt.dao_Pfans.PFANS2000.Lackattendance;
 import com.nt.dao_Pfans.PFANS2000.Residual;
 import com.nt.dao_Pfans.PFANS2000.Vo.GivingVo;
 import com.nt.utils.dao.TokenModel;
@@ -31,6 +32,9 @@ public interface GivingService {
 
     // 本月加班数据变更时，重新计算加班费合计
     Residual thisMonthOvertimeChange(GivingVo givingVo, TokenModel tokenModel) throws Exception;
+
+    // 本月欠勤数据变更时，重新计算欠勤费合计
+    Lackattendance thisMonthLacktimeChange(GivingVo givingVo, TokenModel tokenModel) throws Exception;
 }
 
 

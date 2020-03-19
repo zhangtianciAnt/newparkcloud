@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
 import com.nt.service_pfans.PFANS2000.ExaminationobjectService;
 import com.nt.service_pfans.PFANS2000.LunarbonusService;
@@ -24,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/Getlunarbonus")
 public class Pfans2027Controller {
-	
+
     @Autowired
     private TokenService tokenService;
 
@@ -87,12 +88,12 @@ public class Pfans2027Controller {
 
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody List<Lunardetail> Lunardetaillist, HttpServletRequest request) throws Exception{
-        if (Lunardetaillist == null) {
+    public ApiResult update(@RequestBody LunarAllVo lunarAllVo, HttpServletRequest request) throws Exception{
+        if (lunarAllVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        lunardetailService.update(Lunardetaillist,tokenModel);
+        lunardetailService.update(lunarAllVo,tokenModel);
         return ApiResult.success();
     }
 

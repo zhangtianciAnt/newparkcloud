@@ -42,5 +42,6 @@
      ORDER BY
         cast( punchcardrecord_date AS date )
      ) newpunchcardrecord
+     where punchcardrecord_date =DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y-%m-%d')
 	</select>
 </mapper>
