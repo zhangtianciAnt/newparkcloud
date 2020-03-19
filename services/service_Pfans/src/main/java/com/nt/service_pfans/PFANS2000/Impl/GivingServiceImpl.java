@@ -158,16 +158,6 @@ public class GivingServiceImpl implements GivingService {
         othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherTwo(othertwolist);
 
-        // region 月度赏与 By SKAIXX
-        Appreciation appreciation = new Appreciation();
-        appreciation.setGiving_id(giving_id);
-        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
-        // 月度赏与计算
-        appreciationlist = appreciationCalc(appreciationlist);
-        givingVo.setAppreciation(appreciationlist);
-        // endregion
-
         OtherFive otherfive = new OtherFive();
         otherfive.setGiving_id(giving_id);
         List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
@@ -208,6 +198,16 @@ public class GivingServiceImpl implements GivingService {
         List<Base> baselist = baseMapper.select(base);
         baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
+
+        // region 月度赏与 By SKAIXX
+        Appreciation appreciation = new Appreciation();
+        appreciation.setGiving_id(giving_id);
+        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        // 月度赏与计算
+        appreciationlist = appreciationCalc(baselist, appreciationlist);
+        givingVo.setAppreciation(appreciationlist);
+        // endregion
 
         Contrast contrast = new Contrast();
         contrast.setGiving_id(giving_id);
@@ -1192,39 +1192,22 @@ public class GivingServiceImpl implements GivingService {
      * @Date 2020/3/16 14:28
      * @Param [appreciationlist]
      **/
-    private List<Appreciation> appreciationCalc(List<Appreciation> appreciationlist) {
-        /*获取 customerInfos-lxx*/
-        init();
-        /*获取 customerInfos-lxx*/
+    private List<Appreciation> appreciationCalc(List<Base> baseList, List<Appreciation> appreciationlist) {
+
         for (Appreciation appreciation : appreciationlist) {
-            // 获取用户信息
-            CustomerInfo customerInfo = customerInfos.stream().filter(item -> item.getUserid().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0);
-            // 判断该员工是否为技术职
-            boolean isTech = customerInfo.getUserinfo().getOccupationtype().equals("PR055001");
             // 获取给与标准
-            Dictionary rankDic = new Dictionary();
-            rankDic.setCode(customerInfo.getUserinfo().getRank());
-            rankDic = dictionaryMapper.select(rankDic).get(0);
+            double rnbasesalary = Double.parseDouble(baseList.stream().filter(item -> item.getUser_id().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0).getRnbasesalary());
 
             // 获取评价奖金百分比
             Dictionary commentaryDic = new Dictionary();
             commentaryDic.setCode(appreciation.getCommentary());
             commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
-            if (isTech) {   // 技术职
-                // 奖金计算
-                // 月赏与
-                double monthAppreciation = BigDecimal.valueOf(Double.parseDouble(rankDic.getValue3()) * 1.8d / 12d)
-                        .setScale(0, RoundingMode.HALF_UP).doubleValue();
-                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                        * Double.parseDouble(commentaryDic.getValue3())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
-            } else {    // 事务职
-                // 奖金计算
-                // 月赏与
-                double monthAppreciation = BigDecimal.valueOf(Double.parseDouble(rankDic.getValue2()) * 1.8d / 12d)
-                        .setScale(0, RoundingMode.HALF_UP).doubleValue();
-                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                        * Double.parseDouble(commentaryDic.getValue2())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
-            }
+            // 奖金计算
+            // 月赏与
+            double monthAppreciation = BigDecimal.valueOf(rnbasesalary * 1.8d / 12d)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+            appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                    * Double.parseDouble(commentaryDic.getValue2())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
         }
         return appreciationlist;
     }
@@ -2069,7 +2052,7 @@ public class GivingServiceImpl implements GivingService {
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 retire.setRetiredate(sf.parse(resignationDate));
                 // 计算出勤日数
-                Map<String,String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
                 // 本月正式工作日数
                 double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
                 // 本月试用工作日数
