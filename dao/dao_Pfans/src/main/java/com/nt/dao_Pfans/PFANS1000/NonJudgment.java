@@ -170,4 +170,6 @@ public class NonJudgment extends BaseModel {
     @Column(name = "LYJUDGENO")
     private String lyjudgeno;
 
+    @Column(name = "AMERICANTECHNO")
+    private String americantechno;
 }

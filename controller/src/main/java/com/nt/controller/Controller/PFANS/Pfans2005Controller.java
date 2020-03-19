@@ -217,4 +217,21 @@ public class Pfans2005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(givingService.thisMonthOvertimeChange(givingVo, tokenModel));
     }
+
+    /**
+     * @return com.nt.utils.ApiResult
+     * @Method thisMonthOvertimeChange
+     * @Author SKAIXX
+     * @Description 本月欠勤数据变更时，重新计算欠勤费合计
+     * @Date 2020/3/19 10:05
+     * @Param [givingVo, request]
+     **/
+    @RequestMapping(value = "/thisMonthLacktimeChange", method = {RequestMethod.POST})
+    public ApiResult thisMonthLacktimeChange(@RequestBody GivingVo givingVo, HttpServletRequest request) throws Exception {
+        if (givingVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(givingService.thisMonthLacktimeChange(givingVo, tokenModel));
+    }
 }
