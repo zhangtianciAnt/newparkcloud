@@ -67,4 +67,13 @@
         t.throughtype &lt;> '未通过' OR
         t.throughtype IS NULL)
     </select>
+
+    <!--    获取参加培训的人员id们-->
+    <select id="joinPersonnelid" resultType="string">
+        SELECT DISTINCT
+	        t.personnelid
+        FROM
+	        trainjoinlist AS t
+    </select>
+
 </mapper>

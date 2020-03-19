@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Timer;
-
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.dao_BASF.VO
@@ -38,6 +36,8 @@ public class ProgramlistEnhanceVo extends Programlist {
         this.setRemindtime(programlist.getRemindtime());
         this.setLastdate(programlist.getLastdate());
         this.setThisdate(programlist.getThisdate());
+        this.setNumber(programlist.getNumber());
+        this.setThispeople(programlist.getThispeople());
         this.setNumberpeople(programlist.getNumberpeople());
         this.setApplydata(programlist.getApplydata());
         this.setApplydataurl(programlist.getApplydataurl());

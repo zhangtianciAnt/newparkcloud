@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -440,6 +437,37 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         } else {
             return true;
         }
+    }
+
+    //获取参加培训的人员id们
+    @Override
+    public List<String> joinPersonnelid() throws Exception {
+        return trainjoinlistMapper.joinPersonnelid();
+    }
+
+    //获取参加过培训的人员信息（用于培训档案）
+    @Override
+    public List<CustomerInfo> joinPersonnel(List<String> joinPersonnelid) throws Exception {
+        List<CustomerInfo> customerInfos = new ArrayList<>();
+        //获取当年年份
+        Calendar cal = Calendar.getInstance();
+        String year = Integer.toString(cal.get(Calendar.YEAR));
+
+        for (String personnelid : joinPersonnelid) {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(personnelid));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                Double thelength = startprogramMapper.getTrainThelength(year, personnelid);
+                if (thelength != null) {
+                    customerInfo.getUserinfo().setAccumulated(Double.toString(thelength));
+                } else {
+                    customerInfo.getUserinfo().setAccumulated(Double.toString(0.0));
+                }
+                customerInfos.add(customerInfo);
+            }
+        }
+        return customerInfos;
     }
 
 

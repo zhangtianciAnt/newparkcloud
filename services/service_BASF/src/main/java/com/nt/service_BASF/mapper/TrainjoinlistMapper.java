@@ -26,4 +26,7 @@ public interface TrainjoinlistMapper extends MyMapper<Trainjoinlist> {
     //结果发布判断该培训是否存在正常参加人员通过状态为空
     int isNotThroughtype(@Param("startprogramid") String startprogramid) throws Exception;
 
+    //获取参加培训的人员id们
+    List<String> joinPersonnelid() throws Exception;
+
 }

@@ -38,50 +38,53 @@
 
     <select id="selectbyuserid" resultType="com.nt.dao_BASF.Startprogram">
 
-        select
-        startprogram.startprogramid,
-        startprogram.programlistid,
-        startprogram.programname,
-        startprogram.informpeople,
-        startprogram.starttheorydate,
-        startprogram.theorysite,
-        startprogram.startoperationdate,
-        startprogram.operationsite,
-        startprogram.expirationdate,
-        startprogram.materialsexpirationdate,
-        startprogram.informperson,
-        startprogram.programcode,
-        startprogram.programhard,
-        startprogram.insideoutside,
-        startprogram.mandatory,
-        startprogram.isonline,
-        startprogram.thelength,
-        startprogram.validity,
-        startprogram.money,
-        startprogram.remindtime,
-        startprogram.isfirst,
-        startprogram.applydata,
-        startprogram.applydataurl,
-        startprogram.standard,
-        startprogram.questionnum,
-        startprogram.programtype,
-        startprogram.actualstartdate,
-        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
-        DATE_ADD( starttheorydate, INTERVAL validity MONTH ) AS MODIFYON
-        from startprogram
-        where
-        startprogramid in (
-        select startprogramid from trainjoinlist
-        where
-        personnelid = #{userid}
-        and
-        status = 0)
+        SELECT
+        s.startprogramid,
+        s.programlistid,
+        s.programname,
+        s.informpeople,
+        s.starttheorydate,
+        s.theorysite,
+        s.startoperationdate,
+        s.operationsite,
+        s.expirationdate,
+        s.materialsexpirationdate,
+        s.informperson,
+        s.programcode,
+        s.programhard,
+        s.insideoutside,
+        s.mandatory,
+        s.isonline,
+        s.thelength,
+        s.validity,
+        s.money,
+        s.remindtime,
+        s.isfirst,
+        s.applydata,
+        s.applydataurl,
+        s.standard,
+        s.questionnum,
+        s.programtype,
+        s.actualstartdate
+        FROM
+        startprogram AS s
+        INNER JOIN
+        trainjoinlist AS t
+        ON
+        s.startprogramid = t.startprogramid
+        WHERE
+        t.`STATUS` = '0' AND
+        t.personnelid = #{userid}
 
         <if test="selecttype == 'Abouttoexpire'">
-            AND starttheorydate &lt;> ""
-            AND starttheorydate IS NOT NULL
-            AND programtype in ('BC039004')
-            AND DATEDIFF(DATE_SUB( DATE_ADD( starttheorydate, INTERVAL validity MONTH ), INTERVAL remindtime MONTH
+            AND
+            t.jointype = '正常'
+            AND
+            ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+            AND s.starttheorydate &lt;> ""
+            AND s.starttheorydate IS NOT NULL
+            AND s.programtype in ('BC039004')
+            AND DATEDIFF(DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH
             ),CURRENT_DATE ()) =0
         </if>
         <if test="selecttype == 'enrolment'">
@@ -89,8 +92,12 @@
             programtype in ('BC039001','BC039002')*/
         </if>
         <if test="selecttype == 'completed'">
-            and
-            programtype in ('BC039004')
+            AND
+            t.jointype = '正常'
+            AND
+            ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+            AND
+            s.programtype in ('BC039004')
         </if>
     </select>
 
@@ -137,6 +144,9 @@ FROM
 WHERE
 	s.`STATUS` = "0"
 	AND t.`STATUS` = "0"
+	AND t.jointype = '正常'
+	AND ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+	AND s.programtype = 'BC039004'
 	AND EXTRACT( YEAR FROM s.starttheorydate )= #{year}
 	AND t.personnelid = #{parameter}
 	ORDER BY
@@ -153,6 +163,9 @@ FROM
 WHERE
 	s.`STATUS` = "0"
 	AND t.`STATUS` = "0"
+	AND t.jointype = '正常'
+	AND ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+	AND s.programtype = 'BC039004'
 	AND EXTRACT( YEAR FROM s.starttheorydate )=#{year}
 	AND t.personnelid = #{parameter}
     </select>

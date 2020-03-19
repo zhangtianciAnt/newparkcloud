@@ -3,6 +3,7 @@ package com.nt.service_BASF;
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,4 +68,10 @@ public interface TrainjoinlistServices {
 
     //结果发布判断该培训是否存在正常参加人员通过状态为空
     boolean isNotThroughtype(String startprogramid) throws Exception;
+
+    //获取参加培训的人员id们
+    List<String> joinPersonnelid() throws Exception;
+
+    //获取参加过培训的人员信息（用于培训档案）
+    List<CustomerInfo> joinPersonnel(List<String> joinPersonnelid) throws Exception;
 }
