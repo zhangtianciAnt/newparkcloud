@@ -1503,6 +1503,66 @@ public class GivingServiceImpl implements GivingService {
     }
 
     /**
+     * @return com.nt.dao_Pfans.PFANS2000.Lackattendance
+     * @Method thisMonthLacktimeChange
+     * @Author SKAIXX
+     * @Description 本月欠勤数据变更时，重新计算欠勤费合计
+     * @Date 2020/3/19 10:04
+     * @Param [givingVo, tokenModel]
+     **/
+    @Override
+    public Lackattendance thisMonthLacktimeChange(GivingVo givingVo, TokenModel tokenModel) {
+        double total = 0d;  // 总欠勤费
+
+        String userId = tokenModel.getUserId();
+        Lackattendance lackattendance = givingVo.getLackattendance().stream().filter(item->item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Base base = givingVo.getBase().stream().filter(item->item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+
+        // 当月小时工资 = 月工资÷21.75天÷8小时
+        double currentSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 获取短病欠扣除比例
+        Dictionary shortDictionary = new Dictionary();
+        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
+        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+
+        // 获取长病欠
+        Dictionary longDictionary = new Dictionary();
+        longDictionary.setCode("PR047001");     // 大連社会最低賃金
+        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+        // 长病欠小时工资
+        double longSalary = BigDecimal.valueOf(Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 当月欠勤费用
+        // 欠勤费用-正式
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligenceformal()) * currentSalaryPerHour)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 欠勤费用-试用
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligencetry()) * currentSalaryPerHour * 0.9d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 短病欠-正式
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencyformal()) * currentSalaryPerHour
+                * Double.parseDouble(shortDictionary.getValue2()))
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 短病欠-试用
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencytry()) * currentSalaryPerHour * 0.9d
+                * Double.parseDouble(shortDictionary.getValue2()))
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 长病欠-正式
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencyformal()) * longSalary)
+                .setScale(0, RoundingMode.HALF_UP).doubleValue();
+        // 长病欠-试用
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencytry()) * longSalary * 0.9d)
+                .setScale(0, RoundingMode.HALF_UP).doubleValue();
+        lackattendance.setThistotal(String.valueOf(total));
+        return lackattendance;
+    }
+
+    /**
      * @return
      * @Method insertLackattendance
      * @Author SKAIXX
