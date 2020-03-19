@@ -146,7 +146,7 @@ WHERE
     <!--    根据姓名（或员工号、卡号）和年份查询某人员培训时长信息（培训教育大屏用）-->
     <select id="getTrainThelength" resultType="Double">
 SELECT
-	SUM(s.thelength)
+	round(SUM(s.thelength),1)
 FROM
 	startprogram AS s
 	INNER JOIN trainjoinlist AS t ON s.startprogramid = t.startprogramid
