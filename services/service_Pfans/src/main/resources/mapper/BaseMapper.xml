@@ -4,14 +4,14 @@
     <insert id="insertBase" parameterType="com.nt.dao_Pfans.PFANS2000.Base">
          insert into base (base_id ,giving_id,department_id,user_id,rn,sex,onlychild,`type`,bonus,sociology,registered,
         lastmonth,thismonth,pension,medical,accumulation,heating,workdate,rowindex,thismonthbasic,thismonthduty,lastmonthbasic,lastmonthduty,tmabasic
-        ,groupid,lastmonthsuitdays,lastmonthdays,thismonthsuitdays,thismonthdays,enddate)
+        ,groupid,lastmonthsuitdays,lastmonthdays,thismonthsuitdays,thismonthdays,enddate,rnbasesalary)
          values
      <foreach collection="bases" index="index" item="item" separator=",">
          (#{item.base_id},#{item.giving_id},#{item.department_id},#{item.user_id},#{item.rn},#{item.sex},#{item.onlychild},
          #{item.type},#{item.bonus},#{item.sociology},#{item.registered},#{item.lastmonth},#{item.thismonth},#{item.pension},
          #{item.medical},#{item.accumulation},#{item.heating},#{item.workdate},#{item.rowindex}
          ,#{item.thismonthbasic},#{item.thismonthduty},#{item.lastmonthbasic},#{item.lastmonthduty},#{item.tmabasic},#{item.groupid}
-         ,#{item.lastmonthsuitdays},#{item.lastmonthdays},#{item.thismonthsuitdays},#{item.thismonthdays},#{item.enddate})
+         ,#{item.lastmonthsuitdays},#{item.lastmonthdays},#{item.thismonthsuitdays},#{item.thismonthdays},#{item.enddate},#{item.rnbasesalary})
      </foreach>
     </insert>
 

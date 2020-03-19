@@ -203,4 +203,10 @@ public class Base extends BaseModel {
      */
     @Column(name = "ENDDATE")
     private String enddate;
+
+    /**
+     * RN基本工资
+     */
+    @Column(name = "RNBASESALARY")
+    private String rnbasesalary;
 }
