@@ -25,7 +25,7 @@ public class Lunarbasic extends BaseModel {
     private String lunarbonus_id;
 
     @Column(name = "INDEX1")
-    private int index;
+    private Integer index;
 
     @Column(name = "R5")
     private String r5;

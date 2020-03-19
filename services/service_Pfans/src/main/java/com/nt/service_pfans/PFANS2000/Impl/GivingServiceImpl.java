@@ -183,27 +183,31 @@ public class GivingServiceImpl implements GivingService {
         Residual residua = new Residual();
         residua.setGiving_id(giving_id);
         List<Residual> residualllist = residualMapper.select(residua);
-        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
         givingVo.setResidual(residualllist);
         // endregion
 
         OtherFour otherfour = new OtherFour();
         otherfour.setGiving_id(giving_id);
         List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
-        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherFour(otherfourlist);
 
         Base base = new Base();
         base.setGiving_id(giving_id);
         List<Base> baselist = baseMapper.select(base);
-        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
 
         // region 月度赏与 By SKAIXX
         Appreciation appreciation = new Appreciation();
         appreciation.setGiving_id(giving_id);
         List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
         // 月度赏与计算
         appreciationlist = appreciationCalc(baselist, appreciationlist);
         givingVo.setAppreciation(appreciationlist);
@@ -212,7 +216,8 @@ public class GivingServiceImpl implements GivingService {
         Contrast contrast = new Contrast();
         contrast.setGiving_id(giving_id);
         List<Contrast> contrastList = contrastMapper.select(contrast);
-        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
         givingVo.setContrast(contrastList);
 
         // region 累计税金 By SKAIXX
@@ -340,7 +345,8 @@ public class GivingServiceImpl implements GivingService {
         Induction induction = new Induction();
         induction.setGiving_id(giving_id);
         List<Induction> inductionList = inductionMapper.select(induction);
-        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
         givingVo.setEntryVo(inductionList);
         Calendar nowDate = Calendar.getInstance();
         Calendar lastDate = Calendar.getInstance();
@@ -356,7 +362,8 @@ public class GivingServiceImpl implements GivingService {
         Retire retire = new Retire();
         retire.setGiving_id(giving_id);
         List<Retire> retireList = retireMapper.select(retire);
-        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
@@ -987,8 +994,8 @@ public class GivingServiceImpl implements GivingService {
         insertContrast(givingid, tokenModel);
         insertOtherTwo(givingid, tokenModel);
         insertOtherOne(givingid, tokenModel);
-//        insertLackattendance(givingid, tokenModel);
-//        insertResidual(givingid, tokenModel);
+        insertLackattendance(givingid, tokenModel);
+        insertResidual(givingid, tokenModel);
     }
 
     @Override
@@ -1473,11 +1480,11 @@ public class GivingServiceImpl implements GivingService {
      * @Param [base, residual]
      **/
     @Override
-    public Residual thisMonthOvertimeChange(GivingVo givingVo, TokenModel tokenModel) {
+    public Residual thisMonthOvertimeChange(GivingVo givingVo) {
 
-        String userId = tokenModel.getUserId();
+        Residual residual = givingVo.getResidual().get(0);
+        String userId = residual.getUser_id();
         Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
-        Residual residual = givingVo.getResidual().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
         double total = 0d;  // 总加班费
 
         // 判断员工当月级别是否为R8及以上
