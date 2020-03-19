@@ -192,7 +192,7 @@ public class Evection extends BaseModel {
      * 个人编码
      */
     @Column(name = "PERSONALCODE")
-    private Date personalcode;
+    private String personalcode;
 
 
 }
