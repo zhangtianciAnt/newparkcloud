@@ -59,7 +59,19 @@ public class SendEmailServicesImpl implements SendEmailServices {
             //设置邮件发送日期
             message.setSentDate(new Date());
             //设置邮件内容
-            message.setContent(emailEntity.getContext() , emailEntity.getContextType());
+            String EMAILCONTENT = "XXXX您好：<br>" +
+                    "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\">"
+                    + "<tr>" +
+                    //"<td width=\"10%\">ID</td>" +
+                    "<td>ID</td>" +
+                    "<td>负责人</td>" +
+                    "<td>数据量</td>" +
+                    "<td>说明</td>" +
+                    "<td>文件</td>" +
+                    "</tr>" +
+                    "</table>";
+            //message.setContent(emailEntity.getContext() , emailEntity.getContextType());
+            message.setContent(EMAILCONTENT , emailEntity.getContextType());
             message.saveChanges();
             //发送邮件
             Transport transport = mailSession.getTransport("smtp");
