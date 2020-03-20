@@ -82,4 +82,9 @@ public class Emergencyplan extends BaseModel {
      */
     private String uploadfile;
 
+    /*
+     * 展示
+     */
+    private String downloadpath;
+
 }
