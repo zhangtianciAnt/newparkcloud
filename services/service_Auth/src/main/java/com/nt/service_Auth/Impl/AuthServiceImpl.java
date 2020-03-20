@@ -8,6 +8,7 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.AuthService;
+import org.apache.commons.collections.ArrayStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
@@ -37,6 +38,9 @@ public class AuthServiceImpl implements AuthService {
         Query cusquery = new Query();
         cusquery.addCriteria(Criteria.where("userid").is(useraccountid));
         CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
+        if(cus == null){
+            return new ArrayList<String>();
+        }
         List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
         String teamid = cus.getUserinfo().getTeamid();
         String groupid = cus.getUserinfo().getGroupid();
