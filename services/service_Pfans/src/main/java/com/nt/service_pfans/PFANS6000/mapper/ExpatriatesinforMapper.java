@@ -9,5 +9,4 @@ import java.util.List;
 
 public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
 
-    List<Expatriatesinfor> getExpatriates();
 }

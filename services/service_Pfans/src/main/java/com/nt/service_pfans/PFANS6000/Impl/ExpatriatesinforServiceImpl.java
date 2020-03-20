@@ -38,11 +38,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     }
 
     @Override
-    public List<Expatriatesinfor> getexpatriates() throws Exception {
-        return expatriatesinforMapper.getExpatriates();
-    }
-
-    @Override
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception {
         return expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor_id);
     }
