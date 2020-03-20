@@ -545,7 +545,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                 }
                 //大連戸籍
-                if (("大连").equals(customer.getUserinfo().getRegister())) {
+                if (!StringUtils.isEmpty(customer.getUserinfo().getRegister()) && customer.getUserinfo().getRegister().contains("大连")) {
                     base.setRegistered("1");
                 } else {
                     base.setRegistered("2");
@@ -582,11 +582,12 @@ public class GivingServiceImpl implements GivingService {
                     /*RN基本工资 -lxx*/
                     for (Dictionary diction : dictionarylistForRn) {
                         if (diction.getCode().equals(customer.getUserinfo().getRank())) {
-                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
-                                base.setRnbasesalary(diction.getValue4());
-                            } else {
-                                base.setRnbasesalary(diction.getValue5());
-                            }
+//                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
+//                                base.setRnbasesalary(diction.getValue4());
+//                            } else {
+//                                base.setRnbasesalary(diction.getValue5());
+//                            }
+                            base.setRnbasesalary(diction.getValue2());
                         }
                     }
                     /*RN基本工资 -lxx*/
