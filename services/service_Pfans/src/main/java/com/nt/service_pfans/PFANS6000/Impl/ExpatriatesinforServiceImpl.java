@@ -49,11 +49,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     }
 
     @Override
-    public List<Expatriatesinfor> getexpatriates() throws Exception {
-        return expatriatesinforMapper.getExpatriates();
-    }
-
-    @Override
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception {
         return expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor_id);
     }
@@ -97,7 +92,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
         Priceset priceset = new Priceset();
         priceset.preInsert(tokenModel);
-        priceset.setPricesetid(UUID.randomUUID().toString());
+        priceset.setPriceset_id(UUID.randomUUID().toString());
         priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
         priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());
