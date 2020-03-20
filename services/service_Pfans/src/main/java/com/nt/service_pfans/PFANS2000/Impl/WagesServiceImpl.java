@@ -161,7 +161,10 @@ public class WagesServiceImpl implements WagesService {
         return bonussendMapper.select(bonussend);
     }
 
-
+    @Override
+    public List<Wages> getWagesByGivingId(String givingId) throws Exception {
+        return wagesMapper.getWagesByGivingId(givingId);
+    }
 
 
 }

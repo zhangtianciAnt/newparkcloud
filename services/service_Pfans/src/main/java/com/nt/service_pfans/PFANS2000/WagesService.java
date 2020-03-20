@@ -14,6 +14,15 @@ public interface WagesService {
 
     List<Bonussend> bonusList(Bonussend bonussend) throws Exception;
 
+    /**
+     * 根据givingid获取工资
+     *
+     * @param givingId
+     * @return
+     * @throws Exception
+     */
+    List<Wages> getWagesByGivingId(String givingId) throws Exception;
+
 }
 
 
