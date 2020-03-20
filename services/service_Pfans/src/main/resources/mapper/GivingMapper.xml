@@ -29,5 +29,12 @@
      group by user_id
     </select>
 
+    <select id="selectBase"  resultType="com.nt.dao_Pfans.PFANS2000.Vo.BaseVo">
+    select *, base.lastmonthbasic,
+base.lastmonthduty,
+base.thismonthbasic as thisbasic,
+base.thismonthduty
+from  wages  inner join base  on base.giving_id=wages.giving_id
+    </select>
 
 </mapper>
