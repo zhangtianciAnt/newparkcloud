@@ -937,6 +937,8 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
+        // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
+        init();
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         Giving giving = new Giving();
         String strTemp = sf1.format(new Date());
