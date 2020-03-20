@@ -59,10 +59,10 @@ public class BASF21211Controller {
 
     //根据姓名（或员工号、卡号）和年份查询某人员培训信息（培训教育大屏用）
     @GetMapping("/getTrainEducationPerInfo")
-    public ApiResult getTrainEducationPerInfo(String year, String parameter, HttpServletRequest request) throws Exception {
-        if (StringUtils.isEmpty(year) || StringUtils.isEmpty(parameter)) {
+    public ApiResult getTrainEducationPerInfo(String year, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(year)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(startprogramServices.getTrainEducationPerInfo(year, parameter));
+        return ApiResult.success(startprogramServices.getTrainEducationPerInfo(year));
     }
 }

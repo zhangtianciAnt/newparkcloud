@@ -55,8 +55,8 @@ public interface StartprogramServices {
     //获取非强制的通过/未通过
     List<PassingRateVo> getIsMandatoryInfo() throws Exception;
 
-    //根据姓名（或员工号、卡号）和年份查询某人员培训信息（培训教育大屏用）
-    TrainEducationPerVo getTrainEducationPerInfo(String year, String parameter) throws Exception;
+    //根据年份查询该年度所有人实际参加信息（培训教育大屏用）
+    List<TrainEducationPerVo> getTrainEducationPerInfo(String year) throws Exception;
 
     //大屏培训信息推送列表
     List<Startprogram> getFutureProgram() throws Exception;

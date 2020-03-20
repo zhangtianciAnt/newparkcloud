@@ -131,9 +131,13 @@ sp.mandatory = 'BC033002'
 group by tl.throughtype
     </select>
 
-    <!--    根据姓名（或员工号、卡号）和年份查询某人员培训信息（培训教育大屏用）-->
-    <select id="getTrainEducationPerInfo" resultType="com.nt.dao_BASF.VO.TrainEducationPerVo2">
-SELECT
+    <!--    根据年份查询该年度所有人实际参加信息（培训教育大屏用）-->
+    <select id="getYearProgram" resultType="com.nt.dao_BASF.VO.TrainEducationPerVo">
+        SELECT
+	t.personnelid,
+	t.customername,
+	t.departmentname,
+	t.jobnumber,
 	s.programname,
 	s.starttheorydate,
 	t.throughtype,
@@ -144,13 +148,12 @@ FROM
 WHERE
 	s.`STATUS` = "0"
 	AND t.`STATUS` = "0"
+	AND EXTRACT( YEAR FROM s.starttheorydate ) = #{year}
+	AND s.programtype = 'BC039004'
 	AND t.jointype = '正常'
 	AND ( t.throughtype = '通过' OR t.throughtype = '未通过' )
-	AND s.programtype = 'BC039004'
-	AND EXTRACT( YEAR FROM s.starttheorydate )= #{year}
-	AND t.personnelid = #{parameter}
-	ORDER BY
-	s.CREATEON DESC
+ORDER BY
+	s.starttheorydate DESC
     </select>
 
     <!--    根据姓名（或员工号、卡号）和年份查询某人员培训时长信息（培训教育大屏用）-->

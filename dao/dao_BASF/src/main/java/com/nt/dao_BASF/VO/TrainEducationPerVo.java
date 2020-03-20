@@ -3,18 +3,11 @@ package com.nt.dao_BASF.VO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.opencv.tracking.TrackerBoosting;
-
-import java.util.List;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainEducationPerVo {
-
-    //true 存在唯一数据 false存在重复值
-    private boolean state;
 
     /**
      * 培训教育人员id
@@ -35,12 +28,20 @@ public class TrainEducationPerVo {
     //部门
     private String departmentname;
 
-    //培训总时长
-    private Double thelengthSum;
+    /**
+     * 培训名称
+     */
+    private String programname;
+    /**
+     * 培训时间
+     */
+    private String starttheorydate;
+    /**
+     * 通过/未通过
+     */
+    private String throughtype;
 
-    //存储培训信息
-    private List<TrainEducationPerVo2> startprograms;
-
-
+    //培训时长
+    private Double thelength;
 }
 
