@@ -49,12 +49,12 @@ public class Pfans1036Controller {
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult updateBusinessplanVo(@RequestBody BusinessplanVo businessplanVo, HttpServletRequest request) throws Exception {
-        if (businessplanVo == null) {
+    public ApiResult updateBusinessplanVo(@RequestBody Businessplan businessplan, HttpServletRequest request) throws Exception {
+        if (businessplan == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        businessplanService.updateBusinessplanVo(businessplanVo, tokenModel);
+        businessplanService.updateBusinessplanVo(businessplan, tokenModel);
         return ApiResult.success();
     }
 
