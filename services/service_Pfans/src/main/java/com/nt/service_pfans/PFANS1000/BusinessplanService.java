@@ -17,7 +17,7 @@ public interface BusinessplanService {
 
     public void insertBusinessplan(Businessplan businessplan, TokenModel tokenModel) throws Exception;
 
-    public void updateBusinessplanVo(BusinessplanVo businessplanvo, TokenModel tokenModel) throws Exception;
+    public void updateBusinessplanVo(Businessplan businessplan, TokenModel tokenModel) throws Exception;
 
     String[] getPersonPlan(int year, String groupid) throws Exception;
 }
