@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
@@ -65,8 +66,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         for(Expatriatesinfor item:expatriatesinfor){
             if(StrUtil.isEmpty(item.getAccount())){
                 UserAccount userAccount = new UserAccount();
-                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(),""));
-                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(),""));
+                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
                 userAccount.setUsertype("1");
 
                 Query query = new Query();
