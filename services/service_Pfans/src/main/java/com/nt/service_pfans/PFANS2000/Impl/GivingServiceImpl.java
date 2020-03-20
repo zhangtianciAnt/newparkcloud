@@ -545,7 +545,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                 }
                 //大連戸籍
-                if (("大连").equals(customer.getUserinfo().getRegister())) {
+                if (!StringUtils.isEmpty(customer.getUserinfo().getRegister()) && customer.getUserinfo().getRegister().contains("大连")) {
                     base.setRegistered("1");
                 } else {
                     base.setRegistered("2");
@@ -582,11 +582,12 @@ public class GivingServiceImpl implements GivingService {
                     /*RN基本工资 -lxx*/
                     for (Dictionary diction : dictionarylistForRn) {
                         if (diction.getCode().equals(customer.getUserinfo().getRank())) {
-                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
-                                base.setRnbasesalary(diction.getValue4());
-                            } else {
-                                base.setRnbasesalary(diction.getValue5());
-                            }
+//                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
+//                                base.setRnbasesalary(diction.getValue4());
+//                            } else {
+//                                base.setRnbasesalary(diction.getValue5());
+//                            }
+                            base.setRnbasesalary(diction.getValue2());
                         }
                     }
                     /*RN基本工资 -lxx*/
@@ -630,7 +631,7 @@ public class GivingServiceImpl implements GivingService {
         Integer lastMonthDays = 0;
         Integer lastMonthSuitDays = 0;
 
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         //当月日期1号
         Calendar calNowOne = Calendar.getInstance();
         calNowOne.add(Calendar.MONTH, 0);
@@ -648,11 +649,11 @@ public class GivingServiceImpl implements GivingService {
         calLastOne.set(Calendar.DAY_OF_MONTH, 1);
         //入职日
         Calendar calEnterDay = Calendar.getInstance();
-        calEnterDay.setTime(sf.parse(userinfo.getEnterday()));
+        calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         //退职日
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
-            calResignationDate.setTime(sf.parse(userinfo.getResignation_date()));
+            calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
         } else {
             calResignationDate.setTime(calNowLast.getTime());
         }
@@ -712,11 +713,11 @@ public class GivingServiceImpl implements GivingService {
         else {
             //试用最后日
             Calendar calSuitDate = Calendar.getInstance();
-            calSuitDate.setTime(sf.parse(userinfo.getEnddate()));
+            calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
-            calOfficialDate.setTime(sf.parse(userinfo.getEnddate()));
+            calOfficialDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             //试用截止日大于本月末日
             if (calOfficialDate.getTime().getTime() > calNowLast.getTime().getTime()) {
                 //入职日是当月
