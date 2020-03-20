@@ -176,7 +176,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             if(sf1.parse(enterdaystartCal.replace("Z"," UTC").toString()).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal.replace("Z"," UTC").toString()).compareTo(calendar_a.getTime())<=0)
             {
                 //有工作经验者
-                if(!customer.getUserinfo().getExperience().isEmpty())
+                if(!(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty()))
                 {
                     //入职日
                     calendar.setTime(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")));
