@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.BaseVo;
 import com.nt.service_pfans.PFANS2000.WagesService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.dao.TokenModel;
@@ -151,8 +152,12 @@ public class WagesServiceImpl implements WagesService {
 
             }
         }
-
         return listw;
+    }
+
+    @Override
+    public List<BaseVo> selectBase() throws Exception {
+        return givingMapper.selectBase();
     }
 
     @Override
@@ -161,7 +166,10 @@ public class WagesServiceImpl implements WagesService {
         return bonussendMapper.select(bonussend);
     }
 
-
+    @Override
+    public List<Wages> getWagesByGivingId(String givingId) throws Exception {
+        return wagesMapper.getWagesByGivingId(givingId);
+    }
 
 
 }

@@ -430,15 +430,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //事业年度开始跑系统服务（4月1日）
-    //@Scheduled(cron="20 * * * * ?")
+    //@Scheduled(cron="10 * * * * ?")
     //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半
     //@Scheduled(cron="0 0 0 1 4 ? *")//正式时间每年4月1日零时执行
     public void insertattendance() throws Exception {
-
-        String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01";
+        String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+        String doorIDList = "3,5";
+        String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01&doorIDList=" + doorIDList;
+        //正式String url1 = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
         //請求接口
         ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
         Object obj = JSON.toJSON(getresult.getData());
+
         if (obj != null) {
             //打卡时间
 //            String recordTime = obj.get(0).getString("recordTime");
