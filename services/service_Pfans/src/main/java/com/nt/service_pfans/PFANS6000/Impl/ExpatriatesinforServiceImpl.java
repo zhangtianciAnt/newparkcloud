@@ -56,8 +56,11 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     @Override
     public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+    }
+    @Override
+    public void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception {
 
-        if("BP003001".equals(expatriatesinfor.getResult())){
+        for(Expatriatesinfor item:expatriatesinfor){
             UserAccount userAccount = new UserAccount();
             userAccount.setAccount("123454321");
             userAccount.setPassword("123454321");
@@ -65,15 +68,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
             Query query = new Query();
             query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-            query.addCriteria(Criteria.where("rolename").is("外协staff"));
+            query.addCriteria(Criteria.where("rolename").is("外协员工"));
             List<Role>  rolss =  mongoTemplate.find(query, Role.class);
 
             userAccount.setRoles(rolss);
             userAccount.preInsert(tokenModel);
             mongoTemplate.save(userAccount);
-        }
-    }
 
+            item.setAccount(userAccount.get_id());
+            expatriatesinforMapper.updateByPrimaryKeySelective(item);
+        }
+
+    }
     @Override
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         String yes = "是";

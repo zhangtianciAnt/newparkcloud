@@ -106,4 +106,17 @@ public class Pfans6004Controller {
         ExcelOutPutUtil.OutPut("外驻人员登记表","waizhu.xlsx",data,response);
     }
 
+    @RequestMapping(value = "/crAccount", method = {RequestMethod.POST})
+    public ApiResult crAccount(@RequestBody List<Expatriatesinfor> expatriatesinfor,HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            expatriatesinforService.crAccount(expatriatesinfor, tokenModel);
+            return ApiResult.success();
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
 }

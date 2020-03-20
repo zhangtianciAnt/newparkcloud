@@ -241,5 +241,9 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "WHETHERENTRY")
     private String whetherentry;
 
-
+    /**
+     * 账号
+     */
+    @Column(name = "ACCOUNT")
+    private String account;
 }
