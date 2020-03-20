@@ -21,4 +21,6 @@ public interface ExpatriatesinforService {
 
 
     List<String> expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
+    void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel ) throws Exception;
 }

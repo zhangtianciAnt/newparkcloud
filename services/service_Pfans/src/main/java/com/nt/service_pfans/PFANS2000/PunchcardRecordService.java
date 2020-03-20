@@ -16,4 +16,7 @@ public interface PunchcardRecordService {
     //void methodAttendance(TokenModel tokenModel) throws Exception ;
     void methodAttendance_b(TokenModel tokenModel,List<CustomerInfo> customerInfoList) throws Exception ;
     void saveAttendance(Attendance attendance,String Flg, TokenModel tokenModel) throws Exception ;
+
+    List<PunchcardRecord> getDataList(PunchcardRecord punchcardrecord, TokenModel tokenModel)throws Exception;
+
 }

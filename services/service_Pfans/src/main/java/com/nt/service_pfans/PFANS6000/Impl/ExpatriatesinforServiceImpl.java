@@ -1,8 +1,11 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -56,24 +59,32 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     @Override
     public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-
-        if("BP003001".equals(expatriatesinfor.getResult())){
-            UserAccount userAccount = new UserAccount();
-            userAccount.setAccount("123454321");
-            userAccount.setPassword("123454321");
-            userAccount.setUsertype("1");
-
-            Query query = new Query();
-            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-            query.addCriteria(Criteria.where("rolename").is("外协staff"));
-            List<Role>  rolss =  mongoTemplate.find(query, Role.class);
-
-            userAccount.setRoles(rolss);
-            userAccount.preInsert(tokenModel);
-            mongoTemplate.save(userAccount);
-        }
     }
+    @Override
+    public void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception {
 
+        for(Expatriatesinfor item:expatriatesinfor){
+            if(StrUtil.isEmpty(item.getAccount())){
+                UserAccount userAccount = new UserAccount();
+                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setUsertype("1");
+
+                Query query = new Query();
+                query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+                query.addCriteria(Criteria.where("rolename").is("外协staff"));
+                List<Role>  rolss =  mongoTemplate.find(query, Role.class);
+
+                userAccount.setRoles(rolss);
+                userAccount.preInsert(tokenModel);
+                mongoTemplate.save(userAccount);
+
+                item.setAccount(userAccount.get_id());
+                expatriatesinforMapper.updateByPrimaryKeySelective(item);
+            }
+        }
+
+    }
     @Override
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         String yes = "是";
