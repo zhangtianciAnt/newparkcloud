@@ -630,7 +630,7 @@ public class GivingServiceImpl implements GivingService {
         Integer lastMonthDays = 0;
         Integer lastMonthSuitDays = 0;
 
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         //当月日期1号
         Calendar calNowOne = Calendar.getInstance();
         calNowOne.add(Calendar.MONTH, 0);
@@ -648,11 +648,11 @@ public class GivingServiceImpl implements GivingService {
         calLastOne.set(Calendar.DAY_OF_MONTH, 1);
         //入职日
         Calendar calEnterDay = Calendar.getInstance();
-        calEnterDay.setTime(sf.parse(userinfo.getEnterday()));
+        calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         //退职日
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
-            calResignationDate.setTime(sf.parse(userinfo.getResignation_date()));
+            calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
         } else {
             calResignationDate.setTime(calNowLast.getTime());
         }
@@ -712,11 +712,11 @@ public class GivingServiceImpl implements GivingService {
         else {
             //试用最后日
             Calendar calSuitDate = Calendar.getInstance();
-            calSuitDate.setTime(sf.parse(userinfo.getEnddate()));
+            calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
-            calOfficialDate.setTime(sf.parse(userinfo.getEnddate()));
+            calOfficialDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             //试用截止日大于本月末日
             if (calOfficialDate.getTime().getTime() > calNowLast.getTime().getTime()) {
                 //入职日是当月
