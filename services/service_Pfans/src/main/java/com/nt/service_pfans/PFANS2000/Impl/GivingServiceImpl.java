@@ -168,7 +168,6 @@ public class GivingServiceImpl implements GivingService {
         Additional additional = new Additional();
         additional.setGiving_id(giving_id);
         List<Additional> additionallist = additionalMapper.select(additional);
-        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
         givingVo.setAddiTional(additionallist);
         // endregion
 
@@ -202,7 +201,6 @@ public class GivingServiceImpl implements GivingService {
         Appreciation appreciation = new Appreciation();
         appreciation.setGiving_id(giving_id);
         List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
         // 月度赏与计算
         appreciationlist = appreciationCalc(baselist, appreciationlist);
         givingVo.setAppreciation(appreciationlist);
