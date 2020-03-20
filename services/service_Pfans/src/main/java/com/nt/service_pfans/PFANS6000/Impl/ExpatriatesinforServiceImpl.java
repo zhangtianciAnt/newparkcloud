@@ -70,7 +70,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
         Priceset priceset = new Priceset();
         priceset.preInsert(tokenModel);
-        priceset.setPricesetid(UUID.randomUUID().toString());
+        priceset.setPriceset_id(UUID.randomUUID().toString());
         priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
         priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());
