@@ -1513,12 +1513,11 @@ public class GivingServiceImpl implements GivingService {
      * @Param [givingVo, tokenModel]
      **/
     @Override
-    public Lackattendance thisMonthLacktimeChange(GivingVo givingVo, TokenModel tokenModel) {
+    public Lackattendance thisMonthLacktimeChange(GivingVo givingVo) {
         double total = 0d;  // 总欠勤费
 
-        String userId = tokenModel.getUserId();
-        Lackattendance lackattendance = givingVo.getLackattendance().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
-        Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Lackattendance lackattendance = givingVo.getLackattendance().get(0);
+        Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(lackattendance.getUser_id())).collect(Collectors.toList()).get(0);
 
         // 当月小时工资 = 月工资÷21.75天÷8小时
         double currentSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d)

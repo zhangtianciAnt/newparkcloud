@@ -34,7 +34,7 @@ public interface GivingService {
     Residual thisMonthOvertimeChange(GivingVo givingVo) throws Exception;
 
     // 本月欠勤数据变更时，重新计算欠勤费合计
-    Lackattendance thisMonthLacktimeChange(GivingVo givingVo, TokenModel tokenModel) throws Exception;
+    Lackattendance thisMonthLacktimeChange(GivingVo givingVo) throws Exception;
 }
 
 
