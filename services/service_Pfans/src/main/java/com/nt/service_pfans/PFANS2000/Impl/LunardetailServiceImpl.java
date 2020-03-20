@@ -1,10 +1,14 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.Examinationproject;
+import com.nt.dao_Pfans.PFANS2000.Lunarbasic;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
+import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
 import com.nt.service_pfans.PFANS2000.LunardetailService;
 import com.nt.service_pfans.PFANS2000.mapper.ExaminationprojectMapper;
+import com.nt.service_pfans.PFANS2000.mapper.LunarbasicMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunarbonusMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper;
 import com.nt.utils.dao.TokenModel;
@@ -16,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +40,8 @@ public class LunardetailServiceImpl implements LunardetailService {
     @Autowired
     private ExaminationprojectMapper examinationprojectMapper;
 
-
+    @Autowired
+    private LunarbasicMapper lunarbasicMapper;
     //获取详细一览
     @Override
     public List<Lunardetail> getLunardetail(LunardetailVo lunardetailVo) throws Exception {
@@ -67,11 +73,25 @@ public class LunardetailServiceImpl implements LunardetailService {
     }
 
     @Override
-    public void update(List<Lunardetail> lunardetailList, TokenModel tokenModel) throws Exception {
-//        lunardetailMapper.updateByPrimaryKey(lunardetail);
-        for(int i = 0; i < lunardetailList.size(); i++){
-            Lunardetail lunardetail = lunardetailList.get(i);
-            lunardetailMapper.updateByPrimaryKey(lunardetail);
+    public void update(LunarAllVo lunarAllVo, TokenModel tokenModel) throws Exception {
+        lunarAllVo.getLunarbonus().preUpdate(tokenModel);
+        lunarbonusMapper.updateByPrimaryKey(lunarAllVo.getLunarbonus());
+
+        for(Lunardetail item : lunarAllVo.getLunardetail()){
+            item.preUpdate(tokenModel);
+            lunardetailMapper.updateByPrimaryKey(item);
+        }
+
+        for(Lunarbasic item : lunarAllVo.getLunarbasic()){
+            if(StrUtil.isEmpty(item.getLunarbasic_id())){
+                item.preInsert(tokenModel);
+                item.setLunarbasic_id(UUID.randomUUID().toString());
+                item.setLunarbonus_id(lunarAllVo.getLunarbonus().getLunarbonus_id());
+                lunarbasicMapper.insert(item);
+            }else{
+                item.preUpdate(tokenModel);
+                lunarbasicMapper.updateByPrimaryKey(item);
+            }
         }
     }
 }

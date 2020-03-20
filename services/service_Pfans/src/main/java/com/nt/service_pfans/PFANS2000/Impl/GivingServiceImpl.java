@@ -158,16 +158,6 @@ public class GivingServiceImpl implements GivingService {
         othertwolist = othertwolist.stream().sorted(Comparator.comparing(OtherTwo::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherTwo(othertwolist);
 
-        // region 月度赏与 By SKAIXX
-        Appreciation appreciation = new Appreciation();
-        appreciation.setGiving_id(giving_id);
-        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
-        // 月度赏与计算
-        appreciationlist = appreciationCalc(appreciationlist);
-        givingVo.setAppreciation(appreciationlist);
-        // endregion
-
         OtherFive otherfive = new OtherFive();
         otherfive.setGiving_id(giving_id);
         List<OtherFive> otherfivelist = otherfiveMapper.select(otherfive);
@@ -193,26 +183,41 @@ public class GivingServiceImpl implements GivingService {
         Residual residua = new Residual();
         residua.setGiving_id(giving_id);
         List<Residual> residualllist = residualMapper.select(residua);
-        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
         givingVo.setResidual(residualllist);
         // endregion
 
         OtherFour otherfour = new OtherFour();
         otherfour.setGiving_id(giving_id);
         List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
-        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherFour(otherfourlist);
 
         Base base = new Base();
         base.setGiving_id(giving_id);
         List<Base> baselist = baseMapper.select(base);
-        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
+
+        // region 月度赏与 By SKAIXX
+        Appreciation appreciation = new Appreciation();
+        appreciation.setGiving_id(giving_id);
+        List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        // 月度赏与计算
+        appreciationlist = appreciationCalc(baselist, appreciationlist);
+        givingVo.setAppreciation(appreciationlist);
+        // endregion
 
         Contrast contrast = new Contrast();
         contrast.setGiving_id(giving_id);
         List<Contrast> contrastList = contrastMapper.select(contrast);
-        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
         givingVo.setContrast(contrastList);
 
         // region 累计税金 By SKAIXX
@@ -340,7 +345,8 @@ public class GivingServiceImpl implements GivingService {
         Induction induction = new Induction();
         induction.setGiving_id(giving_id);
         List<Induction> inductionList = inductionMapper.select(induction);
-        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
         givingVo.setEntryVo(inductionList);
         Calendar nowDate = Calendar.getInstance();
         Calendar lastDate = Calendar.getInstance();
@@ -356,7 +362,8 @@ public class GivingServiceImpl implements GivingService {
         Retire retire = new Retire();
         retire.setGiving_id(giving_id);
         List<Retire> retireList = retireMapper.select(retire);
-        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
+        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
+//        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
@@ -504,7 +511,11 @@ public class GivingServiceImpl implements GivingService {
             }
         }
 
-        Calendar calendar = Calendar.getInstance();
+        /*RN基本工资 -lxx*/
+        Dictionary dictionaryForRn = new Dictionary();
+        dictionaryForRn.setPcode("PR021");
+        List<Dictionary> dictionarylistForRn = dictionaryMapper.select(dictionaryForRn);
+        /*RN基本工资 -lxx*/
         if (customerInfos.size() > 0) {
             int rowindex = 0;
             for (CustomerInfo customer : customerInfos) {
@@ -577,6 +588,18 @@ public class GivingServiceImpl implements GivingService {
                         base.setHeating(R7);
                     }
                     /*rank修改 lxx */
+
+                    /*RN基本工资 -lxx*/
+                    for (Dictionary diction : dictionarylistForRn) {
+                        if (diction.getCode().equals(customer.getUserinfo().getRank())) {
+                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
+                                base.setRnbasesalary(diction.getValue4());
+                            } else {
+                                base.setRnbasesalary(diction.getValue5());
+                            }
+                        }
+                    }
+                    /*RN基本工资 -lxx*/
                 }
 
                 //入社日
@@ -964,8 +987,8 @@ public class GivingServiceImpl implements GivingService {
 
         givingMapper.insert(giving);
         // 2020/03/11 add by myt start
-        insertInduction(givingid, tokenModel);
-        insertRetire(givingid, tokenModel);
+//        insertInduction(givingid, tokenModel);
+//        insertRetire(givingid, tokenModel);
         // 2020/03/14 add by myt end
         insertBase(givingid, tokenModel);
         insertContrast(givingid, tokenModel);
@@ -1176,39 +1199,22 @@ public class GivingServiceImpl implements GivingService {
      * @Date 2020/3/16 14:28
      * @Param [appreciationlist]
      **/
-    private List<Appreciation> appreciationCalc(List<Appreciation> appreciationlist) {
-        /*获取 customerInfos-lxx*/
-        init();
-        /*获取 customerInfos-lxx*/
+    private List<Appreciation> appreciationCalc(List<Base> baseList, List<Appreciation> appreciationlist) {
+
         for (Appreciation appreciation : appreciationlist) {
-            // 获取用户信息
-            CustomerInfo customerInfo = customerInfos.stream().filter(item -> item.getUserid().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0);
-            // 判断该员工是否为技术职
-            boolean isTech = customerInfo.getUserinfo().getOccupationtype().equals("PR055001");
             // 获取给与标准
-            Dictionary rankDic = new Dictionary();
-            rankDic.setCode(customerInfo.getUserinfo().getRank());
-            rankDic = dictionaryMapper.select(rankDic).get(0);
+            double rnbasesalary = Double.parseDouble(baseList.stream().filter(item -> item.getUser_id().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0).getRnbasesalary());
 
             // 获取评价奖金百分比
             Dictionary commentaryDic = new Dictionary();
             commentaryDic.setCode(appreciation.getCommentary());
             commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
-            if (isTech) {   // 技术职
-                // 奖金计算
-                // 月赏与
-                double monthAppreciation = BigDecimal.valueOf(Double.parseDouble(rankDic.getValue3()) * 1.8d / 12d)
-                        .setScale(0, RoundingMode.HALF_UP).doubleValue();
-                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                        * Double.parseDouble(commentaryDic.getValue3())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
-            } else {    // 事务职
-                // 奖金计算
-                // 月赏与
-                double monthAppreciation = BigDecimal.valueOf(Double.parseDouble(rankDic.getValue2()) * 1.8d / 12d)
-                        .setScale(0, RoundingMode.HALF_UP).doubleValue();
-                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                        * Double.parseDouble(commentaryDic.getValue2())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
-            }
+            // 奖金计算
+            // 月赏与
+            double monthAppreciation = BigDecimal.valueOf(rnbasesalary * 1.8d / 12d)
+                    .setScale(0, RoundingMode.HALF_UP).doubleValue();
+            appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                    * Double.parseDouble(commentaryDic.getValue2())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
         }
         return appreciationlist;
     }
@@ -1316,6 +1322,7 @@ public class GivingServiceImpl implements GivingService {
                         filter(subItem -> subItem.getApplicationdate()
                                 .equals(restYear + restMonth))
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getLastreplace());
             } else {
                 residual.setLastreplace("0");
             }
@@ -1358,6 +1365,7 @@ public class GivingServiceImpl implements GivingService {
                         filter(subItem -> subItem.getApplicationdate()
                                 .equals(currentRestYear + currentRestMonth))
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getThisreplace());
             } else {
                 residual.setThisreplace("0");
             }
@@ -1378,6 +1386,7 @@ public class GivingServiceImpl implements GivingService {
                                 subItem.getApplicationdate().equals(date3) ||
                                 subItem.getApplicationdate().equals(date4))
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
                 residual.setThisreplace3("0");
             }
@@ -1471,11 +1480,11 @@ public class GivingServiceImpl implements GivingService {
      * @Param [base, residual]
      **/
     @Override
-    public Residual thisMonthOvertimeChange(GivingVo givingVo, TokenModel tokenModel) {
+    public Residual thisMonthOvertimeChange(GivingVo givingVo) {
 
-        String userId = tokenModel.getUserId();
+        Residual residual = givingVo.getResidual().get(0);
+        String userId = residual.getUser_id();
         Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
-        Residual residual = givingVo.getResidual().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
         double total = 0d;  // 总加班费
 
         // 判断员工当月级别是否为R8及以上
@@ -1500,6 +1509,66 @@ public class GivingServiceImpl implements GivingService {
 
         residual.setThistotaly(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return residual;
+    }
+
+    /**
+     * @return com.nt.dao_Pfans.PFANS2000.Lackattendance
+     * @Method thisMonthLacktimeChange
+     * @Author SKAIXX
+     * @Description 本月欠勤数据变更时，重新计算欠勤费合计
+     * @Date 2020/3/19 10:04
+     * @Param [givingVo, tokenModel]
+     **/
+    @Override
+    public Lackattendance thisMonthLacktimeChange(GivingVo givingVo, TokenModel tokenModel) {
+        double total = 0d;  // 总欠勤费
+
+        String userId = tokenModel.getUserId();
+        Lackattendance lackattendance = givingVo.getLackattendance().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+        Base base = givingVo.getBase().stream().filter(item -> item.getUser_id().equals(userId)).collect(Collectors.toList()).get(0);
+
+        // 当月小时工资 = 月工资÷21.75天÷8小时
+        double currentSalaryPerHour = BigDecimal.valueOf(Double.parseDouble(base.getThismonth()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 获取短病欠扣除比例
+        Dictionary shortDictionary = new Dictionary();
+        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
+        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+
+        // 获取长病欠
+        Dictionary longDictionary = new Dictionary();
+        longDictionary.setCode("PR047001");     // 大連社会最低賃金
+        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+        // 长病欠小时工资
+        double longSalary = BigDecimal.valueOf(Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 当月欠勤费用
+        // 欠勤费用-正式
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligenceformal()) * currentSalaryPerHour)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 欠勤费用-试用
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisdiligencetry()) * currentSalaryPerHour * 0.9d)
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 短病欠-正式
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencyformal()) * currentSalaryPerHour
+                * Double.parseDouble(shortDictionary.getValue2()))
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        // 短病欠-试用
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThisshortdeficiencytry()) * currentSalaryPerHour * 0.9d
+                * Double.parseDouble(shortDictionary.getValue2()))
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        // 长病欠-正式
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencyformal()) * longSalary)
+                .setScale(0, RoundingMode.HALF_UP).doubleValue();
+        // 长病欠-试用
+        total += BigDecimal.valueOf(Double.parseDouble(lackattendance.getThischronicdeficiencytry()) * longSalary * 0.9d)
+                .setScale(0, RoundingMode.HALF_UP).doubleValue();
+        lackattendance.setThistotal(String.valueOf(total));
+        return lackattendance;
     }
 
     /**
@@ -1783,7 +1852,7 @@ public class GivingServiceImpl implements GivingService {
         return workDays;
     }
 
-    // 2020/03/11 add by myt start
+    // region 入职和离职 BY Cash
     // 入职表插入数据
     public void insertInduction(String givingid, TokenModel tokenModel) throws Exception {
         int rowundex = 1;
@@ -1813,9 +1882,7 @@ public class GivingServiceImpl implements GivingService {
             }
         }
     }
-    // 2020/03/11 add by myt end
 
-    // 2020/03/11 add by myt start
     // 入职
     public List<Induction> getInduction(String givingId) throws Exception {
         /*获取 customerInfos-lxx*/
@@ -1840,21 +1907,21 @@ public class GivingServiceImpl implements GivingService {
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
         List<Dictionary> subsidyList = dictionaryMapper.select(dictionary);
-        // 食事手当
-        int lunchSubsidy = 0;
-        // 交通費
-        int trafficSubsidy = 0;
+        // 一括补助_试用
+        double trialSubsidy = 0d;
+        // 一括补助_正式
+        double officialSubsidy = 0d;
         for (Dictionary diction : subsidyList) {
-            if (diction.getCode().equals("PR042002")) {
-                lunchSubsidy = Integer.parseInt(diction.getValue2());
-            } else if (diction.getCode().equals("PR042003")) {
-                trafficSubsidy = Integer.parseInt(diction.getValue2());
+            if (diction.getCode().equals("PR042009")) {
+                trialSubsidy = Double.parseDouble(diction.getValue2());
+            } else if (diction.getCode().equals("PR042010")) {
+                officialSubsidy = Double.parseDouble(diction.getValue2());
             }
         }
         dictionary.setPcode("PR049");
         List<Dictionary> proportionList = dictionaryMapper.select(dictionary);
         // 试用期工资扣除比例
-        double wageDeductionProportion = 0.0d;
+        double wageDeductionProportion = 0d;
         for (Dictionary diction : proportionList) {
             if (diction.getCode().equals("PR049010")) {
                 wageDeductionProportion = Double.parseDouble(diction.getValue2());
@@ -1864,154 +1931,85 @@ public class GivingServiceImpl implements GivingService {
         List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(lastMonthDate.getTime()))));
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
+                // 退职日是本月的时候跳出循环（该员工的給料和补助在退职处理中计算）
+                if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
+                    Date resignationDate = sf.parse(customerInfo.getUserinfo().getResignation_date());
+                    if (resignationDate.getTime() >= mouthStart && resignationDate.getTime() <= mouthEnd) {
+                        continue;
+                    }
+                }
                 Induction induction = new Induction();
                 induction.setGiving_id(givingId);
                 // 上月工资结算时点过后入职没发工资的人
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
-                    induction.setUser_id(customerInfo.getUserid());// 用户ID
-                    induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());// 工号
-                    // 入社日
-                    Date enterDay = sf.parse(customerInfo.getUserinfo().getEnterday());
-                    induction.setWorddate(enterDay);
-                    // 本月基本工资
-                    String thisMonthSalary = getSalary(customerInfo, 1);
-                    induction.setThismonth(thisMonthSalary);
-                    // 上月基本工资
-                    String lastMonthSalary = getSalary(customerInfo, 0);
-                    induction.setLastmonth(lastMonthSalary);
-                    // 上月工资结算后入职的员工（本月入职）
-                    if (enterDay.getTime() >= mouthStart && enterDay.getTime() <= mouthEnd) {
-                        // 正社员工開始日(无)
-                        induction.setAttendance("0");// 先月出勤日数
-                        // 今月试用期间的出勤日数（当月应当出勤日数）
-                        Calendar calStart = Calendar.getInstance();
-                        calStart.set(Calendar.DAY_OF_MONTH, 1);
-                        Calendar calEnd = Calendar.getInstance();
-                        calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                        int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
-                        induction.setTrial(String.valueOf(trialAttendanceDays));
-                        // 給料
-                        calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, 0, trialAttendanceDays, wageDeductionProportion, df);
-                        // 午餐和交通补助
-                        calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, 0, trialAttendanceDays, df);
-                    } else {
-                        // 上月工资结算后入职的员工（上月入职）
-                        // 正社员工開始日(无)
-                        // 先月出勤日数
-                        Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnterday());
-                        Calendar calLastStart = Calendar.getInstance();
-                        calLastStart.add(Calendar.MONTH, -1);
-                        calLastStart.set(Calendar.DAY_OF_MONTH, map.get("day"));
-                        Calendar calLastEnd = Calendar.getInstance();
-                        calLastEnd.add(Calendar.MONTH, -1);
-                        calLastEnd.set(Calendar.DAY_OF_MONTH, calLastEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                        int lastAttendanceDays = getWorkDaysExceptWeekend(calLastStart.getTime(), calLastEnd.getTime());
-                        induction.setAttendance(String.valueOf(lastAttendanceDays));
-                        // 今月试用期间的出勤日数（当月应当出勤日数）
-                        Calendar calStart = Calendar.getInstance();
-                        calStart.set(Calendar.DAY_OF_MONTH, 1);
-                        Calendar calEnd = Calendar.getInstance();
-                        calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                        int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
-                        induction.setTrial(String.valueOf(trialAttendanceDays));
-                        // 給料
-                        calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, lastAttendanceDays, trialAttendanceDays, wageDeductionProportion, df);
-                        // 午餐和交通补助
-                        calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, lastAttendanceDays, trialAttendanceDays, df);
-                    }
-                    inductions.add(induction);
-                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
-                    // 本月转正或未转正的人
-                    // 转正日期
-                    Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
-                    if (endDate.getTime() >= mouthStart) {
-                        induction.setUser_id(customerInfo.getUserid()); // 用户ID
-                        induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());// 工号
-                        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));//入社日
-                        // 本月基本工资
-                        String thisMonthSalary = getSalary(customerInfo, 1);
-                        induction.setThismonth(thisMonthSalary);
-                        // 上基本工资
-                        String lastMonthSalary = getSalary(customerInfo, 0);
-                        induction.setLastmonth(lastMonthSalary);
-                        // 先月出勤日数
-                        Calendar calLastStart = Calendar.getInstance();
-                        calLastStart.add(Calendar.MONTH, -1);
-                        calLastStart.set(Calendar.DAY_OF_MONTH, 1);
-                        Calendar calLastEnd = Calendar.getInstance();
-                        calLastEnd.add(Calendar.MONTH, -1);
-                        calLastEnd.set(Calendar.DAY_OF_MONTH, calLastEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                        int lastAttendanceDays = getWorkDaysExceptWeekend(calLastStart.getTime(), calLastEnd.getTime());
-                        induction.setAttendance(String.valueOf(lastAttendanceDays));
+                    if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                        // 转正日期
+                        Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
                         // 本月转正
-                        if (endDate.getTime() <= mouthEnd) {
+                        if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
                             // 正社员工開始日
                             staffStartDate = endDate.toString();
                             induction.setStartdate(endDate);
-                            // 今月试用期间的出勤日数（当月应当出勤日数）
-                            Map<String, Integer> map = getYMD(customerInfo.getUserinfo().getEnddate());
-                            Calendar calStart = Calendar.getInstance();
-                            calStart.set(Calendar.DAY_OF_MONTH, map.get("day"));
-                            Calendar calEnd = Calendar.getInstance();
-                            calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                            int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
-                            induction.setTrial(String.valueOf(trialAttendanceDays));
-                            // 給料
-                            calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, lastAttendanceDays, trialAttendanceDays, wageDeductionProportion, df);
-                            // 午餐和交通补助
-                            calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, lastAttendanceDays, trialAttendanceDays, df);
-                        } else {
-                            // 本月未转正
-                            // 正社员工開始日(无)
-                            // 今月试用期间的出勤日数（当月应当出勤日数）
-                            Calendar calStart = Calendar.getInstance();
-                            calStart.set(Calendar.DAY_OF_MONTH, 1);
-                            Calendar calEnd = Calendar.getInstance();
-                            calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                            int trialAttendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
-                            induction.setTrial(String.valueOf(trialAttendanceDays));
-                            // 給料
-                            calculateSalary(induction, staffStartDate, lastMonthSalary, thisMonthSalary, lastAttendanceDays, trialAttendanceDays, wageDeductionProportion, df);
-                            // 午餐和交通补助
-                            calculateSubsidy(induction, lastMonthSalary, lunchSubsidy, trafficSubsidy, lastAttendanceDays, trialAttendanceDays, df);
                         }
-                        inductions.add(induction);
                     }
+                    // 计算給料和补助
+                    calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sf, df);
+                    inductions.add(induction);
                 }
             }
         }
         return inductions;
     }
 
-    // 计算午餐和交通补助(入职)
-    private void calculateSubsidy(Induction induction, String lastMonthSalary, int lunchSubsidy, int trafficSubsidy,
-                                  int lastAttendanceDays, int trialAttendanceDays, DecimalFormat df) {
-        // 午餐和交通补助
-        if (Integer.valueOf(lastMonthSalary) != 0) {
-            induction.setLunch(df.format(lunchSubsidy / dateBase * lastAttendanceDays + lunchSubsidy));// 午餐补助
-            induction.setTraffic(df.format(trafficSubsidy / dateBase * lastAttendanceDays + trafficSubsidy));// 交通补助
-        } else {
-            induction.setLunch(df.format(lunchSubsidy / dateBase * trialAttendanceDays));// 午餐补助
-            induction.setTraffic(df.format(trafficSubsidy / dateBase * trialAttendanceDays));// 交通补助
-        }
-    }
-
-    // 计算給料(入职)
-    private void calculateSalary(Induction induction, String staffStartDate, String lastMonthSalary, String thisMonthSalary,
-                                 int lastAttendanceDays, int trialAttendanceDays, double wageDeductionProportion, DecimalFormat df) {
+    // 计算給料和补助
+    private void calculateSalaryAndSubsidy(Induction induction, CustomerInfo customerInfo, String staffStartDate, double trialSubsidy, double officialSubsidy,
+                                           double wageDeductionProportion, SimpleDateFormat sf, DecimalFormat df) throws Exception {
+        // 用户ID
+        induction.setUser_id(customerInfo.getUserid());
+        // 工号
+        induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        // 入社日
+        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));
+        // 本月基本工资
+        String thisMonthSalary = getSalary(customerInfo, 1);
+        induction.setThismonth(thisMonthSalary);
+        // 上月基本工资
+        String lastMonthSalary = getSalary(customerInfo, 0);
+        induction.setLastmonth(lastMonthSalary);
+        // 计算出勤日数
+        Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+        // 本月正式工作日数
+        double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
+        // 本月试用工作日数
+        double thisMonthSuitDays = Double.parseDouble(daysList.get("thisMonthSuitDays"));
+        // 上月正式工作日数
+        double lastMonthDays = Double.parseDouble(daysList.get("lastMonthDays"));
+        // 上月试用工作日数
+        double lastMonthSuitDays = Double.parseDouble(daysList.get("lastMonthSuitDays"));
+        // 上月出勤日数
+        double lastAttendanceDays = lastMonthDays + lastMonthSuitDays;
+        induction.setAttendance(String.valueOf(lastAttendanceDays));
+        // 本月试用社员出勤日数
+        double trialAttendanceDays = thisMonthDays + thisMonthSuitDays;
+        induction.setTrial(String.valueOf(trialAttendanceDays));
+        // 正社员工開始日(无)
+        // 給料
         if (StringUtils.isNotEmpty(staffStartDate)) {
-            induction.setGive(df.format(Double.valueOf(thisMonthSalary) - (Double.valueOf(thisMonthSalary) / dateBase * trialAttendanceDays * wageDeductionProportion)));
+            induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * trialAttendanceDays * wageDeductionProportion)));
         } else {
             if (lastAttendanceDays > 0) {
-                induction.setGive(df.format(Double.valueOf(lastMonthSalary) / dateBase * lastAttendanceDays + Double.valueOf(thisMonthSalary)));
+                induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
             } else {
                 if (trialAttendanceDays > 0) {
-                    induction.setGive(df.format(Double.valueOf(thisMonthSalary) / dateBase * trialAttendanceDays));
+                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * trialAttendanceDays));
                 } else {
                     induction.setGive(thisMonthSalary);
                 }
             }
         }
+        // 一括补助
+        induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
+                thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
     }
 
     //退职
@@ -2031,15 +2029,15 @@ public class GivingServiceImpl implements GivingService {
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
         List<Dictionary> subsidyList = dictionaryMapper.select(dictionary);
-        // 食事手当
-        int lunchSubsidy = 0;
-        // 交通費
-        int trafficSubsidy = 0;
+        // 一括补助_试用
+        double trialSubsidy = 0d;
+        // 一括补助_正式
+        double officialSubsidy = 0d;
         for (Dictionary diction : subsidyList) {
-            if (diction.getCode().equals("PR042002")) {
-                lunchSubsidy = Integer.parseInt(diction.getValue2());
-            } else if (diction.getCode().equals("PR042003")) {
-                trafficSubsidy = Integer.parseInt(diction.getValue2());
+            if (diction.getCode().equals("PR042009")) {
+                trialSubsidy = Double.parseDouble(diction.getValue2());
+            } else if (diction.getCode().equals("PR042010")) {
+                officialSubsidy = Double.parseDouble(diction.getValue2());
             }
         }
         // 查询退职人员信息
@@ -2060,43 +2058,30 @@ public class GivingServiceImpl implements GivingService {
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 retire.setRetiredate(sf.parse(resignationDate));
-                // 今月出勤日数
-                Map<String, Integer> map = getYMD(resignationDate);
-                Calendar calStart = Calendar.getInstance();
-                calStart.set(Calendar.DAY_OF_MONTH, 1);
-                Calendar calEnd = Calendar.getInstance();
-                calEnd.set(Calendar.DAY_OF_MONTH, map.get("day"));
-                int attendanceDays = getWorkDaysExceptWeekend(calStart.getTime(), calEnd.getTime());
+                // 计算出勤日数
+                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                // 本月正式工作日数
+                double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
+                // 本月试用工作日数
+                double thisMonthSuitDays = Double.parseDouble(daysList.get("thisMonthSuitDays"));
+                // 本月出勤日数
+                double attendanceDays = thisMonthSuitDays + thisMonthDays;
                 retire.setAttendance(String.valueOf(attendanceDays));
                 // 当月基本工资
                 String thisMonthSalary = getSalary(customerInfo, 1);
-                // 计算全勤天数
-                Calendar calAttendanceStart = Calendar.getInstance();
-                calAttendanceStart.set(Calendar.DAY_OF_MONTH, 1);
-                Calendar calAttendanceEnd = Calendar.getInstance();
-                calAttendanceEnd.set(Calendar.DAY_OF_MONTH, calAttendanceEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-                int allAttendanceDay = getWorkDaysExceptWeekend(calAttendanceStart.getTime(), calAttendanceEnd.getTime());
                 // 給料
-                if (attendanceDays == allAttendanceDay) {
-                    retire.setGive(df.format(Double.valueOf(thisMonthSalary)));
+                int compareResult = Double.compare(attendanceDays, dateBase);
+                if (compareResult >= 0) {
+                    retire.setGive(df.format(Double.parseDouble(thisMonthSalary)));
                 } else {
-                    retire.setGive(df.format(Double.valueOf(thisMonthSalary) / dateBase * attendanceDays));
+                    retire.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * attendanceDays));
                 }
-                // 午餐补助
-                if (attendanceDays == allAttendanceDay) {
-                    retire.setLunch(df.format(lunchSubsidy));
-                } else {
-                    retire.setLunch(df.format(lunchSubsidy / dateBase * attendanceDays));
-                }
-                // 交通补助
-                if (attendanceDays == allAttendanceDay) {
-                    retire.setTraffic(df.format(trafficSubsidy));
-                } else {
-                    retire.setTraffic(df.format(trafficSubsidy / dateBase * attendanceDays));
-                }
+                // 一括补助
+                retire.setLunch(df.format(thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
                 retires.add(retire);
             }
         }
         return retires;
     }
+    // endregion 入职和离职 BY Cash
 }

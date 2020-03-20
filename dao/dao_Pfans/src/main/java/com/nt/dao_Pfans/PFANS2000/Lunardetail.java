@@ -134,11 +134,7 @@ public class Lunardetail extends BaseModel {
     @Column(name = "EXAMINATIONOBJECT_ID")
     private String examinationobject_id;
 
-
-
-
-
-
-
+    @Column(name = "OCCUPATIONTYPE")
+    private String occupationtype;
 
 }

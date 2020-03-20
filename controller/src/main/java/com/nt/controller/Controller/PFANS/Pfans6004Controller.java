@@ -40,7 +40,6 @@ public class Pfans6004Controller {
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
-
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getexpatriatesinforApplyOne(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
         if (expatriatesinfor == null) {

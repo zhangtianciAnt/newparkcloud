@@ -38,6 +38,14 @@ public class CompanyProjectsVo {
      */
     private List<Delegainformation> delegainformation;
     /**
+     * 共通部署起案
+     */
+    private Comproject comproject;
+    /**
+     * 共通部署起案完了
+     */
+    private List<Prosystem> prosystem;
+    /**
      * 委托元为内采的合同
      */
     private List<Contractnumbercount> contractnumbercount;

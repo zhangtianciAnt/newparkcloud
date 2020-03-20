@@ -9,8 +9,6 @@ import java.util.List;
 
 
 public interface DelegainformationMapper extends MyMapper<Delegainformation> {
-   List<DelegainformationVo> getinfo();
-
    List<DelegainformationVo> getYears(@Param("year") String year);
 
 }

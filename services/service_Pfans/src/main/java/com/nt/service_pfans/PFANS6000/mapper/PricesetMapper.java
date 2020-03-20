@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PricesetMapper extends MyMapper<Priceset> {
     List<Priceset> selectByYear(@Param("startTime") String startTime, @Param("endTime") String endTime);
+    List<Priceset> gettlist();
 }

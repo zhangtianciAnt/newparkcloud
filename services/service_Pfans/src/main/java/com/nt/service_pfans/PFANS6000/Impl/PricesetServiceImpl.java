@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS6000.PricesetService;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
@@ -28,8 +29,8 @@ public class PricesetServiceImpl implements PricesetService {
      * @throws Exception
      */
     @Override
-    public List<Priceset> getpriceset(Priceset priceset) throws Exception {
-        return pricesetMapper.select(priceset);
+    public List<Priceset> gettlist() throws Exception {
+        return pricesetMapper.gettlist();
     }
 
     @Override
@@ -51,7 +52,7 @@ public class PricesetServiceImpl implements PricesetService {
 
             Priceset prices = new Priceset();
             //用主键查询
-            prices.setPricesetid(priceset.get(i).getPricesetid());
+            prices.setPriceset_id(priceset.get(i).getPriceset_id());
             List<Priceset> pricesetList = pricesetMapper.select(prices);
 
             String AssesstimeUpYear_s = (priceset.get(i).getAssesstime().substring(0, 4));
@@ -74,7 +75,7 @@ public class PricesetServiceImpl implements PricesetService {
                         pricesetOld.preUpdate(tokenModel);
                         pricesetMapper.updateByPrimaryKeySelective(pricesetOld);
                         price.preInsert(tokenModel);
-                        price.setPricesetid(UUID.randomUUID().toString());
+                        price.setPriceset_id(UUID.randomUUID().toString());
                         price.setStatus("0");
                         pricesetMapper.insert(price);
                     }

@@ -151,6 +151,12 @@ public class DelegainformationVo {
     private String project_name;
 
     /**
+     * 外注人员姓名ID
+     */
+    @Column(name = "EXPNAME")
+    private String expname;
+
+    /**
      * 项目经理(PM)
      */
     @Column(name = "MANAGERID")

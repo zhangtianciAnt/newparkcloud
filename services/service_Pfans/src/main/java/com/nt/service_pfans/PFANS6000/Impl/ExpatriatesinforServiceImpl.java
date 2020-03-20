@@ -3,14 +3,20 @@ package com.nt.service_pfans.PFANS6000.Impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_Auth.Role;
+import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.*;
 
+import static com.nt.utils.MongoObject.CustmizeQuery;
+
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
@@ -31,6 +39,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private PricesetMapper pricesetMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception {
@@ -45,6 +56,22 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     @Override
     public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+
+        if("BP003001".equals(expatriatesinfor.getResult())){
+            UserAccount userAccount = new UserAccount();
+            userAccount.setAccount("123454321");
+            userAccount.setPassword("123454321");
+            userAccount.setUsertype("1");
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+            query.addCriteria(Criteria.where("rolename").is("外协staff"));
+            List<Role>  rolss =  mongoTemplate.find(query, Role.class);
+
+            userAccount.setRoles(rolss);
+            userAccount.preInsert(tokenModel);
+            mongoTemplate.save(userAccount);
+        }
     }
 
     @Override
@@ -65,7 +92,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
         Priceset priceset = new Priceset();
         priceset.preInsert(tokenModel);
-        priceset.setPricesetid(UUID.randomUUID().toString());
+        priceset.setPriceset_id(UUID.randomUUID().toString());
         priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
         priceset.setGraduation(expatriatesinfor.getGraduation_year());
         priceset.setCompany(expatriatesinfor.getSuppliername());

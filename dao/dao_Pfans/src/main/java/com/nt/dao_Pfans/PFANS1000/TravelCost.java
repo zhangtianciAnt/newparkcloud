@@ -82,7 +82,7 @@ public class TravelCost extends BaseModel {
     /**
      * 发票说明
      */
-    @Column(name = "REMARK")
-    private String remark;
+    @Column(name = "REMARKS")
+    private String remarks;
 
 }
