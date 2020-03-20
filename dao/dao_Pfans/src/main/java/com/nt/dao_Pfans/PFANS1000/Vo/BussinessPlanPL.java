@@ -4,16 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ActualPL {
-    private String code;
-    private String actual1;
-    private String actual2;
-    private String actual3;
+public class BussinessPlanPL {
+    private int type;
+    private String money4;
+    private String money5;
+    private String money6;
+    private String money7;
+    private String money8;
+    private String money9;
+    private String money10;
+    private String money11;
+    private String money12;
     private String actual4;
     private String actual5;
     private String actual6;

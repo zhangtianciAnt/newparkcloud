@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -61,7 +62,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     @Override
     public List<PunchcardRecord> list(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception {
-//        methodAttendance(tokenModel);
+        return punchcardrecordMapper.select(punchcardrecord);
+    }
+
+    @Override
+    public List<PunchcardRecord> getDataList(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception{
         return punchcardrecordMapper.select(punchcardrecord);
     }
 

@@ -18,4 +18,46 @@
 		order by USER_ID, ASSESSTIME
         ]]>
 	</select>
+    <select id="gettlist" resultType="com.nt.dao_Pfans.PFANS6000.Vo.PricesetVo">
+select
+expatriatesinfor.expname,
+priceset.graduation,
+priceset.company,
+priceset.assesstime,
+priceset.technical,
+priceset.technology,
+priceset.priceset_id,
+priceset.management,
+priceset.value,
+priceset.user_id,
+priceset.fieldskills,
+priceset.field,
+priceset.language,
+priceset.languagevalue,
+priceset.workskills,
+priceset.service,
+priceset.evaluation,
+priceset.rvicevalue,
+
+priceset.psdcdscale,
+priceset.scalevalue,
+priceset.contribution,
+priceset.coefficient,
+priceset.staffpsdcdrank,
+
+
+priceset.rankvalue,
+priceset.butionevaluation,
+priceset.butioncoefficient,
+priceset.unitprice,
+priceset.totalunit,
+
+priceset.common,
+priceset.psdcdrank,
+priceset.remarks,
+priceset.yearunit
+
+ from priceset INNER JOIN expatriatesinfor on priceset.USER_ID=expatriatesinfor.EXPATRIATESINFOR_ID
+
+	</select>
 </mapper>

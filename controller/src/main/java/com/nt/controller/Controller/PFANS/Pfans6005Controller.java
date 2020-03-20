@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
@@ -29,19 +30,17 @@ public class Pfans6005Controller {
     @Autowired
     private TokenService tokenService;
 
-    /**
-     * 获取单价设定列表
-     * @param request
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/list", method = {RequestMethod.GET})
-    public ApiResult getpriceset(HttpServletRequest request) throws Exception {
+
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult getpriceset(@RequestBody Priceset priceset,HttpServletRequest request) throws Exception {
+        if (priceset == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         TokenModel tokenModel = tokenService.getToken(request);
-        Priceset priceset = new Priceset();
-        priceset.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(pricesetService.getpriceset(priceset));
+        return ApiResult.success(pricesetService.gettlist());
     }
+
+
 
     /**
      * 单价设定修改

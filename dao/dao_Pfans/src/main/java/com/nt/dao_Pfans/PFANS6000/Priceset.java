@@ -23,7 +23,7 @@ public class Priceset extends BaseModel {
      */
     @Id
     @Column(name = "PRICESET_ID")
-    private String pricesetid;
+    private String priceset_id;
 
     /**
      *査定時間

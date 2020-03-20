@@ -31,10 +31,10 @@ public interface GivingService {
     void save(GivingVo givingvo, TokenModel tokenModel)throws Exception;
 
     // 本月加班数据变更时，重新计算加班费合计
-    Residual thisMonthOvertimeChange(GivingVo givingVo, TokenModel tokenModel) throws Exception;
+    Residual thisMonthOvertimeChange(GivingVo givingVo) throws Exception;
 
     // 本月欠勤数据变更时，重新计算欠勤费合计
-    Lackattendance thisMonthLacktimeChange(GivingVo givingVo, TokenModel tokenModel) throws Exception;
+    Lackattendance thisMonthLacktimeChange(GivingVo givingVo) throws Exception;
 }
 
 

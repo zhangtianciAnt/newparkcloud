@@ -11,7 +11,7 @@ public interface DeleginformationService {
     //取出项目体制数据与项目数据，再对数据进行计算存入到月份表中
     public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception;
 
-    List<DelegainformationVo> getDelegainformation() throws Exception;
+//    List<DelegainformationVo> getDelegainformation() throws Exception;
 
     List<DelegainformationVo> getYears(String year) throws Exception;
 }

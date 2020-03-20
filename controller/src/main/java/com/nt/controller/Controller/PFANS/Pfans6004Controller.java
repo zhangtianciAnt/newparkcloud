@@ -40,13 +40,6 @@ public class Pfans6004Controller {
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
-    @RequestMapping(value = "/getexpatriates", method = {RequestMethod.GET})
-    public ApiResult getexpatriates(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(expatriatesinforService.getexpatriates());
-    }
-
-
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getexpatriatesinforApplyOne(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
         if (expatriatesinfor == null) {
@@ -111,6 +104,19 @@ public class Pfans6004Controller {
     public void download(HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
         ExcelOutPutUtil.OutPut("外驻人员登记表","waizhu.xlsx",data,response);
+    }
+
+    @RequestMapping(value = "/crAccount", method = {RequestMethod.POST})
+    public ApiResult crAccount(@RequestBody List<Expatriatesinfor> expatriatesinfor,HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            expatriatesinforService.crAccount(expatriatesinfor, tokenModel);
+            return ApiResult.success();
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 
 }
