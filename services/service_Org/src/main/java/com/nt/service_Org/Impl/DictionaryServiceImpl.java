@@ -53,6 +53,11 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
+    public List<Dictionary> getDictionaryList(Dictionary dictionary) throws Exception{
+        return dictionaryMapper.select(dictionary);
+    }
+
+    @Override
     public void upDictionary(List<Dictionary> dictionarylist, TokenModel tokenModel) throws Exception {
         if(dictionarylist.size() > 0){
             for(Dictionary dictionary : dictionarylist){

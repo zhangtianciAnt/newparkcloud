@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSON;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -156,9 +157,8 @@ public class EvectionServiceImpl implements EvectionService {
             needMergeList.addAll(trafficDetailslist);
             needMergeList.addAll(accommodationdetailslist);
             needMergeList.addAll(otherDetailslist);
-//            needMergeList.addAll(currencyexchangeList);
         }
-        mergeResult = mergeDetailList(needMergeList, specialMap);
+        mergeResult = mergeDetailList(needMergeList, specialMap, currencyexchangeList);
 
 
         List<TravelCost> csvList = new ArrayList<>();
@@ -227,6 +227,7 @@ public class EvectionServiceImpl implements EvectionService {
      */
     private static final String TAX_KEY = "__TAX_KEY__";
     private static final String PADDING_KEY = "__PADDING_KEY__";
+    private static final String CURRENCY_KEY = "__CURRENCY_KEY__";      //外币
     private static final String INPUT_TYPE_KEY = "__INPUT_TYPE_KEY__";
     private static final DecimalFormat FNUM = new DecimalFormat("##0.00");
 
@@ -235,16 +236,16 @@ public class EvectionServiceImpl implements EvectionService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap) throws Exception {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         if ( detailList.size() <= 0 ) {
             throw new Exception("明细不能为空");
         }
         String inputType = getInputType(detailList.get(0));
         for ( Object detail : detailList ) {
-            if ( !inputType.equals(getInputType(detail)) ) {
-                throw new Exception("一次申请，只能选择一种货币。");
-            }
+//            if ( !inputType.equals(getInputType(detail)) ) {
+//                throw new Exception("一次申请，只能选择一种货币。");
+//            }
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             String budgetcoding = getProperty(detail, "budgetcoding");
@@ -311,7 +312,36 @@ public class EvectionServiceImpl implements EvectionService {
                     }
                 }
             }
-
+            //计算汇兑损失
+//            if(currencyexchangeList != null){
+//                for(Currencyexchange curren : currencyexchangeList){
+//                    String curRear = curren.getExchangerate();         //兑换汇率
+////                    String curBefore = detail.getAccommodationallowance();
+//                    Dictionary dictionary = new Dictionary();
+//                    String accflg = ((AccommodationDetails) detail).getAccommodationallowance();
+//                    dictionary.setCode(accflg);
+////                    dictionary.setCode("PJ003002");
+//                    List<Dictionary>  aa = dictionaryService.getDictionaryList(dictionary);
+//                    float curBefore = 0;
+//                    if(aa.size() > 0){
+//                        curBefore = Float.valueOf(aa.get(0).getValue2());
+//                    }
+////                    float curBefore = getPropertyFloat(detail, CURRENCY_KEY);
+//                    float diff = curBefore - getFloatValue(curRear);
+//                    if ( diff != 0 ) {
+//                        TravelCost cur = new TravelCost();
+//                        float isRmb = getPropertyFloat(detail, "rmb");
+//                        cur.setLineamount(String.valueOf(diff * isRmb));
+//                        cur.setBudgetcoding(getProperty(detail, "budgetcoding"));
+//                        cur.setSubjectnumber(getProperty(detail, "subjectnumber"));
+//                        //发票说明
+//                        cur.setRemarks(getProperty(detail, "accountcode"));
+//                        List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(CURRENCY_KEY, new ArrayList<>());
+//                        paddingList.add(cur);
+//                        resultMap.put(CURRENCY_KEY, inputType);
+//                    }
+//                }
+//            }
         }
         if ( totalTax != specialMap.get(TOTAL_TAX) ) {
             throw new Exception("发票合计金额与明细不匹配。");

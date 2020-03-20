@@ -38,11 +38,11 @@ public class Pfans6006Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult getDelegainformation(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(deleginformationService.getDelegainformation());
-    }
+//    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+//    public ApiResult getDelegainformation(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        return ApiResult.success(deleginformationService.getDelegainformation());
+//    }
 
     //
 //    @RequestMapping(value = "/List", method = {RequestMethod.GET})

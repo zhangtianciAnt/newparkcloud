@@ -3,18 +3,18 @@
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper">
     <select id="getAcutal" resultType="com.nt.dao_Pfans.PFANS1000.Vo.ActualPL">
             select code,
-       CONVERT(MAX(CASE a.month WHEN 4 THEN a.rmb ELSE 0 END),decimal) AS 'actual4',
-       CONVERT(MAX(CASE a.month WHEN 5 THEN a.rmb ELSE 0 END),decimal) AS 'actual5',
-       CONVERT(MAX(CASE a.month WHEN 6 THEN a.rmb ELSE 0 END),decimal) AS 'actual6',
-       CONVERT(MAX(CASE a.month WHEN 7 THEN a.rmb ELSE 0 END),decimal) AS 'actual7',
-       CONVERT(MAX(CASE a.month WHEN 8 THEN a.rmb ELSE 0 END),decimal) AS 'actual8',
-       CONVERT(MAX(CASE a.month WHEN 9 THEN a.rmb ELSE 0 END),decimal) AS 'actual9',
-       CONVERT(MAX(CASE a.month WHEN 10 THEN a.rmb ELSE 0 END),decimal) AS 'actual10',
-       CONVERT(MAX(CASE a.month WHEN 11 THEN a.rmb ELSE 0 END),decimal) AS 'actual11',
-       CONVERT(MAX(CASE a.month WHEN 12 THEN a.rmb ELSE 0 END),decimal) AS 'actual12',
-       CONVERT(MAX(CASE a.month WHEN 1 THEN a.rmb ELSE 0 END),decimal) AS 'actual1',
-       CONVERT(MAX(CASE a.month WHEN 2 THEN a.rmb ELSE 0 END),decimal) AS 'actual2',
-       CONVERT(MAX(CASE a.month WHEN 3 THEN a.rmb ELSE 0 END),decimal) AS 'actual3'
+       MAX(CASE a.month WHEN 4 THEN a.rmb ELSE 0 END) AS 'actual4',
+       MAX(CASE a.month WHEN 5 THEN a.rmb ELSE 0 END) AS 'actual5',
+       MAX(CASE a.month WHEN 6 THEN a.rmb ELSE 0 END) AS 'actual6',
+       MAX(CASE a.month WHEN 7 THEN a.rmb ELSE 0 END) AS 'actual7',
+       MAX(CASE a.month WHEN 8 THEN a.rmb ELSE 0 END) AS 'actual8',
+       MAX(CASE a.month WHEN 9 THEN a.rmb ELSE 0 END) AS 'actual9',
+       MAX(CASE a.month WHEN 10 THEN a.rmb ELSE 0 END) AS 'actual10',
+       MAX(CASE a.month WHEN 11 THEN a.rmb ELSE 0 END) AS 'actual11',
+       MAX(CASE a.month WHEN 12 THEN a.rmb ELSE 0 END) AS 'actual12',
+       MAX(CASE a.month WHEN 1 THEN a.rmb ELSE 0 END) AS 'actual1',
+       MAX(CASE a.month WHEN 2 THEN a.rmb ELSE 0 END) AS 'actual2',
+       MAX(CASE a.month WHEN 3 THEN a.rmb ELSE 0 END) AS 'actual3'
     from
 (
 select code, sum(rmb) as rmb, month from (
@@ -39,7 +39,7 @@ group by MONTH(p.REIMBURSEMENTDATE), d.CODE
 
 union all
 
-select 'PJ111008', (IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(a.TRAVELALLOWANCE), 0) + IFNULL(SUM(o.RMB +t.tormb), 0)) as rmb,MONTH(e.REIMBURSEMENTDATE) as month
+select 'PJ111008', (IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(a.RMB), 0) + IFNULL(SUM(o.RMB +t.tormb), 0)) as rmb,MONTH(e.REIMBURSEMENTDATE) as month
 from evection e
 		left join trafficdetails t
                    on e.EVECTION_ID = t.PUBLICEXPENSE_ID

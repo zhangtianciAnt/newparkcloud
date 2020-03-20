@@ -10,8 +10,6 @@ public interface ExpatriatesinforService {
 
     List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception;
 
-    public List<Expatriatesinfor> getexpatriates() throws Exception;
-
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception;
 
     public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception;
@@ -23,4 +21,6 @@ public interface ExpatriatesinforService {
 
 
     List<String> expimport(HttpServletRequest request, TokenModel tokenModel) throws Exception;
+
+    void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel ) throws Exception;
 }

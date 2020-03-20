@@ -21,13 +21,11 @@ public class Businessplan extends BaseModel {
     @Id
     @Column(name = "BUSINESSPLAN_ID")
     private String businessplanid;
-
     /**
      * 计划者ID
      */
     @Column(name = "USER_ID")
     private String user_id;
-
     /**
      * センターID
      */
@@ -58,20 +56,43 @@ public class Businessplan extends BaseModel {
     @Column(name = "ASSETS_OTHER")
     private String assets_other;
 
-    @Column(name = "TRANSPORTATION")
-    private String transportation;
+    @Column(name = "TABLEP")
+    private String tableP;
 
-    @Column(name = "TRUSTB1")
-    private String trustb1;
+    @Column(name = "BUSINESS")
+    private String business;
 
-    @Column(name = "TRUSTB2")
-    private String trustb2;
+    @Column(name = "GROUPA1")
+    private String groupA1;
 
-    @Column(name = "TRUSTB3")
-    private String trustb3;
+    @Column(name = "GROUPA2")
+    private String groupA2;
 
-    @Column(name = "SPECIAL_FUNDS")
-    private String special_funds;
+    @Column(name = "GROUPB1")
+    private String groupB1;
 
+    @Column(name = "GROUPB2")
+    private String groupB2;
+
+    @Column(name = "GROUPB3")
+    private String groupB3;
+
+    @Column(name = "GROUPC")
+    private String groupC;
+
+    @Column(name = "TABLEO1")
+    private String tableO1;
+
+    @Column(name = "TABLEO2")
+    private String tableO2;
+
+    @Column(name = "TABLEO3")
+    private String tableO3;
+
+    @Column(name = "TABLEO")
+    private String tableO;
+
+    @Column(name = "YEAR")
+    private String year;
 
 }
