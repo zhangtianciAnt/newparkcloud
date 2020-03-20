@@ -1,8 +1,10 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -61,22 +63,24 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     public void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception {
 
         for(Expatriatesinfor item:expatriatesinfor){
-            UserAccount userAccount = new UserAccount();
-            userAccount.setAccount("123454321");
-            userAccount.setPassword("123454321");
-            userAccount.setUsertype("1");
+            if(StrUtil.isEmpty(item.getAccount())){
+                UserAccount userAccount = new UserAccount();
+                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(),""));
+                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(),""));
+                userAccount.setUsertype("1");
 
-            Query query = new Query();
-            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-            query.addCriteria(Criteria.where("rolename").is("外协员工"));
-            List<Role>  rolss =  mongoTemplate.find(query, Role.class);
+                Query query = new Query();
+                query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+                query.addCriteria(Criteria.where("rolename").is("外协staff"));
+                List<Role>  rolss =  mongoTemplate.find(query, Role.class);
 
-            userAccount.setRoles(rolss);
-            userAccount.preInsert(tokenModel);
-            mongoTemplate.save(userAccount);
+                userAccount.setRoles(rolss);
+                userAccount.preInsert(tokenModel);
+                mongoTemplate.save(userAccount);
 
-            item.setAccount(userAccount.get_id());
-            expatriatesinforMapper.updateByPrimaryKeySelective(item);
+                item.setAccount(userAccount.get_id());
+                expatriatesinforMapper.updateByPrimaryKeySelective(item);
+            }
         }
 
     }
