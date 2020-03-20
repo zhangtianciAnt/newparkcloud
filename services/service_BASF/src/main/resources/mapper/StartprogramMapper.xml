@@ -65,7 +65,9 @@
         s.standard,
         s.questionnum,
         s.programtype,
-        s.actualstartdate
+        s.actualstartdate,
+        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS MODIFYON
         FROM
         startprogram AS s
         INNER JOIN
