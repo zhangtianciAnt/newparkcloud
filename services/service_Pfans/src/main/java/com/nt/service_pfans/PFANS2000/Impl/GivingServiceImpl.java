@@ -175,39 +175,34 @@ public class GivingServiceImpl implements GivingService {
         // region 欠勤 By SKAIXX
         Lackattendance lackattendance = new Lackattendance();
         lackattendance.setGiving_id(giving_id);
-        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance);
+        List<Lackattendance> lackattendancellist = lackattendanceMapper.select(lackattendance).stream().sorted(Comparator.comparing(Lackattendance::getRowindex)).collect(Collectors.toList());
         givingVo.setLackattendance(lackattendancellist);
         // endregion
 
         // region 残业 By SKAIXX
         Residual residua = new Residual();
         residua.setGiving_id(giving_id);
-        List<Residual> residualllist = residualMapper.select(residua);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        residualllist = residualllist.stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
+        List<Residual> residualllist = residualMapper.select(residua).stream().sorted(Comparator.comparing(Residual::getRowindex)).collect(Collectors.toList());
         givingVo.setResidual(residualllist);
         // endregion
 
         OtherFour otherfour = new OtherFour();
         otherfour.setGiving_id(giving_id);
         List<OtherFour> otherfourlist = otherfourMapper.select(otherfour);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
+        otherfourlist = otherfourlist.stream().sorted(Comparator.comparing(OtherFour::getRowindex)).collect(Collectors.toList());
         givingVo.setOtherFour(otherfourlist);
 
         Base base = new Base();
         base.setGiving_id(giving_id);
         List<Base> baselist = baseMapper.select(base);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
+        baselist = baselist.stream().sorted(Comparator.comparing(Base::getRowindex)).collect(Collectors.toList());
         givingVo.setBase(baselist);
 
         // region 月度赏与 By SKAIXX
         Appreciation appreciation = new Appreciation();
         appreciation.setGiving_id(giving_id);
         List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
         // 月度赏与计算
         appreciationlist = appreciationCalc(baselist, appreciationlist);
         givingVo.setAppreciation(appreciationlist);
@@ -216,8 +211,7 @@ public class GivingServiceImpl implements GivingService {
         Contrast contrast = new Contrast();
         contrast.setGiving_id(giving_id);
         List<Contrast> contrastList = contrastMapper.select(contrast);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
+        contrastList = contrastList.stream().sorted(Comparator.comparing(Contrast::getRowindex)).collect(Collectors.toList());
         givingVo.setContrast(contrastList);
 
         // region 累计税金 By SKAIXX
@@ -345,8 +339,7 @@ public class GivingServiceImpl implements GivingService {
         Induction induction = new Induction();
         induction.setGiving_id(giving_id);
         List<Induction> inductionList = inductionMapper.select(induction);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
+        inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
         givingVo.setEntryVo(inductionList);
         Calendar nowDate = Calendar.getInstance();
         Calendar lastDate = Calendar.getInstance();
@@ -362,8 +355,7 @@ public class GivingServiceImpl implements GivingService {
         Retire retire = new Retire();
         retire.setGiving_id(giving_id);
         List<Retire> retireList = retireMapper.select(retire);
-        // Todo By Skaixx At 2020/3/19 :  rowindex 临时注释
-//        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
+        retireList = retireList.stream().sorted(Comparator.comparing(Retire::getRowindex)).collect(Collectors.toList());
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
@@ -1281,6 +1273,7 @@ public class GivingServiceImpl implements GivingService {
             residual.setRn(item.getRn());
             residual.setGiving_id(givingid);
             residual.setResidual_id(UUID.randomUUID().toString());
+            residual.setRowindex(item.getRowindex());
 
             // 本月是否已退职(员工ID如果在退职表里存在，则视为已退职)
             Retire retire = new Retire();
@@ -1613,6 +1606,7 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setLackattendance_id(UUID.randomUUID().toString());
             lackattendance.setGiving_id(givingid);
             lackattendance.setUser_id(item.getUser_id());
+            lackattendance.setRowindex(item.getRowindex());
 
             // 取得前月欠勤数据
             Attendance attendance = new Attendance();
