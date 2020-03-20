@@ -318,8 +318,9 @@ public class EvectionServiceImpl implements EvectionService {
 //                    String curRear = curren.getExchangerate();         //兑换汇率
 ////                    String curBefore = detail.getAccommodationallowance();
 //                    Dictionary dictionary = new Dictionary();
-////                    String accflg = ((AccommodationDetails) detail).getAccommodationallowance();
-//                    dictionary.setCode("PJ003002");
+//                    String accflg = ((AccommodationDetails) detail).getAccommodationallowance();
+//                    dictionary.setCode(accflg);
+////                    dictionary.setCode("PJ003002");
 //                    List<Dictionary>  aa = dictionaryService.getDictionaryList(dictionary);
 //                    float curBefore = 0;
 //                    if(aa.size() > 0){
