@@ -36,11 +36,13 @@ public class OrgTreeController {
     public ApiResult get(HttpServletRequest request) throws Exception {
         OrgTree orgTree = new OrgTree();
         TokenModel tokenModel = tokenService.getToken(request);
-        //orgTree.setTenantid(tokenModel.getTenantId());
-        orgTree.setOwners(tokenModel.getOwnerList());
-        //orgTree.setIds(tokenModel.getIdList());
+        //权限
+//        orgTree.setTenantid(tokenModel.getTenantId());
+//        orgTree.setOwners(tokenModel.getOwnerList());
+//        orgTree.setIds(tokenModel.getIdList());
 //        orgTree.setTenantid(RequestUtils.CurrentTenantId(request));
 //        orgTree = RequestUtils.CurrentPageOwnerList(request, orgTree);
+
         return ApiResult.success(orgTreeService.get(orgTree));
     }
 

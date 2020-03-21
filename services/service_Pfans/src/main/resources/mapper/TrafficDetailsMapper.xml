@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.TrafficDetailsMapper">
+    <select id="getCount" resultType="Double">
+        select IFNULL(sum(IFNULL(CAST(FOREIGNCURRENCY as  DECIMAL ),0)),0) from trafficdetails where EVECTION_ID = #{Evectionid} and CURRENCY = #{Currency}
+        union all
+        select IFNULL(sum(IFNULL(CAST(TRAVEL as  DECIMAL ),0)),0) from accommodationdetails where EVECTION_ID = #{Evectionid} and ACCOMMODATIONALLOWANCE = #{Currency}
+        union all
+        select IFNULL(sum(IFNULL(CAST(FOREIGNCURRENCY as  DECIMAL ),0)),0) from otherdetails where EVECTION_ID = #{Evectionid} and CURRENCY = #{Currency}
+    </select>
+</mapper>

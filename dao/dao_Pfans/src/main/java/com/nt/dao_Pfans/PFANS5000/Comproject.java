@@ -81,6 +81,12 @@ public class Comproject extends BaseModel {
     @Column(name = "BRIEFINTRODUCTION")
     private String briefintroduction;
 
+    /**
+     *实际结束时间
+     */
+    @Column(name = "NOWDATE")
+    private Date nowdate;
+
 
 
 

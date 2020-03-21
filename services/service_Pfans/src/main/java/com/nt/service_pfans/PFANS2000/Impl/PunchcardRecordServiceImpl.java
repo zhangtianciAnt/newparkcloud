@@ -771,7 +771,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 - Double.valueOf(ad.getLongsickleave()) - Double.valueOf(ad.getCompassionateleave()) - Double.valueOf(ad.getAnnualrest())
                                                 - Double.valueOf(ad.getDaixiu()) - Double.valueOf(ad.getNursingleave()) - Double.valueOf(ad.getWelfare())));
                                     }
-                                    ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null :ad.getNormal());
+                                    ad.setNormal(ad.getNormal() == null ? null :(ad.getNormal() =="0") ? null :ad.getNormal());
                                     ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :ad.getAnnualrest());
                                     ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null :ad.getDaixiu());
                                     ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null :ad.getCompassionateleave());
@@ -781,21 +781,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setWelfare(Double.valueOf(ad.getWelfare()) <= 0 ? null :ad.getWelfare());
                                     ad.setAbsenteeism(Double.valueOf(ad.getAbsenteeism()) <= 0 ? null :ad.getAbsenteeism());
 
-                                    if(workingDaysList.size()>0 || !workinghours.equals("8"))
-                                    {
-                                        ad.setNormal(null);
-                                        ad.setAbsenteeism(null);
-                                        ad.setShortsickleave(null);
-                                        ad.setLongsickleave(null);
-                                        ad.setCompassionateleave(null);
-                                        ad.setAnnualrest(null);
-                                        ad.setDaixiu(null);
-                                        ad.setNursingleave(null);
-                                        ad.setWelfare(null);
-                                        ad.setTshortsickleave(null);
-                                        ad.setTlongsickleave(null);
-                                        ad.setTabsenteeism(null);
-                                    }
+
                                     //更新考勤表
                                     if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
                                     {
@@ -817,6 +803,22 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setLongsickleave(null);
                                             ad.setAbsenteeism(null);
                                         }
+                                    }
+
+                                    if(workingDaysList.size()>0 || !workinghours.equals("8"))
+                                    {
+                                        ad.setNormal(null);
+                                        ad.setAbsenteeism(null);
+                                        ad.setShortsickleave(null);
+                                        ad.setLongsickleave(null);
+                                        ad.setCompassionateleave(null);
+                                        ad.setAnnualrest(null);
+                                        ad.setDaixiu(null);
+                                        ad.setNursingleave(null);
+                                        ad.setWelfare(null);
+                                        ad.setTshortsickleave(null);
+                                        ad.setTlongsickleave(null);
+                                        ad.setTabsenteeism(null);
                                     }
                                     saveAttendance(ad, "0", tokenModel);
                                 }
@@ -952,7 +954,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             - Double.valueOf(ad.getLongsickleave()) - Double.valueOf(ad.getCompassionateleave()) - Double.valueOf(ad.getAnnualrest())
                                             - Double.valueOf(ad.getDaixiu()) - Double.valueOf(ad.getNursingleave()) - Double.valueOf(ad.getWelfare())));
                                 }
-                                ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null :ad.getNormal());
+                                ad.setNormal(ad.getNormal() == null ? null :(ad.getNormal() =="0") ? null :ad.getNormal());
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :ad.getAnnualrest());
                                 ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null :ad.getDaixiu());
                                 ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null :ad.getCompassionateleave());

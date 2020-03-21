@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.Convert;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -26,9 +27,25 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class EvectionServiceImpl implements EvectionService {
 
+    /**
+     * 专票类型KEY
+     */
+    private static final String SPECIAL_KEY = "PJ068001";
+    private static final String TOTAL_TAX = "__TOTAL_TAX__";
+    /**
+     * 税-》KEY
+     */
+    private static final String TAX_KEY = "__TAX_KEY__";
+    private static final String PADDING_KEY = "__PADDING_KEY__";
+    private static final String CURRENCY_KEY = "__CURRENCY_KEY__";      //外币
+    private static final String INPUT_TYPE_KEY = "__INPUT_TYPE_KEY__";
+    private static final DecimalFormat FNUM = new DecimalFormat("##0.00");
+    private static final String FIELD_RMB = "rmb";
+    private static final String FIELD_FOREIGNCURRENCY = "foreigncurrency";
+    private static final String FIELD_INVOICENUMBER = "invoicenumber";
     @Autowired
     private EvectionMapper evectionMapper;
     @Autowired
@@ -37,18 +54,14 @@ public class EvectionServiceImpl implements EvectionService {
     private AccommodationDetailsMapper accommodationdetailsMapper;
     @Autowired
     private OtherDetailsMapper otherdetailsMapper;
-
     @Autowired
     private InvoiceMapper invoicemapper;
     @Autowired
     private CurrencyexchangeMapper currencyexchangeMapper;
-
     @Autowired
     private TravelCostMapper travelcostmapper;
-
     @Autowired
     private DictionaryService dictionaryService;
-
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -58,15 +71,42 @@ public class EvectionServiceImpl implements EvectionService {
     }
 
     @Override
-    public  List<TravelCost> gettravelcost(TravelCostVo travelcostvo) throws Exception {
+    public List<TravelCost> gettravelcost(TravelCostVo travelcostvo) throws Exception {
         List<TravelCost> Listvo = new ArrayList<TravelCost>();
         TravelCost travelcost = new TravelCost();
         List<TravelCost> travelcostlist = travelcostvo.getTravelcost();
-        for(TravelCost travelList:travelcostlist){
+        for (TravelCost travelList : travelcostlist) {
             travelcost.setEvectionid(travelList.getEvectionid());
             List<TravelCost> ListVo = travelcostmapper.select(travelcost);
             ListVo = ListVo.stream().sorted(Comparator.comparing(TravelCost::getNumber)).collect(Collectors.toList());
-            Listvo.addAll(0,ListVo);
+            Listvo.addAll(0, ListVo);
+
+            Currencyexchange currencyexchange = new Currencyexchange();
+            currencyexchange.setEvectionid(travelList.getEvectionid());
+            List<Currencyexchange> lscer = currencyexchangeMapper.select(currencyexchange);
+            for (Currencyexchange item : lscer) {
+                Double ct = 0D;
+                Double diff = Convert.toDouble(item.getCurrencyexchangerate()) - Convert.toDouble(item.getExchangerate());
+                if(diff == 0){
+                    continue;
+                }
+                TravelCost tc = new TravelCost();
+                BeanUtil.copyProperties(ListVo.get(0), tc);
+                tc.setNumber(ListVo.size() + 1);
+                tc.setBudgetcoding("000000");
+                if (diff < 0) {
+                    tc.setSubjectnumber("8611-00-3061");
+                }else{
+                    tc.setSubjectnumber("8511-00-3061");
+                }
+
+                List<Double> costs = trafficdetailsMapper.getCount(travelList.getEvectionid(),item.getCurrency());
+                for(Double cost:costs){
+                    ct += cost;
+                }
+                tc.setLineamount(Convert.toStr(ct * diff));
+                Listvo.add(tc);
+            }
         }
         return Listvo;
     }
@@ -77,8 +117,8 @@ public class EvectionServiceImpl implements EvectionService {
         TrafficDetails trafficdetails = new TrafficDetails();
         AccommodationDetails accommodationdetails = new AccommodationDetails();
         OtherDetails otherdetails = new OtherDetails();
-        Invoice invoice=new Invoice();
-        Currencyexchange currencyexchange=new Currencyexchange();
+        Invoice invoice = new Invoice();
+        Currencyexchange currencyexchange = new Currencyexchange();
         trafficdetails.setEvectionid(evectionid);
         accommodationdetails.setEvectionid(evectionid);
         otherdetails.setEvectionid(evectionid);
@@ -87,12 +127,12 @@ public class EvectionServiceImpl implements EvectionService {
         List<TrafficDetails> trafficdetailslist = trafficdetailsMapper.select(trafficdetails);
         List<AccommodationDetails> accommodationdetailslist = accommodationdetailsMapper.select(accommodationdetails);
         List<OtherDetails> otherdetailslist = otherdetailsMapper.select(otherdetails);
-        List<Invoice> invoicelist=invoicemapper.select(invoice);
+        List<Invoice> invoicelist = invoicemapper.select(invoice);
         List<Currencyexchange> currencyexchangeList = currencyexchangeMapper.select(currencyexchange);
         trafficdetailslist = trafficdetailslist.stream().sorted(Comparator.comparing(TrafficDetails::getRowindex)).collect(Collectors.toList());
         accommodationdetailslist = accommodationdetailslist.stream().sorted(Comparator.comparing(AccommodationDetails::getRowindex)).collect(Collectors.toList());
         otherdetailslist = otherdetailslist.stream().sorted(Comparator.comparing(OtherDetails::getRowindex)).collect(Collectors.toList());
-        invoicelist=invoicelist.stream().sorted(Comparator.comparing(Invoice::getInvoicenumber)).collect(Collectors.toList());
+        invoicelist = invoicelist.stream().sorted(Comparator.comparing(Invoice::getInvoicenumber)).collect(Collectors.toList());
         currencyexchangeList = currencyexchangeList.stream().sorted(Comparator.comparing(Currencyexchange::getRowindex)).collect(Collectors.toList());
         Evection Eve = evectionMapper.selectByPrimaryKey(evectionid);
         eveVo.setEvection(Eve);
@@ -104,13 +144,13 @@ public class EvectionServiceImpl implements EvectionService {
         return eveVo;
     }
 
-//    saveTotalCostList(trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
+    //    saveTotalCostList(trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
     private void saveTravelCostList(List<TrafficDetails> trafficDetailslist, List<AccommodationDetails> accommodationdetailslist, List<OtherDetails> otherDetailslist, List<Invoice> invoicelist,
-                                   List<Currencyexchange> currencyexchangeList, EvectionVo evectionVo, TokenModel tokenModel, String evectionid) throws Exception{
+                                    List<Currencyexchange> currencyexchangeList, EvectionVo evectionVo, TokenModel tokenModel, String evectionid) throws Exception {
         //发票编号
         String invoiceNo = "";
         Calendar cal = Calendar.getInstance();
-        String year = new SimpleDateFormat("yy",Locale.CHINESE).format(Calendar.getInstance().getTime());
+        String year = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DATE);
 
@@ -121,25 +161,25 @@ public class EvectionServiceImpl implements EvectionService {
         //通过字典查取税率
         List<com.nt.dao_Org.Dictionary> dictionaryList = dictionaryService.getForSelect("PJ071");
         Map<String, String> taxRateMap = new HashMap<>();
-        for ( com.nt.dao_Org.Dictionary d : dictionaryList ) {
+        for (com.nt.dao_Org.Dictionary d : dictionaryList) {
             taxRateMap.put(d.getCode(), d.getValue1());
         }
         //科目名字典
         Map<String, String> accountCodeMap = new HashMap<>();
-        for( int i = 0; i<26; i++ ) {
+        for (int i = 0; i < 26; i++) {
             List<com.nt.dao_Org.Dictionary> dictionaryListAccount = dictionaryService.getForSelect("PJ" + (112 + i));
-            for ( Dictionary d : dictionaryListAccount ) {
+            for (Dictionary d : dictionaryListAccount) {
                 accountCodeMap.put(d.getCode(), d.getValue1());
             }
         }
 
         Map<String, Object> mergeResult = null;
         Map<String, Float> specialMap = new HashMap<>();
-        for ( Invoice invoice : invoicelist ) {
-            if ( SPECIAL_KEY.equals(invoice.getInvoicetype())) {
+        for (Invoice invoice : invoicelist) {
+            if (SPECIAL_KEY.equals(invoice.getInvoicetype())) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
-                if ( rate <= 0 ) {
+                if (rate <= 0) {
                     throw new Exception("专票税率不能为0");
                 }
                 specialMap.put(invoice.getInvoicenumber(), rate);
@@ -147,13 +187,13 @@ public class EvectionServiceImpl implements EvectionService {
         }
         // 总金额改为人民币支出
         specialMap.put(TOTAL_TAX, Float.parseFloat(evectionVo.getEvection().getTotalpay()));
-        if ( specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0 ) {
+        if (specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0) {
             throw new Exception("发票合计金额不能为0");
         }
 
         List<Object> needMergeList = new ArrayList<>();
-        if(trafficDetailslist.size() > 0 || accommodationdetailslist.size() > 0
-                || otherDetailslist.size() > 0){
+        if (trafficDetailslist.size() > 0 || accommodationdetailslist.size() > 0
+                || otherDetailslist.size() > 0) {
             needMergeList.addAll(trafficDetailslist);
             needMergeList.addAll(accommodationdetailslist);
             needMergeList.addAll(otherDetailslist);
@@ -165,13 +205,13 @@ public class EvectionServiceImpl implements EvectionService {
         List<TravelCost> taxList = (List<TravelCost>) mergeResult.getOrDefault(TAX_KEY, new ArrayList<>());
         List<TravelCost> paddingList = (List<TravelCost>) mergeResult.getOrDefault(PADDING_KEY, new ArrayList<>());
         String inputType = (String) mergeResult.get(INPUT_TYPE_KEY);
-        for ( Object o : mergeResult.values() ) {
-            if ( o instanceof  TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
+        for (Object o : mergeResult.values()) {
+            if (o instanceof TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
                 String money = getProperty(o, inputType);
                 TravelCost cost = new TravelCost();
-                if ( FIELD_RMB.equals(inputType) ) {
+                if (FIELD_RMB.equals(inputType)) {
                     cost.setCurrency("CYN");
-                } else if ( FIELD_FOREIGNCURRENCY.equals(inputType) ) {
+                } else if (FIELD_FOREIGNCURRENCY.equals(inputType)) {
                     cost.setCurrency("FOREIGN");
                 }
                 cost.setLineamount(money);
@@ -189,12 +229,12 @@ public class EvectionServiceImpl implements EvectionService {
         query.addCriteria(Criteria.where("userid").is(evectionVo.getEvection().getUserid()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         String userName = "";
-        if(customerInfo != null) {
+        if (customerInfo != null) {
             userName = customerInfo.getUserinfo().getCustomername();
         }
 
         int rowindex = 0;
-        for (TravelCost insertInfo: csvList) {
+        for (TravelCost insertInfo : csvList) {
             rowindex = rowindex + 1;
             insertInfo.preInsert(tokenModel);
             insertInfo.setTravelcost_id(UUID.randomUUID().toString());
@@ -207,42 +247,30 @@ public class EvectionServiceImpl implements EvectionService {
             insertInfo.setCurrency(evectionVo.getEvection().getCurrency());//币种
             insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
             //发票说明
-            if(insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null ){
+            if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
                 insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
             }
 
-            String no=String.format("%2d", rowindex).replace(" ", "0");
-            insertInfo.setInvoicenumber("WY" + year + month + day + no);
+            String no = String.format("%2d", rowindex).replace(" ", "0");
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            insertInfo.setInvoicenumber("WY" + year + month1 + day + no);
             travelcostmapper.insertSelective(insertInfo);
         }
     }
 
     /**
-     * 专票类型KEY
-     */
-    private static final String SPECIAL_KEY = "PJ068001";
-    private static final String TOTAL_TAX = "__TOTAL_TAX__";
-    /**
-     * 税-》KEY
-     */
-    private static final String TAX_KEY = "__TAX_KEY__";
-    private static final String PADDING_KEY = "__PADDING_KEY__";
-    private static final String CURRENCY_KEY = "__CURRENCY_KEY__";      //外币
-    private static final String INPUT_TYPE_KEY = "__INPUT_TYPE_KEY__";
-    private static final DecimalFormat FNUM = new DecimalFormat("##0.00");
-
-    /**
      * 对明细数据分组
+     *
      * @param detailList
      * @return resultMap
      */
     private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
-        if ( detailList.size() <= 0 ) {
+        if (detailList.size() <= 0) {
             throw new Exception("明细不能为空");
         }
         String inputType = getInputType(detailList.get(0));
-        for ( Object detail : detailList ) {
+        for (Object detail : detailList) {
 //            if ( !inputType.equals(getInputType(detail)) ) {
 //                throw new Exception("一次申请，只能选择一种货币。");
 //            }
@@ -252,18 +280,18 @@ public class EvectionServiceImpl implements EvectionService {
             String subjectnumber = getProperty(detail, "subjectnumber");
             String isRmb = getProperty(detail, "rmb");
             String mergeKey;
-            if ( specialMap.containsKey(keyNo) && Float.parseFloat(isRmb) > 0 ) {
+            if (specialMap.containsKey(keyNo) && Float.parseFloat(isRmb) > 0) {
                 mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
             } else {
                 mergeKey = budgetcoding + " ... " + subjectnumber;
             }
             // 行合并
             float money = getPropertyFloat(detail, inputType);
-            Object mergeObject =  resultMap.get(mergeKey);
-            if ( mergeObject != null ) {
+            Object mergeObject = resultMap.get(mergeKey);
+            if (mergeObject != null) {
                 // 发现可以合并数据
                 float newMoney = getPropertyFloat(mergeObject, inputType) + money;
-                setProperty(mergeObject, inputType, newMoney+"");
+                setProperty(mergeObject, inputType, newMoney + "");
             } else {
                 resultMap.put(mergeKey, detail);
             }
@@ -271,24 +299,24 @@ public class EvectionServiceImpl implements EvectionService {
 
         float totalTax = 0f;
         List<Object> list = new ArrayList<>(resultMap.values());
-        for (Object detail: list) {
+        for (Object detail : list) {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, inputType);
             totalTax = totalTax + money;
             String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
-            if ( specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0 ) {
+            if (specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0) {
                 List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, taxList);
                 float rate = specialMap.get(keyNo);
                 TravelCost taxCost = new TravelCost();
 
                 // 税拔
-                String lineCost = FNUM.format(money/(1+rate));
+                String lineCost = FNUM.format(money / (1 + rate));
                 // 税金
-                String lineRate = FNUM.format((money/(1+rate))*rate);
-                if ( money>0 ) {
+                String lineRate = FNUM.format((money / (1 + rate)) * rate);
+                if (money > 0) {
                     // 税
                     taxCost.setLineamount(lineRate);
                     taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
@@ -299,9 +327,9 @@ public class EvectionServiceImpl implements EvectionService {
                     // 税拔
                     setProperty(detail, inputType, lineCost);
                     float diff = getFloatValue(lineRate) + getFloatValue(lineCost) - money;
-                    if ( diff!=0 ) {
+                    if (diff != 0) {
                         TravelCost padding = new TravelCost();
-                        padding.setLineamount(diff+"");
+                        padding.setLineamount(diff + "");
                         padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
                         padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
                         //发票说明
@@ -343,24 +371,20 @@ public class EvectionServiceImpl implements EvectionService {
 //                }
 //            }
         }
-        if ( totalTax != specialMap.get(TOTAL_TAX) ) {
+        if (totalTax != specialMap.get(TOTAL_TAX)) {
             throw new Exception("发票合计金额与明细不匹配。");
         }
         resultMap.put(INPUT_TYPE_KEY, inputType);
         return resultMap;
     }
 
-    private static final String FIELD_RMB = "rmb";
-    private static final String FIELD_FOREIGNCURRENCY = "foreigncurrency";
-    private static final String FIELD_INVOICENUMBER = "invoicenumber";
-
     private String getInputType(Object o) throws Exception {
         float rmb = getPropertyFloat(o, FIELD_RMB);
         float foreign = getPropertyFloat(o, FIELD_FOREIGNCURRENCY);
-        if ( rmb>0 && foreign>0 ) {
-            throw new Exception("人民币和外币不能同时输入。");
-        }
-        if ( rmb <0 || foreign<0 || (rmb+foreign) <0 ) {
+//        if (rmb > 0 && foreign > 0) {
+//            throw new Exception("人民币和外币不能同时输入。");
+//        }
+        if (rmb < 0 || foreign < 0 || (rmb + foreign) < 0) {
             throw new Exception("明细行金额不能为负数。");
         }
 
@@ -419,10 +443,10 @@ public class EvectionServiceImpl implements EvectionService {
         otherdetailsMapper.delete(other);
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
 
-        Invoice invoice=new Invoice();
+        Invoice invoice = new Invoice();
         invoice.setEvectionid(evectionid);
         invoicemapper.delete(invoice);
-        List<Invoice> invoicelist=evectionVo.getInvoice();
+        List<Invoice> invoicelist = evectionVo.getInvoice();
 
         Currencyexchange currencyexchange = new Currencyexchange();
         currencyexchange.setEvectionid(evectionid);
@@ -500,7 +524,7 @@ public class EvectionServiceImpl implements EvectionService {
         List<TrafficDetails> trafficdetailslist = evectionVo.getTrafficdetails();
         List<AccommodationDetails> accommodationdetailslist = evectionVo.getAccommodationdetails();
         List<OtherDetails> otherdetailslist = evectionVo.getOtherdetails();
-        List<Invoice> invoicelist=evectionVo.getInvoice();
+        List<Invoice> invoicelist = evectionVo.getInvoice();
         List<Currencyexchange> currencyexchangeList = evectionVo.getCurrencyexchanges();
 
         if (trafficdetailslist != null) {
