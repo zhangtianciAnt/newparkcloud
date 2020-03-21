@@ -53,6 +53,7 @@ public class Pfans6004Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinforApplyOne(expatriatesinfor.getExpatriatesinfor_id()));
     }
 
@@ -93,6 +94,7 @@ public class Pfans6004Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        supplierinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(supplierinforService.getSupplierNameList(supplierinfor, request));
     }
 

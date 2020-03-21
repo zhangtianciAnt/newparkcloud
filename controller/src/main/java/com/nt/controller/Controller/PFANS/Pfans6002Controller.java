@@ -40,6 +40,7 @@ public class Pfans6002Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        customerinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(customerinforService.getcustomerinforApplyOne(customerinfor.getCustomerinfor_id()));
     }
 
