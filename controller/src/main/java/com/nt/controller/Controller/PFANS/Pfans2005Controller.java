@@ -230,7 +230,6 @@ public class Pfans2005Controller {
         if (givingVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(givingService.thisMonthLacktimeChange(givingVo, tokenModel));
+        return ApiResult.success(givingService.thisMonthLacktimeChange(givingVo));
     }
 }

@@ -3,7 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CompanyStatisticsMapper">
 
 	<select id="getWorkTimes" parameterType="map" resultType="com.nt.dao_Pfans.PFANS6000.CompanyStatistics">
-		select a.SUPPLIERNAME as bpcompany,
+		<!--select a.SUPPLIERNAME as bpcompany,
 		IFNULL(a.JANUARY,0) as manhour1, IFNULL(a.FEBRUARY,0) as manhour2, IFNULL(a.MARCH,0) as manhour3, IFNULL(a.APRIL,0) as manhour4, IFNULL(a.MAY,0) as manhour5, IFNULL(a.JUNE,0) as manhour6,
 		IFNULL(a.JULY,0) as manhour7, IFNULL(a.AUGUST,0) as manhour8, IFNULL(a.SEPTEMBER,0) as manhour9, IFNULL(a.OCTOBER,0) as manhour10, IFNULL(a.NOVEMBER,0) as manhour11, IFNULL(a.DECEMBER,0) as manhour12,
 		IFNULL(b.JANUARY,0) as cost1, IFNULL(b.FEBRUARY,0) as cost2, IFNULL(b.MARCH,0) as cost3, IFNULL(b.APRIL,0) as cost4, IFNULL(b.MAY,0) as cost5, IFNULL(b.JUNE,0) as cost6,
@@ -33,11 +33,58 @@
 			and VENUETARGET = #{noValue}
 			group by SUPPLIERNAME
 		) b
-		on a.SUPPLIERNAME = b.SUPPLIERNAME
+		on a.SUPPLIERNAME = b.SUPPLIERNAME-->
+		select a.SUPPLIERINFOR_ID as bpcompany,
+		IFNULL(a.JANUARY,0) as manhour1, IFNULL(a.FEBRUARY,0) as manhour2, IFNULL(a.MARCH,0) as manhour3, IFNULL(a.APRIL,0) as manhour4, IFNULL(a.MAY,0) as manhour5, IFNULL(a.JUNE,0) as manhour6,
+		IFNULL(a.JULY,0) as manhour7, IFNULL(a.AUGUST,0) as manhour8, IFNULL(a.SEPTEMBER,0) as manhour9, IFNULL(a.OCTOBER,0) as manhour10, IFNULL(a.NOVEMBER,0) as manhour11, IFNULL(a.DECEMBER,0) as manhour12,
+		IFNULL(b.JANUARY,0) as cost1, IFNULL(b.FEBRUARY,0) as cost2, IFNULL(b.MARCH,0) as cost3, IFNULL(b.APRIL,0) as cost4, IFNULL(b.MAY,0) as cost5, IFNULL(b.JUNE,0) as cost6,
+		IFNULL(b.JULY,0) as cost7, IFNULL(b.AUGUST,0) as cost8, IFNULL(b.SEPTEMBER,0) as cost9, IFNULL(b.OCTOBER,0) as cost10, IFNULL(b.NOVEMBER,0) as cost11, IFNULL(b.DECEMBER,0) as cost12
+		from
+		(
+		select exp.SUPPLIERINFOR_ID,sum(df.`JANUARY`) as JANUARY, sum(df.FEBRUARY) as FEBRUARY,
+		sum(df.MARCH) as MARCH, sum(df.APRIL) as APRIL, sum(df.MAY) as MAY, sum(df.JUNE) as JUNE,
+		sum(df.`JULY`) as JULY, sum(df.AUGUST) as AUGUST, sum(df.SEPTEMBER) as SEPTEMBER, sum(df.OCTOBER) as OCTOBER,
+		sum(df.NOVEMBER) as NOVEMBER, sum(df.DECEMBER) as DECEMBER
+		from delegainformation df
+		inner join companyprojects cp
+		on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+		inner join projectsystem ps
+		on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+		and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+		inner join expatriatesinfor exp
+		on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+		where df.status = '0'
+		<if test="owner!=null">
+			and OWNER = #{owner}
+		</if>
+		and exp.VENUETARGET = #{yesValue}
+		group by exp.SUPPLIERINFOR_ID
+		) a
+		left join (
+		select exp.SUPPLIERINFOR_ID,sum(df.`JANUARY`) as JANUARY, sum(df.FEBRUARY) as FEBRUARY,
+		sum(df.MARCH) as MARCH, sum(df.APRIL) as APRIL, sum(df.MAY) as MAY, sum(df.JUNE) as JUNE,
+		sum(df.`JULY`) as JULY, sum(df.AUGUST) as AUGUST, sum(df.SEPTEMBER) as SEPTEMBER, sum(df.OCTOBER) as OCTOBER,
+		sum(df.NOVEMBER) as NOVEMBER, sum(df.DECEMBER) as DECEMBER
+		from delegainformation df
+		inner join companyprojects cp
+		on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+		inner join projectsystem ps
+		on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+		and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+		inner join expatriatesinfor exp
+		on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+		where df.status = '0'
+		<if test="owner!=null">
+			and OWNER = #{owner}
+		</if>
+		and exp.VENUETARGET = #{noValue}
+		group by exp.SUPPLIERINFOR_ID
+		) b
+		on a.SUPPLIERINFOR_ID = b.SUPPLIERINFOR_ID
 	</select>
 
 	<select id="getWorkers" parameterType="map" resultType="com.nt.dao_Pfans.PFANS6000.CompanyStatistics">
-		select a.SUPPLIERNAME as bpcompany, IFNULL(a.JANUARY,0) as manhour1, IFNULL(b.FEBRUARY,0) as manhour2, IFNULL(c.MARCH,0) as manhour3, IFNULL(d.APRIL,0) as manhour4, IFNULL(e.MAY,0) as manhour5,
+		<!--select a.SUPPLIERNAME as bpcompany, IFNULL(a.JANUARY,0) as manhour1, IFNULL(b.FEBRUARY,0) as manhour2, IFNULL(c.MARCH,0) as manhour3, IFNULL(d.APRIL,0) as manhour4, IFNULL(e.MAY,0) as manhour5,
 		IFNULL(f.JUNE,0) as manhour6, IFNULL(g.JULY,0) as manhour7,IFNULL(h.AUGUST,0) as manhour8, IFNULL(i.SEPTEMBER,0) as manhour9, IFNULL(j.OCTOBER,0) as manhour10, IFNULL(k.NOVEMBER,0) as manhour11,
 		IFNULL(l.DECEMBER,0) as manhour12
 		from (
@@ -194,6 +241,236 @@
 			and exp.`DECEMBER` != '0'
 			group by SUPPLIERNAME
 		) l
-		on a.SUPPLIERNAME = l.SUPPLIERNAME
+		on a.SUPPLIERNAME = l.SUPPLIERNAME-->
+		select a.SUPPLIERINFOR_ID as bpcompany, IFNULL(a.JANUARY,0) as manhour1, IFNULL(b.FEBRUARY,0) as manhour2, IFNULL(c.MARCH,0) as manhour3, IFNULL(d.APRIL,0) as manhour4, IFNULL(e.MAY,0) as manhour5,
+		IFNULL(f.JUNE,0) as manhour6, IFNULL(g.JULY,0) as manhour7,IFNULL(h.AUGUST,0) as manhour8, IFNULL(i.SEPTEMBER,0) as manhour9, IFNULL(j.OCTOBER,0) as manhour10, IFNULL(k.NOVEMBER,0) as manhour11,
+		IFNULL(l.DECEMBER,0) as manhour12
+		from (
+			select exp.SUPPLIERINFOR_ID,count(df.`JANUARY`) as JANUARY
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`JANUARY` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) a
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`FEBRUARY`) as FEBRUARY
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`FEBRUARY` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) b
+		on a.SUPPLIERINFOR_ID = b.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`MARCH`) as MARCH
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`MARCH` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) c
+		on a.SUPPLIERINFOR_ID = c.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`APRIL`) as APRIL
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`APRIL` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) d
+		on a.SUPPLIERINFOR_ID = d.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`MAY`) as MAY
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`MAY` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) e
+		on a.SUPPLIERINFOR_ID = e.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`JUNE`) as JUNE
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`JUNE` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) f
+		on a.SUPPLIERINFOR_ID = f.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`JULY`) as JULY
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`JULY` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) g
+		on a.SUPPLIERINFOR_ID = g.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`AUGUST`) as AUGUST
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`AUGUST` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) h
+		on a.SUPPLIERINFOR_ID = h.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`SEPTEMBER`) as SEPTEMBER
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`SEPTEMBER` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) i
+		on a.SUPPLIERINFOR_ID = i.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`OCTOBER`) as OCTOBER
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`OCTOBER` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) j
+		on a.SUPPLIERINFOR_ID = j.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`NOVEMBER`) as NOVEMBER
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`NOVEMBER` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) k
+		on a.SUPPLIERINFOR_ID = k.SUPPLIERINFOR_ID
+		left join(
+			select exp.SUPPLIERINFOR_ID, count(df.`DECEMBER`) as DECEMBER
+			from delegainformation df
+			inner join companyprojects cp
+			on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+			inner join projectsystem ps
+			on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+			and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+			inner join expatriatesinfor exp
+			on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+			where df.status = '0'
+			and df.`DECEMBER` != '0'
+			<if test="owner!=null">
+				and OWNER = #{owner}
+			</if>
+			and exp.VENUETARGET = #{yesValue}
+			group by exp.SUPPLIERINFOR_ID
+		) l
+		on a.SUPPLIERINFOR_ID = l.SUPPLIERINFOR_ID
 	</select>
 </mapper>
