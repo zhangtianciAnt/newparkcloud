@@ -34,7 +34,7 @@ public class Pfans8008Controller {
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         InformationDelivery informationDelivery=new InformationDelivery();
-        informationDelivery.setOwners(tokenModel.getOwnerList());
+        //informationDelivery.setOwners(tokenModel.getOwnerList());//所有人都可以查看公司信息
         informationDelivery.setAvailablestate("0");
         return ApiResult.success(informationService.getListType(informationDelivery));
     }
