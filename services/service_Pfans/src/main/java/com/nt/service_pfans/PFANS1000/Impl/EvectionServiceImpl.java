@@ -381,9 +381,9 @@ public class EvectionServiceImpl implements EvectionService {
     private String getInputType(Object o) throws Exception {
         float rmb = getPropertyFloat(o, FIELD_RMB);
         float foreign = getPropertyFloat(o, FIELD_FOREIGNCURRENCY);
-        if (rmb > 0 && foreign > 0) {
-            throw new Exception("人民币和外币不能同时输入。");
-        }
+//        if (rmb > 0 && foreign > 0) {
+//            throw new Exception("人民币和外币不能同时输入。");
+//        }
         if (rmb < 0 || foreign < 0 || (rmb + foreign) < 0) {
             throw new Exception("明细行金额不能为负数。");
         }
