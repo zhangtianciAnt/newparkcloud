@@ -5,12 +5,15 @@ import com.alibaba.fastjson.JSON;
 import com.nt.dao_Org.CustomerInfo;
 import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.dao_Pfans.PFANS1000.Outsidedetail;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetail;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
+import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordDetailMapper;
 import com.nt.service_pfans.PFANS2000.mapper.ReplacerestMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.LogicalException;
@@ -29,7 +32,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.util.StringUtil;
+import com.nt.utils.services.TokenService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -60,6 +65,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private PunchcardRecordDetailMapper punchcardrecorddetailmapper;
+
+    @Autowired
+    private TokenService tokenService;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -423,15 +433,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //事业年度开始跑系统服务（4月1日）
-    @Scheduled(cron="10 * * * * ?")
+    //@Scheduled(cron="10 * * * * ?")
     //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半
     //@Scheduled(cron="0 0 0 1 4 ? *")//正式时间每年4月1日零时执行
     public void insertattendance() throws Exception {
         try {
-            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-            //String doorIDList = "34,16,17";//正式
+            List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
+            TokenModel tokenModel = new TokenModel();
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String doorIDList = "3,5";
-            String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01&doorIDList=" + doorIDList;
+            String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
+            //String doorIDList = "34,16,17";//正式
+            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
             //正式String url1 = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
             //請求接口
             ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
@@ -446,9 +459,60 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     String staffNo = getProperty(ob, "staffNo");
                     //员工姓名
                     String staffName = getProperty(ob, "staffName");
+                    //进出状态(1，正常进入；2，正常外出)
+                    String eventNo = getProperty(ob, "eventNo");
                     //员工部门
                     String departmentName = getProperty(ob, "departmentName");
+
+                    //添加打卡详细
+                    PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
+
+                    //获取人员信息
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(staffNo));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        if(customerInfo.getUserid() == null){
+                            break;
+                        }
+                        //用户
+                        punchcardrecorddetail.setUser_id(customerInfo.getUserid());
+                        punchcardrecorddetail.setOwner(customerInfo.getUserid());
+                        punchcardrecorddetail.setCreateby(customerInfo.getUserid());
+                        punchcardrecorddetail.setCenter_id(customerInfo.getUserinfo().getCentername());
+                        punchcardrecorddetail.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                        punchcardrecorddetail.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                        //卡号
+                        punchcardrecorddetail.setJobnumber(staffNo);
+                    }
+                    //打卡时间
+                    punchcardrecorddetail.setPunchcardrecord_date(sf.parse(recordTime));
+                    //进出状态
+                    punchcardrecorddetail.setEventno(eventNo);
+                    punchcardrecorddetail.preInsert(tokenModel);
+                    punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
+                    punchcardrecorddetailmapper.insert(punchcardrecorddetail);
+                    punDetaillist.add(punchcardrecorddetail);
                 }
+            }
+            if(punDetaillist.size() > 0){
+                PunchcardRecordDetail punDetail = new PunchcardRecordDetail();
+
+                List<PunchcardRecordDetail> punDetaillist1 = new ArrayList<PunchcardRecordDetail>();
+
+                punDetaillist1 = punDetaillist.stream()
+                        .collect(Collectors.collectingAndThen
+                                (Collectors.toCollection(() ->
+                                                new TreeSet<>(Comparator.comparing(t -> t.getUser_id()))),
+                                        ArrayList::new
+                                )
+                        );
+                String a =Integer.toString(punDetaillist1.size());
+                String b = "";
+
+
+//                punDetaillist = punDetaillist.stream().sorted(Comparator.comparing(Outsidedetail::getRowindex)).collect(Collectors.toList());
+//                punDetaillist = punDetaillist.stream()
             }
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
