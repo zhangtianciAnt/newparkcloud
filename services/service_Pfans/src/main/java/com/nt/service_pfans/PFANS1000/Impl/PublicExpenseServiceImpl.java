@@ -330,7 +330,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
 
             String no=String.format("%2d", rowindex).replace(" ", "0");
-            insertInfo.setInvoicenumber("DL4AP" + year + month + day + no);
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            insertInfo.setInvoicenumber("DL4AP" + year + month1 + day + no);
             totalCostMapper.insertSelective(insertInfo);
         }
     }
