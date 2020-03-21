@@ -1,12 +1,9 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.CommonResponse;
-import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
+import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
@@ -16,8 +13,7 @@ import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.ReplacerestMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.dao.AccessToken;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Component
@@ -430,28 +423,43 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //事业年度开始跑系统服务（4月1日）
-    //@Scheduled(cron="10 * * * * ?")
+    @Scheduled(cron="10 * * * * ?")
     //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半
     //@Scheduled(cron="0 0 0 1 4 ? *")//正式时间每年4月1日零时执行
     public void insertattendance() throws Exception {
-        String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-        String doorIDList = "3,5";
-        String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01&doorIDList=" + doorIDList;
-        //正式String url1 = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
-        //請求接口
-        ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
-        Object obj = JSON.toJSON(getresult.getData());
-
-        if (obj != null) {
-            //打卡时间
-//            String recordTime = obj.get(0).getString("recordTime");
-//            //员工编号
-//            String staffNo = obj.get(0).getString("staffNo");
-//            //员工姓名
-//            String staffName = obj.get(0).getString("staffName");
-//            //员工部门
-//            String departmentName = obj.get(0).getString("departmentName");
+        try {
+            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+            //String doorIDList = "34,16,17";//正式
+            String doorIDList = "3,5";
+            String url = "http://192.168.31.165:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-04-01&doorIDList=" + doorIDList;
+            //正式String url1 = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+            //請求接口
+            ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
+            Object obj = JSON.toJSON(getresult.getData());
+            JSONArray jsonArray = JSONArray.parseArray(obj.toString());
+            if(jsonArray.size() > 0){
+                //}
+                for(Object ob : jsonArray){
+                    //打卡时间
+                    String recordTime = getProperty(ob, "recordTime");
+                    //员工编号
+                    String staffNo = getProperty(ob, "staffNo");
+                    //员工姓名
+                    String staffName = getProperty(ob, "staffName");
+                    //员工部门
+                    String departmentName = getProperty(ob, "departmentName");
+                }
+            }
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
         }
     }
-
+    //取object的值
+    private String getProperty(Object o, String key) throws Exception{
+        try {
+            return org.apache.commons.beanutils.BeanUtils.getProperty(o, key);
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
 }
