@@ -137,4 +137,7 @@ public class PublicExpense extends BaseModel {
 
     @Column(name = "SUPPLIERNAME")
     private String suppliername;
+
+    @Column(name = "INVOICENO")
+    private String invoiceno;
 }

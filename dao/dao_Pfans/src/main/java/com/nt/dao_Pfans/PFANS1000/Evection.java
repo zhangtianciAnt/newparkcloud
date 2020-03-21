@@ -194,5 +194,6 @@ public class Evection extends BaseModel {
     @Column(name = "PERSONALCODE")
     private String personalcode;
 
-
+    @Column(name = "INVOICENO")
+    private String invoiceno;
 }
