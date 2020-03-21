@@ -58,7 +58,15 @@ group by MONTH(e.REIMBURSEMENTDATE)
 ) pj group by code, month
 
 union all
+select 'neibuhetong' as code,SUM(CLAIMAMOUNT) as rmb, MONTH(contract.DELIVERYDATE) as month
+from contractnumbercount contract
+inner join companyprojects company
+on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
+where company.GROUP_ID = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+and contract.DELIVERYDATE &gt;= #{startday} and contract.DELIVERYDATE &lt;= #{endday}
+GROUP BY MONTH(contract.DELIVERYDATE)
 
+union all
 select
 case
 when contracttype = 'HT008009' then 'HT008009'
@@ -79,7 +87,7 @@ having contracttype1 is not null
 
 union all
 
-select 'WORKTIME', SUM(l.TIME_START) as worktime ,MONTH(l.LOG_DATE) as month from logmanagement l
+select 'worktime', SUM(l.TIME_START) as worktime ,MONTH(l.LOG_DATE) as month from logmanagement l
 inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
  where c.GROUP_ID = #{groupid}
@@ -92,7 +100,7 @@ group by MONTH(l.LOG_DATE)
 group by code
 
 union all
-select concat('WORKTIME-', e.VENUETARGET) as CODE, IFNULL(sum(APRIL),0) as actual4 ,IFNULL(sum(MAY),0) as actual5,IFNULL(sum(JUNE),0) as actual6,
+select concat('worktime', if(e.VENUETARGET = '是','0','1')) as CODE, IFNULL(sum(APRIL),0) as actual4 ,IFNULL(sum(MAY),0) as actual5,IFNULL(sum(JUNE),0) as actual6,
 IFNULL(sum(JULY),0) as actual7,IFNULL(sum(AUGUST),0) as actual8,
 IFNULL(sum(SEPTEMBER),0) as actual9,IFNULL(sum(OCTOBER),0) as actual10,IFNULL(sum(NOVEMBER),0) as actual11,IFNULL(sum(DECEMBER),0) as actual12,
 IFNULL(sum(JANUARY),0) as actual1, IFNULL(sum(FEBRUARY),0) as actual2, IFNULL(sum(MARCH),0) as actual3
@@ -107,7 +115,18 @@ where c.GROUP_ID = #{groupid}
 and d.year &gt;= #{startday}
 and d.year &lt;= #{endday}
 group by e.VENUETARGET
-order by CODE
+
+union all
+select "neibu" as code,sum(cost.COST4) as actual4,sum(cost.COST5) as actual5,sum(cost.COST6) as actual6,sum(cost.COST7) as actual7,sum(cost.COST8) as actual8,sum(cost.COST9) as actual9,sum(cost.COST10) as actual10,sum(cost.COST11) as actual11,sum(cost.COST12) actual12,sum(cost.COST1) as actual1,sum(cost.COST2) as actual2,sum(cost.COST3) actual3
+from coststatistics cost
+inner join expatriatesinfor exp
+  on cost.BPNAME = exp.EXPATRIATESINFOR_ID
+inner join projectsystem ps
+  on ps.`SUPPLIERNAMEID` = cost.bpname
+inner join companyprojects cp
+  on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+where cp.GROUP_ID = #{groupid}
+group by cost.BPCOMPANY,code
     </select>
 </mapper>
 
