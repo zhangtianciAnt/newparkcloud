@@ -513,8 +513,14 @@ public class EvectionServiceImpl implements EvectionService {
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        int count = evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate()));
-        String no=String.format("%2d", count + 1).replace(" ", "0");
+        String no = "";
+        if(evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate())) != null){
+            int count = evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate()));
+            no=String.format("%2d", count + 1).replace(" ", "0");
+        }else {
+            no = "01";
+        }
+
         String month1 = String.format("%2d", month).replace(" ", "0");
         invoiceNo = "WY" + year + month1 + day + no;
 
