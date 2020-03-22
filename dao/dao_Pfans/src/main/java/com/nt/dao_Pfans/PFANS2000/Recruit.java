@@ -65,7 +65,7 @@ public class Recruit extends BaseModel {
      * 申请时间
      */
     @Column(name = "APPLICATIONTIME")
-    private String applicationtime;
+    private Date applicationtime;
 
     /**
      * 所属项
