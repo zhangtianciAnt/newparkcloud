@@ -62,7 +62,7 @@ public class Replacerest extends BaseModel {
     private String type;
 
     /**
-     * 时长
+     * 代休-周末时长
      */
     @Column(name = "DURATION")
     private String duration;
@@ -74,7 +74,7 @@ public class Replacerest extends BaseModel {
     private String type_teshu;
 
     /**
-     * 时长
+     * 代休-特殊时长
      */
     @Column(name = "DURATION_TESHU")
     private String duration_teshu;
