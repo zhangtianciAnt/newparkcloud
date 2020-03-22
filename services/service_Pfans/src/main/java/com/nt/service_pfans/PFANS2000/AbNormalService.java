@@ -13,6 +13,12 @@ public interface AbNormalService {
     //获取异常申请列表信息
     List<AbNormal> list(AbNormal abNormal) throws Exception;
 
+    //查询家长会申请
+    List<AbNormal> selectAbNormalParent(String userid) throws Exception;
+
+    //查询短病假长度
+    Double getSickleave(String userid) throws Exception;
+
     void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
     //根据id获取数据
