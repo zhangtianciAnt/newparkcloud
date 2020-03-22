@@ -1291,15 +1291,15 @@ public class GivingServiceImpl implements GivingService {
 
             // region 前月残业数据
             // 平日加班（150%）
-            residual.setLastweekdays(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()));
+            residual.setLastweekdays(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
             totalh += Double.parseDouble(residual.getLastweekdays());
 
             // 休日加班（200%）
-            residual.setLastrestDay(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()));
+            residual.setLastrestDay(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
             totalh += Double.parseDouble(residual.getLastrestDay());
 
             // 法定加班（300%）
-            residual.setLastlegal(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()));
+            residual.setLastlegal(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
             totalh += Double.parseDouble(residual.getLastlegal());
 
             // 代休
@@ -1317,11 +1317,11 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getLastreplace());
             } else {
-                residual.setLastreplace("0");
+                residual.setLastreplace("0.00");
             }
 
             // 合计(H)
-            residual.setLasttotalh(String.valueOf(totalh));
+            residual.setLasttotalh(BigDecimal.valueOf(totalh).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 合计(元)
             residual.setLasttotaly(overtimeCalc(item, residual, "pre"));
@@ -1337,15 +1337,15 @@ public class GivingServiceImpl implements GivingService {
 
             // region 本月残业数据
             // 平日加班（150%）
-            residual.setThisweekdays(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()));
+            residual.setThisweekdays(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
             totalh += Double.parseDouble(residual.getThisweekdays());
 
             // 休日加班（200%）
-            residual.setThisrestDay(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()));
+            residual.setThisrestDay(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
             totalh += Double.parseDouble(residual.getThisrestDay());
 
             // 法定加班（300%）
-            residual.setThislegal(String.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()));
+            residual.setThislegal(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
             totalh += Double.parseDouble(residual.getThislegal());
 
             // 本月代休(3か月前)
@@ -1360,7 +1360,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace());
             } else {
-                residual.setThisreplace("0");
+                residual.setThisreplace("0.00");
             }
 
             // 本月代休（3か月以内）
@@ -1381,11 +1381,11 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
-                residual.setThisreplace3("0");
+                residual.setThisreplace3("0.00");
             }
 
             // 合计(H)
-            residual.setThistotalh(String.valueOf(totalh));
+            residual.setThistotalh(BigDecimal.valueOf(totalh).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 合计(元)
             residual.setThistotaly(overtimeCalc(item, residual, "current"));
@@ -1395,7 +1395,7 @@ public class GivingServiceImpl implements GivingService {
             residual.setRemarks(isResign ? "退职" : "-");
 
             // 加班补助
-            residual.setSubsidy(String.valueOf(Double.parseDouble(residual.getLasttotaly()) + Double.parseDouble(residual.getThistotaly())));
+            residual.setSubsidy(BigDecimal.valueOf(Double.parseDouble(residual.getLasttotaly()) + Double.parseDouble(residual.getThistotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             residual.preInsert(tokenModel);
             residualMapper.insert(residual);
@@ -1609,28 +1609,28 @@ public class GivingServiceImpl implements GivingService {
             List<Attendance> attendanceList = attendanceMapper.select(attendance);
 
             // 欠勤-试用
-            lackattendance.setLastdiligencetry(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()));
+            lackattendance.setLastdiligencetry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-试用
-            lackattendance.setLastshortdeficiencytry(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()));
+            lackattendance.setLastshortdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 长病欠-试用
-            lackattendance.setLastchronicdeficiencytry(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()));
+            lackattendance.setLastchronicdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 欠勤-正式
-            lackattendance.setLastdiligenceformal(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
+            lackattendance.setLastdiligenceformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-正式
-            lackattendance.setLastshortdeficiencyformal(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
+            lackattendance.setLastshortdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 长病欠-正式
-            lackattendance.setLastchronicdeficiencyformal(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
+            lackattendance.setLastchronicdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 欠勤
             lackattendance.setLastdiligence(lackSumCalc(lackattendance.getLastdiligencetry(), lackattendance.getLastdiligenceformal()));
@@ -1652,28 +1652,28 @@ public class GivingServiceImpl implements GivingService {
             attendanceList = attendanceMapper.select(attendance);
 
             // 欠勤-试用
-            lackattendance.setThisdiligencetry(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()));
+            lackattendance.setThisdiligencetry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-试用
-            lackattendance.setThisshortdeficiencytry(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()));
+            lackattendance.setThisshortdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 长病欠-试用
-            lackattendance.setThischronicdeficiencytry(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()));
+            lackattendance.setThischronicdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 欠勤-正式
-            lackattendance.setThisdiligenceformal(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()));
+            lackattendance.setThisdiligenceformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-正式
-            lackattendance.setThisshortdeficiencyformal(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()));
+            lackattendance.setThisshortdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 长病欠-正式
-            lackattendance.setThischronicdeficiencyformal(String.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()));
+            lackattendance.setThischronicdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 欠勤
             lackattendance.setThisdiligence(lackSumCalc(lackattendance.getThisdiligencetry(), lackattendance.getThisdiligenceformal()));
@@ -1691,8 +1691,8 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setRemarks(isResign ? "退职" : "-");
 
             // 控除给料
-            lackattendance.setGive(String.valueOf(Double.parseDouble(lackattendance.getLasttotal())
-                    + Double.parseDouble(lackattendance.getThistotal())));
+            lackattendance.setGive(BigDecimal.valueOf(Double.parseDouble(lackattendance.getLasttotal())
+                    + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             lackattendance.preInsert(tokenModel);
             lackattendanceMapper.insert(lackattendance);
@@ -1708,7 +1708,7 @@ public class GivingServiceImpl implements GivingService {
      * @Param [val1, val2]
      **/
     private String lackSumCalc(String val1, String val2) {
-        return String.valueOf(Double.parseDouble(ifNull(val1)) + Double.parseDouble(ifNull(val2)));
+        return BigDecimal.valueOf(Double.parseDouble(ifNull(val1)) + Double.parseDouble(ifNull(val2))).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 
     /**
