@@ -1909,10 +1909,10 @@ public class GivingServiceImpl implements GivingService {
                         continue;
                     }
                 }
-                Induction induction = new Induction();
-                induction.setGiving_id(givingId);
                 // 上月工资结算时点过后入职没发工资的人
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
+                    Induction induction = new Induction();
+                    induction.setGiving_id(givingId);
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
                         Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
@@ -1960,19 +1960,21 @@ public class GivingServiceImpl implements GivingService {
         // 上月出勤日数
         double lastAttendanceDays = lastMonthDays + lastMonthSuitDays;
         induction.setAttendance(String.valueOf(lastAttendanceDays));
-        // 本月试用社员出勤日数
-        double trialAttendanceDays = thisMonthDays + thisMonthSuitDays;
-        induction.setTrial(String.valueOf(trialAttendanceDays));
-        // 正社员工開始日(无)
+        // 本月未转正员为对象
+        if(StringUtils.isEmpty(staffStartDate)){
+            // 今月試用社員出勤日数
+            thisMonthSuitDays = calculateAttendanceDays(thisMonthSuitDays);
+            induction.setTrial(String.valueOf(thisMonthSuitDays));
+        }
         // 給料
         if (StringUtils.isNotEmpty(staffStartDate)) {
-            induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * trialAttendanceDays * wageDeductionProportion)));
+            induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
         } else {
             if (lastAttendanceDays > 0) {
                 induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
             } else {
-                if (trialAttendanceDays > 0) {
-                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * trialAttendanceDays));
+                if (thisMonthSuitDays > 0) {
+                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays));
                 } else {
                     induction.setGive(thisMonthSalary);
                 }
@@ -2014,7 +2016,7 @@ public class GivingServiceImpl implements GivingService {
         // 查询退职人员信息
         Criteria criteria = Criteria.where("userinfo.resignation_date")
                 .gte(now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)
-                .lte(last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")
+                .lt(last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")
                 .and("status").is("0");
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
@@ -2029,30 +2031,54 @@ public class GivingServiceImpl implements GivingService {
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 retire.setRetiredate(sf.parse(resignationDate));
+                // 当月基本工资
+                String thisMonthSalary = getSalary(customerInfo, 1);
                 // 计算出勤日数
-                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                Map<String,String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
                 // 本月正式工作日数
                 double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
                 // 本月试用工作日数
                 double thisMonthSuitDays = Double.parseDouble(daysList.get("thisMonthSuitDays"));
-                // 本月出勤日数
+                // 本月出勤日数（本月试用工作日数 + 本月正式工作日数）
                 double attendanceDays = thisMonthSuitDays + thisMonthDays;
-                retire.setAttendance(String.valueOf(attendanceDays));
-                // 当月基本工资
-                String thisMonthSalary = getSalary(customerInfo, 1);
+                // 本月出勤日数
+                retire.setAttendance(String.valueOf(calculateAttendanceDays(attendanceDays)));
                 // 給料
-                int compareResult = Double.compare(attendanceDays, dateBase);
-                if (compareResult >= 0) {
-                    retire.setGive(df.format(Double.parseDouble(thisMonthSalary)));
-                } else {
-                    retire.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * attendanceDays));
-                }
+                retire.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * attendanceDays));
                 // 一括补助
                 retire.setLunch(df.format(thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
                 retires.add(retire);
             }
         }
         return retires;
+    }
+
+    // 计算出勤天数
+    private Double calculateAttendanceDays(double attendanceDays) {
+        double rtnAttendanceDays;
+        Calendar calAttendanceStart = Calendar.getInstance();
+        calAttendanceStart.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar calAttendanceEnd = Calendar.getInstance();
+        calAttendanceEnd.set(Calendar.DAY_OF_MONTH, calAttendanceEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+        // 本月应当的全勤日数
+        int allAttendanceDay = getWorkDaysExceptWeekend(calAttendanceStart.getTime(), calAttendanceEnd.getTime());
+        // 本月出勤日数与工作日基数（21.75）比较
+        int compareResult = Double.compare(attendanceDays, dateBase);
+        // 本月出勤日数大于等于工作日基数
+        if (compareResult >= 0) {
+            // 本月出勤日数设置为工作日基数
+            rtnAttendanceDays = dateBase;
+        } else {
+            // 本月出勤日数等于本月应当的全勤日数
+            if (Double.compare(attendanceDays, Double.parseDouble(String.valueOf(allAttendanceDay))) == 0) {
+                // 本月出勤日数设置为工作日基数
+                rtnAttendanceDays = dateBase;
+            } else {
+                // 本月出勤日数设置为实际工作日数
+                rtnAttendanceDays = attendanceDays;
+            }
+        }
+        return rtnAttendanceDays;
     }
     // endregion 入职和离职 BY Cash
 }
