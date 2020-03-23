@@ -1317,7 +1317,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getLastreplace());
             } else {
-                residual.setLastreplace("0.00");
+                residual.setLastreplace("0");
             }
 
             // 合计(H)
@@ -1360,7 +1360,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace());
             } else {
-                residual.setThisreplace("0.00");
+                residual.setThisreplace("0");
             }
 
             // 本月代休（3か月以内）
@@ -1381,7 +1381,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
-                residual.setThisreplace3("0.00");
+                residual.setThisreplace3("0");
             }
 
             // 合计(H)
@@ -1865,7 +1865,7 @@ public class GivingServiceImpl implements GivingService {
         // 上月日期
         Calendar lastMonthDate = Calendar.getInstance();
         lastMonthDate.add(Calendar.MONTH, -1);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         int lastDay = thisMonthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         long mouthStart = sf.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sf.format(thisMonthDate.getTime())) + "-01")).getTime();
         long mouthEnd = sf.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sf.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
@@ -1940,7 +1940,7 @@ public class GivingServiceImpl implements GivingService {
         // 工号
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
         // 入社日
-        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));
+        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         // 本月基本工资
         String thisMonthSalary = getSalary(customerInfo, 1);
         induction.setThismonth(thisMonthSalary);
@@ -1989,7 +1989,7 @@ public class GivingServiceImpl implements GivingService {
     public List<Retire> getRetire(String givingId) throws Exception {
         List<Retire> retires = new ArrayList<>();
         Query query = new Query();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         // 保留小数点后两位四舍五入
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
@@ -2030,7 +2030,7 @@ public class GivingServiceImpl implements GivingService {
                 retire.setJobnumber(customerInfo.getUserinfo().getJobnumber());
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
-                retire.setRetiredate(sf.parse(resignationDate));
+                retire.setRetiredate(sf.parse(resignationDate.replace("Z", " UTC")));
                 // 当月基本工资
                 String thisMonthSalary = getSalary(customerInfo, 1);
                 // 计算出勤日数
