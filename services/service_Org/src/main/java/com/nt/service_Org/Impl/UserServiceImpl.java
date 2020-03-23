@@ -11,6 +11,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -50,7 +52,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JsTokenService jsTokenService;
 
-
+    @Autowired
+    private TokenService tokenService;
     /**
      * @方法名：getUserAccount
      * @描述：获取用户
@@ -168,6 +171,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public CustomerInfo addAccountCustomer(UserVo userVo) throws Exception {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
         mongoTemplate.save(userAccount);
@@ -180,6 +184,9 @@ public class UserServiceImpl implements UserService {
             CustomerInfo customerInfo = new CustomerInfo();
             BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
             CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+            userVo.getCustomerInfo().getUserinfo().setWorkday(sf.format(sf.parse(userVo.getCustomerInfo().getUserinfo().getWorkday())));
+            userVo.getCustomerInfo().getUserinfo().setBirthday(sf.format(sf.parse(userVo.getCustomerInfo().getUserinfo().getBirthday())));
+            userVo.getCustomerInfo().getUserinfo().setEnterday(sf.format(sf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday())));
             BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
             customerInfo.setUserid(_id);
             customerInfo.setUserinfo(userInfo);
@@ -615,6 +622,8 @@ public class UserServiceImpl implements UserService {
                 uservo.setCustomerInfo(customerInfo);
                 listVo.add(customerInfo);
                 uservo.setUserAccount(useraccount);
+                TokenModel tokenModel = tokenService.getToken(request);
+                useraccount.preInsert(tokenModel);
                 addAccountCustomer(uservo);
                 accesscount = accesscount + 1;
             }
