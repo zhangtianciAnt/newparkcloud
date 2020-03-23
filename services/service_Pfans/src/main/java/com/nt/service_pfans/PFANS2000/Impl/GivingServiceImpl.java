@@ -1317,7 +1317,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getLastreplace());
             } else {
-                residual.setLastreplace("0.00");
+                residual.setLastreplace("0");
             }
 
             // 合计(H)
@@ -1360,7 +1360,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace());
             } else {
-                residual.setThisreplace("0.00");
+                residual.setThisreplace("0");
             }
 
             // 本月代休（3か月以内）
@@ -1381,7 +1381,7 @@ public class GivingServiceImpl implements GivingService {
                         .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
-                residual.setThisreplace3("0.00");
+                residual.setThisreplace3("0");
             }
 
             // 合计(H)
