@@ -155,7 +155,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 invoicemapper.insertSelective(invoice);
             }
         }
-        saveTotalCostList(invoiceNo, invoicelist, trafficDetailslist, purchaseDetailslist, otherDetailslist, publicExpenseVo, tokenModel, publicexpenseid);
+
+        // 付款方式为网上银行付款，个人账户，转账支票做以下处理
+        if("PJ004001".equals(publicExpense.getPaymentmethod()) || "PJ004002".equals(publicExpense.getPaymentmethod()) || "PJ004003".equals(publicExpense.getPaymentmethod())){
+            saveTotalCostList(invoiceNo, invoicelist, trafficDetailslist, purchaseDetailslist, otherDetailslist, publicExpenseVo, tokenModel, publicexpenseid);
+        }
     }
 
     private void saveTotalCostList(String invoiceNo, List<Invoice> invoicelist,List<TrafficDetails> trafficDetailslist,List<PurchaseDetails> purchaseDetailslist,
@@ -170,39 +174,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         for ( Dictionary d : dictionaryList ) {
             taxRateMap.put(d.getCode(), d.getValue1());
         }
-//        //交通说明字典
-//        List<com.nt.dao_Org.Dictionary> dictionaryList4 = dictionaryService.getForSelect("PJ069");
-//        Map<String, String> costItemTrafficMap = new HashMap<>();
-//        for ( Dictionary d : dictionaryList4 ) {
-//            costItemTrafficMap.put(d.getCode(), d.getValue1());
-//        }
-//        //采购说明字典
-//        List<com.nt.dao_Org.Dictionary> dictionaryList1 = dictionaryService.getForSelect("PJ007");
-//        Map<String, String> procurementDetailsMap = new HashMap<>();
-//        for ( Dictionary d : dictionaryList1 ) {
-//            procurementDetailsMap.put(d.getCode(), d.getValue1());
-//        }
-//        List<com.nt.dao_Org.Dictionary> dictionaryList2 = dictionaryService.getForSelect("PJ005");
-//        Map<String, String> procurementProjectMap = new HashMap<>();
-//        for ( Dictionary d : dictionaryList2 ) {
-//            procurementProjectMap.put(d.getCode(), d.getValue1());
-//        }
-//        List<com.nt.dao_Org.Dictionary> dictionaryList6 = dictionaryService.getForSelect("PJ006");
-//        Map<String, String> procurementProject6Map = new HashMap<>();
-//        for ( Dictionary d : dictionaryList6 ) {
-//            procurementProject6Map.put(d.getCode(), d.getValue1());
-//        }
-//        List<com.nt.dao_Org.Dictionary> dictionaryList8 = dictionaryService.getForSelect("PJ008");
-//        Map<String, String> procurementProject8Map = new HashMap<>();
-//        for ( Dictionary d : dictionaryList8 ) {
-//            procurementProject8Map.put(d.getCode(), d.getValue1());
-//        }
-//        //其他说明字典
-//        List<com.nt.dao_Org.Dictionary> dictionaryList3 = dictionaryService.getForSelect("PJ057");
-//        Map<String, String> costItemMap = new HashMap<>();
-//        for ( Dictionary d : dictionaryList3 ) {
-//            costItemMap.put(d.getCode(), d.getValue1());
-//        }
+        //通过字典查取汇率缩写
+        List<com.nt.dao_Org.Dictionary> dicExchangeRateList = dictionaryService.getForSelect("PG019");
+        Map<String, String> exchangeRateMap = new HashMap<>();
+        for ( Dictionary d : dicExchangeRateList ) {
+            exchangeRateMap.put(d.getCode(), d.getValue3());
+        }
         //科目名字典
         Map<String, String> accountCodeMap = new HashMap<>();
         for( int i = 0; i<26; i++ ) {
@@ -263,31 +240,25 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             if ( o instanceof  TrafficDetails || o instanceof PurchaseDetails || o instanceof OtherDetails ) {
                 String money = getProperty(o, inputType);
                 TotalCost cost = new TotalCost();
-                if ( FIELD_RMB.equals(inputType) ) {
-                    cost.setCurrency("CYN");
-                } else if ( FIELD_FOREIGNCURRENCY.equals(inputType) ) {
-                    cost.setCurrency("FOREIGN");
+//                if ( FIELD_RMB.equals(inputType) ) {
+//                    cost.setCurrency("CYN");
+//                }
+//                else if ( FIELD_FOREIGNCURRENCY.equals(inputType) ) {
+//                    cost.setCurrency("FOREIGN");
+//                }
+                //币种，汇率
+                if(!StringUtils.isEmpty(getProperty(o, "currency"))){
+                    cost.setCurrency(exchangeRateMap.getOrDefault(getProperty(o, "currency"), ""));
+                    cost.setExchangerate(getProperty(o, "currencyrate"));
+                }else {
+                    cost.setCurrency("CNY");
+                    cost.setExchangerate("");
                 }
+
                 cost.setLineamount(money);
                 cost.setBudgetcoding(getProperty(o, "budgetcoding"));
                 cost.setSubjectnumber(getProperty(o, "subjectnumber"));
-                //发票说明
-//                String procurementDetails = "";
-//                String procurementProject = "";
-//                String costitem = "";
-//                procurementDetails = getProperty(o, "procurementdetails");
-//                if(procurementDetails != ""){
-//                    procurementProject = getProperty(o, "procurementproject");
-//                    if(procurementProject != ""){
-//                        cost.setRemark(procurementDetails + procurementProject);
-//                    }else {
-//                        cost.setRemark(procurementDetails);
-//                    }
-//                }
-//                costitem = getProperty(o, "costitem");
-//                if(costitem != ""){
-//                    cost.setRemark(costitem);
-//                }
+                //发票说明取人名+科目名
                 cost.setRemark(getProperty(o, "accountcode"));
                 csvList.add(cost);
             }
@@ -314,34 +285,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             insertInfo.setInvoicedate(date);
             insertInfo.setConditiondate(date);
             insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getPayeecode());//供应商编号
-            insertInfo.setCurrency(publicExpenseVo.getPublicexpense().getCurrency());//币种
             insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
             //发票说明
             if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
                 insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
-//                if(("PJ069").equals(insertInfo.getRemark().substring(0, 5))){
-//                    insertInfo.setRemark(userName + costItemTrafficMap.getOrDefault(insertInfo.getRemark(), ""));
-//                }else if(insertInfo.getRemark().length() > 9){
-//                        String projectDetailName = "";
-//                    if(("PJ006").equals(insertInfo.getRemark().substring(0,5))){
-//                        projectDetailName = procurementProject6Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
-//                    }else if(("PJ007").equals(insertInfo.getRemark().substring(0,5))){
-//                        projectDetailName = procurementDetailsMap.getOrDefault(insertInfo.getRemark().substring(0,8), "");
-//                    }else if(("PJ008").equals(insertInfo.getRemark().substring(0,5))){
-//                        projectDetailName = procurementProject8Map.getOrDefault(insertInfo.getRemark().substring(0,8), "");
-//                    }
-//                    insertInfo.setRemark(userName + procurementProjectMap.getOrDefault(insertInfo.getRemark().substring(8,16), "") + projectDetailName);
-//                }else {
-//                    if(("PJ057").equals(insertInfo.getRemark().substring(0, 5))){
-//                        insertInfo.setRemark(userName + costItemMap.getOrDefault(insertInfo.getRemark(), ""));
-//                    }else {
-//                        if((("PJ007").equals(insertInfo.getRemark().substring(0, 5)))){
-//                            insertInfo.setRemark(userName + procurementDetailsMap.getOrDefault(insertInfo.getRemark(), ""));
-//                        }
-//                    }
-//                }
             }
-
 
             insertInfo.setInvoicenumber(invoiceNo);
             totalCostMapper.insertSelective(insertInfo);
@@ -425,22 +373,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                     taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
-//                    String procurementDetails = "";
-//                    String procurementProject = "";
-//                    String costitem = "";
-//                    procurementDetails = getProperty(detail, "procurementdetails");
-//                    if(procurementDetails != ""){
-//                        procurementProject = getProperty(detail, "procurementproject");
-//                        if(procurementProject != ""){
-//                            taxCost.setRemark(procurementDetails + procurementProject);
-//                        }else {
-//                            taxCost.setRemark(procurementDetails);
-//                        }
-//                    }
-//                    costitem = getProperty(detail, "costitem");
-//                    if(costitem != ""){
-//                        taxCost.setRemark(costitem);
-//                    }
                     taxCost.setRemark(getProperty(detail, "accountcode"));
                     taxList.add(taxCost);
                     // 税拔
@@ -452,18 +384,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
                         padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
                         //发票说明
-//                        if(procurementDetails != ""){
-//                            procurementProject = getProperty(detail, "procurementproject");
-//                            if(procurementProject != ""){
-//                                padding.setRemark(procurementDetails + procurementProject);
-//                            }else {
-//                                padding.setRemark(procurementDetails);
-//                            }
-//                        }
-//                        costitem = getProperty(detail, "costitem");
-//                        if(costitem != ""){
-//                            taxCost.setRemark(costitem);
-//                        }
                         padding.setRemark(getProperty(detail, "accountcode"));
                         List<TotalCost> paddingList = (List<TotalCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
                         paddingList.add(padding);
@@ -601,10 +521,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
         }
 
-        TotalCost totalCost=new TotalCost();
-        totalCost.setPublicexpenseid(spublicexpenseid);
-        totalCostMapper.delete(totalCost);
-        saveTotalCostList(invoiceNo, invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
+        // 付款方式为网上银行付款，个人账户，转账支票做以下处理
+        if("PJ004001".equals(publicExpense.getPaymentmethod()) || "PJ004002".equals(publicExpense.getPaymentmethod()) || "PJ004003".equals(publicExpense.getPaymentmethod())){
+            TotalCost totalCost=new TotalCost();
+            totalCost.setPublicexpenseid(spublicexpenseid);
+            totalCostMapper.delete(totalCost);
+            saveTotalCostList(invoiceNo, invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
+        }
     }
 
     //按id查询

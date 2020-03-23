@@ -500,6 +500,9 @@ public class EvectionServiceImpl implements EvectionService {
                 currencyexchangeMapper.insertSelective(curr);
             }
         }
+        TravelCost travelCost = new TravelCost();
+        travelCost.setEvectionid(evectionid);
+        travelcostmapper.delete(travelCost);
         saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
     }
