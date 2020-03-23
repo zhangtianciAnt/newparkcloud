@@ -276,14 +276,15 @@ public class EvectionServiceImpl implements EvectionService {
 //            }
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
+            String curren = getProperty(detail, "currency");
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
             String isRmb = getProperty(detail, "rmb");
             String mergeKey;
             if (specialMap.containsKey(keyNo) && Float.parseFloat(isRmb) > 0) {
-                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
+                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + curren;
             } else {
-                mergeKey = budgetcoding + " ... " + subjectnumber;
+                mergeKey = budgetcoding + " ... " + subjectnumber+ " ... " + curren;
             }
             // 行合并
             float money = getPropertyFloat(detail, inputType);
