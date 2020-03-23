@@ -52,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
 
         //根据条件检索数据
         Query newquery = new Query();
-        newquery.addCriteria(Criteria.where("_id").in(roleIds));
+        newquery.addCriteria(Criteria.where("_id").in(tokenModel.getRoleIds()));
         newquery.addCriteria(Criteria.where("menus.menuurl").is(url));
         List<Role> list = mongoTemplate.find(newquery, Role.class);
         if (list != null) {
