@@ -65,8 +65,7 @@ public class QuestionManageServicesImpl implements QuestionManageServices {
      */
     @Override
     public List<QuestionManage> list() throws Exception {
-        QuestionManage questionManage = new QuestionManage();
-        return questionManageMapper.select(questionManage);
+        return questionManageMapper.selectEnhance();
     }
 
     /**

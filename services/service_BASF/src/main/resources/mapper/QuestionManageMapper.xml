@@ -25,4 +25,27 @@
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
+
+
+    <select id="selectEnhance" resultType="com.nt.dao_BASF.QuestionManage">
+SELECT
+	q.questionid,
+	p.programname AS programtpe,
+	q.questiontype,
+	q.questiontopic,
+	q.option1,
+	q.option2,
+	q.option3,
+	q.option4,
+	q.option5,
+	q.score,
+	q.questionanswers,
+	q.answersanalysis
+FROM
+	questionmanage AS q
+	INNER JOIN programlist AS p ON q.programtpe = p.programlistid
+WHERE
+	p.`STATUS` = '0'
+	AND q.`STATUS` = '0'
+    </select>
 </mapper>

@@ -3,6 +3,8 @@ package com.nt.service_BASF.mapper;
 import com.nt.dao_BASF.QuestionManage;
 import com.nt.utils.MyMapper;
 
+import java.util.List;
+
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF.mapper
@@ -13,4 +15,8 @@ import com.nt.utils.MyMapper;
  * @Version: 1.0
  */
 public interface QuestionManageMapper extends MyMapper<QuestionManage> {
+
+    //题库列表
+    List<QuestionManage> selectEnhance() throws Exception;
+
 }
