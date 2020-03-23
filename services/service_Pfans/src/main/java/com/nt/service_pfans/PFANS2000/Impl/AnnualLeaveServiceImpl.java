@@ -256,9 +256,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else if(abNormalinfo.getOccurrencedate().compareTo(calendar.getTime())>=0 && abNormalinfo.getOccurrencedate().compareTo(calendar_a.getTime())<=0)
                         {
                             //开始日
-                            calendar.setTime(abNormalinfo.getPeriodstart());
-                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd HH:mm:ss");
-                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            calendar.setTime(abNormalinfo.getOccurrencedate());
+                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
+                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
                             long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
                             hours = hours.add(BigDecimal.valueOf(days*8));
 
@@ -266,9 +266,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else
                         {
                             //终了日
-                            calendar_a.setTime(abNormalinfo.getPeriodend());
-                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd HH:mm:ss");
-                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            calendar_a.setTime(abNormalinfo.getFinisheddate());
+                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
+                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
                             long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
                             hours = hours.add(BigDecimal.valueOf(days*8));
                         }
