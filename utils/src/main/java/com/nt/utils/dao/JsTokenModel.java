@@ -106,6 +106,9 @@ public class JsTokenModel implements Serializable {
 	}
 
 	public List<String> getRoleIds() {
+		if(roleIds == null){
+			return null;
+		}
 		String[] strs=roleIds.split(",");
 		List list= Arrays.asList(strs);
 		return list;

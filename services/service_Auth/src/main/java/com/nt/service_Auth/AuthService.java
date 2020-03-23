@@ -4,6 +4,7 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.utils.dao.JsTokenModel;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
 public interface AuthService {
 
     //获取ownerlist
-    List<String> getOwnerList(String url, String useraccountid,List<String> roleIds) throws Exception;
+    List<String> getOwnerList(String url, JsTokenModel tokenModel) throws Exception;
 
     //获取按钮权限（新建，编辑，删除）
     List<Boolean> getActionsAuth(String url, String useraccountid, String ownerid) throws Exception;

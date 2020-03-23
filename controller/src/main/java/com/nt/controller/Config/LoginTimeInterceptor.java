@@ -97,7 +97,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
      */
     private List<String> getOwnerList(String url, JsTokenModel tokenModel) throws Exception {
         List<String> ownerList = new ArrayList<String>();
-        ownerList = authService.getOwnerList(url, tokenModel.getUserId(),tokenModel.getRoleIds());
+        ownerList = authService.getOwnerList(url, tokenModel);
         return ownerList;
     }
 
