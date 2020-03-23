@@ -1,5 +1,6 @@
 package com.nt.controller.Controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
@@ -161,7 +162,7 @@ public class UserController {
         TokenModel tokenModel = tokenService.getToken(request);
         String id = "";
         CustomerInfo info = new CustomerInfo();
-        if (userVo.getUserAccount().getCreateon() != null && userVo.getUserAccount().getCreateby() != null) {
+        if (StrUtil.isNotBlank(userVo.getUserAccount().get_id())) {
             userVo.getUserAccount().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
