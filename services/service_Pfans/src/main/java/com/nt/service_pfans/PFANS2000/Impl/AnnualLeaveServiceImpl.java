@@ -449,12 +449,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
-            String doorIDList = "3,5";//3:门1；5:门2；7:门3
-            String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            //String doorIDList = "3,5";//3:门1；5:门2；7:门3
+            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
+            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
             //正式
-            //String doorIDList = "34,16,17";34:自动门；16：1F子母门-左；17：1F子母门-右；
-            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-            //String url1 = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+            String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+            String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
             //請求接口
             ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
             Object obj = JSON.toJSON(getresult.getData());
@@ -487,13 +491,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
                     //进门测试用
-                    if(doorID.equals("3")){
-                        punchcardrecorddetail.setEventno("1");
-                    }
-                    //出门测试用
-                    if(doorID.equals("5")){
-                        punchcardrecorddetail.setEventno("2");
-                    }
+//                    if(doorID.equals("3")){
+//                        punchcardrecorddetail.setEventno("1");
+//                    }
+//                    //出门测试用
+//                    if(doorID.equals("5")){
+//                        punchcardrecorddetail.setEventno("2");
+//                    }
                     punchcardrecorddetail.preInsert(tokenModel);
                     punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                     punchcardrecorddetailmapper.insert(punchcardrecorddetail);

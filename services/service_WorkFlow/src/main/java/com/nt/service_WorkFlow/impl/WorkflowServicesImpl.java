@@ -525,9 +525,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         if (currentOrg.getUser().equals(curentUser)) {
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
+            userId = upOrgs.getUser();
         } else {
             userId = currentOrg.getUser();
         }
+
+        if(userId == null || StrUtil.isEmpty(userId)){
+            throw new LogicalException("无上级人员信息！");
+        }
+
         return userId;
     }
 

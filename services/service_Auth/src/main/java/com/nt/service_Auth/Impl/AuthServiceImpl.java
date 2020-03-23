@@ -8,6 +8,7 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.AuthService;
+import com.nt.utils.dao.JsTokenModel;
 import org.apache.commons.collections.ArrayStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -27,24 +28,28 @@ public class AuthServiceImpl implements AuthService {
 
     //获取ownerlist
     @Override
-    public List<String> getOwnerList(String url, String useraccountid) throws Exception {
+    public List<String> getOwnerList(String url, JsTokenModel tokenModel) throws Exception {
         List<String> result = new ArrayList<String>();
-        List<String> roleIds = new ArrayList<String>();
         String actionId = "";
         //登录人所在组织的所有人GBB
         List<String> resultTeam = new ArrayList<String>();
         String flg = "0";
+        List<String> roleIds = new ArrayList<String>();
 
-        //根据条件检索数据
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(useraccountid));
-        UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
-        List<Role> roles = account.getRoles();
-        if (roles != null) {
-            for (int i = 0; i < roles.size(); i++) {
-                roleIds.add(roles.get(i).get_id());
+        if(tokenModel.getRoleIds() == null){
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+            UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+            List<Role> roles = account.getRoles();
+            if (roles != null) {
+                for (int i = 0; i < roles.size(); i++) {
+                    roleIds.add(roles.get(i).get_id());
+                }
             }
+            tokenModel.setRoleIds(roleIds);
         }
+
+
         //根据条件检索数据
         Query newquery = new Query();
         newquery.addCriteria(Criteria.where("_id").in(roleIds));
@@ -84,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
             if(flg.equals("1")){
                 //根据人员查询所在组织的所有人人
                 Query cusquery = new Query();
-                cusquery.addCriteria(Criteria.where("userid").is(useraccountid));
+                cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
                 CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
                 if(cus == null){
                     return new ArrayList<String>();
@@ -117,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
                 result = resultTeam;
             }
             else{
-                result.add(useraccountid);
+                result.add(tokenModel.getUserId());
             }
             return result;
         }

@@ -176,7 +176,7 @@ public class EvectionServiceImpl implements EvectionService {
         Map<String, Object> mergeResult = null;
         Map<String, Float> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
-            if (SPECIAL_KEY.equals(invoice.getInvoicetype())) {
+            if (SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if (rate <= 0) {

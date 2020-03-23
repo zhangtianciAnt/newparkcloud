@@ -60,15 +60,15 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-//        JsTokenModel tokenModel = jsTokenService.getTokenModel(token);
-//        tokenModel.setLocale(locale);
-//        tokenModel.setUrl(url);
-//        //获取ownerlist
-//        if (!StrUtil.isEmpty(url)) {
-//            List<String> ownerList = getOwnerList(url, tokenModel);
-//            tokenModel.setOwnerList(ownerList);
-//        }
-//        jsTokenService.createTokenModel(tokenModel);
+        JsTokenModel tokenModel = jsTokenService.getTokenModel(token);
+        tokenModel.setLocale(locale);
+        tokenModel.setUrl(url);
+        //获取ownerlist
+        if (!StrUtil.isEmpty(url)) {
+            List<String> ownerList = getOwnerList(url, tokenModel);
+            tokenModel.setOwnerList(ownerList);
+        }
+        jsTokenService.createTokenModel(tokenModel);
 
         return true;
     }
@@ -97,7 +97,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
      */
     private List<String> getOwnerList(String url, JsTokenModel tokenModel) throws Exception {
         List<String> ownerList = new ArrayList<String>();
-        ownerList = authService.getOwnerList(url, tokenModel.getUserId());
+        ownerList = authService.getOwnerList(url, tokenModel);
         return ownerList;
     }
 
