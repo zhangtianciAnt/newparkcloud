@@ -78,7 +78,4 @@ public class OtherDetails extends BaseModel {
 
     @Column(name = "TAXES")
     private String taxes;
-
-    @Column(name = "ACCOMMODATIONALLOWANCE")
-    private String accommodationallowance;
 }

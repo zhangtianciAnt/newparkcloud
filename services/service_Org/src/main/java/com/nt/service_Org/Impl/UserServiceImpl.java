@@ -493,6 +493,7 @@ public class UserServiceImpl implements UserService {
             model.add("Rank");
             model.add("入社时间");
             model.add("银行账号");
+            model.add("邮箱");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -603,6 +604,9 @@ public class UserServiceImpl implements UserService {
                     }
                     if(value.get(29) != null) {
                         userinfo.setSeatnumber(value.get(29).toString());
+                    }
+                    if(value.get(30) != null) {
+                        userinfo.setEmail(value.get(30).toString());
                     }
                 }
 

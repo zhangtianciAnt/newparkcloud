@@ -520,6 +520,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
         OrgTree currentOrg = getCurrentOrg(orgs, orgId);
 
+        if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+            throw new LogicalException("无上级人员信息！");
+        }
         if (currentOrg.getUser().equals(curentUser)) {
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
         } else {
@@ -549,12 +552,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (org.get_id().equals(orgId)) {
             return null;
         } else {
-            for (OrgTree item : org.getOrgs()) {
-                OrgTree rst = upCurrentOrg(item, orgId);
-                if (rst == null) {
-                    return org;
-                } else {
-                    return rst;
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree rst = upCurrentOrg(item, orgId);
+                    if (rst == null) {
+                        return org;
+                    } else {
+                        return rst;
+                    }
                 }
             }
         }
