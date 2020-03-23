@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         String flg = "0";
         List<String> roleIds = new ArrayList<String>();
 
-        if(tokenModel.getRoleIds() == null){
+        if(tokenModel.getRoleIds() == null || tokenModel.getRoleIds().size() == 0){
             Query query = new Query();
             query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
             UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
