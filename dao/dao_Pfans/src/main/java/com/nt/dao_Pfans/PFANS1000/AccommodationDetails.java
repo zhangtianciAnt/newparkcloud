@@ -81,10 +81,10 @@ public class AccommodationDetails extends BaseModel {
     private String facilityname;
 
     /**
-     * 住宿津贴（人民币）
+     * 外币币种
      */
-    @Column(name = "ACCOMMODATIONALLOWANCE")
-    private String accommodationallowance;
+    @Column(name = "CURRENCY")
+    private String currency;
 
     /**
      * 住宿津贴（外币）

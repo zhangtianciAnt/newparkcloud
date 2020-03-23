@@ -374,6 +374,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
                     taxCost.setRemark(getProperty(detail, "accountcode"));
+                    //币种
+                    taxCost.setCurrency("CNY");
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
@@ -385,6 +387,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
                         //发票说明
                         padding.setRemark(getProperty(detail, "accountcode"));
+                        //币种
+                        padding.setCurrency("CNY");
                         List<TotalCost> paddingList = (List<TotalCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
                         paddingList.add(padding);
                         resultMap.put(PADDING_KEY, paddingList);

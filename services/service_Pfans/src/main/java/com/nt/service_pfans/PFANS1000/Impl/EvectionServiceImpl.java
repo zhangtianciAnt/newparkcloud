@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -157,6 +158,12 @@ public class EvectionServiceImpl implements EvectionService {
         for (com.nt.dao_Org.Dictionary d : dictionaryList) {
             taxRateMap.put(d.getCode(), d.getValue1());
         }
+        //通过字典查取汇率缩写
+        List<com.nt.dao_Org.Dictionary> dicExchangeRateList = dictionaryService.getForSelect("PG019");
+        Map<String, String> exchangeRateMap = new HashMap<>();
+        for ( Dictionary d : dicExchangeRateList ) {
+            exchangeRateMap.put(d.getCode(), d.getValue3());
+        }
         //科目名字典
         Map<String, String> accountCodeMap = new HashMap<>();
         for (int i = 0; i < 26; i++) {
@@ -202,10 +209,13 @@ public class EvectionServiceImpl implements EvectionService {
             if (o instanceof TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
                 String money = getProperty(o, inputType);
                 TravelCost cost = new TravelCost();
-                if (FIELD_RMB.equals(inputType)) {
-                    cost.setCurrency("CYN");
-                } else if (FIELD_FOREIGNCURRENCY.equals(inputType)) {
-                    cost.setCurrency("FOREIGN");
+                //币种，汇率
+                if(!StringUtils.isEmpty(getProperty(o, "currency"))){
+                    cost.setCurrency(exchangeRateMap.getOrDefault(getProperty(o, "currency"), ""));
+                    cost.setExchangerate(getProperty(o, "currencyrate"));
+                }else {
+                    cost.setCurrency("CNY");
+                    cost.setExchangerate("");
                 }
                 cost.setLineamount(money);
                 cost.setBudgetcoding(getProperty(o, "budgetcoding"));
@@ -237,7 +247,6 @@ public class EvectionServiceImpl implements EvectionService {
             insertInfo.setInvoicedate(date);
             insertInfo.setConditiondate(date);
             insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
-            insertInfo.setCurrency(evectionVo.getEvection().getCurrency());//币种
             insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
             //发票说明
             if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
@@ -314,6 +323,8 @@ public class EvectionServiceImpl implements EvectionService {
                     taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
                     taxCost.setRemarks(getProperty(detail, "accountcode"));
+                    //币种
+                    taxCost.setCurrency("CNY");
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
@@ -325,6 +336,8 @@ public class EvectionServiceImpl implements EvectionService {
                         padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
                         //发票说明
                         padding.setRemarks(getProperty(detail, "accountcode"));
+                        //币种
+                        padding.setCurrency("CNY");
                         List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
                         paddingList.add(padding);
                         resultMap.put(PADDING_KEY, paddingList);
@@ -335,9 +348,9 @@ public class EvectionServiceImpl implements EvectionService {
 //            if(currencyexchangeList != null){
 //                for(Currencyexchange curren : currencyexchangeList){
 //                    String curRear = curren.getExchangerate();         //兑换汇率
-////                    String curBefore = detail.getAccommodationallowance();
+////                    String curBefore = detail.getcurrency();
 //                    Dictionary dictionary = new Dictionary();
-//                    String accflg = ((AccommodationDetails) detail).getAccommodationallowance();
+//                    String accflg = ((AccommodationDetails) detail).getcurrency();
 //                    dictionary.setCode(accflg);
 ////                    dictionary.setCode("PJ003002");
 //                    List<Dictionary>  aa = dictionaryService.getDictionaryList(dictionary);
@@ -500,6 +513,9 @@ public class EvectionServiceImpl implements EvectionService {
                 currencyexchangeMapper.insertSelective(curr);
             }
         }
+        TravelCost travelCost = new TravelCost();
+        travelCost.setEvectionid(evectionid);
+        travelcostmapper.delete(travelCost);
         saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
     }
