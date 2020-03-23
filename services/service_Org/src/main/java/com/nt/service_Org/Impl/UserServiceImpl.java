@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenService tokenService;
+
     /**
      * @方法名：getUserAccount
      * @描述：获取用户
@@ -184,9 +185,6 @@ public class UserServiceImpl implements UserService {
             CustomerInfo customerInfo = new CustomerInfo();
             BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
             CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
-            userVo.getCustomerInfo().getUserinfo().setWorkday(sf.format(sf.parse(userVo.getCustomerInfo().getUserinfo().getWorkday())));
-            userVo.getCustomerInfo().getUserinfo().setBirthday(sf.format(sf.parse(userVo.getCustomerInfo().getUserinfo().getBirthday())));
-            userVo.getCustomerInfo().getUserinfo().setEnterday(sf.format(sf.parse(userVo.getCustomerInfo().getUserinfo().getEnterday())));
             BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
             customerInfo.setUserid(_id);
             customerInfo.setUserinfo(userInfo);
