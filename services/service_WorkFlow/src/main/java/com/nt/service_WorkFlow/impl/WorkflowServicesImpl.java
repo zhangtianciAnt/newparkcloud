@@ -290,9 +290,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
 					endnode.setStepStatus("");
 					workflowLogDetailVo.setResult("");
 				} else {
+					if(workflowinstancelist.get(0).getStatus().equals("0"))
+					{
+						endnode.setStepStatus("");
+						workflowLogDetailVo.setResult("");
+					}
+					else if(workflowinstancelist.get(0).getStatus().equals("4"))
+					{
+						endnode.setStepStatus("流程结束");
+						workflowLogDetailVo.setResult("流程结束");
+					}
 
-					endnode.setStepStatus(workResultConvert(workflowinstancelist.get(0).getStatus(),locale));
-					workflowLogDetailVo.setResult(workResultConvert(workflowinstancelist.get(0).getStatus(),locale));
+//					endnode.setStepStatus(workResultConvert(workflowinstancelist.get(0).getStatus(),locale));
+//					workflowLogDetailVo.setResult(workResultConvert(workflowinstancelist.get(0).getStatus(),locale));
 				}
 				endnode.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_02,locale));
 
