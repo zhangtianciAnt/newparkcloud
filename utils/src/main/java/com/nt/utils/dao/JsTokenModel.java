@@ -1,6 +1,9 @@
 package com.nt.utils.dao;
 
+import com.nt.utils.StringUtils;
+
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,7 +35,7 @@ public class JsTokenModel implements Serializable {
 	private String url;
 
 	// 负责人列表
-	private List<String> roleIds;
+	private String roleIds;
 
 	public JsTokenModel(String userId, String token,
 			String tenantId, String userType,List<String> ownerList,String locale,String url,List<String> roleIds) {
@@ -43,7 +46,7 @@ public class JsTokenModel implements Serializable {
 		this.ownerList = ownerList;
 		this.locale = locale;
 		this.url = url;
-		this.roleIds = roleIds;
+		this.roleIds = StringUtils.join(roleIds,",");
 	}
 
 	public String getUserId() {
@@ -103,11 +106,13 @@ public class JsTokenModel implements Serializable {
 	}
 
 	public List<String> getRoleIds() {
-		return roleIds;
+		String[] strs=roleIds.split(",");
+		List list= Arrays.asList(strs);
+		return list;
 	}
 
 	public void setRoleIds(List<String> roleIds) {
-		this.roleIds = roleIds;
+		this.roleIds = StringUtils.join(roleIds,",");
 	}
 
 	/**
