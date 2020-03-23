@@ -35,7 +35,6 @@ public class Pfans2016Controller {
     @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
         try{
-            
             if (abNormal == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
@@ -44,7 +43,7 @@ public class Pfans2016Controller {
             abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
             abNormalService.insert(abNormal, tokenModel);
             return ApiResult.success();
-        }catch(LogicalException e){
+        }catch(Exception e){
             return ApiResult.fail(e.getMessage());
         }
     }
