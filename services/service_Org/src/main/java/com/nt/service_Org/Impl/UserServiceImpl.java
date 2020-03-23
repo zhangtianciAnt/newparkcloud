@@ -3,6 +3,7 @@ package com.nt.service_Org.Impl;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
@@ -117,7 +118,18 @@ public class UserServiceImpl implements UserService {
         if (userAccountlist.size() <= 0) {
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
         } else {
-            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "");
+            List<String> roleIds = new ArrayList<String>();
+            query = new Query();
+            query.addCriteria(Criteria.where("_id").is(userAccountlist.get(0).get_id()));
+            UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+            List<Role> roles = account.getRoles();
+            if (roles != null) {
+                for (int i = 0; i < roles.size(); i++) {
+                    roleIds.add(roles.get(i).get_id());
+                }
+            }
+
+            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "",roleIds);
         }
 
     }

@@ -31,8 +31,11 @@ public class JsTokenModel implements Serializable {
 
 	private String url;
 
+	// 负责人列表
+	private List<String> roleIds;
+
 	public JsTokenModel(String userId, String token,
-			String tenantId, String userType,List<String> ownerList,String locale,String url) {
+			String tenantId, String userType,List<String> ownerList,String locale,String url,List<String> roleIds) {
 		this.userId = userId;
 		this.token = token;
 		this.tenantId = tenantId;
@@ -40,6 +43,7 @@ public class JsTokenModel implements Serializable {
 		this.ownerList = ownerList;
 		this.locale = locale;
 		this.url = url;
+		this.roleIds = roleIds;
 	}
 
 	public String getUserId() {
@@ -96,6 +100,14 @@ public class JsTokenModel implements Serializable {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public List<String> getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(List<String> roleIds) {
+		this.roleIds = roleIds;
 	}
 
 	/**

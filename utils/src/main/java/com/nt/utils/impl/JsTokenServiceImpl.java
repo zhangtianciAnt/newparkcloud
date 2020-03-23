@@ -41,7 +41,7 @@ public class JsTokenServiceImpl implements JsTokenService {
     		String userId
     		,String tenantId
     		,String userType
-    		,List<String> ownerList,String locale,String url) throws Exception {
+    		,List<String> ownerList,String locale,String url,List<String> roleIds) throws Exception {
 
     	String token = MD5Utils.getMD5(userId);
 
@@ -51,7 +51,7 @@ public class JsTokenServiceImpl implements JsTokenService {
         		tenantId,
         		userType,
         		ownerList,
-				locale,url);
+				locale,url,roleIds);
 
         // 存储到redis并设置过期时间
         JedisUtils.setObject(TOKEN_PREFIX + token, tokenModel, AuthConstants.TOKEN_EXPIRES_TIME);

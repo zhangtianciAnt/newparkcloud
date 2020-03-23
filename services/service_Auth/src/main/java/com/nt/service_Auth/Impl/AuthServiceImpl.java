@@ -27,24 +27,15 @@ public class AuthServiceImpl implements AuthService {
 
     //获取ownerlist
     @Override
-    public List<String> getOwnerList(String url, String useraccountid) throws Exception {
+    public List<String> getOwnerList(String url, String useraccountid,List<String> roleIds) throws Exception {
         List<String> result = new ArrayList<String>();
-        List<String> roleIds = new ArrayList<String>();
         String actionId = "";
         //登录人所在组织的所有人GBB
         List<String> resultTeam = new ArrayList<String>();
         String flg = "0";
 
         //根据条件检索数据
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(useraccountid));
-        UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
-        List<Role> roles = account.getRoles();
-        if (roles != null) {
-            for (int i = 0; i < roles.size(); i++) {
-                roleIds.add(roles.get(i).get_id());
-            }
-        }
+
         //根据条件检索数据
         Query newquery = new Query();
         newquery.addCriteria(Criteria.where("_id").in(roleIds));
