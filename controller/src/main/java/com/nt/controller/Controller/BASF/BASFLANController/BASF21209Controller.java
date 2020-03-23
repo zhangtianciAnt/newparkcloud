@@ -1,7 +1,15 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.EmailConfig;
+import com.nt.dao_BASF.SendEmail;
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.dao_Org.Vo.UserVo;
+import com.nt.service_BASF.EmailConfigServices;
+import com.nt.service_BASF.SendEmailServices;
 import com.nt.service_BASF.StartprogramServices;
+import com.nt.service_BASF.mapper.TrainjoinlistMapper;
+import com.nt.service_Org.UserService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -12,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -32,6 +41,18 @@ public class BASF21209Controller {
     @Autowired
     private StartprogramServices startprogramServices;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TrainjoinlistMapper trainjoinlistMapper;
+
+    @Autowired
+    private EmailConfigServices emailConfigServices;
+
+    @Autowired
+    private SendEmailServices sendEmailServices;
+
     //创建培训列表
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
@@ -51,6 +72,67 @@ public class BASF21209Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         startprogramServices.update(startprogram, tokenModel);
+
+        List<Startprogram> startprogramlist  = startprogramServices.select(startprogram);
+
+        //负责人list
+        String programhardlist = startprogramlist.get(0).getProgramhard();
+        String[] programhard = programhardlist.split(",");
+        //培训名称
+        String programname = startprogramlist.get(0).getProgramname();
+        //线上/线下
+        String isonline = startprogramlist.get(0).getIsonline()=="BC032001"?"线上":"线下";
+
+
+        for(int i = 0;i<programhard.length;i++)
+        {
+            UserVo uservo = userService.getAccountCustomerById(programhard[i]);
+            String depid =  uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
+            String email = uservo.getCustomerInfo().getUserinfo().getEmail();
+            Trainjoinlist trainjoinlist = new Trainjoinlist();
+            trainjoinlist.setDepartmentid(depid);
+            List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
+
+            List<EmailConfig> emailconfig =  emailConfigServices.get();
+
+            String EMAILCONTENT =
+                    "您好：<br>【"+programname+"/"+isonline+"】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
+                            "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\">"
+                            + "<tr>" +
+                            //"<td width=\"10%\">ID</td>" +
+                            "<td>姓名</td>" +
+                            "<td>员工号</td>" +
+                            "<td>成绩</td>" +
+                            "<td>通过状态</td>" +
+                            "</tr>";
+
+            for(int j = 0 ;j < 3; j++)
+            {
+                String neirong =  "<tr>" +
+                        "<td>张三"+j+"</td>" +
+                        "<td>001</td>" +
+                        "<td>80</td>" +
+                        "<td>通过</td>" +
+                        "</tr>";
+
+                EMAILCONTENT = EMAILCONTENT + neirong ;
+            }
+            EMAILCONTENT = EMAILCONTENT + "</table>";
+            SendEmail sendemail = new SendEmail();
+            sendemail.setUserName(emailconfig.get(0).getUsername());
+            sendemail.setPassword(emailconfig.get(0).getPassword());
+            sendemail.setHost(emailconfig.get(0).getHost());
+            sendemail.setPort(emailconfig.get(0).getPort());
+            sendemail.setFromAddress(emailconfig.get(0).getFromaddress());
+            sendemail.setContextType(emailconfig.get(0).getContexttype());
+
+//            sendemail.setToAddress(email);
+            sendemail.setToAddress("251583218@qq.com");
+            sendemail.setSubject("【培训结果发布】");
+            sendemail.setContext(EMAILCONTENT);
+            sendEmailServices.sendmail(tokenModel,sendemail);
+        }
+
         return ApiResult.success();
     }
 
