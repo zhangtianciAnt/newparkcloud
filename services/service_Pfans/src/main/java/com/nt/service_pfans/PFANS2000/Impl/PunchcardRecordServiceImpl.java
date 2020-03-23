@@ -660,21 +660,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                                 //在申请的日期范围内
                                                 if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
-                                                    if(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) < 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) > 0)
+                                                    if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
                                                     {
                                                         strlengthtime = workinghours;
-                                                    }
-                                                    else if(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) < 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0)
-                                                    {
-                                                        long result = ab.getPeriodend().getTime() - ab.getPeriodstart().getTime();
-                                                        Double result1 = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                                        strlengthtime = String.valueOf(result1);
-                                                    }
-                                                    else if(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) > 0)
-                                                    {
-                                                        long result = ab.getPeriodend().getTime() - ab.getPeriodstart().getTime();
-                                                        Double result1 = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                                        strlengthtime = String.valueOf(result1);
                                                     }
                                                 }
                                                 else
@@ -1065,23 +1053,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 if (abNormallist.size() > 0) {
                                     for (AbNormal ab : abNormallist) {
                                         //在申请的日期范围内
-                                        String strlengthtime = ab.getLengthtime();
+                                        String strlengthtime = null;
+                                        if(ab.getRelengthtime().equals("0"))
+                                        {
+                                            strlengthtime = ab.getLengthtime();
+                                        }else
+                                        {
+                                            strlengthtime = ab.getRelengthtime();
+                                        }
                                         if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
-                                            if(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) < 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) > 0)
+                                            if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
                                             {
                                                 strlengthtime = workinghours;
-                                            }
-                                            else if(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) < 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0)
-                                            {
-                                                long result = ab.getPeriodend().getTime() - ab.getPeriodstart().getTime();
-                                                Double result1 = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                                strlengthtime = String.valueOf(result1);
-                                            }
-                                            else if(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) > 0)
-                                            {
-                                                long result = ab.getPeriodend().getTime() - ab.getPeriodstart().getTime();
-                                                Double result1 = Double.valueOf(String.valueOf(result)) / 60 / 60 / 1000;
-                                                strlengthtime = String.valueOf(result1);
                                             }
                                         }
                                         else
