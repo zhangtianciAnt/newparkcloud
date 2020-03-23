@@ -21,6 +21,7 @@ import java.util.List;
 @Component(value = "TrainjoinlistMapper")
 public interface TrainjoinlistMapper extends MyMapper<Trainjoinlist> {
 
+    //大屏培训教育即将到期人员列表
     List<OverduePersonnelListVo> OverduePersonnelList() throws Exception;
 
     //结果发布判断该培训是否存在正常参加人员通过状态为空

@@ -137,7 +137,12 @@ public class StartprogramServicesImpl implements StartprogramServices {
     //by人员id查询培训项目
     @Override
     public List<Startprogram> selectbyuserid(String userid, String selecttype) throws Exception {
-        return startprogramMapper.selectbyuserid(userid, selecttype);
+//        如果是即将到期的查询
+        if (selecttype.equals("Abouttoexpire")) {
+            List<Startprogram> startprogramList = startprogramMapper.onlineOverdue(userid);
+            return startprogramList;
+        } else
+            return startprogramMapper.selectbyuserid(userid, selecttype);
     }
 
     @Override

@@ -414,6 +414,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     @Override
     public List<OverduePersonnelListVo> overduepersonnellist() throws Exception {
         List<OverduePersonnelListVo> overduePersonnelListVoList = trainjoinlistMapper.OverduePersonnelList();
+
         for (int i = 0; i < overduePersonnelListVoList.size(); i++) {
             //填充姓名
             Query query = new Query();

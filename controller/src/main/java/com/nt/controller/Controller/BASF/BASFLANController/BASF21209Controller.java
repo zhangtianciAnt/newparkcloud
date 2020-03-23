@@ -109,8 +109,6 @@ public class BASF21209Controller {
     //by人员id查询培训项目
     @RequestMapping(value = "/selectbyuserid", method = {RequestMethod.GET})
     public ApiResult selectbyuserid(String userid,String selecttype, HttpServletRequest request) throws Exception {
-//        Abouttoexpire completed enrolment
-
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(startprogramServices.selectbyuserid(userid,selecttype));
     }

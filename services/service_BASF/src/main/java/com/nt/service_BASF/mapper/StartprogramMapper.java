@@ -21,7 +21,11 @@ import java.util.List;
 @Component(value = "StartprogramMapper")
 public interface StartprogramMapper extends MyMapper<Startprogram> {
 
+    //by人员id查询培训项目
     List<Startprogram> selectbyuserid(@Param("userid") String userid, @Param("selecttype") String selecttype) throws Exception;
+
+    //通过人员id查询即将到期的培训
+    List<Startprogram> onlineOverdue(@Param("id") String userid) throws Exception;
 
     //获取强制的通过/未通过
     List<PassingRateVo> getMandatoryInfo() throws Exception;

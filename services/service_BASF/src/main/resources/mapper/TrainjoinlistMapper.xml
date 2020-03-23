@@ -12,6 +12,8 @@
         <result column="jointype" property="jointype" jdbcType="VARCHAR"/>
         <result column="performance" property="performance" jdbcType="VARCHAR"/>
         <result column="throughtype" property="throughtype" jdbcType="VARCHAR"/>
+        <result column="finallyexamdate" property="finallyexamdate" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
         <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
@@ -20,7 +22,38 @@
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <!--    大屏培训教育即将到期人员列表（线上）-->
     <select id="OverduePersonnelList" resultType="com.nt.dao_BASF.VO.OverduePersonnelListVo">
+        ( SELECT
+        t.trainjoinlistid,
+        t.personnelid,
+        t.customername,
+        t.departmentname,
+        s.programname,
+        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) AS dueDate
+        FROM
+        trainjoinlist AS t
+        INNER JOIN startprogram AS s ON t.startprogramid = s.startprogramid
+        WHERE
+        t.`STATUS` = '0'
+        AND t.startprogramid IN (
+        SELECT
+        s.startprogramid
+        FROM
+        startprogram AS s
+        WHERE
+        s.`STATUS` = "0"
+        AND t.finallyexamdate IS NOT NULL
+        AND s.starttheorydate &lt;> ""
+        AND s.starttheorydate IS NOT NULL
+        AND s.programtype = 'BC039004'
+        AND s.isonline = 'BC032001'
+        AND DATEDIFF(
+        DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
+        CURRENT_DATE ()) = 0
+        )) UNION ALL
+        (
         SELECT
         t.trainjoinlistid,
         t.personnelid,
@@ -30,14 +63,10 @@
         DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS dueDate
         FROM
         trainjoinlist AS t
-        INNER JOIN
-        startprogram AS s
-        ON
-        t.startprogramid = s.startprogramid
+        INNER JOIN startprogram AS s ON t.startprogramid = s.startprogramid
         WHERE
         t.`STATUS` = '0'
-        AND
-        t.startprogramid IN (
+        AND t.startprogramid IN (
         SELECT
         s.startprogramid
         FROM
@@ -47,13 +76,15 @@
         AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
         AND s.programtype = 'BC039004'
+        AND s.isonline = 'BC032002'
         AND DATEDIFF(
         DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
-        CURRENT_DATE ()) =0
-        )
+        CURRENT_DATE ()) = 0
+        ))
         ORDER BY
-        t.personnelid ASC
+        dueDate ASC
     </select>
+
 
     <select id="isNotThroughtype" resultType="int">
         SELECT

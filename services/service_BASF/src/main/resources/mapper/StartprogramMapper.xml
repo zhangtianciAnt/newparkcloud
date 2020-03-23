@@ -77,18 +77,6 @@
         WHERE
         t.`STATUS` = '0' AND
         t.personnelid = #{userid}
-
-        <if test="selecttype == 'Abouttoexpire'">
-            AND
-            t.jointype = '正常'
-            AND
-            ( t.throughtype = '通过' OR t.throughtype = '未通过' )
-            AND s.starttheorydate &lt;> ""
-            AND s.starttheorydate IS NOT NULL
-            AND s.programtype in ('BC039004')
-            AND DATEDIFF(DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH
-            ),CURRENT_DATE ()) =0
-        </if>
         <if test="selecttype == 'enrolment'">
             /* and
             programtype in ('BC039001','BC039002')*/
@@ -102,6 +90,113 @@
             s.programtype in ('BC039004')
         </if>
     </select>
+
+    <!--    通过人员id查询即将到期的线上培训-->
+    <select id="onlineOverdue" resultType="com.nt.dao_BASF.Startprogram">
+        (SELECT
+        s.startprogramid,
+        s.programlistid,
+        s.programname,
+        s.informpeople,
+        s.starttheorydate,
+        s.theorysite,
+        s.startoperationdate,
+        s.operationsite,
+        s.expirationdate,
+        s.materialsexpirationdate,
+        s.informperson,
+        s.programcode,
+        s.programhard,
+        s.insideoutside,
+        s.mandatory,
+        s.isonline,
+        s.thelength,
+        s.validity,
+        s.money,
+        s.remindtime,
+        s.isfirst,
+        s.applydata,
+        s.applydataurl,
+        s.standard,
+        s.questionnum,
+        s.programtype,
+        s.actualstartdate,
+        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) AS MODIFYON
+        FROM
+        startprogram AS s
+        INNER JOIN
+        trainjoinlist AS t
+        ON
+        s.startprogramid = t.startprogramid
+        WHERE
+        t.`STATUS` = '0' AND
+        t.personnelid = #{id}
+        AND
+        t.jointype = '正常'
+        AND
+        ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+        AND t.finallyexamdate IS NOT NULL
+        AND s.starttheorydate &lt;> ""
+        AND s.starttheorydate IS NOT NULL
+        AND s.programtype in ('BC039004')
+        AND s.isonline='BC032001'
+        AND DATEDIFF(DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH
+        ),CURRENT_DATE ()) =0)
+        UNION ALL
+        (SELECT
+        s.startprogramid,
+        s.programlistid,
+        s.programname,
+        s.informpeople,
+        s.starttheorydate,
+        s.theorysite,
+        s.startoperationdate,
+        s.operationsite,
+        s.expirationdate,
+        s.materialsexpirationdate,
+        s.informperson,
+        s.programcode,
+        s.programhard,
+        s.insideoutside,
+        s.mandatory,
+        s.isonline,
+        s.thelength,
+        s.validity,
+        s.money,
+        s.remindtime,
+        s.isfirst,
+        s.applydata,
+        s.applydataurl,
+        s.standard,
+        s.questionnum,
+        s.programtype,
+        s.actualstartdate,
+        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS MODIFYON
+        FROM
+        startprogram AS s
+        INNER JOIN
+        trainjoinlist AS t
+        ON
+        s.startprogramid = t.startprogramid
+        WHERE
+        t.`STATUS` = '0' AND
+        t.personnelid = #{id}
+        AND
+        t.jointype = '正常'
+        AND
+        ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+        AND s.starttheorydate &lt;> ""
+        AND s.starttheorydate IS NOT NULL
+        AND s.programtype in ('BC039004')
+        AND s.isonline='BC032002'
+        AND DATEDIFF(DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH
+        ),CURRENT_DATE ()) =0)
+        ORDER BY
+		MODIFYON ASC
+    </select>
+
 
     <!--    获取强制的通过/未通过-->
     <select id="getMandatoryInfo" resultType="com.nt.dao_BASF.VO.PassingRateVo">
