@@ -98,8 +98,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             String value = ex.getSupplierinfor_id();
             companyMap.put(key, value);
         }
+        Calendar calendar= Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -3);
+        int year = calendar.get(Calendar.YEAR);
         // 获取活用情报信息
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
+        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
         for ( Coststatistics c : allCostList ) {
             // 合计费用
             double totalmanhours = 0;
