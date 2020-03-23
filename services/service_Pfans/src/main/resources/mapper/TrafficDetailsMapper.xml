@@ -4,7 +4,7 @@
     <select id="getCount" resultType="Double">
         select IFNULL(sum(IFNULL(CAST(FOREIGNCURRENCY as  DECIMAL ),0)),0) from trafficdetails where EVECTION_ID = #{Evectionid} and CURRENCY = #{Currency}
         union all
-        select IFNULL(sum(IFNULL(CAST(TRAVEL as  DECIMAL ),0)),0) from accommodationdetails where EVECTION_ID = #{Evectionid} and ACCOMMODATIONALLOWANCE = #{Currency}
+        select IFNULL(sum(IFNULL(CAST(TRAVEL as  DECIMAL ),0)),0) from accommodationdetails where EVECTION_ID = #{Evectionid} and CURRENCY = #{Currency}
         union all
         select IFNULL(sum(IFNULL(CAST(FOREIGNCURRENCY as  DECIMAL ),0)),0) from otherdetails where EVECTION_ID = #{Evectionid} and CURRENCY = #{Currency}
     </select>

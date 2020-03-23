@@ -335,9 +335,9 @@ public class EvectionServiceImpl implements EvectionService {
 //            if(currencyexchangeList != null){
 //                for(Currencyexchange curren : currencyexchangeList){
 //                    String curRear = curren.getExchangerate();         //兑换汇率
-////                    String curBefore = detail.getAccommodationallowance();
+////                    String curBefore = detail.getcurrency();
 //                    Dictionary dictionary = new Dictionary();
-//                    String accflg = ((AccommodationDetails) detail).getAccommodationallowance();
+//                    String accflg = ((AccommodationDetails) detail).getcurrency();
 //                    dictionary.setCode(accflg);
 ////                    dictionary.setCode("PJ003002");
 //                    List<Dictionary>  aa = dictionaryService.getDictionaryList(dictionary);
