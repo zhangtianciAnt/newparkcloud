@@ -85,7 +85,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--事业年度开始获取年休
     //@Scheduled(cron="10 * * * * ?")测试用
-    //@Scheduled(cron="0 0 0 1 4 ? *")//正式时间每年4月1日零时执行
+    @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
