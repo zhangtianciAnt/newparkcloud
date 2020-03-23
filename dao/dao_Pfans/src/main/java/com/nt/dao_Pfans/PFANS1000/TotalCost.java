@@ -84,5 +84,9 @@ public class TotalCost extends BaseModel {
      */
     @Column(name = "REMARK")
     private String remark;
-
+    /**
+     * 汇率
+     */
+    @Column(name = "EXCHANGERATE")
+    private String exchangerate;
 }

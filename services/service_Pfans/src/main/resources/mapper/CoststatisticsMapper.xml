@@ -22,6 +22,7 @@
 		inner join expatriatesinfor exp
 		on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
 		where df.status = '0'
+		and df.year = #{year}
 		group by exp.EXPATRIATESINFOR_ID
 	</select>
 

@@ -129,9 +129,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             String value = ex.getSupplierinfor_id();
             user2CompanyMap.put(key, value);
         }
-
-
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH,-3);
+        int year = calendar.get(Calendar.YEAR);
+        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
         for ( Coststatistics c : allCostList ) {
