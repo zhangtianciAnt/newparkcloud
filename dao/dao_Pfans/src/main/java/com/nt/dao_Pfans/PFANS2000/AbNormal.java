@@ -168,4 +168,16 @@ public class AbNormal extends BaseModel {
      */
     @Column(name = "RE_LENGTHTIME")
     private String relengthtime;
+    /**
+     * 休假类型
+     */
+    @Column(name = "VACATIONTYPE")
+    private String vacationtype;
+
+    /**
+     * 实际休假类型
+     */
+    @Column(name = "REVACATIONTYPE")
+    private String revacationtype;
+
 }
