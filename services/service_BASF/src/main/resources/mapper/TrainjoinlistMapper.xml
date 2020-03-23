@@ -37,22 +37,19 @@
         INNER JOIN startprogram AS s ON t.startprogramid = s.startprogramid
         WHERE
         t.`STATUS` = '0'
-        AND t.startprogramid IN (
-        SELECT
-        s.startprogramid
-        FROM
-        startprogram AS s
-        WHERE
-        s.`STATUS` = "0"
         AND t.finallyexamdate IS NOT NULL
         AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
         AND s.programtype = 'BC039004'
         AND s.isonline = 'BC032001'
+        AND
+        t.jointype = '正常'
+        AND
+        t.throughtype = '通过'
         AND DATEDIFF(
         DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
         CURRENT_DATE ()) = 0
-        )) UNION ALL
+        ) UNION ALL
         (
         SELECT
         t.trainjoinlistid,
@@ -66,21 +63,18 @@
         INNER JOIN startprogram AS s ON t.startprogramid = s.startprogramid
         WHERE
         t.`STATUS` = '0'
-        AND t.startprogramid IN (
-        SELECT
-        s.startprogramid
-        FROM
-        startprogram AS s
-        WHERE
-        s.`STATUS` = "0"
         AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
         AND s.programtype = 'BC039004'
         AND s.isonline = 'BC032002'
+        AND
+        t.jointype = '正常'
+        AND
+        t.throughtype = '通过'
         AND DATEDIFF(
         DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
         CURRENT_DATE ()) = 0
-        ))
+        )
         ORDER BY
         dueDate ASC
     </select>

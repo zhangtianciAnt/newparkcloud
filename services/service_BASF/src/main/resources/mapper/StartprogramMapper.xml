@@ -135,7 +135,7 @@
         AND
         t.jointype = '正常'
         AND
-        ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+        t.throughtype = '通过'
         AND t.finallyexamdate IS NOT NULL
         AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
@@ -186,7 +186,7 @@
         AND
         t.jointype = '正常'
         AND
-        ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+        t.throughtype = '通过'
         AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
         AND s.programtype in ('BC039004')

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @ProjectName: BASF应急平台
@@ -78,6 +79,12 @@ public class Trainjoinlist extends BaseModel {
      * 考试次数
      */
     private Integer number;
+
+
+    /**
+     * 最后考核日期
+     */
+    private Date finallyexamdate;
 
     /**
      * 备注
