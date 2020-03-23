@@ -193,7 +193,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                 attendance.setNormal("8");
                 // 设置统计外出的时间
-                //attendance.setAbsenteeism();
+                attendance.setAbsenteeism("0.25");
                 attendance.setCenter_id(punchcard.getCenter_id());
                 attendance.setGroup_id(punchcard.getGroup_id());
                 attendance.setTeam_id(punchcard.getTeam_id());
@@ -816,7 +816,25 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //打卡记录加班时间
                                             Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000;
                                             shijiworkHours = String.valueOf(result3 - Double.valueOf(ad.getAbsenteeism()));
-                                            if(Double.valueOf(shijiworkHours) < 8)
+                                            if(Double.valueOf(shijiworkHours) >= 8)
+                                            {
+                                                result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+                                                result2 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+                                                if(result1 >=4 && result2>=4)
+                                                {
+                                                    shijiworkHours = shijiworkHours;
+                                                }
+                                                else
+                                                {
+                                                    //上午上班时间
+                                                    result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+                                                    //下午上班时间
+                                                    result2 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+                                                    result3 = Double.valueOf(String.valueOf(result1 > result2 ? result1 : result2)) / 60 / 60 / 1000;
+                                                    shijiworkHours = String.valueOf(result3);
+                                                }
+                                            }
+                                            else
                                             {
                                                 //上午上班时间
                                                 result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
@@ -829,14 +847,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         //青年节，妇女节换代休
                                         if(Double.valueOf(shijiworkHours)>= Double.valueOf(workinghours) *2)
                                         {
-                                            ad.setNormal(workinghours);
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //ad.setAbsenteeism("0");
+                                            ad.setNormal(df.format(Double.valueOf(workinghours)-Double.valueOf(ad.getAbsenteeism())));
                                             if(!(ad.getWomensday() == null || ad.getWomensday().isEmpty()))
                                             {
-                                                ad.setWomensday(df.format(workinghours));
+                                                ad.setWomensday(df.format(Double.valueOf(workinghours)));
                                             }
                                             if(!(ad.getYouthday() == null || ad.getYouthday().isEmpty()))
                                             {
-                                                ad.setYouthday(df.format(workinghours));
+                                                ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                             }
 
                                             //换代休0.5天
@@ -846,17 +866,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                         else if(Double.valueOf(shijiworkHours)>= Double.valueOf(workinghours) && Double.valueOf(shijiworkHours) <=Double.valueOf(workinghours) *2)
                                         {
-                                            ad.setNormal(workinghours);
-
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //ad.setAbsenteeism("0");
+                                            ad.setNormal(df.format(Double.valueOf(workinghours)-Double.valueOf(ad.getAbsenteeism())));
                                             if(Double.valueOf(leavetime) + Double.valueOf(shijiworkHours) >= Double.valueOf(workinghours) *2)
                                             {
                                                 if(!(ad.getWomensday() == null || ad.getWomensday().isEmpty()))
                                                 {
-                                                    ad.setWomensday(df.format(workinghours));
+                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
                                                 }
                                                 if(!(ad.getYouthday() == null || ad.getYouthday().isEmpty()))
                                                 {
-                                                    ad.setYouthday(df.format(workinghours));
+                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                                 }
                                                 //换代休0.5天
                                                 String duration = "4";
@@ -934,7 +955,25 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 //打卡记录加班时间
                                                 Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000;
                                                 shijiworkHours = String.valueOf(result3 - Double.valueOf(ad.getAbsenteeism()));
-                                                if(Double.valueOf(shijiworkHours) < 8)
+                                                if(Double.valueOf(shijiworkHours) >= 8)
+                                                {
+                                                    result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+                                                    result2 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+                                                    if(result1 >=4 && result2>=4)
+                                                    {
+                                                        shijiworkHours = shijiworkHours;
+                                                    }
+                                                    else
+                                                    {
+                                                        //上午上班时间
+                                                        result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+                                                        //下午上班时间
+                                                        result2 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+                                                        result3 = Double.valueOf(String.valueOf(result1 > result2 ? result1 : result2)) / 60 / 60 / 1000;
+                                                        shijiworkHours = String.valueOf(result3);
+                                                    }
+                                                }
+                                                else
                                                 {
                                                     //上午上班时间
                                                     result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
@@ -962,7 +1001,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 //操作代休表
                                                 insertReplace(ad,tokenModel,"2",duration);
                                             }
-                                            ad.setSpecialday(duration == null ? null:df.format(duration));
+                                            ad.setSpecialday(duration == null ? null:df.format(Double.valueOf(duration)));
                                         }
                                     }
                                     ad.setNormal(ad.getNormal() == null ? null :(ad.getNormal() =="0") ? null :ad.getNormal());
