@@ -56,16 +56,28 @@ public class Replacerest extends BaseModel {
     private String application_date;
 
     /**
-     * 代休类型
+     * 代休-周末
      */
     @Column(name = "TYPE")
     private String type;
 
     /**
-     * 时长
+     * 代休-周末时长
      */
     @Column(name = "DURATION")
     private String duration;
+
+    /**
+     * 代休-特殊
+     */
+    @Column(name = "TYPE_TESHU")
+    private String type_teshu;
+
+    /**
+     * 代休-特殊时长
+     */
+    @Column(name = "DURATION_TESHU")
+    private String duration_teshu;
 
     /**
      * 承认状态

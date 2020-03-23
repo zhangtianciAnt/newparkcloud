@@ -33,12 +33,16 @@
     <select id="selectAbNormalThisYear" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         select
         ERROR_TYPE errortype,
-        LENGTHTIME lengthtime
+        LENGTHTIME lengthtime,
+        OCCURRENCE_DATE occurrencedate,
+        FINISHED_DATE finisheddate,
+        PERIOD_START  periodstart,
+        PERIOD_END  periodend
         from abnormal
-        where abnormal.occurrence_date >= #{occurrencedate}
-        and abnormal.occurrence_date &lt;= #{finisheddate}
-        and abnormal.FINISHED_DATE &gt;= #{occurrencedate}
-        and abnormal.FINISHED_DATE &lt;= #{finisheddate}
+        where ((abnormal.occurrence_date >= #{occurrencedate}
+        and abnormal.occurrence_date &lt;= #{finisheddate})
+        or (abnormal.FINISHED_DATE &gt;= #{occurrencedate}
+        and abnormal.FINISHED_DATE &lt;= #{finisheddate}))
         and abnormal.user_id = #{user_id}
         and abnormal.status = #{status}
     </select>
@@ -47,6 +51,20 @@
          SUM(lengthtime) AS lengthtime
         FROM abnormal
         WHERE error_type = 'PR013008'
+    </select>
+    <select id="selectAbNormalDate" resultType="Double">
+        select sum(timestampdiff(day,application_date,occurrence_date) + 1) as datelength
+        from abnormal
+        where createon
+        between date_sub(now(), interval 365 day) and date_sub(now(), interval 0 day)
+        and error_type = 'pr013009'
+        and user_id = #{userid}
+    </select>
+    <select id="selectAbNormalParent" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select * from abnormal
+        where year(createon)=year(now())
+        and error_type = 'pr013014'
+        and user_id = #{userid}
     </select>
 </mapper>
 

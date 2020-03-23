@@ -125,14 +125,16 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> user2CompanyMap = new HashMap<String, String>();
         for ( Expatriatesinfor ex : companyList) {
-            String key = ex.getExpname();
-            String value = ex.getSuppliername();
+            String key = ex.getExpatriatesinfor_id();
+            String value = ex.getSupplierinfor_id();
             user2CompanyMap.put(key, value);
         }
-
-
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH,-3);
+        int year = calendar.get(Calendar.YEAR);
+        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
+        DecimalFormat df = new DecimalFormat("######0.00");
         for ( Coststatistics c : allCostList ) {
             String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
             CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
@@ -172,7 +174,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
 //                company.setCost1("");
 //                company.setManhour1("");
-                BeanUtils.setProperty(company, p_cost, newCost);
+                BeanUtils.setProperty(company, p_cost, df.format(newCost));
                 BeanUtils.setProperty(company, p_manhour, newManhour);
                 totalcost += cost;
                 totalmanhours += manhour;
@@ -188,8 +190,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 oldTotalmanhours = Double.parseDouble(company.getTotalmanhours());
             } catch (Exception e) {}
 
-            company.setTotalcost(oldTotalcost + totalcost + "");
-            company.setTotalmanhours(oldTotalmanhours + totalmanhours + "");
+            company.setTotalcost(df.format(oldTotalcost + totalcost));
+            company.setTotalmanhours(df.format(oldTotalmanhours + totalmanhours));
             companyMap.put(bpcompany, company);
         }
         result.put("company", new ArrayList<>(companyMap.values()));

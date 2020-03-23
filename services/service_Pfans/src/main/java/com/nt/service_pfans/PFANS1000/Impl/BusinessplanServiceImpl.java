@@ -8,6 +8,7 @@ import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Vo.ActualPL;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.BussinessPlanPL;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,6 +51,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private PersonnelplanMapper personnelplanMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
     //private BusinessplandetMapper businessplandetMapper;
 
@@ -64,49 +68,18 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public void updateBusinessplanVo(BusinessplanVo businessplanVo, TokenModel tokenModel) throws Exception {
-        Businessplan businessplan = new Businessplan();
-        BeanUtils.copyProperties(businessplanVo.getBusinessplan(), businessplan);
+    public void updateBusinessplanVo(Businessplan businessplan, TokenModel tokenModel) throws Exception {
         businessplan.preUpdate(tokenModel);
-        businessplanMapper.updateByPrimaryKey(businessplan);
-        String businessplanid = businessplan.getBusinessplanid();
-        Pieceworktotal piece = new Pieceworktotal();
-        Totalplan total = new Totalplan();
-        piece.setBusinessplanid(businessplanid);
-        total.setBusinessplanid(businessplanid);
-        pieceworktotalMapper.delete(piece);
-        totalplanMapper.delete(total);
-        List<Pieceworktotal> pieceworktotallist = businessplanVo.getPieceworktotal();
-        List<Totalplan> totalplanlist = businessplanVo.getTotalplan();
-        if (pieceworktotallist != null) {
-            int rowindex = 0;
-            for (Pieceworktotal pieceworktotal : pieceworktotallist) {
-                rowindex = rowindex + 1;
-                pieceworktotal.preInsert(tokenModel);
-                pieceworktotal.setPieceworktotal_id(UUID.randomUUID().toString());
-                pieceworktotal.setBusinessplanid(businessplanid);
-                pieceworktotal.setRowindex(rowindex);
-                pieceworktotalMapper.insertSelective(pieceworktotal);
-            }
-        }
-        if (totalplanlist != null) {
-            int rowindex = 0;
-            for (Totalplan totalplan : totalplanlist) {
-                rowindex = rowindex + 1;
-                totalplan.preInsert(tokenModel);
-                totalplan.setTotalplan_id(UUID.randomUUID().toString());
-                totalplan.setBusinessplanid(businessplanid);
-                totalplan.setRowindex(rowindex);
-                totalplanMapper.insertSelective(totalplan);
-            }
-        }
+        businessplanMapper.updateByPrimaryKeySelective(businessplan);
     }
 
     @Override
     public String[] getPersonPlan(int year, String groupid) throws Exception {
         String[] personTable = new String[4];
-
         List<ActualPL> actualPl = businessplanMapper.getAcutal(groupid,year + "-04-01", (year + 1) + "-03-31");
+        for (ActualPL pl: actualPl) {
+             Convert(pl,"code");
+        }
         List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
         PersonnelPlan personnelPlan = new PersonnelPlan();
         personnelPlan.setYears(year);
@@ -151,6 +124,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Override
     public void insertBusinessplan(Businessplan businessplan, TokenModel tokenModel) throws Exception {
         String businessplanid = UUID.randomUUID().toString();
+        List<BussinessPlanPL> pl = JSON.parseArray(businessplan.getTableP(),BussinessPlanPL.class);
         businessplan.setBusinessplanid(businessplanid);
         businessplan.preInsert(tokenModel);
         businessplanMapper.insert(businessplan);
@@ -301,6 +275,17 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             }
         }
         return 0;
+    }
+
+    private<T> void Convert(T t,String val) throws Exception{
+        Field[] fields = t.getClass().getDeclaredFields();
+        for (int i = 0; i < fields.length; i++) {
+            fields[i].setAccessible(true);
+            if (!fields[i].getName().equals(val)) {
+                String value = df.format(new BigDecimal(fields[i].get(t).toString()));
+                fields[i].set(t, value);
+            }
+        }
     }
 
     //获取第二层 type=2 groupOrg

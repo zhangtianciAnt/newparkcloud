@@ -8,6 +8,7 @@ import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -26,7 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -90,12 +94,15 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> companyMap = new HashMap<String, String>();
         for ( Expatriatesinfor ex : companyList) {
-            String key = ex.getExpname();
-            String value = ex.getSuppliername();
+            String key = ex.getExpatriatesinfor_id();
+            String value = ex.getSupplierinfor_id();
             companyMap.put(key, value);
         }
+        Calendar calendar= Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -3);
+        int year = calendar.get(Calendar.YEAR);
         // 获取活用情报信息
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(coststatistics);
+        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
         for ( Coststatistics c : allCostList ) {
             // 合计费用
             double totalmanhours = 0;
@@ -116,7 +123,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
                 } catch (Exception e) {}
                 double cost = price * manhour;
-                BeanUtils.setProperty(c, "cost" + i, cost);
+                BeanUtils.setProperty(c, "cost" + i, String.format("%.2f", cost));
                 totalmanhours += manhour;
                 totalcost += cost;
                 if ( i%3 ==0 ) {
@@ -126,12 +133,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     if ( variousfundsMap.containsKey(variousKey) ) {
                         various = variousfundsMap.get(variousKey);
                     }
-                    BeanUtils.setProperty(c, "expense" +i, various);
-                    BeanUtils.setProperty(c, "contract" +i, various + totalcost);
+                    BeanUtils.setProperty(c, "expense" +i, String.format("%.2f", various));
+                    BeanUtils.setProperty(c, "contract" +i, String.format("%.2f", various + totalcost));
 
                     BeanUtils.setProperty(c,"support" + i, i );
-                    BeanUtils.setProperty(c, "totalcost" + i, totalcost);
-                    BeanUtils.setProperty(c, "totalmanhours" + i, totalmanhours);
+                    BeanUtils.setProperty(c, "totalcost" + i, String.format("%.2f", totalcost));
+                    BeanUtils.setProperty(c, "totalmanhours" + i, String.format("%.2f", totalmanhours));
                     totalcost = 0;
                     totalmanhours = 0;
                 }
@@ -175,24 +182,28 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         for ( Priceset priceset : allPriceset ) {
             Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
             int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
+            String totalUnit = "0";
+            if(StringUtils.isNotBlank(priceset.getTotalunit())){
+                totalUnit = priceset.getTotalunit().trim();
+            }
             if ( pointDate.before(startDate) ) {
                 for ( int i=1; i<=12; i++) {
                     String key = priceset.getUser_id() + "price" + i;
                     Double value = 0.0;
-                    value = Double.parseDouble(priceset.getTotalunit().trim());
+                    value = Double.parseDouble(totalUnit);
                     pricesetMap.put(key, value);
                 }
             }else {
                 if(startM >= 1 && startM<=3){
                     for (int k = startM; k<=3; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(priceset.getTotalunit().trim()));
+                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
                     }
                 }else {
                     for (int k = startM; k<=12; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(priceset.getTotalunit().trim()));
+                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
                     }
                     for (int k = 1; k<=3; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(priceset.getTotalunit().trim()));
+                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
                     }
                 }
             }

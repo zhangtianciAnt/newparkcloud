@@ -25,10 +25,10 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     @Autowired
     private DelegainformationMapper delegainformationMapper;
 
-    @Override
-    public List<DelegainformationVo> getDelegainformation() throws Exception {
-        return delegainformationMapper.getinfo();
-    }
+//    @Override
+////    public List<DelegainformationVo> getDelegainformation() throws Exception {
+////        return delegainformationMapper.getinfo();
+////    }
 
     @Override
     public List<DelegainformationVo> getYears(String year) throws Exception {

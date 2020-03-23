@@ -3,6 +3,7 @@ package com.nt.service_Org.Impl;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
@@ -11,6 +12,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -50,6 +53,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JsTokenService jsTokenService;
 
+    @Autowired
+    private TokenService tokenService;
 
     /**
      * @方法名：getUserAccount
@@ -113,7 +118,18 @@ public class UserServiceImpl implements UserService {
         if (userAccountlist.size() <= 0) {
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
         } else {
-            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "");
+            List<String> roleIds = new ArrayList<String>();
+            query = new Query();
+            query.addCriteria(Criteria.where("_id").is(userAccountlist.get(0).get_id()));
+            UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+            List<Role> roles = account.getRoles();
+            if (roles != null) {
+                for (int i = 0; i < roles.size(); i++) {
+                    roleIds.add(roles.get(i).get_id());
+                }
+            }
+
+            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "",roleIds);
         }
 
     }
@@ -168,6 +184,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public CustomerInfo addAccountCustomer(UserVo userVo) throws Exception {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
         mongoTemplate.save(userAccount);
@@ -493,6 +510,7 @@ public class UserServiceImpl implements UserService {
             model.add("Rank");
             model.add("入社时间");
             model.add("银行账号");
+            model.add("邮箱");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -604,6 +622,9 @@ public class UserServiceImpl implements UserService {
                     if(value.get(29) != null) {
                         userinfo.setSeatnumber(value.get(29).toString());
                     }
+                    if(value.get(30) != null) {
+                        userinfo.setEmail(value.get(30).toString());
+                    }
                 }
 
                 UserVo uservo = new UserVo();
@@ -611,6 +632,8 @@ public class UserServiceImpl implements UserService {
                 uservo.setCustomerInfo(customerInfo);
                 listVo.add(customerInfo);
                 uservo.setUserAccount(useraccount);
+                TokenModel tokenModel = tokenService.getToken(request);
+                useraccount.preInsert(tokenModel);
                 addAccountCustomer(uservo);
                 accesscount = accesscount + 1;
             }

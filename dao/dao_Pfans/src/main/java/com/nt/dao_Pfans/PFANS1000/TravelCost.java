@@ -82,7 +82,12 @@ public class TravelCost extends BaseModel {
     /**
      * 发票说明
      */
-    @Column(name = "REMARK")
-    private String remark;
+    @Column(name = "REMARKS")
+    private String remarks;
+    /**
+     * 汇率
+     */
+    @Column(name = "EXCHANGERATE")
+    private String exchangerate;
 
 }

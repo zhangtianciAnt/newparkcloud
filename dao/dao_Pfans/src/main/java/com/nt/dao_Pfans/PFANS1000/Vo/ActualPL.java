@@ -11,16 +11,16 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ActualPL {
     private String code;
-    private BigDecimal actual1;
-    private BigDecimal actual2;
-    private BigDecimal actual3;
-    private BigDecimal actual4;
-    private BigDecimal actual5;
-    private BigDecimal actual6;
-    private BigDecimal actual7;
-    private BigDecimal actual8;
-    private BigDecimal actual9;
-    private BigDecimal actual10;
-    private BigDecimal actual11;
-    private BigDecimal actual12;
+    private String actual1;
+    private String actual2;
+    private String actual3;
+    private String actual4;
+    private String actual5;
+    private String actual6;
+    private String actual7;
+    private String actual8;
+    private String actual9;
+    private String actual10;
+    private String actual11;
+    private String actual12;
 }

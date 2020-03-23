@@ -40,6 +40,12 @@ public class Pfans6004Controller {
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
+    @RequestMapping(value = "/getWithoutAuth", method = {RequestMethod.GET})
+    public ApiResult getWithoutAuth(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
+    }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getexpatriatesinforApplyOne(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
@@ -47,6 +53,7 @@ public class Pfans6004Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinforApplyOne(expatriatesinfor.getExpatriatesinfor_id()));
     }
 
@@ -87,6 +94,7 @@ public class Pfans6004Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        supplierinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(supplierinforService.getSupplierNameList(supplierinfor, request));
     }
 
@@ -105,6 +113,19 @@ public class Pfans6004Controller {
     public void download(HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
         ExcelOutPutUtil.OutPut("外驻人员登记表","waizhu.xlsx",data,response);
+    }
+
+    @RequestMapping(value = "/crAccount", method = {RequestMethod.POST})
+    public ApiResult crAccount(@RequestBody List<Expatriatesinfor> expatriatesinfor,HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            expatriatesinforService.crAccount(expatriatesinfor, tokenModel);
+            return ApiResult.success();
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
     }
 
 }

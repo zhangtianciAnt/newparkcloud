@@ -13,7 +13,10 @@ import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.*;
-import com.nt.utils.*;
+import com.nt.utils.AuthConstants;
+import com.nt.utils.LogicalException;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,19 +177,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
         workflowinstance.setDataid(startWorkflowVo.getDataId());
         workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
 //        workflowinstance.setTenantid(startWorkflowVo.getTenantId());
-//        workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
         if (Workflowinstancelist.size() > 0) {
             Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
             workflownodeinstance.setWorkflowinstanceid(Workflowinstancelist.get(0).getWorkflowinstanceid());
-//            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 //            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
             List<Workflownodeinstance> Workflownodeinstancelist = workflownodeinstanceMapper
                     .select(workflownodeinstance);
             for (Workflownodeinstance item : Workflownodeinstancelist) {
                 Workflowstep workflowstep = new Workflowstep();
                 workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-//                workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                 workflowstep.setItemid(startWorkflowVo.getUserId());
                 List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
 
@@ -267,8 +270,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 } else {
                     workflowLogDetailVo.setResult(stepResultConvert(it.getResult(), locale));
                 }
+                if ("3".equals(it.getResult())) {
 
-                workflowLogDetailVo.setUserId(it.getItemid());
+                    workflowLogDetailVo.setUserId(it.getCreateby());
+                } else {
+
+                    workflowLogDetailVo.setUserId(it.getItemid());
+                }
                 workflowLogDetailVo.setRemark(it.getRemark());
                 workflowLogDetailVo.setSdata(it.getCreateon());
                 workflowLogDetailVo.setEdata(it.getModifyon());
@@ -348,8 +356,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     } else {
                         workflowLogDetailVo.setResult(stepResultConvert(it.getResult(), locale));
                     }
+                    if ("3".equals(it.getResult())) {
 
-                    workflowLogDetailVo.setUserId(it.getItemid());
+                        workflowLogDetailVo.setUserId(it.getCreateby());
+                    } else {
+
+                        workflowLogDetailVo.setUserId(it.getItemid());
+                    }
                     workflowLogDetailVo.setRemark(it.getRemark());
                     workflowLogDetailVo.setSdata(it.getCreateon());
                     workflowLogDetailVo.setEdata(it.getModifyon());
@@ -495,11 +508,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
         String userId = "";
         UserVo user = userService.getAccountCustomerById(curentUser);
         String orgId = "";
-        if(StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getTeamid())){
+        if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getTeamid())) {
             orgId = user.getCustomerInfo().getUserinfo().getTeamid();
-        }else if(StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getGroupid())){
+        } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getGroupid())) {
             orgId = user.getCustomerInfo().getUserinfo().getGroupid();
-        }else if(StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getCenterid())){
+        } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getCenterid())) {
             orgId = user.getCustomerInfo().getUserinfo().getCenterid();
         }
 
@@ -507,11 +520,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
         OrgTree currentOrg = getCurrentOrg(orgs, orgId);
 
-        if(currentOrg.getUser().equals(curentUser)){
-            OrgTree upOrgs = upCurrentOrg(orgs,orgId);
-        }else{
+        if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+            throw new LogicalException("无上级人员信息！");
+        }
+        if (currentOrg.getUser().equals(curentUser)) {
+            OrgTree upOrgs = upCurrentOrg(orgs, orgId);
+            userId = upOrgs.getUser();
+        } else {
             userId = currentOrg.getUser();
         }
+
+        if(userId == null || StrUtil.isEmpty(userId)){
+            throw new LogicalException("无上级人员信息！");
+        }
+
         return userId;
     }
 
@@ -519,9 +541,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (org.get_id().equals(orgId)) {
             return org;
         } else {
-            if(org.getOrgs() !=null){
+            if (org.getOrgs() != null) {
                 for (OrgTree item : org.getOrgs()) {
-                    OrgTree or =  getCurrentOrg(item, orgId);
+                    OrgTree or = getCurrentOrg(item, orgId);
                     if (or.get_id().equals(orgId)) {
                         return or;
                     }
@@ -536,17 +558,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (org.get_id().equals(orgId)) {
             return null;
         } else {
-            for (OrgTree item : org.getOrgs()) {
-                OrgTree rst = upCurrentOrg(item, orgId);
-                if(rst == null){
-                    return org;
-                }else{
-                    return rst;
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree rst = upCurrentOrg(item, orgId);
+                    if (rst == null) {
+                        return org;
+                    } else {
+                        return rst;
+                    }
                 }
             }
         }
         return null;
     }
+
     // 0:进行中
     // 1：拒绝
     // 2：通过

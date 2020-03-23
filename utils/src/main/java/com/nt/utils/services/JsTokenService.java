@@ -18,7 +18,7 @@ public interface JsTokenService {
      * @param userId 指定用户的id
      * @return 生成的token
      */
-    JsTokenModel createToken(String userId, String tenantId, String userType, List<String> ownerList, String locale,String url) throws Exception;
+    JsTokenModel createToken(String userId, String tenantId, String userType, List<String> ownerList, String locale,String url,List<String> roleIds) throws Exception;
 
     JsTokenModel createTokenModel(JsTokenModel model) throws Exception;
 

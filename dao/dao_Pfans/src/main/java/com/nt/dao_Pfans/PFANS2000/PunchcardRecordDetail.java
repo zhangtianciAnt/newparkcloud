@@ -42,4 +42,7 @@ public class PunchcardRecordDetail extends BaseModel {
 
     @Column(name = "REGION ")
     private String region ;
+
+    @Column(name = "EVENTNO ")
+    private String eventno ;
 }

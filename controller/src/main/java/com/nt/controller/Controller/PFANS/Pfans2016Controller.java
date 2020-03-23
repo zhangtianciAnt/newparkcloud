@@ -34,14 +34,18 @@ public class Pfans2016Controller {
 
     @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
-        if (abNormal == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        try{
+            if (abNormal == null) {
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+            TokenModel tokenModel = tokenService.getToken(request);
+            //未承认
+            abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+            abNormalService.insert(abNormal, tokenModel);
+            return ApiResult.success();
+        }catch(Exception e){
+            return ApiResult.fail(e.getMessage());
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        //未承认
-        abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-        abNormalService.insert(abNormal, tokenModel);
-        return ApiResult.success();
     }
 
     @RequestMapping(value = "/updateInfo", method = {RequestMethod.POST})
@@ -69,5 +73,24 @@ public class Pfans2016Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(abNormalService.cklength(abNormal));
+    }
+
+    @RequestMapping(value = "/getSickleave", method = {RequestMethod.GET})
+    public ApiResult getSickleave(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(abNormalService.getSickleave(userid));
+    }
+
+
+    @RequestMapping(value = "/selectAbNormalParent", method = {RequestMethod.GET})
+    public ApiResult selectAbNormalParent(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(abNormalService.selectAbNormalParent(userid));
     }
 }

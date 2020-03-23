@@ -8,6 +8,8 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.AuthService;
+import com.nt.utils.dao.JsTokenModel;
+import org.apache.commons.collections.ArrayStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
@@ -26,51 +28,28 @@ public class AuthServiceImpl implements AuthService {
 
     //获取ownerlist
     @Override
-    public List<String> getOwnerList(String url, String useraccountid) throws Exception {
+    public List<String> getOwnerList(String url, JsTokenModel tokenModel) throws Exception {
         List<String> result = new ArrayList<String>();
-        List<String> roleIds = new ArrayList<String>();
         String actionId = "";
         //登录人所在组织的所有人GBB
         List<String> resultTeam = new ArrayList<String>();
         String flg = "0";
-        //根据人员查询所在组织的所有人人
-        Query cusquery = new Query();
-        cusquery.addCriteria(Criteria.where("userid").is(useraccountid));
-        CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
-        List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
-        String teamid = cus.getUserinfo().getTeamid();
-        String groupid = cus.getUserinfo().getGroupid();
-        String centerid = cus.getUserinfo().getCenterid();
-        if(!StringUtils.isNullOrEmpty(teamid)){
-            Query cusqueryteamid = new Query();
-            cusqueryteamid.addCriteria(Criteria.where("userinfo.teamid").is(teamid));
-            cuslist = mongoTemplate.find(cusqueryteamid, CustomerInfo.class);
-        }
-        else if(!StringUtils.isNullOrEmpty(groupid)){
-            Query cusquerygroupid = new Query();
-            cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(groupid));
-            cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
-        }
-        else if(!StringUtils.isNullOrEmpty(centerid)){
-            Query cusquerycenterid = new Query();
-            cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
-            cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
-        }
-        if(cuslist.size() > 0){
-            for(CustomerInfo cusinfo : cuslist){
-                resultTeam.add(cusinfo.getUserid());
+        List<String> roleIds = new ArrayList<String>();
+
+        if(tokenModel.getRoleIds() == null){
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+            UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+            List<Role> roles = account.getRoles();
+            if (roles != null) {
+                for (int i = 0; i < roles.size(); i++) {
+                    roleIds.add(roles.get(i).get_id());
+                }
             }
+            tokenModel.setRoleIds(roleIds);
         }
-        //根据条件检索数据
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(useraccountid));
-        UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
-        List<Role> roles = account.getRoles();
-        if (roles != null) {
-            for (int i = 0; i < roles.size(); i++) {
-                roleIds.add(roles.get(i).get_id());
-            }
-        }
+
+
         //根据条件检索数据
         Query newquery = new Query();
         newquery.addCriteria(Criteria.where("_id").in(roleIds));
@@ -78,18 +57,18 @@ public class AuthServiceImpl implements AuthService {
         List<Role> list = mongoTemplate.find(newquery, Role.class);
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-                List<AppPermission.menu> menus = list.get(i).getMenus();
-                var menu = menus.stream()
-                        .filter(info -> info.getMenuurl().equals(url))
-                        .collect(Collectors.toList());
-                if (menu != null && menu.size() > 0) {
-                    var action = menu.get(0).getActions().stream()
-                            .filter(item -> item.getActiontype().equals("0"))
-                            .collect(Collectors.toList());
-                    if (action != null && action.size() > 0) {
-                        actionId = action.get(0).get_id();
-                    }
-                }
+//                List<AppPermission.menu> menus = list.get(i).getMenus();
+//                var menu = menus.stream()
+//                        .filter(info -> info.getMenuurl().equals(url))
+//                        .collect(Collectors.toList());
+//                if (menu != null && menu.size() > 0) {
+//                    var action = menu.get(0).getActions().stream()
+//                            .filter(item -> item.getActiontype().equals("0"))
+//                            .collect(Collectors.toList());
+//                    if (action != null && action.size() > 0) {
+//                        actionId = action.get(0).get_id();
+//                    }
+//                }
                 List<AppPermission.menu.actions> actions = list.get(i).getActions();
                 if (!StrUtil.isEmpty(actionId)) {
                     String finalActionId = actionId;
@@ -103,17 +82,47 @@ public class AuthServiceImpl implements AuthService {
                         }
                         if (auth == 5) {
                             flg = "1";
-                            return resultTeam;
                         }
-                        continue;
                     }
                 }
             }
             if(flg.equals("1")){
+                //根据人员查询所在组织的所有人人
+                Query cusquery = new Query();
+                cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
+                if(cus == null){
+                    return new ArrayList<String>();
+                }
+                List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
+                String teamid = cus.getUserinfo().getTeamid();
+                String groupid = cus.getUserinfo().getGroupid();
+                String centerid = cus.getUserinfo().getCenterid();
+                if(!StringUtils.isNullOrEmpty(teamid)){
+                    Query cusqueryteamid = new Query();
+                    cusqueryteamid.addCriteria(Criteria.where("userinfo.teamid").is(teamid));
+                    cuslist = mongoTemplate.find(cusqueryteamid, CustomerInfo.class);
+                }
+                else if(!StringUtils.isNullOrEmpty(groupid)){
+                    Query cusquerygroupid = new Query();
+                    cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(groupid));
+                    cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+                }
+                else if(!StringUtils.isNullOrEmpty(centerid)){
+                    Query cusquerycenterid = new Query();
+                    cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
+                    cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+                }
+                if(cuslist.size() > 0){
+                    for(CustomerInfo cusinfo : cuslist){
+                        resultTeam.add(cusinfo.getUserid());
+                    }
+                }
+
                 result = resultTeam;
             }
             else{
-                result.add(useraccountid);
+                result.add(tokenModel.getUserId());
             }
             return result;
         }
