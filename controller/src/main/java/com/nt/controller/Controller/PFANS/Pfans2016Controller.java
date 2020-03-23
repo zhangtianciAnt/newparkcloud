@@ -70,4 +70,23 @@ public class Pfans2016Controller {
         }
         return ApiResult.success(abNormalService.cklength(abNormal));
     }
+
+    @RequestMapping(value = "/getSickleave", method = {RequestMethod.GET})
+    public ApiResult getSickleave(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(abNormalService.getSickleave(userid));
+    }
+
+
+    @RequestMapping(value = "/selectAbNormalParent", method = {RequestMethod.GET})
+    public ApiResult selectAbNormalParent(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(abNormalService.selectAbNormalParent(userid));
+    }
 }

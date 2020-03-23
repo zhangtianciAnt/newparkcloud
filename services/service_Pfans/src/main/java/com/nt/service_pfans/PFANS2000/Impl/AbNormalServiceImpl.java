@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
-import java.time.Duration;
 import java.util.*;
 
 @Service
@@ -35,6 +33,20 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
         return abNormalMapper.select(abNormal);
+    }
+
+    @Override
+    public List<AbNormal> selectAbNormalParent(String userid) throws Exception {
+        return abNormalMapper.selectAbNormalParent(userid);
+    }
+
+    @Override
+    public Double getSickleave(String userid) throws Exception {
+        Double a =abNormalMapper.selectAbNormalDate(userid);
+        if(a == null){
+            a = 0.0;
+        }
+        return a;
     }
 
     @Override

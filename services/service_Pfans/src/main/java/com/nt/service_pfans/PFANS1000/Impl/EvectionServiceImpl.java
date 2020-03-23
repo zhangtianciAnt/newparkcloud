@@ -145,15 +145,8 @@ public class EvectionServiceImpl implements EvectionService {
     }
 
     //    saveTotalCostList(trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
-    private void saveTravelCostList(List<TrafficDetails> trafficDetailslist, List<AccommodationDetails> accommodationdetailslist, List<OtherDetails> otherDetailslist, List<Invoice> invoicelist,
+    private void saveTravelCostList(String invoiceNo, List<TrafficDetails> trafficDetailslist, List<AccommodationDetails> accommodationdetailslist, List<OtherDetails> otherDetailslist, List<Invoice> invoicelist,
                                     List<Currencyexchange> currencyexchangeList, EvectionVo evectionVo, TokenModel tokenModel, String evectionid) throws Exception {
-        //发票编号
-        String invoiceNo = "";
-        Calendar cal = Calendar.getInstance();
-        String year = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DATE);
-
         // 发票日期，条件日期
         Date date = new Date();
         SimpleDateFormat myFormatter = new SimpleDateFormat("ddMMMyyyy", Locale.ENGLISH);
@@ -251,9 +244,7 @@ public class EvectionServiceImpl implements EvectionService {
                 insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
             }
 
-            String no = String.format("%2d", rowindex).replace(" ", "0");
-            String month1 = String.format("%2d", month).replace(" ", "0");
-            insertInfo.setInvoicenumber("WY" + year + month1 + day + no);
+            insertInfo.setInvoicenumber(invoiceNo);
             travelcostmapper.insertSelective(insertInfo);
         }
     }
@@ -427,7 +418,7 @@ public class EvectionServiceImpl implements EvectionService {
         evection.preUpdate(tokenModel);
         evectionMapper.updateByPrimaryKey(evection);
         String evectionid = evection.getEvectionid();
-
+        String invoiceNo = evection.getInvoiceno();
         TrafficDetails traffic = new TrafficDetails();
         traffic.setEvectionid(evectionid);
         trafficdetailsMapper.delete(traffic);
@@ -509,15 +500,34 @@ public class EvectionServiceImpl implements EvectionService {
                 currencyexchangeMapper.insertSelective(curr);
             }
         }
-        saveTravelCostList(trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
+        saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
     }
 
     @Override
     public void insertEvectionVo(EvectionVo evectionVo, TokenModel tokenModel) throws Exception {
+        //发票编号
+        String invoiceNo = "";
+        Calendar cal = Calendar.getInstance();
+        String year = new SimpleDateFormat("yy",Locale.CHINESE).format(Calendar.getInstance().getTime());
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DATE);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String no = "";
+        if(evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate())) != null){
+            int count = evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate()));
+            no=String.format("%2d", count + 1).replace(" ", "0");
+        }else {
+            no = "01";
+        }
+
+        String month1 = String.format("%2d", month).replace(" ", "0");
+        invoiceNo = "WY" + year + month1 + day + no;
+
         String evectionid = UUID.randomUUID().toString();
         Evection evection = new Evection();
         BeanUtils.copyProperties(evectionVo.getEvection(), evection);
+        evection.setInvoiceno(invoiceNo);
         evection.preInsert(tokenModel);
         evection.setEvectionid(evectionid);
         evectionMapper.insertSelective(evection);
@@ -585,7 +595,7 @@ public class EvectionServiceImpl implements EvectionService {
                 currencyexchangeMapper.insertSelective(curr);
             }
         }
-        saveTravelCostList(trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
+        saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
     }
 

@@ -81,9 +81,28 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     //新建
     @Override
     public void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
+        //发票编号
+        String invoiceNo = "";
+        Calendar cal = Calendar.getInstance();
+        String year = new SimpleDateFormat("yy",Locale.CHINESE).format(Calendar.getInstance().getTime());
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DATE);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String no = "";
+        if(publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null){
+            int count = publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()));
+            no=String.format("%2d", count + 1).replace(" ", "0");
+        }else {
+            no = "01";
+        }
+
+        String month1 = String.format("%2d", month).replace(" ", "0");
+        invoiceNo = "DL4AP" + year + month1 + day + no;
+
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(),publicExpense);
+        publicExpense.setInvoiceno(invoiceNo);
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
         publicExpenseMapper.insertSelective(publicExpense);
@@ -91,6 +110,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         List<PurchaseDetails> purchaseDetailslist = publicExpenseVo.getPurchasedetails();
         List<OtherDetails> otherDetailslist=publicExpenseVo.getOtherdetails();
         List<Invoice> invoicelist=publicExpenseVo.getInvoice();
+
         if (trafficDetailslist != null) {
             int rowundex = 0;
             for (TrafficDetails trafficDetails : trafficDetailslist) {
@@ -135,18 +155,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 invoicemapper.insertSelective(invoice);
             }
         }
-
-        saveTotalCostList(invoicelist, trafficDetailslist, purchaseDetailslist, otherDetailslist, publicExpenseVo, tokenModel, publicexpenseid);
+        saveTotalCostList(invoiceNo, invoicelist, trafficDetailslist, purchaseDetailslist, otherDetailslist, publicExpenseVo, tokenModel, publicexpenseid);
     }
 
-    private void saveTotalCostList(List<Invoice> invoicelist,List<TrafficDetails> trafficDetailslist,List<PurchaseDetails> purchaseDetailslist,
+    private void saveTotalCostList(String invoiceNo, List<Invoice> invoicelist,List<TrafficDetails> trafficDetailslist,List<PurchaseDetails> purchaseDetailslist,
                                    List<OtherDetails> otherDetailslist,PublicExpenseVo publicExpenseVo, TokenModel tokenModel,String publicexpenseid) throws Exception{
-        //发票编号
-        String invoiceNo = "";
-        Calendar cal = Calendar.getInstance();
-        String year = new SimpleDateFormat("yy",Locale.CHINESE).format(Calendar.getInstance().getTime());
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DATE);
         // 发票日期，条件日期
         Date date = new Date();
         SimpleDateFormat myFormatter = new SimpleDateFormat("ddMMMyyyy", Locale.ENGLISH);
@@ -329,9 +342,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //                }
             }
 
-            String no=String.format("%2d", rowindex).replace(" ", "0");
-            String month1 = String.format("%2d", month).replace(" ", "0");
-            insertInfo.setInvoicenumber("DL4AP" + year + month1 + day + no);
+
+            insertInfo.setInvoicenumber(invoiceNo);
             totalCostMapper.insertSelective(insertInfo);
         }
     }
@@ -522,7 +534,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         publicExpense.preUpdate(tokenModel);
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
         String spublicexpenseid = publicExpense.getPublicexpenseid();
-
+        String invoiceNo = publicExpense.getInvoiceno();
         TrafficDetails traffic = new TrafficDetails();
         traffic.setPublicexpenseid(spublicexpenseid);
         trafficDetailsMapper.delete(traffic);
@@ -592,7 +604,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         TotalCost totalCost=new TotalCost();
         totalCost.setPublicexpenseid(spublicexpenseid);
         totalCostMapper.delete(totalCost);
-        saveTotalCostList(invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
+        saveTotalCostList(invoiceNo, invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
     }
 
     //按id查询
