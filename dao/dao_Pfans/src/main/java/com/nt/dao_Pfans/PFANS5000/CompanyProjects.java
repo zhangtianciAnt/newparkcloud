@@ -303,4 +303,16 @@ public class CompanyProjects extends BaseModel {
      */
     @Column(name = "TOOLSORGS")
     private String toolsorgs;
+
+    /**
+     * 委托元(在华)
+     */
+    @Column(name = "CHENTRUST")
+    private String chentrust;
+
+    /**
+     * 委托元(在华以外)
+     */
+    @Column(name = "OUENTRUST")
+    private String ouentrust;
 }
