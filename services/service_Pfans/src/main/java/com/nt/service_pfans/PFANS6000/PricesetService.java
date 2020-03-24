@@ -11,6 +11,8 @@ public interface PricesetService {
     //获取单价设定列表
     List<Priceset> gettlist() throws Exception;
 
+    List<Priceset> getPricesetList(Priceset priceset) throws Exception;
+
     //单价设定生成
     public Priceset pricesetgenerate(String priceset_id) throws Exception;
 

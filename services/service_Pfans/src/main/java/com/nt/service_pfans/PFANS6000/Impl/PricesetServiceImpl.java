@@ -24,7 +24,8 @@ public class PricesetServiceImpl implements PricesetService {
 
     /**
      * 获取单价设定列表
-     * @param priceset
+     *
+     * @param
      * @return
      * @throws Exception
      */
@@ -32,6 +33,12 @@ public class PricesetServiceImpl implements PricesetService {
     public List<Priceset> gettlist() throws Exception {
         return pricesetMapper.gettlist();
     }
+
+    @Override
+    public List<Priceset> getPricesetList(Priceset priceset) throws Exception {
+        return pricesetMapper.select(priceset);
+    }
+
 
     @Override
     public Priceset pricesetgenerate(String pricesetid) throws Exception {
