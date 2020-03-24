@@ -1945,10 +1945,10 @@ public class GivingServiceImpl implements GivingService {
                 if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
                     continue;
                 }
-                // 上月工资结算时点过后入职没发工资的人
+                Induction induction = new Induction();
+                induction.setGiving_id(givingId);
+                // 上月工资结算时点过后入职没发工资的人（包含上月入职和本月入职的员工）
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
-                    Induction induction = new Induction();
-                    induction.setGiving_id(givingId);
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
@@ -1962,6 +1962,26 @@ public class GivingServiceImpl implements GivingService {
                     // 计算給料和补助
                     calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
                     inductions.add(induction);
+                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                    // 本月转正或未转正的人
+                    Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    if (endDate.getTime() >= mouthStart) {
+                        // 本月转正
+                        if (endDate.getTime() <= mouthEnd) {
+                            // 正社员工開始日
+                            staffStartDate = endDate.toString();
+                            induction.setStartdate(endDate);
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                            inductions.add(induction);
+                        } else {
+                            // 本月未转正
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                            inductions.add(induction);
+                        }
+                    }
+
                 }
             }
         }
@@ -1996,12 +2016,9 @@ public class GivingServiceImpl implements GivingService {
         // 上月出勤日数
         double lastAttendanceDays = lastMonthDays + lastMonthSuitDays;
         induction.setAttendance(String.valueOf(lastAttendanceDays));
-        // 本月未转正员为对象
-        if(StringUtils.isEmpty(staffStartDate)){
-            // 今月試用社員出勤日数
-            thisMonthSuitDays = calculateAttendanceDays(thisMonthSuitDays);
-            induction.setTrial(String.valueOf(thisMonthSuitDays));
-        }
+        // 今月試用社員出勤日数
+        thisMonthSuitDays = calculateAttendanceDays(thisMonthSuitDays);
+        induction.setTrial(String.valueOf(thisMonthSuitDays));
         // 給料
         if (StringUtils.isNotEmpty(staffStartDate)) {
             induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
@@ -2032,11 +2049,15 @@ public class GivingServiceImpl implements GivingService {
         // 保留小数点后两位四舍五入
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
-        Calendar now = Calendar.getInstance();
-        Calendar last = Calendar.getInstance();
-        last.add(Calendar.MONTH, 1);
-        now.add(Calendar.MONTH, -1);
-        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 上个月
+        Calendar lastMonth = Calendar.getInstance();
+        lastMonth.add(Calendar.MONTH, -1);
+        // 上个月最后一日
+        int lastMonthLastDay = lastMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 本月
+        Calendar thisMonth = Calendar.getInstance();
+        // 本月最后一日
+        int thisMonthLastDay = thisMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         // 納付率表抽取相关数据
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
@@ -2052,10 +2073,10 @@ public class GivingServiceImpl implements GivingService {
                 officialSubsidy = Double.parseDouble(diction.getValue2());
             }
         }
-        // 查询退职人员信息
+        // 查询退职人员信息（本月退职人员为对象）
         Criteria criteria = Criteria.where("userinfo.resignation_date")
-                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(now.getTime())) + "-" + lastDay)
-                .lt(last.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(last.getTime())) + "-01")
+                .gte(lastMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + lastMonthLastDay)
+                .lt(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonth.getTime())) + "-" + thisMonthLastDay)
                 .and("status").is("0");
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
