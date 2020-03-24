@@ -65,15 +65,15 @@ public class BASF21209Controller {
     }
 
     //更新培训列表
-    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+        @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
         if (startprogram == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        Startprogram startprogramnew = new Startprogram();
         startprogramServices.update(startprogram, tokenModel);
-
-        List<Startprogram> startprogramlist  = startprogramServices.select(startprogram);
+        List<Startprogram> startprogramlist  = startprogramServices.select(startprogramnew);
 
         //负责人list
         String programhardlist = startprogramlist.get(0).getProgramhard();
@@ -106,16 +106,21 @@ public class BASF21209Controller {
                             "<td>通过状态</td>" +
                             "</tr>";
 
-            for(int j = 0 ;j < 3; j++)
+            for(int j = 0 ;j < trainjoinlists.size(); j++)
             {
-                String neirong =  "<tr>" +
-                        "<td>张三"+j+"</td>" +
-                        "<td>001</td>" +
-                        "<td>80</td>" +
-                        "<td>通过</td>" +
-                        "</tr>";
+                String customername = trainjoinlists.get(j).getCustomername();
+                String documentnumber = trainjoinlists.get(j).getJobnumber();
+                String performance = trainjoinlists.get(j).getPerformance();
+                String throughtype = trainjoinlists.get(j).getThroughtype();
 
-                EMAILCONTENT = EMAILCONTENT + neirong ;
+                String neirong =
+                        "<tr>" +
+                        "<td>"+customername+"</td>" +
+                        "<td>"+documentnumber+"</td>" +
+                        "<td>"+performance+"</td>" +
+                        "<td>"+throughtype+"</td>" +
+                        "</tr>";
+                EMAILCONTENT = EMAILCONTENT + neirong;
             }
             EMAILCONTENT = EMAILCONTENT + "</table>";
             SendEmail sendemail = new SendEmail();
@@ -127,7 +132,7 @@ public class BASF21209Controller {
             sendemail.setContextType(emailconfig.get(0).getContexttype());
 
 //            sendemail.setToAddress(email);
-            sendemail.setToAddress("251583218@qq.com");
+            sendemail.setToAddress("1078680188@qq.com");
             sendemail.setSubject("【培训结果发布】");
             sendemail.setContext(EMAILCONTENT);
             sendEmailServices.sendmail(tokenModel,sendemail);
