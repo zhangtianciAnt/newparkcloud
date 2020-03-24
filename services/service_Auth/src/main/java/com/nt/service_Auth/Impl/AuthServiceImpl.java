@@ -57,18 +57,18 @@ public class AuthServiceImpl implements AuthService {
         List<Role> list = mongoTemplate.find(newquery, Role.class);
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-//                List<AppPermission.menu> menus = list.get(i).getMenus();
-//                var menu = menus.stream()
-//                        .filter(info -> info.getMenuurl().equals(url))
-//                        .collect(Collectors.toList());
-//                if (menu != null && menu.size() > 0) {
-//                    var action = menu.get(0).getActions().stream()
-//                            .filter(item -> item.getActiontype().equals("0"))
-//                            .collect(Collectors.toList());
-//                    if (action != null && action.size() > 0) {
-//                        actionId = action.get(0).get_id();
-//                    }
-//                }
+                List<AppPermission.menu> menus = list.get(i).getMenus();
+                var menu = menus.stream()
+                        .filter(info -> info.getMenuurl().equals(url))
+                        .collect(Collectors.toList());
+                if (menu != null && menu.size() > 0) {
+                    var action = menu.get(0).getActions().stream()
+                            .filter(item -> item.getActiontype().equals("0"))
+                            .collect(Collectors.toList());
+                    if (action != null && action.size() > 0) {
+                        actionId = action.get(0).get_id();
+                    }
+                }
                 List<AppPermission.menu.actions> actions = list.get(i).getActions();
                 if (!StrUtil.isEmpty(actionId)) {
                     String finalActionId = actionId;
