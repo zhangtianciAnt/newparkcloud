@@ -192,7 +192,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         Map<String, Object> mergeResult = null;
         Map<String, Float> specialMap = new HashMap<>();
         for ( Invoice invoice : invoicelist ) {
-            if ( SPECIAL_KEY.equals(invoice.getInvoicetype())) {
+            if ( SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if ( rate <= 0 ) {
@@ -211,23 +211,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
 
         List<Object> needMergeList = new ArrayList<>();
-        if(trafficDetailslist.size() > 0 &&
-                StringUtils.hasText(trafficDetailslist.get(0).getInvoicenumber())){
+        if(trafficDetailslist.size() > 0){
             // 交通费
             needMergeList.addAll(trafficDetailslist);
-//            for ( TrafficDetails details : trafficDetailslist ) {
-//                needMergeList.add(details);
-//            }
         } else {
             // 其他
             needMergeList.addAll(purchaseDetailslist);
             needMergeList.addAll(otherDetailslist);
-//            for ( PurchaseDetails details : purchaseDetailslist ) {
-//                needMergeList.add(details);
-//            }
-//            for ( OtherDetails details : otherDetailslist ) {
-//                needMergeList.add(details);
-//            }
         }
         mergeResult = mergeDetailList(needMergeList, specialMap);
 

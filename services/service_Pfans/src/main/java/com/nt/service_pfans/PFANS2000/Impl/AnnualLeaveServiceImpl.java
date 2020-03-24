@@ -85,7 +85,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--事业年度开始获取年休
     //@Scheduled(cron="10 * * * * ?")测试用
-    //@Scheduled(cron="0 0 0 1 4 ? *")//正式时间每年4月1日零时执行
+    @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
@@ -171,7 +171,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //离社年月日
         String resignationDateendCal = customer.getUserinfo().getResignation_date();
         //事业年度开始（4月1日）
-        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar_a = Calendar.getInstance();
         calendar_a.setTime(new Date());
         calendar_a.add(Calendar.DAY_OF_YEAR,-1);
@@ -182,7 +182,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅰ.途中入职：本事业年度在职期间/12个月*15天
         if(StringUtil.isEmpty(resignationDateendCal))
         {
-            if(sf1.parse(enterdaystartCal.replace("Z"," UTC").toString()).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal.replace("Z"," UTC").toString()).compareTo(calendar_a.getTime())<=0)
+            if(sf1.parse(enterdaystartCal).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal).compareTo(calendar_a.getTime())<=0)
             {
                 //有工作经验者
                 if(!(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty()))
@@ -198,18 +198,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅱ.途中离职：本事业年度在职期间/12个月*当年年休天数
         if(StringUtil.isNotEmpty(resignationDateendCal))
         {
-            if(sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")).compareTo(calendar.getTime())>=0 && sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")).compareTo(calendar_a.getTime())<=0)
+            if(sf1.parse(resignationDateendCal).compareTo(calendar.getTime())>=0 && sf1.parse(resignationDateendCal).compareTo(calendar_a.getTime())<=0)
             {
                 //离职日
-                calendar_a.setTime(sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")));
+                calendar_a.setTime(sf1.parse(resignationDateendCal));
                 annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                 annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
-                if(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")).compareTo(calendar_a.getTime())<=0)
+                if(sf1.parse(enterdaystartCal).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal).compareTo(calendar_a.getTime())<=0)
                 {
                     //入职日
-                    calendar.setTime(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")));
+                    calendar.setTime(sf1.parse(enterdaystartCal));
                     //离职日
-                    calendar_a.setTime(sf1.parse(resignationDateendCal.toString().replace("Z"," UTC")));
+                    calendar_a.setTime(sf1.parse(resignationDateendCal));
                     annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
@@ -256,9 +256,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else if(abNormalinfo.getOccurrencedate().compareTo(calendar.getTime())>=0 && abNormalinfo.getOccurrencedate().compareTo(calendar_a.getTime())<=0)
                         {
                             //开始日
-                            calendar.setTime(abNormalinfo.getPeriodstart());
-                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd HH:mm:ss");
-                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            calendar.setTime(abNormalinfo.getOccurrencedate());
+                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
+                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
                             long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
                             hours = hours.add(BigDecimal.valueOf(days*8));
 
@@ -266,9 +266,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else
                         {
                             //终了日
-                            calendar_a.setTime(abNormalinfo.getPeriodend());
-                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd HH:mm:ss");
-                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd HH:mm:ss");
+                            calendar_a.setTime(abNormalinfo.getFinisheddate());
+                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
+                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
                             long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
                             hours = hours.add(BigDecimal.valueOf(days*8));
                         }
@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -449,12 +449,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
-            String doorIDList = "3,5";//3:门1；5:门2；7:门3
-            String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            //String doorIDList = "3,5";//3:门1；5:门2；7:门3
+            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
+            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
             //正式
-            //String doorIDList = "34,16,17";34:自动门；16：1F子母门-左；17：1F子母门-右；
-            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-            //String url1 = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+            String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+            String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
             //請求接口
             ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
             Object obj = JSON.toJSON(getresult.getData());
@@ -487,13 +491,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
                     //进门测试用
-                    if(doorID.equals("3")){
-                        punchcardrecorddetail.setEventno("1");
-                    }
-                    //出门测试用
-                    if(doorID.equals("5")){
-                        punchcardrecorddetail.setEventno("2");
-                    }
+//                    if(doorID.equals("3")){
+//                        punchcardrecorddetail.setEventno("1");
+//                    }
+//                    //出门测试用
+//                    if(doorID.equals("5")){
+//                        punchcardrecorddetail.setEventno("2");
+//                    }
                     punchcardrecorddetail.preInsert(tokenModel);
                     punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                     punchcardrecorddetailmapper.insert(punchcardrecorddetail);

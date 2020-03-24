@@ -982,8 +982,8 @@ public class GivingServiceImpl implements GivingService {
 
         givingMapper.insert(giving);
         // 2020/03/11 add by myt start
-//        insertInduction(givingid, tokenModel);
-//        insertRetire(givingid, tokenModel);
+        insertInduction(givingid, tokenModel);
+        insertRetire(givingid, tokenModel);
         // 2020/03/14 add by myt end
         insertBase(givingid, tokenModel);
         insertContrast(givingid, tokenModel);
@@ -1867,10 +1867,11 @@ public class GivingServiceImpl implements GivingService {
         // 上月日期
         Calendar lastMonthDate = Calendar.getInstance();
         lastMonthDate.add(Calendar.MONTH, -1);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sfUTC = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
+        SimpleDateFormat sfChina = new SimpleDateFormat("yyyy-MM-dd");
         int lastDay = thisMonthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
-        long mouthStart = sf.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sf.format(thisMonthDate.getTime())) + "-01")).getTime();
-        long mouthEnd = sf.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sf.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
+        long mouthStart = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-01")).getTime();
+        long mouthEnd = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
         // 保留小数点后两位四舍五入
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
@@ -1901,15 +1902,12 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         // 抽取上月发工资的人员
-        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(lastMonthDate.getTime()))));
+        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sfChina.format(lastMonthDate.getTime()))));
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
-                // 退职日是本月的时候跳出循环（该员工的給料和补助在退职处理中计算）
+                // 退职日非空的情况（该员工的給料和补助在退职处理中计算）
                 if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
-                    Date resignationDate = sf.parse(customerInfo.getUserinfo().getResignation_date());
-                    if (resignationDate.getTime() >= mouthStart && resignationDate.getTime() <= mouthEnd) {
-                        continue;
-                    }
+                    continue;
                 }
                 // 上月工资结算时点过后入职没发工资的人
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
@@ -1917,7 +1915,7 @@ public class GivingServiceImpl implements GivingService {
                     induction.setGiving_id(givingId);
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
-                        Date endDate = sf.parse(customerInfo.getUserinfo().getEnddate());
+                        Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         // 本月转正
                         if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
                             // 正社员工開始日
@@ -1926,7 +1924,7 @@ public class GivingServiceImpl implements GivingService {
                         }
                     }
                     // 计算給料和补助
-                    calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sf, df);
+                    calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
                     inductions.add(induction);
                 }
             }
@@ -1942,7 +1940,7 @@ public class GivingServiceImpl implements GivingService {
         // 工号
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
         // 入社日
-        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday()));
+        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         // 本月基本工资
         String thisMonthSalary = getSalary(customerInfo, 1);
         induction.setThismonth(thisMonthSalary);
@@ -1991,7 +1989,10 @@ public class GivingServiceImpl implements GivingService {
     public List<Retire> getRetire(String givingId) throws Exception {
         List<Retire> retires = new ArrayList<>();
         Query query = new Query();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        // 国际标准时间格式化
+        SimpleDateFormat sfUTC = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
+        // 东八区（中国）时间格式化
+        SimpleDateFormat sfChina = new SimpleDateFormat("yyyy-MM-dd");
         // 保留小数点后两位四舍五入
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
@@ -2017,8 +2018,8 @@ public class GivingServiceImpl implements GivingService {
         }
         // 查询退职人员信息
         Criteria criteria = Criteria.where("userinfo.resignation_date")
-                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sf.format(now.getTime())) + "-" + lastDay)
-                .lt(last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")
+                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(now.getTime())) + "-" + lastDay)
+                .lt(last.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(last.getTime())) + "-01")
                 .and("status").is("0");
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
@@ -2032,7 +2033,7 @@ public class GivingServiceImpl implements GivingService {
                 retire.setJobnumber(customerInfo.getUserinfo().getJobnumber());
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
-                retire.setRetiredate(sf.parse(resignationDate));
+                retire.setRetiredate(sfUTC.parse(resignationDate.replace("Z", " UTC")));
                 // 当月基本工资
                 String thisMonthSalary = getSalary(customerInfo, 1);
                 // 计算出勤日数

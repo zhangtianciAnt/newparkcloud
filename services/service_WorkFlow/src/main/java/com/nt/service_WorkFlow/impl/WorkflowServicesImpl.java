@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class WorkflowServicesImpl implements WorkflowServices {
 
     private static Logger log = LoggerFactory.getLogger(WorkflowServicesImpl.class);
-
+private String upFlg = "0";
     @Autowired
     private WorkflowMapper workflowMapper;
 
@@ -524,10 +524,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new LogicalException("无上级人员信息！");
         }
         if (currentOrg.getUser().equals(curentUser)) {
+            upFlg = "0";
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
+            userId = upOrgs.getUser();
         } else {
             userId = currentOrg.getUser();
         }
+
+        if(userId == null || StrUtil.isEmpty(userId)){
+            throw new LogicalException("无上级人员信息！");
+        }
+
         return userId;
     }
 
@@ -550,20 +557,22 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private OrgTree upCurrentOrg(OrgTree org, String orgId) throws Exception {
         if (org.get_id().equals(orgId)) {
-            return null;
+            return  null;
         } else {
             if (org.getOrgs() != null) {
                 for (OrgTree item : org.getOrgs()) {
                     OrgTree rst = upCurrentOrg(item, orgId);
-                    if (rst == null) {
+                    if(rst == null){
+                        upFlg = "1";
                         return org;
-                    } else {
+                    }
+                    if(upFlg == "1"){
                         return rst;
                     }
                 }
             }
         }
-        return null;
+        return org;
     }
 
     // 0:进行中
@@ -759,7 +768,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setDataid(startWorkflowVo.getDataId());
         workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
-//        workflowinstance.setOwner(startWorkflowVo.getUserId());
+        workflowinstance.setOwner(startWorkflowVo.getUserId());
 //        workflowinstance.setTenantid(startWorkflowVo.getTenantId());
         workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
