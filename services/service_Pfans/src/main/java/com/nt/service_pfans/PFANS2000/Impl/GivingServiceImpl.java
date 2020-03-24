@@ -1019,40 +1019,58 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
-        if (givingvo.getStrFlg().equals("16")) {
-            List<Contrast> contrastlist = givingvo.getContrast();
-            if (contrastlist != null) {
-                for (Contrast contrast : contrastlist) {
-                    contrast.preUpdate(tokenModel);
-                    contrastMapper.updateByPrimaryKeySelective(contrast);
+        switch (givingvo.getStrFlg()) {
+            case "16":
+                List<Contrast> contrastlist = givingvo.getContrast();
+                if (contrastlist != null) {
+                    for (Contrast contrast : contrastlist) {
+                        contrast.preUpdate(tokenModel);
+                        contrastMapper.updateByPrimaryKeySelective(contrast);
+                    }
                 }
-            }
-        } else if (givingvo.getStrFlg().equals("2")) {
-            List<OtherOne> otheronelist = givingvo.getOtherOne();
-            if (otheronelist != null) {
-                for (OtherOne otherOne : otheronelist) {
-                    otherOne.preUpdate(tokenModel);
-                    otherOneMapper.updateByPrimaryKeySelective(otherOne);
+                break;
+            case "2":
+                List<OtherOne> otheronelist = givingvo.getOtherOne();
+                if (otheronelist != null) {
+                    for (OtherOne otherOne : otheronelist) {
+                        otherOne.preUpdate(tokenModel);
+                        otherOneMapper.updateByPrimaryKeySelective(otherOne);
+                    }
                 }
-            }
-        } else if (givingvo.getStrFlg().equals("3")) {
-            List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
-            if (otherTwolist != null) {
-                for (OtherTwo othertwo : otherTwolist) {
-                    othertwo.preUpdate(tokenModel);
-                    othertwoMapper.updateByPrimaryKeySelective(othertwo);
-                    List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(othertwo.getGiving_id());
-                    if (otherTwo2List.size() > 0) {
-                        for (OtherTwo2 otherTwo2 : otherTwo2List) {
-                            otherTwo2.preInsert(tokenModel);
-                            otherTwo2.setUser_id(otherTwo2.getUser_id());
-                            otherTwo2.setMoneys(otherTwo2.getMoneys());
-                            otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
-                            othertwo2Mapper.insert(otherTwo2);
+                break;
+            case "3":
+                List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
+                if (otherTwolist != null) {
+                    for (OtherTwo othertwo : otherTwolist) {
+                        othertwo.preUpdate(tokenModel);
+                        othertwoMapper.updateByPrimaryKeySelective(othertwo);
+                        List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(othertwo.getGiving_id());
+                        if (otherTwo2List.size() > 0) {
+                            for (OtherTwo2 otherTwo2 : otherTwo2List) {
+                                otherTwo2.preInsert(tokenModel);
+                                otherTwo2.setUser_id(otherTwo2.getUser_id());
+                                otherTwo2.setMoneys(otherTwo2.getMoneys());
+                                otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+                                othertwo2Mapper.insert(otherTwo2);
+                            }
                         }
                     }
                 }
-            }
+                break;
+            case "8":   // 欠勤
+                List<Lackattendance> lackattendanceList = givingvo.getLackattendance();
+                lackattendanceList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    lackattendanceMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "9":   // 残业
+                List<Residual> residualList = givingvo.getResidual();
+                residualList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    residualMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
         }
     }
 
