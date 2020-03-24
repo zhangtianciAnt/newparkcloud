@@ -216,7 +216,7 @@ public class EvectionServiceImpl implements EvectionService {
                     if(currencyexchangeList.size() > 0){
                         for(Currencyexchange exchange: currencyexchangeList){
                             if(getProperty(o, "currency").equals(getProperty(exchange, "currency"))){
-                                cost.setExchangerate(getProperty(exchange, "exchangerate"));
+                                cost.setExchangerate(getProperty(exchange, "currencyexchangerate"));
                             }
                         }
                     }
