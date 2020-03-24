@@ -41,7 +41,7 @@ public class WorkflowController {
             Workflow workflow = new Workflow();
             workflow.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             workflow.setTenantid(tokenModel.getTenantId());
-            workflow.setOwners(tokenModel.getOwnerList());
+//            workflow.setOwners(tokenModel.getOwnerList());
             workflow.setIds(tokenModel.getIdList());
             return ApiResult.success(workflowServices.list(workflow));
 
