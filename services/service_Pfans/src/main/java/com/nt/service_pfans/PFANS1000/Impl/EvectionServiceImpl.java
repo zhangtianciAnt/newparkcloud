@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -85,13 +86,15 @@ public class EvectionServiceImpl implements EvectionService {
             Currencyexchange currencyexchange = new Currencyexchange();
             currencyexchange.setEvectionid(travelList.getEvectionid());
             List<Currencyexchange> lscer = currencyexchangeMapper.select(currencyexchange);
+            TravelCost tc = new TravelCost();
+            String st = null;
+            Double ctsum = 0D;
             for (Currencyexchange item : lscer) {
                 Double ct = 0D;
                 Double diff = Convert.toDouble(item.getCurrencyexchangerate()) - Convert.toDouble(item.getExchangerate());
                 if(diff == 0){
                     continue;
                 }
-                TravelCost tc = new TravelCost();
                 BeanUtil.copyProperties(ListVo.get(0), tc);
                 tc.setNumber(ListVo.size() + 1);
                 tc.setBudgetcoding("000000");
@@ -105,9 +108,12 @@ public class EvectionServiceImpl implements EvectionService {
                 for(Double cost:costs){
                     ct += cost;
                 }
-                tc.setLineamount(Convert.toStr(ct * diff));
-                Listvo.add(tc);
+                ctsum += ct * diff;
             }
+            DecimalFormat df=new DecimalFormat(".##");
+            st=df.format(ctsum);
+            tc.setLineamount(Convert.toStr(st));
+            Listvo.add(tc);
         }
         return Listvo;
     }
