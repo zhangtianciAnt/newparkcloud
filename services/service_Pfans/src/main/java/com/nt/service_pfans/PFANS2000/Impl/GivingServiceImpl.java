@@ -357,6 +357,8 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
+        givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
+
         return givingVo;
     }
 
@@ -965,6 +967,24 @@ public class GivingServiceImpl implements GivingService {
             retire.setGiving_id(givinglist.get(0).getGiving_id());
             retireMapper.delete(retire);
             // 2020/03/14 add by myt end
+            // region 重新生成Giving时，删除旧数据 By Skaixx
+            // dutyfree
+            Dutyfree dutyfree = new Dutyfree();
+            dutyfree.setGiving_id(givinglist.get(0).getGiving_id());
+            dutyfreeMapper.delete(dutyfree);
+            // disciplinary
+            Disciplinary disciplinary = new Disciplinary();
+            disciplinary.setGiving_id(givinglist.get(0).getGiving_id());
+            disciplinaryMapper.delete(disciplinary);
+            // accumulatedtax
+            Accumulatedtax accumulatedtax = new Accumulatedtax();
+            accumulatedtax.setGiving_id(givinglist.get(0).getGiving_id());
+            accumulatedTaxMapper.delete(accumulatedtax);
+            //comprehensive
+            Comprehensive comprehensive = new Comprehensive();
+            comprehensive.setGivingId(givinglist.get(0).getGiving_id());
+            comprehensiveMapper.delete(comprehensive);
+            // endregion
         }
         giving = new Giving();
         giving.setMonths(strTemp);
