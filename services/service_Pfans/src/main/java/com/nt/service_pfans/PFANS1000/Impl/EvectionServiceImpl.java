@@ -204,20 +204,27 @@ public class EvectionServiceImpl implements EvectionService {
         List<TravelCost> csvList = new ArrayList<>();
         List<TravelCost> taxList = (List<TravelCost>) mergeResult.getOrDefault(TAX_KEY, new ArrayList<>());
         List<TravelCost> paddingList = (List<TravelCost>) mergeResult.getOrDefault(PADDING_KEY, new ArrayList<>());
-        String inputType = (String) mergeResult.get(INPUT_TYPE_KEY);
+//        String inputType = (String) mergeResult.get(INPUT_TYPE_KEY);
         for (Object o : mergeResult.values()) {
             if (o instanceof TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
-                String money = getProperty(o, inputType);
+                Float money = getPropertyFloat(o, "rmb") + getPropertyFloat(o, "foreigncurrency");
                 TravelCost cost = new TravelCost();
                 //币种，汇率
                 if(!StringUtils.isEmpty(getProperty(o, "currency"))){
                     cost.setCurrency(exchangeRateMap.getOrDefault(getProperty(o, "currency"), ""));
-                    cost.setExchangerate(getProperty(o, "currencyrate"));
+                    //匹配汇率
+                    if(currencyexchangeList.size() > 0){
+                        for(Currencyexchange exchange: currencyexchangeList){
+                            if(getProperty(o, "currency").equals(getProperty(exchange, "currency"))){
+                                cost.setExchangerate(getProperty(exchange, "currencyexchangerate"));
+                            }
+                        }
+                    }
                 }else {
                     cost.setCurrency("CNY");
                     cost.setExchangerate("");
                 }
-                cost.setLineamount(money);
+                cost.setLineamount(money.toString());
                 cost.setBudgetcoding(getProperty(o, "budgetcoding"));
                 cost.setSubjectnumber(getProperty(o, "subjectnumber"));
                 //发票说明
@@ -269,7 +276,7 @@ public class EvectionServiceImpl implements EvectionService {
         if (detailList.size() <= 0) {
             throw new Exception("明细不能为空");
         }
-        String inputType = getInputType(detailList.get(0));
+        //String inputType = getInputType(detailList.get(0));
         for (Object detail : detailList) {
 //            if ( !inputType.equals(getInputType(detail)) ) {
 //                throw new Exception("一次申请，只能选择一种货币。");
@@ -287,12 +294,17 @@ public class EvectionServiceImpl implements EvectionService {
                 mergeKey = budgetcoding + " ... " + subjectnumber+ " ... " + curren;
             }
             // 行合并
-            float money = getPropertyFloat(detail, inputType);
+            float money = getPropertyFloat(detail, "rmb") + getPropertyFloat(detail, "foreigncurrency");
             Object mergeObject = resultMap.get(mergeKey);
             if (mergeObject != null) {
                 // 发现可以合并数据
-                float newMoney = getPropertyFloat(mergeObject, inputType) + money;
-                setProperty(mergeObject, inputType, newMoney + "");
+                float newMoney = getPropertyFloat(mergeObject, "rmb") + getPropertyFloat(mergeObject, "foreigncurrency") + money;
+//                setProperty(mergeObject, inputType, newMoney + "");
+                if(!"0".equals(getProperty(detail, "rmb"))){
+                    setProperty(mergeObject, "rmb", newMoney + "");
+                }else {
+                    setProperty(mergeObject, "foreigncurrency", newMoney + "");
+                }
             } else {
                 resultMap.put(mergeKey, detail);
             }
@@ -303,7 +315,7 @@ public class EvectionServiceImpl implements EvectionService {
         for (Object detail : list) {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
-            float money = getPropertyFloat(detail, inputType);
+            float money = getPropertyFloat(detail, "rmb");
             totalTax = totalTax + money;
             String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
@@ -328,7 +340,7 @@ public class EvectionServiceImpl implements EvectionService {
                     taxCost.setCurrency("CNY");
                     taxList.add(taxCost);
                     // 税拔
-                    setProperty(detail, inputType, lineCost);
+                    setProperty(detail, "rmb", lineCost);
                     float diff = getFloatValue(lineRate) + getFloatValue(lineCost) - money;
                     if (diff != 0) {
                         TravelCost padding = new TravelCost();
@@ -379,7 +391,7 @@ public class EvectionServiceImpl implements EvectionService {
         if (totalTax != specialMap.get(TOTAL_TAX)) {
             throw new Exception("发票合计金额与明细不匹配。");
         }
-        resultMap.put(INPUT_TYPE_KEY, inputType);
+        resultMap.put(INPUT_TYPE_KEY, "rmb");
         return resultMap;
     }
 
