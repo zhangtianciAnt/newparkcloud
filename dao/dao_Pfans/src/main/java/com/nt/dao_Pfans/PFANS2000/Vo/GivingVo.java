@@ -57,4 +57,6 @@ public class GivingVo {
     // 2020/03/11 add by myt end
 
     private String strFlg;
+
+    private List<Wages> wagesList;
 }
