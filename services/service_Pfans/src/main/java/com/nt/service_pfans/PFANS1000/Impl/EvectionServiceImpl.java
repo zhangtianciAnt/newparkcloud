@@ -207,7 +207,7 @@ public class EvectionServiceImpl implements EvectionService {
 //        String inputType = (String) mergeResult.get(INPUT_TYPE_KEY);
         for (Object o : mergeResult.values()) {
             if (o instanceof TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
-                String money = getProperty(o, "rmb") + getProperty(o, "foreigncurrency");
+                Float money = getPropertyFloat(o, "rmb") + getPropertyFloat(o, "foreigncurrency");
                 TravelCost cost = new TravelCost();
                 //币种，汇率
                 if(!StringUtils.isEmpty(getProperty(o, "currency"))){
@@ -224,7 +224,7 @@ public class EvectionServiceImpl implements EvectionService {
                     cost.setCurrency("CNY");
                     cost.setExchangerate("");
                 }
-                cost.setLineamount(money);
+                cost.setLineamount(money.toString());
                 cost.setBudgetcoding(getProperty(o, "budgetcoding"));
                 cost.setSubjectnumber(getProperty(o, "subjectnumber"));
                 //发票说明
@@ -276,7 +276,6 @@ public class EvectionServiceImpl implements EvectionService {
         if (detailList.size() <= 0) {
             throw new Exception("明细不能为空");
         }
-        //todo 画面是不同币种，不适用
         //String inputType = getInputType(detailList.get(0));
         for (Object detail : detailList) {
 //            if ( !inputType.equals(getInputType(detail)) ) {
