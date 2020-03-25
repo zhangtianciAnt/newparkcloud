@@ -163,7 +163,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         //项目体制
         List<Projectsystem> projectsystemList = companyProjectsVo.getProjectsystem();
-        if (projectsystemList != null) {
+        if (projectsystemList != null && projectsystemList.size() > 0) {
             Projectsystem projectsystem = new Projectsystem();
             projectsystem.setCompanyprojects_id(companyprojectsid);
             projectsystemMapper.delete(projectsystem);
@@ -975,7 +975,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         //项目合同
         List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
-        if (projectcontractList != null) {
+        if (projectcontractList != null && projectcontractList.size() > 0) {
             ProjectContract projectcontract = new ProjectContract();
             projectcontract.setCompanyprojects_id(companyprojectsid);
             projectcontractMapper.delete(projectcontract);
@@ -992,7 +992,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
         //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额
         List<Contractnumbercount> contractnumbercountList = companyProjectsVo.getContractnumbercount();
-        if (contractnumbercountList.size() > 0) {
+        if (contractnumbercountList!= null && contractnumbercountList.size() > 0) {
             Contractnumbercount contractnumbercount = new Contractnumbercount();
             contractnumbercount.setCompanyprojectsid(companyprojectsid);
             contractnumbercountMapper.delete(contractnumbercount);

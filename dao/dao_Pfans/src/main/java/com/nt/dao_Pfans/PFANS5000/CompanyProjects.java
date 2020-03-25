@@ -315,4 +315,10 @@ public class CompanyProjects extends BaseModel {
      */
     @Column(name = "OUENTRUST")
     private String ouentrust;
+
+    /**
+     * 实际完成时间
+     */
+    @Column(name = "ENDTIME")
+    private Date endtime;
 }

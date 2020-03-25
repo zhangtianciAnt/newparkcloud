@@ -629,6 +629,9 @@ public class UserServiceImpl implements UserService {
 
                 UserVo uservo = new UserVo();
                 customerInfo.setUserinfo(userinfo);
+                customerInfo.setType("1");
+                customerInfo.setStatus("0");
+                customerInfo.getUserinfo().setType("0");
                 uservo.setCustomerInfo(customerInfo);
                 listVo.add(customerInfo);
                 uservo.setUserAccount(useraccount);
