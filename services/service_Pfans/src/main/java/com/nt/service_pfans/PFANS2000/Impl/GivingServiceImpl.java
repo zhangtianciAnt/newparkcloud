@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -411,7 +412,11 @@ public class GivingServiceImpl implements GivingService {
                     OtherOne otherOne = new OtherOne();
                     String beginTime = "";
                     String otherOneid = UUID.randomUUID().toString();
-                    // otherOne.preInsert(tokenModel);
+                    if (tokenModel != null) {
+                        otherOne.preInsert(tokenModel);
+                    } else {
+                        otherOne.preInsert();
+                    }
                     otherOne.setOtherone_id(otherOneid);
                     otherOne.setGiving_id(givingid);
                     otherOne.setUser_id(abNor.getUser_id());
@@ -514,7 +519,11 @@ public class GivingServiceImpl implements GivingService {
                 Base base = new Base();
                 rowindex = rowindex + 1;
                 String baseid = UUID.randomUUID().toString();
-                base.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    base.preInsert(tokenModel);
+                } else {
+                    base.preInsert();
+                }
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
@@ -861,7 +870,11 @@ public class GivingServiceImpl implements GivingService {
         for (CasgiftApply casgift : casgiftapplylist) {
             rowundex = rowundex + 1;
             String othertwoid = UUID.randomUUID().toString();
-            othertwo.preInsert(tokenModel);
+            if (tokenModel != null) {
+                othertwo.preInsert(tokenModel);
+            } else {
+                othertwo.preInsert();
+            }
             othertwo.setOthertwo_id(othertwoid);
             othertwo.setGiving_id(givingid);
             othertwo.setUser_id(casgift.getUser_id());
@@ -879,7 +892,11 @@ public class GivingServiceImpl implements GivingService {
         List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(givingid);
         if (otherTwo2List.size() > 0) {
             for (OtherTwo2 otherTwo2 : otherTwo2List) {
-                otherTwo2.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    otherTwo2.preInsert(tokenModel);
+                } else {
+                    otherTwo2.preInsert();
+                }
                 otherTwo2.setUser_id(otherTwo2.getUser_id());
                 otherTwo2.setMoneys(otherTwo2.getMoneys());
                 otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
@@ -903,7 +920,11 @@ public class GivingServiceImpl implements GivingService {
             for (Base base1 : baselist) {
                 rowindex = rowindex + 1;
                 String consrastid = UUID.randomUUID().toString();
-                contrast.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    contrast.preInsert(tokenModel);
+                } else {
+                    contrast.preInsert();
+                }
                 contrast.setGiving_id(base1.getGiving_id());
                 contrast.setContrast_id(consrastid);
                 contrast.setUser_id(base1.getUser_id());
@@ -992,7 +1013,11 @@ public class GivingServiceImpl implements GivingService {
 
         String givingid = UUID.randomUUID().toString();
         giving = new Giving();
-        giving.preInsert(tokenModel);
+        if (tokenModel != null) {
+            giving.preInsert(tokenModel);
+        } else {
+            giving.preInsert();
+        }
         giving.setGiving_id(givingid);
         giving.setGeneration(generation);
         giving.setGenerationdate(new Date());
@@ -1009,6 +1034,12 @@ public class GivingServiceImpl implements GivingService {
         insertOtherOne(givingid, tokenModel);
         insertLackattendance(givingid, tokenModel);
         insertResidual(givingid, tokenModel);
+    }
+
+
+    @Scheduled(cron = "0 0 1 10 * ?")
+    private void autoCreateGiving() throws Exception {
+        insert("1", null);
     }
 
     @Override
@@ -1069,6 +1100,20 @@ public class GivingServiceImpl implements GivingService {
                 residualList.forEach(item -> {
                     item.preUpdate(tokenModel);
                     residualMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "6":   // 入职
+                List<Induction> inductionList = givingvo.getEntryVo();
+                inductionList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    inductionMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "7":   // 退职
+                List<Retire> retireList = givingvo.getRetireVo();
+                retireList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    retireMapper.updateByPrimaryKeySelective(item);
                 });
                 break;
         }
@@ -1434,8 +1479,11 @@ public class GivingServiceImpl implements GivingService {
 
             // 加班补助
             residual.setSubsidy(BigDecimal.valueOf(Double.parseDouble(residual.getLasttotaly()) + Double.parseDouble(residual.getThistotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
-
-            residual.preInsert(tokenModel);
+            if (tokenModel != null) {
+                residual.preInsert(tokenModel);
+            } else {
+                residual.preInsert();
+            }
             residualMapper.insert(residual);
         });
     }
@@ -1541,6 +1589,7 @@ public class GivingServiceImpl implements GivingService {
         total += isOverR8 ? 0d : (Double.parseDouble(ifNull(residual.getThisreplace3())) + Double.parseDouble(ifNull(residual.getThisreplace()))) * 8d * lastSalaryPerHour * 2.0d;
 
         residual.setThistotaly(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        residual.setSubsidy(new BigDecimal(residual.getThistotaly()).add(new BigDecimal(residual.getLasttotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return residual;
     }
 
@@ -1592,6 +1641,7 @@ public class GivingServiceImpl implements GivingService {
         // 长病欠-试用
         total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
         lackattendance.setThistotal(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        lackattendance.setGive(new BigDecimal(lackattendance.getThistotal()).add(new BigDecimal(lackattendance.getLasttotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return lackattendance;
     }
 
@@ -1732,7 +1782,11 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setGive(BigDecimal.valueOf(Double.parseDouble(lackattendance.getLasttotal())
                     + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
-            lackattendance.preInsert(tokenModel);
+            if (tokenModel != null) {
+                lackattendance.preInsert(tokenModel);
+            } else {
+                lackattendance.preInsert();
+            }
             lackattendanceMapper.insert(lackattendance);
         });
     }
@@ -1869,7 +1923,11 @@ public class GivingServiceImpl implements GivingService {
         if (inductionList.size() > 0) {
             for (Induction induction : inductionList) {
                 induction.setInduction_id(UUID.randomUUID().toString());
-                induction.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    induction.preInsert(tokenModel);
+                } else {
+                    induction.preInsert();
+                }
                 induction.setRowindex(rowundex);
                 inductionMapper.insert(induction);
                 rowundex++;
@@ -1884,7 +1942,11 @@ public class GivingServiceImpl implements GivingService {
         if (retireList.size() > 0) {
             for (Retire retire : retireList) {
                 retire.setRetire_id(UUID.randomUUID().toString());
-                retire.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    retire.preInsert(tokenModel);
+                } else {
+                    retire.preInsert();
+                }
                 retire.setRowindex(rowundex);
                 retireMapper.insert(retire);
                 rowundex++;
