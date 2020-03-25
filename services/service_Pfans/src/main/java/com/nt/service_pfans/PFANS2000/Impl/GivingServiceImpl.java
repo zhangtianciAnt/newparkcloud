@@ -1102,6 +1102,20 @@ public class GivingServiceImpl implements GivingService {
                     residualMapper.updateByPrimaryKeySelective(item);
                 });
                 break;
+            case "6":   // 入职
+                List<Induction> inductionList = givingvo.getEntryVo();
+                inductionList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    inductionMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "7":   // 退职
+                List<Retire> retireList = givingvo.getRetireVo();
+                retireList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    retireMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
         }
     }
 
