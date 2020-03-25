@@ -1038,7 +1038,7 @@ public class GivingServiceImpl implements GivingService {
 
 
     @Scheduled(cron = "0 0 1 10 * ?")
-    private void autoCreateGiving() throws Exception {
+    protected void autoCreateGiving() throws Exception {
         insert("1", null);
     }
 
