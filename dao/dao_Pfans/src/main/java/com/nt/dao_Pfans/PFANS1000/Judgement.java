@@ -199,5 +199,11 @@ public class Judgement extends BaseModel {
     @Column(name = "ENDDATE")
     private Date enddate;
 
+    /**
+     * 序号
+     */
+    @Column(name = "INDEX")
+    private String index;
+
 
 }

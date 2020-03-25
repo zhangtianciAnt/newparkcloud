@@ -31,6 +31,10 @@ public class OtherDetails extends BaseModel {
     @Column(name = "OTHERDETAILSDATE")
     private Date otherdetailsdate;
 
+    @Column(name = "SERVICEHOURS")
+    private Date servicehours;
+
+    
     @Column(name = "PLSUMMARY")
     private String  plsummary;
 
