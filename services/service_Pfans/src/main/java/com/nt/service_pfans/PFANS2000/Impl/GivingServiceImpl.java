@@ -1541,6 +1541,7 @@ public class GivingServiceImpl implements GivingService {
         total += isOverR8 ? 0d : (Double.parseDouble(ifNull(residual.getThisreplace3())) + Double.parseDouble(ifNull(residual.getThisreplace()))) * 8d * lastSalaryPerHour * 2.0d;
 
         residual.setThistotaly(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        residual.setSubsidy(new BigDecimal(residual.getThistotaly()).add(new BigDecimal(residual.getLasttotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return residual;
     }
 
@@ -1592,6 +1593,7 @@ public class GivingServiceImpl implements GivingService {
         // 长病欠-试用
         total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
         lackattendance.setThistotal(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        lackattendance.setGive(new BigDecimal(lackattendance.getThistotal()).add(new BigDecimal(lackattendance.getLasttotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return lackattendance;
     }
 
