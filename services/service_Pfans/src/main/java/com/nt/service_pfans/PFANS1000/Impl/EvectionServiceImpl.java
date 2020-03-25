@@ -98,10 +98,13 @@ public class EvectionServiceImpl implements EvectionService {
                 BeanUtil.copyProperties(ListVo.get(0), tc);
                 tc.setNumber(ListVo.size() + 1);
                 tc.setBudgetcoding("000000");
+                List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG024");
+                    String value1 = dictionaryList.get(0).getValue2();
+                    String value2 = dictionaryList.get(1).getValue2();
                 if (diff < 0) {
-                    tc.setSubjectnumber("8611-00-3061");
+                    tc.setSubjectnumber(value2);
                 }else{
-                    tc.setSubjectnumber("8511-00-3061");
+                    tc.setSubjectnumber(value1);
                 }
 
                 List<Double> costs = trafficdetailsMapper.getCount(travelList.getEvectionid(),item.getCurrency());
