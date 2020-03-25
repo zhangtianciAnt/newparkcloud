@@ -32,18 +32,27 @@ public class Pfans6005Controller {
 
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult getpriceset(@RequestBody Priceset priceset,HttpServletRequest request) throws Exception {
+    public ApiResult getpriceset(@RequestBody Priceset priceset, HttpServletRequest request) throws Exception {
         if (priceset == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        priceset.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(pricesetService.gettlist());
     }
 
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getPricesetList(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Priceset priceset = new Priceset();
+        priceset.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(pricesetService.getPricesetList(priceset));
+    }
 
 
     /**
      * 单价设定修改
+     *
      * @param
      * @param request
      * @throws Exception
