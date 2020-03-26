@@ -2034,7 +2034,7 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     // 上月开了工资的员工
                     // 试用期截止日为空的情况
-                    if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                    if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 本月未转正
                         // 计算給料和补助
                         calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
