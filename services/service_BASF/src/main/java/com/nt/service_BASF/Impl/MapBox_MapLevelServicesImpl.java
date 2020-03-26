@@ -69,8 +69,34 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
     @Override
     public void edit(MapBox_MapLevel info, TokenModel tokenModel) throws Exception {
         info.preUpdate(tokenModel);
+        MapBox_MapLevel map = new MapBox_MapLevel();
+        map.setId(info.getId());
+        List maplist =  mapBox_mapLevelMapper.select(map);
+        String oldname = ((MapBox_MapLevel) maplist.get(0)).getName();
+        String newname = info.getName();
         mapBox_mapLevelMapper.updateByPrimaryKeySelective(info);
+        editmapLevelchild(oldname,newname,info.getId());
     }
+    public void editmapLevelchild(String oldname,String newname,String id) {
+        MapBox_MapLevel mapLevel = new MapBox_MapLevel();
+        mapLevel.setParentid(id);
+        List mapLevelchildlist =  mapBox_mapLevelMapper.select(mapLevel);
+        if(mapLevelchildlist.size()>0)
+        {
+            for (int i = 0;i<mapLevelchildlist.size();i++)
+            {
+                String childname = ((MapBox_MapLevel) mapLevelchildlist.get(i)).getCascname();
+                String newchildname = childname.replace(oldname,newname);
+                MapBox_MapLevel mapLevelchild = new MapBox_MapLevel();
+                mapLevelchild.setId(((MapBox_MapLevel) mapLevelchildlist.get(i)).getId());
+                mapLevelchild.setCascname(newchildname);
+                mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapLevelchild);
+                editmapLevelchild(oldname,newname,((MapBox_MapLevel) mapLevelchildlist.get(i)).getId());
+            }
+        }
+    }
+
+
     @Override
     public void delete(MapBox_MapLevel mapBox_mapLevel, TokenModel tokenModel) throws Exception {
 //        MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
