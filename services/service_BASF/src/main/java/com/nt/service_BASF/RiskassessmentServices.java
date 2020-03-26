@@ -28,7 +28,8 @@ public interface RiskassessmentServices {
     //承诺公告更新
     void noticeUpdata(String notice, TokenModel tokenModel) throws Exception;
 
-    List<Highriskarea> selecthig(TokenModel tokenModel,Highriskarea highriskarea) throws Exception;
+    //    region 高风险作业
+    List<Highriskarea> selecthig(TokenModel tokenModel, Highriskarea highriskarea) throws Exception;
     //insert
     void insert(TokenModel tokenModel, Highriskarea highriskarea) throws Exception;
 
@@ -37,5 +38,6 @@ public interface RiskassessmentServices {
 
     //delete
     void delete(TokenModel tokenModel, Highriskarea highriskarea) throws Exception;
+    //    endregion
 
 }

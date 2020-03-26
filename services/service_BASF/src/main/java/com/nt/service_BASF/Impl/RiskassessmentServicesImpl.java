@@ -3,9 +3,7 @@ package com.nt.service_BASF.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_BASF.Highriskarea;
-import com.nt.dao_BASF.Highriskareadetailed;
 import com.nt.dao_BASF.Riskassessment;
-import com.nt.dao_BASF.VO.HighriskareaVo;
 import com.nt.service_BASF.RiskassessmentServices;
 import com.nt.service_BASF.mapper.HighriskareaMapper;
 import com.nt.service_BASF.mapper.HighriskareadetailedMapper;
@@ -49,7 +47,7 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
     @Autowired
     private HighriskareadetailedMapper highriskareadetailedMapper;
 
-    //excel成绩文档导入
+    //excel风险判研文档导入
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception {
@@ -276,9 +274,11 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
         mongoTemplate.save(riskassessment);
     }
 
+    //region 高风险作业
+    //高风险作业查找
     @Override
-    public List<Highriskarea> selecthig(TokenModel tokenModel,Highriskarea highriskarea) throws Exception {
-          return highriskareaMapper.select(highriskarea);
+    public List<Highriskarea> selecthig(TokenModel tokenModel, Highriskarea highriskarea) throws Exception {
+        return highriskareaMapper.select(highriskarea);
 
 //        List<HighriskareaVo> highriskareavolist = new ArrayList<>();//
 //        List<Highriskarea> highriskareaList =  highriskareaMapper.select(highriskarea);//
@@ -310,6 +310,7 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
 //        return highriskareavolist;
     }
 
+    //高风险作业添加
     @Override
     public void insert(TokenModel tokenModel, Highriskarea highriskarea) throws Exception {
         //Highriskarea highriskarea = new Highriskarea();
@@ -333,6 +334,7 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
 //        }
     }
 
+    //高风险作业更新
     @Override
     public void update(TokenModel tokenModel, Highriskarea highriskarea) throws Exception {
         //Highriskarea highriskarea = new Highriskarea();
@@ -358,9 +360,11 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
 //        }
     }
 
+    //高风险作业删除
     @Override
-    public void delete(TokenModel tokenModel,Highriskarea highriskarea) throws Exception {
+    public void delete(TokenModel tokenModel, Highriskarea highriskarea) throws Exception {
         //逻辑删除（status -> "1"）
         highriskareaMapper.updateByPrimaryKeySelective(highriskarea);
     }
+    //endregion
 }

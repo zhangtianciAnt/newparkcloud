@@ -1,18 +1,17 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Highriskarea;
-import com.nt.dao_BASF.VO.HighriskareaVo;
+import com.nt.dao_BASF.Riskassessments;
 import com.nt.service_BASF.RiskassessmentServices;
+import com.nt.service_BASF.RiskassessmentsServices;
+import com.nt.service_BASF.mapper.RiskassessmentsMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +30,10 @@ public class BASF11101Controller {
 
     @Autowired
     private RiskassessmentServices riskassessmentServices;
+
+    //风险研判（MySql表）
+    @Autowired
+    private RiskassessmentsServices riskassessmentsServices;
 
     @Autowired
     private TokenService tokenService;
@@ -73,25 +76,62 @@ public class BASF11101Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/selecthig", method = {RequestMethod.POST})
-    public ApiResult selecthig(@RequestBody Highriskarea highriskarea,HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(riskassessmentservices.selecthig(tokenModel,highriskarea));
+    //region 风险研判（MySql表）
+
+    //获取风险研判数据
+    @RequestMapping(value = "/getAll", method = {RequestMethod.POST})
+    public ApiResult getAll(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
+        return ApiResult.success(riskassessmentsServices.getAll(riskassessments));
     }
 
+    //更新风险研判数据
+    @PostMapping("/updataRiskassessments")
+    public ApiResult updataRiskassessments(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        riskassessmentsServices.updataRiskassessments(riskassessments, tokenModel);
+        return ApiResult.success();
+    }
+
+    //增加风险研判数据
+    @PostMapping("/insertRiskassessments")
+    public ApiResult insertRiskassessments(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel);
+        return ApiResult.success();
+    }
+
+    //根据id查找风险研判数据
+    @GetMapping("/getDataById")
+    public ApiResult getDataById(String id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(riskassessmentsServices.getDataById(id));
+    }
+    //endregion
+
+    //region 高风险作业的相关方法
+    //高风险作业查找
+    @RequestMapping(value = "/selecthig", method = {RequestMethod.POST})
+    public ApiResult selecthig(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(riskassessmentservices.selecthig(tokenModel, highriskarea));
+    }
+
+    //高风险作业添加
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        riskassessmentservices.insert(tokenModel,highriskarea);
+        riskassessmentservices.insert(tokenModel, highriskarea);
         return ApiResult.success();
     }
 
+    //高风险作业更新
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        riskassessmentservices.update(tokenModel,highriskarea);
+        riskassessmentservices.update(tokenModel, highriskarea);
         return ApiResult.success();
     }
+
+    //高风险作业删除
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})
     public ApiResult delete(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -99,4 +139,5 @@ public class BASF11101Controller {
         riskassessmentservices.delete(tokenModel, highriskarea);
         return ApiResult.success();
     }
+    //endregion
 }
