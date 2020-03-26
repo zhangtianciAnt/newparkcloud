@@ -20,6 +20,7 @@ public class Pltab extends BaseModel {
 	private static final long serialVersionUID = 1L;
 
     private String pj;//项目-
+    private String pj1;//共同项目-
 
     private String outst1;//外部受託-
      private String outst2;
