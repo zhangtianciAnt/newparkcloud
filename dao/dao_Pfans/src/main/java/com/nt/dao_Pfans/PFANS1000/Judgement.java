@@ -202,8 +202,8 @@ public class Judgement extends BaseModel {
     /**
      * 序号
      */
-    @Column(name = "INDEX")
-    private String index;
+    @Column(name = "ROWINDEX")
+    private Integer rowindex;
 
 
 }
