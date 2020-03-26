@@ -42,6 +42,12 @@
             <artifactId>mail</artifactId>
             <version>1.5.0-b01</version>
         </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_WorkFlow</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -53,6 +53,11 @@ public class BASF10202Controller {
         return ApiResult.success(applicationServices.get(application));
     }
 
+    @RequestMapping(value = "/getone", method = {RequestMethod.POST})
+    public ApiResult getone(@RequestBody Application application) throws Exception {
+        return ApiResult.success(applicationServices.getone(application));
+    }
+
 //    @RequestMapping(value = "/getApplicationList", method = {RequestMethod.POST})
 //    public ApiResult getApplicationList(HttpServletRequest request) throws Exception {
 //        TokenModel tokenModel = tokenService.getToken(request);

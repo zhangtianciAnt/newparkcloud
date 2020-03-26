@@ -10,9 +10,11 @@ package com.nt.service_BASF.Impl;
  */
 import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_BASF.ApplicationServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,32 @@ public class ApplicationServiceImpl implements ApplicationServices {
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;
 
+    @Autowired
+    private WorkflowinstanceMapper workflowinstanceMapper;
+
     @Override
     public List<Application> get(Application application) throws Exception {
         return applicationMapper.select(application);
     }
+
+    public ApplicationVo getone(Application application) throws Exception{
+
+        Workflowinstance workflowinstance = new Workflowinstance();
+        workflowinstance.setDataid(application.getApplicationid());
+        List wf =  workflowinstanceMapper.select(workflowinstance);
+        String wfname = ((Workflowinstance)wf.get(0)).getWorkflowname();
+
+        ApplicationVo applicationVo = new ApplicationVo();
+        List applicationlist = applicationMapper.select(application);
+        applicationVo.setApplication((Application) applicationlist.get(0));
+        applicationVo.setWorkflowname(wfname);
+        return applicationVo;
+    }
+
+
+
+
+
 
     public List<ApplicationVo> getList() throws Exception {
         return applicationMapper.selectApplicationVoList();

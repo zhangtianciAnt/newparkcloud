@@ -19,6 +19,8 @@ public interface ApplicationServices {
 
     List<Application> get(Application application) throws Exception;
 
+    ApplicationVo getone(Application application) throws Exception;
+
     List<ApplicationVo> getList() throws Exception;
 
 

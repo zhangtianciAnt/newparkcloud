@@ -39,4 +39,9 @@ public class ApplicationVo extends BaseModel {
      */
     private String mapid;
 
+    /**
+     * 流程名称
+     */
+    private String workflowname;
+
 }
