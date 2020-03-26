@@ -243,7 +243,7 @@ public class BaseVo {
 
     private String thismonthduty;
 
-//    private String rnbasesalary;
-//
-//    private String ykbz;
+    private String rnbasesalary;
+
+    private String ykbz;
 }
