@@ -549,7 +549,7 @@ public class GivingServiceImpl implements GivingService {
                 //1999年前社会人
                 if (customer.getUserinfo().getWorkday() != null && customer.getUserinfo().getWorkday().length() > 0) {
                     String strWorkday = customer.getUserinfo().getWorkday().substring(0, 4);
-                    if (Integer.parseInt(strWorkday) > 1999) {
+                    if (Integer.parseInt(strWorkday) < 1999) {
                         base.setSociology("1");
                     } else {
                         base.setSociology("2");
