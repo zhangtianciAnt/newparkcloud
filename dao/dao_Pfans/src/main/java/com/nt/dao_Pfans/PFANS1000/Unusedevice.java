@@ -25,12 +25,6 @@ public class Unusedevice extends BaseModel {
     private String unusedeviceid;
 
     /**
-     * 決裁願外键
-     */
-    @Column(name = "JUDGEMENT_ID")
-    private String judgementid;
-
-    /**
      * 设备名
      */
     @Column(name = "DEVICENAME")

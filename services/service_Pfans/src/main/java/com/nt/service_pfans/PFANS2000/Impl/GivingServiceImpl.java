@@ -568,8 +568,12 @@ public class GivingServiceImpl implements GivingService {
                 //本月工资
                 base.setThismonthbasic(getSalaryBasicAndDuty(customer, 1).get("thisMonthBasic"));
                 base.setThismonthduty(getSalaryBasicAndDuty(customer, 1).get("thisMonthDuty"));
-                //3月前基数
-                base.setTmabasic(getSalaryBasicAndDuty(customer, -2).get("thisMonth"));
+                //N月前基数-N根据字典获取 PR061001
+                Dictionary dictionaryPr = new Dictionary();
+                dictionaryPr.setCode("PR061001");
+                Dictionary dicResult = dictionaryMapper.selectByPrimaryKey(dictionaryPr);
+                int tmabasic = Integer.parseInt(dicResult.getValue1());
+                base.setTmabasic(getSalaryBasicAndDuty(customer, -tmabasic).get("thisMonth"));
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
                 base.setLastmonth(getSalary(customer, 0)); //上月工资
                 base.setThismonth(getSalary(customer, 1)); //本月工资
@@ -1303,8 +1307,8 @@ public class GivingServiceImpl implements GivingService {
      * @Param [salary, dictionaryList]
      **/
     private Dictionary getTaxRate(double salary, List<Dictionary> dictionaryList) {
-        double currentVal = 0;
-        double nextVal = 0;
+        double currentVal;
+        double nextVal;
         for (int i = 0; i < dictionaryList.size(); i++) {
             currentVal = Double.parseDouble(dictionaryList.get(i).getValue1());
             if (i != dictionaryList.size() - 1) {
@@ -1346,6 +1350,12 @@ public class GivingServiceImpl implements GivingService {
         Base base = new Base();
         base.setGiving_id(givingid);
         List<Base> baseList = baseMapper.select(base);
+
+        // 代休截止间隔修改为从字典中获取
+        Dictionary replaceDic = new Dictionary();
+        replaceDic.setCode("PR061001");    // 代休间隔
+        replaceDic = dictionaryMapper.select(replaceDic).get(0);
+        int rep = Integer.parseInt(replaceDic.getValue1());
 
         // 以基数表数据为单位循环插入残业数据
         baseList.forEach(item -> {
@@ -1389,7 +1399,7 @@ public class GivingServiceImpl implements GivingService {
             // 从代休视图获取该员工所有代休
             List<restViewVo> restViewVoList = annualLeaveMapper.getrest(item.getUser_id());
             // 获取3个月之前的代休
-            cal.add(Calendar.MONTH, -5);
+            cal.add(Calendar.MONTH, -2 + rep * -1);
             String restYear = String.valueOf(cal.get(Calendar.YEAR));
             String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
 
@@ -1447,21 +1457,18 @@ public class GivingServiceImpl implements GivingService {
             }
 
             // 本月代休（3か月以内）
-            cal.add(Calendar.MONTH, 1);
-            String date1 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
-            cal.add(Calendar.MONTH, 1);
-            String date2 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
-            cal.add(Calendar.MONTH, 1);
-            String date3 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
-            String date4 = currentYear + currentMonth;
+            int index = 0;
+            List<String> conditionList = new ArrayList<>();
+            while (index <= rep) {
+                cal.add(Calendar.MONTH, 1);
+                conditionList.add(cal.get(Calendar.YEAR) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0"));
+                index++;
+            }
 
             if (restViewVoList.size() > 0) {
                 residual.setThisreplace3(String.valueOf(restViewVoList.stream().
-                        filter(subItem -> subItem.getApplicationdate().equals(date1) ||
-                                subItem.getApplicationdate().equals(date2) ||
-                                subItem.getApplicationdate().equals(date3) ||
-                                subItem.getApplicationdate().equals(date4))
-                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                        filter(subItem -> conditionList.contains(subItem.getApplicationdate()))
+                                .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
                 residual.setThisreplace3("0");
@@ -2156,7 +2163,7 @@ public class GivingServiceImpl implements GivingService {
                 // 当月基本工资
                 String thisMonthSalary = getSalary(customerInfo, 1);
                 // 计算出勤日数
-                Map<String,String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
                 // 本月正式工作日数
                 double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
                 // 本月试用工作日数

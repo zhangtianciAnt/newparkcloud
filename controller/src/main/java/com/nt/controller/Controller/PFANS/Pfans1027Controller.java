@@ -38,7 +38,7 @@ public class Pfans1027Controller {
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Quotation quotation =new Quotation();
-        quotation.setOwners(tokenModel.getOwnerList());
+//        quotation.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(quotationService.get(quotation));
     }
 
