@@ -539,7 +539,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                 }
                 /*设置type lxx */
-                if (customer.getUserinfo().getChildren() != null) {
+                if (customer.getUserinfo().getChildren() == "1") {
                     base.setOnlychild("1");  //独生子女
                 } else {
                     base.setOnlychild("2");  //独生子女
