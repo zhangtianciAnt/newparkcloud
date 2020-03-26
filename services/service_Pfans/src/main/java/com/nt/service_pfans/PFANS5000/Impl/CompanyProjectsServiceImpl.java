@@ -975,7 +975,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         //项目合同
         List<ProjectContract> projectcontractList = companyProjectsVo.getProjectcontract();
-        if (projectcontractList != null && projectcontractList.size() > 0) {
+        if (projectcontractList != null && projectcontractList.size() >= 0) {
             ProjectContract projectcontract = new ProjectContract();
             projectcontract.setCompanyprojects_id(companyprojectsid);
             projectcontractMapper.delete(projectcontract);
