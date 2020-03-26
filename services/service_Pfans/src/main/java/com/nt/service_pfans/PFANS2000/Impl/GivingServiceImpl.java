@@ -568,8 +568,12 @@ public class GivingServiceImpl implements GivingService {
                 //本月工资
                 base.setThismonthbasic(getSalaryBasicAndDuty(customer, 1).get("thisMonthBasic"));
                 base.setThismonthduty(getSalaryBasicAndDuty(customer, 1).get("thisMonthDuty"));
-                //3月前基数
-                base.setTmabasic(getSalaryBasicAndDuty(customer, -2).get("thisMonth"));
+                //N月前基数-N根据字典获取 PR061001
+                Dictionary dictionaryPr = new Dictionary();
+                dictionaryPr.setCode("PR061001");
+                Dictionary dicResult = dictionaryMapper.selectByPrimaryKey(dictionaryPr);
+                int tmabasic = Integer.parseInt(dicResult.getValue1());
+                base.setTmabasic(getSalaryBasicAndDuty(customer, -tmabasic).get("thisMonth"));
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
                 base.setLastmonth(getSalary(customer, 0)); //上月工资
                 base.setThismonth(getSalary(customer, 1)); //本月工资
