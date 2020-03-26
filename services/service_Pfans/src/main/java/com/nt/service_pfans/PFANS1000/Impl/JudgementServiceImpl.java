@@ -27,17 +27,13 @@ public class JudgementServiceImpl implements JudgementService {
     }
 
     @Override
-    public List<Judgement> selectJudgement() throws Exception {
-        return judgementMapper.selectJudgement();
-    }
-
-    @Override
     public Judgement One(String judgementid) throws Exception {
         return judgementMapper.selectByPrimaryKey(judgementid);
     }
 
     @Override
     public void update(Judgement judgement, TokenModel tokenModel) throws Exception {
+        judgement.preUpdate(tokenModel);
         judgementMapper.updateByPrimaryKeySelective(judgement);
     }
 
@@ -49,10 +45,5 @@ public class JudgementServiceImpl implements JudgementService {
         judgement.setJudgementid(judgementid);
         judgement.setEquipment("0");
         judgementMapper.insertSelective(judgement);
-    }
-
-    @Override
-    public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception {
-        return judgementMapper.select(judgement);
     }
 }

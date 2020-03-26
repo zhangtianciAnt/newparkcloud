@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface JudgementService {
-    public List<Judgement> selectJudgement() throws Exception;
 
     List<Judgement> getJudgement(Judgement judgement) throws Exception;
 
@@ -17,6 +16,5 @@ public interface JudgementService {
 
     public void insert(Judgement judgement, TokenModel tokenModel)throws Exception;
 
-    public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception;
 
 }
