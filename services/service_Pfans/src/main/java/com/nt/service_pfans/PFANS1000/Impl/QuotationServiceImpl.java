@@ -97,6 +97,22 @@ public class QuotationServiceImpl implements QuotationService {
         return asseVo;
     }
 
+//    @Override
+//    public  List<Quotation> getquotation(QuotationVo quotationVo) throws Exception {
+//        List<Quotation> listvo = new ArrayList<Quotation>();
+//        List<Personfee> listvo1 = new ArrayList<Personfee>();
+//        Quotation quotation = new Quotation();
+//        List<Quotation> quotationlist = quotationVo.getQuotation();
+//        for(Quotation quList:quotationlist){
+//            quotation.setQuotationid(quList.getQuotationid());
+//            List<Quotation> listVo = quotationMapper.select(quotation);
+//            listVo = listVo.stream().sorted(Comparator.comparing(Quotation::getNumber)).collect(Collectors.toList());
+//            listvo.addAll(0,listVo);
+//        }
+//
+//        return listvo;
+//    }
+
     @Override
     public void update(QuotationVo quotationVo, TokenModel tokenModel) throws Exception {
         Quotation quotation = new Quotation();

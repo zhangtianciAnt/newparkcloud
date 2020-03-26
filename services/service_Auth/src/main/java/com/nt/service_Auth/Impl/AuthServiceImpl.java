@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         String flg = "0";
         List<String> roleIds = new ArrayList<String>();
 
-        if(tokenModel.getRoleIds() == null){
+        if(tokenModel.getRoleIds() == null || tokenModel.getRoleIds().size() == 0){
             Query query = new Query();
             query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
             UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
@@ -52,23 +52,23 @@ public class AuthServiceImpl implements AuthService {
 
         //根据条件检索数据
         Query newquery = new Query();
-        newquery.addCriteria(Criteria.where("_id").in(roleIds));
+        newquery.addCriteria(Criteria.where("_id").in(tokenModel.getRoleIds()));
         newquery.addCriteria(Criteria.where("menus.menuurl").is(url));
         List<Role> list = mongoTemplate.find(newquery, Role.class);
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-//                List<AppPermission.menu> menus = list.get(i).getMenus();
-//                var menu = menus.stream()
-//                        .filter(info -> info.getMenuurl().equals(url))
-//                        .collect(Collectors.toList());
-//                if (menu != null && menu.size() > 0) {
-//                    var action = menu.get(0).getActions().stream()
-//                            .filter(item -> item.getActiontype().equals("0"))
-//                            .collect(Collectors.toList());
-//                    if (action != null && action.size() > 0) {
-//                        actionId = action.get(0).get_id();
-//                    }
-//                }
+                List<AppPermission.menu> menus = list.get(i).getMenus();
+                var menu = menus.stream()
+                        .filter(info -> info.getMenuurl().equals(url))
+                        .collect(Collectors.toList());
+                if (menu != null && menu.size() > 0) {
+                    var action = menu.get(0).getActions().stream()
+                            .filter(item -> item.getActiontype().equals("0"))
+                            .collect(Collectors.toList());
+                    if (action != null && action.size() > 0) {
+                        actionId = action.get(0).get_id();
+                    }
+                }
                 List<AppPermission.menu.actions> actions = list.get(i).getActions();
                 if (!StrUtil.isEmpty(actionId)) {
                     String finalActionId = actionId;

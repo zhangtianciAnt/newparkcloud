@@ -194,19 +194,7 @@ public class Business extends BaseModel {
     private String currency;
 
     /**
-     * 日元汇率
-     */
-    @Column(name = "JPYFXRATE")
-    private String jpyfxrate;
-
-    /**
-     * 美元汇率
-     */
-    @Column(name = "DOLLARFXRATE")
-    private String dollarfxrate;
-
-    /**
-     * 其他汇率
+     * 汇率
      */
     @Column(name = "OTHERFXRATE")
     private String otherfxrate;

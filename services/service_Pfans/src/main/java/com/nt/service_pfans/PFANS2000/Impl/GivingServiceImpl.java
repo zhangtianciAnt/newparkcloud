@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -357,6 +358,8 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
+        givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
+
         return givingVo;
     }
 
@@ -409,7 +412,11 @@ public class GivingServiceImpl implements GivingService {
                     OtherOne otherOne = new OtherOne();
                     String beginTime = "";
                     String otherOneid = UUID.randomUUID().toString();
-                    // otherOne.preInsert(tokenModel);
+                    if (tokenModel != null) {
+                        otherOne.preInsert(tokenModel);
+                    } else {
+                        otherOne.preInsert();
+                    }
                     otherOne.setOtherone_id(otherOneid);
                     otherOne.setGiving_id(givingid);
                     otherOne.setUser_id(abNor.getUser_id());
@@ -512,7 +519,11 @@ public class GivingServiceImpl implements GivingService {
                 Base base = new Base();
                 rowindex = rowindex + 1;
                 String baseid = UUID.randomUUID().toString();
-                base.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    base.preInsert(tokenModel);
+                } else {
+                    base.preInsert();
+                }
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
@@ -859,7 +870,11 @@ public class GivingServiceImpl implements GivingService {
         for (CasgiftApply casgift : casgiftapplylist) {
             rowundex = rowundex + 1;
             String othertwoid = UUID.randomUUID().toString();
-            othertwo.preInsert(tokenModel);
+            if (tokenModel != null) {
+                othertwo.preInsert(tokenModel);
+            } else {
+                othertwo.preInsert();
+            }
             othertwo.setOthertwo_id(othertwoid);
             othertwo.setGiving_id(givingid);
             othertwo.setUser_id(casgift.getUser_id());
@@ -877,7 +892,11 @@ public class GivingServiceImpl implements GivingService {
         List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(givingid);
         if (otherTwo2List.size() > 0) {
             for (OtherTwo2 otherTwo2 : otherTwo2List) {
-                otherTwo2.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    otherTwo2.preInsert(tokenModel);
+                } else {
+                    otherTwo2.preInsert();
+                }
                 otherTwo2.setUser_id(otherTwo2.getUser_id());
                 otherTwo2.setMoneys(otherTwo2.getMoneys());
                 otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
@@ -901,7 +920,11 @@ public class GivingServiceImpl implements GivingService {
             for (Base base1 : baselist) {
                 rowindex = rowindex + 1;
                 String consrastid = UUID.randomUUID().toString();
-                contrast.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    contrast.preInsert(tokenModel);
+                } else {
+                    contrast.preInsert();
+                }
                 contrast.setGiving_id(base1.getGiving_id());
                 contrast.setContrast_id(consrastid);
                 contrast.setUser_id(base1.getUser_id());
@@ -965,6 +988,24 @@ public class GivingServiceImpl implements GivingService {
             retire.setGiving_id(givinglist.get(0).getGiving_id());
             retireMapper.delete(retire);
             // 2020/03/14 add by myt end
+            // region 重新生成Giving时，删除旧数据 By Skaixx
+            // dutyfree
+            Dutyfree dutyfree = new Dutyfree();
+            dutyfree.setGiving_id(givinglist.get(0).getGiving_id());
+            dutyfreeMapper.delete(dutyfree);
+            // disciplinary
+            Disciplinary disciplinary = new Disciplinary();
+            disciplinary.setGiving_id(givinglist.get(0).getGiving_id());
+            disciplinaryMapper.delete(disciplinary);
+            // accumulatedtax
+            Accumulatedtax accumulatedtax = new Accumulatedtax();
+            accumulatedtax.setGiving_id(givinglist.get(0).getGiving_id());
+            accumulatedTaxMapper.delete(accumulatedtax);
+            //comprehensive
+            Comprehensive comprehensive = new Comprehensive();
+            comprehensive.setGivingId(givinglist.get(0).getGiving_id());
+            comprehensiveMapper.delete(comprehensive);
+            // endregion
         }
         giving = new Giving();
         giving.setMonths(strTemp);
@@ -972,7 +1013,11 @@ public class GivingServiceImpl implements GivingService {
 
         String givingid = UUID.randomUUID().toString();
         giving = new Giving();
-        giving.preInsert(tokenModel);
+        if (tokenModel != null) {
+            giving.preInsert(tokenModel);
+        } else {
+            giving.preInsert();
+        }
         giving.setGiving_id(givingid);
         giving.setGeneration(generation);
         giving.setGenerationdate(new Date());
@@ -991,6 +1036,12 @@ public class GivingServiceImpl implements GivingService {
         insertResidual(givingid, tokenModel);
     }
 
+
+    @Scheduled(cron = "0 0 1 10 * ?")
+    protected void autoCreateGiving() throws Exception {
+        insert("1", null);
+    }
+
     @Override
     public List<Giving> getDataList(Giving giving) throws Exception {
 
@@ -999,40 +1050,72 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void save(GivingVo givingvo, TokenModel tokenModel) throws Exception {
-        if (givingvo.getStrFlg().equals("16")) {
-            List<Contrast> contrastlist = givingvo.getContrast();
-            if (contrastlist != null) {
-                for (Contrast contrast : contrastlist) {
-                    contrast.preUpdate(tokenModel);
-                    contrastMapper.updateByPrimaryKeySelective(contrast);
+        switch (givingvo.getStrFlg()) {
+            case "16":
+                List<Contrast> contrastlist = givingvo.getContrast();
+                if (contrastlist != null) {
+                    for (Contrast contrast : contrastlist) {
+                        contrast.preUpdate(tokenModel);
+                        contrastMapper.updateByPrimaryKeySelective(contrast);
+                    }
                 }
-            }
-        } else if (givingvo.getStrFlg().equals("2")) {
-            List<OtherOne> otheronelist = givingvo.getOtherOne();
-            if (otheronelist != null) {
-                for (OtherOne otherOne : otheronelist) {
-                    otherOne.preUpdate(tokenModel);
-                    otherOneMapper.updateByPrimaryKeySelective(otherOne);
+                break;
+            case "2":
+                List<OtherOne> otheronelist = givingvo.getOtherOne();
+                if (otheronelist != null) {
+                    for (OtherOne otherOne : otheronelist) {
+                        otherOne.preUpdate(tokenModel);
+                        otherOneMapper.updateByPrimaryKeySelective(otherOne);
+                    }
                 }
-            }
-        } else if (givingvo.getStrFlg().equals("3")) {
-            List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
-            if (otherTwolist != null) {
-                for (OtherTwo othertwo : otherTwolist) {
-                    othertwo.preUpdate(tokenModel);
-                    othertwoMapper.updateByPrimaryKeySelective(othertwo);
-                    List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(othertwo.getGiving_id());
-                    if (otherTwo2List.size() > 0) {
-                        for (OtherTwo2 otherTwo2 : otherTwo2List) {
-                            otherTwo2.preInsert(tokenModel);
-                            otherTwo2.setUser_id(otherTwo2.getUser_id());
-                            otherTwo2.setMoneys(otherTwo2.getMoneys());
-                            otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
-                            othertwo2Mapper.insert(otherTwo2);
+                break;
+            case "3":
+                List<OtherTwo> otherTwolist = givingvo.getOtherTwo();
+                if (otherTwolist != null) {
+                    for (OtherTwo othertwo : otherTwolist) {
+                        othertwo.preUpdate(tokenModel);
+                        othertwoMapper.updateByPrimaryKeySelective(othertwo);
+                        List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(othertwo.getGiving_id());
+                        if (otherTwo2List.size() > 0) {
+                            for (OtherTwo2 otherTwo2 : otherTwo2List) {
+                                otherTwo2.preInsert(tokenModel);
+                                otherTwo2.setUser_id(otherTwo2.getUser_id());
+                                otherTwo2.setMoneys(otherTwo2.getMoneys());
+                                otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+                                othertwo2Mapper.insert(otherTwo2);
+                            }
                         }
                     }
                 }
-            }
+                break;
+            case "8":   // 欠勤
+                List<Lackattendance> lackattendanceList = givingvo.getLackattendance();
+                lackattendanceList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    lackattendanceMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "9":   // 残业
+                List<Residual> residualList = givingvo.getResidual();
+                residualList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    residualMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "6":   // 入职
+                List<Induction> inductionList = givingvo.getEntryVo();
+                inductionList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    inductionMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
+            case "7":   // 退职
+                List<Retire> retireList = givingvo.getRetireVo();
+                retireList.forEach(item -> {
+                    item.preUpdate(tokenModel);
+                    retireMapper.updateByPrimaryKeySelective(item);
+                });
+                break;
         }
     }
 
@@ -1220,8 +1303,8 @@ public class GivingServiceImpl implements GivingService {
      * @Param [salary, dictionaryList]
      **/
     private Dictionary getTaxRate(double salary, List<Dictionary> dictionaryList) {
-        double currentVal = 0;
-        double nextVal = 0;
+        double currentVal;
+        double nextVal;
         for (int i = 0; i < dictionaryList.size(); i++) {
             currentVal = Double.parseDouble(dictionaryList.get(i).getValue1());
             if (i != dictionaryList.size() - 1) {
@@ -1263,6 +1346,12 @@ public class GivingServiceImpl implements GivingService {
         Base base = new Base();
         base.setGiving_id(givingid);
         List<Base> baseList = baseMapper.select(base);
+
+        // 代休截止间隔修改为从字典中获取
+        Dictionary replaceDic = new Dictionary();
+        replaceDic.setCode("PR061001");    // 代休间隔
+        replaceDic = dictionaryMapper.select(replaceDic).get(0);
+        int rep = Integer.parseInt(replaceDic.getValue1());
 
         // 以基数表数据为单位循环插入残业数据
         baseList.forEach(item -> {
@@ -1306,7 +1395,7 @@ public class GivingServiceImpl implements GivingService {
             // 从代休视图获取该员工所有代休
             List<restViewVo> restViewVoList = annualLeaveMapper.getrest(item.getUser_id());
             // 获取3个月之前的代休
-            cal.add(Calendar.MONTH, -5);
+            cal.add(Calendar.MONTH, -2 + rep * -1);
             String restYear = String.valueOf(cal.get(Calendar.YEAR));
             String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
 
@@ -1364,21 +1453,18 @@ public class GivingServiceImpl implements GivingService {
             }
 
             // 本月代休（3か月以内）
-            cal.add(Calendar.MONTH, 1);
-            String date1 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
-            cal.add(Calendar.MONTH, 1);
-            String date2 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
-            cal.add(Calendar.MONTH, 1);
-            String date3 = String.valueOf(cal.get(Calendar.YEAR)) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
-            String date4 = currentYear + currentMonth;
+            int index = 0;
+            List<String> conditionList = new ArrayList<>();
+            while (index <= rep) {
+                cal.add(Calendar.MONTH, 1);
+                conditionList.add(cal.get(Calendar.YEAR) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0"));
+                index++;
+            }
 
             if (restViewVoList.size() > 0) {
                 residual.setThisreplace3(String.valueOf(restViewVoList.stream().
-                        filter(subItem -> subItem.getApplicationdate().equals(date1) ||
-                                subItem.getApplicationdate().equals(date2) ||
-                                subItem.getApplicationdate().equals(date3) ||
-                                subItem.getApplicationdate().equals(date4))
-                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                        filter(subItem -> conditionList.contains(subItem.getApplicationdate()))
+                                .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
                 residual.setThisreplace3("0");
@@ -1396,8 +1482,11 @@ public class GivingServiceImpl implements GivingService {
 
             // 加班补助
             residual.setSubsidy(BigDecimal.valueOf(Double.parseDouble(residual.getLasttotaly()) + Double.parseDouble(residual.getThistotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
-
-            residual.preInsert(tokenModel);
+            if (tokenModel != null) {
+                residual.preInsert(tokenModel);
+            } else {
+                residual.preInsert();
+            }
             residualMapper.insert(residual);
         });
     }
@@ -1503,6 +1592,7 @@ public class GivingServiceImpl implements GivingService {
         total += isOverR8 ? 0d : (Double.parseDouble(ifNull(residual.getThisreplace3())) + Double.parseDouble(ifNull(residual.getThisreplace()))) * 8d * lastSalaryPerHour * 2.0d;
 
         residual.setThistotaly(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        residual.setSubsidy(new BigDecimal(residual.getThistotaly()).add(new BigDecimal(residual.getLasttotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return residual;
     }
 
@@ -1554,6 +1644,7 @@ public class GivingServiceImpl implements GivingService {
         // 长病欠-试用
         total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
         lackattendance.setThistotal(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
+        lackattendance.setGive(new BigDecimal(lackattendance.getThistotal()).add(new BigDecimal(lackattendance.getLasttotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return lackattendance;
     }
 
@@ -1694,7 +1785,11 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setGive(BigDecimal.valueOf(Double.parseDouble(lackattendance.getLasttotal())
                     + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
-            lackattendance.preInsert(tokenModel);
+            if (tokenModel != null) {
+                lackattendance.preInsert(tokenModel);
+            } else {
+                lackattendance.preInsert();
+            }
             lackattendanceMapper.insert(lackattendance);
         });
     }
@@ -1831,7 +1926,11 @@ public class GivingServiceImpl implements GivingService {
         if (inductionList.size() > 0) {
             for (Induction induction : inductionList) {
                 induction.setInduction_id(UUID.randomUUID().toString());
-                induction.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    induction.preInsert(tokenModel);
+                } else {
+                    induction.preInsert();
+                }
                 induction.setRowindex(rowundex);
                 inductionMapper.insert(induction);
                 rowundex++;
@@ -1846,7 +1945,11 @@ public class GivingServiceImpl implements GivingService {
         if (retireList.size() > 0) {
             for (Retire retire : retireList) {
                 retire.setRetire_id(UUID.randomUUID().toString());
-                retire.preInsert(tokenModel);
+                if (tokenModel != null) {
+                    retire.preInsert(tokenModel);
+                } else {
+                    retire.preInsert();
+                }
                 retire.setRowindex(rowundex);
                 retireMapper.insert(retire);
                 rowundex++;
@@ -1907,10 +2010,10 @@ public class GivingServiceImpl implements GivingService {
                 if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
                     continue;
                 }
-                // 上月工资结算时点过后入职没发工资的人
+                Induction induction = new Induction();
+                induction.setGiving_id(givingId);
+                // 上月工资结算时点过后入职没发工资的人（包含上月入职和本月入职的员工）
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
-                    Induction induction = new Induction();
-                    induction.setGiving_id(givingId);
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
@@ -1924,6 +2027,26 @@ public class GivingServiceImpl implements GivingService {
                     // 计算給料和补助
                     calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
                     inductions.add(induction);
+                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                    // 本月转正或未转正的人
+                    Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    if (endDate.getTime() >= mouthStart) {
+                        // 本月转正
+                        if (endDate.getTime() <= mouthEnd) {
+                            // 正社员工開始日
+                            staffStartDate = endDate.toString();
+                            induction.setStartdate(endDate);
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                            inductions.add(induction);
+                        } else {
+                            // 本月未转正
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                            inductions.add(induction);
+                        }
+                    }
+
                 }
             }
         }
@@ -1958,12 +2081,9 @@ public class GivingServiceImpl implements GivingService {
         // 上月出勤日数
         double lastAttendanceDays = lastMonthDays + lastMonthSuitDays;
         induction.setAttendance(String.valueOf(lastAttendanceDays));
-        // 本月未转正员为对象
-        if(StringUtils.isEmpty(staffStartDate)){
-            // 今月試用社員出勤日数
-            thisMonthSuitDays = calculateAttendanceDays(thisMonthSuitDays);
-            induction.setTrial(String.valueOf(thisMonthSuitDays));
-        }
+        // 今月試用社員出勤日数
+        thisMonthSuitDays = calculateAttendanceDays(thisMonthSuitDays);
+        induction.setTrial(String.valueOf(thisMonthSuitDays));
         // 給料
         if (StringUtils.isNotEmpty(staffStartDate)) {
             induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
@@ -1994,11 +2114,15 @@ public class GivingServiceImpl implements GivingService {
         // 保留小数点后两位四舍五入
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
-        Calendar now = Calendar.getInstance();
-        Calendar last = Calendar.getInstance();
-        last.add(Calendar.MONTH, 1);
-        now.add(Calendar.MONTH, -1);
-        int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 上个月
+        Calendar lastMonth = Calendar.getInstance();
+        lastMonth.add(Calendar.MONTH, -1);
+        // 上个月最后一日
+        int lastMonthLastDay = lastMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 本月
+        Calendar thisMonth = Calendar.getInstance();
+        // 本月最后一日
+        int thisMonthLastDay = thisMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         // 納付率表抽取相关数据
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
@@ -2014,10 +2138,10 @@ public class GivingServiceImpl implements GivingService {
                 officialSubsidy = Double.parseDouble(diction.getValue2());
             }
         }
-        // 查询退职人员信息
+        // 查询退职人员信息（本月退职人员为对象）
         Criteria criteria = Criteria.where("userinfo.resignation_date")
-                .gte(now.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(now.getTime())) + "-" + lastDay)
-                .lt(last.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(last.getTime())) + "-01")
+                .gte(lastMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + lastMonthLastDay)
+                .lt(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonth.getTime())) + "-" + thisMonthLastDay)
                 .and("status").is("0");
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
@@ -2035,7 +2159,7 @@ public class GivingServiceImpl implements GivingService {
                 // 当月基本工资
                 String thisMonthSalary = getSalary(customerInfo, 1);
                 // 计算出勤日数
-                Map<String,String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
+                Map<String, String> daysList = suitAndDaysCalc(customerInfo.getUserinfo());
                 // 本月正式工作日数
                 double thisMonthDays = Double.parseDouble(daysList.get("thisMonthDays"));
                 // 本月试用工作日数
