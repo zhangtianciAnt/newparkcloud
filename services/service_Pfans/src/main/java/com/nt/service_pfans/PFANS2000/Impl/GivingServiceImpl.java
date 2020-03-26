@@ -1371,7 +1371,6 @@ public class GivingServiceImpl implements GivingService {
             attendance.setYears(preYear);
             attendance.setMonths(preMonth);
             List<Attendance> attendanceList = attendanceMapper.select(attendance);
-
             // region 前月残业数据
             // 平日加班（150%）
             residual.setLastweekdays(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
