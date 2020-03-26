@@ -41,4 +41,10 @@ public interface FirealarmServices {
 
     //获取接警事件记录
     List<FireAlarmVo> getFireAlarm() throws Exception;
+
+    //获取今日事件列表
+    List<FireAlarmVo> getSameDayFireAlarm() throws Exception;
+
+    //获取本周事件列表
+    List<FireAlarmVo> getWeekFireAlarm() throws Exception;
 }

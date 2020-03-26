@@ -60,4 +60,28 @@
 		firealarm.`STATUS` = 0
         order by firealarm.alarmtimes desc
     </select>
+
+    <!--    今日事件-->
+    <select id="getSameDayFireAlarm" resultType="com.nt.dao_BASF.VO.FireAlarmVo">
+        select firealarm.*,dictionary.value1 from
+        firealarm
+        inner join dictionary
+        on dictionary.code = firealarm.typacc
+        where
+		year(alarmtimes)=year(now())
+        and month(alarmtimes) = month(now())
+        and day(alarmtimes) = day(now())
+        order by firealarm.alarmtimes desc
+    </select>
+
+    <!--    本周事件-->
+    <select id="getWeekFireAlarm" resultType="com.nt.dao_BASF.VO.FireAlarmVo">
+        select firealarm.*,dictionary.value1 from
+        firealarm
+        inner join dictionary
+        on dictionary.code = firealarm.typacc
+        where
+		YEARWEEK(date_format(alarmtimes,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        order by firealarm.alarmtimes desc
+    </select>
 </mapper>

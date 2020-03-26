@@ -323,5 +323,21 @@ public class MultiThreadScheduleTask {
         webSocketVo.setRiskassessment(riskassessmentServices.getData());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90905_GetSameDayFireAlarm() throws Exception {
+        // 获取今日事件列表
+        webSocketVo.setSameDayFireAlarm(firealarmServices.getSameDayFireAlarm());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90906_GetWeekFireAlarm() throws Exception {
+        // 获取本周事件列表
+        webSocketVo.setWeekFireAlarm(firealarmServices.getWeekFireAlarm());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
     // endregion
 }

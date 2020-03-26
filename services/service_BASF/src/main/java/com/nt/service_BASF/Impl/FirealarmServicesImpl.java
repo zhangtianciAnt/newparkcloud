@@ -180,4 +180,30 @@ public class FirealarmServicesImpl implements FirealarmServices {
     public List<FireAlarmVo> getFireAlarm() throws Exception {
         return firealarmMapper.getFireAlarm();
     }
+
+    /**
+     * @return 今日事件列表
+     * @Method getSameDayFireAlarm
+     * @Author GJ
+     * @Description 获取今日事件列表
+     * @Date 2020/3/26 15:43
+     * @Param
+     **/
+    @Override
+    public List<FireAlarmVo> getSameDayFireAlarm() throws Exception {
+        return firealarmMapper.getSameDayFireAlarm();
+    }
+
+    /**
+     * @return 本周事件列表
+     * @Method getWeekFireAlarm
+     * @Author GJ
+     * @Description 获取本周事件列表
+     * @Date 2020/3/26 15:43
+     * @Param
+     **/
+    @Override
+    public List<FireAlarmVo> getWeekFireAlarm() throws Exception {
+        return firealarmMapper.getWeekFireAlarm();
+    }
 }

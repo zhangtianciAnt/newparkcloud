@@ -79,5 +79,10 @@ public class WebSocketVo {
     private List<Startprogram> futureProgramList = new ArrayList<>();
     //获取风险判研信息
     private Riskassessment riskassessment = new Riskassessment();
+
+    // BASF90905 今日事件列表
+    private List<FireAlarmVo> sameDayFireAlarm = new ArrayList<>();
+    // BASF90906 本周事件列表
+    private List<FireAlarmVo> weekFireAlarm = new ArrayList<>();
     // endregion
 }
