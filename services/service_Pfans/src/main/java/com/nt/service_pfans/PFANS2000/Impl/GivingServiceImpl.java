@@ -1389,7 +1389,12 @@ public class GivingServiceImpl implements GivingService {
             // 从代休视图获取该员工所有代休
             List<restViewVo> restViewVoList = annualLeaveMapper.getrest(item.getUser_id());
             // 获取3个月之前的代休
-            cal.add(Calendar.MONTH, -5);
+            // 代休截止间隔修改为从字典中获取
+            Dictionary replaceDic = new Dictionary();
+            replaceDic.setCode("PR061001");    // 代休间隔
+            replaceDic = dictionaryMapper.select(replaceDic).get(0);
+            int rep = Integer.parseInt(replaceDic.getValue1());
+            cal.add(Calendar.MONTH, -2 + rep * -1);
             String restYear = String.valueOf(cal.get(Calendar.YEAR));
             String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
 
