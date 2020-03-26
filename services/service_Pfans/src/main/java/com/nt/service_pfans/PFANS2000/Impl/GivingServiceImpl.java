@@ -2031,26 +2031,35 @@ public class GivingServiceImpl implements GivingService {
                     // 计算給料和补助
                     calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
                     inductions.add(induction);
-                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
-                    // 本月转正或未转正的人
-                    Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
-                    if (endDate.getTime() >= mouthStart) {
-                        // 本月转正
-                        if (endDate.getTime() <= mouthEnd) {
-                            // 正社员工開始日
-                            staffStartDate = endDate.toString();
-                            induction.setStartdate(endDate);
-                            // 计算給料和补助
-                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
-                            inductions.add(induction);
-                        } else {
-                            // 本月未转正
-                            // 计算給料和补助
-                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
-                            inductions.add(induction);
+                } else {
+                    // 上月开了工资的员工
+                    // 试用期截止日为空的情况
+                    if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                        // 本月未转正
+                        // 计算給料和补助
+                        calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                        inductions.add(induction);
+                    } else {
+                        // 试用期截止日不为空的情况
+                        // 本月转正或未转正的人
+                        Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                        if (endDate.getTime() >= mouthStart) {
+                            // 本月转正
+                            if (endDate.getTime() <= mouthEnd) {
+                                // 正社员工開始日
+                                staffStartDate = endDate.toString();
+                                induction.setStartdate(endDate);
+                                // 计算給料和补助
+                                calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                                inductions.add(induction);
+                            } else {
+                                // 本月未转正
+                                // 计算給料和补助
+                                calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                                inductions.add(induction);
+                            }
                         }
                     }
-
                 }
             }
         }
