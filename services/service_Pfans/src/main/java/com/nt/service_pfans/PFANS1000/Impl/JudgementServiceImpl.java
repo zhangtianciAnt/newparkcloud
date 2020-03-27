@@ -88,11 +88,11 @@ public class JudgementServiceImpl implements JudgementService {
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
         judgement.preInsert(tokenModel);
         judgement.setJudgementid(judgementid);
-        judgement.setEquipment("0");
+//        judgement.setEquipment("0");
         judgementMapper.insertSelective(judgement);
         List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
         if(unusedeviceList != null){
-            judgement.setEquipment("1");
+//            judgement.setEquipment("1");
             int rowundex = 0;
             for(Unusedevice unu : unusedeviceList){
                 rowundex = rowundex + 1;
