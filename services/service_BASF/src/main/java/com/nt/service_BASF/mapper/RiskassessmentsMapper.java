@@ -2,6 +2,7 @@ package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.Riskassessments;
 import com.nt.utils.MyMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,5 +17,6 @@ import org.springframework.stereotype.Component;
 @Component(value = "RiskassessmentsMapper")
 public interface RiskassessmentsMapper extends MyMapper<Riskassessments> {
 
-
+    //根据装置code查找今日有无填写信息
+    int checkExist(@Param("code") String devicecode) throws Exception;
 }

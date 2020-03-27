@@ -57,6 +57,17 @@ public class RiskassessmentsServicesImpl implements RiskassessmentsServices {
         return riskassessmentsMapper.selectOne(riskassessments);
     }
 
+    //根据装置code查找今日有无填写信息
+    @Override
+    public boolean checkExist(String devicecode) throws Exception {
+        int count = riskassessmentsMapper.checkExist(devicecode);
+        if (count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //获取今日风险研判综合信息(前端大屏首页用)
     @Override
     public Riskassessments getSynthesize() throws Exception {
@@ -69,6 +80,5 @@ public class RiskassessmentsServicesImpl implements RiskassessmentsServices {
         List<Riskassessments> riskassessments = new ArrayList<>();
         return riskassessments;
     }
-
 
 }

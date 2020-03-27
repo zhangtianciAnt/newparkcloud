@@ -28,10 +28,14 @@ public interface RiskassessmentsServices {
     //根据id查找风险研判数据
     Riskassessments getDataById(String id) throws Exception;
 
+    //根据装置code查找今日有无填写信息
+    boolean checkExist(String devicecode) throws Exception;
+
     //获取今日风险研判综合信息
     Riskassessments getSynthesize() throws Exception;
 
     //获取今日各装置综合信息
     List<Riskassessments> getRespectiveData() throws Exception;
+
 
 }

@@ -5,15 +5,14 @@ import com.nt.dao_BASF.Riskassessments;
 import com.nt.service_BASF.RiskassessmentServices;
 import com.nt.service_BASF.RiskassessmentsServices;
 import com.nt.service_BASF.mapper.RiskassessmentsMapper;
-import com.nt.utils.ApiResult;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @ProjectName: BASF应急平台
@@ -103,7 +102,22 @@ public class BASF11101Controller {
     //根据id查找风险研判数据
     @GetMapping("/getDataById")
     public ApiResult getDataById(String id, HttpServletRequest request) throws Exception {
-        return ApiResult.success(riskassessmentsServices.getDataById(id));
+        if (StringUtils.isNotEmpty(id)) {
+            return ApiResult.success(riskassessmentsServices.getDataById(id));
+        } else {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+    }
+
+    //根据装置code查找今日有无填写信息
+    @GetMapping("checkExist")
+    public ApiResult checkExist(String devicecode, HttpServletRequest request) throws Exception {
+        if (StringUtils.isNotEmpty(devicecode)) {
+            return ApiResult.success(riskassessmentsServices.checkExist(devicecode));
+        } else {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
     }
     //endregion
 
