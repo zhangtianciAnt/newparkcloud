@@ -1,7 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
-import com.nt.service_pfans.PFANS1000.JudgementService;
+import com.nt.dao_Pfans.PFANS1000.Unusedevice;
+import com.nt.service_pfans.PFANS1000.UnusedeviceService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -17,47 +17,48 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/judgement")
-public class Pfans1004Controller {
+@RequestMapping("/unusedevice")
+public class Pfans1003Controller {
     @Autowired
-    private JudgementService judgementService;
+    private UnusedeviceService unusedeviceService;
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception{
             TokenModel tokenModel = tokenService.getToken(request);
-            Judgement judgement = new Judgement();
-            judgement.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(judgementService.getJudgement(judgement));
+            Unusedevice unusedevice = new Unusedevice();
+            unusedevice.setOwners(tokenModel.getOwnerList());
+            return ApiResult.success(unusedeviceService.getUnusedevice(unusedevice));
     }
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult one(@RequestBody Unusedevice unusedevice, HttpServletRequest request) throws Exception {
+        if (unusedevice == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(judgementService.One(judgement.getJudgementid()));
+        return ApiResult.success(unusedeviceService.One(unusedevice.getUnusedeviceid()));
     }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateJudgement(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception{
-        if (judgement == null) {
+    public ApiResult updateUnusedevice(@RequestBody Unusedevice unusedevice, HttpServletRequest request) throws Exception{
+        if (unusedevice == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.update(judgement,tokenModel);
+        unusedeviceService.update(unusedevice,tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/create",method={RequestMethod.POST})
-    public ApiResult create(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
-        if (judgement == null) {
+    public ApiResult create(@RequestBody Unusedevice unusedevice, HttpServletRequest request) throws Exception {
+        if (unusedevice == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        judgementService.insert(judgement,tokenModel);
+        unusedeviceService.insert(unusedevice,tokenModel);
         return ApiResult.success();
     }
+
 }

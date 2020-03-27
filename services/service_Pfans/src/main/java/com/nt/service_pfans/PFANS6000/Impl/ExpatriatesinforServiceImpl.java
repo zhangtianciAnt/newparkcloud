@@ -87,17 +87,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     }
     @Override
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
-        String yes = "是";
-        String no = "否";
         if (expatriatesinfor.getOperationform().equals("BP024001")) {
-            expatriatesinfor.setDistriobjects(yes);
-            expatriatesinfor.setVenuetarget(yes);
+            expatriatesinfor.setDistriobjects("0");
+            expatriatesinfor.setVenuetarget("0");
         } else if (expatriatesinfor.getOperationform().equals("BP024002")) {
-            expatriatesinfor.setDistriobjects(no);
-            expatriatesinfor.setVenuetarget(yes);
+            expatriatesinfor.setDistriobjects("1");
+            expatriatesinfor.setVenuetarget("0");
         } else {
-            expatriatesinfor.setDistriobjects(no);
-            expatriatesinfor.setVenuetarget(no);
+            expatriatesinfor.setDistriobjects("1");
+            expatriatesinfor.setVenuetarget("1");
         }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
