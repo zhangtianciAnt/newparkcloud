@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_BASF.mapper.RiskassessmentsMapper">
 
-    <select id="checkExist" resultType="int">
+	<!--	根据装置code查找今日有无填写信息-->
+	<select id="checkExist" resultType="int">
 SELECT
 	COUNT( r.devicecode )
 FROM
@@ -12,6 +13,42 @@ WHERE
 		r.date,
 	CURRENT_DATE ()) = 0
 	AND r.devicecode = #{code}
+    </select>
+
+	<!--	查询装置今日已填写的风险研判信息-->
+	<select id="writeList" resultType="com.nt.dao_BASF.Riskassessments">
+SELECT
+	r.riskassessmentid,
+	r.devicecode,
+	r.devicenum,
+	r.rundevicenum,
+	r.stopdevicenum,
+	r.vesselnum,
+	r.employvesslnum,
+	r.stopvesselnum,
+	r.warehousenum,
+	r.employwarehousenum,
+	r.stopwarehousenum,
+	r.specialhotworknum,
+	r.onelevelhotworknum,
+	r.twolevelhotworknum,
+	r.confinedspacenum,
+	r.roadbreakingnum,
+	r.excavationnum,
+	r.blindplateoperationnum,
+	r.temporaryelectricitynum,
+	r.workatheightnum,
+	r.liftingoperation,
+	r.pilotproduction,
+	r.operationandstop
+FROM
+	riskassessments AS r
+WHERE
+	DATEDIFF(
+	r.date,
+	CURRENT_DATE ()) = 0
+	ORDER BY
+	r.devicecode ASC
     </select>
 
 </mapper>

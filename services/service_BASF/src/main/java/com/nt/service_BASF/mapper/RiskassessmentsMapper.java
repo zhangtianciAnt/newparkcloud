@@ -5,6 +5,8 @@ import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @ProjectName: BASF应急平台
  * @Package: com.nt.service_BASF.mapper
@@ -19,4 +21,7 @@ public interface RiskassessmentsMapper extends MyMapper<Riskassessments> {
 
     //根据装置code查找今日有无填写信息
     int checkExist(@Param("code") String devicecode) throws Exception;
+
+    //查询装置今日已填写的风险研判信息
+    List<Riskassessments> writeList() throws Exception;
 }

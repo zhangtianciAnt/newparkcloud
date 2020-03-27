@@ -19,9 +19,6 @@ import java.util.List;
  */
 public interface RiskassessmentServices {
 
-    //excel文档导入
-    List<String> importexcel(HttpServletRequest request, TokenModel tokenModel) throws Exception;
-
     //获取数据
     Riskassessment getData() throws Exception;
 

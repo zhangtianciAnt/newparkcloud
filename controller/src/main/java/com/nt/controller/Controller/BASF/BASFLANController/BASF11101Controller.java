@@ -40,27 +40,6 @@ public class BASF11101Controller {
     @Autowired
     private RiskassessmentServices riskassessmentservices;
 
-    /**
-     * @ProjectName: BASF应急平台
-     * @Package: com.nt.controller.Controller.BASF.BASFLANController
-     * @ClassName: BASF11101
-     * @Author: 王哲
-     * @Description: EXECL导入
-     * @Date: 2020/02/04
-     * @Version: 1.0
-     */
-    @RequestMapping(value = "/importexcel", method = {RequestMethod.POST})
-    public ApiResult importexcel(HttpServletRequest request) {
-        try {
-            TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(riskassessmentServices.importexcel(request, tokenModel));
-        } catch (LogicalException e) {
-            return ApiResult.fail(e.getMessage());
-        } catch (Exception e) {
-            return ApiResult.fail("操作失败！");
-        }
-    }
-
     //获取风险研判数据
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
@@ -118,6 +97,12 @@ public class BASF11101Controller {
         } else {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+    }
+
+    //查询装置今日已填写的风险研判信息
+    @PostMapping("/writeList")
+    public ApiResult writeList(HttpServletRequest request) throws Exception {
+        return ApiResult.fail(riskassessmentsServices.writeList());
     }
     //endregion
 

@@ -179,7 +179,7 @@ public class Riskassessments extends BaseModel {
      * 吊装作业数
      */
     @Column(name = "liftingoperation")
-    private String liftingoperation;
+    private Long liftingoperation;
 
     /**
      * 是否有承包商作业

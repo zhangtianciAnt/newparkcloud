@@ -77,8 +77,11 @@ public class WebSocketVo {
     private List<OverduePersonnelListVo> overduePersonnelListVoList = new ArrayList<>();
     //大屏培训信息推送列表
     private List<Startprogram> futureProgramList = new ArrayList<>();
-    //获取风险判研信息
+
+    //获取风险研判信息（MongoDB）
     private Riskassessment riskassessment = new Riskassessment();
+    ///获取风险研判信息（MySql）
+    private List<Riskassessments> riskassessmentsList = new ArrayList<>();
 
     // BASF90905 今日事件列表
     private List<FireAlarmVo> sameDayFireAlarm = new ArrayList<>();

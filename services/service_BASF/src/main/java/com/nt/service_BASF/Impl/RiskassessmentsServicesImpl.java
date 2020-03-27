@@ -7,6 +7,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,17 +69,9 @@ public class RiskassessmentsServicesImpl implements RiskassessmentsServices {
         }
     }
 
-    //获取今日风险研判综合信息(前端大屏首页用)
-    @Override
-    public Riskassessments getSynthesize() throws Exception {
-        return new Riskassessments();
-    }
-
-    //获取今日各装置综合信息
-    @Override
-    public List<Riskassessments> getRespectiveData() throws Exception {
-        List<Riskassessments> riskassessments = new ArrayList<>();
-        return riskassessments;
+    //查询装置今日已填写的风险研判信息
+    public List<Riskassessments> writeList() throws Exception {
+        return riskassessmentsMapper.writeList();
     }
 
 }

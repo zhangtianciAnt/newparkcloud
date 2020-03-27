@@ -48,9 +48,15 @@ public class MultiThreadScheduleTask {
     @SuppressWarnings("all")
     TrainjoinlistServices trainjoinlistServices;
 
+    //MongoDB
     @Autowired
     @SuppressWarnings("all")
     RiskassessmentServices riskassessmentServices;
+
+    //MySql
+    @Autowired
+    @SuppressWarnings("all")
+    RiskassessmentsServices riskassessmentsServices;
 
     @Autowired
     EmergencyplanServices emergencyplanServices;
@@ -321,12 +327,19 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASF90900_GetRiskassessment() throws Exception {
-        //获取风险判研信息
-        System.out.println("执行 获取风险判研信息 定时任务: " + LocalDateTime.now().toLocalTime()
-                + "\r\n线程 : " + Thread.currentThread().getName());
+        //获取风险判研信息(MongoDB)
         webSocketVo.setRiskassessment(riskassessmentServices.getData());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90900_WriteList() throws Exception {
+        //获取风险研判信息（MySql）
+        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
 
     @Async
     @Scheduled(fixedDelay = 30000)
