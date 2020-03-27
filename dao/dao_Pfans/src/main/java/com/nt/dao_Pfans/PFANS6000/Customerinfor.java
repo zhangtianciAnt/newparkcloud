@@ -153,6 +153,6 @@ public class Customerinfor extends BaseModel {
     /**
      * 事业场编码
      */
-    @Column(name = "SHIYECODE")
-    private String shiyecode;
+    @Column(name = "CAUSECODE")
+    private String causecode;
 }
