@@ -48,6 +48,12 @@ public class LogManagement extends BaseModel {
     private String project_id;
 
     /**
+     * 工作項目名
+     */
+    @Column(name = "PROJECT_NAME")
+    private String project_name;
+
+    /**
      * 工作階段
      */
     @Column(name = "WORK_PHASE")
