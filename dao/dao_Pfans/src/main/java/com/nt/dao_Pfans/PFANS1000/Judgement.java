@@ -205,5 +205,9 @@ public class Judgement extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
-
+    /**
+     * 决裁和无偿设备区分
+     */
+    @Column(name = "TYPE")
+    private String type;
 }
