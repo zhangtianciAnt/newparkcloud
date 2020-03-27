@@ -71,6 +71,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 userAccount.setUsertype("1");
 
                 Query query = new Query();
+                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                List<UserAccount> list = mongoTemplate.find(query, UserAccount.class);
+
+                if(list.size() > 0){
+                    userAccount = list.get(0);
+                }
+                query = new Query();
                 query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
                 query.addCriteria(Criteria.where("rolename").is("外协staff"));
                 List<Role>  rolss =  mongoTemplate.find(query, Role.class);
@@ -85,6 +94,43 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         }
 
     }
+
+    @Override
+    public void crAccount2(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception {
+
+        for(Expatriatesinfor item:expatriatesinfor){
+            if(StrUtil.isEmpty(item.getAccount())){
+                UserAccount userAccount = new UserAccount();
+                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setUsertype("1");
+
+                Query query = new Query();
+                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                List<UserAccount> list = mongoTemplate.find(query, UserAccount.class);
+
+                if(list.size() > 0){
+                    userAccount = list.get(0);
+                }
+
+                query = new Query();
+                query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+                query.addCriteria(Criteria.where("rolename").is("外协员工"));
+                List<Role>  rolss =  mongoTemplate.find(query, Role.class);
+
+                userAccount.setRoles(rolss);
+                userAccount.preInsert(tokenModel);
+                mongoTemplate.save(userAccount);
+
+                item.setAccount(userAccount.get_id());
+                expatriatesinforMapper.updateByPrimaryKeySelective(item);
+            }
+        }
+
+    }
+
     @Override
     public void updateexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
         if (expatriatesinfor.getOperationform().equals("BP024001")) {
