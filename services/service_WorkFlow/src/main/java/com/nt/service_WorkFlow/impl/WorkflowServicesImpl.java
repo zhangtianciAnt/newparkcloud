@@ -735,6 +735,7 @@ private String upFlg = "0";
         workflowinstance.setDataid(startWorkflowVo.getDataId());
         workflowinstance.setFormid(startWorkflowVo.getMenuUrl());
         workflowinstance.setUrl(startWorkflowVo.getDataUrl());
+        workflowinstance.setOwner("");
         workflowinstance.preInsert(tokenModel);
         workflowinstanceMapper.insert(workflowinstance);
 

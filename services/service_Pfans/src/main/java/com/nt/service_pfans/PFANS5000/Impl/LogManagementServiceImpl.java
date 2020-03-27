@@ -56,7 +56,9 @@ public class LogManagementServiceImpl implements LogManagementService {
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(logmanagement.getCreateby()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-        logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        if(customerInfo != null && customerInfo.getUserinfo() != null){
+            logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+        }
         logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
     }
