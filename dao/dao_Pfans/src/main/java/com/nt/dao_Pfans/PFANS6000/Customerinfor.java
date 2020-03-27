@@ -149,4 +149,10 @@ public class Customerinfor extends BaseModel {
      */
     @Column(name = "THECOMPANY")
     private String thecompany;
+
+    /**
+     * 事业场编码
+     */
+    @Column(name = "CAUSECODE")
+    private String causecode;
 }

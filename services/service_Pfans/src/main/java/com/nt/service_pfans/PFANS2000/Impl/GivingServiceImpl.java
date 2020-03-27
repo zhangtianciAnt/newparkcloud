@@ -539,7 +539,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                 }
                 /*设置type lxx */
-                if (customer.getUserinfo().getChildren() != null) {
+                if (customer.getUserinfo().getChildren() == "1") {
                     base.setOnlychild("1");  //独生子女
                 } else {
                     base.setOnlychild("2");  //独生子女
@@ -549,7 +549,7 @@ public class GivingServiceImpl implements GivingService {
                 //1999年前社会人
                 if (customer.getUserinfo().getWorkday() != null && customer.getUserinfo().getWorkday().length() > 0) {
                     String strWorkday = customer.getUserinfo().getWorkday().substring(0, 4);
-                    if (Integer.parseInt(strWorkday) > 1999) {
+                    if (Integer.parseInt(strWorkday) < 1999) {
                         base.setSociology("1");
                     } else {
                         base.setSociology("2");
@@ -568,8 +568,12 @@ public class GivingServiceImpl implements GivingService {
                 //本月工资
                 base.setThismonthbasic(getSalaryBasicAndDuty(customer, 1).get("thisMonthBasic"));
                 base.setThismonthduty(getSalaryBasicAndDuty(customer, 1).get("thisMonthDuty"));
-                //3月前基数
-                base.setTmabasic(getSalaryBasicAndDuty(customer, -2).get("thisMonth"));
+                //N月前基数-N根据字典获取 PR061001
+                Dictionary dictionaryPr = new Dictionary();
+                dictionaryPr.setCode("PR061001");
+                Dictionary dicResult = dictionaryMapper.selectByPrimaryKey(dictionaryPr);
+                int tmabasic = Integer.parseInt(dicResult.getValue1());
+                base.setTmabasic(getSalaryBasicAndDuty(customer, -tmabasic).get("thisMonth"));
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
                 base.setLastmonth(getSalary(customer, 0)); //上月工资
                 base.setThismonth(getSalary(customer, 1)); //本月工资
@@ -2027,26 +2031,35 @@ public class GivingServiceImpl implements GivingService {
                     // 计算給料和补助
                     calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
                     inductions.add(induction);
-                } else if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
-                    // 本月转正或未转正的人
-                    Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
-                    if (endDate.getTime() >= mouthStart) {
-                        // 本月转正
-                        if (endDate.getTime() <= mouthEnd) {
-                            // 正社员工開始日
-                            staffStartDate = endDate.toString();
-                            induction.setStartdate(endDate);
-                            // 计算給料和补助
-                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
-                            inductions.add(induction);
-                        } else {
-                            // 本月未转正
-                            // 计算給料和补助
-                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
-                            inductions.add(induction);
+                } else {
+                    // 上月开了工资的员工
+                    // 试用期截止日为空的情况
+                    if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+                        // 本月未转正
+                        // 计算給料和补助
+                        calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                        inductions.add(induction);
+                    } else {
+                        // 试用期截止日不为空的情况
+                        // 本月转正或未转正的人
+                        Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                        if (endDate.getTime() >= mouthStart) {
+                            // 本月转正
+                            if (endDate.getTime() <= mouthEnd) {
+                                // 正社员工開始日
+                                staffStartDate = endDate.toString();
+                                induction.setStartdate(endDate);
+                                // 计算給料和补助
+                                calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                                inductions.add(induction);
+                            } else {
+                                // 本月未转正
+                                // 计算給料和补助
+                                calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                                inductions.add(induction);
+                            }
                         }
                     }
-
                 }
             }
         }
