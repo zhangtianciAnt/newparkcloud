@@ -84,5 +84,8 @@ public class WebSocketVo {
     private List<FireAlarmVo> sameDayFireAlarm = new ArrayList<>();
     // BASF90906 本周事件列表
     private List<FireAlarmVo> weekFireAlarm = new ArrayList<>();
+
+    // BASF90921 高风险作业清单
+    private List<Highriskarea> highriskareaList = new ArrayList<>();
     // endregion
 }

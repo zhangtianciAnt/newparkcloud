@@ -64,6 +64,10 @@ public class MultiThreadScheduleTask {
     @Autowired
     private SqlUserInfoMapper sqlUserInfoMapper;
 
+    @Autowired
+    @SuppressWarnings("all")
+    private HighriskareaServices highriskareaServices;
+
     // websocket消息推送
     private WebSocket ws = new WebSocket();
     // WebSocketVow
@@ -337,6 +341,14 @@ public class MultiThreadScheduleTask {
     public void BASF90906_GetWeekFireAlarm() throws Exception {
         // 获取本周事件列表
         webSocketVo.setWeekFireAlarm(firealarmServices.getWeekFireAlarm());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90921_GetHighriskareaList() throws Exception {
+        // 获取高风险作业清单
+        webSocketVo.setHighriskareaList(highriskareaServices.list());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion
