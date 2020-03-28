@@ -99,7 +99,7 @@ public class Pfans1012Controller {
         if (loanapplication==null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
+//        TokenModel tokenModel=tokenService.getToken(request);
         return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
     }
 

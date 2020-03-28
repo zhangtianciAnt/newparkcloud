@@ -3,133 +3,163 @@
 <mapper namespace="com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper">
 
 	<select id="getList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
-		select
-		c.`COMPANYPROJECTS_ID`,
-		c.`PROJECT_NAME` as PROJECT_NAME,
-		c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
-		c.`NUMBERS` as NUMBERS,
-		s.`PHASE` as phase,
-		s.`PRODUCTSTATUS` as productstatus,
-		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
-		when s.`COMPANYPROJECTS_ID` != "" then '1'
-		ELSE '' END as phasestatus,
-		s.`ESTIMATEDWORK` as estimatedwork,
-		s.`ACTUALWORK` as actualwork,
-		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
-		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
-		else '2' end as contractstatus,
-		c.`STATUS` as status,
-		c.`COMPANYPROJECTS_ID`,
-		c.ENTRUST as ENTRUST,
-		c.WORK as WORK,
-		c.LEADERID as LEADERID,
-		c.FIELD as FIELD
-		from `companyprojects` c
-		left outer join `stageinformation` s
-		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
-		and s.status = '0'
-		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
-		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
-		left join (
-		select p.COMPANYPROJECTS_ID,
-		max(substring(a.CLAIMDATETIME,1,10)) as stime,
-		min(substring(a.CLAIMDATETIME,14,10)) as etime
-		from projectcontract p
-		inner join contractapplication a
-		on a.contractnumber = p.CONTRACT
-		and a.status = '0' and p.status = '0'
-		group by p.COMPANYPROJECTS_ID
-		) pp
-		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
-		where c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6'
-		order by c.`CREATEON` desc
-	</select>
+        select
+        c.`COMPANYPROJECTS_ID`,
+        c.`PROJECT_NAME` as PROJECT_NAME,
+        c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+        c.`NUMBERS` as NUMBERS,
+        s.`PHASE` as phase,
+        s.`PRODUCTSTATUS` as productstatus,
+        <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+        when s.`COMPANYPROJECTS_ID` != "" then '1'
+        ELSE '' END as phasestatus,
+        s.`ESTIMATEDWORK` as estimatedwork,
+        s.`ACTUALWORK` as actualwork,
+        <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>   then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>   then '1'
+        else "" end contractstatus,
+        c.`STATUS` as status,
+        c.`COMPANYPROJECTS_ID`,
+        c.ENTRUST as ENTRUST,
+        c.WORK as WORK,
+        c.LEADERID as LEADERID,
+        c.FIELD as FIELD
+        from `companyprojects` c
+        left outer join  (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+        on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+        and s.status = '0'
+        <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
+        left join (
+        select p.COMPANYPROJECTS_ID,
+        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        from projectcontract p
+        inner join contractapplication a
+        on a.contractnumber = p.CONTRACT
+        and a.status = '0' and p.status = '0'
+        group by p.COMPANYPROJECTS_ID
+        ) pp
+        on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+        where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6')
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            c.owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by c.`CREATEON` desc
+
+    </select>
 
     <select id="getList2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
-		select
-		c.`COMPANYPROJECTS_ID`,
-		c.`PROJECT_NAME` as PROJECT_NAME,
-		c.`NUMBERS` as NUMBERS,
-		s.`PHASE` as phase,
-		s.`PRODUCTSTATUS` as productstatus,
-		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
-		when s.`COMPANYPROJECTS_ID` != "" then '1'
-		ELSE '' END as phasestatus,
-		s.`ESTIMATEDWORK` as estimatedwork,
-		s.`ACTUALWORK` as actualwork,
-		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
-		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
-		else '2' end as contractstatus,
-		c.`STATUS` as status,
-		c.`COMPANYPROJECTS_ID`,
-		c.ENTRUST as ENTRUST,
-		c.WORK as WORK,
-		c.LEADERID as LEADERID,
-		c.FIELD as FIELD
-		from `companyprojects` c
-		left outer join `stageinformation` s
-		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
-		and s.status = '0'
-		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
-		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
-		left join (
-		select p.COMPANYPROJECTS_ID,
-		max(substring(a.CLAIMDATETIME,1,10)) as stime,
-		min(substring(a.CLAIMDATETIME,14,10)) as etime
-		from projectcontract p
-		inner join contractapplication a
-		on a.contractnumber = p.CONTRACT
-		and a.status = '0' and p.status = '0'
-		group by p.COMPANYPROJECTS_ID
-		) pp
-		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
-		where
-		c.`STATUS` = '4' or c.`STATUS` = '7' or c.`STATUS` = '8'
-		order by c.`CREATEON` desc
-	</select>
+        select
+        c.`COMPANYPROJECTS_ID`,
+        c.`PROJECT_NAME` as PROJECT_NAME,
+        c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+        c.`NUMBERS` as NUMBERS,
+        s.`PHASE` as phase,
+        s.`PRODUCTSTATUS` as productstatus,
+        <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+        when s.`COMPANYPROJECTS_ID` != "" then '1'
+        ELSE '' END as phasestatus,
+        s.`ESTIMATEDWORK` as estimatedwork,
+        s.`ACTUALWORK` as actualwork,
+        <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>   then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>   then '1'
+        else "" end contractstatus,
+        c.`STATUS` as status,
+        c.`COMPANYPROJECTS_ID`,
+        c.ENTRUST as ENTRUST,
+        c.WORK as WORK,
+        c.LEADERID as LEADERID,
+        c.FIELD as FIELD
+        from `companyprojects` c
+        left outer join  (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+        on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+        and s.status = '0'
+        <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
+        left join (
+        select p.COMPANYPROJECTS_ID,
+        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        from projectcontract p
+        inner join contractapplication a
+        on a.contractnumber = p.CONTRACT
+        and a.status = '0' and p.status = '0'
+        group by p.COMPANYPROJECTS_ID
+        ) pp
+        on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+        where (c.`STATUS` = '4' or c.`STATUS` = '7' or c.`STATUS` = '8')
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            c.owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by c.`CREATEON` desc
+
+    </select>
 
     <select id="getList3" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
-		select
-		c.`COMPANYPROJECTS_ID`,
-		c.`PROJECT_NAME` as PROJECT_NAME,
-		c.`NUMBERS` as NUMBERS,
-		s.`PHASE` as phase,
-		s.`PRODUCTSTATUS` as productstatus,
-		<![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
-		when s.`COMPANYPROJECTS_ID` != "" then '1'
-		ELSE '' END as phasestatus,
-		s.`ESTIMATEDWORK` as estimatedwork,
-		s.`ACTUALWORK` as actualwork,
-		<![CDATA[ case when pp.COMPANYPROJECTS_ID != "" && (curdate() < pp.stime || curdate() > pp.etime) ]]> then '0'
-		<![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= pp.stime && curdate() <= pp.etime ]]> then '1'
-		else '2' end as contractstatus,
-		c.`STATUS` as status,
-		c.`COMPANYPROJECTS_ID`,
-		c.ENTRUST as ENTRUST,
-		c.WORK as WORK,
-		c.LEADERID as LEADERID,
-		c.FIELD as FIELD
-		from `companyprojects` c
-		left outer join `stageinformation` s
-		on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
-		and s.status = '0'
-		<![CDATA[ and s.ACTUALSTARTTIME <= curdate()
-		and (curdate() <= s.ACTUALENDTIME || ISNULL(s.ACTUALENDTIME)) ]]>
-		left join (
-		select p.COMPANYPROJECTS_ID,
-		max(substring(a.CLAIMDATETIME,1,10)) as stime,
-		min(substring(a.CLAIMDATETIME,14,10)) as etime
-		from projectcontract p
-		inner join contractapplication a
-		on a.contractnumber = p.CONTRACT
-		and a.status = '0' and p.status = '0'
-		group by p.COMPANYPROJECTS_ID
-		) pp
-		on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
-		where
-		c.`STATUS` = '9'
-		order by c.`CREATEON` desc
-	</select>
+        select
+        c.`COMPANYPROJECTS_ID`,
+        c.`PROJECT_NAME` as PROJECT_NAME,
+        c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+        c.`NUMBERS` as NUMBERS,
+        s.`PHASE` as phase,
+        s.`PRODUCTSTATUS` as productstatus,
+        <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+        when s.`COMPANYPROJECTS_ID` != "" then '1'
+        ELSE '' END as phasestatus,
+        s.`ESTIMATEDWORK` as estimatedwork,
+        s.`ACTUALWORK` as actualwork,
+        <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>   then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>   then '1'
+        else "" end contractstatus,
+        c.`STATUS` as status,
+        c.`COMPANYPROJECTS_ID`,
+        c.ENTRUST as ENTRUST,
+        c.WORK as WORK,
+        c.LEADERID as LEADERID,
+        c.FIELD as FIELD
+        from `companyprojects` c
+        left outer join  (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+        on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+        and s.status = '0'
+        <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
+        left join (
+        select p.COMPANYPROJECTS_ID,
+        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        from projectcontract p
+        inner join contractapplication a
+        on a.contractnumber = p.CONTRACT
+        and a.status = '0' and p.status = '0'
+        group by p.COMPANYPROJECTS_ID
+        ) pp
+        on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+        where (c.`STATUS` = '9')
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            c.owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by c.`CREATEON` desc
+
+    </select>
 
 	<select id="getListVo2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
 		select a.CONTRACTNUMBER as contractnumber,c.COMPANYPROJECTS_ID as companyprojects_id

@@ -66,6 +66,8 @@ public class PurchaseDetails extends BaseModel {
     @Column(name = "RMB")
     private String rmb;
 
+    @Column(name = "EXTERNAL")
+    private String external;
 
 
     @Column(name = "FOREIGNCURRENCY")
