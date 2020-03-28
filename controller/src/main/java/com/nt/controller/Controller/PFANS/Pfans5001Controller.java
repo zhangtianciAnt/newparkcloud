@@ -219,7 +219,12 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.getSiteList(companyProjects));
     }
 
-
+    @RequestMapping(value="/getSiteList2", method={RequestMethod.GET})
+    public ApiResult getSiteList2(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        CompanyProjects companyProjects = new CompanyProjects();
+        return ApiResult.success(companyProjectsService.getSiteList(companyProjects));
+    }
     /**
      * @方法名：getPjList
      * @描述：获取PJ完了审批列表
