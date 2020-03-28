@@ -30,7 +30,13 @@ public class Pfans6003Controller {
     public ApiResult getsupplierinfor(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Supplierinfor supplierinfor = new Supplierinfor();
-        //supplierinfor.setOwners(tokenModel.getOwnerList());
+        supplierinfor.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(supplierinforService.getsupplierinfor(supplierinfor));
+    }
+
+    @RequestMapping(value = "/getWithoutAuth", method = {RequestMethod.GET})
+    public ApiResult getsupplierinfor2(HttpServletRequest request) throws Exception {
+        Supplierinfor supplierinfor = new Supplierinfor();
         return ApiResult.success(supplierinforService.getsupplierinfor(supplierinfor));
     }
 
