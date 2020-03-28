@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetail;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
@@ -18,5 +19,7 @@ public interface PunchcardRecordService {
     void saveAttendance(Attendance attendance,String Flg, TokenModel tokenModel) throws Exception ;
 
     List<PunchcardRecord> getDataList(PunchcardRecord punchcardrecord, TokenModel tokenModel)throws Exception;
+
+    List<PunchcardRecordDetail> getDetail(PunchcardRecordDetail detail)throws Exception;
 
 }

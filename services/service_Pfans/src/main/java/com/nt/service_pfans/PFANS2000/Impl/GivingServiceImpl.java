@@ -143,7 +143,7 @@ public class GivingServiceImpl implements GivingService {
         // 专项控除数据需要插入到专项控除表中
         disciplinary.forEach(item -> {
             item.setDisciplinary_id(UUID.randomUUID().toString());
-            disciplinaryMapper.insert(item);
+//            disciplinaryMapper.insert(item);
         });
         // endregion
 
@@ -967,28 +967,34 @@ public class GivingServiceImpl implements GivingService {
     public void insert(String generation, TokenModel tokenModel) throws Exception {
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
         init();
+        // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
-        Giving giving = new Giving();
         String strTemp = sf1.format(new Date());
+        // 查询当前月份的giving
+        Giving giving = new Giving();
         giving.setMonths(strTemp);
         List<Giving> givinglist = givingMapper.select(giving);
-        Base base = new Base();
-        Contrast contrast = new Contrast();
-        OtherOne otherOne = new OtherOne();
-        // 2020/03/14 add by myt start
-        Induction induction = new Induction();
-        Retire retire = new Retire();
-        // 2020/03/14 add by myt end
+        // 如果存在当月数据
         if (givinglist.size() != 0) {
+            // 删除当前月份的基数表数据
+            Base base = new Base();
             base.setGiving_id(givinglist.get(0).getGiving_id());
             baseMapper.delete(base);
+            // 删除当前月份的契约表数据 ？？ 契约表干什么的
+            Contrast contrast = new Contrast();
             contrast.setGiving_id(givinglist.get(0).getGiving_id());
             contrastMapper.delete(contrast);
+            // 删除当前月份的其他1表数据
+            OtherOne otherOne = new OtherOne();
             otherOne.setGiving_id(givinglist.get(0).getGiving_id());
             otherOneMapper.delete(otherOne);
             // 2020/03/14 add by myt start
+            // 删除当前月份的入职表数据
+            Induction induction = new Induction();
             induction.setGiving_id(givinglist.get(0).getGiving_id());
             inductionMapper.delete(induction);
+            // 删除当前月份的退职表数据
+            Retire retire = new Retire();
             retire.setGiving_id(givinglist.get(0).getGiving_id());
             retireMapper.delete(retire);
             // 2020/03/14 add by myt end
@@ -1011,10 +1017,11 @@ public class GivingServiceImpl implements GivingService {
             comprehensiveMapper.delete(comprehensive);
             // endregion
         }
+        // 删除当前月giving表数据
         giving = new Giving();
         giving.setMonths(strTemp);
         givingMapper.delete(giving);
-
+        // 创建giving表数据
         String givingid = UUID.randomUUID().toString();
         giving = new Giving();
         if (tokenModel != null) {
@@ -1026,8 +1033,10 @@ public class GivingServiceImpl implements GivingService {
         giving.setGeneration(generation);
         giving.setGenerationdate(new Date());
         giving.setMonths(sf1.format(new Date()));
-
         givingMapper.insert(giving);
+        /*
+            插入其他相关表数据
+         */
         // 2020/03/11 add by myt start
         insertInduction(givingid, tokenModel);
         insertRetire(givingid, tokenModel);
@@ -1381,7 +1390,6 @@ public class GivingServiceImpl implements GivingService {
             attendance.setYears(preYear);
             attendance.setMonths(preMonth);
             List<Attendance> attendanceList = attendanceMapper.select(attendance);
-
             // region 前月残业数据
             // 平日加班（150%）
             residual.setLastweekdays(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());

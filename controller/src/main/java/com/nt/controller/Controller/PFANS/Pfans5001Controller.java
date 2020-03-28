@@ -69,6 +69,14 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.list(companyProjects));
     }
 
+    @RequestMapping(value = "/list2", method = {RequestMethod.POST})
+    public ApiResult List2(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
+        if (companyProjects == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.list(companyProjects));
+    }
+
     @RequestMapping(value = "/getPjnameList", method = {RequestMethod.POST})
     public ApiResult getPjnameList(CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
         if (companyProjects == null) {

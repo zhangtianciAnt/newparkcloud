@@ -488,6 +488,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecorddetail.setJobnumber(jobnumber);
                     //打卡时间
                     punchcardrecorddetail.setPunchcardrecord_date(sf.parse(recordTime));
+                    //打卡时间
+                    punchcardrecorddetail.setUser_id(staffName);
+
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
                     //进门测试用
