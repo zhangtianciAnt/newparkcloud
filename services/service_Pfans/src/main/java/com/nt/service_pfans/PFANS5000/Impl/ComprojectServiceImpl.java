@@ -799,8 +799,8 @@ public class ComprojectServiceImpl implements ComprojectService {
      * @作者：zy
      */
     @Override
-    public List<CompanyProjectsVo2> getSiteList() throws Exception {
-        return companyprojectsMapper.getList();
+    public List<CompanyProjectsVo2> getSiteList(CompanyProjects companyProjects) throws Exception {
+        return companyprojectsMapper.getList(companyProjects.getOwners());
     }
 
     @Override

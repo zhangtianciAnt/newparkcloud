@@ -34,7 +34,7 @@ public interface ComprojectService {
     List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception;
 
     //现场管理list
-    List<CompanyProjectsVo2> getSiteList() throws Exception;
+    List<CompanyProjectsVo2> getSiteList(CompanyProjects companyProjects) throws Exception;
 
     //PJ完了审批
     List<CompanyProjectsVo2> getPjList(String flag) throws Exception;
