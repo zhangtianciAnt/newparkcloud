@@ -3,6 +3,8 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
@@ -10,6 +12,8 @@ import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.service_pfans.PFANS6000.Impl.DelegainformationServiceImpl;
+import org.springframework.web.client.RestTemplate;
+import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -1579,5 +1583,31 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     public Double getUnit(Double d1,Double d2) throws Exception {
         Double d3 = d1 / d2;
         return Double.valueOf((int) Math.ceil(d3)) * d2;
+    }
+
+    @Override
+    public List<PunchcardRecordDetail> getDetail(PunchcardRecordDetail detail) throws Exception{
+        List<PunchcardRecordDetail> detaillist = punchcardrecorddetailmapper.select(detail);
+        //所有记录时间升序
+        Collections.sort(detaillist, new Comparator<PunchcardRecordDetail>() {
+            @Override
+            public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
+                try {
+                    Date dt1 = o1.getPunchcardrecord_date();
+                    Date dt2 = o2.getPunchcardrecord_date();
+                    if (dt1.getTime() > dt2.getTime()) {
+                        return 1;
+                    } else if (dt1.getTime() < dt2.getTime()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return 0;
+            }
+        });
+        return detaillist;
     }
 }
