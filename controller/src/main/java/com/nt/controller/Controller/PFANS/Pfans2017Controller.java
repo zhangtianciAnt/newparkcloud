@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetail;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -52,9 +53,8 @@ public class Pfans2017Controller {
         }
     }
 
-    @RequestMapping(value = "/download", method = {RequestMethod.POST})
-    public void download(HttpServletResponse response) throws Exception {
-        Map<String, Object> data = new HashMap<>();
-        ExcelOutPutUtil.OutPut("打卡记录","dakajilu.xlsx",data,response);
+    @RequestMapping(value = "/getDetail", method = {RequestMethod.POST})
+    public ApiResult getexpatriatesinfor(@RequestBody PunchcardRecordDetail detail, HttpServletRequest request) throws Exception {
+        return ApiResult.success(punchcardrecordService.getDetail(detail));
     }
 }
