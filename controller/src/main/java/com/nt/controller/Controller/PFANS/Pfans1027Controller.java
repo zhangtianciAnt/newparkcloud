@@ -69,7 +69,6 @@ public class Pfans1027Controller {
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(qu.getQuotation().getCurrencyposition())) {
-
                 qu.getQuotation().setCurrencyposition(item.getValue1());
             }
         }
