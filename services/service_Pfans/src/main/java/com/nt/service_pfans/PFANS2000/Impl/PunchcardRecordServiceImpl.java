@@ -1586,28 +1586,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     }
 
     @Override
-    public List<PunchcardRecordDetail> getDetail(PunchcardRecordDetail detail) throws Exception{
-        List<PunchcardRecordDetail> detaillist = punchcardrecorddetailmapper.select(detail);
-        //所有记录时间升序
-        Collections.sort(detaillist, new Comparator<PunchcardRecordDetail>() {
-            @Override
-            public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
-                try {
-                    Date dt1 = o1.getPunchcardrecord_date();
-                    Date dt2 = o2.getPunchcardrecord_date();
-                    if (dt1.getTime() > dt2.getTime()) {
-                        return 1;
-                    } else if (dt1.getTime() < dt2.getTime()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        });
+    public List<PunchcardRecordDetail> getPunDetail(PunchcardRecordDetail detail) throws Exception{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String Jobnumber = detail.getJobnumber();
+        String Punchcardrecord_date = sdf.format(detail.getPunchcardrecord_date());
+        List<PunchcardRecordDetail> detaillist = punchcardrecorddetailmapper.getPunDetail(Jobnumber,Punchcardrecord_date);
         return detaillist;
     }
 }

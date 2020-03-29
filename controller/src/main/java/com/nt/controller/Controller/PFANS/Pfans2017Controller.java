@@ -53,8 +53,8 @@ public class Pfans2017Controller {
         }
     }
 
-    @RequestMapping(value = "/getDetail", method = {RequestMethod.POST})
-    public ApiResult getexpatriatesinfor(@RequestBody PunchcardRecordDetail detail, HttpServletRequest request) throws Exception {
-        return ApiResult.success(punchcardrecordService.getDetail(detail));
+    @RequestMapping(value = "/getPunDetail", method = {RequestMethod.POST})
+    public ApiResult getPunDetail(@RequestBody PunchcardRecordDetail detail, HttpServletRequest request) throws Exception {
+        return ApiResult.success(punchcardrecordService.getPunDetail(detail));
     }
 }
