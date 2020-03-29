@@ -128,4 +128,16 @@ public class Pfans6004Controller {
         }
     }
 
+    @RequestMapping(value = "/crAccount2", method = {RequestMethod.POST})
+    public ApiResult crAccount2(@RequestBody List<Expatriatesinfor> expatriatesinfor,HttpServletRequest request) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            expatriatesinforService.crAccount2(expatriatesinfor, tokenModel);
+            return ApiResult.success();
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
 }

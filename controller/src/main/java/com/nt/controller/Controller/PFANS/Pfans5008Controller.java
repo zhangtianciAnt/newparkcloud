@@ -69,7 +69,6 @@ public class Pfans5008Controller {
         if (companyprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyprojectsService.getCompanyProjectList(companyprojects, request));
     }
 

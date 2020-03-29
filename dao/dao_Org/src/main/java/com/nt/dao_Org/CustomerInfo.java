@@ -633,9 +633,9 @@ public class CustomerInfo extends BaseModel {
     public static class Personal{
         private String date;
         private String before;
-        private String after;
-        private String basic;
-        private String duty;
+        private String after;   //8845
+        private String basic;   //5000
+        private String duty;    //3845
         private String remark;
     }
 

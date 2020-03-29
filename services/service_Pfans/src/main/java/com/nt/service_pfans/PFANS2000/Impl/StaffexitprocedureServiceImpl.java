@@ -134,7 +134,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         Calendar now = Calendar.getInstance();
         Calendar min = Calendar.getInstance();
         Calendar max = Calendar.getInstance();
-        Date _now = sdf.parse(sdf.format(now));
+        Date _now = sdf.parse(sdf.format(now.getTime()));
         now.setTime(_now);
         int year = now.get(Calendar.MONTH) <3 ? now.get(Calendar.YEAR) - 1 : now.get(Calendar.YEAR);
         annualLeave.setYears(year + "");
