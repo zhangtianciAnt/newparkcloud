@@ -342,7 +342,7 @@ private String upFlg = "0";
             workflownodeinstance.setWorkflowinstanceid(item.getWorkflowinstanceid());
             List<Workflownodeinstance> workflownodeinstancelist = workflownodeinstanceMapper.select(workflownodeinstance);
             workflownodeinstancelist = workflownodeinstancelist.stream()
-                    .sorted(Comparator.comparing(Workflownodeinstance::getCreateon).reversed()).collect(Collectors.toList());
+                    .sorted(Comparator.comparing(Workflownodeinstance::getNodeord).reversed()).collect(Collectors.toList());
             for (Workflownodeinstance node : workflownodeinstancelist) {
 
                 Workflowstep workflowstep = new Workflowstep();
