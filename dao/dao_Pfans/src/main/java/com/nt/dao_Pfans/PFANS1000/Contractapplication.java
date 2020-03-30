@@ -208,5 +208,5 @@ public class Contractapplication extends BaseModel {
     private String qingremarks;
 
     @Column(name = "EXTENSIONDATE")
-    private String extensiondate;
+    private Date extensiondate;
 }
