@@ -1,5 +1,10 @@
 package com.nt.service_Auth.Impl;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.AuthVo;
@@ -9,6 +14,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.RoleService;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.services.TokenService;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,7 +22,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -31,10 +39,21 @@ public class RoleServiceImpl implements RoleService {
 
     //获取角色列表
     @Override
-    public List<Role> getRoleList(Role role) throws Exception {
-        Query query = CustmizeQuery(role);
-        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-        return mongoTemplate.find(query, Role.class);
+    public List<Map<String, Object>> getRoleList(Role role) throws Exception {
+//        Query query = CustmizeQuery(role);
+//        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        BasicDBObject query1 = new BasicDBObject(); //setup the query criteria 设置查询条件
+        query1.put("status", AuthConstants.DEL_FLAG_NORMAL);
+        FindIterable<Document> dbCursor =mongoTemplate.getCollection("role").find(query1);
+        MongoCursor<Document> mongoCursor = dbCursor.iterator();
+        while(mongoCursor.hasNext()){
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.putAll(mongoCursor.next());
+            list.add(map);
+        }
+
+        return list;
     }
 
     //获取角色详细信息

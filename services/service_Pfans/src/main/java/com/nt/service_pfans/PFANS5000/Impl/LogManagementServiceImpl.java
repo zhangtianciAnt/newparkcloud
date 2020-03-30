@@ -135,7 +135,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
-            model.add("工号");
+            model.add("账号");
             model.add("姓名");
             model.add("项目");
             model.add("日志日期");
@@ -185,7 +185,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     }
                     Query query = new Query();
                     String jobnumber = value.get(0).toString();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                    query.addCriteria(Criteria.where("userinfo.adfield").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         logmanagement.setCreateby(customerInfo.getUserid());
@@ -194,7 +194,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     }
                     if (customerInfo == null) {
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的账号字段没有找到，请输入正确的账号，导入失败");
                         continue;
                     }
                     //确认状态
