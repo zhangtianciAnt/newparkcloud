@@ -526,14 +526,16 @@ private String upFlg = "0";
         if (currentOrg.getUser().equals(curentUser)) {
             upFlg = "0";
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
-            userId = upOrgs.getUser();
+            if(upOrgs != null){
+                userId = upOrgs.getUser();
+            }
         } else {
             userId = currentOrg.getUser();
         }
-
-        if(userId == null || StrUtil.isEmpty(userId)){
-            throw new LogicalException("无上级人员信息！");
-        }
+//
+//        if(userId == null || StrUtil.isEmpty(userId)){
+//            throw new LogicalException("无上级人员信息！");
+//        }
 
         return userId;
     }
@@ -628,6 +630,9 @@ private String upFlg = "0";
                     } else if ("2".equals(item.getNodeusertype())) {
 
                         String user = getUpUser(tokenModel.getUserId());
+                        if(StrUtil.isEmpty(user)){
+                            continue;
+                        }
                         // 创建节点
                         Workflowstep workflowstep = new Workflowstep();
                         workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
