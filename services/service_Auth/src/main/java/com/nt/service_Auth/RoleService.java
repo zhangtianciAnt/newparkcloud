@@ -1,11 +1,14 @@
 package com.nt.service_Auth;
 
+import com.mongodb.client.FindIterable;
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
+import org.bson.Document;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ProjectName: newparkcloud
@@ -22,7 +25,7 @@ import java.util.List;
 public interface RoleService {
 
     //获取角色列表
-    List<Role> getRoleList(Role role) throws Exception;
+    List<Map<String, Object>> getRoleList(Role role) throws Exception;
 
     //获取角色详细信息
     Role getRoleInfo(String roleid) throws Exception;
