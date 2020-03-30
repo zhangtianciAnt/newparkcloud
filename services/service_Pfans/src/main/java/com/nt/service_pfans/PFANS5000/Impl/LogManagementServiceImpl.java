@@ -114,6 +114,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                 if(confirmstatus.equals("2")){
                     ToDoNotice toDoNotice = new ToDoNotice();
                     toDoNotice.setTitle("您有一个项目日志填写被拒绝！");
+                    toDoNotice.setType("2");//消息
                     toDoNotice.setInitiator(tokenModel.getUserId());
                     toDoNotice.setUrl("/PFANS5008View");
                     toDoNotice.preInsert(tokenModel);
@@ -130,6 +131,7 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Override
     public void update(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
+        String Confirmstatus = logmanagement.getConfirmstatus();
         logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
         logmanagementmapper.updateByPrimaryKey(logmanagement);
