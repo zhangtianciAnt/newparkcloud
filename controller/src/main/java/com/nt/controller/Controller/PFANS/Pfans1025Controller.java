@@ -42,15 +42,17 @@ public class Pfans1025Controller {
         String aa[] = av.getAward().getClaimdatetime().split(" ~ ");
        List<Map<String,String>> grouplist = (List<Map<String,String>>)av.getGroupN();
        List<AwardDetail> adlist = av.getAwardDetail();
-        for (Map<String,String> user : grouplist) {
-            String groupid = user.get("groupid");
-            String groupname = user.get("groupname");
-            for(AwardDetail grn :adlist){
-                if(groupid.equals(grn.getDepart())){
-                    grn.setDepart(groupname);
-                }
-            }
-        }
+       if(grouplist != null){
+           for (Map<String,String> user : grouplist) {
+               String groupid = user.get("groupid");
+               String groupname = user.get("groupname");
+               for(AwardDetail grn :adlist){
+                   if(groupid.equals(grn.getDepart())){
+                       grn.setDepart(groupname);
+                   }
+               }
+           }
+       }
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(av.getAward().getCurrencyposition())) {
@@ -58,13 +60,13 @@ public class Pfans1025Controller {
                 av.getAward().setCurrencyposition(item.getValue1());
             }
         }
-        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
-        for(Dictionary item:planList){
-            if(item.getCode().equals(av.getAward().getPlan())) {
-
-                av.getAward().setPlan(item.getValue1());
-            }
-        }
+//        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
+//        for(Dictionary item:planList){
+//            if(item.getCode().equals(av.getAward().getPlan())) {
+//
+//                av.getAward().setPlan(item.getValue1());
+//            }
+//        }
         List<Dictionary> valuationList = dictionaryService.getForSelect("HT005");
         for(Dictionary item:valuationList){
             if(item.getCode().equals(av.getAward().getValuation()) || item.getCode().equals(av.getAward().getIndividual())) {
