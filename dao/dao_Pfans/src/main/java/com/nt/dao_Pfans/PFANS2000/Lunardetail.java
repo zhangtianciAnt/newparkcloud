@@ -42,7 +42,8 @@ public class Lunardetail extends BaseModel {
     @Column(name = "TEAM_ID")
     private String team_id;
 
-
+    @Column(name = "CENTER_ID")
+    private String center_id;
 
     @Column(name = "SALARY")
     private String salary;
@@ -136,5 +137,7 @@ public class Lunardetail extends BaseModel {
 
     @Column(name = "OCCUPATIONTYPE")
     private String occupationtype;
+
+
 
 }
