@@ -318,7 +318,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setDeployment(contractapp.getDeployment());
                     award.setPjnamechinese(contractapp.getConchinese());
                     award.setPjnamejapanese(contractapp.getConjapanese());
-                    award.setClaimdatetime(contractapp.getClaimdatetime());
+                    award.setClaimdatetime(contractapp.getContractdate());
                     award.setDeliverydate(contractapp.getDeliverydate());
                     award.setCurrencyposition(contractapp.getCurrencyposition());
                     award.setClaimamount(contractapp.getClaimamount());
