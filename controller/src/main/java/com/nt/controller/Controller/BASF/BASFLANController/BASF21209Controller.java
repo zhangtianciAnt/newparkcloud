@@ -53,6 +53,8 @@ public class BASF21209Controller {
     @Autowired
     private SendEmailServices sendEmailServices;
 
+    private String as;
+
     //创建培训列表
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
@@ -64,36 +66,53 @@ public class BASF21209Controller {
         return ApiResult.success();
     }
 
-    //更新培训列表
+    //更新培训项目
         @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
         if (startprogram == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        Startprogram startprogramnew = new Startprogram();
         startprogramServices.update(startprogram, tokenModel);
-        List<Startprogram> startprogramlist  = startprogramServices.select(startprogramnew);
+        return ApiResult.success();
+    }
+
+    //更新培训列表
+    @RequestMapping(value = "/resultsEmail", method = {RequestMethod.POST})
+    public ApiResult updateResultsEmail(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
+        if (startprogram == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<Startprogram> startprogramlist  = startprogramServices.select(startprogram);
+        startprogramServices.update(startprogram, tokenModel);
 
         //负责人list
         String programhardlist = startprogramlist.get(0).getProgramhard();
         String[] programhard = programhardlist.split(",");
+        //通知人员list
+        String ePersonlist = startprogramlist.get(0).getInformperson();
+        String[] notifyPerson = ePersonlist.split(",");
         //培训名称
         String programname = startprogramlist.get(0).getProgramname();
         //线上/线下
         String isonline = startprogramlist.get(0).getIsonline()=="BC032001"?"线上":"线下";
+        String startprogramid = startprogramlist.get(0).getStartprogramid();
 
+        Trainjoinlist trainjoinlist = new Trainjoinlist();
+        trainjoinlist.setStartprogramid(startprogram.getStartprogramid());
+        List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
+       //发信人
+        List<EmailConfig> emailconfig =  emailConfigServices.get();
 
-        for(int i = 0;i<programhard.length;i++)
-        {
-            UserVo uservo = userService.getAccountCustomerById(programhard[i]);
+        for (int l = 0 ; l <notifyPerson.length ; l++){
+            UserVo uservo = userService.getAccountCustomerById(notifyPerson[l]);
             String depid =  uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
-            String email = uservo.getCustomerInfo().getUserinfo().getEmail();
-            Trainjoinlist trainjoinlist = new Trainjoinlist();
-            trainjoinlist.setDepartmentid(depid);
-            List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
-
-            List<EmailConfig> emailconfig =  emailConfigServices.get();
+            String useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
+            Trainjoinlist trainjoinlist1 = new Trainjoinlist();
+            trainjoinlist1.setDepartmentid(depid);
+            trainjoinlist1.setStartprogramid(startprogramid);
+            List<Trainjoinlist> Departmentidlists = trainjoinlistMapper.select(trainjoinlist1);
 
             String EMAILCONTENT =
                     "您好：<br>【"+programname+"/"+isonline+"】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
@@ -105,24 +124,41 @@ public class BASF21209Controller {
                             "<td>成绩</td>" +
                             "<td>通过状态</td>" +
                             "</tr>";
-
-            for(int j = 0 ;j < trainjoinlists.size(); j++)
+            String neirong = "";
+            for(int i = 0;i<Departmentidlists.size();i++)
             {
-                String customername = trainjoinlists.get(j).getCustomername();
-                String documentnumber = trainjoinlists.get(j).getJobnumber();
-                String performance = trainjoinlists.get(j).getPerformance();
-                String throughtype = trainjoinlists.get(j).getThroughtype();
+                String customername = Departmentidlists.get(i).getCustomername();
+                String documentnumber = Departmentidlists.get(i).getJobnumber();
+                String performance = Departmentidlists.get(i).getPerformance();
+                String throughtype = Departmentidlists.get(i).getThroughtype();
 
-                String neirong =
-                        "<tr>" +
-                        "<td>"+customername+"</td>" +
-                        "<td>"+documentnumber+"</td>" +
-                        "<td>"+performance+"</td>" +
-                        "<td>"+throughtype+"</td>" +
-                        "</tr>";
-                EMAILCONTENT = EMAILCONTENT + neirong;
+                if (customername == null){
+                    customername = " ";
+                }
+                if (documentnumber == null){
+                    documentnumber = " ";
+                }
+                if (performance == null){
+                    performance = " ";
+                }
+                if (throughtype == null){
+                    throughtype = " ";
+                }
+
+             neirong =neirong +
+                    "<tr>" +
+                            "<td>"+customername+"</td>" +
+                            "<td>"+documentnumber+"</td>" +
+                            "<td>"+performance+"</td>" +
+                            "<td>"+throughtype+"</td>" +
+                            "</tr>";
+
+//            EMAILCONTENT = EMAILCONTENT + neirong;
+//            EMAILCONTENT = EMAILCONTENT + "</table>";
+//            as = EMAILCONTENT;
             }
-            EMAILCONTENT = EMAILCONTENT + "</table>";
+            EMAILCONTENT = EMAILCONTENT + neirong + "</table>";
+
             SendEmail sendemail = new SendEmail();
             sendemail.setUserName(emailconfig.get(0).getUsername());
             sendemail.setPassword(emailconfig.get(0).getPassword());
@@ -130,16 +166,14 @@ public class BASF21209Controller {
             sendemail.setPort(emailconfig.get(0).getPort());
             sendemail.setFromAddress(emailconfig.get(0).getFromaddress());
             sendemail.setContextType(emailconfig.get(0).getContexttype());
-
-//            sendemail.setToAddress(email);
-            sendemail.setToAddress("1078680188@qq.com");
+            sendemail.setToAddress(useremail);
             sendemail.setSubject("【培训结果发布】");
             sendemail.setContext(EMAILCONTENT);
             sendEmailServices.sendmail(tokenModel,sendemail);
         }
-
         return ApiResult.success();
     }
+
 
     //更新培训清单
     @RequestMapping(value = "/updateprogramlist", method = {RequestMethod.GET})
