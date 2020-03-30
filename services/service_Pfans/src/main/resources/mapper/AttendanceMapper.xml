@@ -39,4 +39,40 @@ GROUP BY
 	months
 	order by CAST(years as SIGNED) desc ,CAST(months as SIGNED) desc
 	</select>
+	<select id="selectAttendance" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.Attendance">
+        select
+        ATTENDANCE_ID attendanceid,
+        center_id,
+        group_id,
+        team_id,
+        years,
+        months,
+        user_id,
+        dates,
+        normal,
+        actual,
+        shortsickleave,
+        longsickleave,
+        compassionateleave,
+        annualrest,
+        daixiu,
+        nursingleave,
+        welfare,
+        absenteeism,
+        recognitionstate,
+        tshortsickleave,
+        tlongsickleave,
+        tcompassionateleave,
+        tabsenteeism,
+        status,
+        createon,
+        createby,
+        owner,
+        tenantid
+        from attendance
+        where attendance.dates >= #{occurrencedate}
+        and attendance.dates &lt;= #{finisheddate}
+        and attendance.user_id = #{user_id}
+        and attendance.recognitionstate = #{recognitionstate}
+    </select>
 </mapper>

@@ -20,7 +20,7 @@
         LENGTHTIME lengthtime,
         HOSPITAL hospital,
         EDATE edate,
-        RELATION relation,
+
         ENCLOSUREEXPLAIN enclosureexplain
         from abnormal
         where abnormal.occurrence_date &lt;= #{now}
