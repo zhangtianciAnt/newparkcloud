@@ -107,19 +107,22 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
 
-            List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
-            String teamid = cus.getUserinfo().getTeamid();
-            String groupid = cus.getUserinfo().getGroupid();
-            String centerid = cus.getUserinfo().getCenterid();
-            if(!StringUtils.isNullOrEmpty(teamid)){
-                lunardetailCondition.setTeam_id(teamid);
+            if(cus.getUserinfo() != null){
+                List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
+                String teamid = cus.getUserinfo().getTeamid();
+                String groupid = cus.getUserinfo().getGroupid();
+                String centerid = cus.getUserinfo().getCenterid();
+                if(!StringUtils.isNullOrEmpty(teamid)){
+                    lunardetailCondition.setTeam_id(teamid);
+                }
+                else if(!StringUtils.isNullOrEmpty(groupid)){
+                    lunardetailCondition.setGroup_id(groupid);
+                }
+                else if(!StringUtils.isNullOrEmpty(centerid)){
+                    lunardetailCondition.setCenter_id(centerid);
+                }
             }
-            else if(!StringUtils.isNullOrEmpty(groupid)){
-                lunardetailCondition.setGroup_id(groupid);
-            }
-            else if(!StringUtils.isNullOrEmpty(centerid)){
-                lunardetailCondition.setCenter_id(centerid);
-            }
+
         }
 
         LunarAllVo.setLunardetail(lunardetailMapper.select(lunardetailCondition));
