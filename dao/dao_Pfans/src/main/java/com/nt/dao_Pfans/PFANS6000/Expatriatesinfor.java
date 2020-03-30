@@ -56,6 +56,12 @@ public class Expatriatesinfor extends BaseModel {
     private String graduateschool;
 
     /**
+     * 邮箱
+     */
+    @Column(name = "EMAIL")
+    private String email;
+
+    /**
      * 学历
      */
     @Column(name = "EDUCATION")

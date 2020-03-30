@@ -34,6 +34,13 @@ public class Pfans6002Controller {
         return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
     }
 
+    @RequestMapping(value = "/get2", method = {RequestMethod.GET})
+    public ApiResult getcustomerinfor2(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Customerinfor customerinfor = new Customerinfor();
+        return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
+    }
+
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getcustomerinforApplyOne(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception {
         if (customerinfor == null) {

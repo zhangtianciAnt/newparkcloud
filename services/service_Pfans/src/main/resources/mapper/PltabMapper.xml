@@ -140,5 +140,12 @@ GROUP BY code,company.PROJECT_NAME
 ) a
 group by pj
     </select>
+    <select id="getCMPJ" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+       select * from logmanagement
+       where PROJECT_ID = 'PP024001'
+      and month(CREATEON) = #{month}
+      and year(CREATEON) = #{year}
+    </select>
+
 </mapper>
 

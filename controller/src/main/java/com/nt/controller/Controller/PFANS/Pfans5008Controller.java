@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/logmanagement")
@@ -69,7 +71,6 @@ public class Pfans5008Controller {
         if (companyprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyprojectsService.getCompanyProjectList(companyprojects, request));
     }
 
@@ -81,6 +82,20 @@ public class Pfans5008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         personalprojects.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(personalprojectsService.getProjectList(personalprojects));
+    }
+
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public void download(String type, HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        String templateName = null;
+        String fileName = null;
+        if ( "0".equals(type) ) {
+            templateName = "rizhiguanli.xlsx";
+            fileName = "日志管理";
+        }
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
     }
 
     @RequestMapping(value = "/createProject", method = {RequestMethod.POST})

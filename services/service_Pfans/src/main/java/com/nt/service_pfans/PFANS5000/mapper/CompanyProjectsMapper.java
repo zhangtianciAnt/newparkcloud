@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CompanyProjectsMapper extends MyMapper<CompanyProjects> {
 
-    List<CompanyProjectsVo2> getList();
+    List<CompanyProjectsVo2> getList(@Param("owners")List<String> owners);
     List<CompanyProjectsVo2> getList2();
     List<CompanyProjectsVo2> getList3();
     List<CompanyProjectsVo2> getListVo2();

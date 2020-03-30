@@ -69,6 +69,14 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.list(companyProjects));
     }
 
+    @RequestMapping(value = "/list2", method = {RequestMethod.POST})
+    public ApiResult List2(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
+        if (companyProjects == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.list(companyProjects));
+    }
+
     @RequestMapping(value = "/getPjnameList", method = {RequestMethod.POST})
     public ApiResult getPjnameList(CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
         if (companyProjects == null) {
@@ -214,10 +222,17 @@ public class Pfans5001Controller {
     @RequestMapping(value="/getSiteList", method={RequestMethod.GET})
     public ApiResult getSiteList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyProjectsService.getSiteList());
+        CompanyProjects companyProjects = new CompanyProjects();
+        companyProjects.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(companyProjectsService.getSiteList(companyProjects));
     }
 
-
+    @RequestMapping(value="/getSiteList2", method={RequestMethod.GET})
+    public ApiResult getSiteList2(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        CompanyProjects companyProjects = new CompanyProjects();
+        return ApiResult.success(companyProjectsService.getSiteList(companyProjects));
+    }
     /**
      * @方法名：getPjList
      * @描述：获取PJ完了审批列表

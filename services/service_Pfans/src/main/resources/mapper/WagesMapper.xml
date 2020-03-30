@@ -299,7 +299,7 @@
         @AMOUNT := base.APPRECIATION_AMOUNT AS APPRECIATION,#月度賞与
         @XJ2 := ( @OTHER2 + @AMOUNT + @YKBZ ) AS TOTAL2,# 小计2 其他3字段画面手动录入，sql里只计算了交通补助到月度賞与的合计，需要在画面再加上其他3手动录入的数据
         @NSGZZE := round( ( @XJ1 + @XJ2 ), 2 ) AS TAXESTOTAL,#纳税工资总额(小计1+2)  小计1(基本給+补助)+小计2,画面手动添加 其他3的数据
-        @CNF := ( IF ( @THISMONTH = 0, base.HEATING, 0 ) ) AS HEATING,#采暖费
+        @CNF := ( IF ( @THISMONTH &lt;> 0, base.HEATING, 0 ) ) AS HEATING,#采暖费
         @DSZNF := ( IF ( @ONLYCHILD &lt;=> '1', base.DIC_DSZNF, 0 ) ) AS ONLYCHILDMONEY,#独生子女费
         @XJ3 := round( ( @CNF + @DSZNF ), 2 ) AS TOTAL3,#小计3
         @GZZE := round( ( @NSGZZE + @XJ3 ), 2 ) AS TOTALWAGES,#工资总额(纳税+免税)
@@ -309,20 +309,23 @@
         @GRSHBX := round( ( @YLBXGR + @YILIAOBXGR + @SYBXGR ), 2 ) AS SOCIALINSURANCE,#个人社会保险(専項控除)
         @GJJ := round( ( ACCUMULATION * base.DIC_GJJGRFD ), 2 ) AS ACCUMULATIONFUND,#个人住房公积金(専項控除)
         @GRHJ := round( ( @GRSHBX + @GJJ ), 2 ) AS DISCIPLINARYCONTROL,#个人社会保险费+公积金(専項控除)合计
-        @ZXKCLJ := base.DISCIPLINARY_TOTAL AS THISMONTHTERM,#専項控除累計（当月まで）
+        @ZXKCLJ := base.DISCIPLINARY_TOTAL + @GRHJ AS THISMONTHTERM,#専項控除累計（当月まで）
         @ADDITIONAL_TOTAL := base.ADDITIONAL_TOTAL AS THISMONTHADDITIONAL,#附加控除累計（当月まで）
-        @DUTYFREE_CUMULATIVE := base.DUTYFREE_CUMULATIVE AS THISMONTHDUTYFREE,#免税分累計（当月まで）
+        @DUTYFREE_CUMULATIVE := base.DUTYFREE_CUMULATIVE + @XJ3 AS THISMONTHDUTYFREE,#免税分累計（当月まで）
         @ACCUMUKATEDTAX_YEARTAXES := base.ACCUMUKATEDTAX_YEARTAXES AS LASTDUTYFREE,#年間累計税金（先月まで）
+        @DIC_99NQZGDWGR  := base.DIC_ZNDLSZZZPJGZ * 3 * 0.12  AS `DIC_99NQZGDWGR`,
+        @DIC_99NHZGDW := base.DIC_ZNDLSZZZPJGZ * 3 * 0.25  AS `DIC_99NHZGDW`,
+        @DIC_99NHZGGR  := base.DIC_ZNDLSZZZPJGZ * 3 * 0.15  AS `DIC_99NHZGGR`,
         @ZFGJJYNSJE := (
         IF
         (
         @SOCIOLOGY &lt;=> '1',
         IF
-        ( @GJJ * 2 - base.DIC_99NQZGDW * 2 > 0, @GJJ * 2 - base.DIC_99NQZGDW * 2, 0 ),
+        ( @GJJ * 2 - @DIC_99NQZGDWGR * 2 > 0, @GJJ * 2 - @DIC_99NQZGDWGR * 2, 0 ),
         IF
-        ( @GJJ > base.DIC_99NQZGDW, @GJJ - base.DIC_99NQZGDW, 0 ) +
+        ( @GJJ > @DIC_99NHZGDW, @GJJ - @DIC_99NHZGDW, 0 ) +
         IF
-        ( @GJJ > base.DIC_99NHZGGR, @GJJ - base.DIC_99NHZGGR, 0 )
+        ( @GJJ > @DIC_99NHZGGR, @GJJ - @DIC_99NHZGGR, 0 )
         )
         ) AS HOUSINGMONEYS,#住房公积金应纳税金额
         @OTHERFOUR_TOTAL := base.OTHERFOUR_TOTAL AS OTHER4,#其他4公司负担社保（24元）
