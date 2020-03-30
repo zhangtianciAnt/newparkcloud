@@ -53,8 +53,6 @@ public class BASF21209Controller {
     @Autowired
     private SendEmailServices sendEmailServices;
 
-    private String as;
-
     //创建培训列表
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
@@ -109,10 +107,10 @@ public class BASF21209Controller {
             UserVo uservo = userService.getAccountCustomerById(notifyPerson[l]);
             String depid =  uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
             String useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
-            Trainjoinlist trainjoinlist1 = new Trainjoinlist();
-            trainjoinlist1.setDepartmentid(depid);
-            trainjoinlist1.setStartprogramid(startprogramid);
-            List<Trainjoinlist> Departmentidlists = trainjoinlistMapper.select(trainjoinlist1);
+            Trainjoinlist trainjoilist = new Trainjoinlist();
+            trainjoilist.setDepartmentid(depid);
+            trainjoilist.setStartprogramid(startprogramid);
+            List<Trainjoinlist> Departmentidlists = trainjoinlistMapper.select(trainjoilist);
 
             String EMAILCONTENT =
                     "您好：<br>【"+programname+"/"+isonline+"】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
@@ -152,10 +150,6 @@ public class BASF21209Controller {
                             "<td>"+performance+"</td>" +
                             "<td>"+throughtype+"</td>" +
                             "</tr>";
-
-//            EMAILCONTENT = EMAILCONTENT + neirong;
-//            EMAILCONTENT = EMAILCONTENT + "</table>";
-//            as = EMAILCONTENT;
             }
             EMAILCONTENT = EMAILCONTENT + neirong + "</table>";
 
@@ -173,7 +167,6 @@ public class BASF21209Controller {
         }
         return ApiResult.success();
     }
-
 
     //更新培训清单
     @RequestMapping(value = "/updateprogramlist", method = {RequestMethod.GET})
