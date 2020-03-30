@@ -10,10 +10,7 @@ import com.nt.service_pfans.PFANS1000.JudgementService;
 
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,13 +54,19 @@ public class Pfans1012Controller {
     }
     @RequestMapping(value = "/insert",method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
-        if (publicExpenseVo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        try{
+            if (publicExpenseVo == null) {
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+            TokenModel tokenModel = tokenService.getToken(request);
+            publicExpenseService.insert(publicExpenseVo,tokenModel);
+            return ApiResult.success();
+        }catch (Exception e) {
+            return ApiResult.fail(e.getMessage());
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        publicExpenseService.insert(publicExpenseVo,tokenModel);
-        return ApiResult.success();
+
     }
+
     @RequestMapping(value = "/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {

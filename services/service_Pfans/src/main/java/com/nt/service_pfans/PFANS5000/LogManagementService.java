@@ -27,7 +27,7 @@ public interface LogManagementService {
 
     public List<LogmanagementStatusVo> getGroupTimestart(List<String> createby,String starttime,String endtime) throws Exception;
 
-    void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo)throws Exception;
+    void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo,TokenModel tokenModel)throws Exception;
 
     void update(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
 

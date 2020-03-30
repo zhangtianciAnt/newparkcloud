@@ -62,7 +62,7 @@
 			select createby,date_format(log_date,'%Y-%m-%d') as logdate,sum(time_start) as timestart
 			from logmanagement
 			where confirmstatus = '0'
-			and project_id = ''
+			and (project_id is null or project_id = '')
 			<if test="createby != null and createby.size() > 0">
 				and (createby in
 				<foreach item="item" index="index" collection="createby"

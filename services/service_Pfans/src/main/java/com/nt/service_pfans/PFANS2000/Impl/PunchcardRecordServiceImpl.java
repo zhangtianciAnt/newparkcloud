@@ -339,13 +339,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         {
                             workinghours = "0";
                         }
-                        else if(sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
-                        {
-                            workinghours = "4";
-                        }
                         else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
                         {
                             workinghours = "0";
+                        }
+                        else if(sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(dateStart).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
+                        {
+                            workinghours = "4";
                         }
                         else
                         {
@@ -677,23 +677,35 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 if (ab.getStatus().equals("7"))
                                                 {
                                                     strlengthtime = ab.getRelengthtime();
-                                                }
-                                                else
-                                                {
-                                                    strlengthtime = ab.getLengthtime();
-                                                }
-
-                                                //在申请的日期范围内
-                                                if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
-                                                    if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
+                                                    //在申请的日期范围内
+                                                    if (ab.getReoccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
+                                                        if(!(ab.getReoccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
+                                                        {
+                                                            strlengthtime = workinghours;
+                                                        }
+                                                    }
+                                                    else
                                                     {
-                                                        strlengthtime = workinghours;
+                                                        strlengthtime = "0";
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    strlengthtime = "0";
+                                                    strlengthtime = ab.getLengthtime();
+                                                    //在申请的日期范围内
+                                                    if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
+                                                        if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
+                                                        {
+                                                            strlengthtime = workinghours;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        strlengthtime = "0";
+                                                    }
                                                 }
+
+
                                                 if (ab.getErrortype().equals("PR013001")) {//外出
                                                     //ad.setNormal(strlengthtime);
                                                     //外出大于等于15分
@@ -1238,21 +1250,32 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ab.getStatus().equals("7"))
                                         {
                                             strlengthtime = ab.getRelengthtime();
-                                        }
-                                        else
-                                        {
-                                            strlengthtime = ab.getLengthtime();
-                                        }
-                                        if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
-                                            if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
+                                            if (ab.getReoccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
+                                                if(!(ab.getReoccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
+                                                {
+                                                    strlengthtime = workinghours;
+                                                }
+                                            }
+                                            else
                                             {
-                                                strlengthtime = workinghours;
+                                                strlengthtime = "0";
                                             }
                                         }
                                         else
                                         {
-                                            strlengthtime = "0";
+                                            strlengthtime = ab.getLengthtime();
+                                            if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
+                                                if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
+                                                {
+                                                    strlengthtime = workinghours;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                strlengthtime = "0";
+                                            }
                                         }
+
                                         //是否是工作日，青年节，妇女节，休日
                                         ad.setAbsenteeism(workinghours);
 

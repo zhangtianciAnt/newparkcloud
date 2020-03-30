@@ -13,6 +13,6 @@ public interface LunarbonusService {
 
     public void insert(LunardetailVo LunardetailVo, TokenModel tokenModel)throws Exception;
 
-    public LunarAllVo getOne(String id)throws Exception;
+    public LunarAllVo getOne(String id,TokenModel tokenModel)throws Exception;
 
 }
