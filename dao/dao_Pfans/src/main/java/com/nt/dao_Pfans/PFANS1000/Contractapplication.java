@@ -206,4 +206,7 @@ public class Contractapplication extends BaseModel {
 
     @Column(name = "QINGREMARKS")
     private String qingremarks;
+
+    @Column(name = "EXTENSIONDATE")
+    private Date extensiondate;
 }

@@ -144,7 +144,8 @@ public class Pfans5001Controller {
         if (LogmanagementStatusVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        logmanagementService.updateTimestart(LogmanagementStatusVo);
+        TokenModel tokenModel = tokenService.getToken(request);
+        logmanagementService.updateTimestart(LogmanagementStatusVo,tokenModel);
         return ApiResult.success();
     }
 

@@ -17,6 +17,7 @@ import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,6 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import com.nt.dao_Org.ToDoNotice;
+import com.nt.service_Org.ToDoNoticeService;
+import com.nt.utils.MsgConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -48,6 +52,9 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
 
     @Override
     public void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
@@ -93,7 +100,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo) throws Exception {
+    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo,TokenModel tokenModel) throws Exception {
         List<LogManagement> loglist = LogmanagementStatusVo.getLogmanagement();
         String confirmstatus = LogmanagementStatusVo.getConfirmstatus();
         String starttime = LogmanagementStatusVo.getStarttime();
@@ -102,6 +109,17 @@ public class LogManagementServiceImpl implements LogManagementService {
             for(int i = 0;i < loglist.size(); i++){
                 String createby = loglist.get(i).getCreateby();
                 logmanagementmapper.updateTimestart(createby,confirmstatus,starttime,endtime);
+
+                //拒绝之后发代办
+                if(confirmstatus.equals("2")){
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    toDoNotice.setTitle("您有一个项目日志填写被拒绝！");
+                    toDoNotice.setInitiator(tokenModel.getUserId());
+                    toDoNotice.setUrl("/PFANS5008View");
+                    toDoNotice.preInsert(tokenModel);
+                    toDoNotice.setOwner(createby);
+                    toDoNoticeService.save(toDoNotice);
+                }
             }
         }
     }
@@ -135,7 +153,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
-            model.add("工号");
+            model.add("账号");
             model.add("姓名");
             model.add("项目");
             model.add("日志日期");
@@ -185,7 +203,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     }
                     Query query = new Query();
                     String jobnumber = value.get(0).toString();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                    query.addCriteria(Criteria.where("userinfo.adfield").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         logmanagement.setCreateby(customerInfo.getUserid());
@@ -194,7 +212,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                     }
                     if (customerInfo == null) {
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的账号字段没有找到，请输入正确的账号，导入失败");
                         continue;
                     }
                     //确认状态

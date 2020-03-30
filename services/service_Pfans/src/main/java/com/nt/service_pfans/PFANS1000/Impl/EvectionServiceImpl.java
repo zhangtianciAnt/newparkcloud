@@ -17,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -86,37 +84,39 @@ public class EvectionServiceImpl implements EvectionService {
             Currencyexchange currencyexchange = new Currencyexchange();
             currencyexchange.setEvectionid(travelList.getEvectionid());
             List<Currencyexchange> lscer = currencyexchangeMapper.select(currencyexchange);
-            TravelCost tc = new TravelCost();
-            String st = null;
-            Double ctsum = 0D;
-            for (Currencyexchange item : lscer) {
-                Double ct = 0D;
-                Double diff = Convert.toDouble(item.getCurrencyexchangerate()) - Convert.toDouble(item.getExchangerate());
-                if(diff == 0){
-                    continue;
-                }
-                BeanUtil.copyProperties(ListVo.get(0), tc);
-                tc.setNumber(ListVo.size() + 1);
-                tc.setBudgetcoding("000000");
-                List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG024");
+            if (lscer != null && lscer.size() > 0) {
+                TravelCost tc = new TravelCost();
+                String st = null;
+                Double ctsum = 0D;
+                for (Currencyexchange item : lscer) {
+                    Double ct = 0D;
+                    Double diff = Convert.toDouble(item.getCurrencyexchangerate()) - Convert.toDouble(item.getExchangerate());
+                    if (diff == 0) {
+                        continue;
+                    }
+                    BeanUtil.copyProperties(ListVo.get(0), tc);
+                    tc.setNumber(ListVo.size() + 1);
+                    tc.setBudgetcoding("000000");
+                    List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG024");
                     String value1 = dictionaryList.get(0).getValue2();
                     String value2 = dictionaryList.get(1).getValue2();
-                if (diff < 0) {
-                    tc.setSubjectnumber(value2);
-                }else{
-                    tc.setSubjectnumber(value1);
-                }
+                    if (diff < 0) {
+                        tc.setSubjectnumber(value2);
+                    } else {
+                        tc.setSubjectnumber(value1);
+                    }
 
-                List<Double> costs = trafficdetailsMapper.getCount(travelList.getEvectionid(),item.getCurrency());
-                for(Double cost:costs){
-                    ct += cost;
+                    List<Double> costs = trafficdetailsMapper.getCount(travelList.getEvectionid(), item.getCurrency());
+                    for (Double cost : costs) {
+                        ct += cost;
+                    }
+                    ctsum += ct * diff;
                 }
-                ctsum += ct * diff;
+                DecimalFormat df = new DecimalFormat(".##");
+                st = df.format(ctsum);
+                tc.setLineamount(Convert.toStr(st));
+                Listvo.add(tc);
             }
-            DecimalFormat df=new DecimalFormat(".##");
-            st=df.format(ctsum);
-            tc.setLineamount(Convert.toStr(st));
-            Listvo.add(tc);
         }
         return Listvo;
     }
@@ -515,15 +515,15 @@ public class EvectionServiceImpl implements EvectionService {
         //发票编号
         String invoiceNo = "";
         Calendar cal = Calendar.getInstance();
-        String year = new SimpleDateFormat("yy",Locale.CHINESE).format(Calendar.getInstance().getTime());
+        String year = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String no = "";
-        if(evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate())) != null){
+        if (evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate())) != null) {
             int count = evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate()));
-            no=String.format("%2d", count + 1).replace(" ", "0");
-        }else {
+            no = String.format("%2d", count + 1).replace(" ", "0");
+        } else {
             no = "01";
         }
 
