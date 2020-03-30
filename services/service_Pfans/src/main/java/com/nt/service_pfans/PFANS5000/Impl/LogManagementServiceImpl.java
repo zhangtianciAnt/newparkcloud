@@ -113,7 +113,7 @@ public class LogManagementServiceImpl implements LogManagementService {
                 //拒绝之后发代办
                 if(confirmstatus.equals("2")){
                     ToDoNotice toDoNotice = new ToDoNotice();
-                    toDoNotice.setTitle("您的日志被拒绝,请重新确认!");
+                    toDoNotice.setTitle("您有一个项目日志填写被拒绝！");
                     toDoNotice.setInitiator(tokenModel.getUserId());
                     toDoNotice.setUrl("/PFANS5008View");
                     toDoNotice.preInsert(tokenModel);
