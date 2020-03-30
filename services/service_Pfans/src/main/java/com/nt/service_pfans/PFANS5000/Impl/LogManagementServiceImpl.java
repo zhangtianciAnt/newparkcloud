@@ -17,6 +17,7 @@ import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,6 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import com.nt.dao_Org.ToDoNotice;
+import com.nt.service_Org.ToDoNoticeService;
+import com.nt.utils.MsgConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -48,6 +52,9 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
 
     @Override
     public void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
@@ -93,7 +100,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo) throws Exception {
+    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo,TokenModel tokenModel) throws Exception {
         List<LogManagement> loglist = LogmanagementStatusVo.getLogmanagement();
         String confirmstatus = LogmanagementStatusVo.getConfirmstatus();
         String starttime = LogmanagementStatusVo.getStarttime();
@@ -102,6 +109,17 @@ public class LogManagementServiceImpl implements LogManagementService {
             for(int i = 0;i < loglist.size(); i++){
                 String createby = loglist.get(i).getCreateby();
                 logmanagementmapper.updateTimestart(createby,confirmstatus,starttime,endtime);
+
+                //拒绝之后发代办
+                if(confirmstatus.equals("2")){
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    toDoNotice.setTitle("您的日志被拒绝,请重新确认!");
+                    toDoNotice.setInitiator(tokenModel.getUserId());
+                    toDoNotice.setUrl("/PFANS5008View");
+                    toDoNotice.preInsert(tokenModel);
+                    toDoNotice.setOwner(createby);
+                    toDoNoticeService.save(toDoNotice);
+                }
             }
         }
     }
