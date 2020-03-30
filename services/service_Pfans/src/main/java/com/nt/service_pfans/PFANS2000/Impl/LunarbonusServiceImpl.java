@@ -107,7 +107,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
 
-            if(cus.getUserinfo() != null){
+            if(cus != null && cus.getUserinfo() != null){
                 List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
                 String teamid = cus.getUserinfo().getTeamid();
                 String groupid = cus.getUserinfo().getGroupid();
