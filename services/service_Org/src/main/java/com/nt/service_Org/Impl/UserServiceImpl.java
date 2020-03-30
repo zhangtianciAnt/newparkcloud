@@ -547,6 +547,7 @@ public class UserServiceImpl implements UserService {
             if(orgs.get(j).getDepartmentname().equals(departmentname))
             {
                 depid =  orgs.get(j).get_id();
+                break;
             }
             else
             {
@@ -580,14 +581,14 @@ public class UserServiceImpl implements UserService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
-            model.add("部门");
-            model.add("姓名");
+            model.add("*部门");
+            model.add("*姓名");
             model.add("职位名称");
-            model.add("性别");
-            model.add("USE ID");
-            model.add("员工号");
-            model.add("部门联系邮箱");
-            model.add("装置经理邮箱");
+            model.add("*性别");
+            model.add("*卡号");
+            model.add("*员工号");
+            model.add("*部门联系邮箱");
+            model.add("*装置经理邮箱");
             model.add("身份证件号");
             model.add("文化程度");
             model.add("成本中心");
@@ -614,8 +615,13 @@ public class UserServiceImpl implements UserService {
                 String departmentname = value.get(0).toString();
                 //姓名
                 String name = value.get(1).toString();
-                //职位名称
-                String  positionname= value.get(2).toString();
+                String  positionname = "";
+                try{
+                    //职位名称
+                     positionname= value.get(2)!= null ? value.get(2).toString() : "";
+                }
+                catch (Exception e){
+                }
                 //性别
                 String sex = value.get(3).toString().equals("男")?"0":"1";
                 //USE ID
@@ -626,18 +632,42 @@ public class UserServiceImpl implements UserService {
                 String departmentemail = value.get(6).toString();
                 //装置经理邮箱
                 String devicemanageremail = value.get(7).toString();
-                //身份证件号
-                String idnumber = value.get(8).toString();
-                //文化程度
-                String degreeeducation = value.get(9).toString();
-                //成本中心
-                String costcenter = value.get(10).toString();
-                //本人邮箱
-                String email = value.get(11).toString();
-                //本人手机号
-                String mobilenumber =  value.get(12).toString();
 
-
+                String idnumber = "";
+                try{
+                    //身份证件号
+                     idnumber = value.get(8)!= null ? value.get(8).toString() : "";
+                }
+                catch (Exception e){
+                }
+                String degreeeducation = "";
+                try{
+                    //文化程度
+                    degreeeducation = value.get(9)!= null ? value.get(9).toString() : "";
+                }
+                catch (Exception e){
+                }
+                String costcenter = "";
+                try{
+                    //成本中心
+                    costcenter = value.get(10)!= null ? value.get(10).toString() : "";
+                }
+                catch (Exception e){
+                }
+                String email = "";
+                try{
+                    //本人邮箱
+                    email = value.get(11)!= null ? value.get(11).toString() : "";
+                }
+                catch (Exception e){
+                }
+                String mobilenumber = "";
+                try{
+                    //本人手机号
+                    mobilenumber =  value.get(12)!= null ? value.get(12).toString() : "";
+                }
+                catch (Exception e){
+                }
                 UserAccount useraccount = new UserAccount();
                 CustomerInfo customerinfo = new CustomerInfo();
                 CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
