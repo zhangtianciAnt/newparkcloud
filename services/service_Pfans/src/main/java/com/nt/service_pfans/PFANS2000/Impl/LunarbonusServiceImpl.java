@@ -100,11 +100,8 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         LunarAllVo LunarAllVo = new LunarAllVo();
         LunarAllVo.setLunarbonus(lunarbonusMapper.selectByPrimaryKey(id));
         Lunardetail lunardetailCondition = new Lunardetail();
-        if("5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId())){
-
-            lunardetailCondition.setLunarbonus_id(id);
-
-        }else{
+        lunardetailCondition.setLunarbonus_id(id);
+        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId())){
             List<String> users = new ArrayList<String>();
             Query cusquery = new Query();
             cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
