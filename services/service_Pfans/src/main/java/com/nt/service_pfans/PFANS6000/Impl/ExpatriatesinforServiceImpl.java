@@ -144,16 +144,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setVenuetarget("1");
         }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-        String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-        Priceset priceset = new Priceset();
-        priceset.preInsert(tokenModel);
-        priceset.setPriceset_id(UUID.randomUUID().toString());
-        priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-        priceset.setGraduation(expatriatesinfor.getGraduation_year());
-        priceset.setCompany(expatriatesinfor.getSuppliername());
-        priceset.setAssesstime(thisDate);
-        priceset.setStatus("0");
-        pricesetMapper.insert(priceset);
+        if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
+            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+            Priceset priceset = new Priceset();
+            priceset.preInsert(tokenModel);
+            priceset.setPriceset_id(UUID.randomUUID().toString());
+            priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+            priceset.setGraduation(expatriatesinfor.getGraduation_year());
+            priceset.setCompany(expatriatesinfor.getSuppliername());
+            priceset.setAssesstime(thisDate);
+            priceset.setStatus("0");
+            pricesetMapper.insert(priceset);
+        }
     }
 
 
