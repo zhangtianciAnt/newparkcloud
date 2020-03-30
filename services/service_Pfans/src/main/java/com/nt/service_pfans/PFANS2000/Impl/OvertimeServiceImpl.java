@@ -374,11 +374,11 @@ public class OvertimeServiceImpl implements OvertimeService {
                                 }
                             }
                         }
+                        overtime.setActualovertime(overtimeHours);
                     }
                 }
             }
         }
-
         overtime.preUpdate(tokenModel);
         overtimeMapper.updateByPrimaryKey(overtime);
     }
