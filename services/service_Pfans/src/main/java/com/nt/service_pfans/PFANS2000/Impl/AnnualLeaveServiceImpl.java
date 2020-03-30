@@ -693,13 +693,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
                     attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                     attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                    attendance.setYears(DateUtil.format(new Date(), "YYYY").toString());
-                    attendance.setMonths(DateUtil.format(new Date(), "MM").toString());
                     attendance.setUser_id(customerInfo.getUserid());
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
                     calendar.add(Calendar.DAY_OF_YEAR, -1);
                     attendance.setDates(calendar.getTime());
+                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     tokenModel.setUserId(attendance.getUser_id());
                     tokenModel.setExpireDate(new Date());
