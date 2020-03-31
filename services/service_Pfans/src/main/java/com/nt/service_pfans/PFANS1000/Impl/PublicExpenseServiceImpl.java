@@ -10,6 +10,7 @@ import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -196,7 +197,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if ( rate <= 0 ) {
-                    throw new Exception("专票税率不能为0");
+                    throw new LogicalException("专票税率不能为0");
                 }
                 specialMap.put(invoice.getInvoicenumber(), rate);
             }
@@ -207,7 +208,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         // 总金额改为人民币支出
         specialMap.put(TOTAL_TAX, Float.parseFloat(publicExpenseVo.getPublicexpense().getRmbexpenditure()) + Float.parseFloat(publicExpenseVo.getPublicexpense().getForeigncurrency()));
         if ( specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0 ) {
-            throw new Exception("发票合计金额不能为0");
+            throw new LogicalException("发票合计金额不能为0");
         }
 
         List<Object> needMergeList = new ArrayList<>();
@@ -308,16 +309,16 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap) throws Exception {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap) throws LogicalException {
         Map<String, Object> resultMap = new HashMap<>();
         if ( detailList.size() <= 0 ) {
-            throw new Exception("明细不能为空");
+            throw new LogicalException("明细不能为空");
         }
         String inputType = getInputType(detailList.get(0));
 //        Map<String, Object> mergedMap = new HashMap<>();
         for ( Object detail : detailList ) {
             if ( !inputType.equals(getInputType(detail)) ) {
-                throw new Exception("一次申请，只能选择一种货币。");
+                throw new LogicalException("一次申请，只能选择一种货币。");
             }
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
@@ -392,7 +393,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
         }
         if ( totalTax != specialMap.get(TOTAL_TAX) ) {
-            throw new Exception("发票合计金额与明细不匹配。");
+            throw new LogicalException("发票合计金额与明细不匹配。");
         }
         resultMap.put(INPUT_TYPE_KEY, inputType);
         return resultMap;
@@ -402,14 +403,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     private static final String FIELD_FOREIGNCURRENCY = "foreigncurrency";
     private static final String FIELD_INVOICENUMBER = "invoicenumber";
 
-    private String getInputType(Object o) throws Exception {
+    private String getInputType(Object o) throws LogicalException {
         float rmb = getPropertyFloat(o, FIELD_RMB);
         float foreign = getPropertyFloat(o, FIELD_FOREIGNCURRENCY);
         if ( rmb>0 && foreign>0 ) {
-            throw new Exception("人民币和外币不能同时输入。");
+            throw new LogicalException("人民币和外币不能同时输入。");
         }
         if ( rmb <0 || foreign<0 || (rmb+foreign) <0 ) {
-            throw new Exception("明细行金额不能为负数。");
+            throw new LogicalException("明细行金额不能为负数。");
         }
 
         return rmb > 0 ? FIELD_RMB : FIELD_FOREIGNCURRENCY;
