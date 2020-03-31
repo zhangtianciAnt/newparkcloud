@@ -69,12 +69,16 @@ public class Pfans1012Controller {
 
     @RequestMapping(value = "/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
-        if (publicExpenseVo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        try{
+            if (publicExpenseVo == null) {
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+            TokenModel tokenModel = tokenService.getToken(request);
+            publicExpenseService.update(publicExpenseVo,tokenModel);
+            return ApiResult.success();
+        }catch (Exception e) {
+            return ApiResult.fail(e.getMessage());
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        publicExpenseService.update(publicExpenseVo,tokenModel);
-        return ApiResult.success();
     }
     @RequestMapping(value="/gettotalcost" ,method = {RequestMethod.POST})
     public ApiResult gettotalcost(@RequestBody TotalCostVo totalcostvo, HttpServletRequest request) throws Exception{
