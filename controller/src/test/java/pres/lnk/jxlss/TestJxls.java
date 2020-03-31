@@ -86,19 +86,19 @@ public class TestJxls {
 //        writer.write(rows, true);
 //        writer.close();
 
-        Query query = new Query();
-        query.addCriteria(Criteria.where("usertype").ne("1"));
-        List<UserAccount> list = template.find(query, UserAccount.class);
-
-        query = new Query();
-        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-        query.addCriteria(Criteria.where("rolename").is("正式社员"));
-        List<Role>  rolss =  template.find(query, Role.class);
-
-        for(UserAccount item:list){
-            item.setRoles(rolss);
-            template.save(item);
-        }
+//        Query query = new Query();
+//        query.addCriteria(Criteria.where("usertype").ne("1"));
+//        List<UserAccount> list = template.find(query, UserAccount.class);
+//
+//        query = new Query();
+//        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+//        query.addCriteria(Criteria.where("rolename").is("正式社员"));
+//        List<Role>  rolss =  template.find(query, Role.class);
+//
+//        for(UserAccount item:list){
+//            item.setRoles(rolss);
+//            template.save(item);
+//        }
     }
 
     private static Employee getEmployee() {
