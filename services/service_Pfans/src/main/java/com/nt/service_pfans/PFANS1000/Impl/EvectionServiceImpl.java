@@ -10,6 +10,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -183,7 +184,7 @@ public class EvectionServiceImpl implements EvectionService {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if (rate <= 0) {
-                    throw new Exception("专票税率不能为0");
+                    throw new LogicalException("专票税率不能为0");
                 }
                 specialMap.put(invoice.getInvoicenumber(), rate);
             }
@@ -191,7 +192,7 @@ public class EvectionServiceImpl implements EvectionService {
         // 总金额改为人民币支出
         specialMap.put(TOTAL_TAX, Float.parseFloat(evectionVo.getEvection().getTotalpay()));
         if (specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0) {
-            throw new Exception("发票合计金额不能为0");
+            throw new LogicalException("发票合计金额不能为0");
         }
 
         List<Object> needMergeList = new ArrayList<>();
@@ -259,10 +260,10 @@ public class EvectionServiceImpl implements EvectionService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws LogicalException {
         Map<String, Object> resultMap = new HashMap<>();
         if (detailList.size() <= 0) {
-            throw new Exception("明细不能为空");
+            throw new LogicalException("明细不能为空");
         }
         String inputType = getInputType(detailList.get(0));
         for (Object detail : detailList) {
@@ -366,20 +367,20 @@ public class EvectionServiceImpl implements EvectionService {
 //            }
         }
         if (totalTax != specialMap.get(TOTAL_TAX)) {
-            throw new Exception("发票合计金额与明细不匹配。");
+            throw new LogicalException("发票合计金额与明细不匹配。");
         }
         resultMap.put(INPUT_TYPE_KEY, "rmb");
         return resultMap;
     }
 
-    private String getInputType(Object o) throws Exception {
+    private String getInputType(Object o) throws LogicalException {
         float rmb = getPropertyFloat(o, FIELD_RMB);
         float foreign = getPropertyFloat(o, FIELD_FOREIGNCURRENCY);
 //        if (rmb > 0 && foreign > 0) {
 //            throw new Exception("人民币和外币不能同时输入。");
 //        }
         if (rmb < 0 || foreign < 0 || (rmb + foreign) < 0) {
-            throw new Exception("明细行金额不能为负数。");
+            throw new LogicalException("明细行金额不能为负数。");
         }
 
         return rmb > 0 ? FIELD_RMB : FIELD_FOREIGNCURRENCY;
