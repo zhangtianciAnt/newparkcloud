@@ -44,10 +44,12 @@ public class RiskassessmentsServicesImpl implements RiskassessmentsServices {
 
     //增加风险研判数据
     @Override
-    public void insertRiskassessments(Riskassessments riskassessments, TokenModel tokenModel) throws Exception {
+    public String insertRiskassessments(Riskassessments riskassessments, TokenModel tokenModel) throws Exception {
         riskassessments.preInsert(tokenModel);
-        riskassessments.setRiskassessmentid(UUID.randomUUID().toString());
+        String uuid = UUID.randomUUID().toString();
+        riskassessments.setRiskassessmentid(uuid);
         riskassessmentsMapper.insert(riskassessments);
+        return uuid;
     }
 
     //根据id查找风险研判数据

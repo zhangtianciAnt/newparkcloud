@@ -74,8 +74,7 @@ public class BASF11101Controller {
     @PostMapping("/insertRiskassessments")
     public ApiResult insertRiskassessments(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel);
-        return ApiResult.success();
+        return ApiResult.success(riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel));
     }
 
     //根据id查找风险研判数据

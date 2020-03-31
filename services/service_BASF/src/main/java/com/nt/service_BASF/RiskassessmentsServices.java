@@ -23,7 +23,7 @@ public interface RiskassessmentsServices {
     void updataRiskassessments(Riskassessments riskassessments, TokenModel tokenModel) throws Exception;
 
     //增加风险判研数据
-    void insertRiskassessments(Riskassessments riskassessments, TokenModel tokenModel) throws Exception;
+    String insertRiskassessments(Riskassessments riskassessments, TokenModel tokenModel) throws Exception;
 
     //根据id查找风险研判数据
     Riskassessments getDataById(String id) throws Exception;
