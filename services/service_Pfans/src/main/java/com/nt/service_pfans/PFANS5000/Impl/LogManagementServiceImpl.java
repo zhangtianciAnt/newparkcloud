@@ -10,6 +10,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
@@ -86,6 +87,18 @@ public class LogManagementServiceImpl implements LogManagementService {
             Result = logmanagementmapper.getunProjectList(strDate);
         }
 
+        return Result;
+    }
+
+    @Override
+    public List<LogmanagementVo2> getListcheck(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
+        List<LogmanagementVo2> Result = new ArrayList<LogmanagementVo2>();
+        List<LogmanagementVo2> checkList = logmanagementmapper.getcheckList();
+        if (checkList != null && checkList.size() > 0) {
+            Result = logmanagementmapper.getcheckList3();
+        }else{
+            Result = logmanagementmapper.getcheckList2();
+        }
         return Result;
     }
 

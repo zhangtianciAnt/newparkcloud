@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS5000;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
@@ -22,6 +23,8 @@ public interface LogManagementService {
     public List<LogManagement> gettlist() throws Exception;
 
     public List<LogmanagementConfirmVo> getProjectList(String strFlg,String StrDate) throws Exception;
+
+    public List<LogmanagementVo2> getListcheck(LogManagement logmanagement, TokenModel tokenModel) throws Exception;
 
     public List<LogmanagementStatusVo> getTimestart(String project_id,String starttime,String endtime) throws Exception;
 

@@ -138,12 +138,15 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setGiving(giving);
 
         // region 专项控除 By SKAIXX
+        Disciplinary disciplinary1 = new Disciplinary();
+        disciplinary1.setGiving_id(giving_id);
+        disciplinaryMapper.delete(disciplinary1);
         List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary();
         givingVo.setDisciplinaryVo(disciplinary);
         // 专项控除数据需要插入到专项控除表中
         disciplinary.forEach(item -> {
             item.setDisciplinary_id(UUID.randomUUID().toString());
-//            disciplinaryMapper.insert(item);
+            disciplinaryMapper.insert(item);
         });
         // endregion
 
@@ -214,12 +217,14 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setContrast(contrastList);
 
         // region 累计税金 By SKAIXX
+        Accumulatedtax accumulatedtax1 = new Accumulatedtax();
+        accumulatedtax1.setGiving_id(giving_id);
+        accumulatedTaxMapper.delete(accumulatedtax1);
         List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
         // 获取全年综合收入适用税率
         Dictionary taxDictionary = new Dictionary();
         taxDictionary.setPcode("PR048");    // 全年综合收入适用税率
         List<Dictionary> taxDictionaryList = dictionaryMapper.getDictionary(taxDictionary);
-
         // 计算年度应纳付税金
         for (AccumulatedTaxVo tmpVo : accumulatedTaxVolist) {
             taxDictionary = getTaxRate(Double.parseDouble(tmpVo.getShouldwages()), taxDictionaryList);
@@ -265,6 +270,10 @@ public class GivingServiceImpl implements GivingService {
         // endregion
 
         // region 免税 By SKAIXX
+        Dutyfree dutyfree1 = new Dutyfree();
+        dutyfree1.setGiving_id(giving_id);
+        dutyfreeMapper.delete(dutyfree1);
+
         List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
         givingVo.setDutyfreeVo(dutyfreeVolist);
         // region 免税数据插入到免税表中
@@ -292,6 +301,10 @@ public class GivingServiceImpl implements GivingService {
         // endregion
 
         // region 综合收入 By SKAIXX
+        Comprehensive comprehensive1 = new Comprehensive();
+        comprehensive1.setGivingId(giving_id);
+        comprehensiveMapper.delete(comprehensive1);
+
         List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
         givingVo.setComprehensiveVo(comprehensiveVolist);
         // region 综合收入数据插入到综合收入表中
@@ -1476,7 +1489,7 @@ public class GivingServiceImpl implements GivingService {
             if (restViewVoList.size() > 0) {
                 residual.setThisreplace3(String.valueOf(restViewVoList.stream().
                         filter(subItem -> conditionList.contains(subItem.getApplicationdate()))
-                                .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
                 totalh += Double.parseDouble(residual.getThisreplace3());
             } else {
                 residual.setThisreplace3("0");
@@ -1541,7 +1554,7 @@ public class GivingServiceImpl implements GivingService {
             // 3个月前小时工资 = 月工资÷21.75天÷8小时
             double salaryPerHourTma = Double.parseDouble(base.getTmabasic()) / 21.75d / 8d;
             // 前月小时工资
-            double salaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
+            double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
             // 休日加班费 200%
@@ -1794,8 +1807,14 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setRemarks(isResign ? "退职" : "-");
 
             // 控除给料
+
             lackattendance.setGive(BigDecimal.valueOf(Double.parseDouble(lackattendance.getLasttotal())
                     + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // give不为0.00的时候数据加负号
+            if(!"0.00".equals(lackattendance.getGive())){
+                lackattendance.setGive("-"+lackattendance.getGive());
+            }
 
             if (tokenModel != null) {
                 lackattendance.preInsert(tokenModel);

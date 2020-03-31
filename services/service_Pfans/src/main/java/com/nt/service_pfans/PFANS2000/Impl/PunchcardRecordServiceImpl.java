@@ -558,6 +558,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             && Double.valueOf(sdf.parse(time_end).getTime()) >= Double.valueOf(sdf.parse(closingtime_start).getTime())
                                             && resultwork - Double.valueOf(ad.getAbsenteeism() == null ? "0":ad.getAbsenteeism())>=9) {
                                         ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                        if(Double.valueOf(workinghours)>=8)
+                                        {
+                                            ad.setAbsenteeism(null);
+                                        }
                                     }
                                     else //异常打卡的情况
                                     {

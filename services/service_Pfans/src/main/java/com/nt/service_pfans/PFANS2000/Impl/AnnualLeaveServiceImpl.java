@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 20 15 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -452,7 +452,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
-            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            //String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //String doorIDList = "3,5";//3:门1；5:门2；7:门3
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
@@ -481,7 +482,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     String departmentName = getProperty(ob, "departmentName");
                     //门号
                     String doorID = getProperty(ob, "doorID");
-
                     //添加打卡详细
                     PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
                     //卡号

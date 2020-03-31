@@ -170,9 +170,14 @@ public class Supplierinfor extends BaseModel {
     private String uploadfile;
 
     /**
-     * 供应商编码
+     * 收款方编码
      */
     @Column(name = "SUPPLIERCODE")
     private String suppliercode;
 
+    /**
+     * 供应商编码（合同用）
+     */
+    @Column(name = "VENDORCODE")
+    private String vendorcode;
 }

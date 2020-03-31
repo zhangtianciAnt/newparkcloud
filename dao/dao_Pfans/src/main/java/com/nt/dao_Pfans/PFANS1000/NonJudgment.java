@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.SplittableRandom;
 
 @Data
 @AllArgsConstructor
@@ -93,13 +94,11 @@ public class NonJudgment extends BaseModel {
     @Column(name = "PRODUCTNUMBER")
     private String  productnumber;
 
-
     @Column(name = "OUTPUTLIMIT2")
     private String  outputlimit2;
 
     @Column(name = "MAREASON")
     private String  mareason;
-
 
     @Column(name = "MANAGEMENT2")
     private String  management2;
@@ -172,4 +171,49 @@ public class NonJudgment extends BaseModel {
 
     @Column(name = "AMERICANTECHNO")
     private String americantechno;
+
+    @Column(name = "OTHER1")
+    private String other1;
+
+    @Column(name = "OTHER2")
+    private String other2;
+
+    @Column(name = "OTHER3")
+    private String other3;
+
+    @Column(name = "OTHER4")
+    private String other4;
+
+    @Column(name = "OTHER5")
+    private String other5;
+
+    @Column(name = "OTHER6")
+    private String other6;
+
+    @Column(name = "OTHER7")
+    private String other7;
+
+    @Column(name = "OTHER8")
+    private String other8;
+
+    @Column(name = "OTHER9")
+    private String other9;
+
+    @Column(name = "OTHER10")
+    private String other10;
+
+    @Column(name = "OTHER11")
+    private String other11;
+
+    @Column(name = "OREASON")
+    private String oreason;
+
+    @Column(name = "OTHREASON")
+    private String othreason;
+
+    @Column(name = "OTHERREASON")
+    private String otherreason;
+
+    @Column(name = "ECCNJUDGENO")
+    private String eccnjudgeno;
 }
