@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    //@Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 00 13 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -481,7 +481,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     String departmentName = getProperty(ob, "departmentName");
                     //门号
                     String doorID = getProperty(ob, "doorID");
-
                     //添加打卡详细
                     PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
                     //卡号
