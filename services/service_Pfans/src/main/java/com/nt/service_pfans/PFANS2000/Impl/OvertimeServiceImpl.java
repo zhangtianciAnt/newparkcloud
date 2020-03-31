@@ -122,7 +122,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                         //实际加班時間
                         actualoverTime = overtime.getActualovertime();
 
-                        String overtimeHours = null;
+                        String overtimeHours = "0";
                         //考勤管理
                         Attendance attendance = new Attendance();
                         attendance.setUser_id(overtime.getUserid());
@@ -373,8 +373,15 @@ public class OvertimeServiceImpl implements OvertimeService {
                                     attendanceMapper.updateByPrimaryKey(attend);
                                 }
                             }
+                            if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES))
+                            {
+                                overtime.setReserveovertime(overtimeHours);
+                            }
+                            else
+                            {
+                                overtime.setActualovertime(overtimeHours);
+                            }
                         }
-                        overtime.setActualovertime(overtimeHours);
                     }
                 }
             }
