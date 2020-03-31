@@ -39,21 +39,22 @@ public class RoleServiceImpl implements RoleService {
 
     //获取角色列表
     @Override
-    public List<Map<String, Object>> getRoleList(Role role) throws Exception {
-//        Query query = CustmizeQuery(role);
-//        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        BasicDBObject query1 = new BasicDBObject(); //setup the query criteria 设置查询条件
-        query1.put("status", AuthConstants.DEL_FLAG_NORMAL);
-        FindIterable<Document> dbCursor =mongoTemplate.getCollection("role").find(query1);
-        MongoCursor<Document> mongoCursor = dbCursor.iterator();
-        while(mongoCursor.hasNext()){
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.putAll(mongoCursor.next());
-            list.add(map);
-        }
+    public List<Role> getRoleList(Role role) throws Exception {
+        Query query = CustmizeQuery(role);
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+        return mongoTemplate.find(query, Role.class);
+//        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+//        BasicDBObject query1 = new BasicDBObject(); //setup the query criteria 设置查询条件
+//        query1.put("status", AuthConstants.DEL_FLAG_NORMAL);
+//        FindIterable<Document> dbCursor =mongoTemplate.getCollection("role").find(query1);
+//        MongoCursor<Document> mongoCursor = dbCursor.iterator();
+//        while(mongoCursor.hasNext()){
+//            Map<String, Object> map = new HashMap<String, Object>();
+//            map.putAll(mongoCursor.next());
+//            list.add(map);
+//        }
 
-        return list;
+//        return list;
     }
 
     //获取角色详细信息

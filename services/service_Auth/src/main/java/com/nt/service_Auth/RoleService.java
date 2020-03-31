@@ -25,7 +25,7 @@ import java.util.Map;
 public interface RoleService {
 
     //获取角色列表
-    List<Map<String, Object>> getRoleList(Role role) throws Exception;
+    List<Role> getRoleList(Role role) throws Exception;
 
     //获取角色详细信息
     Role getRoleInfo(String roleid) throws Exception;
