@@ -276,7 +276,7 @@
         @LACKATTENDANCE_GIVE := base.LACKATTENDANCE_GIVE AS OWINGCONTROL,#病欠/欠勤控除
         @BASE_SJJE := (
         IF
-        ( @TYPE &lt;=> '-', ROUND( @THISMONTH + @LACKATTENDANCE_GIVE, 2 ), ROUND( base.RTCXBASE + @LACKATTENDANCE_GIVE, 2 ) )
+        ( @TYPE &lt;=> '-', ROUND( @THISMONTH - @LACKATTENDANCE_GIVE, 2 ), ROUND( base.RTCXBASE - @LACKATTENDANCE_GIVE, 2 ) )
         ) AS ACTUALAMOUNT,#基本給实际金额
         @JBBZ := base.SUBSIDY AS OVERTIMESUBSIDY,# 加班补助
         @XJ1 := round( ( @BASE_SJJE + @JBBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
@@ -310,7 +310,10 @@
         @GJJ := round( ( ACCUMULATION * base.DIC_GJJGRFD ), 2 ) AS ACCUMULATIONFUND,#个人住房公积金(専項控除)
         @GRHJ := round( ( @GRSHBX + @GJJ ), 2 ) AS DISCIPLINARYCONTROL,#个人社会保险费+公积金(専項控除)合计
         @ZXKCLJ := base.DISCIPLINARY_TOTAL + @GRHJ AS THISMONTHTERM,#専項控除累計（当月まで）
-        @ADDITIONAL_TOTAL := base.ADDITIONAL_TOTAL AS THISMONTHADDITIONAL,#附加控除累計（当月まで）
+        @ADDITIONAL_TOTAL := (
+        IF
+        ( ( isnull( base.ADDITIONAL_TOTAL ) OR ( length( trim( base.ADDITIONAL_TOTAL ) ) &lt; 1 ) ), 0, base.ADDITIONAL_TOTAL )
+        ) AS THISMONTHADDITIONAL,#附加控除累計（当月まで）
         @DUTYFREE_CUMULATIVE := base.DUTYFREE_CUMULATIVE + @XJ3 AS THISMONTHDUTYFREE,#免税分累計（当月まで）
         @ACCUMUKATEDTAX_YEARTAXES := base.ACCUMUKATEDTAX_YEARTAXES AS LASTDUTYFREE,#年間累計税金（先月まで）
         @DIC_99NQZGDWGR  := base.DIC_ZNDLSZZZPJGZ * 3 * 0.12  AS `DIC_99NQZGDWGR`,
@@ -398,7 +401,7 @@
         )
         )
         END AS THISMONTHADJUSTMENT,#本月应扣缴所得税
-        round( ( @GZZE + @GRHJ + @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
+        round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
         @YLBXHS := round( @PENSION * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
         @YILIAOBXHS := round( @MEDICAL * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
         @SYBXGRFDHS := round( @PENSION * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
