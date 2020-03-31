@@ -87,4 +87,62 @@
 	    between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
 	</select>
 
+
+    <select id="getcheckList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
+		 select
+		 p.COMPANYPROJECTS_ID
+         from projectcontract p
+         inner join companyprojects a
+         on a.companyprojects_id = p.companyprojects_id
+         and a.status = '4' and a.status = '5' and a.status = '6'
+         group by p.COMPANYPROJECTS_ID
+	</select>
+
+    <select id="getcheckList2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
+		 select
+  s.COMPANYPROJECTS_ID,
+  min(estimatedstarttime) as estimatedstarttime,
+  max(estimatedendtime) as estimatedendtime,
+  left join (
+   select p.COMPANYPROJECTS_ID
+         from projectcontract p
+         inner join companyprojects a
+         on a.companyprojects_id = p.companyprojects_id
+         and a.status = '4' and a.status = '5' and a.status = '6'
+          group by p.COMPANYPROJECTS_ID) ppp
+  on
+  s.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
+   GROUP BY s.COMPANYPROJECTS_ID
+	</select>
+
+    <select id="getcheckList3" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
+		select
+ c.COMPANYPROJECTS_ID,
+ppp.extensiondate,
+ppp.CLAIMDATETIME
+ from  companyprojects c
+   left join (
+        select
+        p.COMPANYPROJECTS_ID,
+        a.CLAIMDATETIME,
+        a.extensiondate
+        from projectcontract p
+        inner join (
+        select
+        extensiondate,
+        status,
+        max(substring(CLAIMDATETIME,14,10))  as CLAIMDATETIME,
+        contractnumber
+        from contractapplication
+        group by contractapplication_id
+        ) a
+        on a.contractnumber = p.CONTRACT
+        and a.status = '0' and p.status = '0'
+        group by p.COMPANYPROJECTS_ID,a.extensiondate,a.CLAIMDATETIME
+        ) ppp
+  on
+  c.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
+   GROUP BY c.COMPANYPROJECTS_ID,ppp.extensiondate,
+ppp.CLAIMDATETIME
+	</select>
 </mapper>
