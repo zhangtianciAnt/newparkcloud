@@ -159,6 +159,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     nonJudgment.setVarto(contractapp.getVarto());
                     nonJudgment.setClaimdatetime(contractapp.getClaimdatetime());
                     nonJudgment.setOutnumber(contractapp.getOutnumber());
+                    nonJudgment.setJaname(contractapp.getConchinese());
+                    nonJudgment.setCareer(contractapp.getBusinesscode());
                     nonJudgment.setProductnumber(contractapp.getProductnumber());
 
 

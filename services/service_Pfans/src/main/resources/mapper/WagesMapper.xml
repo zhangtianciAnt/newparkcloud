@@ -262,17 +262,17 @@
         @BONUS := base.BONUS AS BONUS,#base表 奨金計上
         @SOCIOLOGY := base.SOCIOLOGY AS SOCIOLOGY,#base表 是否1999年前社会人 1是 2不是
         @REGISTERED := base.REGISTERED AS REGISTERED,#base表 是否大連戸籍    1是 2不是
-        @PENSION := base.PENSION AS PENSION,#base表 養老・失業・工傷基数
-        @MEDICAL := base.MEDICAL AS MEDICAL,#base表 医療・生育基数
-        @ACCUMULATION := base.ACCUMULATION AS ACCUMULATION,#base表 公积金基数
-        @LASTMONTH := base.LASTMONTH AS LASTMONTH,#base表 上个月基本工资
-        @THISMONTH := base.THISMONTH AS THISMONTH,#base表 当月基本工资
-        @RNBASESALARY := base.RNBASESALARY AS RNBASESALARY,#RN基本工资
-        @CXDAYS := base.ATTENDANCE AS BIRTHREST,# 其他1表 産休出勤日数(看護休暇日数)
-        base.RTCXBASE AS THISMONTHBASIC,#本月入/退職/産休基本給
-        @SHORTDEFICIENCY := base.SHORTDEFICIENCY AS SHORTILLNESS,#短病欠時数
-        @CHRONICDEFICIENCY := base.CHRONICDEFICIENCY AS LONGILLNESS,#长病欠時数
-        @DILIGENCE := base.DILIGENCE AS OWEDILIGENCE,#欠勤時数
+        @PENSION := round(base.PENSION,2) AS PENSION,#base表 養老・失業・工傷基数
+	    @MEDICAL := round(base.MEDICAL,2) AS MEDICAL,#base表 医療・生育基数
+	    @ACCUMULATION := round(base.ACCUMULATION,2) AS ACCUMULATION,#base表 公积金基数
+	    @LASTMONTH := round(base.LASTMONTH,2) AS LASTMONTH,#base表 上个月基本工资
+	    @THISMONTH := round(base.THISMONTH,2) AS THISMONTH,#base表 当月基本工资
+	    @RNBASESALARY := round(base.RNBASESALARY,2) AS RNBASESALARY,#RN基本工资
+        @CXDAYS := round(base.ATTENDANCE,2) AS BIRTHREST,# 其他1表 産休出勤日数(看護休暇日数)
+	    base.RTCXBASE AS THISMONTHBASIC,#本月入/退職/産休基本給
+	    @SHORTDEFICIENCY := round(base.SHORTDEFICIENCY,2) AS SHORTILLNESS,#短病欠時数
+	    @CHRONICDEFICIENCY := round(base.CHRONICDEFICIENCY,2) AS LONGILLNESS,#长病欠時数
+	    @DILIGENCE := round(base.DILIGENCE,2) AS OWEDILIGENCE,#欠勤時数
         @LACKATTENDANCE_GIVE := base.LACKATTENDANCE_GIVE AS OWINGCONTROL,#病欠/欠勤控除
         @BASE_SJJE := (
         IF
@@ -295,12 +295,12 @@
         2
         )
         END AS YKBZ,#一括补助
-        @OTHER2 := base.OTHERTWO_MONEYS AS OTHER2,#其他2
-        @AMOUNT := base.APPRECIATION_AMOUNT AS APPRECIATION,#月度賞与
+        @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
+        @AMOUNT := round(base.APPRECIATION_AMOUNT,2) AS APPRECIATION,#月度賞与
         @XJ2 := ( @OTHER2 + @AMOUNT + @YKBZ ) AS TOTAL2,# 小计2 其他3字段画面手动录入，sql里只计算了交通补助到月度賞与的合计，需要在画面再加上其他3手动录入的数据
         @NSGZZE := round( ( @XJ1 + @XJ2 ), 2 ) AS TAXESTOTAL,#纳税工资总额(小计1+2)  小计1(基本給+补助)+小计2,画面手动添加 其他3的数据
-        @CNF := ( IF ( @THISMONTH &lt;> 0, base.HEATING, 0 ) ) AS HEATING,#采暖费
-        @DSZNF := ( IF ( @ONLYCHILD &lt;=> '1', base.DIC_DSZNF, 0 ) ) AS ONLYCHILDMONEY,#独生子女费
+        @CNF := ( IF ( @THISMONTH &lt;> 0, round(base.HEATING,2), round(0,2) ) ) AS HEATING,#采暖费
+        @DSZNF := ( IF ( @ONLYCHILD &lt;=> '1', round(base.DIC_DSZNF,2), round(0,2) ) ) AS ONLYCHILDMONEY,#独生子女费
         @XJ3 := round( ( @CNF + @DSZNF ), 2 ) AS TOTAL3,#小计3
         @GZZE := round( ( @NSGZZE + @XJ3 ), 2 ) AS TOTALWAGES,#工资总额(纳税+免税)
         @YLBXGR := round( ( @PENSION * base.DIC_YLBXGRFDGR ), 2 ) AS ENDOWMENTINSURANCE,#养老保险
@@ -309,27 +309,30 @@
         @GRSHBX := round( ( @YLBXGR + @YILIAOBXGR + @SYBXGR ), 2 ) AS SOCIALINSURANCE,#个人社会保险(専項控除)
         @GJJ := round( ( ACCUMULATION * base.DIC_GJJGRFD ), 2 ) AS ACCUMULATIONFUND,#个人住房公积金(専項控除)
         @GRHJ := round( ( @GRSHBX + @GJJ ), 2 ) AS DISCIPLINARYCONTROL,#个人社会保险费+公积金(専項控除)合计
-        @ZXKCLJ := base.DISCIPLINARY_TOTAL + @GRHJ AS THISMONTHTERM,#専項控除累計（当月まで）
-        @ADDITIONAL_TOTAL := base.ADDITIONAL_TOTAL AS THISMONTHADDITIONAL,#附加控除累計（当月まで）
-        @DUTYFREE_CUMULATIVE := base.DUTYFREE_CUMULATIVE + @XJ3 AS THISMONTHDUTYFREE,#免税分累計（当月まで）
-        @ACCUMUKATEDTAX_YEARTAXES := base.ACCUMUKATEDTAX_YEARTAXES AS LASTDUTYFREE,#年間累計税金（先月まで）
-        @DIC_99NQZGDWGR  := base.DIC_ZNDLSZZZPJGZ * 3 * 0.12  AS `DIC_99NQZGDWGR`,
-        @DIC_99NHZGDW := base.DIC_ZNDLSZZZPJGZ * 3 * 0.25  AS `DIC_99NHZGDW`,
-        @DIC_99NHZGGR  := base.DIC_ZNDLSZZZPJGZ * 3 * 0.15  AS `DIC_99NHZGGR`,
+        @ZXKCLJ := round(base.DISCIPLINARY_TOTAL + @GRHJ,2) AS THISMONTHTERM,#専項控除累計（当月まで）
+        @ADDITIONAL_TOTAL := (
+        IF
+        ( ( isnull( base.ADDITIONAL_TOTAL ) OR ( length( trim( base.ADDITIONAL_TOTAL ) ) &lt; 1 ) ), round(0,2), round(base.ADDITIONAL_TOTAL,2) )
+        ) AS THISMONTHADDITIONAL,#附加控除累計（当月まで）
+        @DUTYFREE_CUMULATIVE := round(base.DUTYFREE_CUMULATIVE + @XJ3,2) AS THISMONTHDUTYFREE,#免税分累計（当月まで）
+        @ACCUMUKATEDTAX_YEARTAXES := round(base.ACCUMUKATEDTAX_YEARTAXES,2) AS LASTDUTYFREE,#年間累計税金（先月まで）
+        @DIC_99NQZGDWGR := round(base.DIC_ZNDLSZZZPJGZ * 3 * 0.12,2) AS `DIC_99NQZGDWGR`,
+	    @DIC_99NHZGDW := round(base.DIC_ZNDLSZZZPJGZ * 3 * 0.25,2) AS `DIC_99NHZGDW`,
+	    @DIC_99NHZGGR := round(base.DIC_ZNDLSZZZPJGZ * 3 * 0.15,2) AS `DIC_99NHZGGR`,
         @ZFGJJYNSJE := (
         IF
         (
         @SOCIOLOGY &lt;=> '1',
         IF
-        ( @GJJ * 2 - @DIC_99NQZGDWGR * 2 > 0, @GJJ * 2 - @DIC_99NQZGDWGR * 2, 0 ),
+        ( @GJJ * 2 - @DIC_99NQZGDWGR * 2 > 0, round(@GJJ * 2 - @DIC_99NQZGDWGR * 2,2), round(0,2) ),
         IF
-        ( @GJJ > @DIC_99NHZGDW, @GJJ - @DIC_99NHZGDW, 0 ) +
+        ( @GJJ > @DIC_99NHZGDW, round(@GJJ - @DIC_99NHZGDW,2), round(0,2) ) +
         IF
-        ( @GJJ > @DIC_99NHZGGR, @GJJ - @DIC_99NHZGGR, 0 )
+        ( @GJJ > @DIC_99NHZGGR, round(@GJJ - @DIC_99NHZGGR,2), round(0,2) )
         )
         ) AS HOUSINGMONEYS,#住房公积金应纳税金额
-        @OTHERFOUR_TOTAL := base.OTHERFOUR_TOTAL AS OTHER4,#其他4公司负担社保（24元）
-        @OTHERFIVE_TOTAL := base.OTHERFIVE_TOTAL AS OTHER5,#其他5（保険：福祉）
+        @OTHERFOUR_TOTAL := round(base.OTHERFOUR_TOTAL,2) AS OTHER4,#其他4公司负担社保（24元）
+        @OTHERFIVE_TOTAL := round(base.OTHERFIVE_TOTAL,2) AS OTHER5,#其他5（保険：福祉）
         @DYYKGZ := round( ( @GZZE + @ZFGJJYNSJE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL ), 2 ) AS SHOULDWAGES,#当月応発工資（工资总额(纳税+免税)+只納税）
         @YEARSTOTAL12 := ( base.COMPREHENSIVE_YEARSTOTAL12 + @DYYKGZ ) AS SHOULDCUMULATIVE,#累計応発工資（当月含）
         @LJYNSSDE := (
@@ -348,77 +351,78 @@
         )
         )
         ) AS SHOULDPAYTAXES,#累計应纳税所得额
-        @BYYKJSDS :=
+        @BYYKJSDS := (
         CASE
 
-        WHEN ( @LJYNSSDE &lt;= 0 AND @LJYNSSDE &lt;= 36000 ) THEN#3%
+        WHEN ( @LJYNSSDE &lt;= 0 AND @LJYNSSDE &lt;= 36000 ) THEN
         (
         IF
         (
-        round( ( @LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, 0, @LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ) ) WHEN ( @LJYNSSDE > 36000
+        round( ( @LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ,2)) ) WHEN ( @LJYNSSDE > 36000
         AND @LJYNSSDE &lt;= 144000
-        ) THEN#10%
+        ) THEN
         (
         IF
         (
-        round( ( @LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, 0, @LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ) ) WHEN ( @LJYNSSDE > 144000
+        round( ( @LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 144000
         AND @LJYNSSDE &lt;= 300000
         ) THEN#20%
         (
         IF
         (
-        round( ( @LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, 0, @LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ) ) WHEN ( @LJYNSSDE > 300000
+        round( ( @LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 300000
         AND @LJYNSSDE &lt;= 420000
         ) THEN#25%
         (
         IF
         (
-        round( ( @LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, 0, @LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ) ) WHEN ( @LJYNSSDE > 420000
+        round( ( @LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 420000
         AND @LJYNSSDE &lt;= 660000
         ) THEN#30%
         (
         IF
         (
-        round( ( @LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, 0, @LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ) ) WHEN ( @LJYNSSDE > 660000
+        round( ( @LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 660000
         AND @LJYNSSDE &lt;= 960000
         ) THEN#35%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_5SL - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0,
-        0,
-        @LJYNSSDE * base.DIC_5SL - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES
+        round(0,2),
+        round(@LJYNSSDE * base.DIC_5SL - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES ,2)
         )
         ) ELSE (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_6SL - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0,
-        0,
-        @LJYNSSDE * base.DIC_6SL - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES
+        round(0,2),
+        round(@LJYNSSDE * base.DIC_6SL - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES ,2)
         )
         )
-        END AS THISMONTHADJUSTMENT,#本月应扣缴所得税
-        round( ( @GZZE + @GRHJ + @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
+        END
+        ) AS THISMONTHADJUSTMENT,#本月应扣缴所得税
+        round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
         @YLBXHS := round( @PENSION * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
         @YILIAOBXHS := round( @MEDICAL * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
         @SYBXGRFDHS := round( @PENSION * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
         @GSBXHS := round( @PENSION * DIC_GSBXHS, 2 ) AS COMINJURYINSURANCE,#工伤保险
         @SYBXHS := round( @MEDICAL * DIC_SYBXHS, 2 ) AS COMBIRTHINSURANCE,#生育保险
-        @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @PENSION != 0 ), DIC_DLHXNFF, 0 ) ) AS COMHEATING,#暖房费
+        @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @PENSION != 0 ), round(DIC_DLHXNFF,2), round(0,2) ) ) AS COMHEATING,#暖房费
         @ZFGJJ := round( @ACCUMULATION * DIC_GJJHSFD, 2 ) AS COMACCUMULATIONFUND,#住房公积金
         @SUMHS := round( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS + @NFF + @ZFGJJ ), 2 ) AS TOTAL,#总计
-        @GHJFJS := @XJ1 + @AMOUNT AS LABOURUNIONBASE,#工会经费基数
+        @GHJFJS := round(base.THISMONTHBASIC + base.THISMONTHDUTY + @AMOUNT,2) AS LABOURUNIONBASE,#工会经费基数
         @GHJF := round( @GHJFJS * 0.02, 2 ) AS LABOURUNIONFUNDS,#工会经费
         @GZFZFDZJ := ROUND( ( @GZZE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL + @SUMHS + @GHJF ), 2 ) AS COMTOTALWAGES,#工资总额(纳税+免税)+福祉+公司負担+工会経費总计
         @JSJJ := (
-        IF
-        (
-        @BONUS = 1,
-        ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 0 ),
-        IF
-        ( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ) - @AMOUNT
-        )
-        ) AS BONUSMONEY,#計上奨金
+							IF
+								(
+									@BONUS = 1,
+									ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 2 ),
+								round(IF
+									( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ) - @AMOUNT ,2)
+								)
+							) AS BONUSMONEY,#計上奨金
         @GZFZFDZJ + @JSJJ AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
