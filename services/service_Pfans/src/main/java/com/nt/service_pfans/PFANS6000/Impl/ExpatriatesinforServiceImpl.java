@@ -66,8 +66,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         for(Expatriatesinfor item:expatriatesinfor){
             if(StrUtil.isEmpty(item.getAccount())){
                 UserAccount userAccount = new UserAccount();
-                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
-                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setAccount("KK-"+PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setPassword("KK-"+PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
                 userAccount.setUsertype("1");
 
                 Query query = new Query();
@@ -101,8 +101,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         for(Expatriatesinfor item:expatriatesinfor){
             if(StrUtil.isEmpty(item.getAccount())){
                 UserAccount userAccount = new UserAccount();
-                userAccount.setAccount(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
-                userAccount.setPassword(PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setAccount("KK-"+PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                userAccount.setPassword("KK-"+PinyinHelper.convertToPinyinString(item.getExpname(), "", PinyinFormat.WITHOUT_TONE));
                 userAccount.setUsertype("1");
 
                 Query query = new Query();
@@ -144,16 +144,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setVenuetarget("1");
         }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-        String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-        Priceset priceset = new Priceset();
-        priceset.preInsert(tokenModel);
-        priceset.setPriceset_id(UUID.randomUUID().toString());
-        priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-        priceset.setGraduation(expatriatesinfor.getGraduation_year());
-        priceset.setCompany(expatriatesinfor.getSuppliername());
-        priceset.setAssesstime(thisDate);
-        priceset.setStatus("0");
-        pricesetMapper.insert(priceset);
+        if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
+            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+            Priceset priceset = new Priceset();
+            priceset.preInsert(tokenModel);
+            priceset.setPriceset_id(UUID.randomUUID().toString());
+            priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+            priceset.setGraduation(expatriatesinfor.getGraduation_year());
+            priceset.setCompany(expatriatesinfor.getSuppliername());
+            priceset.setAssesstime(thisDate);
+            priceset.setStatus("0");
+            pricesetMapper.insert(priceset);
+        }
     }
 
 

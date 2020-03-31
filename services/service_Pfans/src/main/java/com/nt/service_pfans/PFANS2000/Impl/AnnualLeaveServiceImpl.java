@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 00 13 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -481,7 +481,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     String departmentName = getProperty(ob, "departmentName");
                     //门号
                     String doorID = getProperty(ob, "doorID");
-
                     //添加打卡详细
                     PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
                     //卡号
@@ -493,7 +492,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
-                    //进门测试用
+//                    //进门测试用
 //                    if(doorID.equals("3")){
 //                        punchcardrecorddetail.setEventno("1");
 //                    }
@@ -693,13 +692,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
                     attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                     attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                    attendance.setYears(DateUtil.format(new Date(), "YYYY").toString());
-                    attendance.setMonths(DateUtil.format(new Date(), "MM").toString());
                     attendance.setUser_id(customerInfo.getUserid());
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
                     calendar.add(Calendar.DAY_OF_YEAR, -1);
                     attendance.setDates(calendar.getTime());
+                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     tokenModel.setUserId(attendance.getUser_id());
                     tokenModel.setExpireDate(new Date());
@@ -710,7 +709,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 punchcardRecordService.methodAttendance_b(tokenModel,customerInfoList);
             }
         } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
+            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
         }
     }
     //取object的值

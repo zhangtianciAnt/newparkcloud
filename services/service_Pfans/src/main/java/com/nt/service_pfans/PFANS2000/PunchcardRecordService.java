@@ -20,6 +20,6 @@ public interface PunchcardRecordService {
 
     List<PunchcardRecord> getDataList(PunchcardRecord punchcardrecord, TokenModel tokenModel)throws Exception;
 
-    List<PunchcardRecordDetail> getDetail(PunchcardRecordDetail detail)throws Exception;
+    List<PunchcardRecordDetail> getPunDetail(PunchcardRecordDetail detail)throws Exception;
 
 }

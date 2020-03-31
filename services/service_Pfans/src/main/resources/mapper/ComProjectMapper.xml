@@ -46,13 +46,15 @@
 	</select>
 
     <select id="getList2" resultType="com.nt.dao_Pfans.PFANS5000.Comproject">
-		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID from comproject
+		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
 		where STATUS = '4' or STATUS = '7' or STATUS = '8'
+		ORDER BY CREATEON DESC
 	</select>
 
     <select id="getList3" resultType="com.nt.dao_Pfans.PFANS5000.Comproject">
-		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID from comproject
+		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
 		where STATUS = '9'
+		ORDER BY CREATEON DESC
 	</select>
 
 	<select id="getListVo2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">

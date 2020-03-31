@@ -103,7 +103,8 @@ public class Pfans2027Controller {
         if(lunarbonus_id==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(lunarbonusService.getOne(lunarbonus_id));
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(lunarbonusService.getOne(lunarbonus_id,tokenModel));
     }
 
 

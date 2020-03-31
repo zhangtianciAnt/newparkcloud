@@ -112,8 +112,8 @@ public class AbNormal extends BaseModel {
     /**
      * 关联加班申请
      */
-    @Column(name = "relation")
-    private String relation;
+    //@Column(name = "relation")
+    //private String relation;
 
     /**
      * 附件说明
