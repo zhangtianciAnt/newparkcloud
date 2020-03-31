@@ -1,7 +1,9 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.PersonnelPermissions;
+import com.nt.utils.dao.TokenModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,4 +19,7 @@ public interface PersonnelPermissionsServices {
 
     //获取人员清点列表
     List<PersonnelPermissions> list() throws Exception;
+
+    //保存部门列表
+    void insert(ArrayList<PersonnelPermissions> personnelPermissions, TokenModel tokenModel) throws Exception;
 }

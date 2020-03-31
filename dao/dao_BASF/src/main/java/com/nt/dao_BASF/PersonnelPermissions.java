@@ -18,18 +18,23 @@ public class PersonnelPermissions extends BaseModel {
     private String permissionsid;
 
     /**
-     * 内部人员
+     * recnum
      */
-    private String companystaff;
+    private String recnum;
 
     /**
-     * 供应商
+     * allname
      */
-    private String supplier;
+    private String allname;
 
     /**
-     * 外来人员
+     * name
      */
-    private String foreignworkers;
+    private String name;
+
+    /**
+     * classname
+     */
+    private String classname;
 
 }
