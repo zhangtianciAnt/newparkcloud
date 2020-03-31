@@ -1554,7 +1554,7 @@ public class GivingServiceImpl implements GivingService {
             // 3个月前小时工资 = 月工资÷21.75天÷8小时
             double salaryPerHourTma = Double.parseDouble(base.getTmabasic()) / 21.75d / 8d;
             // 前月小时工资
-            double salaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
+            double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
             // 休日加班费 200%
@@ -1807,8 +1807,14 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setRemarks(isResign ? "退职" : "-");
 
             // 控除给料
+
             lackattendance.setGive(BigDecimal.valueOf(Double.parseDouble(lackattendance.getLasttotal())
                     + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // give不为0.00的时候数据加负号
+            if(!"0.00".equals(lackattendance.getGive())){
+                lackattendance.setGive("-"+lackattendance.getGive());
+            }
 
             if (tokenModel != null) {
                 lackattendance.preInsert(tokenModel);
