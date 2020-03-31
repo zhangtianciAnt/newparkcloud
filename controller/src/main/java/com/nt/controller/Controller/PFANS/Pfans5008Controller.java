@@ -46,6 +46,15 @@ public class Pfans5008Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getListcheck", method = {RequestMethod.POST})
+    public ApiResult getListcheck(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.getListcheck(logmanagement, tokenModel));
+    }
+
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult updateInformation(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {
