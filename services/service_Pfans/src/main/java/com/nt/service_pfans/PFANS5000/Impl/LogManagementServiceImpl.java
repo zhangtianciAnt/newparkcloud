@@ -93,9 +93,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     @Override
     public List<LogmanagementVo2> getListcheck(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
         List<LogmanagementVo2> Result = new ArrayList<LogmanagementVo2>();
-
         List<LogmanagementVo2> checkList = logmanagementmapper.getcheckList();
-
         if (checkList != null && checkList.size() > 0) {
             Result = logmanagementmapper.getcheckList3();
         }else{
