@@ -78,7 +78,7 @@ public class Pfans1032Controller {
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(pd.getCurrencyposition())) {
 
-                        pd.setCurrencyposition(item.getValue3());
+                        pd.setCurrencyposition(item.getValue4());
                     }
                 }
                 ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(日本受託-RMB)","qingqiushu_ribenrmb.xlsx",data,response);
@@ -86,7 +86,7 @@ public class Pfans1032Controller {
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(pd.getCurrencyposition())) {
 
-                        pd.setCurrencyposition(item.getValue3());
+                        pd.setCurrencyposition(item.getValue4());
                     }
                 }
                 ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(日本受託-US$)","qingqiushu_ribenus.xlsx",data,response);
