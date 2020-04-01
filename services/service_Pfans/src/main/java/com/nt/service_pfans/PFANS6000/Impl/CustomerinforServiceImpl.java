@@ -1,5 +1,7 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
@@ -111,24 +113,24 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                 k++;
 
                 if (value != null && !value.isEmpty()) {
-                    customerinfor.setCustchinese(value.get(0).toString());
-                    customerinfor.setCustjapanese(value.get(1).toString());
-                    customerinfor.setCustenglish(value.get(2).toString());
-                    customerinfor.setAbbreviation(value.get(3).toString());
-                    customerinfor.setLiableperson(value.get(4).toString());
-                    customerinfor.setProchinese(value.get(5).toString());
-                    customerinfor.setProjapanese(value.get(6).toString());
-                    customerinfor.setProenglish(value.get(7).toString());
-                    customerinfor.setProtelephone(value.get(8).toString());
-                    customerinfor.setProtemail(value.get(9).toString());
-                    customerinfor.setCommontperson(value.get(10).toString());
-                    customerinfor.setComtelephone(value.get(11).toString());
-                    customerinfor.setComnemail(value.get(12).toString());
-                    customerinfor.setAddchinese(value.get(13).toString());
-                    customerinfor.setAddjapanese(value.get(14).toString());
-                    customerinfor.setAddenglish(value.get(15).toString());
+                    customerinfor.setCustchinese(Convert.toStr(value.get(0)));
+                    customerinfor.setCustjapanese(Convert.toStr(value.get(1)));
+                    customerinfor.setCustenglish(Convert.toStr(value.get(2)));
+                    customerinfor.setAbbreviation(Convert.toStr(value.get(3)));
+                    customerinfor.setLiableperson(Convert.toStr(value.get(4)));
+                    customerinfor.setProchinese(Convert.toStr(value.get(5)));
+                    customerinfor.setProjapanese(Convert.toStr(value.get(6)));
+                    customerinfor.setProenglish(Convert.toStr(value.get(7)));
+                    customerinfor.setProtelephone(Convert.toStr(value.get(8)));
+                    customerinfor.setProtemail(Convert.toStr(value.get(9)));
+                    customerinfor.setCommontperson(Convert.toStr(value.get(10)));
+                    customerinfor.setComtelephone(Convert.toStr(value.get(11)));
+                    customerinfor.setComnemail(Convert.toStr(value.get(12)));
+                    customerinfor.setAddchinese(Convert.toStr(value.get(13)));
+                    customerinfor.setAddjapanese(Convert.toStr(value.get(14)));
+                    customerinfor.setAddenglish(Convert.toStr(value.get(15)));
             }
-                String person=value.get(16).toString();
+                String person=Convert.toStr(value.get(16)).trim();
                 if(value.size()>1 && ! person.isEmpty()){
                     if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                         customerinfor.setPerscale("BP007001");  //改数据
@@ -142,8 +144,8 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                         customerinfor.setPerscale("BP007004");  //改数据
                     }
                 }
-                customerinfor.setThecompany(value.get(17).toString());
-                customerinfor.setCausecode(value.get(18).toString());
+                customerinfor.setThecompany(Convert.toStr(value.get(17)));
+                customerinfor.setCausecode(Convert.toStr(value.get(18)));
                 customerinfor.preInsert(tokenModel);
                 customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
                 customerinforMapper.insert(customerinfor);
