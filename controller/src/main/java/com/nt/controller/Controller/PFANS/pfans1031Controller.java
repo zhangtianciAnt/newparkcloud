@@ -87,7 +87,7 @@ public class pfans1031Controller {
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(na.getCurrencyformat())) {
 
-                        na.setCurrencyformat(item.getValue3());
+                        na.setCurrencyformat(item.getValue4());
                     }
                 }
                 ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(日本受託‐技術開発-RMB)","napinshu_rmb.xlsx",data,response);
@@ -95,7 +95,7 @@ public class pfans1031Controller {
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(na.getCurrencyformat())) {
 
-                        na.setCurrencyformat(item.getValue3());
+                        na.setCurrencyformat(item.getValue4());
 
                     }
                 }
