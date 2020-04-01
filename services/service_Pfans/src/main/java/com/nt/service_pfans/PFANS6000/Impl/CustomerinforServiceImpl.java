@@ -129,18 +129,18 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                 String person=value.get(16).toString();
                 if(value.size()>1 && ! person.isEmpty()){
                     if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
-                        customerinfor.setPerscale("<50");  //改数据
+                        customerinfor.setPerscale("BP007001");  //改数据
                     }
                     if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
-                        customerinfor.setPerscale("≥50");  //改数据
+                        customerinfor.setPerscale("BP007002");  //改数据
                     } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
-                        customerinfor.setPerscale("≥100");  //改数据
+                        customerinfor.setPerscale("BP007003");  //改数据
                     }
                     if(Integer.parseInt(person)>=500){
-                        customerinfor.setPerscale("≥500");  //改数据
+                        customerinfor.setPerscale("BP007004");  //改数据
                     }
                 }
-                customerinfor.preInsert();
+                customerinfor.preInsert(tokenModel);
                 customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
                 customerinforMapper.insert(customerinfor);
                 listVo.add(customerinfor);
