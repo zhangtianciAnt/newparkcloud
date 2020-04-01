@@ -210,7 +210,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             List<CustomerInfo> customerInfoList = mongoTemplate.find(query_userid, CustomerInfo.class);
             for (CustomerInfo customerInfo : customerInfoList)
             {
-                //if (customerInfo.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")) {
+                //if (customerInfo.getUserid().equals("5e02c92ac5e5250ef8cba3b2")) {
                 //插入没有打卡记录的员工的考勤
                 Attendance attendance = new Attendance();
                 attendance.setAbsenteeism("8");
@@ -231,7 +231,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 attendance.setOwner(attendance.getUser_id());
                 attendance.preInsert(tokenModel);
                 saveAttendance(attendance, "1", tokenModel);
-            }
+            //}
             }
 
             methodAttendance_b(tokenModel,customerInfoList);
@@ -1185,7 +1185,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                     else
                                     {
-                                        if (sdf.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
+                                        if (sf1ymd.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
                                         {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
@@ -1407,7 +1407,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
                                 }
-                                else if (sdf.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
+                                else if (sf1ymd.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
                                 {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
