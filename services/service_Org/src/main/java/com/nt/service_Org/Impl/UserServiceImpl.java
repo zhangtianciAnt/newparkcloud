@@ -216,12 +216,28 @@ public class UserServiceImpl implements UserService {
      * @返回值：List<CustomerInfo>
      */
     @Override
-    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
         Query query = new Query();
-        if (StrUtil.isNotBlank(orgid)) {
-            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
-                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+//        if (StrUtil.isNotBlank(orgid)) {
+//            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+//                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+//        }
+        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
+                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId())){
+            query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+            List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
+            query = new Query();
+            if(CustomerInfolist.size() > 0){
+                if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
+                    query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
+                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
+                    query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
+                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
+                    query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
+                }
+            }
         }
+
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfos;
     }
