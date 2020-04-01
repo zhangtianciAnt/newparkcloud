@@ -34,12 +34,13 @@ public class ReplacerestServiceImpl implements ReplacerestService {
         Date dateStart = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(dateStart);
-        cal.add(Calendar.DAY_OF_MONTH, -1);
+        cal.add(Calendar.MONTH, -3);
         String data = sf1ymd.format(sdfxx.parse(sdfxx.format(cal.getTime())));
         Replacerest rep = new Replacerest();
-        rep.setType("0");
-        rep.setRecognitionstate("0");
-        rep.setApplication_date(data);
+        rep.setStatus("0");//状态可用
+        rep.setType("0");//周末加班
+        rep.setRecognitionstate("0");//可用状态
+        rep.setApplication_date(data);//申请日期
         List<Replacerest> replacerestlist = replacerestMapper.select(rep);
             for (Replacerest replacerest : replacerestlist) {
                 replacerest.setRecognitionstate("1");
