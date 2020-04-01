@@ -47,7 +47,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     public ContractapplicationVo get(Contractapplication contractapplication ) {
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
-        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        Contractapplication contrac = new Contractapplication();
+        contrac.setEntrycondition(contractapplication.getEntrycondition());
+        List<Contractapplication> coList = contractapplicationMapper.select(contrac);
         vo.setContractapplication(coList);
         //契约番号回数
         Contractnumbercount number = new Contractnumbercount();

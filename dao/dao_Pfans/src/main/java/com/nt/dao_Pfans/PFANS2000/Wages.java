@@ -67,19 +67,24 @@ public class Wages extends BaseModel {
     @Column(name = "THISMONTH")
     private String thismonth;       //  本月基本給
 
+    @Column(name = "LASTMONTHBASIC")
+    private String lastmonthbasic;  //上个月基本工资
+    @Column(name = "LASTMONTHDUTY")
+    private String lastmonthduty; //上月职责工资
+    @Column(name = "BASETHISMONTHBASIC")
+    private String basethismonthbasic;//本月基本工资
+    @Column(name = "THISMONTHDUTY")
+    private String thismonthduty;//本月职责工资
+
+
     @Column(name = "RNBASESALARY")  //  RN基本工资 ***
     private String rnbasesalary;
 
-    public String getRnbasesalary() {
-        return rnbasesalary;
-    }
-
-    public void setRnbasesalary(String rnbasesalary) {
-        this.rnbasesalary = rnbasesalary;
-    }
-
     @Column(name = "BIRTHREST")
     private String birthrest;       // 産休出勤日数(看護休暇日数)
+
+    @Column(name = "THISMONTHBASICBASIC")
+    private String thismonthbasicbasic;//本月入/退職/産休基本工资
 
     @Column(name = "THISMONTHBASIC")
     private String thismonthbasic;  // 本月入/退職/産休基本給
@@ -98,6 +103,13 @@ public class Wages extends BaseModel {
 
     @Column(name = "ACTUALAMOUNT")
     private String actualamount;    //  基本給实际金额
+
+    @Column(name = "THISMONTHBASICGEI")
+    private String thismonthbasicgei;   //本月基本给
+
+    @Column(name = "THISMONTHDUTYGEI")
+    private String thismonthdutygei;    //本月职责给
+
 
     @Column(name = "SUPPLEMENT")
     private String supplement;      // 公积金补充(加班补充）不要了
@@ -120,7 +132,7 @@ public class Wages extends BaseModel {
     @Column(name = "TOTAL1")
     private String total1;              // 小计1(基本給+补助)
 
-    @Column(name="YKBZ")                // 一括补助 ***
+    @Column(name = "YKBZ")                // 一括补助 ***
     private String ykbz;
 
     public String getYkbz() {
@@ -262,6 +274,9 @@ public class Wages extends BaseModel {
 
     @Column(name = "BONUSMONEY")
     private String bonusmoney;              // 計上奨金
+
+    @Column(name = "NJJY")   //年休结余
+    private String njjy;
 
     @Column(name = "TOTALBONUS")
     private String totalbonus;              // 总计+計上奨金
