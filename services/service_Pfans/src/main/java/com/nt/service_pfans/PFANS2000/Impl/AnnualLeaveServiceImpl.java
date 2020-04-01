@@ -482,6 +482,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     if(eventNo.equals("30")){
                         continue;
                     }
+                    //PSCDC(本社人员)
+                    String departmentName_P = getProperty(ob, "departmentName");
+                    if(!departmentName_P.equals("PSDCD")){
+                        continue;
+                    }
                     //判断是否短时间同一人多次打卡
                     if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
                         continue;
