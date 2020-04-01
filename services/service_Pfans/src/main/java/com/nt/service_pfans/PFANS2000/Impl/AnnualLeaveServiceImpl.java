@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 20 15 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 30 8 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -452,8 +452,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
-            //String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
-            String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
+            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //String doorIDList = "3,5";//3:门1；5:门2；7:门3
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
@@ -468,16 +467,29 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String recordTime = "";
             //员工编号
             String jobnumber = "";
+            String jobnumberOld = "";
+            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+            String eventNoOld = "";
             if(jsonArray.size() > 0){
                 for(Object ob : jsonArray){
                     //打卡时间
                     recordTime = getProperty(ob, "recordTime");
                     //员工编号
                     jobnumber = getProperty(ob, "staffNo");
+                    //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+                    String eventNo = getProperty(ob, "eventNo");
+                    //无效-反潜回
+                    if(eventNo.equals("30")){
+                        continue;
+                    }
+                    //判断是否短时间同一人多次打卡
+                    if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
+                        continue;
+                    }
+                    eventNoOld = eventNo;
+                    jobnumberOld = jobnumber;
                     //员工姓名
                     String staffName = getProperty(ob, "staffName");
-                    //进出状态(1，正常进入；2，正常外出)
-                    String eventNo = getProperty(ob, "eventNo");
                     //员工部门
                     String departmentName = getProperty(ob, "departmentName");
                     //门号
@@ -490,7 +502,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecorddetail.setPunchcardrecord_date(sf.parse(recordTime));
                     //打卡时间
                     punchcardrecorddetail.setUser_id(staffName);
-
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
 //                    //进门测试用
@@ -553,11 +564,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //个人所有进门记录
                     List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //第一条进门记录
-                    Date Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                    Date Time_start = new Date();
+                    if(punDetaillistevent1.size() > 0){
+                        Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                    }
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //最后一条出门记录
-                    Date Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                    Date Time_end = new Date();
+                    if(punDetaillistevent2.size() > 0){
+                        Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                    }
                     //个人出门时间
 //                    long start = sf.parse(Time_start).getTime();
 //                    //个人出门之后再次进门时间
