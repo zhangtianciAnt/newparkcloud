@@ -94,15 +94,19 @@ public class StartprogramServicesImpl implements StartprogramServices {
     @Override
     public void updateprogramlist(String startprogramid, TokenModel tokenModel) throws Exception {
         Startprogram startprogram = one(startprogramid);
-        Programlist programlist = programlistroServices.one(startprogram.getProgramlistid());
-        programlist.setLastdate(startprogram.getActualstartdate());
-        programlist.setThisdate(null);
-        programlist.setNumber(String.valueOf(Integer.parseInt(programlist.getNumber()) + 1));
-        programlist.setNumberpeople(String.valueOf(Integer.parseInt(programlist.getNumberpeople()) + trainjoinlistServices.actualjoinnumber(startprogramid)));
-        programlist.setThispeople("0");
-        programlist.setProgramtype("BC039001");
-        programlist.preUpdate(tokenModel);
-        programlistMapper.updateByPrimaryKey(programlist);
+        if (startprogram != null) {
+            Programlist programlist = programlistroServices.one(startprogram.getProgramlistid());
+            programlist.setLastdate(startprogram.getActualstartdate());
+            programlist.setThisdate(null);
+            programlist.setNumber(String.valueOf(Integer.parseInt(programlist.getNumber()) + 1));
+            if (!"BC040002".equals(startprogram.getIsfirst())) {
+                programlist.setNumberpeople(String.valueOf(Integer.parseInt(programlist.getNumberpeople()) + trainjoinlistServices.actualjoinnumber(startprogramid)));
+            }
+            programlist.setThispeople("0");
+            programlist.setProgramtype("BC039001");
+            programlist.preUpdate(tokenModel);
+            programlistMapper.updateByPrimaryKey(programlist);
+        }
     }
 
     //查询培训
