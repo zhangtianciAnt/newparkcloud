@@ -79,8 +79,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
-    public List<AnnualLeave> getDataList() {
-        return annualLeaveMapper.getDataList("");
+    public List<AnnualLeave> getDataList(TokenModel tokenModel) {
+        return annualLeaveMapper.getDataList(tokenModel.getOwnerList());
     }
 
     //系统服务--事业年度开始获取年休
@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 15 21 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 55 21 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -589,7 +589,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 //                    double hourd = (double) ((end - start)/(1000));
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
-                        if(i < punDetaillistevent1.size()){
+                        if(i < punDetaillistevent1.size() - 1){
 
                             //个人出门时间
                             long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();

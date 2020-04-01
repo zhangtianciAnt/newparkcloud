@@ -39,6 +39,6 @@ public class Pfans2013Controller {
         Calendar cal = Calendar.getInstance();
         String this_year = String.valueOf(cal.get(cal.YEAR));
         annualLeave.setYears(this_year);
-        return ApiResult.success(annualLeaveService.getDataList());
+        return ApiResult.success(annualLeaveService.getDataList(tokenModel));
     }
 }

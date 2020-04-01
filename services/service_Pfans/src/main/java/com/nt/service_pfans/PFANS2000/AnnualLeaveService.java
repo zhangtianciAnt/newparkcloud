@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
+import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface AnnualLeaveService {
      * @return
      * @throws Exception
      */
-    List<AnnualLeave> getDataList() throws Exception;
+    List<AnnualLeave> getDataList(TokenModel tokenModel) throws Exception;
 
     /**
      * 数据做成
