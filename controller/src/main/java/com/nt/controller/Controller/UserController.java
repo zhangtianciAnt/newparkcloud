@@ -222,6 +222,21 @@ public class UserController {
     }
 
     /**
+     * @方法名：getAccountCustomer
+     * @描述：根据orgid获取用户账号及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[orgid, orgtype, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getAccountCustomer2", method = {RequestMethod.GET})
+    public ApiResult getAccountCustomer2(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,tokenModel));
+    }
+
+
+    /**
      * @方法名：getAccountCustomerById
      * @描述：根据用户id获取用户账号及用户信息
      * @创建日期：2018/12/06

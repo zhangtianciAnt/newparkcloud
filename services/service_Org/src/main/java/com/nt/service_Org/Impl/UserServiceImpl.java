@@ -242,6 +242,17 @@ public class UserServiceImpl implements UserService {
         return customerInfos;
     }
 
+    @Override
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
+        Query query = new Query();
+        if (StrUtil.isNotBlank(orgid)) {
+            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+        }
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        return customerInfos;
+    }
+
     /**
      * @方法名：getAccountCustomerById
      * @描述：根据用户id获取用户信息
