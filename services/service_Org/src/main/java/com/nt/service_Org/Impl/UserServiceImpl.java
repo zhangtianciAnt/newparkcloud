@@ -216,7 +216,34 @@ public class UserServiceImpl implements UserService {
      * @返回值：List<CustomerInfo>
      */
     @Override
-    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception {
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
+        Query query = new Query();
+//        if (StrUtil.isNotBlank(orgid)) {
+//            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+//                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+//        }
+        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
+                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId())){
+            query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+            List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
+            query = new Query();
+            if(CustomerInfolist.size() > 0){
+                if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
+                    query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
+                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
+                    query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
+                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
+                    query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
+                }
+            }
+        }
+
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        return customerInfos;
+    }
+
+    @Override
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
             query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
@@ -471,180 +498,238 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request) throws Exception {
         try {
-            List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
             File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
-            List<List<Object>> list = reader.read();
-            List<Object> model = new ArrayList<Object>();
-            model.add("姓名");
-            model.add("性别");
-            model.add("AD域账号");
-            model.add("生年月日");
-            model.add("国籍");
-            model.add("民族");
-            model.add("户籍");
-            model.add("住所");
-            model.add("最终毕业学校");
-            model.add("专业");
-            model.add("最终学位");
-            model.add("最终学历");
-            model.add("毕业年月日");
-            model.add("身份证号码");
-            model.add("婚姻状况");
-            model.add("仕事开始年月日");
-            model.add("center");
-            model.add("group");
-            model.add("team");
-            model.add("center");
-            model.add("group");
-            model.add("team");
-            model.add("社員ID");
-            model.add("预算单位");
-            model.add("奖金记上区分");
-            model.add("职务");
-            model.add("类别");
-            model.add("Rank");
-            model.add("入社时间");
-            model.add("银行账号");
-            model.add("邮箱");
-            List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
-                if (!key.get(i).toString().trim().equals(model.get(i))) {
-                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
-                }
-            }
+            List<Map<String, Object>> readAll = reader.readAll();
             int accesscount = 0;
             int error = 0;
-            for (int i = 2; i < list.size(); i++) {
-                CustomerInfo customerInfo = new CustomerInfo();
-                UserAccount useraccount = new UserAccount();
-//            CustomerInfo.UserInfo getUserinfo = new CustomerInfo.UserInfo();
-                CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
-                List<Object> value = list.get(i);
-                if (value != null && !value.isEmpty()) {
-                    if(value.get(0) != null){
-                        userinfo.setCustomername(value.get(0).toString());
-                    }
-                    if(value.get(1) != null) {
-                        userinfo.setSex(value.get(1).toString());
-                    }
-                    if(value.get(2) != null) {
-                        userinfo.setAdfield(value.get(2).toString());
-                    }
-                    if(value.get(2) != null) {
-                        useraccount.setAccount(value.get(2).toString());
-                    }
-                    if(value.get(2) != null) {
-                        useraccount.setPassword(value.get(2).toString());
-                    }
-                    if(value.get(3) != null) {
-                        userinfo.setBirthday(value.get(3).toString());
-                    }
-                    if(value.get(4) != null) {
-                        userinfo.setNationality(value.get(4).toString());
-                    }
-                    if(value.get(5) != null) {
-                        userinfo.setNation(value.get(5).toString());
-                    }
-                    if(value.get(6) != null) {
-                        userinfo.setRegister(value.get(6).toString());
-                    }
-                    if(value.get(7) != null) {
-                        userinfo.setAddress(value.get(7).toString());
-                    }
-                    if(value.get(8) != null) {
-                        userinfo.setGraduation(value.get(8).toString());
-                    }
-                    if(value.get(9) != null) {
-                        userinfo.setSpecialty(value.get(9).toString());
-                    }
-                    if(value.get(10) != null) {
-                        userinfo.setDegree(value.get(10).toString());
-                    }
-                    if(value.get(11) != null) {
-                        userinfo.setEducational(value.get(11).toString());
-                    }
-                    if(value.get(12) != null) {
-                        userinfo.setGraduationday(value.get(12).toString());
-                    }
-                    if(value.get(13) != null) {
-                        userinfo.setIdnumber(value.get(13).toString());
-                    }
-                    if(value.get(14) != null) {
-                        userinfo.setMarital(value.get(14).toString());
-                    }
-                    if(value.get(15) != null) {
-                        userinfo.setWorkday(value.get(15).toString());
-                    }
-                    if(value.get(16) != null){
-                        userinfo.setCenterid(value.get(16).toString());
-                    }
-                    if(value.get(17) != null) {
-                        userinfo.setGroupid(value.get(17).toString());
-                    }
-                    if(value.get(18) != null) {
-                        userinfo.setTeamid(value.get(18).toString());
-                    }
-                    if(value.get(19) != null) {
-                        userinfo.setCentername(value.get(19).toString());
-                    }
-                    if(value.get(20) != null) {
-                        userinfo.setGroupname(value.get(20).toString());
-                    }
-                    if(value.get(21) != null) {
-                        userinfo.setTeamname(value.get(21).toString());
-                    }
-                    if(value.get(22) != null) {
-                        userinfo.setJobnumber(value.get(22).toString());
-                    }
-                    if(value.get(23) != null) {
-                        userinfo.setBudgetunit(value.get(23).toString());
-                    }
-                    if(value.get(24) != null) {
-                        userinfo.setDifference(value.get(24).toString());
-                    }
-                    if(value.get(25) != null) {
-                        userinfo.setPost(value.get(25).toString());
-                    }
-                    if(value.get(26) != null) {
-                        userinfo.setType(value.get(26).toString());
-                    }
-                    if(value.get(27) != null) {
-                        userinfo.setRank(value.get(27).toString());
-                    }
-                    if(value.get(28) != null) {
-                        userinfo.setEnterday(value.get(28).toString());
-                    }
-                    if(value.get(29) != null) {
-                        userinfo.setSeatnumber(value.get(29).toString());
-                    }
-                    if(value.get(30) != null) {
-                        userinfo.setEmail(value.get(30).toString());
-                    }
+            for (Map<String, Object> item : readAll) {
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(item.get("社員ID")));
+                List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+
+                if (customerInfos.size() > 0) {
+                    customerInfos.get(0).getUserinfo().setCenterid(item.get("centerid").toString());
+                    customerInfos.get(0).getUserinfo().setGroupid(item.get("groupid").toString());
+                    customerInfos.get(0).getUserinfo().setTeamid(item.get("teamid").toString());
+                    customerInfos.get(0).getUserinfo().setCentername(item.get("所属センター").toString());
+                    customerInfos.get(0).getUserinfo().setGroupname(item.get("所属グループ").toString());
+                    customerInfos.get(0).getUserinfo().setTeamname(item.get("所属チーム").toString());
+                    customerInfos.get(0).getUserinfo().setBudgetunit(item.get("予算単位").toString());
+                    customerInfos.get(0).getUserinfo().setPost(item.get("職務").toString());
+                    customerInfos.get(0).getUserinfo().setRank(item.get("ランク").toString());
+                    customerInfos.get(0).getUserinfo().setLaborcontractday(item.get("労働契約締切日").toString());
+                    customerInfos.get(0).getUserinfo().setAnnuallastyear(item.get("去年年休数(残)").toString());
+                    customerInfos.get(0).getUserinfo().setAnnualyear(item.get("今年年休数").toString());
+                    customerInfos.get(0).getUserinfo().setUpgraded(item.get("昇格昇号年月日").toString());
+                    customerInfos.get(0).getUserinfo().setSeatnumber(item.get("口座番号").toString());
+                    List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
+                    CustomerInfo.Personal personal = new CustomerInfo.Personal();
+                    personal.setAfter(item.get("変更前基本工资").toString());
+                    personal.setBefore(item.get("変更前职责工资").toString());
+                    personal.setBasic(item.get("変更后基本工资").toString());
+                    personal.setDuty(item.get("変更后职责工资").toString());
+                    personal.setDate(item.get("給料変更日").toString());
+                    cupList.add(personal);
+                    customerInfos.get(0).getUserinfo().setGridData(cupList);
+                    customerInfos.get(0).getUserinfo().setOldageinsurance(item.get("養老保険基数").toString());
+                    customerInfos.get(0).getUserinfo().setMedicalinsurance(item.get("医療保険基数").toString());
+                    customerInfos.get(0).getUserinfo().setHouseinsurance(item.get("住宅積立金納付基数").toString());
+                    mongoTemplate.save(customerInfos.get(0));
                 }
 
-                UserVo uservo = new UserVo();
-                customerInfo.setUserinfo(userinfo);
-                customerInfo.setType("1");
-                customerInfo.setStatus("0");
-                customerInfo.getUserinfo().setType("0");
-                uservo.setCustomerInfo(customerInfo);
-                listVo.add(customerInfo);
-                uservo.setUserAccount(useraccount);
-                TokenModel tokenModel = tokenService.getToken(request);
-                useraccount.preInsert(tokenModel);
-                addAccountCustomer(uservo);
                 accesscount = accesscount + 1;
             }
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
-        } catch (Exception e) {
+            } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
+
+//    @Override
+//    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+//    public List<String> importUser(HttpServletRequest request) throws Exception {
+//        try {
+//            List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
+//            List<String> Result = new ArrayList<String>();
+//            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+//            File f = null;
+//            f = File.createTempFile("tmp", null);
+//            file.transferTo(f);
+//            ExcelReader reader = ExcelUtil.getReader(f);
+//            List<List<Object>> list = reader.read();
+//            List<Object> model = new ArrayList<Object>();
+//            model.add("姓名");
+//            model.add("性别");
+//            model.add("AD域账号");
+//            model.add("生年月日");
+//            model.add("国籍");
+//            model.add("民族");
+//            model.add("户籍");
+//            model.add("住所");
+//            model.add("最终毕业学校");
+//            model.add("专业");
+//            model.add("最终学位");
+//            model.add("最终学历");
+//            model.add("毕业年月日");
+//            model.add("身份证号码");
+//            model.add("婚姻状况");
+//            model.add("仕事开始年月日");
+//            model.add("center");
+//            model.add("group");
+//            model.add("team");
+//            model.add("center");
+//            model.add("group");
+//            model.add("team");
+//            model.add("社員ID");
+//            model.add("预算单位");
+//            model.add("奖金记上区分");
+//            model.add("职务");
+//            model.add("类别");
+//            model.add("Rank");
+//            model.add("入社时间");
+//            model.add("银行账号");
+//            model.add("邮箱");
+//            List<Object> key = list.get(0);
+//            for (int i = 0; i < key.size(); i++) {
+//                if (!key.get(i).toString().trim().equals(model.get(i))) {
+//                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+//                }
+//            }
+//            int accesscount = 0;
+//            int error = 0;
+//            for (int i = 2; i < list.size(); i++) {
+//                CustomerInfo customerInfo = new CustomerInfo();
+//                UserAccount useraccount = new UserAccount();
+////            CustomerInfo.UserInfo getUserinfo = new CustomerInfo.UserInfo();
+//                CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
+//                List<Object> value = list.get(i);
+//                if (value != null && !value.isEmpty()) {
+//                    if(value.get(0) != null){
+//                        userinfo.setCustomername(value.get(0).toString());
+//                    }
+//                    if(value.get(1) != null) {
+//                        userinfo.setSex(value.get(1).toString());
+//                    }
+//                    if(value.get(2) != null) {
+//                        userinfo.setAdfield(value.get(2).toString());
+//                    }
+//                    if(value.get(2) != null) {
+//                        useraccount.setAccount(value.get(2).toString());
+//                    }
+//                    if(value.get(2) != null) {
+//                        useraccount.setPassword(value.get(2).toString());
+//                    }
+//                    if(value.get(3) != null) {
+//                        userinfo.setBirthday(value.get(3).toString());
+//                    }
+//                    if(value.get(4) != null) {
+//                        userinfo.setNationality(value.get(4).toString());
+//                    }
+//                    if(value.get(5) != null) {
+//                        userinfo.setNation(value.get(5).toString());
+//                    }
+//                    if(value.get(6) != null) {
+//                        userinfo.setRegister(value.get(6).toString());
+//                    }
+//                    if(value.get(7) != null) {
+//                        userinfo.setAddress(value.get(7).toString());
+//                    }
+//                    if(value.get(8) != null) {
+//                        userinfo.setGraduation(value.get(8).toString());
+//                    }
+//                    if(value.get(9) != null) {
+//                        userinfo.setSpecialty(value.get(9).toString());
+//                    }
+//                    if(value.get(10) != null) {
+//                        userinfo.setDegree(value.get(10).toString());
+//                    }
+//                    if(value.get(11) != null) {
+//                        userinfo.setEducational(value.get(11).toString());
+//                    }
+//                    if(value.get(12) != null) {
+//                        userinfo.setGraduationday(value.get(12).toString());
+//                    }
+//                    if(value.get(13) != null) {
+//                        userinfo.setIdnumber(value.get(13).toString());
+//                    }
+//                    if(value.get(14) != null) {
+//                        userinfo.setMarital(value.get(14).toString());
+//                    }
+//                    if(value.get(15) != null) {
+//                        userinfo.setWorkday(value.get(15).toString());
+//                    }
+//                    if(value.get(16) != null){
+//                        userinfo.setCenterid(value.get(16).toString());
+//                    }
+//                    if(value.get(17) != null) {
+//                        userinfo.setGroupid(value.get(17).toString());
+//                    }
+//                    if(value.get(18) != null) {
+//                        userinfo.setTeamid(value.get(18).toString());
+//                    }
+//                    if(value.get(19) != null) {
+//                        userinfo.setCentername(value.get(19).toString());
+//                    }
+//                    if(value.get(20) != null) {
+//                        userinfo.setGroupname(value.get(20).toString());
+//                    }
+//                    if(value.get(21) != null) {
+//                        userinfo.setTeamname(value.get(21).toString());
+//                    }
+//                    if(value.get(22) != null) {
+//                        userinfo.setJobnumber(value.get(22).toString());
+//                    }
+//                    if(value.get(23) != null) {
+//                        userinfo.setBudgetunit(value.get(23).toString());
+//                    }
+//                    if(value.get(24) != null) {
+//                        userinfo.setDifference(value.get(24).toString());
+//                    }
+//                    if(value.get(25) != null) {
+//                        userinfo.setPost(value.get(25).toString());
+//                    }
+//                    if(value.get(26) != null) {
+//                        userinfo.setType(value.get(26).toString());
+//                    }
+//                    if(value.get(27) != null) {
+//                        userinfo.setRank(value.get(27).toString());
+//                    }
+//                    if(value.get(28) != null) {
+//                        userinfo.setEnterday(value.get(28).toString());
+//                    }
+//                    if(value.get(29) != null) {
+//                        userinfo.setSeatnumber(value.get(29).toString());
+//                    }
+//                    if(value.get(30) != null) {
+//                        userinfo.setEmail(value.get(30).toString());
+//                    }
+//                }
+//
+//                UserVo uservo = new UserVo();
+//                customerInfo.setUserinfo(userinfo);
+//                customerInfo.setType("1");
+//                customerInfo.setStatus("0");
+//                customerInfo.getUserinfo().setType("0");
+//                uservo.setCustomerInfo(customerInfo);
+//                listVo.add(customerInfo);
+//                uservo.setUserAccount(useraccount);
+//                TokenModel tokenModel = tokenService.getToken(request);
+//                useraccount.preInsert(tokenModel);
+//                addAccountCustomer(uservo);
+//                accesscount = accesscount + 1;
+//            }
+//            Result.add("失败数：" + error);
+//            Result.add("成功数：" + accesscount);
+//            return Result;
+//        } catch (Exception e) {
+//            throw new LogicalException(e.getMessage());
+//        }
+//    }
 }

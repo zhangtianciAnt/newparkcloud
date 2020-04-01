@@ -51,7 +51,9 @@ public interface UserService {
     CustomerInfo addAccountCustomer(UserVo userVo) throws Exception;
 
     // 根据orgid获取用户及用户信息列表
-    List<CustomerInfo> getAccountCustomer(String orgid, String orgtype) throws Exception;
+    List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
+
+    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
 
     // 根据用户id获取用户信息
     UserVo getAccountCustomerById(String userid) throws Exception;

@@ -143,7 +143,19 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setDistriobjects("1");
             expatriatesinfor.setVenuetarget("1");
         }
-        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+        Expatriatesinfor e = new Expatriatesinfor();
+        e.setEmail(expatriatesinfor.getEmail());
+
+//        e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+        List<Expatriatesinfor> list = expatriatesinforMapper.select(e);
+
+        if(list.size() == 0 || list.get(0).getExpname() .equals(expatriatesinfor.getExpname())){
+            expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+        }
+        else {
+            throw new LogicalException("邮箱已重复");
+        }
+
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
             String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
             Priceset priceset = new Priceset();

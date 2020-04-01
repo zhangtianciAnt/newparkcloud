@@ -265,10 +265,25 @@
         @PENSION := round(base.PENSION,2) AS PENSION,#base表 養老・失業・工傷基数
 	    @MEDICAL := round(base.MEDICAL,2) AS MEDICAL,#base表 医療・生育基数
 	    @ACCUMULATION := round(base.ACCUMULATION,2) AS ACCUMULATION,#base表 公积金基数
-	    @LASTMONTH := round(base.LASTMONTH,2) AS LASTMONTH,#base表 上个月基本工资
-	    @THISMONTH := round(base.THISMONTH,2) AS THISMONTH,#base表 当月基本工资
+        round( base.LASTMONTHBASIC, 2 ) AS LASTMONTHBASIC,# base表 上个月基本工资
+	    round( base.LASTMONTHDUTY, 2 ) AS LASTMONTHDUTY,# base表 上月职责工资
+	    @BASETHISMONTHBASIC := round( base.THISMONTHBASIC, 2 ) AS BASETHISMONTHBASIC,#base表 本月基本工资
+	    round( base.THISMONTHDUTY, 2 ) AS THISMONTHDUTY,#base表 本月职责工资
+	    @LASTMONTH := round( base.LASTMONTHTOTAL, 2 ) AS LASTMONTH,# base表上个月
+	    @THISMONTH := round( base.THISMONTHTOTAL, 2 ) AS THISMONTH,# base表本月
 	    @RNBASESALARY := round(base.RNBASESALARY,2) AS RNBASESALARY,#RN基本工资
         @CXDAYS := round(base.ATTENDANCE,2) AS BIRTHREST,# 其他1表 産休出勤日数(看護休暇日数)
+        @THISMONTHBASICBASIC :=
+        CASE
+        WHEN ( @TYPE &lt;=> '2' ) THEN
+        round( ( @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
+        WHEN ( @TYPE &lt;=> '1' ) THEN
+        round(base.INDUCTION_GIVE,2)
+        WHEN ( @TYPE &lt;=> '4' ) THEN
+        round(base.LACKATTENDANCE_GIVE,2)
+        ELSE
+        round(0,2)
+        END AS THISMONTHBASICBASIC, #本月入/退職/産休基本工资
 	    base.RTCXBASE AS THISMONTHBASIC,#本月入/退職/産休基本給
 	    @SHORTDEFICIENCY := round(base.SHORTDEFICIENCY,2) AS SHORTILLNESS,#短病欠時数
 	    @CHRONICDEFICIENCY := round(base.CHRONICDEFICIENCY,2) AS LONGILLNESS,#长病欠時数
@@ -278,11 +293,12 @@
         IF
         ( @TYPE &lt;=> '-', ROUND( @THISMONTH + @LACKATTENDANCE_GIVE, 2 ), ROUND( base.RTCXBASE + @LACKATTENDANCE_GIVE, 2 ) )
         ) AS ACTUALAMOUNT,#基本給实际金额
+        @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',(@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),(@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE)) as THISMONTHBASICGEI, #本月基本给
+        @BASE_SJJE - @THISMONTHBASICGEI as THISMONTHDUTYGEI, #本月职责给
         @JBBZ := base.SUBSIDY AS OVERTIMESUBSIDY,# 加班补助
         @XJ1 := round( ( @BASE_SJJE + @JBBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @YKBZ :=
         CASE
-
         WHEN ( @TYPE &lt;=> '2' ) THEN
         round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS ), 2 )
         WHEN ( @TYPE &lt;=> '1' ) THEN
@@ -415,15 +431,16 @@
         @GHJF := round( @GHJFJS * 0.02, 2 ) AS LABOURUNIONFUNDS,#工会经费
         @GZFZFDZJ := ROUND( ( @GZZE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL + @SUMHS + @GHJF ), 2 ) AS COMTOTALWAGES,#工资总额(纳税+免税)+福祉+公司負担+工会経費总计
         @JSJJ := (
-							IF
-								(
-									@BONUS = 1,
-									ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 2 ),
-								round(IF
-									( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ) - @AMOUNT ,2)
-								)
-							) AS BONUSMONEY,#計上奨金
-        @GZFZFDZJ + @JSJJ AS TOTALBONUS #总计+計上奨金
+		IF
+			(
+				@BONUS = 1,
+				ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 2 ),
+			round(IF
+				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ) - @AMOUNT ,2)
+			)
+		) AS BONUSMONEY,#計上奨金
+        @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
+	    @GZFZFDZJ + @NJJY + @JSJJ AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
         WHERE

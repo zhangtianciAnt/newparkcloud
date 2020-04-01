@@ -552,7 +552,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                 }
                 /*设置type lxx */
-                if (customer.getUserinfo().getChildren().equals("1")) {
+                if (customer.getUserinfo().getChildren() != null && customer.getUserinfo().getChildren().equals("1")) {
                     base.setOnlychild("1");  //独生子女
                 } else {
                     base.setOnlychild("2");  //独生子女
@@ -595,30 +595,32 @@ public class GivingServiceImpl implements GivingService {
                 base.setAccumulation(notNull(customer.getUserinfo().getHouseinsurance()));  //公积金基数
                 //采暖费
                 if (customer.getUserinfo().getRank() != null && customer.getUserinfo().getRank().length() > 0) {
-                    String strRank = customer.getUserinfo().getRank().substring(2);
-                    int rank = Integer.parseInt(strRank);
-                    /*rank修改 lxx */
-                    if (rank >= 21009) {
-                        base.setHeating(R9);
-                    } else if (rank <= 21008 && rank >= 21006) {
-                        base.setHeating(R8);
-                    } else if (rank <= 21005) {
-                        base.setHeating(R7);
-                    }
-                    /*rank修改 lxx */
+                    if (!"その他".equals(customer.getUserinfo().getRank())) {
+                        String strRank = customer.getUserinfo().getRank().substring(2);
+                        int rank = Integer.parseInt(strRank);
+                        /*rank修改 lxx */
+                        if (rank >= 21009) {
+                            base.setHeating(R9);
+                        } else if (rank <= 21008 && rank >= 21006) {
+                            base.setHeating(R8);
+                        } else if (rank <= 21005) {
+                            base.setHeating(R7);
+                        }
+                        /*rank修改 lxx */
 
-                    /*RN基本工资 -lxx*/
-                    for (Dictionary diction : dictionarylistForRn) {
-                        if (diction.getCode().equals(customer.getUserinfo().getRank())) {
+                        /*RN基本工资 -lxx*/
+                        for (Dictionary diction : dictionarylistForRn) {
+                            if (diction.getCode().equals(customer.getUserinfo().getRank())) {
 //                            if (4 <= (cal.get(Calendar.MONTH) + 1) && (cal.get(Calendar.MONTH) + 1) <= 6) {
 //                                base.setRnbasesalary(diction.getValue4());
 //                            } else {
 //                                base.setRnbasesalary(diction.getValue5());
 //                            }
-                            base.setRnbasesalary(diction.getValue2());
+                                base.setRnbasesalary(diction.getValue2());
+                            }
                         }
+                        /*RN基本工资 -lxx*/
                     }
-                    /*RN基本工资 -lxx*/
                 }
 
                 //入社日
@@ -677,10 +679,18 @@ public class GivingServiceImpl implements GivingService {
         calLastOne.set(Calendar.DAY_OF_MONTH, 1);
         //入职日
         Calendar calEnterDay = Calendar.getInstance();
+        if (userinfo.getEnterday().indexOf("Z") < 0) {
+            userinfo.setEnterday(userinfo.getEnterday().replace(" ", "T"));
+            userinfo.setEnterday(userinfo.getEnterday().concat(".000Z"));
+        }
         calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         //退职日
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
+            if (userinfo.getResignation_date().indexOf("Z") < 0) {
+                userinfo.setResignation_date(userinfo.getResignation_date().replace(" ", "T"));
+                userinfo.setResignation_date(userinfo.getResignation_date().concat(".000Z"));
+            }
             calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
         } else {
             calResignationDate.setTime(calNowLast.getTime());
@@ -741,10 +751,18 @@ public class GivingServiceImpl implements GivingService {
         else {
             //试用最后日
             Calendar calSuitDate = Calendar.getInstance();
+            if (userinfo.getEnddate().indexOf("Z") < 0) {
+                userinfo.setEnddate(userinfo.getEnddate().replace(" ", "T"));
+                userinfo.setEnddate(userinfo.getEnddate().concat(".000Z"));
+            }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
+            if (userinfo.getEnddate().indexOf("Z") < 0) {
+                userinfo.setEnddate(userinfo.getEnddate().replace(" ", "T"));
+                userinfo.setEnddate(userinfo.getEnddate().concat(".000Z"));
+            }
             calOfficialDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             //试用截止日大于本月末日
             if (calOfficialDate.getTime().getTime() > calNowLast.getTime().getTime()) {
@@ -1545,7 +1563,7 @@ public class GivingServiceImpl implements GivingService {
 
         // 判断员工当月级别是否为R8及以上
         boolean isOverR8 = false;
-        String rn = StringUtils.isEmpty(base.getRn()) ? "PR021001" : base.getRn();
+        String rn = StringUtils.isEmpty(base.getRn()) || "その他".equals(base.getRn()) ? "PR021001" : base.getRn();
         if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
             isOverR8 = true;
         }
@@ -1812,8 +1830,8 @@ public class GivingServiceImpl implements GivingService {
                     + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // give不为0.00的时候数据加负号
-            if(!"0.00".equals(lackattendance.getGive())){
-                lackattendance.setGive("-"+lackattendance.getGive());
+            if (!"0.00".equals(lackattendance.getGive())) {
+                lackattendance.setGive("-" + lackattendance.getGive());
             }
 
             if (tokenModel != null) {
@@ -2047,6 +2065,10 @@ public class GivingServiceImpl implements GivingService {
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
+                        if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().replace(" ", "T"));
+                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().concat(".000Z"));
+                        }
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         // 本月转正
                         if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
@@ -2069,6 +2091,10 @@ public class GivingServiceImpl implements GivingService {
                     } else {
                         // 试用期截止日不为空的情况
                         // 本月转正或未转正的人
+                        if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().replace(" ", "T"));
+                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().concat(".000Z"));
+                        }
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         if (endDate.getTime() >= mouthStart) {
                             // 本月转正
@@ -2100,7 +2126,11 @@ public class GivingServiceImpl implements GivingService {
         induction.setUser_id(customerInfo.getUserid());
         // 工号
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
-        // 入社日
+        // 入社日 客户导入日期是yy-mm-dd hh:mm:ss
+        if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
+            customerInfo.getUserinfo().setEnterday(customerInfo.getUserinfo().getEnterday().replace(" ", "T"));
+            customerInfo.getUserinfo().setEnterday(customerInfo.getUserinfo().getEnterday().concat(".000Z"));
+        }
         induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         // 本月基本工资
         String thisMonthSalary = getSalary(customerInfo, 1);
@@ -2195,6 +2225,10 @@ public class GivingServiceImpl implements GivingService {
                 retire.setJobnumber(customerInfo.getUserinfo().getJobnumber());
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
+                if (resignationDate.indexOf("Z") < 0) {
+                    resignationDate = resignationDate.replace(" ", "T");
+                    resignationDate = resignationDate.concat(".000Z");
+                }
                 retire.setRetiredate(sfUTC.parse(resignationDate.replace("Z", " UTC")));
                 // 当月基本工资
                 String thisMonthSalary = getSalary(customerInfo, 1);

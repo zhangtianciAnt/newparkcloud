@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ProjectName: newparkcloud
@@ -52,6 +55,20 @@ public class UserController {
     private LogService logService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public void download(String type, HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        String templateName = null;
+        String fileName = null;
+        if ( "0".equals(type) ) {
+            templateName = "renyuanxinxi.xlsx";
+            fileName = "用户导入模板";
+        }
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
+    }
 
     //注册
     @RequestMapping(value = "/register", method = {RequestMethod.POST})
@@ -201,8 +218,23 @@ public class UserController {
     @RequestMapping(value = "/getAccountCustomer", method = {RequestMethod.GET})
     public ApiResult getAccountCustomer(String orgid, String orgtype, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype));
+        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype,tokenModel));
     }
+
+    /**
+     * @方法名：getAccountCustomer
+     * @描述：根据orgid获取用户账号及用户信息
+     * @创建日期：2018/12/06
+     * @作者：ZHANGYING
+     * @参数：[orgid, orgtype, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getAccountCustomer2", method = {RequestMethod.GET})
+    public ApiResult getAccountCustomer2(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,tokenModel));
+    }
+
 
     /**
      * @方法名：getAccountCustomerById
@@ -216,6 +248,12 @@ public class UserController {
     public ApiResult getAccountCustomerById(String userid, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(userService.getAccountCustomerById(userid));
+    }
+
+    @RequestMapping(value = "/getme", method = {RequestMethod.GET})
+    public ApiResult getme(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomerById(tokenModel.getUserId()));
     }
 
     /**
