@@ -3,6 +3,7 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
+import com.nt.dao_BASF.PersonnelPermissions;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 /**
  * basf多线程定时任务
@@ -74,6 +75,9 @@ public class MultiThreadScheduleTask {
     @SuppressWarnings("all")
     private HighriskareaServices highriskareaServices;
 
+    @Autowired
+    private PersonnelPermissionsServices personnelPermissionsServices;
+
     // websocket消息推送
     private WebSocket ws = new WebSocket();
     // WebSocketVow
@@ -82,75 +86,93 @@ public class MultiThreadScheduleTask {
     /**
      * @return void
      * @Method selectUsersCount
-     * @Author MYT
+     * @Author GJ
      * @Description ERC大屏在厂人数统计
-     * @Date 2020/1/8 14:39
+     * @Date 2020/03/30 18:10
      * @Param
      **/
     @Async
     @Scheduled(fixedDelay = 30000)
     public void selectUsersCount() throws Exception {
-        System.out.println("执行 查询员工人数 定时任务: " + LocalDateTime.now().toLocalTime()
-                + "\r\n线程 : " + Thread.currentThread().getName());
-//        // 查询员工人数
-//        int usersCount = basfUserInfoMapper.selectUsersCount();
-//        // 查询承包商人数
-//        int contractorsCount = basfUserInfoMapper.selectContractorsCount();
-//        // 查询访客人数
-//        int visitorsCount = basfUserInfoMapper.selectVisitorsCount();
-//        // 在厂总人数
-//        int allUsersCount = usersCount + contractorsCount + visitorsCount;
+        Map<String,String> departmentInfoList=new HashMap<>();
+        List departlist = sqlUserInfoMapper.selectdepartment();
+        List apblist = sqlUserInfoMapper.selectapbcardholder();
+        List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
+        String companystaff="";
+        String supplier="";
+        String foreignworkers="";
 
-        List apblist = sqlUserInfoMapper.selectapbcard();
+        // 查询员工人数
         int YG = 0;
+        // 查询访客人数
         int FK = 0;
+        // 查询承包商人数
         int CBS = 0;
+        // 在厂总人数
         int ZALL = 0;
+
         if (apblist.size() > 0) {
-            for (int i = 0; i < apblist.size(); i++) {
-                String lastAPBName = ((SqlAPBCardHolder) apblist.get(i)).getLastapbname();
-                String DepartmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                if (lastAPBName.indexOf("厂外") < 0) {
-                    SqlViewDepartment sqlviewdepartment1 = sqlUserInfoMapper.selectdepartmentid(DepartmentID);
-                    if (sqlviewdepartment1.getDepartmentpeid().indexOf("-1") == 0) {
-                        String name1 = sqlviewdepartment1.getName();
-                        if ("'访客','送货员','临时工作人员','VIP'".indexOf(name1) > 0) {
-                            FK = FK + 1;
-                        } else if ("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name1) > 0) {
-                            YG = YG + 1;
-                        } else if ("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name1) > 0) {
-                            CBS = CBS + 1;
+            if (departlist.size() > 0) {
+                for (int i = 0; i < departlist.size(); i++) {
+                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(),((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
+                }
+            }
+            if (personnelPermissionsList.size() > 0) {
+                for (int i = 0; i < personnelPermissionsList.size(); i++) {
+                    if("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                        if("".equals(companystaff)){
+                            companystaff=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }else{
+                            companystaff=companystaff+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
-                    } else {
-                        SqlViewDepartment sqlviewdepartment2 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment1.getDepartmentpeid());
-
-                        if (sqlviewdepartment2.getDepartmentpeid().indexOf("-1") == 0) {
-                            String name2 = sqlviewdepartment2.getName();
-                            if ("'访客','送货员','临时工作人员','VIP'".indexOf(name2) > 0) {
-                                FK = FK + 1;
-                            } else if ("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name2) > 0) {
-                                YG = YG + 1;
-                            } else if ("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name2) > 0) {
-                                CBS = CBS + 1;
-                            }
-                        } else {
-                            SqlViewDepartment sqlviewdepartment3 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment2.getDepartmentpeid());
-
-                            if (sqlviewdepartment3.getDepartmentpeid().indexOf("-1") == 0) {
-                                String name3 = sqlviewdepartment3.getName();
-                                if ("'访客','送货员','临时工作人员','VIP'".indexOf(name3) > 0) {
-                                    FK = FK + 1;
-                                } else if ("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name3) > 0) {
-                                    YG = YG + 1;
-                                } else if ("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name3) > 0) {
-                                    CBS = CBS + 1;
-                                }
-                            }
+                    }
+                    if("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                        if("".equals(foreignworkers)){
+                            foreignworkers=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }else{
+                            foreignworkers=foreignworkers+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }
+                    }
+                    if("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                        if("".equals(supplier)){
+                            supplier=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }else{
+                            supplier=supplier+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
                 }
             }
+            List<String> companystaffList = Arrays.asList(companystaff.split(","));
+            List<String> supplierList = Arrays.asList(supplier.split(","));
+            List<String> foreignworkersList = Arrays.asList(foreignworkers.split(","));
+
+            for (int i = 0; i < apblist.size(); i++) {
+                String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
+                for (int j = 1; j<10; j++) {
+                    if ("-1".equals(departmentInfoList.get(departmentID))) {
+                        for(int z = 0; z<companystaffList.size(); z++) {
+                            if(companystaffList.get(z).equals(departmentID)){
+                                YG += 1;
+                            }
+                        }
+                        for(int z = 0; z<supplierList.size(); z++) {
+                            if(supplierList.get(z).equals(departmentID)){
+                                CBS += 1;
+                            }
+                        }
+                        for(int z = 0; z<foreignworkersList.size(); z++) {
+                            if(foreignworkersList.get(z).equals(departmentID)){
+                                FK += 1;
+                            }
+                        }
+                        j=10;
+                    }else {
+                        departmentID=departmentInfoList.get(departmentID);
+                    }
+                }
+            }
         }
+
         ZALL = YG + FK + CBS;
         webSocketVo.setUsersCount(YG);
         webSocketVo.setContractorsCount(CBS);
@@ -162,16 +184,138 @@ public class MultiThreadScheduleTask {
     /**
      * @return void
      * @Method selectDeviceUsersCount
-     * @Author MYT
-     * @Description ERC大屏8个装置人数统计
-     * @Date 2020/1/8 14:39
+     * @Author GJ
+     * @Description ERC大屏7个装置内人数统计
+     * @Date 2020/03/31 11:21
      * @Param
      **/
     @Async
     @Scheduled(fixedDelay = 30000)
     public void selectDeviceUsersCount() throws Exception {
-        // 8个装置人数统计
-        webSocketVo.setDeviceUsersCountList(basfUserInfoMapper.selectDeviceUsersCount());
+        // 7个装置人数统计
+        Map<String, Integer> deviceInfoList=new HashMap<>();
+        List userCnt = basfUserInfoMapper.selectDeviceUsersCnt();
+        List<Integer> deviceUserCnt = new ArrayList<>();
+        if (userCnt.size() > 0) {
+            for (int i = 0; i < userCnt.size(); i++) {
+                deviceInfoList.put(((SqlAPBCardHolder) userCnt.get(i)).getApbid(),((SqlAPBCardHolder) userCnt.get(i)).getCnt());
+            }
+            if (deviceInfoList.size() > 0) {
+                //CCP
+                if(deviceInfoList.get("14189") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14189"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+                //PTHF
+                if(deviceInfoList.get("14185") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14185"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+                //Basonat
+                if(deviceInfoList.get("14187") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14187"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+                //BMW大楼
+                if(deviceInfoList.get("14195") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14195"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+                //PA6
+                if(deviceInfoList.get("14191") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14191"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+                //树脂
+                if(deviceInfoList.get("14193") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14193"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+                //PA6仓库
+                if(deviceInfoList.get("14197") > 0){
+                    deviceUserCnt.add(deviceInfoList.get("14197"));
+                }else{
+                    deviceUserCnt.add(0);
+                }
+            }
+        }
+
+        webSocketVo.setDeviceUsersCountList(deviceUserCnt);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    /**
+     * @return void
+     * @Method selectDeviceOutUsersCount
+     * @Author GJ
+     * @Description ERC大屏7个装置外人数统计
+     * @Date 2020/04/01 09:44
+     * @Param
+     **/
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void selectDeviceOutUsersCount() throws Exception {
+        // 7个装置人数统计
+        Map<String, Integer> deviceInfoList=new HashMap<>();
+        List userCnt = basfUserInfoMapper.selectDeviceOutUsersCnt();
+        List<Integer> deviceOutUserCnt = new ArrayList<>();
+        if (userCnt.size() > 0) {
+            for (int i = 0; i < userCnt.size(); i++) {
+                deviceInfoList.put(((SqlAPBCardHolder) userCnt.get(i)).getApbid(),((SqlAPBCardHolder) userCnt.get(i)).getCnt());
+            }
+            if (deviceInfoList.size() > 0) {
+                //CCP
+                if(deviceInfoList.get("14190") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14190"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+                //PTHF
+                if(deviceInfoList.get("14186") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14186"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+                //Basonat
+                if(deviceInfoList.get("14188") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14188"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+                //BMW大楼
+                if(deviceInfoList.get("14196") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14196"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+                //PA6
+                if(deviceInfoList.get("14192") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14192"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+                //树脂
+                if(deviceInfoList.get("14194") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14194"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+                //PA6仓库
+                if(deviceInfoList.get("14198") > 0){
+                    deviceOutUserCnt.add(deviceInfoList.get("14198"));
+                }else{
+                    deviceOutUserCnt.add(0);
+                }
+            }
+        }
+
+        webSocketVo.setDeviceOutUsersCountList(deviceOutUserCnt);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

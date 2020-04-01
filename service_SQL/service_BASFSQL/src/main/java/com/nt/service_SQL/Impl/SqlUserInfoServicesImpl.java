@@ -115,4 +115,14 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
         }
         return resultlist;
     }
+
+    @Override
+    public List<SqlAPBCardHolder> selectapbcardholder() throws Exception {
+        return sqlUserInfoMapper.selectapbcardholder();
+    }
+
+    @Override
+    public List<SqlViewDepartment> selectdepartment() throws Exception {
+        return sqlUserInfoMapper.selectdepartment();
+    }
 }

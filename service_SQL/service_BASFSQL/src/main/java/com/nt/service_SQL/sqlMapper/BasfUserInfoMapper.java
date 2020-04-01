@@ -1,5 +1,7 @@
 package com.nt.service_SQL.sqlMapper;
 
+import com.nt.dao_SQL.SqlAPBCardHolder;
+
 import java.util.List;
 
 /**
@@ -13,4 +15,8 @@ public interface BasfUserInfoMapper {
     int selectVisitorsCount();
 
     List<Integer> selectDeviceUsersCount();
+
+    List<SqlAPBCardHolder> selectDeviceUsersCnt();
+
+    List<SqlAPBCardHolder> selectDeviceOutUsersCnt();
 }

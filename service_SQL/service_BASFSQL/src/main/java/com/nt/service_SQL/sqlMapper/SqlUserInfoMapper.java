@@ -12,4 +12,6 @@ public interface SqlUserInfoMapper {
     List<SqlUserInfo> userinfolist();
     List<SqlAPBCardHolder> selectapbcard();
     SqlViewDepartment selectdepartmentid(@Param("recnum") String recnum);
+    List<SqlAPBCardHolder> selectapbcardholder();
+    List<SqlViewDepartment> selectdepartment();
 }

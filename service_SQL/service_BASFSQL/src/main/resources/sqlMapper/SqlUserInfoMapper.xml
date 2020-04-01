@@ -54,6 +54,17 @@ where
 recnum = #{recnum}
     </select>
 
+    <select id="selectdepartment" resultType="com.nt.dao_SQL.SqlViewDepartment">
+select * from View_Department
+    </select>
+
+    <select id="selectapbcardholder" resultType="com.nt.dao_SQL.SqlAPBCardHolder">
+        SELECT DepartmentID
+        FROM View_APBCardholder
+        WHERE APBName &lt;> '厂外'
+        AND CONVERT(varchar,InTime,23)=CONVERT(varchar,GETDATE(),23)
+    </select>
+
 
 </mapper>
 

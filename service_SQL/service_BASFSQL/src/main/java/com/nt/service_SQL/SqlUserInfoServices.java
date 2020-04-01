@@ -14,5 +14,7 @@ public interface SqlUserInfoServices {
 
     SqlViewDepartment selectdepartmentid(String recnum) throws Exception;
 
+    List<SqlAPBCardHolder> selectapbcardholder() throws Exception;
 
+    List<SqlViewDepartment> selectdepartment() throws Exception;
 }

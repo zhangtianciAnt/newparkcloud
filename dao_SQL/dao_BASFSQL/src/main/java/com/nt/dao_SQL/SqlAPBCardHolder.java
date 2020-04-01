@@ -19,6 +19,8 @@ public class SqlAPBCardHolder {
 
     private String usertype;
 
+    private int cnt;
+
     public String getUsertype() {
         return usertype;
     }
@@ -26,8 +28,6 @@ public class SqlAPBCardHolder {
     public void setUsertype(String usertype) {
         this.usertype = usertype;
     }
-
-
 
 
     public String getDepartmentname() {
@@ -132,5 +132,13 @@ public class SqlAPBCardHolder {
 
     public void setLastrdrdvcid(String lastrdrdvcid) {
         this.lastrdrdvcid = lastrdrdvcid;
+    }
+
+    public int getCnt() {
+        return cnt;
+    }
+
+    public void setCnt(int cnt) {
+        this.cnt = cnt;
     }
 }
