@@ -218,6 +218,12 @@ public class UserController {
         return ApiResult.success(userService.getAccountCustomerById(userid));
     }
 
+    @RequestMapping(value = "/getme", method = {RequestMethod.GET})
+    public ApiResult getme(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomerById(tokenModel.getUserId()));
+    }
+
     /**
      * @方法名：mobileCheck
      * @描述：验证手机号是否重复
