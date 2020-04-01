@@ -658,8 +658,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 //                                                    ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(absenteeism) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
 //                                                }
 //                                            }
-                                            ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism())/ Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
-
+                                            if (Double.valueOf(ad.getAbsenteeism() == null ? "0":ad.getAbsenteeism()) %  (Double.valueOf(lateearlyleave))!=0)
+                                            {
+                                                ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism() == null ? "0":ad.getAbsenteeism())/ Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                            }
                                         }
                                         //---------处理昨日审批通过的异常考勤申请start-------
                                         AbNormal abnormal = new AbNormal();
@@ -814,7 +816,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                         } else {
                                             //有打卡记录 没有申请
-                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism())));
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism() == null ? "0":ad.getAbsenteeism())));
                                         }
 
                                         //---------处理昨日审批通过的异常考勤申请end-------
