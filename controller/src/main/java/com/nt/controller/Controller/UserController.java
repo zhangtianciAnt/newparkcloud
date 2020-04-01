@@ -201,7 +201,7 @@ public class UserController {
     @RequestMapping(value = "/getAccountCustomer", method = {RequestMethod.GET})
     public ApiResult getAccountCustomer(String orgid, String orgtype, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype));
+        return ApiResult.success(userService.getAccountCustomer(orgid, orgtype,tokenModel));
     }
 
     /**
