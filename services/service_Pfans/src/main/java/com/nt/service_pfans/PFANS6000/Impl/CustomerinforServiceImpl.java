@@ -93,6 +93,8 @@ public class CustomerinforServiceImpl implements CustomerinforService {
             model.add("地址(日文)");
             model.add("地址(英文)");
             model.add("人员规模");
+            model.add("所属公司");
+            model.add("事业场编码");
             List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
             for (int i = 0; i < key.size(); i++) {
@@ -129,18 +131,20 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                 String person=value.get(16).toString();
                 if(value.size()>1 && ! person.isEmpty()){
                     if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
-                        customerinfor.setPerscale("<50");  //改数据
+                        customerinfor.setPerscale("BP007001");  //改数据
                     }
                     if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
-                        customerinfor.setPerscale("≥50");  //改数据
+                        customerinfor.setPerscale("BP007002");  //改数据
                     } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
-                        customerinfor.setPerscale("≥100");  //改数据
+                        customerinfor.setPerscale("BP007003");  //改数据
                     }
                     if(Integer.parseInt(person)>=500){
-                        customerinfor.setPerscale("≥500");  //改数据
+                        customerinfor.setPerscale("BP007004");  //改数据
                     }
                 }
-                customerinfor.preInsert();
+                customerinfor.setThecompany(value.get(17).toString());
+                customerinfor.setCausecode(value.get(18).toString());
+                customerinfor.preInsert(tokenModel);
                 customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
                 customerinforMapper.insert(customerinfor);
                 listVo.add(customerinfor);

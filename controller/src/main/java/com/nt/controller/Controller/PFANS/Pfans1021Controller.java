@@ -53,7 +53,7 @@ public class Pfans1021Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "insert", method = {RequestMethod.POST})
+    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody SecurityVo securityVo, HttpServletRequest request) throws Exception {
         if (securityVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
