@@ -33,6 +33,9 @@ public interface TrainjoinlistServices {
     //在线培训添加培训人员名单
     String onlineInsert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception;
 
+    //根据用户id填充姓名（结果发布用）
+    List<Trainjoinlist> addUserName(List<Trainjoinlist> trainjoinlists) throws Exception;
+
     //根据培训列表id删除参加名单
     void delete(String startprogramid, TokenModel tokenModel) throws Exception;
 
@@ -40,7 +43,7 @@ public interface TrainjoinlistServices {
     boolean verifyTrai(Trainjoinlist trainjoinlist) throws Exception;
 
     //获取培训申请人员id名单
-    ArrayList<String> joinlist(String startprogramid) throws Exception;
+    List<CustomerInfo> joinlist(String startprogramid) throws Exception;
 
     //获取培训申请人员名单
     List<Trainjoinlist> joinlists(String startprogramid) throws Exception;

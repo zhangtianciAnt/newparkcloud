@@ -171,20 +171,24 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     }
 
 
-    //获取培训申请人员id名单
+    //获取培训申请人员id名单(用户表中的详细信息，用于填充前端表格)
     @Override
-    public ArrayList<String> joinlist(String startprogramid) throws Exception {
+    public List<CustomerInfo> joinlist(String startprogramid) throws Exception {
+        List<CustomerInfo> customerInfos = new ArrayList<>();
         Trainjoinlist trainjoinlist = new Trainjoinlist();
         trainjoinlist.setStartprogramid(startprogramid);
         trainjoinlist.setStatus("0");
         List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
-        ArrayList<String> joinlist = new ArrayList<String>();
-        for (Trainjoinlist trainjoin : trainjoinlists) {
-            if (StringUtils.isNotBlank(trainjoin.getPersonnelid())) {
-                joinlist.add(trainjoin.getPersonnelid());
+        for (Trainjoinlist trainjoinlist1 : trainjoinlists) {
+            Query query = new Query();
+            if (StringUtils.isNotEmpty(trainjoinlist1.getPersonnelid())) {
+                query.addCriteria(Criteria.where("_id").is(trainjoinlist1.getPersonnelid()));
+                customerInfos.add(mongoTemplate.findOne(query, CustomerInfo.class));
+            } else {
+                break;
             }
         }
-        return joinlist;
+        return customerInfos;
     }
 
     //获取培训申请人员名单
@@ -471,5 +475,20 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         return customerInfos;
     }
 
-
+    //根据用户id填充姓名（结果发布用）
+    @Override
+    public List<Trainjoinlist> addUserName(List<Trainjoinlist> trainjoinlists) throws Exception {
+        for (int i = 0; i < trainjoinlists.size(); i++) {
+            //填充姓名
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(trainjoinlists.get(i).getPersonnelid()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                if (StringUtils.isNotBlank(customerInfo.getUserinfo().getCustomername())) {
+                    trainjoinlists.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+                }
+            }
+        }
+        return trainjoinlists;
+    }
 }

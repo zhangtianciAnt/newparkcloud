@@ -48,10 +48,10 @@ public class BASF21208Controller {
         return ApiResult.success(startprogramServices.onlineNostart());
     }
 
-    //获取获取未开班参加人员id名单
+    //获取培训申请人员id名单(用户表中的详细信息，用于填充前端表格)
     @RequestMapping(value = "/getjoinlist", method = {RequestMethod.GET})
-    public ApiResult getjoinlist(String personnelid, HttpServletRequest request) throws Exception {
-        return ApiResult.success(trainjoinlistServices.joinlist(personnelid));
+    public ApiResult getjoinlist(String startprogramid, HttpServletRequest request) throws Exception {
+        return ApiResult.success(trainjoinlistServices.joinlist(startprogramid));
     }
 
     //获取获取参加人员名单

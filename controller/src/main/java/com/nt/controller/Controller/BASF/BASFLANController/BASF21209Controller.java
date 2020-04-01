@@ -8,12 +8,14 @@ import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_BASF.EmailConfigServices;
 import com.nt.service_BASF.SendEmailServices;
 import com.nt.service_BASF.StartprogramServices;
+import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,6 +50,9 @@ public class BASF21209Controller {
     private TrainjoinlistMapper trainjoinlistMapper;
 
     @Autowired
+    private TrainjoinlistServices trainjoinlistServices;
+
+    @Autowired
     private EmailConfigServices emailConfigServices;
 
     @Autowired
@@ -65,7 +70,7 @@ public class BASF21209Controller {
     }
 
     //更新培训项目
-        @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
         if (startprogram == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -82,38 +87,30 @@ public class BASF21209Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        List<Startprogram> startprogramlist  = startprogramServices.select(startprogram);
-        startprogramServices.update(startprogram, tokenModel);
+        List<Startprogram> startprogramlist = startprogramServices.select(startprogram);
 
-        //负责人list
-        String programhardlist = startprogramlist.get(0).getProgramhard();
-        String[] programhard = programhardlist.split(",");
         //通知人员list
         String ePersonlist = startprogramlist.get(0).getInformperson();
         String[] notifyPerson = ePersonlist.split(",");
         //培训名称
         String programname = startprogramlist.get(0).getProgramname();
         //线上/线下
-        String isonline = startprogramlist.get(0).getIsonline()=="BC032001"?"线上":"线下";
+        String isonline = startprogramlist.get(0).getIsonline() == "BC032001" ? "线上" : "线下";
         String startprogramid = startprogramlist.get(0).getStartprogramid();
+        //发信人
+        List<EmailConfig> emailconfig = emailConfigServices.get();
 
-        Trainjoinlist trainjoinlist = new Trainjoinlist();
-        trainjoinlist.setStartprogramid(startprogram.getStartprogramid());
-        List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
-       //发信人
-        List<EmailConfig> emailconfig =  emailConfigServices.get();
-
-        for (int l = 0 ; l <notifyPerson.length ; l++){
+        for (int l = 0; l < notifyPerson.length; l++) {
             UserVo uservo = userService.getAccountCustomerById(notifyPerson[l]);
-            String depid =  uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
+            String depid = uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
             String useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
             Trainjoinlist trainjoilist = new Trainjoinlist();
             trainjoilist.setDepartmentid(depid);
             trainjoilist.setStartprogramid(startprogramid);
-            List<Trainjoinlist> Departmentidlists = trainjoinlistMapper.select(trainjoilist);
+            List<Trainjoinlist> Departmentidlists = trainjoinlistServices.addUserName(trainjoinlistMapper.select(trainjoilist));
 
             String EMAILCONTENT =
-                    "您好：<br>【"+programname+"/"+isonline+"】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
+                    "您好：<br>【" + programname + "/" + isonline + "】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
                             "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\">"
                             + "<tr>" +
                             //"<td width=\"10%\">ID</td>" +
@@ -123,33 +120,32 @@ public class BASF21209Controller {
                             "<td>通过状态</td>" +
                             "</tr>";
             String neirong = "";
-            for(int i = 0;i<Departmentidlists.size();i++)
-            {
+            for (int i = 0; i < Departmentidlists.size(); i++) {
                 String customername = Departmentidlists.get(i).getCustomername();
                 String documentnumber = Departmentidlists.get(i).getJobnumber();
                 String performance = Departmentidlists.get(i).getPerformance();
                 String throughtype = Departmentidlists.get(i).getThroughtype();
 
-                if (customername == null){
+                if (customername == null) {
                     customername = " ";
                 }
-                if (documentnumber == null){
+                if (documentnumber == null) {
                     documentnumber = " ";
                 }
-                if (performance == null){
+                if (performance == null) {
                     performance = " ";
                 }
-                if (throughtype == null){
+                if (throughtype == null) {
                     throughtype = " ";
                 }
 
-             neirong =neirong +
-                    "<tr>" +
-                            "<td>"+customername+"</td>" +
-                            "<td>"+documentnumber+"</td>" +
-                            "<td>"+performance+"</td>" +
-                            "<td>"+throughtype+"</td>" +
-                            "</tr>";
+                neirong = neirong +
+                        "<tr>" +
+                        "<td>" + customername + "</td>" +
+                        "<td>" + documentnumber + "</td>" +
+                        "<td>" + performance + "</td>" +
+                        "<td>" + throughtype + "</td>" +
+                        "</tr>";
             }
             EMAILCONTENT = EMAILCONTENT + neirong + "</table>";
 
@@ -163,7 +159,7 @@ public class BASF21209Controller {
             sendemail.setToAddress(useremail);
             sendemail.setSubject("【培训结果发布】");
             sendemail.setContext(EMAILCONTENT);
-            sendEmailServices.sendmail(tokenModel,sendemail);
+            sendEmailServices.sendmail(tokenModel, sendemail);
         }
         return ApiResult.success();
     }
@@ -222,9 +218,9 @@ public class BASF21209Controller {
 
     //by人员id查询培训项目
     @RequestMapping(value = "/selectbyuserid", method = {RequestMethod.GET})
-    public ApiResult selectbyuserid(String userid,String selecttype, HttpServletRequest request) throws Exception {
+    public ApiResult selectbyuserid(String userid, String selecttype, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(startprogramServices.selectbyuserid(userid,selecttype));
+        return ApiResult.success(startprogramServices.selectbyuserid(userid, selecttype));
     }
 
     //未来三个月培训信息
