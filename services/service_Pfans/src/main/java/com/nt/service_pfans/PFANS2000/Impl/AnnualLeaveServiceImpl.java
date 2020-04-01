@@ -440,7 +440,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 30 8 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 0 19 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -738,4 +738,95 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             throw new LogicalException(e.getMessage());
         }
     }
+
+    /*//系统服务--取打卡记录--查询个人打卡记录
+    @Scheduled(cron="0 30 8 * * ?")//正式时间每天半夜12点半  GBB add
+    public void selectattendance() throws Exception {
+        try {
+            TokenModel tokenModel = new TokenModel();
+            List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
+            //测试接口 GBB add
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            //String doorIDList = "3,5";//3:门1；5:门2；7:门3
+            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
+            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
+            //正式
+            String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+            String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+            //請求接口
+            ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
+            Object obj = JSON.toJSON(getresult.getData());
+            JSONArray jsonArray = JSONArray.parseArray(obj.toString());
+            //打卡时间
+            String recordTime = "";
+            //员工编号
+            String jobnumber = "";
+            String jobnumberOld = "";
+            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+            String eventNoOld = "";
+            if(jsonArray.size() > 0){
+                for(Object ob : jsonArray){
+                    //打卡时间
+                    recordTime = getProperty(ob, "recordTime");
+                    //员工编号
+                    jobnumber = getProperty(ob, "staffNo");
+                    //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+                    String eventNo = getProperty(ob, "eventNo");
+                    //无效-反潜回
+                    if(eventNo.equals("30")){
+                        continue;
+                    }
+                    //判断是否短时间同一人多次打卡
+                    if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
+                        continue;
+                    }
+                    eventNoOld = eventNo;
+                    jobnumberOld = jobnumber;
+                    //员工姓名
+                    String staffName = getProperty(ob, "staffName");
+                    //员工部门
+                    String departmentName = getProperty(ob, "departmentName");
+                    //门号
+                    String doorID = getProperty(ob, "doorID");
+                    //添加打卡详细
+                    PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
+                    //卡号
+                    punchcardrecorddetail.setJobnumber(jobnumber);
+                    //打卡时间
+                    punchcardrecorddetail.setPunchcardrecord_date(sf.parse(recordTime));
+                    //打卡时间
+                    punchcardrecorddetail.setUser_id(staffName);
+                    //进出状态
+                    punchcardrecorddetail.setEventno(eventNo);
+//                    //进门测试用
+//                    if(doorID.equals("3")){
+//                        punchcardrecorddetail.setEventno("1");
+//                    }
+//                    //出门测试用
+//                    if(doorID.equals("5")){
+//                        punchcardrecorddetail.setEventno("2");
+//                    }
+                    punchcardrecorddetail.preInsert(tokenModel);
+                    punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
+                    punchcardrecorddetailmapper.insert(punchcardrecorddetail);
+                    punDetaillist.add(punchcardrecorddetail);
+                }
+            }
+            if(punDetaillist.size() > 0)
+            {
+                List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
+                punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
+
+            }
+        } catch (Exception e) {
+            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
+        }
+    }*/
+
 }
