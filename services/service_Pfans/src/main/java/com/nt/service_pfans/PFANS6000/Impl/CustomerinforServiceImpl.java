@@ -93,6 +93,8 @@ public class CustomerinforServiceImpl implements CustomerinforService {
             model.add("地址(日文)");
             model.add("地址(英文)");
             model.add("人员规模");
+            model.add("所属公司");
+            model.add("事业场编码");
             List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
             for (int i = 0; i < key.size(); i++) {
@@ -140,6 +142,8 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                         customerinfor.setPerscale("BP007004");  //改数据
                     }
                 }
+                customerinfor.setThecompany(value.get(17).toString());
+                customerinfor.setCausecode(value.get(18).toString());
                 customerinfor.preInsert(tokenModel);
                 customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
                 customerinforMapper.insert(customerinfor);
