@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ProjectName: newparkcloud
@@ -52,6 +55,20 @@ public class UserController {
     private LogService logService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public void download(String type, HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        String templateName = null;
+        String fileName = null;
+        if ( "0".equals(type) ) {
+            templateName = "renyuanxinxi.xlsx";
+            fileName = "用户导入模板";
+        }
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
+    }
 
     //注册
     @RequestMapping(value = "/register", method = {RequestMethod.POST})
