@@ -1156,7 +1156,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                     else
                                     {
-                                        if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > dateStart.getTime())
+                                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                        if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > dateStart.getTime())
                                         {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
@@ -1380,14 +1381,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
                                 }
-                                else if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > dateStart.getTime())
+                                else
                                 {
-                                    ad.setTshortsickleave(ad.getShortsickleave());
-                                    ad.setTlongsickleave(ad.getLongsickleave());
-                                    ad.setTabsenteeism(ad.getAbsenteeism());
-                                    ad.setShortsickleave(null);
-                                    ad.setLongsickleave(null);
-                                    ad.setAbsenteeism(null);
+                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > dateStart.getTime())
+                                    {
+                                        ad.setTshortsickleave(ad.getShortsickleave());
+                                        ad.setTlongsickleave(ad.getLongsickleave());
+                                        ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setShortsickleave(null);
+                                        ad.setLongsickleave(null);
+                                        ad.setAbsenteeism(null);
+                                    }
                                 }
                                 if(workinghours.equals("0"))
                                 {

@@ -203,7 +203,8 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 }
                                 else
                                 {
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > attend.getDates().getTime())
+                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
                                     {
                                         attend.setTshortsickleave(attend.getShortsickleave());
                                         attend.setTlongsickleave(attend.getLongsickleave());
@@ -366,7 +367,8 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 }
                                 else
                                 {
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > attend.getDates().getTime())
+                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
                                     {
                                         attend.setTshortsickleave(attend.getShortsickleave());
                                         attend.setTlongsickleave(attend.getLongsickleave());
@@ -475,7 +477,8 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 }
                                 else
                                 {
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > attend.getDates().getTime())
+                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
                                     {
                                         attend.setTshortsickleave(attend.getShortsickleave());
                                         attend.setTlongsickleave(attend.getLongsickleave());
@@ -677,7 +680,8 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 }
                                 else
                                 {
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > attend.getDates().getTime())
+                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
                                     {
                                         attend.setTshortsickleave(attend.getShortsickleave());
                                         attend.setTlongsickleave(attend.getLongsickleave());
