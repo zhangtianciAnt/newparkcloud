@@ -91,7 +91,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
-                //if(customer.getUserid().equals("5e0ee8a8c0911e1c24f1a57c")){
+                //if(customer.getUserid().equals("5e78b2264e3b194874180f37")){
                     insertannualLeave(customer);
                 //}
             }
@@ -183,13 +183,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅰ.途中入职：本事业年度在职期间/12个月*15天
         if(StringUtil.isEmpty(resignationDateendCal))
         {
-            if(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar_a.getTime())<=0)
+            if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar_a.getTime())<=0)
             {
                 //有工作经验者
                 if(!(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty()))
                 {
                     //入职日
-                    calendar.setTime(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal)).toString().replace("Z"," UTC")));
+                    calendar.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal))).toString().replace("Z"," UTC")));
                     annual_leave_thisyear=dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
@@ -199,18 +199,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅱ.途中离职：本事业年度在职期间/12个月*当年年休天数
         if(StringUtil.isNotEmpty(resignationDateendCal))
         {
-            if(sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))).compareTo(calendar_a.getTime())<=0)
+            if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))).compareTo(calendar_a.getTime())<=0)
             {
                 //离职日
-                calendar_a.setTime(sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))));
+                calendar_a.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))));
                 annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                 annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
-                if(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar_a.getTime())<=0)
+                if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar_a.getTime())<=0)
                 {
                     //入职日
-                    calendar.setTime(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))));
+                    calendar.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))));
                     //离职日
-                    calendar_a.setTime(sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))));
+                    calendar_a.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))));
                     annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
@@ -341,7 +341,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String this_year = String.valueOf(cal.get(cal.YEAR));
         String endCal = this_year + "-04-01";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = sdf.parse(startCal);
+        Date startDate = sdf.parse(Convert.toStr(sdf.format(Convert.toDate(startCal))));
         Date endDate = sdf.parse(endCal);
         Calendar startCalendar = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();
