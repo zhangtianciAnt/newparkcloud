@@ -138,6 +138,12 @@ public class InterviewRecord  extends BaseModel {
     private String resultshows;
 
     /**
+     * 建立来源-其他
+     */
+    @Column(name = "OTHER")
+    private String other;
+
+    /**
      * 联系电话
      */
     @Column(name = "CONTACTINFORMATION")
