@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -1155,7 +1156,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                     else
                                     {
-                                        if (sf1ymd.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
+                                        if (sf1ymd.parse(Convert.toStr(Convert.toDate(customerInfo.getUserinfo().getEnddate()))).getTime() > dateStart.getTime())
                                         {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
@@ -1379,7 +1380,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
                                 }
-                                else if (sf1ymd.parse(customerInfo.getUserinfo().getEnddate()).getTime() > dateStart.getTime())
+                                else if (sf1ymd.parse(Convert.toStr(Convert.toDate(customerInfo.getUserinfo().getEnddate()))).getTime() > dateStart.getTime())
                                 {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
