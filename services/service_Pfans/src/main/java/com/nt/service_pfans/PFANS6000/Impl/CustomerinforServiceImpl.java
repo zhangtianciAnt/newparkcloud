@@ -58,7 +58,7 @@ public class CustomerinforServiceImpl implements CustomerinforService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception {
-        try {
+
 //            创建listVo集合方便存储导入信息
             List<Customerinfor> listVo = new ArrayList<Customerinfor>();
 //            创建Result结果集的集合
@@ -130,8 +130,9 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                     customerinfor.setAddjapanese(Convert.toStr(value.get(14)));
                     customerinfor.setAddenglish(Convert.toStr(value.get(15)));
             }
-                String person=Convert.toStr(value.get(16)).trim();
-                if(value.size()>1 && ! person.isEmpty()){
+                String person=Convert.toStr(value.get(16));
+                if(value.size()>1 && StrUtil.isNotBlank(person)){
+                    person = person.trim();
                     if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                         customerinfor.setPerscale("BP007001");  //改数据
                     }
@@ -155,9 +156,7 @@ public class CustomerinforServiceImpl implements CustomerinforService {
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
+
     }
 
 
