@@ -737,12 +737,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         else if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime())
                                         {
                                             long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
+                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)- Double.valueOf(PR.getAbsenteeismam()) );
                                         }
                                         else if(sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
                                         {
                                             long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
+                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)- Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
                                         }
                                         else
                                         {
@@ -1156,7 +1156,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                     else
                                     {
-                                        if (sf1ymd.parse(Convert.toStr(Convert.toDate(customerInfo.getUserinfo().getEnddate()))).getTime() > dateStart.getTime())
+                                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                        if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > dateStart.getTime())
                                         {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
@@ -1338,7 +1339,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 } else {
                                     //没有记录，没有申请
                                     ad.setAbsenteeism(workinghours);
-                                    ad.setNormal(Double.valueOf(ad.getNormal()) == 0 ? null :ad.getNormal());
+                                    ad.setNormal(null);
                                 }
                                 //---------处理昨日审批通过的异常考勤申请end-------
                                 ad.setNormal(ad.getNormal() == null ? "0" :ad.getNormal());
@@ -1361,12 +1362,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 {
                                     ad.setNormal("0");
                                 }
-                                else
-                                {
-                                    ad.setNormal(df.format(Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism()) -  Double.valueOf(ad.getShortsickleave())
-                                            - Double.valueOf(ad.getLongsickleave()) - Double.valueOf(ad.getCompassionateleave()) - Double.valueOf(ad.getAnnualrest())
-                                            - Double.valueOf(ad.getDaixiu()) - Double.valueOf(ad.getNursingleave()) - Double.valueOf(ad.getWelfare())));
-                                }
                                 ad.setNormal(ad.getNormal() == null ? null :(ad.getNormal() =="0" ? null :df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :df.format(Double.valueOf(ad.getAnnualrest())));
                                 ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null :df.format(Double.valueOf(ad.getDaixiu())));
@@ -1386,14 +1381,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
                                 }
-                                else if (sf1ymd.parse(Convert.toStr(Convert.toDate(customerInfo.getUserinfo().getEnddate()))).getTime() > dateStart.getTime())
+                                else
                                 {
-                                    ad.setTshortsickleave(ad.getShortsickleave());
-                                    ad.setTlongsickleave(ad.getLongsickleave());
-                                    ad.setTabsenteeism(ad.getAbsenteeism());
-                                    ad.setShortsickleave(null);
-                                    ad.setLongsickleave(null);
-                                    ad.setAbsenteeism(null);
+                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > dateStart.getTime())
+                                    {
+                                        ad.setTshortsickleave(ad.getShortsickleave());
+                                        ad.setTlongsickleave(ad.getLongsickleave());
+                                        ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setShortsickleave(null);
+                                        ad.setLongsickleave(null);
+                                        ad.setAbsenteeism(null);
+                                    }
                                 }
                                 if(workinghours.equals("0"))
                                 {
