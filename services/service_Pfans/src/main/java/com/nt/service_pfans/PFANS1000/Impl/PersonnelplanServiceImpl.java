@@ -6,6 +6,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -65,7 +66,14 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     }
 
     @Override
-    public void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) {
+    public void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) throws LogicalException{
+        int year = personnelPlan.getYears();
+        PersonnelPlan personnel = new PersonnelPlan();
+        personnel.setYears(year);
+        List<PersonnelPlan>  personnelPlanList = personnelplanMapper.select(personnel);
+        if(personnelPlanList.size()>0){
+            throw new LogicalException("当前年份已填写人员计划");
+        }
         personnelPlan.preInsert(tokenModel);
         personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
         personnelplanMapper.insert(personnelPlan);

@@ -138,16 +138,8 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setGiving(giving);
 
         // region 专项控除 By SKAIXX
-        Disciplinary disciplinary1 = new Disciplinary();
-        disciplinary1.setGiving_id(giving_id);
-        disciplinaryMapper.delete(disciplinary1);
         List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary();
         givingVo.setDisciplinaryVo(disciplinary);
-        // 专项控除数据需要插入到专项控除表中
-        disciplinary.forEach(item -> {
-            item.setDisciplinary_id(UUID.randomUUID().toString());
-            disciplinaryMapper.insert(item);
-        });
         // endregion
 
         OtherOne otherOne = new OtherOne();
@@ -217,133 +209,22 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setContrast(contrastList);
 
         // region 累计税金 By SKAIXX
-        Accumulatedtax accumulatedtax1 = new Accumulatedtax();
-        accumulatedtax1.setGiving_id(giving_id);
-        accumulatedTaxMapper.delete(accumulatedtax1);
         List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
         // 获取全年综合收入适用税率
         Dictionary taxDictionary = new Dictionary();
         taxDictionary.setPcode("PR048");    // 全年综合收入适用税率
         List<Dictionary> taxDictionaryList = dictionaryMapper.getDictionary(taxDictionary);
-        // 计算年度应纳付税金
-        for (AccumulatedTaxVo tmpVo : accumulatedTaxVolist) {
-            taxDictionary = getTaxRate(Double.parseDouble(tmpVo.getShouldwages()), taxDictionaryList);
-
-            // 年度应纳付税金 = 年度応納税総額*税率 - 速算扣除   (计算结果保留两位小数)
-            BigDecimal shouldwages = new BigDecimal(tmpVo.getShouldwages());
-            BigDecimal taxRate = new BigDecimal(taxDictionary.getValue2());
-            BigDecimal taxFree = new BigDecimal(taxDictionary.getValue3());
-            BigDecimal shouldTax = shouldwages.multiply(taxRate).subtract(taxFree);
-            shouldTax = shouldTax.setScale(2, RoundingMode.HALF_UP);
-            tmpVo.setShouldtax(shouldTax.toPlainString());
-
-            // 還付差額 = 年度応納付税金-年間累計税金-12月的税金
-            tmpVo.setBalance(shouldTax.subtract(new BigDecimal(tmpVo.getSumThis()))
-                    .subtract(new BigDecimal(tmpVo.getDecember()))
-                    .setScale(2, RoundingMode.HALF_UP).toPlainString());
-
-            // region 累计税金数据插入到累计税金表中
-            Accumulatedtax accumulatedtax = new Accumulatedtax();
-            accumulatedtax.setAccumulatedtax_id(UUID.randomUUID().toString());
-            accumulatedtax.setGiving_id(giving_id);
-            accumulatedtax.setUser_id1(tmpVo.getUser_id());
-            accumulatedtax.setTaxesmonth1(tmpVo.getJanuary());
-            accumulatedtax.setTaxesmonth2(tmpVo.getFebruary());
-            accumulatedtax.setTaxesmonth3(tmpVo.getMarch());
-            accumulatedtax.setTaxesmonth4(tmpVo.getApril());
-            accumulatedtax.setTaxesmonth5(tmpVo.getMay());
-            accumulatedtax.setTaxesmonth6(tmpVo.getJune());
-            accumulatedtax.setTaxesmonth7(tmpVo.getJuly());
-            accumulatedtax.setTaxesmonth8(tmpVo.getAugust());
-            accumulatedtax.setTaxesmonth9(tmpVo.getSeptember());
-            accumulatedtax.setTaxesmonth10(tmpVo.getOctober());
-            accumulatedtax.setTaxesmonth11(tmpVo.getNovember());
-            accumulatedtax.setTaxesmonth12(tmpVo.getDecember());
-            accumulatedtax.setYeartaxes(tmpVo.getSumThis());                // 年间累计税金
-            accumulatedtax.setTaxamount(shouldwages.toPlainString());       // 年度应纳税总额
-            accumulatedtax.setTaxpaid(shouldTax.toPlainString());           // 年度应纳付税金
-            accumulatedtax.setDifference(tmpVo.getBalance());               // 还付差额
-            accumulatedTaxMapper.insert(accumulatedtax);
-            // endregion
-        }
         givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
         // endregion
 
         // region 免税 By SKAIXX
-        Dutyfree dutyfree1 = new Dutyfree();
-        dutyfree1.setGiving_id(giving_id);
-        dutyfreeMapper.delete(dutyfree1);
-
         List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
         givingVo.setDutyfreeVo(dutyfreeVolist);
-        // region 免税数据插入到免税表中
-        dutyfreeVolist.forEach(item -> {
-            Dutyfree dutyfree = new Dutyfree();
-            dutyfree.setDutyfree_id(UUID.randomUUID().toString());
-            dutyfree.setGiving_id(giving_id);
-            dutyfree.setUser_id(item.getUser_id());
-            dutyfree.setTaxesmonth1(item.getJanuary());
-            dutyfree.setTaxesmonth2(item.getFebruary());
-            dutyfree.setTaxesmonth3(item.getMarch());
-            dutyfree.setTaxesmonth4(item.getApril());
-            dutyfree.setTaxesmonth5(item.getMay());
-            dutyfree.setTaxesmonth6(item.getJune());
-            dutyfree.setTaxesmonth7(item.getJuly());
-            dutyfree.setTaxesmonth8(item.getAugust());
-            dutyfree.setTaxesmonth9(item.getSeptember());
-            dutyfree.setTaxesmonth10(item.getOctober());
-            dutyfree.setTaxesmonth11(item.getNovember());
-            dutyfree.setTaxesmonth12(item.getDecember());
-            dutyfree.setCumulative(item.getTotal());    // 累计年间控除
-            dutyfreeMapper.insert(dutyfree);
-        });
-        // endregion
         // endregion
 
         // region 综合收入 By SKAIXX
-        Comprehensive comprehensive1 = new Comprehensive();
-        comprehensive1.setGivingId(giving_id);
-        comprehensiveMapper.delete(comprehensive1);
-
         List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
         givingVo.setComprehensiveVo(comprehensiveVolist);
-        // region 综合收入数据插入到综合收入表中
-        comprehensiveVolist.forEach(item -> {
-            Comprehensive comprehensive = new Comprehensive();
-            comprehensive.setComprehensiveId(UUID.randomUUID().toString());
-            comprehensive.setGivingId(giving_id);
-            comprehensive.setUserId(item.getUser_id());
-            comprehensive.setYearswages(item.getTotalbonus1());
-            comprehensive.setMonth1Wages(item.getMonth1wages());
-            comprehensive.setMonth1Appreciation(item.getMonth1appreciation());
-            comprehensive.setMonth2Wages(item.getMonth2wages());
-            comprehensive.setMonth2Appreciation(item.getMonth2appreciation());
-            comprehensive.setMonth3Wages(item.getMonth3wages());
-            comprehensive.setMonth3Appreciation(item.getMonth3appreciation());
-            comprehensive.setMonth4Wages(item.getMonth4wages());
-            comprehensive.setMonth4Appreciation(item.getMonth4appreciation());
-            comprehensive.setMonth5Wages(item.getMonth5wages());
-            comprehensive.setMonth5Appreciation(item.getMonth5appreciation());
-            comprehensive.setMonth6Wages(item.getMonth6wages());
-            comprehensive.setMonth6Appreciation(item.getMonth6appreciation());
-            comprehensive.setMonth7Wages(item.getMonth7wages());
-            comprehensive.setMonth7Appreciation(item.getMonth7appreciation());
-            comprehensive.setMonth8Wages(item.getMonth8wages());
-            comprehensive.setMonth8Appreciation(item.getMonth8appreciation());
-            comprehensive.setMonth9Wages(item.getMonth9wages());
-            comprehensive.setMonth9Appreciation(item.getMonth9appreciation());
-            comprehensive.setMonth10Wages(item.getMonth10wages());
-            comprehensive.setMonth10Appreciation(item.getMonth10appreciation());
-            comprehensive.setMonth11Wages(item.getMonth11wages());
-            comprehensive.setMonth11Appreciation(item.getMonth11appreciation());
-            comprehensive.setMonth12Wages(item.getMonth12wages());
-            comprehensive.setMonth12Appreciation(item.getMonth12appreciation());
-            comprehensive.setTotalwages(item.getAppreciationtotal());
-            comprehensive.setYearstotal12(item.getTotalwithout12());
-            comprehensive.setYearstotal(item.getTotalwithin12());
-            comprehensiveMapper.insert(comprehensive);
-        });
-        // endregion
         // endregion
 
         // 2020/03/11 add by myt start
@@ -680,16 +561,14 @@ public class GivingServiceImpl implements GivingService {
         //入职日
         Calendar calEnterDay = Calendar.getInstance();
         if (userinfo.getEnterday().indexOf("Z") < 0) {
-            userinfo.setEnterday(userinfo.getEnterday().replace(" ", "T"));
-            userinfo.setEnterday(userinfo.getEnterday().concat(".000Z"));
+            userinfo.setEnterday(formatStringDate(userinfo.getEnterday()));
         }
         calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         //退职日
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
             if (userinfo.getResignation_date().indexOf("Z") < 0) {
-                userinfo.setResignation_date(userinfo.getResignation_date().replace(" ", "T"));
-                userinfo.setResignation_date(userinfo.getResignation_date().concat(".000Z"));
+                userinfo.setResignation_date(formatStringDate(userinfo.getResignation_date()));
             }
             calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
         } else {
@@ -752,16 +631,14 @@ public class GivingServiceImpl implements GivingService {
             //试用最后日
             Calendar calSuitDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
-                userinfo.setEnddate(userinfo.getEnddate().replace(" ", "T"));
-                userinfo.setEnddate(userinfo.getEnddate().concat(".000Z"));
+                userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
-                userinfo.setEnddate(userinfo.getEnddate().replace(" ", "T"));
-                userinfo.setEnddate(userinfo.getEnddate().concat(".000Z"));
+                userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calOfficialDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             //试用截止日大于本月末日
@@ -2066,8 +1943,7 @@ public class GivingServiceImpl implements GivingService {
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
                         if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().replace(" ", "T"));
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().concat(".000Z"));
+                            customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
                         }
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         // 本月转正
@@ -2092,8 +1968,7 @@ public class GivingServiceImpl implements GivingService {
                         // 试用期截止日不为空的情况
                         // 本月转正或未转正的人
                         if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().replace(" ", "T"));
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().concat(".000Z"));
+                            customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
                         }
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         if (endDate.getTime() >= mouthStart) {
@@ -2128,8 +2003,7 @@ public class GivingServiceImpl implements GivingService {
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
         // 入社日 客户导入日期是yy-mm-dd hh:mm:ss
         if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
-            customerInfo.getUserinfo().setEnterday(customerInfo.getUserinfo().getEnterday().replace(" ", "T"));
-            customerInfo.getUserinfo().setEnterday(customerInfo.getUserinfo().getEnterday().concat(".000Z"));
+            customerInfo.getUserinfo().setEnterday(formatStringDate(customerInfo.getUserinfo().getEnterday()));
         }
         induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         // 本月基本工资
@@ -2226,8 +2100,7 @@ public class GivingServiceImpl implements GivingService {
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 if (resignationDate.indexOf("Z") < 0) {
-                    resignationDate = resignationDate.replace(" ", "T");
-                    resignationDate = resignationDate.concat(".000Z");
+                    resignationDate = formatStringDate(resignationDate);
                 }
                 retire.setRetiredate(sfUTC.parse(resignationDate.replace("Z", " UTC")));
                 // 当月基本工资
@@ -2280,4 +2153,16 @@ public class GivingServiceImpl implements GivingService {
         return rtnAttendanceDays;
     }
     // endregion 入职和离职 BY Cash
+
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @return
+     */
+    private String formatStringDate(String date) {
+        date = date.replace("/", "-");
+        date = date.concat("T00:00:00.000Z");
+        return date;
+    }
 }

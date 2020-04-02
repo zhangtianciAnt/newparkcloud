@@ -370,7 +370,7 @@
         @BYYKJSDS := (
         CASE
 
-        WHEN ( @LJYNSSDE &lt;= 0 AND @LJYNSSDE &lt;= 36000 ) THEN
+        WHEN ( @LJYNSSDE >= 0 AND @LJYNSSDE &lt;= 36000 ) THEN
         (
         IF
         (

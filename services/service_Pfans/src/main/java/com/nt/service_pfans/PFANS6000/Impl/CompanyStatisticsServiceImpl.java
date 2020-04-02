@@ -364,18 +364,38 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     propertyC  = "totalcost";
                 }
                 int colIndex = getColIndex4Month(k);
-                //合计行
-                rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
-                rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
-                //経費除きの平均単価(人月)
-                Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
-                rowT1.createCell(colIndex).setCellValue(avg);
-                //出張経費(元)
-                rowT2.createCell(colIndex).setCellValue(trip.get(propertyC));
-                //設備経費(元)
-                rowT3.createCell(colIndex).setCellValue(asset.get(propertyC));
+                double tripflg = 0.0;
+                double assetflg = 0.0;
+                double totalCostMapflg = 0.0;
+                if(trip.size() > 0){
+                    //出張経費(元)
+                    rowT2.createCell(colIndex).setCellValue(trip.get(propertyC));
+                    tripflg = trip.get(propertyC);
+                } else {
+                    rowT2.createCell(colIndex).setCellValue(0.0);
+                }
+                if(asset.size() > 0){
+                    //設備経費(元)
+                    rowT3.createCell(colIndex).setCellValue(asset.get(propertyC));
+                    assetflg = asset.get(propertyC);
+                } else {
+                    rowT3.createCell(colIndex).setCellValue(0.0);
+                }
+                if(totalCostMap.size() > 0){
+                    //合计行
+                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+                    rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
+                    //経費除きの平均単価(人月)
+                    Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
+                    rowT1.createCell(colIndex).setCellValue(avg);
+                    totalCostMapflg = totalCostMap.get(propertyC);
+                } else {
+                    rowT.createCell(colIndex).setCellValue(0.0);
+                    rowT.createCell(colIndex + 1).setCellValue(0.0);
+                    rowT1.createCell(colIndex).setCellValue(0.0);
+                }
                 //外注総合費用合計(元)
-                Double totalAll = totalCostMap.get(propertyC) + trip.get(propertyC) + asset.get(propertyC);
+                Double totalAll = totalCostMapflg + tripflg + assetflg;
                 rowT4.createCell(colIndex).setCellValue(totalAll);
             }
 
@@ -462,8 +482,14 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
                 int colIndex = getColIndex4Month(k);
                 //合计行
-                rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
-                rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
+                if(totalCostMap.size() > 0 ){
+                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+                    rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
+                } else {
+                    rowT.createCell(colIndex).setCellValue(0.0);
+                    rowT.createCell(colIndex + 1).setCellValue(0.0);
+                }
+
             }
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
@@ -536,7 +562,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
                 int colIndex = k > 12 ? k+2 : (getColIndex4Month(k)-3)/2 + 3;
                 //合计行
-                rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+                if(totalCostMap.size() > 0){
+                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+                } else {
+                    rowT.createCell(colIndex).setCellValue(0.0);
+                }
             }
         } catch (Exception e ) {
             throw new LogicalException(e.getMessage());
