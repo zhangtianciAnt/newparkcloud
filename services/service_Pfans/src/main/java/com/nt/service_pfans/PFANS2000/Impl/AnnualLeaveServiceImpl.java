@@ -565,8 +565,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 int x = 0;
                 for(PunchcardRecordDetail count : punDetaillistCount){
                     x = x + 1;
-                    //欠勤时间
+                    //欠勤时间 全天
                     BigDecimal minute = new BigDecimal("0");
+                    //上午
+                    BigDecimal minuteam = new BigDecimal("0");
                     //个人所有进门记录
                     List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //第一条进门记录
@@ -596,8 +598,20 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //个人出门之后再次进门时间
                             long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
                             //去除午餐时间的情况1
-                            if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime())
-                            || (startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime())){
+                            if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
+                            {
+                                //个人出门时间
+                                long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                                //个人出门之后再次进门时间
+                                long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                                //时间出门到进门的相差分钟数
+                                int minutes = (int) ((to - from)/(1000 * 60));
+                                BigDecimal abnormal = new BigDecimal(minutes);
+                                minute = minute.add(abnormal);
+                                minuteam = minuteam.add(abnormal);
+                            }
+                            else if((startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime()))
+                            {
                                 //个人出门时间
                                 long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
                                 //个人出门之后再次进门时间
@@ -619,6 +633,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 BigDecimal abnormal = new BigDecimal(minutes);
                                 //累计欠勤时间
                                 minute = minute.add(abnormal);
+                                minuteam = minuteam.add(abnormal);
                                 //午餐结束之后进门的情况3
                                 if(endl > sdhm.parse(lunchbreak_end).getTime()){
                                     //午餐结束时间
@@ -666,6 +681,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     }
                     double minutess= minute.doubleValue();
                     minute = BigDecimal.valueOf(minutess/60).setScale(2);
+
+                    if (minuteam.remainder(standard) != BigDecimal.ZERO)
+                    {
+                        double minutes= minuteam.doubleValue();
+                        double standards = standard.doubleValue();
+                        minuteam = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
+
+                    }
+                    double minutesss= minuteam.doubleValue();
+                    minuteam = BigDecimal.valueOf(minutesss/60).setScale(2);
+
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
@@ -679,6 +705,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setTeam_id(customerInfo.getUserinfo().getTeamname());
                         //外出超过15分钟的欠勤时间
                         punchcardrecord.setWorktime(minute.toString());
+                        punchcardrecord.setAbsenteeismam(minuteam.toString());
                         punchcardrecord.setTime_start(Time_start);
                         punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
