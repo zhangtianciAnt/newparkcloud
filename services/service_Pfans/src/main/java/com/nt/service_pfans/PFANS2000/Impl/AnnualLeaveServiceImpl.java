@@ -443,7 +443,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 30 19 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 45 21 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -455,7 +455,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
-            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            //String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //删除昨天的临时数据
             punchcardrecorddetailmapper.deletetepun(DateUtil.format(new Date(),"yyyy-MM-dd"));
             //删除昨天的临时数据
@@ -782,7 +783,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
     }
     //系统服务--取当天打卡记录
-    @Scheduled(cron="0 0 16 * * ?")//正式时间每天下午四点执行  GBB add
+    @Scheduled(cron="0 35 21 * * ?")//正式时间每天下午四点执行  GBB add
     public void selectattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
