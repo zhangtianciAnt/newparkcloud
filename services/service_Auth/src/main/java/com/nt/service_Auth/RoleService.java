@@ -4,6 +4,7 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,5 +45,8 @@ public interface RoleService {
 
     //获取当前登陆人权限内app的信息
     AuthVo getCurrentUserApps(String useraccountid) throws Exception;
+
+    //获取当前登录用户角色下的非系统登录用户
+    List<CustomerInfo> getThisRoleUsers(String userid) throws Exception;
 
 }

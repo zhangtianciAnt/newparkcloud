@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.Trainjoinlist;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
@@ -35,6 +36,9 @@ public class BASF21211Controller {
     private ProgramlistServices programlistServices;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private StartprogramServices startprogramServices;
 
     //更新培训参加人员
@@ -64,5 +68,14 @@ public class BASF21211Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(startprogramServices.getTrainEducationPerInfo(year));
+    }
+
+    //获取当前登录角色下的非系统登录用户
+    @GetMapping("/getThisRoleUsers")
+    public ApiResult getThisRoleUsers(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        //useraccount表的_id。customerinfo表的_userid
+        String userid = tokenModel.getUserId();
+        return ApiResult.success(roleService.getThisRoleUsers(userid));
     }
 }

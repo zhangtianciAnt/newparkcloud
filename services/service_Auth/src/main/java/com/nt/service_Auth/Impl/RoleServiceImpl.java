@@ -5,7 +5,6 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.AuthVo;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.RoleService;
 import com.nt.utils.AuthConstants;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
@@ -42,7 +42,7 @@ public class RoleServiceImpl implements RoleService {
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(roleid));
-        return mongoTemplate.findOne(query,Role.class);
+        return mongoTemplate.findOne(query, Role.class);
     }
 
     //获取所有应用和菜单信息
@@ -52,7 +52,7 @@ public class RoleServiceImpl implements RoleService {
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-        List<AppPermission> appList = mongoTemplate.find(query,AppPermission.class);
+        List<AppPermission> appList = mongoTemplate.find(query, AppPermission.class);
 //        for (int i = 0; i < appList.size(); i++) {
 //            List<AppPermission.menu> menuList = appList.get(i).getMenus();
 //            if (menuList != null && menuList.size() > 0){
@@ -151,6 +151,65 @@ public class RoleServiceImpl implements RoleService {
         }
         return new AuthVo(appId, menuId);
     }
+
+//    region 获取当前登录用户角色下的非系统登录用户
+
+    //获取当前登录用户角色下的非系统登录用户
+    @Override
+    public List<CustomerInfo> getThisRoleUsers(String id) throws Exception {
+        //根据useraccount的_id查询
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+        UserAccount userAccount = mongoTemplate.findOne(query, UserAccount.class);
+        List<CustomerInfo> customerInfoList = new ArrayList<>();
+        if (userAccount.getRoles() != null && userAccount.getRoles().size() > 0) {
+            for (Role roles : userAccount.getRoles()) {
+                List<UserAccount> userAccounts = getRolesUserAccountList(roles);
+                if (userAccounts.size() > 0) {
+                    List<CustomerInfo> customerInfos = getRolesUserCustomerInfoList(userAccounts);
+                    if (customerInfos.size() > 0) {
+                        customerInfoList.addAll(customerInfos);
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            return customerInfoList;
+        } else {
+            return customerInfoList;
+        }
+    }
+
+    //获取该roles下的List<UserAccount>
+    private List<UserAccount> getRolesUserAccountList(Role role) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("roles._id").is(role.get_id()));
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+        List<UserAccount> accounts = mongoTemplate.find(query, UserAccount.class);
+        return accounts;
+    }
+
+    //获取List<UserAccount>对应的List<CustomerInfo>
+    private List<CustomerInfo> getRolesUserCustomerInfoList(List<UserAccount> userAccounts) throws Exception {
+        List<CustomerInfo> customerInfoList = new ArrayList<>();
+        for (UserAccount userAccount : userAccounts) {
+            Query newQuery = new Query();
+            newQuery.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
+            newQuery.addCriteria(Criteria.where("type").is("1"));
+            newQuery.addCriteria(Criteria.where("logintype").is("0"));
+            newQuery.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+            CustomerInfo customerInfo = mongoTemplate.findOne(newQuery, CustomerInfo.class);
+            if (customerInfo != null) {
+                customerInfoList.add(customerInfo);
+            }
+        }
+        return customerInfoList;
+    }
+
+//    endregion
 
     //获取当前登陆人的所有角色信息
 //    @Override
