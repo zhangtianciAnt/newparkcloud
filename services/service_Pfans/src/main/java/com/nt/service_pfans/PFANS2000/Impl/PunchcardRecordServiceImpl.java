@@ -553,12 +553,22 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                     //---------处理昨日审批通过的加班申请end-------
                                     //正常的打卡记录
-                                    Double resultwork = Double.valueOf(sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime())/60/60/1000;
+                                    String time_end_temp=time_end;
+                                    String time_start_temp=time_start;
+                                    if(Double.valueOf(sdf.parse(time_end).getTime()) >= Double.valueOf(sdf.parse(closingtime_end).getTime()))
+                                    {
+                                        time_end_temp = closingtime_end;
+                                    }
+                                    if(Double.valueOf(sdf.parse(time_start).getTime()) <= Double.valueOf(sdf.parse(workshift_start).getTime()))
+                                    {
+                                        time_start_temp = workshift_start;
+                                    }
+                                    Double resultwork = Double.valueOf(sdf.parse(time_end_temp).getTime() - sdf.parse(time_start_temp).getTime())/60/60/1000;
                                     if ( Double.valueOf(sdf.parse(time_start).getTime()) <= Double.valueOf(sdf.parse(workshift_end).getTime())
                                             && Double.valueOf(sdf.parse(time_end).getTime()) >= Double.valueOf(sdf.parse(closingtime_start).getTime())
                                             && resultwork - Double.valueOf(ad.getAbsenteeism() == null ? "0":ad.getAbsenteeism())>=9) {
                                         ad.setNormal(df.format(Double.valueOf(workinghours)));
-                                        if(Double.valueOf(workinghours)>=8)
+                                        if(Double.valueOf(workinghours)==8)
                                         {
                                             ad.setAbsenteeism(null);
                                         }

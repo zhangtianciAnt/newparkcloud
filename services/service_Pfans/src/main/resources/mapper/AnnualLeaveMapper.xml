@@ -28,8 +28,15 @@
         DEDUCT_ANNUAL_LEAVE_THISYEAR deduct_annual_leave_thisyear,
         REMAINING_ANNUAL_LEAVE_THISYEAR remaining_annual_leave_thisyear
         from annulleaveView
-        <if test="userid!=null and userid !=''">
-            where USER_ID = #{userid}
+             where
+             1=1
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            USER_ID in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
         </if>
     </select>
 

@@ -15,7 +15,7 @@ public interface AnnualLeaveMapper extends MyMapper<AnnualLeave> {
      *
      * @return
      */
-    List<AnnualLeave> getDataList(@Param("userid") String userid);
+    List<AnnualLeave> getDataList(@Param("owners") List<String> userid);
 
     List<restViewVo> getrest(@Param("userid") String userid);
 

@@ -713,7 +713,9 @@ public class AbNormalServiceImpl implements AbNormalService {
         }
 
         if("PR013005".equals(abNormal.getErrortype())){
-            List<AnnualLeave> list = annualLeaveMapper.getDataList(abNormal.getUser_id());
+            List<String> ls = new ArrayList<String>();
+            ls.add(abNormal.getUser_id());
+            List<AnnualLeave> list = annualLeaveMapper.getDataList(ls);
             if(list.size() > 0 ){
                 if(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() >= lengths){
                     String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue());
