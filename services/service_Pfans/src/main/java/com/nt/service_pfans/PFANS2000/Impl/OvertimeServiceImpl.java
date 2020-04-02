@@ -64,13 +64,13 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public void updateOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
-        SimpleDateFormat sdfxx = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-        Date dateStart = overtime.getReserveovertimedate();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dateStart);
-        cal.add(Calendar.HOUR_OF_DAY, -8);
-        dateStart = cal.getTime();
-        overtime.setReserveovertimedate(dateStart);
+        /*        SimpleDateFormat sdfxx = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+//        Date dateStart = overtime.getReserveovertimedate();
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(dateStart);
+//        cal.add(Calendar.HOUR_OF_DAY, -8);
+//        dateStart = cal.getTime();
+//        overtime.setReserveovertimedate(dateStart);
         if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || overtime.getStatus().equals("7")){
 
             Overtime over = new Overtime();
@@ -378,6 +378,8 @@ public class OvertimeServiceImpl implements OvertimeService {
                 }
             }
         }
+        */
+        
         overtime.preUpdate(tokenModel);
         overtimeMapper.updateByPrimaryKey(overtime);
     }
