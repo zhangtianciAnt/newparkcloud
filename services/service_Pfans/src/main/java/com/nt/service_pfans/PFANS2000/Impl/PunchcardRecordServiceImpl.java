@@ -1338,7 +1338,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 } else {
                                     //没有记录，没有申请
                                     ad.setAbsenteeism(workinghours);
-                                    ad.setNormal(Double.valueOf(ad.getNormal()) == 0 ? null :ad.getNormal());
+                                    ad.setNormal(null);
                                 }
                                 //---------处理昨日审批通过的异常考勤申请end-------
                                 ad.setNormal(ad.getNormal() == null ? "0" :ad.getNormal());
@@ -1360,12 +1360,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 else if(Double.valueOf(ad.getAbsenteeism())<0)
                                 {
                                     ad.setNormal("0");
-                                }
-                                else
-                                {
-                                    ad.setNormal(df.format(Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism()) -  Double.valueOf(ad.getShortsickleave())
-                                            - Double.valueOf(ad.getLongsickleave()) - Double.valueOf(ad.getCompassionateleave()) - Double.valueOf(ad.getAnnualrest())
-                                            - Double.valueOf(ad.getDaixiu()) - Double.valueOf(ad.getNursingleave()) - Double.valueOf(ad.getWelfare())));
                                 }
                                 ad.setNormal(ad.getNormal() == null ? null :(ad.getNormal() =="0" ? null :df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :df.format(Double.valueOf(ad.getAnnualrest())));
