@@ -629,6 +629,119 @@ private String upFlg = "0";
                         //上级审批
                     } else if ("2".equals(item.getNodeusertype())) {
 
+                        UserVo userInfo = userService.getAccountCustomerById(tokenModel.getUserId());
+                        //TL
+                        if(item.getNodename().toUpperCase().contains("TL")){
+                            if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
+                                OrgTree orgs = orgTreeService.get(new OrgTree());
+                                OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getTeamid());
+                                if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                    throw new LogicalException("无上级人员信息！");
+                                }
+                                if (currentOrg.getUser().equals(tokenModel.getUserId())) {
+                                    Workflowstep workflowstep = new Workflowstep();
+                                    workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                                    workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                                    workflowstep.setName(item.getNodename());
+                                    workflowstep.setItemid(tokenModel.getUserId());
+                                    workflowstep.setResult("0");
+                                    workflowstep.setRemark("自动跳过");
+                                    workflowstep.setModifyby(tokenModel.getUserId());
+                                    workflowstep.setModifyon(new Date());
+                                    workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                    workflowstep.preInsert(tokenModel);
+                                    workflowstepMapper.insert(workflowstep);
+                                    continue;
+                                }
+                            } else {
+                                Workflowstep workflowstep = new Workflowstep();
+                                workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                                workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                                workflowstep.setName(item.getNodename());
+                                workflowstep.setItemid(tokenModel.getUserId());
+                                workflowstep.setResult("0");
+                                workflowstep.setRemark("自动跳过");
+                                workflowstep.setModifyby(tokenModel.getUserId());
+                                workflowstep.setModifyon(new Date());
+                                workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowstep.preInsert(tokenModel);
+                                workflowstepMapper.insert(workflowstep);
+                                continue;
+                            }
+                        }
+
+                        // GM
+                        if(item.getNodename().toUpperCase().contains("GM")){
+                            if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
+
+                                if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
+                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
+                                    if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                        throw new LogicalException("无上级人员信息！");
+                                    }
+                                    if (currentOrg.getUser().equals(tokenModel.getUserId())) {
+                                        Workflowstep workflowstep = new Workflowstep();
+                                        workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                                        workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                                        workflowstep.setName(item.getNodename());
+                                        workflowstep.setItemid(tokenModel.getUserId());
+                                        workflowstep.setResult("0");
+                                        workflowstep.setRemark("自动跳过");
+                                        workflowstep.setModifyby(tokenModel.getUserId());
+                                        workflowstep.setModifyon(new Date());
+                                        workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                        workflowstep.preInsert(tokenModel);
+                                        workflowstepMapper.insert(workflowstep);
+                                        continue;
+                                    }
+                                }else {
+                                    Workflowstep workflowstep = new Workflowstep();
+                                    workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                                    workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                                    workflowstep.setName(item.getNodename());
+                                    workflowstep.setItemid(tokenModel.getUserId());
+                                    workflowstep.setResult("0");
+                                    workflowstep.setRemark("自动跳过");
+                                    workflowstep.setModifyby(tokenModel.getUserId());
+                                    workflowstep.setModifyon(new Date());
+                                    workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                    workflowstep.preInsert(tokenModel);
+                                    workflowstepMapper.insert(workflowstep);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        //CENTER
+                        if(item.getNodename().toUpperCase().contains("CENTER")){
+                            if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid()) && StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
+
+                                if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getCenterid())) {
+                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getCenterid());
+                                    if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                        throw new LogicalException("无上级人员信息！");
+                                    }
+                                    if (currentOrg.getUser().equals(tokenModel.getUserId())) {
+                                        Workflowstep workflowstep = new Workflowstep();
+                                        workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                                        workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                                        workflowstep.setName(item.getNodename());
+                                        workflowstep.setItemid(tokenModel.getUserId());
+                                        workflowstep.setResult("0");
+                                        workflowstep.setRemark("自动跳过");
+                                        workflowstep.setModifyby(tokenModel.getUserId());
+                                        workflowstep.setModifyon(new Date());
+                                        workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                        workflowstep.preInsert(tokenModel);
+                                        workflowstepMapper.insert(workflowstep);
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+
                         String user = getUpUser(tokenModel.getUserId());
                         if(StrUtil.isEmpty(user)){
                             continue;
