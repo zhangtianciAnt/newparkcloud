@@ -149,8 +149,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //入社年月日
         String enterdaystartCal = customer.getUserinfo().getEnterday();
         if (StringUtil.isEmpty(enterdaystartCal)) {
-            enterdaystartCal = "1980-02-29T16:00:00.000Z";
+            enterdaystartCal = "1980-02-29";
         }
+        enterdaystartCal = enterdaystartCal.substring(0,10);
         //仕事开始年月日
         String workdaystartCal = customer.getUserinfo().getWorkday();
 
@@ -199,10 +200,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅱ.途中离职：本事业年度在职期间/12个月*当年年休天数
         if(StringUtil.isNotEmpty(resignationDateendCal))
         {
-            if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))).compareTo(calendar_a.getTime())<=0)
+            String resignationDateendCal1 = resignationDateendCal.substring(0,10);
+            if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal1)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal1)))).compareTo(calendar_a.getTime())<=0)
             {
                 //离职日
-                calendar_a.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))));
+                calendar_a.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal1)))));
                 annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                 annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar_a.getTime())<=0)
@@ -210,7 +212,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //入职日
                     calendar.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))));
                     //离职日
-                    calendar_a.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal)))));
+                    calendar_a.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(resignationDateendCal1)))));
                     annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
