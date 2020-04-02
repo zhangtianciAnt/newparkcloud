@@ -253,7 +253,6 @@ public class GivingServiceImpl implements GivingService {
         // 2020/03/11 add by myt end
 
         givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
-
         return givingVo;
     }
 

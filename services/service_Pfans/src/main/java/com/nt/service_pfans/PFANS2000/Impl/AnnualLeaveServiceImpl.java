@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.nt.dao_Org.CustomerInfo;
@@ -85,7 +86,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--事业年度开始获取年休
     //@Scheduled(cron="10 * * * * ?")测试用
-    @Scheduled(cron="0 50 14 2 4 *")//正式时间每年4月1日零时执行
+    @Scheduled(cron="0 30 19 2 4 *")//正式时间每年4月1日零时执行
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
@@ -182,13 +183,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅰ.途中入职：本事业年度在职期间/12个月*15天
         if(StringUtil.isEmpty(resignationDateendCal))
         {
-            if(sf1.parse(enterdaystartCal).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal).compareTo(calendar_a.getTime())<=0)
+            if(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar_a.getTime())<=0)
             {
                 //有工作经验者
                 if(!(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty()))
                 {
                     //入职日
-                    calendar.setTime(sf1.parse(enterdaystartCal.toString().replace("Z"," UTC")));
+                    calendar.setTime(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal)).toString().replace("Z"," UTC")));
                     annual_leave_thisyear=dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
@@ -198,18 +199,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //Ⅱ.途中离职：本事业年度在职期间/12个月*当年年休天数
         if(StringUtil.isNotEmpty(resignationDateendCal))
         {
-            if(sf1.parse(resignationDateendCal).compareTo(calendar.getTime())>=0 && sf1.parse(resignationDateendCal).compareTo(calendar_a.getTime())<=0)
+            if(sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))).compareTo(calendar_a.getTime())<=0)
             {
                 //离职日
-                calendar_a.setTime(sf1.parse(resignationDateendCal));
+                calendar_a.setTime(sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))));
                 annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                 annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
-                if(sf1.parse(enterdaystartCal).compareTo(calendar.getTime())>=0 && sf1.parse(enterdaystartCal).compareTo(calendar_a.getTime())<=0)
+                if(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))).compareTo(calendar_a.getTime())<=0)
                 {
                     //入职日
-                    calendar.setTime(sf1.parse(enterdaystartCal));
+                    calendar.setTime(sf1.parse(Convert.toStr(Convert.toDate(enterdaystartCal))));
                     //离职日
-                    calendar_a.setTime(sf1.parse(resignationDateendCal));
+                    calendar_a.setTime(sf1.parse(Convert.toStr(Convert.toDate(resignationDateendCal))));
                     annual_leave_thisyear = dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
@@ -440,7 +441,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 35 22 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 30 19 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -452,8 +453,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
             Calendar cal = Calendar.getInstance();
             //cal.setTime(new Date());
-            //cal.add(Calendar.DAY_OF_MONTH, -1);
-            String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //String doorIDList = "3,5";//3:门1；5:门2；7:门3
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
