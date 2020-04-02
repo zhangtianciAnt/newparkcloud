@@ -51,4 +51,12 @@
         and  date_format(PUNCHCARDRECORD_DATE, '%Y-%m-%d') = #{punchcardrecord_date}
         order by PUNCHCARDRECORD_DATE
     </select>
+
+    <delete id="deletetepun">
+        DELETE FROM punchcardrecord WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date};
+    </delete>
+
+    <delete id="deletetepundet">
+        DELETE FROM punchcardrecorddetail WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date};
+    </delete>
 </mapper>
