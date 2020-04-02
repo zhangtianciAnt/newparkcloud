@@ -5,6 +5,7 @@ import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public interface PersonnelplanService {
     List<PersonnelPlan> getAll();
     PersonnelPlan getOne(String id);
     void update(PersonnelPlan personnelPlan, TokenModel tokenModel);
-    void insert(PersonnelPlan personnelPlan, TokenModel tokenModel);
+    void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) throws LogicalException;
 
     List<PersonnelPlan> get(PersonnelPlan personnelPlan);
 }
