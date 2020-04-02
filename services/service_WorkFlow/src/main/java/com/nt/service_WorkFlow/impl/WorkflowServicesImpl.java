@@ -648,8 +648,8 @@ private String upFlg = "0";
                                     workflowstep.setRemark("系统自动跳过");
                                     workflowstep.setModifyby(tokenModel.getUserId());
                                     workflowstep.setModifyon(new Date());
-                                    workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                     workflowstep.preInsert(tokenModel);
+                                    workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                     workflowstepMapper.insert(workflowstep);
                                     continue;
                                 }
@@ -663,8 +663,9 @@ private String upFlg = "0";
                                 workflowstep.setRemark("系统自动跳过");
                                 workflowstep.setModifyby(tokenModel.getUserId());
                                 workflowstep.setModifyon(new Date());
-                                workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+
                                 workflowstep.preInsert(tokenModel);
+                                workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                 workflowstepMapper.insert(workflowstep);
                                 continue;
                             }
@@ -690,8 +691,9 @@ private String upFlg = "0";
                                         workflowstep.setRemark("系统自动跳过");
                                         workflowstep.setModifyby(tokenModel.getUserId());
                                         workflowstep.setModifyon(new Date());
-                                        workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+
                                         workflowstep.preInsert(tokenModel);
+                                        workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                         workflowstepMapper.insert(workflowstep);
                                         continue;
                                     }
@@ -705,8 +707,9 @@ private String upFlg = "0";
                                     workflowstep.setRemark("系统自动跳过");
                                     workflowstep.setModifyby(tokenModel.getUserId());
                                     workflowstep.setModifyon(new Date());
-                                    workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+
                                     workflowstep.preInsert(tokenModel);
+                                    workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                     workflowstepMapper.insert(workflowstep);
                                     continue;
                                 }
@@ -733,8 +736,9 @@ private String upFlg = "0";
                                         workflowstep.setRemark("系统自动跳过");
                                         workflowstep.setModifyby(tokenModel.getUserId());
                                         workflowstep.setModifyon(new Date());
-                                        workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                         workflowstep.preInsert(tokenModel);
+
+                                        workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                         workflowstepMapper.insert(workflowstep);
                                         continue;
                                     }
