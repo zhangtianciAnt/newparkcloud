@@ -741,8 +741,33 @@ private String upFlg = "0";
                                 }
                             }
                         }
+                        String user = "";
+                        if(item.getNodename().toUpperCase().contains("CENTER")){
 
-                        String user = getUpUser(tokenModel.getUserId());
+                            List<Workflownodeinstance> noderst =  workflownodeinstancelist.stream().filter(node -> (node.getNodename().toUpperCase().contains("GM"))).collect(Collectors.toList());
+                            if(noderst.size() > 0){
+
+                                Workflowstep conditionWorkflowstepi = new Workflowstep();
+                                conditionWorkflowstepi.setWorkflownodeinstanceid(noderst.get(0).getWorkflownodeinstanceid());
+                                List<Workflowstep> workflowsteplisti = workflowstepMapper.select(conditionWorkflowstepi);
+                                if(workflowsteplisti.size() > 0){
+
+                                    user = getUpUser(workflowsteplisti.get(0).getItemid());
+
+                                }else{
+
+                                    user = getUpUser(tokenModel.getUserId());
+                                }
+                            }else{
+
+                                user = getUpUser(tokenModel.getUserId());
+                            }
+                            user = getUpUser(tokenModel.getUserId());
+
+                        }else{
+
+                            user = getUpUser(tokenModel.getUserId());
+                        }
                         if(StrUtil.isEmpty(user)){
                             continue;
                         }
