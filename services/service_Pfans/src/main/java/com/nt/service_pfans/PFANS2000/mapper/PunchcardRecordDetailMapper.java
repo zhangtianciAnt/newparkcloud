@@ -13,4 +13,7 @@ public interface PunchcardRecordDetailMapper extends MyMapper<PunchcardRecordDet
 
     List<PunchcardRecordDetail> getPunDetail(@Param("jobnumber") String jobnumber, @Param("punchcardrecord_date") String punchcardrecord_date);
 
+    void deletetepun(@Param("punchcardrecord_date") String punchcardrecord_date);
+
+    void deletetepundet(@Param("punchcardrecord_date") String punchcardrecord_date);
 }
