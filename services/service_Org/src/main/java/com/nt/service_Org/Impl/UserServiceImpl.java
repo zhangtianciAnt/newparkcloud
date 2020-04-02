@@ -250,6 +250,48 @@ public class UserServiceImpl implements UserService {
                     Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        for(CustomerInfo item:customerInfos){
+            item.getUserinfo().setIdnumber("");
+            item.getUserinfo().setPassport("");
+            item.getUserinfo().setSecurity("");
+            item.getUserinfo().setHousefund("");
+            item.getUserinfo().setAddress("");
+            item.getUserinfo().setMobilenumber("");
+            item.getUserinfo().setPhone("");
+            item.getUserinfo().setExtension("");
+            item.getUserinfo().setWorkday("");
+            item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
+            item.getUserinfo().setJobnumber("");
+            item.getUserinfo().setBudgetunit("");
+            item.getUserinfo().setPersonalcode("");
+            item.getUserinfo().setType("");
+            item.getUserinfo().setOccupationtype("");
+            item.getUserinfo().setDifference("");
+            item.getUserinfo().setLaborcontracttype("");
+            item.getUserinfo().setFixedate("");
+            item.getUserinfo().setEnterday("");
+            item.getUserinfo().setUpgraded("");
+            item.getUserinfo().setEnddate("");
+            item.getUserinfo().setAnnualyear("");
+            item.getUserinfo().setAnnuallastyear("");
+            item.getUserinfo().setWelfareyear("");
+            item.getUserinfo().setWelfarelastyear("");
+            item.getUserinfo().setRestyear("");
+            item.getUserinfo().setRestlastyear("");
+            item.getUserinfo().setSeatnumber("");
+            item.getUserinfo().setBasic("");
+            item.getUserinfo().setDuty("");
+            item.getUserinfo().setOldageinsurance("");
+            item.getUserinfo().setHouseinsurance("");
+            item.getUserinfo().setMedicalinsurance("");
+            item.getUserinfo().setSalary("");
+            item.getUserinfo().setCaution("");
+            item.getUserinfo().setWorkAfterTable(new ArrayList<CustomerInfo.TableInfo>());
+            item.getUserinfo().setTrainTable(new ArrayList<CustomerInfo.TableInfo>());
+            item.getUserinfo().setRewardTable(new ArrayList<CustomerInfo.TableInfo>());
+            item.getUserinfo().setResignation_date("");
+            item.getUserinfo().setReason2("");
+        }
         return customerInfos;
     }
 

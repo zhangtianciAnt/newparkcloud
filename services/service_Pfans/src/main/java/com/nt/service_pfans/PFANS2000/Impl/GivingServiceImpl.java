@@ -253,7 +253,6 @@ public class GivingServiceImpl implements GivingService {
         // 2020/03/11 add by myt end
 
         givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
-
         return givingVo;
     }
 
@@ -561,16 +560,14 @@ public class GivingServiceImpl implements GivingService {
         //入职日
         Calendar calEnterDay = Calendar.getInstance();
         if (userinfo.getEnterday().indexOf("Z") < 0) {
-            userinfo.setEnterday(userinfo.getEnterday().replace(" ", "T"));
-            userinfo.setEnterday(userinfo.getEnterday().concat(".000Z"));
+            userinfo.setEnterday(formatStringDate(userinfo.getEnterday()));
         }
         calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         //退职日
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
             if (userinfo.getResignation_date().indexOf("Z") < 0) {
-                userinfo.setResignation_date(userinfo.getResignation_date().replace(" ", "T"));
-                userinfo.setResignation_date(userinfo.getResignation_date().concat(".000Z"));
+                userinfo.setResignation_date(formatStringDate(userinfo.getResignation_date()));
             }
             calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
         } else {
@@ -633,16 +630,14 @@ public class GivingServiceImpl implements GivingService {
             //试用最后日
             Calendar calSuitDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
-                userinfo.setEnddate(userinfo.getEnddate().replace(" ", "T"));
-                userinfo.setEnddate(userinfo.getEnddate().concat(".000Z"));
+                userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
-                userinfo.setEnddate(userinfo.getEnddate().replace(" ", "T"));
-                userinfo.setEnddate(userinfo.getEnddate().concat(".000Z"));
+                userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calOfficialDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
             //试用截止日大于本月末日
@@ -1947,8 +1942,7 @@ public class GivingServiceImpl implements GivingService {
                     if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                         // 转正日期
                         if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().replace(" ", "T"));
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().concat(".000Z"));
+                            customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
                         }
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         // 本月转正
@@ -1973,8 +1967,7 @@ public class GivingServiceImpl implements GivingService {
                         // 试用期截止日不为空的情况
                         // 本月转正或未转正的人
                         if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().replace(" ", "T"));
-                            customerInfo.getUserinfo().setEnddate(customerInfo.getUserinfo().getEnddate().concat(".000Z"));
+                            customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
                         }
                         Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                         if (endDate.getTime() >= mouthStart) {
@@ -2009,8 +2002,7 @@ public class GivingServiceImpl implements GivingService {
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
         // 入社日 客户导入日期是yy-mm-dd hh:mm:ss
         if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
-            customerInfo.getUserinfo().setEnterday(customerInfo.getUserinfo().getEnterday().replace(" ", "T"));
-            customerInfo.getUserinfo().setEnterday(customerInfo.getUserinfo().getEnterday().concat(".000Z"));
+            customerInfo.getUserinfo().setEnterday(formatStringDate(customerInfo.getUserinfo().getEnterday()));
         }
         induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         // 本月基本工资
@@ -2107,8 +2099,7 @@ public class GivingServiceImpl implements GivingService {
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 if (resignationDate.indexOf("Z") < 0) {
-                    resignationDate = resignationDate.replace(" ", "T");
-                    resignationDate = resignationDate.concat(".000Z");
+                    resignationDate = formatStringDate(resignationDate);
                 }
                 retire.setRetiredate(sfUTC.parse(resignationDate.replace("Z", " UTC")));
                 // 当月基本工资
@@ -2161,4 +2152,16 @@ public class GivingServiceImpl implements GivingService {
         return rtnAttendanceDays;
     }
     // endregion 入职和离职 BY Cash
+
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @return
+     */
+    private String formatStringDate(String date) {
+        date = date.replace("/", "-");
+        date = date.concat("T00:00:00.000Z");
+        return date;
+    }
 }

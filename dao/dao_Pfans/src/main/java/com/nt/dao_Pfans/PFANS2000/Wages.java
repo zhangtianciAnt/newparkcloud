@@ -32,7 +32,7 @@ public class Wages extends BaseModel {
     private String user_id;     //  用户id
 
     @Column(name = "WORKDATE")
-    private Date workdate;      // 入社年月
+    private String workdate;      // 入社年月
 
     @Column(name = "SEX")
     private String sex;         //  性別
