@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Data
 @AllArgsConstructor
@@ -99,4 +100,7 @@ public class Residual extends BaseModel {
 
     @Column(name = "JOBNUMBER")
     private String jobnumber;
+
+    @Transient
+    private boolean isDirty;    // 判断该条记录是否被修改
 }
