@@ -451,7 +451,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
             Calendar cal = Calendar.getInstance();
-            //cal.setTime(new Date());
+            cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
             String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //删除昨天的临时数据
@@ -784,7 +784,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     public void selectattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
-            //punchcardrecorddetailmapper.deletePunDetailPro();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
             //测试接口 GBB add
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
