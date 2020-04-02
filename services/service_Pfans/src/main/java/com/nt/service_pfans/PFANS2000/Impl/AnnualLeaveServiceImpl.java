@@ -455,9 +455,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             cal.add(Calendar.DAY_OF_MONTH, -1);
             String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepun(thisDate);
+            punchcardrecorddetailmapper.deletetepun(DateUtil.format(new Date(),"yyyy-MM-dd"));
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepundet(thisDate);
+            punchcardrecorddetailmapper.deletetepundet(DateUtil.format(new Date(),"yyyy-MM-dd"));
             //String doorIDList = "3,5";//3:门1；5:门2；7:门3
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
