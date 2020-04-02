@@ -293,24 +293,26 @@
         IF
         ( @TYPE &lt;=> '-', ROUND( @THISMONTH + @LACKATTENDANCE_GIVE, 2 ), ROUND( base.RTCXBASE + @LACKATTENDANCE_GIVE, 2 ) )
         ) AS ACTUALAMOUNT,#基本給实际金额
-        @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',(@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),(@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE)) as THISMONTHBASICGEI, #本月基本给
-        @BASE_SJJE - @THISMONTHBASICGEI as THISMONTHDUTYGEI, #本月职责给
+        @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',round((@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),2),round((@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE),2)) as THISMONTHBASICGEI, #本月基本给
+        round( @BASE_SJJE - @THISMONTHBASICGEI, 2 ) AS THISMONTHDUTYGEI,#本月职责给
         @JBBZ := base.SUBSIDY AS OVERTIMESUBSIDY,# 加班补助
         @XJ1 := round( ( @BASE_SJJE + @JBBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
-        @YKBZ :=
-        CASE
-        WHEN ( @TYPE &lt;=> '2' ) THEN
-        round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS ), 2 )
-        WHEN ( @TYPE &lt;=> '1' ) THEN
-        base.INDUCTION_LUNCH
-        WHEN ( @TYPE &lt;=> '4' ) THEN
-        base.RETIRE_LUNCH ELSE round(
+        @YKBZJS := base.DIC_YKBZZS AS YKBZJS, # 一括补助基本給
+        @YKBZ := round(
+        IF
         (
-        base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + base.THISMONTHDAYS * base.DIC_YKBZZS / 21.75 - base.DIC_YKBZSY / 21.75 / 8 * ( base.LASTDILIGENCETRY + base.LASTSHORTDEFICIENCYTRY + base.LASTCHRONICDEFICIENCYTRY ) - base.DIC_YKBZZS / 21.75 / 8 * ( base.LASTDILIGENCEFORMAL + base.LASTSHORTDEFICIENCYFORMAL + base.LASTCHRONICDEFICIENCYFORMAL )
+        base.LASTMONTHSUITDAYS &lt;=> 0,
+        0,
+        base.DIC_YKBZSY * ( base.LASTMONTHSUITDAYS * 8 - base.LASTDILIGENCETRY - base.LASTSHORTDEFICIENCYTRY - base.LASTCHRONICDEFICIENCYTRY ) / ( base.LASTMONTHSUITDAYS * 8 )
+        ) +
+        IF
+        (
+        base.LASTMONTHDAYS &lt;=> 0,
+        0,
+        base.DIC_YKBZZS * ( base.LASTMONTHDAYS * 8 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / ( base.LASTMONTHDAYS * 8 )
         ),
         2
-        )
-        END AS YKBZ,#一括补助
+        ) AS YKBZ,#一括补助
         @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
         @AMOUNT := round(base.APPRECIATION_AMOUNT,2) AS APPRECIATION,#月度賞与
         @XJ2 := ( @OTHER2 + @AMOUNT + @YKBZ ) AS TOTAL2,# 小计2 其他3字段画面手动录入，sql里只计算了交通补助到月度賞与的合计，需要在画面再加上其他3手动录入的数据

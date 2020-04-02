@@ -132,6 +132,10 @@ public class Wages extends BaseModel {
     @Column(name = "TOTAL1")
     private String total1;              // 小计1(基本給+补助)
 
+
+    @Column(name = "YKBZJS")                // 一括补助基本给 ***
+    private String ykbzjs;
+
     @Column(name = "YKBZ")                // 一括补助 ***
     private String ykbz;
 
