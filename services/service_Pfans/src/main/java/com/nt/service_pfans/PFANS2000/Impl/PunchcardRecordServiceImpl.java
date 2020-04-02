@@ -737,12 +737,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         else if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime())
                                         {
                                             long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
+                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)- Double.valueOf(PR.getAbsenteeismam()) );
                                         }
                                         else if(sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
                                         {
                                             long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
+                                            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)- Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
                                         }
                                         else
                                         {
@@ -1156,7 +1156,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                     else
                                     {
-                                        if (sf1ymd.parse(Convert.toStr(Convert.toDate(customerInfo.getUserinfo().getEnddate()))).getTime() > dateStart.getTime())
+                                        if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > dateStart.getTime())
                                         {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
@@ -1380,7 +1380,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
                                 }
-                                else if (sf1ymd.parse(Convert.toStr(Convert.toDate(customerInfo.getUserinfo().getEnddate()))).getTime() > dateStart.getTime())
+                                else if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(customerInfo.getUserinfo().getEnddate())))).getTime() > dateStart.getTime())
                                 {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
