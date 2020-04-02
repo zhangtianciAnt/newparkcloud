@@ -231,6 +231,18 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 cal.setTime(abNormal.getOccurrencedate());
                                 List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
 
+                                if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
+                                {
+                                    attend.setAbsenteeism(attend.getTabsenteeism());
+                                }
+                                if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
+                                {
+                                    attend.setShortsickleave(attend.getTshortsickleave());
+                                }
+                                if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
+                                {
+                                    attend.setLongsickleave(attend.getTlongsickleave());
+                                }
                                 //判断当天是否是休日，青年节，妇女节，周六周日
                                 if(workingDaysList.size()>0)
                                 {
@@ -255,10 +267,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
-                                    if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
-                                    {
-                                        attend.setAbsenteeism(attend.getTabsenteeism());
-                                    }
+
                                     if (Double.valueOf(timeLength) >= Double.valueOf(attend.getAbsenteeism())) {
                                         if (Double.valueOf(timeLength) >= Double.valueOf(workinghours)) {
                                             attend.setNormal(workinghours);
@@ -283,17 +292,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 } else if (abNormal.getErrortype().equals("PR013008")) {//事休
                                     attend.setCompassionateleave(df.format( Double.valueOf(timeLength)));
                                 } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
-                                    if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
-                                    {
-                                        attend.setShortsickleave(attend.getTshortsickleave());
-                                    }
+
                                     attend.setShortsickleave(df.format( Double.valueOf(timeLength)));
 
                                 } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
-                                    if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
-                                    {
-                                        attend.setLongsickleave(attend.getTlongsickleave());
-                                    }
+
                                     attend.setLongsickleave(df.format( Double.valueOf(timeLength)));
                                 } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
                                     attend.setNursingleave(df.format( Double.valueOf(timeLength)));
@@ -310,8 +313,9 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     attend.setWelfare(df.format( Double.valueOf(timeLength)));
                                 }
 
-                                if(attend.getAbsenteeism() != null && !attend.getAbsenteeism().isEmpty() && !abNormal.getErrortype().equals("PR013001"))
+                                if(!abNormal.getErrortype().equals("PR013001"))
                                 {
+                                    attend.setAbsenteeism(attend.getAbsenteeism() == null ? "0" : attend.getAbsenteeism());
                                     if (Double.valueOf(attend.getAbsenteeism()) > Double.valueOf(timeLength) )
                                     {
                                         attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
@@ -499,6 +503,18 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 cal.setTime(abNormal.getOccurrencedate());
                                 List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
 
+                                if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
+                                {
+                                    attend.setAbsenteeism(attend.getTabsenteeism());
+                                }
+                                if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
+                                {
+                                    attend.setShortsickleave(attend.getTshortsickleave());
+                                }
+                                if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
+                                {
+                                    attend.setLongsickleave(attend.getTlongsickleave());
+                                }
                                 //判断当天是否是休日，青年节，妇女节，周六周日
                                 if(workingDaysList.size()>0)
                                 {
@@ -523,10 +539,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
-                                    if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
-                                    {
-                                        attend.setAbsenteeism(attend.getTabsenteeism());
-                                    }
+
                                     if (Double.valueOf(timeLength) >= Double.valueOf(attend.getAbsenteeism())) {
                                         if (Double.valueOf(timeLength) >= Double.valueOf(workinghours)) {
                                             attend.setNormal(workinghours);
@@ -571,10 +584,6 @@ public class AbNormalServiceImpl implements AbNormalService {
                                         attend.setCompassionateleave(df.format(Double.valueOf(timeLength)));
                                     }
                                 } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
-                                    if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
-                                    {
-                                        attend.setShortsickleave(attend.getTshortsickleave());
-                                    }
                                     if(attend.getShortsickleave() != null && !attend.getShortsickleave().isEmpty()){
                                         attend.setShortsickleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getShortsickleave())));
                                     }
@@ -583,10 +592,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     }
 
                                 } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
-                                    if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
-                                    {
-                                        attend.setLongsickleave(attend.getTlongsickleave());
-                                    }
+
                                     if(attend.getLongsickleave() != null && !attend.getLongsickleave().isEmpty()){
                                         attend.setLongsickleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getLongsickleave())));
                                     }
@@ -618,8 +624,9 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     }
                                 }
 
-                                if(attend.getAbsenteeism() != null && !attend.getAbsenteeism().isEmpty() && !abNormal.getErrortype().equals("PR013001"))
+                                if(!abNormal.getErrortype().equals("PR013001"))
                                 {
+                                    attend.setAbsenteeism(attend.getAbsenteeism() == null ? "0" : attend.getAbsenteeism());
                                     if (Double.valueOf(attend.getAbsenteeism()) > Double.valueOf(timeLength) )
                                     {
                                         attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
