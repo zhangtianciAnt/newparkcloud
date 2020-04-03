@@ -74,7 +74,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public String[] getPersonPlan(int year, String groupid) throws Exception {
+    public String[] getPersonPlan(String year, String groupid) throws Exception {
         String[] personTable = new String[4];
         List<ActualPL> actualPl = businessplanMapper.getAcutal(groupid,year + "-04-01", (year + 1) + "-03-31");
         for (ActualPL pl: actualPl) {

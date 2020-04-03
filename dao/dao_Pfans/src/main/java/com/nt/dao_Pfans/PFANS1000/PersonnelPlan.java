@@ -19,7 +19,7 @@ public class PersonnelPlan extends BaseModel {
     @Id
     private String personnelplanid;
     //年份
-    private int years;
+    private String years;
     //centerid
     private String centerid;
     //groupid

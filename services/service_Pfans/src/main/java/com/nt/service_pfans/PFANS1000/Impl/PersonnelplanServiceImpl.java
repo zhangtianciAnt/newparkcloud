@@ -47,10 +47,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     }
 
     @Override
-    public List<PersonnelPlan> getAll() {
-        PersonnelPlan personnelPlan = new PersonnelPlan();
-        List<PersonnelPlan> personnelPlans = personnelplanMapper.selectAll();
-        return personnelPlans;
+    public List<PersonnelPlan> getAll(PersonnelPlan personnelplan) throws Exception {
+        return personnelplanMapper.select(personnelplan);
     }
 
     @Override
@@ -67,9 +65,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
 
     @Override
     public void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) throws LogicalException{
-        int year = personnelPlan.getYears();
         PersonnelPlan personnel = new PersonnelPlan();
-        personnel.setYears(year);
+        personnel.setYears(personnelPlan.getYears());
+        personnel.setGroupid(personnelPlan.getGroupid());
         List<PersonnelPlan>  personnelPlanList = personnelplanMapper.select(personnel);
         if(personnelPlanList.size()>0){
             throw new LogicalException("当前年份已填写人员计划");
