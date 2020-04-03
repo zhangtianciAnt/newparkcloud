@@ -183,7 +183,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setUser_id(punchcard.getUser_id());
                 punchcardrecord.setJobnumber(punchcard.getJobnumber());
                 punchcardrecord.setWorktime(df.format(Worktime));
-                punchcardrecord.setAbsenteeismam("0.25");
+                punchcardrecord.setAbsenteeismam("0.00");
                 punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                 punchcardrecord.setTime_start(punchcard.getTime_start());
                 punchcardrecord.setTime_end(punchcard.getTime_end());
@@ -199,7 +199,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                 attendance.setNormal("8");
                 // 设置统计外出的时间
-                attendance.setAbsenteeism("0.25");
+                attendance.setAbsenteeism("0.00");
                 attendance.setCenter_id(punchcard.getCenter_id());
                 attendance.setGroup_id(punchcard.getGroup_id());
                 attendance.setTeam_id(punchcard.getTeam_id());
@@ -417,14 +417,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                             if(Ot.getStatus().equals("7"))
                                             {
-                                                if(Double.valueOf(overtimeHours) > Double.valueOf(actualoverTime))
-                                                {
-                                                    overtimeHours = String.valueOf(Double.valueOf(actualoverTime));
-                                                }
-                                                else
-                                                {
-                                                    overtimeHours = String.valueOf(Double.valueOf(overtimeHours));
-                                                }
+                                               overtimeHours = String.valueOf(Double.valueOf(actualoverTime));
                                             }
                                             else
                                             {
@@ -454,12 +447,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             {
                                                 //周末加班/法定日加班/一齐年休日加班
                                                 overtimeHours = timeLength(time_start,time_end,lunchbreak_start,lunchbreak_end);
-                                                if(!actualoverTime.equals("0"))
+                                                if(Ot.getStatus().equals("7"))
                                                 {
-                                                    if(Double.valueOf(overtimeHours) > Double.valueOf(actualoverTime))
-                                                    {
-                                                        overtimeHours = actualoverTime;
-                                                    }
+                                                    overtimeHours = actualoverTime;
                                                 }
                                                 else
                                                 {
@@ -602,7 +592,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                             }
 
-
                                             if (ab.getErrortype().equals("PR013001")) {//外出
                                                 //ad.setNormal(strlengthtime);
                                                 //外出大于等于15分
@@ -729,7 +718,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     if(workinghours.equals("4"))
                                     {
                                         String shijiworkHours ="0";
-                                        if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
+                                        if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime() || sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
                                         {
                                             long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
                                             shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
@@ -927,34 +916,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         //申请了年休，代休
                                         if(Double.valueOf(ad.getAnnualrest()) > 0 || Double.valueOf(ad.getDaixiu())>0)
                                         {
-                                            String shijiworkHours ="0";
-                                            if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
-                                            {
-                                                long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
-                                                shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
-                                            }
-                                            else if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime())
-                                            {
-                                                long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-                                                shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(PR.getAbsenteeismam()));
-                                            }
-                                            else if(sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
-                                            {
-                                                long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-                                                shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
-                                            }
-                                            else
-                                            {
-                                                //下午上班时间
-                                                long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-                                                //上午上班时间
-                                                long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-
-                                                Double result3 = Double.valueOf(result1)/ 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
-                                                Double result4 = Double.valueOf(result2)/ 60 / 60 / 1000 - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam());
-                                                shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
-
-                                            }
+                                            String shijiworkHours =shijiworkLength(time_start,time_end,lunchbreak_start,lunchbreak_end,PR,ad);
                                             shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime))/60/60/1000))*((Double.valueOf(strovertime))/60/60/1000));
 
                                             //申请代休，没有申请年休
@@ -1013,34 +975,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                         else if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty())
                                         {
-                                            String shijiworkHours ="0";
-                                            if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
-                                            {
-                                                long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
-                                                shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
-                                            }
-                                            else if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime())
-                                            {
-                                                long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-                                                shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(PR.getAbsenteeismam()));
-                                            }
-                                            else if(sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
-                                            {
-                                                long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-                                                shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
-                                            }
-                                            else
-                                            {
-                                                ///打卡开始-结束时间
-                                                long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
-                                                //午休时间
-                                                long result2 = sdf.parse(lunchbreak_end).getTime() - sdf.parse(lunchbreak_start).getTime();
+                                            String shijiworkHours =shijiworkLength(time_start,time_end,lunchbreak_start,lunchbreak_end,PR,ad);
+                                            shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime))/60/60/1000))*((Double.valueOf(strovertime))/60/60/1000));
 
-                                                Double result3 = Double.valueOf(result1)/ 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
-                                                Double result4 = Double.valueOf(result2)/ 60 / 60 / 1000 - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam());
-                                                shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
-
-                                            }
                                             String duration = null;
                                             if(Double.valueOf(shijiworkHours)>=8)
                                             {
@@ -1134,7 +1071,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                     }
 
-                                    ad.setNormal(ad.getNormal() == null || ad.getNormal() =="0" ? null : df.format(Double.valueOf(ad.getNormal())));
+                                    ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) == 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                     ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :df.format(Double.valueOf(ad.getAnnualrest())));
                                     ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null :df.format(Double.valueOf(ad.getDaixiu())));
                                     ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null :df.format(Double.valueOf(ad.getCompassionateleave())));
@@ -1338,7 +1275,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
                                 } else {
                                     //没有记录，没有申请
-                                    ad.setAbsenteeism(workinghours);
+                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours)));
                                     ad.setNormal(null);
                                 }
                                 //---------处理昨日审批通过的异常考勤申请end-------
@@ -1362,7 +1299,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 {
                                     ad.setNormal("0");
                                 }
-                                ad.setNormal(ad.getNormal() == null ? null :(ad.getNormal() =="0" ? null :df.format(Double.valueOf(ad.getNormal()))));
+                                ad.setNormal(ad.getNormal() == null ? null :(Double.valueOf(ad.getNormal()) == 0 ? null :df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :df.format(Double.valueOf(ad.getAnnualrest())));
                                 ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null :df.format(Double.valueOf(ad.getDaixiu())));
                                 ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null :df.format(Double.valueOf(ad.getCompassionateleave())));
@@ -1476,6 +1413,46 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         }
         return overtimeHours;
     }
+
+    public String shijiworkLength(String time_start,String time_end,String lunchbreak_start, String lunchbreak_end,PunchcardRecord PR,Attendance ad) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+        String shijiworkHours ="0";
+        if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime())
+        {
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(PR.getAbsenteeismam()));
+        }
+        else if(sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
+        {
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
+        }
+        else if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime())
+        {
+            long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(PR.getAbsenteeismam()));
+        }
+        else if(sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
+        {
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
+        }
+        else
+        {
+            //下午上班时间
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+            //上午上班时间
+            long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+
+            Double result3 = Double.valueOf(result1)/ 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
+            Double result4 = Double.valueOf(result2)/ 60 / 60 / 1000 - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam());
+            shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
+
+        }
+        return shijiworkHours;
+    }
+
+
 
     //代休添加
     public void insertReplace(Attendance ad, TokenModel tokenModel,String type,String duration) throws Exception {
