@@ -30,6 +30,15 @@ WHERE status = '0'
 	<if test="owner != null and owner != ''" >
 		AND owner = #{owner,jdbcType=VARCHAR}
 	</if>
+
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
 GROUP BY
 	user_id,
 	center_id,

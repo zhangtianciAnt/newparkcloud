@@ -113,11 +113,39 @@ public class AuthServiceImpl implements AuthService {
                     cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
                     cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
                 }
+
                 if(cuslist.size() > 0){
                     for(CustomerInfo cusinfo : cuslist){
                         resultTeam.add(cusinfo.getUserid());
                     }
                 }
+
+                if(cus.getUserinfo().getOtherorgs() != null && cus.getUserinfo().getOtherorgs().size() > 0){
+                    for(CustomerInfo.OtherOrgs itemO:cus.getUserinfo().getOtherorgs()){
+                        if(!StringUtils.isNullOrEmpty(itemO.getTeamid())){
+                            Query cusqueryteamid = new Query();
+                            cusqueryteamid.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
+                            cuslist = mongoTemplate.find(cusqueryteamid, CustomerInfo.class);
+                        }
+                        else if(!StringUtils.isNullOrEmpty(itemO.getGroupid())){
+                            Query cusquerygroupid = new Query();
+                            cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
+                            cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+                        }
+                        else if(!StringUtils.isNullOrEmpty(itemO.getCenterid())){
+                            Query cusquerycenterid = new Query();
+                            cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
+                            cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+                        }
+
+                        if(cuslist.size() > 0){
+                            for(CustomerInfo cusinfo : cuslist){
+                                resultTeam.add(cusinfo.getUserid());
+                            }
+                        }
+                    }
+                }
+
 
                 result = resultTeam;
             }

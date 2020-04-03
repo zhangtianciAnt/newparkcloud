@@ -28,7 +28,8 @@ public class Pfans2010Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        attendance.setOwner(tokenModel.getUserId());
+        //attendance.setOwner(tokenModel.getUserId());
+        attendance.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.getlist(attendance));
     }
 
