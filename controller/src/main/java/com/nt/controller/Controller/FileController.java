@@ -31,13 +31,12 @@ public class FileController {
 
     @RequestMapping(value = "/getToken",method={RequestMethod.GET})
     private ApiResult getToken() throws Exception {
-        String url = Url + "/kodexplorer/?user/loginSubmit&isAjax=1&getToken=1&name=admin&password=admin";
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         HttpEntity<String> requestEntity = new HttpEntity<String>(null, headers);
-        ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.GET,requestEntity,String.class);
+        ResponseEntity<String> rst  = restTemplate.exchange(Url, HttpMethod.GET,requestEntity,String.class);
         String value = rst.getBody();
         JSONObject string_to_json = JSONUtil.parseObj(value);
         return ApiResult.success(string_to_json);
