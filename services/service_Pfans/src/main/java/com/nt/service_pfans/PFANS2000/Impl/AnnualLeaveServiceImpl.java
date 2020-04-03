@@ -461,9 +461,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetailmapper.deletetepun(thisDate);
             //删除昨天的临时数据
             punchcardrecorddetailmapper.deletetepundet(thisDate);
-            //String doorIDList = "3,5";//3:门1；5:门2；7:门3
-            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
-            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
             String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
@@ -517,14 +514,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecorddetail.setUser_id(staffName);
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
-//                    //进门测试用
-//                    if(doorID.equals("3")){
-//                        punchcardrecorddetail.setEventno("1");
-//                    }
-//                    //出门测试用
-//                    if(doorID.equals("5")){
-//                        punchcardrecorddetail.setEventno("2");
-//                    }
                     punchcardrecorddetail.preInsert(tokenModel);
                     punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                     punchcardrecorddetailmapper.insert(punchcardrecorddetail);
@@ -534,13 +523,23 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             if(punDetaillist.size() > 0){
                 //考勤设定
                 AttendanceSetting attendancesetting = new AttendanceSetting();
+                //上班开始时间
+                String workshift_start = "";
+                //午下班结束时间
+                String closingtime_end = "";
                 //午休时间开始
                 String lunchbreak_start = "";
                 //午休时间结束
                 String lunchbreak_end = "";
                 List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
                 if(attendancesettinglist.size() > 0) {
+                    //上班开始时间
+                    workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
+                    //下班结束时间
+                    closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
+                    //午休时间开始
                     lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
+                    //午休时间结束
                     lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
                 }
                 PunchcardRecordDetail pd = new PunchcardRecordDetail();
@@ -590,12 +589,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     if(punDetaillistevent2.size() > 0){
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     }
-                    //个人出门时间
-//                    long start = sf.parse(Time_start).getTime();
-//                    //个人出门之后再次进门时间
-//                    long end = sf.parse(Time_end).getTime();
-//                    //实际打卡时间
-//                    double hourd = (double) ((end - start)/(1000));
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
                         if(i < punDetaillistevent1.size() - 1){
@@ -604,6 +597,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
                             //个人出门之后再次进门时间
                             long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+
+                            if(startl < sdhm.parse(workshift_start).getTime() || startl > sdhm.parse(closingtime_end).getTime()){
+                                continue;
+                            }
                             //去除午餐时间的情况1
                             if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                             {
@@ -678,24 +675,24 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //获取人员信息
                     Query query = new Query();
                     //欠勤基本单位
-                    BigDecimal standard =new BigDecimal(15);
-                    if (minute.remainder(standard) != BigDecimal.ZERO)
-                    {
-                        double minutes= minute.doubleValue();
-                        double standards = standard.doubleValue();
-                        minute = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
-
-                    }
+                    //BigDecimal standard =new BigDecimal(15);
+//                    if (minute.remainder(standard) != BigDecimal.ZERO)
+//                    {
+//                        double minutes= minute.doubleValue();
+//                        double standards = standard.doubleValue();
+//                        minute = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
+//
+//                    }
                     double minutess= minute.doubleValue();
                     minute = BigDecimal.valueOf(minutess/60).setScale(2);
 
-                    if (minuteam.remainder(standard) != BigDecimal.ZERO)
-                    {
-                        double minutes= minuteam.doubleValue();
-                        double standards = standard.doubleValue();
-                        minuteam = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
-
-                    }
+//                    if (minuteam.remainder(standard) != BigDecimal.ZERO)
+//                    {
+//                        double minutes= minuteam.doubleValue();
+//                        double standards = standard.doubleValue();
+//                        minuteam = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
+//
+//                    }
                     double minutesss= minuteam.doubleValue();
                     minuteam = BigDecimal.valueOf(minutesss/60).setScale(2);
 
@@ -796,9 +793,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //cal.setTime(new Date());
             //cal.add(Calendar.DAY_OF_MONTH, -1);
             String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
-            //String doorIDList = "3,5";//3:门1；5:门2；7:门3
-            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
-            //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
             String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
@@ -852,14 +846,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecorddetail.setUser_id(staffName);
                     //进出状态
                     punchcardrecorddetail.setEventno(eventNo);
-//                    //进门测试用
-//                    if(doorID.equals("3")){
-//                        punchcardrecorddetail.setEventno("1");
-//                    }
-//                    //出门测试用
-//                    if(doorID.equals("5")){
-//                        punchcardrecorddetail.setEventno("2");
-//                    }
                     punchcardrecorddetail.preInsert(tokenModel);
                     punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
                     punchcardrecorddetailmapper.insert(punchcardrecorddetail);
@@ -869,13 +855,23 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             if(punDetaillist.size() > 0){
                 //考勤设定
                 AttendanceSetting attendancesetting = new AttendanceSetting();
+                //上班开始时间
+                String workshift_start = "";
+                //午下班结束时间
+                String closingtime_end = "";
                 //午休时间开始
                 String lunchbreak_start = "";
                 //午休时间结束
                 String lunchbreak_end = "";
                 List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
                 if(attendancesettinglist.size() > 0) {
+                    //上班开始时间
+                    workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
+                    //下班结束时间
+                    closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
+                    //午休时间开始
                     lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
+                    //午休时间结束
                     lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
                 }
                 PunchcardRecordDetail pd = new PunchcardRecordDetail();
@@ -925,12 +921,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     if(punDetaillistevent2.size() > 0){
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     }
-                    //个人出门时间
-//                    long start = sf.parse(Time_start).getTime();
-//                    //个人出门之后再次进门时间
-//                    long end = sf.parse(Time_end).getTime();
-//                    //实际打卡时间
-//                    double hourd = (double) ((end - start)/(1000));
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
                         if(i < punDetaillistevent1.size() - 1){
@@ -939,6 +929,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
                             //个人出门之后再次进门时间
                             long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+
+                            if(startl < sdhm.parse(workshift_start).getTime() || startl > sdhm.parse(closingtime_end).getTime()){
+                                continue;
+                            }
                             //去除午餐时间的情况1
                             if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                             {
@@ -1013,24 +1007,24 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //获取人员信息
                     Query query = new Query();
                     //欠勤基本单位
-                    BigDecimal standard =new BigDecimal(15);
-                    if (minute.remainder(standard) != BigDecimal.ZERO)
-                    {
-                        double minutes= minute.doubleValue();
-                        double standards = standard.doubleValue();
-                        minute = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
-
-                    }
+//                    BigDecimal standard =new BigDecimal(15);
+//                    if (minute.remainder(standard) != BigDecimal.ZERO)
+//                    {
+//                        double minutes= minute.doubleValue();
+//                        double standards = standard.doubleValue();
+//                        minute = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
+//
+//                    }
                     double minutess= minute.doubleValue();
                     minute = BigDecimal.valueOf(minutess/60).setScale(2);
 
-                    if (minuteam.remainder(standard) != BigDecimal.ZERO)
-                    {
-                        double minutes= minuteam.doubleValue();
-                        double standards = standard.doubleValue();
-                        minuteam = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
-
-                    }
+//                    if (minuteam.remainder(standard) != BigDecimal.ZERO)
+//                    {
+//                        double minutes= minuteam.doubleValue();
+//                        double standards = standard.doubleValue();
+//                        minuteam = BigDecimal.valueOf(Math.floor(Double.valueOf(minutes)/Double.valueOf(standards))*Double.valueOf(standards) +Double.valueOf(standards));
+//
+//                    }
                     double minutesss= minuteam.doubleValue();
                     minuteam = BigDecimal.valueOf(minutesss/60).setScale(2);
 
@@ -1049,7 +1043,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
                         punchcardrecord.setTime_start(Time_start);
-                        //punchcardrecord.setTime_end(Time_end);
+                        punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);
