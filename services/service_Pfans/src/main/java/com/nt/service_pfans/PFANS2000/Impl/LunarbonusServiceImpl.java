@@ -12,6 +12,7 @@ import com.nt.service_pfans.PFANS2000.mapper.ExaminationobjectMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunarbasicMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunarbonusMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -55,14 +56,22 @@ public class LunarbonusServiceImpl implements LunarbonusService {
     @Override
     public void insert(LunardetailVo lunardetailVo, TokenModel tokenModel) throws Exception {
         Lunarbonus lunarbonus = new Lunarbonus();
-        lunarbonus.preInsert(tokenModel);
-        lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
-        lunarbonus.setEvaluationday(new Date());
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+        Date Evaluationday = new SimpleDateFormat("yyyy-MM-dd").parse(sd.format(new Date()));
+        lunarbonus.setEvaluationday(Evaluationday);
         lunarbonus.setSubjectmon(lunardetailVo.getSubjectmon());
         lunarbonus.setEvaluatenum(lunardetailVo.getEvaluatenum());
         lunarbonus.setSubject(lunardetailVo.getSubjectmon());
         lunarbonus.setUser_id(lunardetailVo.getUser_id());
-        lunarbonusMapper.insert(lunarbonus);
+        List<Lunarbonus> List = lunarbonusMapper.select(lunarbonus);
+        if(List.size() == 0){
+            lunarbonus.preInsert(tokenModel);
+            lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
+            lunarbonusMapper.insert(lunarbonus);
+        }
+        else {
+            throw new LogicalException("不能重复评价");
+        }
 
         Query query = new Query();
         List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
