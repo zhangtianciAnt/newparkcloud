@@ -61,8 +61,10 @@ public class pfans1038Controller {
    //获取全部
     @RequestMapping(value = "/getall", method = {RequestMethod.GET})
     public ApiResult getAll(HttpServletRequest request) throws Exception {
-        List<PersonnelPlan> personnelPlans = personnelplanService.getAll();
-        return ApiResult.success(personnelPlans);
+        PersonnelPlan personnelplan = new PersonnelPlan();
+        TokenModel tokenModel = tokenService.getToken(request);
+        personnelplan.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(personnelplanService.getAll(personnelplan));
     }
     //获取选中
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})

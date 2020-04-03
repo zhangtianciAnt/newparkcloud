@@ -59,7 +59,7 @@ public class Pfans1036Controller {
     }
 
     @RequestMapping(value = "/getpersonplan", method = {RequestMethod.GET})
-    public ApiResult getPersonPlan(@RequestParam int year,@RequestParam String groupid, HttpServletRequest request) throws Exception {
+    public ApiResult getPersonPlan(@RequestParam String year,@RequestParam String groupid, HttpServletRequest request) throws Exception {
         if (groupid == "") {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bonussend")
@@ -29,6 +32,20 @@ public class Pfans2007Controller {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public void download(String type, HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        String templateName = null;
+        String fileName = null;
+        if ( "0".equals(type) ) {
+            templateName = "jiangjinfasong.xlsx";
+            fileName = "奖金发送导入模板";
+        }
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
+    }
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody List<Bonussend> bonussend, HttpServletRequest request) throws Exception{
