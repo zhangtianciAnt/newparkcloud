@@ -540,10 +540,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 timeLength = df.format(Double.valueOf(abNormal.getLengthtime()));
                                 if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
                                 {
-                                    if(!abNormal.getErrortype().equals("PR013001"))
-                                    {
+                                    //if(!abNormal.getErrortype().equals("PR013001"))
+                                    //{
                                         timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
-                                    }
+                                    //}
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
 
