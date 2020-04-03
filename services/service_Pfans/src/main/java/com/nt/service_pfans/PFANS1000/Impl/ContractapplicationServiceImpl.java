@@ -134,12 +134,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
-                        try {
                             quotation.setStartdate(sdf.parse(startAndEnd[0]));
-                        } catch (Exception e) {}
-                        try {
                             quotation.setEnddate(sdf.parse(startAndEnd[1]));
-                        } catch (Exception e) {}
                     }
 
                     quotationMapper.insert(quotation);
@@ -188,12 +184,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
-                        try {
                             contract.setOpeningdate(sdf.parse(startAndEnd[0]));
-                        } catch (Exception e) {}
-                        try {
                             contract.setEnddate(sdf.parse(startAndEnd[1]));
-                        } catch (Exception e) {}
                     }
 
 
@@ -256,12 +248,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                             String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
-                            try {
                                 napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
-                            } catch (Exception e) {}
-                            try {
                                 napalm.setEnddate(sdf.parse(startAndEnd[1]));
-                            } catch (Exception e) {}
                         }
 
                         napalmMapper.insert(napalm);
