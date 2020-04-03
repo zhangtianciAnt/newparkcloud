@@ -1011,15 +1011,19 @@ public class GivingServiceImpl implements GivingService {
             case "8":   // 欠勤
                 List<Lackattendance> lackattendanceList = givingvo.getLackattendance();
                 lackattendanceList.forEach(item -> {
-                    item.preUpdate(tokenModel);
-                    lackattendanceMapper.updateByPrimaryKeySelective(item);
+                    if (item.isDirty()) {
+                        item.preUpdate(tokenModel);
+                        lackattendanceMapper.updateByPrimaryKeySelective(item);
+                    }
                 });
                 break;
             case "9":   // 残业
                 List<Residual> residualList = givingvo.getResidual();
                 residualList.forEach(item -> {
-                    item.preUpdate(tokenModel);
-                    residualMapper.updateByPrimaryKeySelective(item);
+                    if (item.isDirty()) {
+                        item.preUpdate(tokenModel);
+                        residualMapper.updateByPrimaryKeySelective(item);
+                    }
                 });
                 break;
             case "6":   // 入职
