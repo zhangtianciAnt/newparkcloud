@@ -222,6 +222,7 @@ public class UserServiceImpl implements UserService {
 //            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
 //                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
 //        }
+        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
         if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
                 && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId())){
             query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
@@ -235,10 +236,28 @@ public class UserServiceImpl implements UserService {
                 }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
                     query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
                 }
+
+                customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+
+                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
+                    for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
+                        query = new Query();
+
+                        if(StrUtil.isNotBlank(itemO.getTeamid())){
+                            query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
+                        }else  if(StrUtil.isNotBlank(itemO.getGroupid())){
+                            query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
+                        }else  if(StrUtil.isNotBlank(itemO.getCenterid())){
+                            query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
+                        }
+
+                        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+                    }
+                }
             }
         }
 
-        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+
         return customerInfos;
     }
 
