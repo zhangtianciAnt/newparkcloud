@@ -120,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
                     }
                 }
 
-                if(cus.getUserinfo().getOtherorgs().size() > 0){
+                if(cus.getUserinfo().getOtherorgs() != null && cus.getUserinfo().getOtherorgs().size() > 0){
                     for(CustomerInfo.OtherOrgs itemO:cus.getUserinfo().getOtherorgs()){
                         if(!StringUtils.isNullOrEmpty(itemO.getTeamid())){
                             Query cusqueryteamid = new Query();

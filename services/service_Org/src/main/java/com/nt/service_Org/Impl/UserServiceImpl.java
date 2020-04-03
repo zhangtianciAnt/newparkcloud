@@ -239,7 +239,7 @@ public class UserServiceImpl implements UserService {
 
                 customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
 
-                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
+                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
                     for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
                         query = new Query();
 
@@ -255,6 +255,9 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
+        }else{
+            query = new Query();
+            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
         }
 
 
