@@ -86,7 +86,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--事业年度开始获取年休
     //@Scheduled(cron="10 * * * * ?")测试用
-    @Scheduled(cron="0 30 19 2 4 *")//正式时间每年4月1日零时执行
+    @Scheduled(cron="0 0 0 2 4 *")//正式时间每年4月1日零时执行
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
         if (customerinfo != null) {
@@ -443,7 +443,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 45 21 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -455,12 +455,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
-            //String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
-            String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
+            String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
+            //String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepun(DateUtil.format(new Date(),"yyyy-MM-dd"));
+            punchcardrecorddetailmapper.deletetepun(thisDate);
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepundet(DateUtil.format(new Date(),"yyyy-MM-dd"));
+            punchcardrecorddetailmapper.deletetepundet(thisDate);
             //String doorIDList = "3,5";//3:门1；5:门2；7:门3
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=2020-01-01&endDate=2020-05-01&doorIDList=" + doorIDList;
             //String url = "http://192.168.10.57:9950/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + data + "&endDate=" + data + "&doorIDList=" + doorIDList;
@@ -783,7 +783,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
     }
     //系统服务--取当天打卡记录
-    @Scheduled(cron="0 35 21 * * ?")//正式时间每天下午四点执行  GBB add
+    @Scheduled(cron="0 0 16 * * ?")//正式时间每天下午四点执行  GBB add
     public void selectattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
