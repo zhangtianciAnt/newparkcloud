@@ -155,24 +155,17 @@ public class OvertimeServiceImpl implements OvertimeService {
                                         overtimeHours = String.valueOf(Double.valueOf(String.valueOf(result1))/ 60 / 60 / 1000);
                                     }
 
-                                    if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES))
+                                    if(overtime.getStatus().equals("7"))
                                     {
-                                        //状态是4 ，取预定
-                                        if(Double.valueOf(overtimeHours) > Double.valueOf(reserveoverTime))
-                                        {
-                                            overtimeHours = String.valueOf(Double.valueOf(reserveoverTime));
-                                        }
-                                        else
-                                        {
-                                            overtimeHours = String.valueOf(Double.valueOf(overtimeHours));
-                                        }
+                                        //状态是7 ，取实际
+                                        overtimeHours = String.valueOf(Double.valueOf(actualoverTime));
                                     }
                                     else
                                     {
-                                        //状态是7 ，取实际
-                                        if(Double.valueOf(overtimeHours) > Double.valueOf(actualoverTime))
+                                        //状态是4 ，取预定B
+                                        if(Double.valueOf(overtimeHours) > Double.valueOf(reserveoverTime))
                                         {
-                                            overtimeHours = String.valueOf(Double.valueOf(actualoverTime));
+                                            overtimeHours = String.valueOf(Double.valueOf(reserveoverTime));
                                         }
                                         else
                                         {
@@ -185,18 +178,7 @@ public class OvertimeServiceImpl implements OvertimeService {
                                         overtimeHours = workhours(time_start,time_end,lunchbreak_start,lunchbreak_end,attend);
                                         overtimeHours = df.format(Math.floor(Double.valueOf(overtimeHours) / (Double.valueOf(strovertime)))*(Double.valueOf(strovertime)));
                                         if(overtime.getOvertimetype().equals("PR001005")){
-                                            if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES))
-                                            {
-                                                if(Double.valueOf(overtimeHours)>= Double.valueOf(reserveoverTime))
-                                                {
-                                                    overtimeHours = reserveoverTime;
-                                                }
-                                                else
-                                                {
-                                                    overtimeHours ="0";
-                                                }
-                                            }
-                                            else
+                                            if(overtime.getStatus().equals("7"))
                                             {
                                                 if(Double.valueOf(overtimeHours) >= Double.valueOf(actualoverTime))
                                                 {
@@ -207,12 +189,9 @@ public class OvertimeServiceImpl implements OvertimeService {
                                                     overtimeHours ="0";
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            if(overtime.getStatus().equals(AuthConstants.APPROVED_FLAG_YES))
+                                            else
                                             {
-                                                if(Double.valueOf(overtimeHours) - 4 >= Double.valueOf(reserveoverTime))
+                                                if(Double.valueOf(overtimeHours)>= Double.valueOf(reserveoverTime))
                                                 {
                                                     overtimeHours = reserveoverTime;
                                                 }
@@ -221,11 +200,18 @@ public class OvertimeServiceImpl implements OvertimeService {
                                                     overtimeHours ="0";
                                                 }
                                             }
+                                        }
+                                        else
+                                        {
+                                            if(overtime.getStatus().equals("7"))
+                                            {
+                                                overtimeHours = actualoverTime;
+                                            }
                                             else
                                             {
-                                                if(Double.valueOf(overtimeHours) - 4 >= Double.valueOf(actualoverTime))
+                                                if(Double.valueOf(overtimeHours) - 4 >= Double.valueOf(reserveoverTime))
                                                 {
-                                                    overtimeHours = actualoverTime;
+                                                    overtimeHours = reserveoverTime;
                                                 }
                                                 else
                                                 {
@@ -394,7 +380,7 @@ public class OvertimeServiceImpl implements OvertimeService {
     {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
             String shijiworkHours ="0";
-            if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
+            if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime() || sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
             {
                 long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
                 shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()));
