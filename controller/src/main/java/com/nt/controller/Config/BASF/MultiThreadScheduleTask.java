@@ -185,137 +185,64 @@ public class MultiThreadScheduleTask {
      * @return void
      * @Method selectDeviceUsersCount
      * @Author GJ
-     * @Description ERC大屏7个装置内人数统计
+     * @Description ERC大屏装置人数统计
      * @Date 2020/03/31 11:21
      * @Param
      **/
     @Async
     @Scheduled(fixedDelay = 30000)
     public void selectDeviceUsersCount() throws Exception {
-        // 7个装置人数统计
-        Map<String, Integer> deviceInfoList=new HashMap<>();
-        List userCnt = basfUserInfoMapper.selectDeviceUsersCnt();
-        List<Integer> deviceUserCnt = new ArrayList<>();
+        // 装置人数统计
+        List<SqlAPBCardHolder> userCnt = basfUserInfoMapper.selectDeviceUsersCnt();
+        List<SqlAPBCardHolder> userCntLast =new ArrayList<>();
+        String lastName="";
         if (userCnt.size() > 0) {
+            int j=-1;
             for (int i = 0; i < userCnt.size(); i++) {
-                deviceInfoList.put(((SqlAPBCardHolder) userCnt.get(i)).getApbid(),((SqlAPBCardHolder) userCnt.get(i)).getCnt());
-            }
-            if (deviceInfoList.size() > 0) {
-                //CCP
-                if(deviceInfoList.get("14189") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14189"));
-                }else{
-                    deviceUserCnt.add(0);
+                if(userCnt.get(i).getApbname().contains("（内）")){
+                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
+                    if(i != 0){
+                        if(1!=userCnt.get(i-1).getApbflg()){
+                            userCntLast.get(j).setApbflg(1);
+                            userCntLast.get(j).setOutCnt(0);
+                        }
+                    }
+
+                    String[] strs=userCnt.get(i).getApbname().split("（内）");
+                    tempApb.setApbid(userCnt.get(i).getApbid());
+                    tempApb.setApbname(strs[0]+"装置");
+                    tempApb.setCnt(userCnt.get(i).getCnt());
+
+                    userCnt.get(i).setApbflg(0);
+                    userCnt.get(i).setApbname(strs[0]+"装置");
+                    userCntLast.add(userCnt.get(i));
+                    j=j+1;
+                    lastName=userCnt.get(i).getApbname();
+
+                    if(i==userCnt.size()-1){
+                        userCntLast.get(j).setOutCnt(0);
+                    }
                 }
-                //PTHF
-                if(deviceInfoList.get("14185") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14185"));
-                }else{
-                    deviceUserCnt.add(0);
-                }
-                //Basonat
-                if(deviceInfoList.get("14187") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14187"));
-                }else{
-                    deviceUserCnt.add(0);
-                }
-                //BMW大楼
-                if(deviceInfoList.get("14195") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14195"));
-                }else{
-                    deviceUserCnt.add(0);
-                }
-                //PA6
-                if(deviceInfoList.get("14191") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14191"));
-                }else{
-                    deviceUserCnt.add(0);
-                }
-                //树脂
-                if(deviceInfoList.get("14193") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14193"));
-                }else{
-                    deviceUserCnt.add(0);
-                }
-                //PA6仓库
-                if(deviceInfoList.get("14197") > 0){
-                    deviceUserCnt.add(deviceInfoList.get("14197"));
-                }else{
-                    deviceUserCnt.add(0);
+
+                if(userCnt.get(i).getApbname().contains("（外）")){
+                    String[] strs=userCnt.get(i).getApbname().split("（外）");
+                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
+                    if(i==0 || !lastName.equals(strs[0]+"装置")){
+                        tempApb.setCnt(0);
+                        tempApb.setApbname(strs[0]+"装置");
+                        tempApb.setApbid(userCnt.get(i).getApbid());
+                        userCntLast.add(tempApb);
+                        j=j+1;
+                    }
+                    userCnt.get(i).setApbflg(1);
+                    userCnt.get(i).setApbname(strs[0]+"装置");
+                    userCntLast.get(j).setOutCnt(userCnt.get(i).getCnt());
+                    lastName=userCnt.get(i).getApbname();
                 }
             }
         }
 
-        webSocketVo.setDeviceUsersCountList(deviceUserCnt);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    /**
-     * @return void
-     * @Method selectDeviceOutUsersCount
-     * @Author GJ
-     * @Description ERC大屏7个装置外人数统计
-     * @Date 2020/04/01 09:44
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void selectDeviceOutUsersCount() throws Exception {
-        // 7个装置人数统计
-        Map<String, Integer> deviceInfoList=new HashMap<>();
-        List userCnt = basfUserInfoMapper.selectDeviceOutUsersCnt();
-        List<Integer> deviceOutUserCnt = new ArrayList<>();
-        if (userCnt.size() > 0) {
-            for (int i = 0; i < userCnt.size(); i++) {
-                deviceInfoList.put(((SqlAPBCardHolder) userCnt.get(i)).getApbid(),((SqlAPBCardHolder) userCnt.get(i)).getCnt());
-            }
-            if (deviceInfoList.size() > 0) {
-                //CCP
-                if(deviceInfoList.get("14190") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14190"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-                //PTHF
-                if(deviceInfoList.get("14186") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14186"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-                //Basonat
-                if(deviceInfoList.get("14188") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14188"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-                //BMW大楼
-                if(deviceInfoList.get("14196") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14196"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-                //PA6
-                if(deviceInfoList.get("14192") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14192"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-                //树脂
-                if(deviceInfoList.get("14194") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14194"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-                //PA6仓库
-                if(deviceInfoList.get("14198") > 0){
-                    deviceOutUserCnt.add(deviceInfoList.get("14198"));
-                }else{
-                    deviceOutUserCnt.add(0);
-                }
-            }
-        }
-
-        webSocketVo.setDeviceOutUsersCountList(deviceOutUserCnt);
+        webSocketVo.setDeviceUsersCountList(userCntLast);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

@@ -221,22 +221,10 @@
         ,APBID
         ,APBName
         FROM View_APBCardholder
-		WHERE APBName LIKE '%（内）%'
-		AND CONVERT(varchar,InTime,23)=CONVERT(varchar,GETDATE(),23)
-		GROUP BY
-		APBID,APBName
-    </select>
-
-	<select id="selectDeviceOutUsersCnt" resultType="com.nt.dao_SQL.SqlAPBCardHolder">
-        SELECT
-        Count(*) CNT
-        ,APBID
-        ,APBName
-        FROM View_APBCardholder
-		WHERE APBName LIKE '%（外）%'
-		AND CONVERT(varchar,InTime,23)=CONVERT(varchar,GETDATE(),23)
-		GROUP BY
-		APBID,APBName
+        WHERE (APBName LIKE '%（内）%' OR APBName LIKE '%（外）%')
+        AND CONVERT(varchar,InTime,23)=CONVERT(varchar,GETDATE(),23)
+        GROUP BY
+        APBID,APBName
     </select>
 </mapper>
 

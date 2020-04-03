@@ -21,6 +21,10 @@ public class SqlAPBCardHolder {
 
     private int cnt;
 
+    private int outcnt;
+
+    private int apbflg;
+
     public String getUsertype() {
         return usertype;
     }
@@ -140,5 +144,21 @@ public class SqlAPBCardHolder {
 
     public void setCnt(int cnt) {
         this.cnt = cnt;
+    }
+
+    public int getOutCnt() {
+        return outcnt;
+    }
+
+    public void setOutCnt(int outcnt) {
+        this.outcnt = outcnt;
+    }
+
+    public int getApbflg() {
+        return apbflg;
+    }
+
+    public void setApbflg(int apbflg) {
+        this.apbflg = apbflg;
     }
 }

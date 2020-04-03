@@ -17,6 +17,4 @@ public interface BasfUserInfoMapper {
     List<Integer> selectDeviceUsersCount();
 
     List<SqlAPBCardHolder> selectDeviceUsersCnt();
-
-    List<SqlAPBCardHolder> selectDeviceOutUsersCnt();
 }
