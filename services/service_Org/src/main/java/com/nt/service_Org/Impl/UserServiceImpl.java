@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
 //        }
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
         if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
-                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId())){
+                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())){
             query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
             query = new Query();
