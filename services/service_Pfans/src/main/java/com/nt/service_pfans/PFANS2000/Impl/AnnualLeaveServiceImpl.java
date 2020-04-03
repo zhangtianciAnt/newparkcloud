@@ -1049,7 +1049,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
                         punchcardrecord.setTime_start(Time_start);
-                        punchcardrecord.setTime_end(Time_end);
+                        //punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);

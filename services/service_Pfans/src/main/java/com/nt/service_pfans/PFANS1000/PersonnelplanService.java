@@ -14,10 +14,10 @@ public interface PersonnelplanService {
     List<CustomerInfo> SelectCustomer(String id);
     List<Supplierinfor> getExternal();
     List<ExternalVo> getExpatriatesinfor(String groupid);
-    List<PersonnelPlan> getAll();
+    List<PersonnelPlan> getAll(PersonnelPlan personnelplan) throws Exception;
     PersonnelPlan getOne(String id);
     void update(PersonnelPlan personnelPlan, TokenModel tokenModel);
-    void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) throws LogicalException;
+    void insert(PersonnelPlan personnelPlan, TokenModel tokenModel)throws LogicalException;
 
     List<PersonnelPlan> get(PersonnelPlan personnelPlan);
 }

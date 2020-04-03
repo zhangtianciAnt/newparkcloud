@@ -129,6 +129,8 @@ public class CustomerInfo extends BaseModel {
          * teamname
          */
         private String teamname;
+
+        private List<OtherOrgs> otherorgs;
         /**
          * 办公电话
          */
@@ -639,6 +641,22 @@ public class CustomerInfo extends BaseModel {
         private String remark;
     }
 
+    @Data
+    public static class OtherOrgs{
+
+        /**
+         * centerid
+         */
+        private String centerid;
+        /**
+         * groupid
+         */
+        private String groupid;
+        /**
+         * teamid
+         */
+        private String teamid;
+    }
     // endregion
     // endregion
 
