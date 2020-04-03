@@ -225,6 +225,8 @@ public class AbNormalServiceImpl implements AbNormalService {
                         List<Attendance> attendancelist = attendanceMapper.select(attendance);
                         DecimalFormat df = new DecimalFormat("######0.00");
 
+                        //检索打卡记录明细表（用用户id，）
+
                         if (attendancelist.size() > 0) {
                             for (Attendance attend : attendancelist) {
                                 WorkingDay workDay = new WorkingDay();
@@ -266,7 +268,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 timeLength = df.format(Double.valueOf(abNormal.getRelengthtime()));
                                 if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
                                 {
-                                    timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
+                                    if (!abNormal.getErrortype().equals("PR013001"))
+                                    {
+                                        timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
+                                    }
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
 
@@ -275,6 +280,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                             attend.setNormal(workinghours);
                                             attend.setAbsenteeism(null);
                                         } else {
+
                                             attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(attend.getAbsenteeism())));
                                             attend.setAbsenteeism(null);
                                         }
@@ -283,6 +289,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     {
                                         attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(timeLength)));
                                         attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
+                                        attend.setNormal(df.format(Math.floor(Double.valueOf(attend.getNormal()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism)));
+                                        if (!(Double.valueOf(attend.getAbsenteeism()) % (Double.valueOf(absenteeism))==0))
+                                        {
+                                            attend.setAbsenteeism(df.format(Math.floor(Double.valueOf(attend.getAbsenteeism()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) ));
+                                        }
                                     }
 
                                 } else if (abNormal.getErrortype().equals("PR013005")) {//年休
