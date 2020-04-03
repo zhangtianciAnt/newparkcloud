@@ -551,10 +551,9 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 timeLength = df.format(Double.valueOf(abNormal.getLengthtime()));
                                 if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
                                 {
-                                    //if(!abNormal.getErrortype().equals("PR013001"))
-                                    //{
-                                        timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
-                                    //}
+                                    if(!abNormal.getErrortype().equals("PR013001")) {
+                                        timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism)) * Double.valueOf(absenteeism) + Double.valueOf(absenteeism));
+                                    }
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
 
@@ -571,6 +570,12 @@ public class AbNormalServiceImpl implements AbNormalService {
                                     {
                                         attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(timeLength)));
                                         attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
+                                        attend.setNormal(df.format(Math.floor(Double.valueOf(attend.getNormal()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism)));
+                                        if (!(Double.valueOf(attend.getAbsenteeism()) % (Double.valueOf(absenteeism))==0))
+                                        {
+                                            attend.setAbsenteeism(df.format(Math.floor(Double.valueOf(attend.getAbsenteeism()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) ));
+                                        }
+
                                     }
 
                                 } else if (abNormal.getErrortype().equals("PR013005")) {//年休
