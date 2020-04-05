@@ -30,7 +30,7 @@ public class Outsidedetail extends BaseModel {
     @Column(name = "USERNAME")
     private String username;
 
-    @Column(name = "RANK")
+    @Column(name = "`RANK`")
     private String rank;
 
     @Column(name = "MAILADDRESS")
