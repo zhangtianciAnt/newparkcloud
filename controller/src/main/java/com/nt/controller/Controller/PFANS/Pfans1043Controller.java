@@ -27,7 +27,7 @@ public class Pfans1043Controller {
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         ThemeInfor themeinfor = new ThemeInfor();
-        themeinfor.setOwners(tokenModel.getOwnerList());
+        //themeinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(themeinforservice.list(themeinfor));
     }
 
