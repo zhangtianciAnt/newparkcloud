@@ -27,7 +27,7 @@ public class Pfans6007Controller {
     public ApiResult getvariousfunds(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Variousfunds variousfunds = new Variousfunds();
-        //variousfunds.setOwners(tokenModel.getOwnerList());
+        variousfunds.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(variousfundsService.getvariousfunds(variousfunds));
     }
 

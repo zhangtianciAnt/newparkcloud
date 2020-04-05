@@ -134,7 +134,6 @@ public class Pfans5008Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagement.setOwners(tokenModel.getOwnerList());
-        logmanagement.setOwner(tokenModel.getUserId());
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
     }
 

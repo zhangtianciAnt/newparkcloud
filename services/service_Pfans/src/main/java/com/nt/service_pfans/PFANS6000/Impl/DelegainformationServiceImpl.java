@@ -31,8 +31,8 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 ////    }
 
     @Override
-    public List<DelegainformationVo> getYears(String year) throws Exception {
-        return delegainformationMapper.getYears(year);
+    public List<DelegainformationVo> getYears(String year,List<String> owners) throws Exception {
+        return delegainformationMapper.getYears(year,owners);
     }
 
     @Override
