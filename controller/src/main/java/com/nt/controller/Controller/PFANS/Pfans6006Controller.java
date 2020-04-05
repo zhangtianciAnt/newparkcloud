@@ -52,6 +52,8 @@ public class Pfans6006Controller {
 //    }
     @RequestMapping(value = "/getYears", method = {RequestMethod.GET})
     public ApiResult getYears(String year, HttpServletRequest request) throws Exception {
-        return ApiResult.success(deleginformationService.getYears(year));
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<String> owners = tokenModel.getOwnerList();
+        return ApiResult.success(deleginformationService.getYears(year,owners));
     }
 }

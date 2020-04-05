@@ -23,7 +23,16 @@
                 INNER JOIN projectsystem b ON a.PROJECTSYSTEM_ID = b.PROJECTSYSTEM_ID
                 INNER JOIN companyprojects c ON a.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
                 INNER JOIN expatriatesinfor d ON a.SUPPLIERINFOR_ID = d.SUPPLIERINFOR_ID
-        WHERE a.year = #{year}
+        WHERE 1 = 1
+        <if test="owners != null and owners.size() > 0">
+            and (a.owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        and a.year = #{year}
     </select>
 </mapper>
 
