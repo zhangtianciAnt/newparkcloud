@@ -651,6 +651,18 @@ private String upFlg = "0";
                                     workflowstep.preInsert(tokenModel);
                                     workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                     workflowstepMapper.insert(workflowstep);
+
+                                    // 如果节点为最后一个节点时，结束流程
+                                    if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                        workflowinstance.setModifyby(tokenModel.getUserId());
+                                        workflowinstance.setModifyon(new Date());
+                                        workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                        workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                        outOperationWorkflowVo.setState("2");
+                                        outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                        return outOperationWorkflowVo;
+                                    }
+
                                     continue;
                                 }
                             } else {
@@ -667,6 +679,18 @@ private String upFlg = "0";
                                 workflowstep.preInsert(tokenModel);
                                 workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                 workflowstepMapper.insert(workflowstep);
+
+                                // 如果节点为最后一个节点时，结束流程
+                                if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                    workflowinstance.setModifyby(tokenModel.getUserId());
+                                    workflowinstance.setModifyon(new Date());
+                                    workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                    workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                    outOperationWorkflowVo.setState("2");
+                                    outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                    return outOperationWorkflowVo;
+                                }
+
                                 continue;
                             }
                         }
@@ -695,6 +719,18 @@ private String upFlg = "0";
                                         workflowstep.preInsert(tokenModel);
                                         workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                         workflowstepMapper.insert(workflowstep);
+
+                                        // 如果节点为最后一个节点时，结束流程
+                                        if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                            workflowinstance.setModifyby(tokenModel.getUserId());
+                                            workflowinstance.setModifyon(new Date());
+                                            workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                            workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                            outOperationWorkflowVo.setState("2");
+                                            outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                            return outOperationWorkflowVo;
+                                        }
+
                                         continue;
                                     }
                                 }else {
@@ -711,6 +747,18 @@ private String upFlg = "0";
                                     workflowstep.preInsert(tokenModel);
                                     workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                     workflowstepMapper.insert(workflowstep);
+
+                                    // 如果节点为最后一个节点时，结束流程
+                                    if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                        workflowinstance.setModifyby(tokenModel.getUserId());
+                                        workflowinstance.setModifyon(new Date());
+                                        workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                        workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                        outOperationWorkflowVo.setState("2");
+                                        outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                        return outOperationWorkflowVo;
+                                    }
+
                                     continue;
                                 }
                             }else{
@@ -773,6 +821,18 @@ private String upFlg = "0";
 
                                         workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                                         workflowstepMapper.insert(workflowstep);
+
+                                        // 如果节点为最后一个节点时，结束流程
+                                        if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                            workflowinstance.setModifyby(tokenModel.getUserId());
+                                            workflowinstance.setModifyon(new Date());
+                                            workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                            workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                            outOperationWorkflowVo.setState("2");
+                                            outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                            return outOperationWorkflowVo;
+                                        }
+
                                         continue;
                                     }
                                 }
@@ -905,7 +965,7 @@ private String upFlg = "0";
     }
 
     @Override
-    public void StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception {
+    public OutOperationWorkflowVo StartWorkflow(StartWorkflowVo startWorkflowVo, TokenModel tokenModel) throws Exception {
 
         // 创建流程实例
         Workflow workflow = workflowMapper.selectByPrimaryKey(startWorkflowVo.getWorkFlowId());
@@ -938,7 +998,7 @@ private String upFlg = "0";
         }
 
         // 生成节点操作
-        cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
+       return cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
                 startWorkflowVo.getDataUrl(), startWorkflowVo.getMenuUrl(), workflow.getWorkflowname(), startWorkflowVo.getUserList());
 
     }
