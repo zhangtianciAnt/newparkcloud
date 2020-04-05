@@ -13,5 +13,5 @@ public interface DeleginformationService {
 
 //    List<DelegainformationVo> getDelegainformation() throws Exception;
 
-    List<DelegainformationVo> getYears(String year) throws Exception;
+    List<DelegainformationVo> getYears(String year,List<String> owners) throws Exception;
 }

@@ -64,12 +64,11 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         lunarbonus.setSubject(lunardetailVo.getSubjectmon());
         lunarbonus.setUser_id(lunardetailVo.getUser_id());
         List<Lunarbonus> List = lunarbonusMapper.select(lunarbonus);
-        if(List.size() == 0){
+        if (List.size() == 0) {
             lunarbonus.preInsert(tokenModel);
             lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
             lunarbonusMapper.insert(lunarbonus);
-        }
-        else {
+        } else {
             throw new LogicalException("不能重复评价");
         }
 
@@ -105,29 +104,27 @@ public class LunarbonusServiceImpl implements LunarbonusService {
 
     //获取详情列表初始数据
     @Override
-    public LunarAllVo getOne(String id,TokenModel tokenModel) throws Exception {
+    public LunarAllVo getOne(String id, TokenModel tokenModel) throws Exception {
         LunarAllVo LunarAllVo = new LunarAllVo();
         LunarAllVo.setLunarbonus(lunarbonusMapper.selectByPrimaryKey(id));
         Lunardetail lunardetailCondition = new Lunardetail();
         lunardetailCondition.setLunarbonus_id(id);
-        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId())){
+        if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId())) {
             List<String> users = new ArrayList<String>();
             Query cusquery = new Query();
             cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
 
-            if(cus != null && cus.getUserinfo() != null){
+            if (cus != null && cus.getUserinfo() != null) {
                 List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
                 String teamid = cus.getUserinfo().getTeamid();
                 String groupid = cus.getUserinfo().getGroupid();
                 String centerid = cus.getUserinfo().getCenterid();
-                if(!StringUtils.isNullOrEmpty(teamid)){
+                if (!StringUtils.isNullOrEmpty(teamid)) {
                     lunardetailCondition.setTeam_id(teamid);
-                }
-                else if(!StringUtils.isNullOrEmpty(groupid)){
+                } else if (!StringUtils.isNullOrEmpty(groupid)) {
                     lunardetailCondition.setGroup_id(groupid);
-                }
-                else if(!StringUtils.isNullOrEmpty(centerid)){
+                } else if (!StringUtils.isNullOrEmpty(centerid)) {
                     lunardetailCondition.setCenter_id(centerid);
                 }
             }
@@ -138,6 +135,6 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         Lunarbasic lunarbasicConditon = new Lunarbasic();
         lunarbasicConditon.setLunarbonus_id(id);
         LunarAllVo.setLunarbasic(lunarbasicMapper.select(lunarbasicConditon).stream().sorted(Comparator.comparing(Lunarbasic::getIndex)).collect(Collectors.toList()));
-        return LunarAllVo ;
+        return LunarAllVo;
     }
 }

@@ -44,6 +44,7 @@ public class Pfans6004Controller {
     public ApiResult getWithoutAuth(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
@@ -86,16 +87,6 @@ public class Pfans6004Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         expatriatesinforService.createexpatriatesinforApply(expatriatesinfor, tokenModel);
         return ApiResult.success();
-    }
-
-    @RequestMapping(value = "/getSupplierNameList", method = {RequestMethod.POST})
-    public ApiResult getSupplierNameList(@RequestBody Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
-        if (supplierinfor == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        supplierinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(supplierinforService.getSupplierNameList(supplierinfor, request));
     }
 
     @RequestMapping(value = "/expimport", method = {RequestMethod.POST})
