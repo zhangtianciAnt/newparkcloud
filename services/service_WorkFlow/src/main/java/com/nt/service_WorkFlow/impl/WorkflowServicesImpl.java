@@ -713,6 +713,39 @@ private String upFlg = "0";
                                     workflowstepMapper.insert(workflowstep);
                                     continue;
                                 }
+                            }else{
+                                if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
+                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
+                                    if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                        throw new LogicalException("无上级人员信息！");
+                                    }
+
+                                    Workflowstep workflowstep = new Workflowstep();
+                                    workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                                    workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                                    workflowstep.setName(item.getNodename());
+                                    workflowstep.setItemid(currentOrg.getUser());
+                                    workflowstep.preInsert(tokenModel);
+                                    workflowstepMapper.insert(workflowstep);
+
+
+                                    // 创建代办
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    params.add(workflowname);
+                                    toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                                    toDoNotice.setInitiator(tokenModel.getUserId());
+                                    toDoNotice.setContent(item.getNodename());
+                                    toDoNotice.setDataid(dataId);
+                                    toDoNotice.setUrl(url);
+                                    toDoNotice.setWorkflowurl(workFlowurl);
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(currentOrg.getUser());
+                                    toDoNoticeService.save(toDoNotice);
+                                    continue;
+
+                                }
                             }
                         }
 

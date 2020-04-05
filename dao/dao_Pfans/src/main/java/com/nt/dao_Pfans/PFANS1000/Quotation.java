@@ -86,8 +86,8 @@ public class Quotation extends BaseModel {
     @Column(name = "TEL")
     private String tel;
 
-    @Column(name = "'SYSTEM'")
-    private String system;
+    @Column(name = "CONSTITUTIONCHART")
+    private String constitutionchart;
 
     @Column(name = "CLAIMDATETIME")
     private String claimdatetime;
