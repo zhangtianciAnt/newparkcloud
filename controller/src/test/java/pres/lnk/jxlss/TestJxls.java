@@ -1,6 +1,14 @@
 package pres.lnk.jxlss;
 
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+import com.nt.service_pfans.PFANS2000.Impl.AnnualLeaveServiceImpl;
 import com.nt.utils.Excel2Pdf;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.DbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import pres.lnk.jxlss.demo.Employee;
 import pres.lnk.jxlss.demo.Experience;
 
@@ -28,8 +43,31 @@ public class TestJxls {
 
     @Before
     public void init() {
-        MongoDbFactory facotry = new SimpleMongoDbFactory(new MongoClient("59.46.185.130", 27017), "PFANS");
-        template = new MongoTemplate(facotry);
+
+        String host = "59.46.185.130";
+        int port = 27017;
+        String userName = "pfansroot";
+        String password = "password1!";
+        String databaseName = "PFANS";
+
+// 权限验证 MongoCredential
+        MongoCredential credential = MongoCredential.createScramSha1Credential(
+                userName, databaseName, password.toCharArray());
+        ServerAddress serverAddress = new ServerAddress(host, port);
+        MongoClient mongoClient = new MongoClient(serverAddress,
+                Arrays.asList(credential));
+        SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(
+                mongoClient, databaseName);
+        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
+        MappingMongoConverter converter = new MappingMongoConverter(
+                dbRefResolver, new MongoMappingContext());
+// 不插入_class
+        converter.setTypeMapper(new DefaultMongoTypeMapper(null));
+        template = new MongoTemplate(mongoDbFactory,
+                converter);
+
+//        MongoDbFactory facotry = new SimpleMongoDbFactory(new MongoClient("59.46.185.130", 27017), "PFANS");
+//        template = new MongoTemplate(facotry);
     }
 
     @Test
@@ -42,15 +80,21 @@ public class TestJxls {
 //        data.put("educationList",educationList);
 //        data.put("workList",workList);
         //ExcelOutPutUtil.OutPut("123","employee.xlsx",data,response);
-//        List<CustomerInfo> rst = new ArrayList<CustomerInfo>();
-//        ExcelReader reader = ExcelUtil.getReader("d:/导入用户管理.xlsx");
-//        List<Map<String,Object>> readAll = reader.readAll();
-//        String i = "" ;
-//        for(Map<String,Object> item :readAll){
-//                        Query query = new Query();
-//            query.addCriteria(Criteria.where("userinfo.customername").is(item.get("氏名")));
-//            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
-//            if(customerInfos.size() > 0){
+        List<CustomerInfo> rst = new ArrayList<CustomerInfo>();
+        ExcelReader reader = ExcelUtil.getReader("d:/财务编码更新.xlsx");
+        List<Map<String,Object>> readAll = reader.readAll();
+        ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+        String i = "" ;
+        for(Map<String,Object> item :readAll) {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userinfo.customername").is(item.get("name")));
+            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
+            if(customerInfos.size() > 0){
+                Map<String, Object> row1 = new LinkedHashMap<>();
+                row1.put("id", customerInfos.get(0).get_id());
+                row1.put("name", customerInfos.get(0).getUserinfo().getCustomername());
+                row1.put("code", item.get("code"));
+                rows.add(row1);
 //                CustomerInfo customerInfo = customerInfos.get(0);
 //                customerInfo.getUserinfo().setSex(Convert.toStr(item.get("性别")));
 //                customerInfo.getUserinfo().setBirthday(Convert.toStr(item.get("生年月日")));
@@ -97,20 +141,20 @@ public class TestJxls {
 //                customerInfos.get(0).getUserinfo().setGroupname(item.get("gn").toString());
 //                customerInfos.get(0).getUserinfo().setTeamname(item.get("tn").toString());
 //                template.save(customerInfos.get(0));
-//            }
+            }else{
+                Map<String, Object> row1 = new LinkedHashMap<>();
+                row1.put("id", "无此用户");
+                row1.put("name", item.get("name"));
+                row1.put("code", item.get("code"));
+                rows.add(row1);
+            }
 //
 //        }
+        }
 
-//        ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
-//        for(CustomerInfo item:rst){
-//            Map<String, Object> row1 = new LinkedHashMap<>();
-//            row1.put("id", item.get_id());
-//            row1.put("name", item.getUserinfo().getCustomername());
-//            rows.add(row1);
-//        }
-//        ExcelWriter writer = ExcelUtil.getWriter("d:/1111.xlsx");
-//        writer.write(rows, true);
-//        writer.close();
+        ExcelWriter writer = ExcelUtil.getWriter("d:/结果.xlsx");
+        writer.write(rows, true);
+        writer.close();
 
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("usertype").ne("1"));
@@ -139,7 +183,9 @@ public class TestJxls {
 ////
 //        Excel2Pdf pdf = new Excel2Pdf(objects , fos);
 //        pdf.convert();
-        Excel2Pdf.excel2pdf("D:\\仮出金.xls","D:\\仮出金.pdf");
+//        Excel2Pdf.excel2pdf("D:\\仮出金.xls","D:\\仮出金.pdf");
+//        AnnualLeaveService a = new AnnualLeaveServiceImpl();
+//        a.insertpunchcard(0);
     }
 
     private static Employee getEmployee() {

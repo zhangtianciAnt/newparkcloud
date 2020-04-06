@@ -100,7 +100,6 @@ on l.PROJECT_ID = c.COMPANYPROJECTS_ID
 where c.GROUP_ID = #{groupid}
 and year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
- and l.CONFIRMSTATUS = '1'
  group by `code`,c.PROJECT_NAME
 
 union all
