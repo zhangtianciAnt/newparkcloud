@@ -595,18 +595,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                             }
 
-//                                            if (ab.getErrortype().equals("PR013001")) {//外出
-//                                                //ad.setNormal(strlengthtime);
-//                                                //外出大于等于15分
-//                                                if (Double.valueOf(strlengthtime) %  (Double.valueOf(lateearlyleave))==0) {
-//                                                    //欠勤里扣除外出时间
-//                                                    ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism() == null?"0":ad.getAbsenteeism())-Double.valueOf(strlengthtime)));
-//                                                }
-//                                                else
-//                                                {
-//                                                    ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism() == null?"0":ad.getAbsenteeism())-Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave)));
-//                                                }
-//                                            } else
+                                            if (ab.getErrortype().equals("PR013001")) {//外出
+                                                //ad.setNormal(strlengthtime);
+                                                //外出大于等于15分
+                                                if (Double.valueOf(strlengthtime) %  (Double.valueOf(lateearlyleave))==0) {
+                                                    //欠勤里扣除外出时间
+                                                    ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism() == null?"0":ad.getAbsenteeism())-Double.valueOf(strlengthtime)));
+                                                }
+                                                else
+                                                {
+                                                    ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism() == null?"0":ad.getAbsenteeism())-Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave)));
+                                                }
+                                            } else
                                             if (ab.getErrortype().equals("PR013005")) {//年休
                                                 if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                                     strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
@@ -1068,7 +1068,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                             {
                                                                 ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave) ));
                                                             }
-                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime)));
+                                                            if(Double.valueOf(ad.getAbsenteeism())>0)
+                                                            {
+                                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime)));
+                                                            }
+                                                            else
+                                                            {
+                                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) ));
+                                                            }
                                                         }
                                                         else
                                                         {
@@ -1182,21 +1189,21 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         //是否是工作日，青年节，妇女节，休日
                                         ad.setAbsenteeism(workinghours);
 
-//                                        if (ab.getErrortype().equals("PR013001")) {//外出
-//                                            if (ad.getNormal() != null && !ad.getNormal().isEmpty()) {
-//                                                strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getNormal())));
-//                                            }
-//                                            //外出大于等于15分
-//                                            if (Double.valueOf(strlengthtime) %  (Double.valueOf(lateearlyleave))==0) {
-//                                                //欠勤里扣除外出时间
-//                                                strlengthtime=df.format(Double.valueOf(ad.getAbsenteeism())-Double.valueOf(strlengthtime));
-//                                            }
-//                                            else
-//                                            {
-//                                                strlengthtime=df.format(Double.valueOf(ad.getAbsenteeism())-Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave));
-//                                            }
-//                                            ad.setAbsenteeism(strlengthtime);
-//                                        } else
+                                        if (ab.getErrortype().equals("PR013001")) {//外出
+                                            if (ad.getNormal() != null && !ad.getNormal().isEmpty()) {
+                                                strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getNormal())));
+                                            }
+                                            //外出大于等于15分
+                                            if (Double.valueOf(strlengthtime) %  (Double.valueOf(lateearlyleave))==0) {
+                                                //欠勤里扣除外出时间
+                                                strlengthtime=df.format(Double.valueOf(ad.getAbsenteeism())-Double.valueOf(strlengthtime));
+                                            }
+                                            else
+                                            {
+                                                strlengthtime=df.format(Double.valueOf(ad.getAbsenteeism())-Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave));
+                                            }
+                                            ad.setAbsenteeism(strlengthtime);
+                                        } else
                                         if (ab.getErrortype().equals("PR013005")) {//年休
                                             if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                                 strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
