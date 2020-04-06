@@ -74,10 +74,10 @@ public class Pfans1027Controller {
         }
         Map<String, Object> data = new HashMap<>();
         data.put("qu",qu.getQuotation());
-        data.put("qlist",qu.getPersonfee());
         data.put("qulist",qu.getOthpersonfee());
         data.put("qualist",qu.getFruit());
-        data.put("num",qu.getNumbercounts());
+        data.put("num", qu.getNumbercounts());
+        data.put("qlist", qu.getPersonfee());
         if(qq.length > 0){
             data.put("statime",qq);
         } else {

@@ -100,7 +100,7 @@ public class Pfans5013Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate,tokenModel.getOwnerList()));
+        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate,tokenModel));
     }
 
     /**
@@ -220,6 +220,7 @@ public class Pfans5013Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         CompanyProjects companyProjects = new CompanyProjects();
         companyProjects.setOwners(tokenModel.getOwnerList());
+        companyProjects.setOwner(tokenModel.getUserId());
         return ApiResult.success(companyProjectsService.getSiteList(companyProjects));
     }
 

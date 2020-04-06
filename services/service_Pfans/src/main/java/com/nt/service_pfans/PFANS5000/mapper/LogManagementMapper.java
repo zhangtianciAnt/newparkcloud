@@ -13,7 +13,7 @@ import java.util.List;
 public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
-    List<LogmanagementConfirmVo> getProjectList(@Param("owners")List<String> owners);
+    List<LogmanagementConfirmVo> getProjectList(@Param("owners")List<String> owners,@Param("userid")String userid);
 
     List<LogmanagementVo2> getcheckList();
 

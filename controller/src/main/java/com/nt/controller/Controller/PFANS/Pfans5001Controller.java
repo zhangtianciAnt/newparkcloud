@@ -105,7 +105,7 @@ public class Pfans5001Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate,tokenModel.getOwnerList()));
+        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate,tokenModel));
     }
 
     /**
@@ -226,6 +226,15 @@ public class Pfans5001Controller {
         CompanyProjects companyProjects = new CompanyProjects();
         companyProjects.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(companyProjectsService.getSiteList(companyProjects));
+    }
+
+    @RequestMapping(value="/getSiteList3", method={RequestMethod.GET})
+    public ApiResult getSiteList3(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        CompanyProjects companyProjects = new CompanyProjects();
+        companyProjects.setOwners(tokenModel.getOwnerList());
+        companyProjects.setOwner(tokenModel.getUserId());
+        return ApiResult.success(companyProjectsService.getSiteList2(companyProjects));
     }
 
     @RequestMapping(value="/getSiteList2", method={RequestMethod.GET})
