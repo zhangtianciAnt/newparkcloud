@@ -101,6 +101,11 @@ public class Overtime extends BaseModel {
      */
     @Column(name = "RECOGNITIONSTATE")
     private String recognitionstate;
+    /**
+     * 加班时间合计
+     */
+    @Column(name = "WORKTIME")
+    private String worktime;
 }
 
 
