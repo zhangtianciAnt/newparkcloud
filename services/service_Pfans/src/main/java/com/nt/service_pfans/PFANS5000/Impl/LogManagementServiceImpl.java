@@ -78,13 +78,13 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<LogmanagementConfirmVo> getProjectList(String StrFlg,String strDate) throws Exception {
+    public List<LogmanagementConfirmVo> getProjectList(String StrFlg,String strDate,List<String> owners) throws Exception {
         List<LogmanagementConfirmVo> Result = new ArrayList<LogmanagementConfirmVo>();
         if(StrFlg.equals("1")){
-            Result = logmanagementmapper.getProjectList();
+            Result = logmanagementmapper.getProjectList(owners);
         }
         else{
-            Result = logmanagementmapper.getunProjectList(strDate);
+            Result = logmanagementmapper.getunProjectList(strDate,owners);
         }
 
         return Result;

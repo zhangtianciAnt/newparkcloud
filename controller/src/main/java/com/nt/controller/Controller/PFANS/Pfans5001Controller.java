@@ -104,7 +104,8 @@ public class Pfans5001Controller {
         if (StrFlg == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate));
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate,tokenModel.getOwnerList()));
     }
 
     /**

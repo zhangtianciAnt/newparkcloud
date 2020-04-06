@@ -13,7 +13,7 @@ import java.util.List;
 public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
-    List<LogmanagementConfirmVo> getProjectList();
+    List<LogmanagementConfirmVo> getProjectList(@Param("owners")List<String> owners);
 
     List<LogmanagementVo2> getcheckList();
 
@@ -21,7 +21,7 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
 
     List<LogmanagementVo2> getcheckList3();
 
-    List<LogmanagementConfirmVo> getunProjectList(@Param("StrDate") String StrDate);
+    List<LogmanagementConfirmVo> getunProjectList(@Param("StrDate") String StrDate,@Param("owners")List<String> owners);
 
     List<LogmanagementConfirmVo> getCenterList();
 

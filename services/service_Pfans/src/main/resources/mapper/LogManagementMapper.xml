@@ -2,59 +2,80 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper">
     <select id="getDataList" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-		SELECT * FROM (
-			SELECT * FROM  logmanagement
-			)a
-		ORDER BY a.log_date,a.TIME_START;
-	</select>
+        SELECT *
+        FROM (
+                 SELECT *
+                 FROM logmanagement
+             ) a
+        ORDER BY a.log_date,a.TIME_START;
+    </select>
     <select id="gettlist" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-		select * from logmanagement where HAS_PROJECT = '02' ;
-	</select>
+        select *
+        from logmanagement
+        where HAS_PROJECT = '02';
+    </select>
 
     <select id="getProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
-		select companyprojects_id as projectid,numbers,project_name as projectname,logm.confirm,logm.unconfirm from companyprojects
-		left join (
-			select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
-				(select project_id,
-				case when confirmstatus = '1' then sum(TIME_START) end  as confirm,
-				case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end  as unconfirm
-				from logmanagement
-				where status = '0'
-				group by project_id,confirmstatus
-				) log
-			group by project_id
-		) logm
-		on logm.project_id = companyprojects.companyprojects_id
-		where status = '4'
-	</select>
+        select companyprojects_id as projectid,numbers,project_name as projectname,logm.confirm,logm.unconfirm from
+        companyprojects
+        left join (
+        select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
+        (select project_id,
+        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        from logmanagement
+        where status = '0'
+        group by project_id,confirmstatus
+        ) log
+        group by project_id
+        ) logm
+        on logm.project_id = companyprojects.companyprojects_id
+        where status = '4'
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+    </select>
 
     <select id="getunProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
-		select createby as projectid,sum(confirm) as confirm,sum(unconfirm) as unconfirm from (
-			select createby,
-					case when confirmstatus = '1' then sum(TIME_START) end  as confirm,
-					case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end  as unconfirm
-					from logmanagement
-					where status = '0'
-					and project_id = ''
-					and date_format(LOG_DATE, '%Y-%m') = #{StrDate}
-					group by createby,confirmstatus
-		) logm
-		group by createby
-	</select>
+        select createby as projectid,sum(confirm) as confirm,sum(unconfirm) as unconfirm from (
+        select createby,
+        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        from logmanagement
+        where status = '0'
+        and project_id = ''
+        and date_format(LOG_DATE, '%Y-%m') = #{StrDate}
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        group by createby,confirmstatus
+        ) logm
+        group by createby
+    </select>
 
     <select id="getTimestart" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo">
-		select  info.createby,group_concat(info.logdate) as logdate ,group_concat(info.timestart) as timestart
-		from  (
-			select createby,date_format(log_date,'%Y-%m-%d') as logdate,sum(time_start) as timestart
-			from logmanagement
-			where confirmstatus = '0'
-			and project_id = #{project_id}
-			and date_format(LOG_DATE, '%Y-%m-%d')
-	    	between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
-			group by createby,log_date
-		 ) info
-		group by  info.createby
-	</select>
+        select info.createby,group_concat(info.logdate) as logdate,group_concat(info.timestart) as timestart
+        from (
+                 select createby,date_format(log_date, '%Y-%m-%d') as logdate,sum(time_start) as timestart
+                 from logmanagement
+                 where confirmstatus = '0'
+                   and project_id = #{project_id}
+                   and date_format(LOG_DATE, '%Y-%m-%d')
+                     between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
+                 group by createby,log_date
+             ) info
+        group by info.createby
+    </select>
 
     <select id="getGroupTimestart" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo">
         select info.createby,group_concat(info.logdate) as logdate ,group_concat(info.timestart) as timestart
@@ -79,71 +100,113 @@
     </select>
 
     <select id="updateTimestart">
-	 	update logmanagement set confirmstatus = #{confirmstatus}
-		where
-		confirmstatus = '0'
-		and createby = #{createby}
-	    and date_format(LOG_DATE, '%Y-%m-%d')
-	    between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
-	</select>
+        update logmanagement
+        set confirmstatus = #{confirmstatus}
+        where
+            confirmstatus = '0'
+          and createby = #{createby}
+          and date_format(LOG_DATE, '%Y-%m-%d')
+            between str_to_date(#{starttime}, '%Y-%m-%d %H') and str_to_date(#{endtime}, '%Y-%m-%d %H')
+    </select>
 
 
     <select id="getcheckList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
-		 select
-		 p.COMPANYPROJECTS_ID
-         from projectcontract p
-         inner join companyprojects a
-         on a.companyprojects_id = p.companyprojects_id
-         where
-         a.status = '4' or a.status = '5' or a.status = '6'
-         group by p.COMPANYPROJECTS_ID
-	</select>
+        select
+            p.COMPANYPROJECTS_ID
+        from projectcontract p
+                 inner join companyprojects a
+                            on a.companyprojects_id = p.companyprojects_id
+        where
+            a.status = '4'
+           or a.status = '5'
+           or a.status = '6'
+        group by p.COMPANYPROJECTS_ID
+    </select>
 
     <select id="getcheckList2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
-	select
-    s.COMPANYPROJECTS_ID,
-    min(estimatedstarttime) as estimatedstarttime,
-    max(estimatedendtime) as estimatedendtime,
-   left join (
-   select p.COMPANYPROJECTS_ID
-         from projectcontract p
-         inner join companyprojects a
-         on a.companyprojects_id = p.companyprojects_id
-         where
-         a.status = '4' or a.status = '5' or a.status = '6'
-         group by p.COMPANYPROJECTS_ID) ppp
-    on
-    s.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
-    GROUP BY s.COMPANYPROJECTS_ID
-	</select>
+        select
+            s.COMPANYPROJECTS_ID,
+            min(estimatedstarttime) as estimatedstarttime,
+            max(estimatedendtime)   as estimatedendtime,
+            left
+            join (
+            select
+            p
+            .
+            COMPANYPROJECTS_ID
+            from
+            projectcontract
+            p
+            inner
+            join
+            companyprojects
+            a
+            on
+            a
+            .
+            companyprojects_id =
+            p
+            .
+            companyprojects_id
+            where
+            a
+            .
+            status =
+            '4'
+            or
+            a
+            .
+            status =
+            '5'
+            or
+            a
+            .
+            status =
+            '6'
+            group
+            by
+            p
+            .
+            COMPANYPROJECTS_ID)
+            ppp
+        on
+            s
+            .
+            COMPANYPROJECTS_ID =
+            ppp
+            .
+            COMPANYPROJECTS_ID
+        GROUP BY s.COMPANYPROJECTS_ID
+    </select>
 
     <select id="getcheckList3" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
-   select
-   c.COMPANYPROJECTS_ID,
-   ppp.extensiondate,
-   ppp.CLAIMDATETIME
-   from  companyprojects c
-   left join (
         select
-        p.COMPANYPROJECTS_ID,
-        a.CLAIMDATETIME,
-        a.extensiondate
-        from projectcontract p
-        inner join (
-        select
-        extensiondate,
-        status,
-        max(substring(CLAIMDATETIME,14,10))  as CLAIMDATETIME,
-        contractnumber
-        from contractapplication
-        group by contractapplication_id
-        ) a
-        on a.contractnumber = p.CONTRACT
-        where a.status = '0' and p.status = '0'
-        group by p.COMPANYPROJECTS_ID,a.extensiondate,a.CLAIMDATETIME
-        ) ppp
-   on
-   c.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
-   GROUP BY c.COMPANYPROJECTS_ID,ppp.extensiondate,ppp.CLAIMDATETIME
-	</select>
+            c.COMPANYPROJECTS_ID,
+            ppp.extensiondate,
+            ppp.CLAIMDATETIME
+        from companyprojects c
+                 left join (
+                select
+                    p.COMPANYPROJECTS_ID,
+                    a.CLAIMDATETIME,
+                    a.extensiondate
+                from projectcontract p
+                         inner join (
+                        select
+                            extensiondate,
+                            status,
+                            max(substring(CLAIMDATETIME, 14, 10)) as CLAIMDATETIME,
+                            contractnumber
+                        from contractapplication
+                        group by contractapplication_id
+                    ) a
+                                    on a.contractnumber = p.CONTRACT
+                where a.status = '0'
+                  and p.status = '0'
+                group by p.COMPANYPROJECTS_ID,a.extensiondate,a.CLAIMDATETIME
+            ) ppp
+                           on
+                               c.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
+        GROUP BY c.COMPANYPROJECTS_ID,ppp.extensiondate,ppp.CLAIMDATETIME
+    </select>
 </mapper>
