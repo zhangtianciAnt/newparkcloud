@@ -928,31 +928,49 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             {
                                                 leavetime = String.valueOf(Double.valueOf(ad.getShortsickleave()) + Double.valueOf(ad.getLongsickleave())
                                                         + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
-                                                if(Double.valueOf(shijiworkHours) >= 4 )
+                                                if(Double.valueOf(leavetime)>=8)
                                                 {
-                                                    ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                    ad.setNormal("0");
                                                     ad.setAbsenteeism("0");
                                                 }
                                                 else
                                                 {
-                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHours)));
-                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                    if(Double.valueOf(shijiworkHours) >= 4 )
+                                                    {
+                                                        ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                        ad.setAbsenteeism("0");
+                                                    }
+                                                    else
+                                                    {
+                                                        ad.setNormal(df.format(Double.valueOf(shijiworkHours)));
+                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                    }
                                                 }
+
                                             }
                                             //没有申请代休周末，申请年休
                                             if(j>0 && i == 0)
                                             {
+
                                                 leavetime = String.valueOf(Double.valueOf(ad.getShortsickleave()) + Double.valueOf(ad.getLongsickleave())
                                                         + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getAnnualrest()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
-                                                if(Double.valueOf(shijiworkHours) >= 4 )
+                                                if(Double.valueOf(leavetime)>=8)
                                                 {
-                                                    ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                    ad.setNormal("0");
                                                     ad.setAbsenteeism("0");
                                                 }
                                                 else
                                                 {
-                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHours)));
-                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                    if(Double.valueOf(shijiworkHours) >= 4 )
+                                                    {
+                                                        ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                        ad.setAbsenteeism("0");
+                                                    }
+                                                    else
+                                                    {
+                                                        ad.setNormal(df.format(Double.valueOf(shijiworkHours)));
+                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                    }
                                                 }
                                             }
                                             if(i>0 && j>0)
