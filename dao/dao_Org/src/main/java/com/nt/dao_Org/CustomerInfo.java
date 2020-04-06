@@ -372,6 +372,29 @@ public class CustomerInfo extends BaseModel {
         private List<Personal> houseData;
         private List<Personal> oldageData;
 
+        // ADD-LXX
+        /**
+         * 养老保险基数
+         */
+        private String yanglaoinsurance;
+        /**
+         * 医疗保险基数
+         */
+        private String yiliaoinsurance;
+        /**
+         * 失业保险基数
+         */
+        private String shiyeinsurance;
+        /**
+         * 工伤保险基数
+         */
+        private String gongshanginsurance;
+        /**
+         * 生育保险基数
+         */
+        private String shengyuinsurance;
+        // ADD-LXX
+
     }
     // endregion
 
