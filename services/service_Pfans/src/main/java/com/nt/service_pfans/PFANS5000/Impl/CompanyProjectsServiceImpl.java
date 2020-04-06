@@ -1751,7 +1751,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      */
     @Override
     public List<CompanyProjectsVo2> getSiteList(CompanyProjects companyProjects) throws Exception {
-        return companyprojectsMapper.getList(companyProjects.getOwners());
+        return companyprojectsMapper.getList4(companyProjects.getOwners(),companyProjects.getOwner());
     }
 
     @Override

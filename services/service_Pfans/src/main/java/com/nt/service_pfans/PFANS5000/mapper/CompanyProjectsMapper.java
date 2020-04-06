@@ -15,4 +15,5 @@ public interface CompanyProjectsMapper extends MyMapper<CompanyProjects> {
     List<CompanyProjectsVo2> getList3();
     List<CompanyProjectsVo2> getListVo2();
     List<CompanyProjectsVo3> getCompanyProject(@Param("SyspName") String SyspName);
+    List<CompanyProjectsVo2> getList4(@Param("owners")List<String> owners,@Param("user")String user);
 }
