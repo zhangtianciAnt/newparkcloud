@@ -1058,13 +1058,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     {
                                                         if(resultwork - Double.valueOf(ad.getAbsenteeism())  > 0)
                                                         {
-                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(resultwork)- Double.valueOf(leavetime)));
+                                                            //欠勤 = 8-（实际出勤(出勤-外出时间) +申请异常）
+                                                            ad.setAbsenteeism( df.format(Double.valueOf(workinghours) -
+                                                                    ( Double.valueOf(resultwork) + Double.valueOf(leavetime) -Double.valueOf(ad.getAbsenteeism()) ) ) );
                                                             if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave))==0))
                                                             {
                                                                 ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave) ));
                                                             }
-                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(resultwork) / Double.valueOf(lateearlyleave))*Double.valueOf(lateearlyleave) - Double.valueOf(ad.getAbsenteeism()) ));
-
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime)));
                                                         }
                                                         else
                                                         {
@@ -1077,7 +1078,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                     }
 
-                                    ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) == 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
+                                    ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                     ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null  :df.format(Double.valueOf(ad.getAnnualrest())));
                                     ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null :df.format(Double.valueOf(ad.getDaixiu())));
                                     ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null :df.format(Double.valueOf(ad.getCompassionateleave())));
