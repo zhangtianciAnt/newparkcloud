@@ -1751,7 +1751,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      */
     @Override
     public List<CompanyProjectsVo2> getSiteList(CompanyProjects companyProjects) throws Exception {
-        return companyprojectsMapper.getList(companyProjects.getOwners());
+        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList(companyProjects.getOwners());
+        return rst;
+    }
+
+    @Override
+    public List<CompanyProjectsVo2> getSiteList2(CompanyProjects companyProjects) throws Exception {
+        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList(companyProjects.getOwners());
+        rst.addAll(companyprojectsMapper.getList4(companyProjects.getOwner()));
+        return rst;
     }
 
     @Override

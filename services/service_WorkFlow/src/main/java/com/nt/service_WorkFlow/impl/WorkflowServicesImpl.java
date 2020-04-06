@@ -617,7 +617,7 @@ private String upFlg = "0";
                             List<String> params = new ArrayList<String>();
                             params.add(workflowname);
                             toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                            toDoNotice.setInitiator(tokenModel.getUserId());
+                            toDoNotice.setInitiator(workflowinstance.getOwner());
                             toDoNotice.setContent(item.getNodename());
                             toDoNotice.setDataid(dataId);
                             toDoNotice.setUrl(url);
@@ -783,7 +783,7 @@ private String upFlg = "0";
                                     List<String> params = new ArrayList<String>();
                                     params.add(workflowname);
                                     toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                                    toDoNotice.setInitiator(tokenModel.getUserId());
+                                    toDoNotice.setInitiator(workflowinstance.getOwner());
                                     toDoNotice.setContent(item.getNodename());
                                     toDoNotice.setDataid(dataId);
                                     toDoNotice.setUrl(url);
@@ -791,8 +791,10 @@ private String upFlg = "0";
                                     toDoNotice.preInsert(tokenModel);
                                     toDoNotice.setOwner(currentOrg.getUser());
                                     toDoNoticeService.save(toDoNotice);
-                                    continue;
 
+                                    outOperationWorkflowVo.setState("0");
+                                    outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                    return outOperationWorkflowVo;
                                 }
                             }
                         }
@@ -882,7 +884,7 @@ private String upFlg = "0";
                         List<String> params = new ArrayList<String>();
                         params.add(workflowname);
                         toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                        toDoNotice.setInitiator(tokenModel.getUserId());
+                        toDoNotice.setInitiator(workflowinstance.getOwner());
                         toDoNotice.setContent(item.getNodename());
                         toDoNotice.setDataid(dataId);
                         toDoNotice.setUrl(url);
@@ -913,7 +915,7 @@ private String upFlg = "0";
                             List<String> params = new ArrayList<String>();
                             params.add(workflowname);
                             toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                            toDoNotice.setInitiator(tokenModel.getUserId());
+                            toDoNotice.setInitiator(workflowinstance.getOwner());
                             toDoNotice.setContent(item.getNodename());
                             toDoNotice.setDataid(dataId);
                             toDoNotice.setUrl(url);
