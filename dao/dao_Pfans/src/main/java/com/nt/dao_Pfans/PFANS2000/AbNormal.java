@@ -180,4 +180,10 @@ public class AbNormal extends BaseModel {
     @Column(name = "REVACATIONTYPE")
     private String revacationtype;
 
+    /**
+     * 外出合计时长
+     */
+    @Column(name = "WORKTIME")
+    private String worktime;
+
 }

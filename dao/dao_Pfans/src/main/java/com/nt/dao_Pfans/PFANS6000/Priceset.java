@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -36,6 +37,12 @@ public class Priceset extends BaseModel {
      */
     @Column(name = "USER_ID")
     private String user_id;
+
+    /**
+     * 外协人员姓名
+     */
+    @Transient
+    private  String username;
 
     /**
      *卒業年
