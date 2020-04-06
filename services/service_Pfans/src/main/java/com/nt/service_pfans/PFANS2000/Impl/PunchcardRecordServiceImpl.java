@@ -1,6 +1,8 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -240,7 +242,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             }
             }
 
-            methodAttendance_b(tokenModel,customerInfoList);
+            methodAttendance_b(tokenModel,customerInfoList,-1);
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
@@ -249,7 +251,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         }
     }
 
-    public void methodAttendance_b(TokenModel tokenModel,List<CustomerInfo> customerInfoList) throws Exception
+    public void methodAttendance_b(TokenModel tokenModel,List<CustomerInfo> customerInfoList,int diffday) throws Exception
     {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
@@ -370,7 +372,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             PunchcardRecord punchcardRecord = new PunchcardRecord();
                             punchcardRecord.setStatus("0");
                             punchcardRecord.setUser_id(ad.getUser_id());
-                            punchcardRecord.setPunchcardrecord_date(dateStart);
+                            DateTime temp = DateUtil.offsetDate(dateStart, DateField.DAY_OF_MONTH,diffday);
+                            punchcardRecord.setPunchcardrecord_date(temp);
                             List<PunchcardRecord> punchcardRecordlist = punchcardrecordMapper.select(punchcardRecord);
                             // if有打卡记录  else 没有打卡记录
                             if (punchcardRecordlist.size() > 0) {

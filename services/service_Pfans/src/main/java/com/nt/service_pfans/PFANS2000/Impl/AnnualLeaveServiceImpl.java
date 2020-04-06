@@ -441,11 +441,15 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return map;
     }
 
+    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    public void insertattendanceTask()throws Exception {
+        insertattendance(-1);
+    }
     //系统服务--取打卡记录
     //@Scheduled(cron="10 * * * * ?")//测试用
-    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
-    public void insertattendance() throws Exception {
-        try {
+    @Override
+    public void insertattendance(int diffday) throws Exception {
+//        try {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
             //测试接口 GBB add
@@ -454,7 +458,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
-            cal.add(Calendar.DAY_OF_MONTH, -1);
+            cal.add(Calendar.DAY_OF_MONTH, diffday);
             String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //删除昨天的临时数据
@@ -660,7 +664,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //午餐结束之后进门时间
                                 long to = endl;
                                 //时间出门到进门的相差分钟数
-                                int minutes = (int) ((to - from)/(1000 * 60));
+                                Double minutes = Convert.toDouble((to - from)/(1000 * 60));
 
                                 //超过15分钟翻倍记录（向上取整）
                                 BigDecimal abnormal = new BigDecimal(minutes);
@@ -765,11 +769,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendanceMapper.insert(attendance);
                 }
                 //处理异常和加班数据
-                punchcardRecordService.methodAttendance_b(tokenModel,customerInfoList);
+                punchcardRecordService.methodAttendance_b(tokenModel,customerInfoList,diffday);
             }
-        } catch (Exception e) {
-            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
-        }
+//        } catch (Exception e) {
+//            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
+//        }
     }
     //取object的值
     private String getProperty(Object o, String key) throws Exception{
