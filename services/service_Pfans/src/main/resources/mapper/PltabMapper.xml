@@ -135,7 +135,7 @@ from contractnumbercount contract
 inner join companyprojects company
 on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
 where company.GROUP_ID = #{groupid}
-and contract.DELIVERYDATE = #{year} and contract.DELIVERYDATE = #{month}
+and year(contract.DELIVERYDATE) = #{year} and month(contract.DELIVERYDATE) = #{month}
 GROUP BY code,company.PROJECT_NAME
 ) a
 group by pj

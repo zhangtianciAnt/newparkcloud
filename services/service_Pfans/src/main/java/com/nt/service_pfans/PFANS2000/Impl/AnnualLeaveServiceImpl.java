@@ -780,7 +780,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
     }
     //系统服务--取当天打卡记录
-    @Scheduled(cron="0 0 16 * * ?")//正式时间每天下午四点执行  GBB add
+    @Scheduled(cron="0 45 16 * * ?")//正式时间每天下午4点45分执行  GBB add
     public void selectattendance() throws Exception {
         try {
             TokenModel tokenModel = new TokenModel();
@@ -789,9 +789,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
-            Calendar cal = Calendar.getInstance();
-            //cal.setTime(new Date());
-            //cal.add(Calendar.DAY_OF_MONTH, -1);
             String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；

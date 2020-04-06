@@ -943,6 +943,21 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         String companyprojectsid = UUID.randomUUID().toString();
         CompanyProjects companyProjects = new CompanyProjects();
         BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
+        List<CompanyProjects> companyProjectslist = companyprojectsMapper.selectAll();
+        String year = new SimpleDateFormat("yyyy",Locale.CHINESE).format(Calendar.getInstance().getTime());
+        int number = 0;
+        String Numbers = "";
+        String no = "";
+        if(companyProjectslist.size()>0){
+            for(CompanyProjects comprotect :companyProjectslist){
+                number = number+1;
+            }
+            no=String.format("%2d", number + 1).replace(" ", "00");
+        }else{
+            no = "001";
+        }
+        Numbers = year+ no;
+        companyProjects.setNumbers(Numbers);
         companyProjects.preInsert(tokenModel);
         companyProjects.setCompanyprojects_id(companyprojectsid);
         companyprojectsMapper.insertSelective(companyProjects);
@@ -1751,7 +1766,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      */
     @Override
     public List<CompanyProjectsVo2> getSiteList(CompanyProjects companyProjects) throws Exception {
-        return companyprojectsMapper.getList(companyProjects.getOwners());
+        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList(companyProjects.getOwners());
+        return rst;
+    }
+
+    @Override
+    public List<CompanyProjectsVo2> getSiteList2(CompanyProjects companyProjects) throws Exception {
+        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList(companyProjects.getOwners());
+        rst.addAll(companyprojectsMapper.getList4(companyProjects.getOwner()));
+        return rst;
     }
 
     @Override
