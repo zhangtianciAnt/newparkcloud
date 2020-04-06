@@ -434,7 +434,8 @@ private String upFlg = "0";
         ToDoNotice toDoNotice1 = new ToDoNotice();
         toDoNotice1.setDataid(operationWorkflowVo.getDataId());
         toDoNotice1.setUrl(operationWorkflowVo.getDataUrl());
-        toDoNotice1.setOwner(tokenModel.getUserId());
+//        toDoNotice1.setOwner(tokenModel.getUserId());
+        toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
         for (ToDoNotice item :
                 rst1) {
@@ -617,7 +618,7 @@ private String upFlg = "0";
                             List<String> params = new ArrayList<String>();
                             params.add(workflowname);
                             toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                            toDoNotice.setInitiator(tokenModel.getUserId());
+                            toDoNotice.setInitiator(workflowinstance.getOwner());
                             toDoNotice.setContent(item.getNodename());
                             toDoNotice.setDataid(dataId);
                             toDoNotice.setUrl(url);
@@ -783,7 +784,7 @@ private String upFlg = "0";
                                     List<String> params = new ArrayList<String>();
                                     params.add(workflowname);
                                     toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                                    toDoNotice.setInitiator(tokenModel.getUserId());
+                                    toDoNotice.setInitiator(workflowinstance.getOwner());
                                     toDoNotice.setContent(item.getNodename());
                                     toDoNotice.setDataid(dataId);
                                     toDoNotice.setUrl(url);
@@ -791,8 +792,10 @@ private String upFlg = "0";
                                     toDoNotice.preInsert(tokenModel);
                                     toDoNotice.setOwner(currentOrg.getUser());
                                     toDoNoticeService.save(toDoNotice);
-                                    continue;
 
+                                    outOperationWorkflowVo.setState("0");
+                                    outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                                    return outOperationWorkflowVo;
                                 }
                             }
                         }
@@ -882,7 +885,7 @@ private String upFlg = "0";
                         List<String> params = new ArrayList<String>();
                         params.add(workflowname);
                         toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                        toDoNotice.setInitiator(tokenModel.getUserId());
+                        toDoNotice.setInitiator(workflowinstance.getOwner());
                         toDoNotice.setContent(item.getNodename());
                         toDoNotice.setDataid(dataId);
                         toDoNotice.setUrl(url);
@@ -913,7 +916,7 @@ private String upFlg = "0";
                             List<String> params = new ArrayList<String>();
                             params.add(workflowname);
                             toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                            toDoNotice.setInitiator(tokenModel.getUserId());
+                            toDoNotice.setInitiator(workflowinstance.getOwner());
                             toDoNotice.setContent(item.getNodename());
                             toDoNotice.setDataid(dataId);
                             toDoNotice.setUrl(url);
@@ -934,9 +937,9 @@ private String upFlg = "0";
                     // 当前有未审批节点
                     conditionWorkflowstep = new Workflowstep();
                     conditionWorkflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-                    conditionWorkflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//                    conditionWorkflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                     workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
-                    if (workflowsteplist.size() > 0) {
+                    if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi ->(AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() == 0) {
                         // 结束操作
                         outOperationWorkflowVo.setState("0");
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());

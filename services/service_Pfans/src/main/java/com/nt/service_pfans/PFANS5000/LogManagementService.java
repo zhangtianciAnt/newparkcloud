@@ -22,7 +22,7 @@ public interface LogManagementService {
 
     public List<LogManagement> gettlist() throws Exception;
 
-    public List<LogmanagementConfirmVo> getProjectList(String strFlg,String StrDate) throws Exception;
+    public List<LogmanagementConfirmVo> getProjectList(String strFlg,String StrDate,TokenModel tokenModel) throws Exception;
 
     public List<LogmanagementVo2> getListcheck(LogManagement logmanagement, TokenModel tokenModel) throws Exception;
 
