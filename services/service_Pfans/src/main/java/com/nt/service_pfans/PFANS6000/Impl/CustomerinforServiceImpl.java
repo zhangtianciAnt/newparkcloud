@@ -129,24 +129,24 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                     customerinfor.setAddchinese(Convert.toStr(value.get(13)));
                     customerinfor.setAddjapanese(Convert.toStr(value.get(14)));
                     customerinfor.setAddenglish(Convert.toStr(value.get(15)));
-            }
-                String person=Convert.toStr(value.get(16));
-                if(value.size()>1 && StrUtil.isNotBlank(person)){
-                    person = person.trim();
-                    if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
-                        customerinfor.setPerscale("BP007001");  //改数据
-                    }
-                    if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
-                        customerinfor.setPerscale("BP007002");  //改数据
-                    } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
-                        customerinfor.setPerscale("BP007003");  //改数据
-                    }
-                    if(Integer.parseInt(person)>=500){
-                        customerinfor.setPerscale("BP007004");  //改数据
+                    customerinfor.setThecompany(Convert.toStr(value.get(17)));
+                    customerinfor.setCausecode(Convert.toStr(value.get(18)));
+                    String person=Convert.toStr(value.get(16));
+                    if(value.size()>1 && StrUtil.isNotBlank(person)){
+                        person = person.trim();
+                        if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
+                            customerinfor.setPerscale("BP007001");  //改数据
+                        }
+                        if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
+                            customerinfor.setPerscale("BP007002");  //改数据
+                        } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
+                            customerinfor.setPerscale("BP007003");  //改数据
+                        }
+                        if(Integer.parseInt(person)>=500){
+                            customerinfor.setPerscale("BP007004");  //改数据
+                        }
                     }
                 }
-                customerinfor.setThecompany(Convert.toStr(value.get(17)));
-                customerinfor.setCausecode(Convert.toStr(value.get(18)));
                 customerinfor.preInsert(tokenModel);
                 customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
                 customerinforMapper.insert(customerinfor);
