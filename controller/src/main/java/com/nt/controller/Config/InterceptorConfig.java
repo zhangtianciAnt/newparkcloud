@@ -17,6 +17,8 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/file/**")
                 .excludePathPatterns("/assets/**")
                 .excludePathPatterns("/role/getAppData")
+                .excludePathPatterns("/auth/getAttendance")
+
         ;
     }
 
