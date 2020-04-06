@@ -44,7 +44,7 @@ public class Pfans6004Controller {
     public ApiResult getWithoutAuth(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-        expatriatesinfor.setOwners(tokenModel.getOwnerList());
+//        expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
