@@ -38,6 +38,16 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 
+    @RequestMapping(value="/getSupplier",method = {RequestMethod.GET})
+    public ApiResult getSupplier(Contractapplication contractapplication,HttpServletRequest request) throws Exception{
+        if(contractapplication==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        //不加权限
+        return ApiResult.success(contractapplicationService.get(contractapplication));
+    }
+
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody ContractapplicationVo contractapplication, HttpServletRequest request) throws Exception{
         if (contractapplication == null) {
