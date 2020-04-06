@@ -435,7 +435,7 @@ private String upFlg = "0";
         toDoNotice1.setDataid(operationWorkflowVo.getDataId());
         toDoNotice1.setUrl(operationWorkflowVo.getDataUrl());
 //        toDoNotice1.setOwner(tokenModel.getUserId());
-        workflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
         for (ToDoNotice item :
                 rst1) {
