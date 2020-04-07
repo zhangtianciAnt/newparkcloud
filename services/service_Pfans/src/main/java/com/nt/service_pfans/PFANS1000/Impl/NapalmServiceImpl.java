@@ -31,22 +31,22 @@ public class NapalmServiceImpl implements NapalmService {
     @Override
     public Napalm One(String napalm_id) throws Exception {
         Napalm napalm = napalmMapper.selectByPrimaryKey(napalm_id);
-        String name = "";
-        String [] companyProjectsid = napalm.getPjnamechinese().split(",");
-        if(companyProjectsid.length > 0){
-            for (int i = 0;i < companyProjectsid.length;i++){
-                CompanyProjects companyProjects = new CompanyProjects();
-                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
-                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
-                if(comList.size() > 0){
-                    name = name + comList.get(0).getProject_name() + ",";
-                }
-            }
-            if(!name.equals("")){
-                name = name.substring(0,name.length()-1);
-            }
-        }
-        napalm.setPjnamechinese(name);
+//        String name = "";
+//        String [] companyProjectsid = napalm.getPjnamechinese().split(",");
+//        if(companyProjectsid.length > 0){
+//            for (int i = 0;i < companyProjectsid.length;i++){
+//                CompanyProjects companyProjects = new CompanyProjects();
+//                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
+//                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+//                if(comList.size() > 0){
+//                    name = name + comList.get(0).getProject_name() + ",";
+//                }
+//            }
+//            if(!name.equals("")){
+//                name = name.substring(0,name.length()-1);
+//            }
+//        }
+//        napalm.setPjnamechinese(name);
         return napalm;
     }
 

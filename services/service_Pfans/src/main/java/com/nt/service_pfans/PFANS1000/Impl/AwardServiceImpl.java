@@ -61,22 +61,22 @@ public class AwardServiceImpl implements AwardService {
         stafflist=stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
         Award awa = awardMapper.selectByPrimaryKey(award_id);
         Award award = awardMapper.selectByPrimaryKey(award_id);
-        String name = "";
-        String [] companyProjectsid = award.getPjnamechinese().split(",");
-        if(companyProjectsid.length > 0){
-            for (int i = 0;i < companyProjectsid.length;i++){
-                CompanyProjects companyProjects = new CompanyProjects();
-                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
-                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
-                if(comList.size() > 0){
-                    name = name + comList.get(0).getProject_name() + ",";
-                }
-            }
-            if(!name.equals("")){
-                name = name.substring(0,name.length()-1);
-            }
-        }
-        award.setPjnamechinese(name);
+//        String name = "";
+//        String [] companyProjectsid = award.getPjnamechinese().split(",");
+//        if(companyProjectsid.length > 0){
+//            for (int i = 0;i < companyProjectsid.length;i++){
+//                CompanyProjects companyProjects = new CompanyProjects();
+//                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
+//                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+//                if(comList.size() > 0){
+//                    name = name + comList.get(0).getProject_name() + ",";
+//                }
+//            }
+//            if(!name.equals("")){
+//                name = name.substring(0,name.length()-1);
+//            }
+//        }
+//        award.setPjnamechinese(name);
         awavo.setAward(awa);
         awavo.setAwardDetail(awalist);
         awavo.setStaffDetail(stafflist);
