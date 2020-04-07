@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.Vo.PersonalProjectsVo;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
@@ -136,6 +137,17 @@ public class Pfans5008Controller {
         logmanagement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
     }
+
+    
+    @RequestMapping(value = "/CheckList", method = {RequestMethod.POST})
+    public ApiResult CheckList(@RequestBody Projectsystem projectsystem, HttpServletRequest request) throws Exception {
+        if (projectsystem == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.CheckList(projectsystem));
+    }
+
 
     @RequestMapping(value = "/gettlist", method = {RequestMethod.POST})
     public ApiResult gettlist(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
