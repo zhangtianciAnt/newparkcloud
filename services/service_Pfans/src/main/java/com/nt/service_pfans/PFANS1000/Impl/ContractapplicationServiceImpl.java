@@ -352,6 +352,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         co.setContracttype(citation.getContracttype());
                         co.setGroup_id(citation.getGroup_id());
                         co.setType(citation.getType());
+                        co.setState("有效");
                         if(citation.getType().equals("0")){
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
@@ -371,7 +372,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             if (coListcount.length() == 1) {
                                 number = "000" + coListcount;
                             } else if (coListcount.length() == 2) {
-                                number = "0" + coListcount;
+                                number = "00" + coListcount;
                             } else if (coListcount.length() == 3) {
                                 number = "0" + coListcount;
                             }
