@@ -164,6 +164,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
+                    int numberSum = 0;
+                    for (Contractnumbercount number : countList) {
+                        numberSum += Integer.valueOf(number.getClaimamount());
+                    }
                     Contract contract = new Contract();
                     contract.preInsert(tokenModel);
                     contract.setContract_id(UUID.randomUUID().toString());
@@ -179,7 +183,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.setPjnamechinese(contractapp.getConchinese());
                     contract.setPjnamejapanese(contractapp.getConjapanese());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
-                    contract.setClaimamount(contractapp.getClaimamount());
+                    contract.setClaimamount(String.valueOf(numberSum));
                     contract.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
