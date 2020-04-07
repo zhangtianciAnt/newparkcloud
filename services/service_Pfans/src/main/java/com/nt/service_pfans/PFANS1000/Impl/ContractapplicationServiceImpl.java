@@ -329,6 +329,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Override
     public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
         Map<String, Object> result = new HashMap<>();
+        String newcontractnumber = "";
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
@@ -340,14 +341,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else{
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
-                    if(citation.getType().equals("0")){
-                        String contractnumber = citation.getContractnumber();
-                        String[] str = contractnumber.split("-");
-                        if(str.length == 1){
-                            Contractapplication co = new Contractapplication();
-                            co.setContracttype(citation.getContracttype());
-                            co.setGroup_id(citation.getGroup_id());
-                            co.setType(citation.getType());
+                    String contractnumber = citation.getContractnumber();
+                    String[] str = contractnumber.split("-");
+                    if(str.length == 1){
+                        Contractapplication co = new Contractapplication();
+                        co.setContracttype(citation.getContracttype());
+                        co.setGroup_id(citation.getGroup_id());
+                        co.setType(citation.getType());
+                        if(citation.getType().equals("0")){
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
                             String number = "01";
@@ -357,9 +358,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             } else if (coListcount.length() == 2) {
                                 number = coListcount;
                             }
-                            String newcontractnumber = contractnumber + number;
-                            citation.setContractnumber(newcontractnumber);
+                            newcontractnumber = contractnumber + number;
                         }
+                        else{
+                            List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            String number = "'0001'";
+                            String coListcount = String.valueOf(coList.size() + 1);
+                            if (coListcount.length() == 1) {
+                                number = "000" + coListcount;
+                            } else if (coListcount.length() == 2) {
+                                number = "0" + coListcount;
+                            } else if (coListcount.length() == 3) {
+                                number = "0" + coListcount;
+                            }
+                            newcontractnumber = contractnumber + number;
+                        }
+                        citation.setContractnumber(newcontractnumber);
                     }
                     contractapplicationMapper.insert(citation);
                 }
