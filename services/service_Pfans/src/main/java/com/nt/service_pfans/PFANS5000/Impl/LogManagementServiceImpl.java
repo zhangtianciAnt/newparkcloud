@@ -83,6 +83,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
     @Override
     public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception{
+
         return projectsystemMapper.select(projectsystem);
     }
     @Override
