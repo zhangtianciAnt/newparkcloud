@@ -345,6 +345,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         String[] str = contractnumber.split("-");
                         if(str.length == 1){
                             Contractapplication co = new Contractapplication();
+                            co.setContracttype(citation.getContracttype());
+                            co.setGroup_id(citation.getGroup_id());
                             co.setType(citation.getType());
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
@@ -374,10 +376,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 number.setRowindex(rowindex);
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
+                    number.setContractnumber(cnList.get(0).getContractnumber());
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
                 }
                 else{
                     number.preInsert(tokenModel);
+                    number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
                 }
