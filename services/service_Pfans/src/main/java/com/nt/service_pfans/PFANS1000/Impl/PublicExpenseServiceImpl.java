@@ -98,7 +98,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
 
         String month1 = String.format("%2d", month).replace(" ", "0");
-        invoiceNo = "DL4AP" + year + month1 + day + no;
+        String day1 = String.format("%2d", day).replace(" ", "0");
+        invoiceNo = "DL4AP" + year + month1 + day1 + no;
 
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();

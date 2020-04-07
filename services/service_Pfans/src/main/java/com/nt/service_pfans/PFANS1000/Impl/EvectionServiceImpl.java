@@ -335,36 +335,6 @@ public class EvectionServiceImpl implements EvectionService {
                     }
                 }
             }
-            //计算汇兑损失
-//            if(currencyexchangeList != null){
-//                for(Currencyexchange curren : currencyexchangeList){
-//                    String curRear = curren.getExchangerate();         //兑换汇率
-////                    String curBefore = detail.getcurrency();
-//                    Dictionary dictionary = new Dictionary();
-//                    String accflg = ((AccommodationDetails) detail).getcurrency();
-//                    dictionary.setCode(accflg);
-////                    dictionary.setCode("PJ003002");
-//                    List<Dictionary>  aa = dictionaryService.getDictionaryList(dictionary);
-//                    float curBefore = 0;
-//                    if(aa.size() > 0){
-//                        curBefore = Float.valueOf(aa.get(0).getValue2());
-//                    }
-////                    float curBefore = getPropertyFloat(detail, CURRENCY_KEY);
-//                    float diff = curBefore - getFloatValue(curRear);
-//                    if ( diff != 0 ) {
-//                        TravelCost cur = new TravelCost();
-//                        float isRmb = getPropertyFloat(detail, "rmb");
-//                        cur.setLineamount(String.valueOf(diff * isRmb));
-//                        cur.setBudgetcoding(getProperty(detail, "budgetcoding"));
-//                        cur.setSubjectnumber(getProperty(detail, "subjectnumber"));
-//                        //发票说明
-//                        cur.setRemarks(getProperty(detail, "accountcode"));
-//                        List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(CURRENCY_KEY, new ArrayList<>());
-//                        paddingList.add(cur);
-//                        resultMap.put(CURRENCY_KEY, inputType);
-//                    }
-//                }
-//            }
         }
         if (totalTax != specialMap.get(TOTAL_TAX)) {
             throw new LogicalException("发票合计金额与明细不匹配。");
@@ -529,7 +499,8 @@ public class EvectionServiceImpl implements EvectionService {
         }
 
         String month1 = String.format("%2d", month).replace(" ", "0");
-        invoiceNo = "WY" + year + month1 + day + no;
+        String day1 = String.format("%2d", day).replace(" ", "0");
+        invoiceNo = "WY" + year + month1 + day1 + no;
 
         String evectionid = UUID.randomUUID().toString();
         Evection evection = new Evection();
