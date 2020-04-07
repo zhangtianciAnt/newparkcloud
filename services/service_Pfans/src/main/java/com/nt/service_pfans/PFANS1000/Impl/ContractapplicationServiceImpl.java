@@ -352,10 +352,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         co.setContracttype(citation.getContracttype());
                         co.setGroup_id(citation.getGroup_id());
                         co.setType(citation.getType());
-                        co.setState("有效");
                         if(citation.getType().equals("0")){
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
@@ -367,7 +367,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         }
                         else{
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
-                            String number = "'0001'";
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            String number = "0001";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
                                 number = "000" + coListcount;
