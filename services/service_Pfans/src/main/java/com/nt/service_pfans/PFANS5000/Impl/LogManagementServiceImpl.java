@@ -8,12 +8,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -49,6 +51,9 @@ public class LogManagementServiceImpl implements LogManagementService {
     private LogManagementMapper logmanagementmapper;
 
     @Autowired
+    private ProjectsystemMapper projectsystemMapper;
+
+    @Autowired
     private PersonalProjectsMapper personalprojectsMapper;
 
     @Autowired
@@ -76,7 +81,10 @@ public class LogManagementServiceImpl implements LogManagementService {
     public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
         return logmanagementmapper.select(logmanagement);
     }
-
+    @Override
+    public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception{
+        return projectsystemMapper.select(projectsystem);
+    }
     @Override
     public List<LogmanagementConfirmVo> getProjectList(String StrFlg,String strDate,TokenModel tokenModel) throws Exception {
         List<LogmanagementConfirmVo> Result = new ArrayList<LogmanagementConfirmVo>();

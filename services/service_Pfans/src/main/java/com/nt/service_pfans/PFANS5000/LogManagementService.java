@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000;
 
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
@@ -19,6 +20,8 @@ public interface LogManagementService {
     void insert(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
 
     public List<LogManagement> getDataList(LogManagement logmanagemenr) throws Exception;
+
+    public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception;
 
     public List<LogManagement> gettlist() throws Exception;
 
