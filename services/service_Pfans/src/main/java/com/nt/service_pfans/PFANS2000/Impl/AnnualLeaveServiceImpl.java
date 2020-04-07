@@ -566,7 +566,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 //                        } catch (Exception e) {
 //                            e.printStackTrace();
 //                        }
-                        return 0;
+//                        return 0;
                     }
                 });
                 //卡号去重得到打卡总人数
@@ -898,7 +898,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 //                        } catch (Exception e) {
 //                            e.printStackTrace();
 //                        }
-                        return 0;
+//                        return 0;
                     }
                 });
                 //卡号去重得到打卡总人数
