@@ -198,9 +198,46 @@ public class UserServiceImpl implements UserService {
             BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
             CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
             BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
-            customerInfo.setUserid(_id);
-            customerInfo.setUserinfo(userInfo);
-            mongoTemplate.save(customerInfo);
+            int flg1 = 0;
+            int flg2 = 0;
+            int flg3 = 0;
+//邮箱重复check
+            Query queryEmail = new Query();
+            queryEmail.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
+            List<CustomerInfo> qcEmail = mongoTemplate.find(queryEmail, CustomerInfo.class);
+            if(qcEmail.size() == 0 || qcEmail.get(0).getUserid().equals(customerInfo.getUserid())){
+                flg1 = 1;
+            }
+            else {
+                throw new LogicalException("邮箱已重复");
+            }
+
+//个人编码重复check
+            Query queryCode = new Query();
+            queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
+            List<CustomerInfo> qcAD = mongoTemplate.find(queryCode, CustomerInfo.class);
+            if(qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())){
+                flg2 = 1;
+            }
+            else {
+                throw new LogicalException("AD域账号重复");
+            }
+
+//AD域重复check
+            Query queryAD = new Query();
+            queryAD.addCriteria(Criteria.where("userinfo.personalcode").is(userInfo.getPersonalcode()));
+            List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
+            if(qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())){
+                flg3 = 1;
+            }
+            else {
+                throw new LogicalException("个人编码重复");
+            }
+            if(flg1 == 1 && flg2 == 1 && flg3 == 1){
+                customerInfo.setUserid(_id);
+                customerInfo.setUserinfo(userInfo);
+                mongoTemplate.save(customerInfo);
+            }
             return customerInfo;
         } else {
             return new CustomerInfo();
@@ -611,7 +648,7 @@ public class UserServiceImpl implements UserService {
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
-            } catch (Exception e) {
+        } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
