@@ -137,7 +137,6 @@
         AND
         t.throughtype = '通过'
         AND t.finallyexamdate IS NOT NULL
-        AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
         AND s.programtype in ('BC039004')
         AND s.isonline='BC032001'
@@ -187,7 +186,6 @@
         t.jointype = '正常'
         AND
         t.throughtype = '通过'
-        AND s.starttheorydate &lt;> ""
         AND s.starttheorydate IS NOT NULL
         AND s.programtype in ('BC039004')
         AND s.isonline='BC032002'
