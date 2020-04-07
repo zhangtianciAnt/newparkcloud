@@ -60,6 +60,12 @@ public class Pfans1025Controller {
                 av.getAward().setCurrencyposition(item.getValue1());
             }
         }
+        List<Dictionary> curList = dictionaryService.getForSelect("PG019");
+        for(Dictionary item:curList){
+            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
+                av.getAward().setCurrencyposition(item.getValue1());
+            }
+        }
 //        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
 //        for(Dictionary item:planList){
 //            if(item.getCode().equals(av.getAward().getPlan())) {
