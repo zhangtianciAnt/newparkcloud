@@ -345,6 +345,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         String[] str = contractnumber.split("-");
                         if(str.length == 1){
                             Contractapplication co = new Contractapplication();
+                            co.setGroup_id(citation.getGroup_id());
                             co.setType(citation.getType());
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
