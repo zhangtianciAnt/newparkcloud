@@ -375,10 +375,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 number.setRowindex(rowindex);
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
+                    number.setContractnumber(cnList.get(0).getContractnumber());
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
                 }
                 else{
                     number.preInsert(tokenModel);
+                    number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
                 }
