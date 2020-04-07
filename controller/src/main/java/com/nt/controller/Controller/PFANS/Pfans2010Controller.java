@@ -40,7 +40,7 @@ public class Pfans2010Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         attendance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-        attendance.setOwners(tokenModel.getOwnerList());
+//        attendance.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.getAttendancelist(attendance));
     }
 

@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
@@ -603,7 +604,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //个人出门之后再次进门时间
                             long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                            if(startl < sdhm.parse(workshift_start).getTime() || startl > sdhm.parse(closingtime_end).getTime()){
+//                            if(startl < sdhm.parse(workshift_start).getTime() || startl > sdhm.parse(closingtime_end).getTime()){
+                            if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
+
                                 continue;
                             }
                             //去除午餐时间的情况1
@@ -738,6 +741,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         attendance.setAttendanceid(UUID.randomUUID().toString());
                         attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                         attendance.preInsert(tokenModel);
+                        attendance.setTenantid(Time_start.toString());
                         attendanceMapper.insert(attendance);
                         books[x] = customerInfo.getUserid();
                     }
@@ -759,7 +763,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setUser_id(customerInfo.getUserid());
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
-                    calendar.add(Calendar.DAY_OF_YEAR, -1);
+                    calendar.add(Calendar.DAY_OF_YEAR, diffday);
                     attendance.setDates(calendar.getTime());
                     attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
                     attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
