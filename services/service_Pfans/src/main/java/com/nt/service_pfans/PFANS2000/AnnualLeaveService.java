@@ -20,6 +20,8 @@ public interface AnnualLeaveService {
      */
     List<AnnualLeave> getDataList(TokenModel tokenModel) throws Exception;
 
+    void insertattendance(int diffday) throws Exception;
+
     /**
      * 数据做成
      */
