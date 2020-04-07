@@ -23,7 +23,7 @@
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <!--    大屏培训教育即将到期人员列表（线上）-->
+    <!--    大屏培训教育即将到期人员列表-->
     <select id="OverduePersonnelList" resultType="com.nt.dao_BASF.VO.OverduePersonnelListVo">
         ( SELECT
         t.trainjoinlistid,
@@ -45,10 +45,11 @@
         t.jointype = '正常'
         AND
         t.throughtype = '通过'
-        AND DATEDIFF(
-        DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
-        CURRENT_DATE ()) = 0
-        ) UNION ALL
+--         逻辑:到期日>当前日期>=开始提醒日期
+        AND DATEDIFF(DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ),CURRENT_DATE ()) >0
+        AND DATEDIFF(CURRENT_DATE (),DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >=0
+        )
+        UNION ALL
         (
         SELECT
         t.trainjoinlistid,
@@ -69,9 +70,9 @@
         t.jointype = '正常'
         AND
         t.throughtype = '通过'
-        AND DATEDIFF(
-        DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH ),
-        CURRENT_DATE ()) = 0
+        --         逻辑:到期日>当前日期>=开始提醒日期
+        AND DATEDIFF(DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ),CURRENT_DATE ()) >0
+        AND DATEDIFF(CURRENT_DATE (),DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >=0
         )
         ORDER BY
         dueDate ASC

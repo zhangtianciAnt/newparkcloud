@@ -91,7 +91,7 @@
         </if>
     </select>
 
-    <!--    通过人员id查询即将到期的线上培训-->
+    <!--    通过人员id查询即将到期的培训-->
     <select id="onlineOverdue" resultType="com.nt.dao_BASF.Startprogram">
         (SELECT
         s.startprogramid,
@@ -140,8 +140,9 @@
         AND s.starttheorydate IS NOT NULL
         AND s.programtype in ('BC039004')
         AND s.isonline='BC032001'
-        AND DATEDIFF(DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH
-        ),CURRENT_DATE ()) =0)
+        AND DATEDIFF(DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ),CURRENT_DATE ()) >0
+        AND DATEDIFF(CURRENT_DATE (),DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >=0
+        )
         UNION ALL
         (SELECT
         s.startprogramid,
@@ -189,8 +190,9 @@
         AND s.starttheorydate IS NOT NULL
         AND s.programtype in ('BC039004')
         AND s.isonline='BC032002'
-        AND DATEDIFF(DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH
-        ),CURRENT_DATE ()) =0)
+        AND DATEDIFF(DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ),CURRENT_DATE ()) >0
+        AND DATEDIFF(CURRENT_DATE (),DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >=0
+        )
         ORDER BY
 		MODIFYON ASC
     </select>
