@@ -28,13 +28,23 @@ public class Pfans1026Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult selectById(Contractapplication contractapplication,HttpServletRequest request) throws Exception{
+    @RequestMapping(value="/get",method = {RequestMethod.POST})
+    public ApiResult selectById(@RequestBody Contractapplication contractapplication,HttpServletRequest request) throws Exception{
         if(contractapplication==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         contractapplication.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractapplicationService.get(contractapplication));
+    }
+
+    @RequestMapping(value="/get2",method = {RequestMethod.POST})
+    public ApiResult selectById2(@RequestBody Contractapplication contractapplication,HttpServletRequest request) throws Exception{
+        if(contractapplication==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        contractapplication.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 
