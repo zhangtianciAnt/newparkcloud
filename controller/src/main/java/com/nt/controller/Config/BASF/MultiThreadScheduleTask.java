@@ -133,7 +133,7 @@ public class MultiThreadScheduleTask {
                             foreignworkers=foreignworkers+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
-                    if("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                    if("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
                         if("".equals(supplier)){
                             supplier=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }else{
