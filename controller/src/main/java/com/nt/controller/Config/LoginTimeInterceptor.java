@@ -67,8 +67,16 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         if (!StrUtil.isEmpty(url)) {
             List<String> ownerList = getOwnerList(url, tokenModel);
 
-            if(ownerList.size() > 0){
-                if("XXXXX".equals(ownerList.get(0))){
+            if(ownerList.size() > 0 && "XXXXX".equals(ownerList.get(0))){
+
+                if(url.contains("FormView")){
+                    String Burl = url.replace("Form","");
+                    List<String> ownerLists = getOwnerList(Burl, tokenModel);
+                    if(ownerLists.size() > 0 && "XXXXX".equals(ownerLists.get(0))){
+                        errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
+                        return false;
+                    }
+                }else{
                     errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
                     return false;
                 }
