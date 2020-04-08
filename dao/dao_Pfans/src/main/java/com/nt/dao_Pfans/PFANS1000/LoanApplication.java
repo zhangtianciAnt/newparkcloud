@@ -42,7 +42,8 @@ public class LoanApplication extends BaseModel {
     @Column(name = "TEAM_ID")
     private String team_id;
 
-
+    @Column(name = "JUDGEMENT")
+    private String judgement;
     /**
      * 申请人
      */
