@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
         newquery.addCriteria(Criteria.where("_id").in(tokenModel.getRoleIds()));
         newquery.addCriteria(Criteria.where("menus.menuurl").is(url));
         List<Role> list = mongoTemplate.find(newquery, Role.class);
-        if (list != null) {
+        if (list != null && list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
                 List<AppPermission.menu> menus = list.get(i).getMenus();
                 var menu = menus.stream()
