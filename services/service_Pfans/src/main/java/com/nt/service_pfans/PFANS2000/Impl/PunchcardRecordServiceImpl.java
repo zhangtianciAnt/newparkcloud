@@ -339,7 +339,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         //判断当天是否是休日，青年节，妇女节，周六周日
                         if(workingDaysList.size()>0)
                         {
-                            workinghours = "0";
+                            //振替出勤日
+                            if(workingDaysList.get(0).getType().equals("4"))
+                            {
+                                workinghours = "8";
+                            }
+                            else
+                            {
+                                workinghours = "0";
+                            }
+
                         }
                         else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
                         {
