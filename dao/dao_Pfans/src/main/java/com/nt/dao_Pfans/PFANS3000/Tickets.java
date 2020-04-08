@@ -170,4 +170,16 @@ public class Tickets extends BaseModel {
     @Column(name = "TRIPEND")
     private Date tripend;
 
+    /**
+     * 出差申请关联
+     */
+    @Column(name = "BUSINESS_ID")
+    private String business_id;
+
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATIONDATE")
+    private Date applicationdate;
+
 }

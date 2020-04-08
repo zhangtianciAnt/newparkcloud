@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.util.Date;
 
 
 @Data
@@ -116,5 +116,11 @@ public class BusinessCard extends BaseModel {
      */
     @Column(name = "REMARKS")
     private String remarks;
+
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATIONDATE")
+    private Date applicationdate;
 
 }

@@ -98,4 +98,10 @@ public class HotelReservation extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATIONDATE")
+    private Date applicationdate;
+
 }
