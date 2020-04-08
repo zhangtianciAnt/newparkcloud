@@ -104,4 +104,22 @@ public class HotelReservation extends BaseModel {
     @Column(name = "APPLICATIONDATE")
     private Date applicationdate;
 
+    /**
+     * 是否受理
+     */
+    @Column(name = "ACCEPT")
+    private String accept;
+
+    /**
+     * 受理状态
+     */
+    @Column(name = "ACCEPTSTATUS")
+    private String acceptstatus;
+
+    /**
+     * 完成日期
+     */
+    @Column(name = "FINDATE")
+    private Date findate;
+
 }
