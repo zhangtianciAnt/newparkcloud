@@ -58,7 +58,6 @@
         where createon
         between date_sub(now(), interval 365 day) and date_sub(now(), interval 0 day)
         and error_type = 'pr013009'
-        and status in (4,2)
         and user_id = #{userid}
     </select>
     <select id="selectAbNormalParent" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">

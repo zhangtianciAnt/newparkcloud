@@ -247,6 +247,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
+
     }
 
     public void methodAttendance_b(TokenModel tokenModel,List<CustomerInfo> customerInfoList,int diffday) throws Exception
@@ -573,6 +574,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ab.getStatus().equals("7"))
                                             {
                                                 strlengthtime = ab.getRelengthtime();
+                                                if(Double.valueOf(strlengthtime) <= 8)
+                                                {
+                                                    ab.setRefinisheddate(ab.getReoccurrencedate());
+                                                }
                                                 //在申请的日期范围内
                                                 if (ab.getReoccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
                                                     if(!(ab.getReoccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
@@ -588,6 +593,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             else
                                             {
                                                 strlengthtime = ab.getLengthtime();
+                                                if(Double.valueOf(strlengthtime) <= 8)
+                                                {
+                                                    ab.setFinisheddate(ab.getOccurrencedate());
+                                                }
                                                 //在申请的日期范围内
                                                 if (ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) >= 0) {
                                                     if(!(ab.getOccurrencedate().compareTo(sdfxx.parse(dateStart.toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(dateStart.toString())) == 0))
