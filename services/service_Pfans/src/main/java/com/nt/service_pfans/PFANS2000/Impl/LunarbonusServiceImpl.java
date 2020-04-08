@@ -58,13 +58,14 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         Lunarbonus lunarbonus = new Lunarbonus();
         SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
         Date Evaluationday = new SimpleDateFormat("yyyy-MM-dd").parse(sd.format(new Date()));
-//        lunarbonus.setEvaluationday(Evaluationday);
+        lunarbonus.setEvaluationday(Evaluationday);
         lunarbonus.setSubjectmon(lunardetailVo.getSubjectmon());
         lunarbonus.setEvaluatenum(lunardetailVo.getEvaluatenum());
-        lunarbonus.setSubject(lunardetailVo.getSubjectmon());
-        lunarbonus.setUser_id(lunardetailVo.getUser_id());
+
         List<Lunarbonus> List = lunarbonusMapper.select(lunarbonus);
         if (List.size() == 0) {
+            lunarbonus.setSubject(lunardetailVo.getSubjectmon());
+            lunarbonus.setUser_id(lunardetailVo.getUser_id());
             lunarbonus.preInsert(tokenModel);
             lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
             lunarbonusMapper.insert(lunarbonus);
@@ -72,7 +73,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             throw new LogicalException("不能重复评价");
         }
 
-        if(lunardetailVo.getEvaluatenum().equals("PJ104001")){
+        if (lunardetailVo.getEvaluatenum().equals("PJ104001")) {
             Query query = new Query();
             List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
             for (CustomerInfo customerInfo : CustomerInfoList) {
@@ -136,11 +137,28 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         }
 
         List<Lunardetail> detal = lunardetailMapper.select(lunardetailCondition);
-        if(detal.size() > 0){
+        if (detal.size() > 0) {
 
             LunarAllVo.setLunardetail(detal);
-        }else{
-
+        } else {
+            Lunarbonus con = new Lunarbonus();
+            if (lunarbonus.getEvaluatenum().equals("PJ104003")) {
+                con.setEvaluatenum("PJ104002");
+            } else if (lunarbonus.getEvaluatenum().equals("PJ104002")) {
+                con.setEvaluatenum("PJ104001");
+            }
+            con.setEvaluationday(lunarbonus.getEvaluationday());
+            con.setSubjectmon(lunarbonus.getSubjectmon());
+            List<Lunarbonus> lunars = lunarbonusMapper.select(con);
+            if (lunars.size() > 0) {
+                lunardetailCondition.setLunarbonus_id(lunars.get(0).getLunarbonus_id());
+                detal = lunardetailMapper.select(lunardetailCondition);
+                for(Lunardetail item:detal){
+                    item.setLunarbonus_id("");
+                    item.setLunardetail_id("");
+                }
+                LunarAllVo.setLunardetail(detal);
+            }
 //            LunarAllVo.setLunardetail();
         }
         Lunarbasic lunarbasicConditon = new Lunarbasic();
