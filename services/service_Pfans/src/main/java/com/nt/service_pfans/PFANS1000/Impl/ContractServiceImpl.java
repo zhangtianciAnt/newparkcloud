@@ -35,22 +35,22 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractVo One(String contract_id) throws Exception {
         Contract contract = contractMapper.selectByPrimaryKey(contract_id);
-        String name = "";
-        String [] companyProjectsid = contract.getPjnamechinese().split(",");
-        if(companyProjectsid.length > 0){
-            for (int i = 0;i < companyProjectsid.length;i++){
-                CompanyProjects companyProjects = new CompanyProjects();
-                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
-                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
-                if(comList.size() > 0){
-                    name = name + comList.get(0).getProject_name() + ",";
-                }
-            }
-            if(!name.equals("")){
-                name = name.substring(0,name.length()-1);
-            }
-        }
-        contract.setPjnamechinese(name);
+//        String name = "";
+//        String [] companyProjectsid = contract.getPjnamechinese().split(",");
+//        if(companyProjectsid.length > 0){
+//            for (int i = 0;i < companyProjectsid.length;i++){
+//                CompanyProjects companyProjects = new CompanyProjects();
+//                companyProjects.setCompanyprojects_id(companyProjectsid[i]);
+//                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+//                if(comList.size() > 0){
+//                    name = name + comList.get(0).getProject_name() + ",";
+//                }
+//            }
+//            if(!name.equals("")){
+//                name = name.substring(0,name.length()-1);
+//            }
+//        }
+//        contract.setPjnamechinese(name);
         // add by zy
         ContractVo result = new ContractVo();
         if ( contract!= null ) {

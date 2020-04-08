@@ -164,6 +164,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //契約書作成
                 else if(rowindex.equals("3")){
+                    int numberSum = 0;
+                    for (Contractnumbercount number : countList) {
+                        numberSum += Integer.valueOf(number.getClaimamount());
+                    }
                     Contract contract = new Contract();
                     contract.preInsert(tokenModel);
                     contract.setContract_id(UUID.randomUUID().toString());
@@ -179,7 +183,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.setPjnamechinese(contractapp.getConchinese());
                     contract.setPjnamejapanese(contractapp.getConjapanese());
                     contract.setCurrencyposition(contractapp.getCurrencyposition());
-                    contract.setClaimamount(contractapp.getClaimamount());
+                    contract.setClaimamount(String.valueOf(numberSum));
                     contract.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -329,6 +333,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Override
     public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
         Map<String, Object> result = new HashMap<>();
+        String newcontractnumber = "";
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
@@ -340,15 +345,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else{
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
-                    if(citation.getType().equals("0")){
-                        String contractnumber = citation.getContractnumber();
-                        String[] str = contractnumber.split("-");
-                        if(str.length == 1){
-                            Contractapplication co = new Contractapplication();
-                            co.setGroup_id(citation.getGroup_id());
-                            co.setType(citation.getType());
+                    String contractnumber = citation.getContractnumber();
+                    String[] str = contractnumber.split("-");
+                    if(str.length == 1){
+                        Contractapplication co = new Contractapplication();
+                        co.setContracttype(citation.getContracttype());
+                        co.setGroup_id(citation.getGroup_id());
+                        co.setType(citation.getType());
+                        if(citation.getType().equals("0")){
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
@@ -356,9 +363,23 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             } else if (coListcount.length() == 2) {
                                 number = coListcount;
                             }
-                            String newcontractnumber = contractnumber + number;
-                            citation.setContractnumber(newcontractnumber);
+                            newcontractnumber = contractnumber + number;
                         }
+                        else{
+                            List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            String number = "0001";
+                            String coListcount = String.valueOf(coList.size() + 1);
+                            if (coListcount.length() == 1) {
+                                number = "000" + coListcount;
+                            } else if (coListcount.length() == 2) {
+                                number = "00" + coListcount;
+                            } else if (coListcount.length() == 3) {
+                                number = "0" + coListcount;
+                            }
+                            newcontractnumber = contractnumber + number;
+                        }
+                        citation.setContractnumber(newcontractnumber);
                     }
                     contractapplicationMapper.insert(citation);
                 }
@@ -375,10 +396,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 number.setRowindex(rowindex);
                 if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
                     number.preUpdate(tokenModel);
+                    number.setContractnumber(cnList.get(0).getContractnumber());
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
                 }
                 else{
                     number.preInsert(tokenModel);
+                    number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
                 }

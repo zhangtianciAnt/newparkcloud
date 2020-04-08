@@ -339,7 +339,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         //判断当天是否是休日，青年节，妇女节，周六周日
                         if(workingDaysList.size()>0)
                         {
-                            workinghours = "0";
+                            //振替出勤日
+                            if(workingDaysList.get(0).getType().equals("4"))
+                            {
+                                workinghours = "8";
+                            }
+                            else
+                            {
+                                workinghours = "0";
+                            }
+
                         }
                         else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
                         {
@@ -608,7 +617,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                                     strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
                                                 }
-                                                j=j+1;
+                                                if(Double.valueOf(strlengthtime)>0)
+                                                {
+                                                    j=j+1;
+                                                }
                                                 ad.setAnnualrest(strlengthtime);
                                             } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
                                                 if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
@@ -628,7 +640,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                     strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
                                                 }
-                                                i=i+1;
+                                                if(Double.valueOf(strlengthtime)>0)
+                                                {
+                                                    i=i+1;
+                                                }
                                                 ad.setDaixiu(strlengthtime);
                                             }else if (ab.getErrortype().equals("PR013008")) {//事休
                                                 if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
@@ -915,7 +930,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     else if(workinghours.equals("8"))
                                     {
                                         //申请了年休，代休
-                                        if(Double.valueOf(ad.getAnnualrest()) > 0 || Double.valueOf(ad.getDaixiu())>0)
+                                        //if(Double.valueOf(ad.getAnnualrest()) > 0 || Double.valueOf(ad.getDaixiu())>0)
+                                        if(i>0 || j>0)
                                         {
                                             String shijiworkHours =shijiworkLength(time_start,time_end,lunchbreak_start,lunchbreak_end,PR,ad);
                                             shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime))/60/60/1000))*((Double.valueOf(strovertime))/60/60/1000));
