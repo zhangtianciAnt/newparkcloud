@@ -30,7 +30,7 @@ public class AwardDetail extends BaseModel {
     @Column(name = "DEPART")
     private String depart;
 
-    @Column(name = "MEMBER")
+    @Column(name = "MEMBERS")
     private String member;
 
     @Column(name = "COMMUNITY")

@@ -952,7 +952,12 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             for(CompanyProjects comprotect :companyProjectslist){
                 number = number+1;
             }
-            no=String.format("%2d", number + 1).replace(" ", "00");
+//            String.format("%2d", number + 1).replace(" ", "00");
+            if(number<=8){
+                no="00"+(number + 1);
+            }else{
+                no="0"+(number + 1);
+            }
         }else{
             no = "001";
         }

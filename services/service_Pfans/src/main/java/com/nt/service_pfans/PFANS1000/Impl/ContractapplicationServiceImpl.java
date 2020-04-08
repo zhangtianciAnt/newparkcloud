@@ -355,6 +355,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         if(citation.getType().equals("0")){
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
@@ -366,12 +367,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         }
                         else{
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
-                            String number = "'0001'";
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            String number = "0001";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
                                 number = "000" + coListcount;
                             } else if (coListcount.length() == 2) {
-                                number = "0" + coListcount;
+                                number = "00" + coListcount;
                             } else if (coListcount.length() == 3) {
                                 number = "0" + coListcount;
                             }

@@ -167,6 +167,12 @@ public class InterviewRecord  extends BaseModel {
     @Column(name = "NETWORK")
     private String network;
 
+    /**
+     * 面接
+     */
+    @Column(name = "INTERVIEW ")
+    private String interview ;
+
 }
 
 

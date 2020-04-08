@@ -197,4 +197,22 @@ public class Purchase  extends BaseModel {
     @Column(name = "ACTUARIALAMOUNT")
     private String actuarialamount;
 
+    /**
+     * 是否受理
+     */
+    @Column(name = "ACCEPT")
+    private String accept;
+
+    /**
+     * 受理状态
+     */
+    @Column(name = "ACCEPTSTATUS")
+    private String acceptstatus;
+
+    /**
+     * 完成日期
+     */
+    @Column(name = "FINDATE")
+    private Date findate;
+
 }
