@@ -78,8 +78,17 @@ public class LunardetailServiceImpl implements LunardetailService {
         lunarbonusMapper.updateByPrimaryKey(lunarAllVo.getLunarbonus());
 
         for(Lunardetail item : lunarAllVo.getLunardetail()){
-            item.preUpdate(tokenModel);
-            lunardetailMapper.updateByPrimaryKey(item);
+            if(StrUtil.isEmpty(item.getLunardetail_id())){
+
+                item.preInsert(tokenModel);
+                item.setLunardetail_id(UUID.randomUUID().toString());
+                item.setLunarbonus_id(lunarAllVo.getLunarbonus().getLunarbonus_id());
+                lunardetailMapper.insert(item);
+            }else{
+                item.preUpdate(tokenModel);
+                lunardetailMapper.updateByPrimaryKey(item);
+
+            }
         }
 
         for(Lunarbasic item : lunarAllVo.getLunarbasic()){
