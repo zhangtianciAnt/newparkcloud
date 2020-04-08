@@ -65,6 +65,7 @@ public class DictionaryController {
      */
     @RequestMapping(value = "/smallAtbig", method = {RequestMethod.GET})
     public ApiResult bigList(String code, HttpServletRequest request) throws Exception {
+        //小特性，当STATUS为空字符串的为系统隐藏字典,但不影响使用
         return ApiResult.success(dictionaryService.smallAtbig(code));
     }
 
