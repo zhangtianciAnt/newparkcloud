@@ -707,7 +707,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                         + Double.valueOf(attend.getLongsickleave()) + Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(attend.getAnnualrest())
                                         + Double.valueOf(attend.getDaixiu()) + Double.valueOf(attend.getNursingleave()) + Double.valueOf(attend.getWelfare()));
 
-                                attend.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0?null:Double.valueOf(workinghours) - Double.valueOf(setNormal)));
+                                attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0 ? null: df.format((Double.valueOf(workinghours) - Double.valueOf(setNormal))));
 
                                 attend.setNormal(Double.valueOf(attend.getNormal()) <= 0 ? null :attend.getNormal());
                                 attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
