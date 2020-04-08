@@ -808,9 +808,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
         //String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
         //删除昨天的临时数据
-        punchcardrecorddetailbpmapper.deletetepun(thisDate);
+        punchcardrecorddetailbpmapper.deletetepunbp(thisDate);
         //删除昨天的临时数据
-        punchcardrecorddetailbpmapper.deletetepundet(thisDate);
+        punchcardrecorddetailbpmapper.deletetepundetbp(thisDate);
         //正式
         String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
         String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
