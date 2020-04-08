@@ -45,6 +45,7 @@ select
 from VIEW_APBCardHolder
 where
 datediff(day,intime,GETDATE()) = 0
+AND APBName &lt;> '厂外'
 order by intime desc
     </select>
 
