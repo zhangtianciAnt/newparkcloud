@@ -22,6 +22,8 @@ public interface AnnualLeaveService {
 
     void insertattendance(int diffday) throws Exception;
 
+    void insertattendancebp(int diffday) throws Exception;
+
     /**
      * 数据做成
      */
