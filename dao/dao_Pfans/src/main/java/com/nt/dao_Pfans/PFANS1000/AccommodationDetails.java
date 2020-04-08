@@ -156,7 +156,7 @@ public class AccommodationDetails extends BaseModel {
     /**
      *PL摘要内容
      */
-    @Column(name = "PLSUMMARY")
+    @Column(name = "PL")
     private String  plsummary;
 
     @Column(name = "ACCOUNTCODE")
