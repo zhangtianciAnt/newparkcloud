@@ -13,11 +13,11 @@ import java.util.List;
 public class LogmanagementVo2 {
     private String COMPANYPROJECTS_ID;
 
-    private Date estimatedendtime;
+    private String estimatedendtime;
 
-    private Date estimatedstarttime;
+    private String estimatedstarttime;
 
-    private Date extensiondate;
+    private String extensiondate;
 
-    private Date claimdatetime;
+    private String claimdatetime;
 }

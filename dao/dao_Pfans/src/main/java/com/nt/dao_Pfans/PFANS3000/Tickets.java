@@ -170,4 +170,33 @@ public class Tickets extends BaseModel {
     @Column(name = "TRIPEND")
     private Date tripend;
 
+    /**
+     * 出差申请关联
+     */
+    @Column(name = "BUSINESS_ID")
+    private String business_id;
+
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATIONDATE")
+    private Date applicationdate;
+
+    /**
+     * 是否受理
+     */
+    @Column(name = "ACCEPT")
+    private String accept;
+
+    /**
+     * 受理状态
+     */
+    @Column(name = "ACCEPTSTATUS")
+    private String acceptstatus;
+
+    /**
+     * 完成日期
+     */
+    @Column(name = "FINDATE")
+    private Date findate;
 }
