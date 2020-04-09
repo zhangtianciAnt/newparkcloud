@@ -48,12 +48,28 @@
     <select id="getList2" resultType="com.nt.dao_Pfans.PFANS5000.Comproject">
 		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
 		where STATUS = '4' or STATUS = '7' or STATUS = '8'
+		<if test="owners != null and owners.size() > 0 ">
+			and
+			owner in
+			<foreach item="item" index="index" collection="owners"
+					 open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		ORDER BY CREATEON DESC
 	</select>
 
     <select id="getList3" resultType="com.nt.dao_Pfans.PFANS5000.Comproject">
 		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
 		where STATUS = '9'
+		<if test="owners != null and owners.size() > 0 ">
+			and
+			owner in
+			<foreach item="item" index="index" collection="owners"
+					 open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		ORDER BY CREATEON DESC
 	</select>
 

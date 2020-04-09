@@ -1783,11 +1783,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     @Override
-    public List<CompanyProjectsVo2> getList2(String flag) throws Exception {
+    public List<CompanyProjectsVo2> getList2(String flag,List<String> ownerList) throws Exception {
         if ("0".equals(flag)) {
-            return companyprojectsMapper.getList2();
+            return companyprojectsMapper.getList2(ownerList);
         } else {
-            return companyprojectsMapper.getList3();
+            return companyprojectsMapper.getList3(ownerList);
         }
     }
 
