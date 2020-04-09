@@ -41,6 +41,14 @@ public class Pfans2017Controller {
         punchcardrecord.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
     }
+
+    @RequestMapping(value = "/list1", method = {RequestMethod.POST})
+    public ApiResult list1(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        PunchcardRecord punchcardrecord = new PunchcardRecord();
+        punchcardrecord.setOwner(tokenModel.getUserId());
+        return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
+    }
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request){
         try{
