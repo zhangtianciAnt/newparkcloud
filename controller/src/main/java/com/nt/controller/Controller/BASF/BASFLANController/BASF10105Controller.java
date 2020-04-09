@@ -91,6 +91,8 @@ public class BASF10105Controller {
                     firealarm.setAlarmpeo("系统管理员");
                     firealarm.setAlarmtimes(yyMMdd);
                     firealarm.setIndevice(linkagelist.get(0).getDevice());
+                    firealarm.setCompletesta("0");
+                    firealarm.setMisinformation("0");
                     String firealarmuuid = firealarmServices.insert(firealarm,tokenModel);
                     linkagelistVo.setDeviceinformation(linkagelist.get(0));
                     linkagelistVo.setFirealarmuuid(firealarmuuid);

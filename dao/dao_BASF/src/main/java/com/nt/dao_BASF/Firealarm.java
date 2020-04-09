@@ -129,9 +129,14 @@ public class Firealarm extends BaseModel {
 
 
     /**
-     * 接警单状态
+     * 接警单状态 0:未完成;1：完成
      */
     private String completesta;
+
+    /**
+     * 是否误报 0：非误报；1：误报
+     */
+    private String misinformation;
 
 
 }

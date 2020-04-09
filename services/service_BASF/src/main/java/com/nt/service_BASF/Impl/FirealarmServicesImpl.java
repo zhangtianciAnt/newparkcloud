@@ -88,6 +88,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
         String ccid = UUID.randomUUID().toString();
         firealarm.setFirealarmid(ccid);
         firealarm.setCompletesta("0");
+        firealarm.setMisinformation("0");
         firealarmMapper.insert(firealarm);
         return ccid;
     }
