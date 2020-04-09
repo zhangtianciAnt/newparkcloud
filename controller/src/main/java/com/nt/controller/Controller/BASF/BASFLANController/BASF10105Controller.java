@@ -78,8 +78,8 @@ public class BASF10105Controller {
                 ServerInfo serverinfo = serverinfolist.get(i);
                 Deviceinformation deviceinformation = new Deviceinformation();
                 deviceinformation.setFactoryname(serverinfo.getFactoryname());
-                deviceinformation.setLine(serverinfo.getLine());
-                deviceinformation.setRow(serverinfo.getRow());
+                deviceinformation.setDevline(serverinfo.getLine());
+                deviceinformation.setDevrow(serverinfo.getRow());
                 List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
                 DeviceinformationVo linkagelistVo = new DeviceinformationVo();
                 if(linkagelist.size() == 1)
