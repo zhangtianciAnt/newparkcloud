@@ -596,14 +596,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //个人所有进门记录
                     List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //第一条进门记录
-                    Date Time_start = new Date();
+                    //Date Time_start = new Date();
+                    Date Time_start = null;
                     if(punDetaillistevent1.size() > 0){
                         Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                     }
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //最后一条出门记录
-                    Date Time_end = new Date();
+//                    Date Time_end = new Date();
+                    Date Time_end = null;
                     if(punDetaillistevent2.size() > 0){
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     }
@@ -730,8 +732,20 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //外出超过15分钟的欠勤时间
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
-                        punchcardrecord.setTime_start(Time_start);
-                        punchcardrecord.setTime_end(Time_end);
+                        if(Time_start == null){
+
+                            punchcardrecord.setTime_start(Time_end);
+                        }else{
+
+                            punchcardrecord.setTime_start(Time_start);
+                        }
+                        if(Time_end == null){
+
+                            punchcardrecord.setTime_end(Time_start);
+                        }else{
+
+                            punchcardrecord.setTime_end(Time_end);
+                        }
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);
