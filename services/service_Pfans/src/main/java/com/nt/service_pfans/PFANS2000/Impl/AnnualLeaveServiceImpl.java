@@ -603,7 +603,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //最后一条出门记录
-                    Date Time_end = new Date();
+//                    Date Time_end = new Date();
+                    Date Time_end = null;
                     if(punDetaillistevent2.size() > 0){
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     }
@@ -731,7 +732,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
                         punchcardrecord.setTime_start(Time_start);
-                        punchcardrecord.setTime_end(Time_end);
+                        if(Time_end == null){
+
+                            punchcardrecord.setTime_end(Time_start);
+                        }else{
+
+                            punchcardrecord.setTime_end(Time_end);
+                        }
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);
