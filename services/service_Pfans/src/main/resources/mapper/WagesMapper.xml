@@ -354,14 +354,14 @@
         @LJYNSSDE := (
         IF
         (
-        TO_DAYS( STR_TO_DATE( @WORKDATE, '%Y-%m-%d' ) ) - TO_DAYS( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) != 0,
+        TO_DAYS( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) - TO_DAYS( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) != 0,
         round(
         ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
         2
         ),
         round(
         (
-        @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - MONTH ( STR_TO_DATE( @WORKDATE, '%Y-%m-%d' ) ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE
+        @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - MONTH ( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE
         ),
         2
         )
