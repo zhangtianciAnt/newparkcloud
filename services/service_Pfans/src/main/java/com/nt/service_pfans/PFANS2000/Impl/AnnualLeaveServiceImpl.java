@@ -787,7 +787,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         attendance.setAttendanceid(UUID.randomUUID().toString());
                         attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                         attendance.preInsert(tokenModel);
-                        attendance.setTenantid(Time_start.toString());
                         attendanceMapper.insert(attendance);
                         books[x] = customerInfo.getUserid();
                     }
