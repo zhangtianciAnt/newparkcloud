@@ -372,7 +372,6 @@ public class AbNormalServiceImpl implements AbNormalService {
 
                                 attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0?null:df.format(Double.valueOf(workinghours) - Double.valueOf(setNormal)));
 
-                                attend.setNormal(Double.valueOf(attend.getNormal()) <= 0 ? null :attend.getNormal());
                                 attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
                                 attend.setDaixiu(Double.valueOf(attend.getDaixiu()) <= 0 ? null :attend.getDaixiu());
                                 attend.setCompassionateleave(Double.valueOf(attend.getCompassionateleave()) <= 0 ? null :attend.getCompassionateleave());
@@ -421,7 +420,6 @@ public class AbNormalServiceImpl implements AbNormalService {
                         {
                             for (Attendance attend : attendancelist)
                             {
-
                                 WorkingDay workDay = new WorkingDay();
                                 workDay.setWorkingdate(attend.getDates());
                                 Calendar cal = Calendar.getInstance();
@@ -709,7 +707,6 @@ public class AbNormalServiceImpl implements AbNormalService {
 
                                 attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0 ? null: df.format((Double.valueOf(workinghours) - Double.valueOf(setNormal))));
 
-                                attend.setNormal(Double.valueOf(attend.getNormal()) <= 0 ? null :attend.getNormal());
                                 attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
                                 attend.setDaixiu(Double.valueOf(attend.getDaixiu()) <= 0 ? null :attend.getDaixiu());
                                 attend.setCompassionateleave(Double.valueOf(attend.getCompassionateleave()) <= 0 ? null :attend.getCompassionateleave());
