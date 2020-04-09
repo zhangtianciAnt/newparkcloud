@@ -51,7 +51,13 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public void insertOvertime(Overtime overtime, TokenModel tokenModel) throws Exception {
+        String strtus = overtime.getStatus();
+
         overtime.preInsert(tokenModel);
+        //总经理新建自动通过
+        if(strtus.equals(AuthConstants.APPROVED_FLAG_YES)){
+            overtime.setStatus(AuthConstants.APPROVED_FLAG_YES);
+        }
         overtime.setOvertimeid(UUID.randomUUID().toString());
         overtimeMapper.insert(overtime);
     }

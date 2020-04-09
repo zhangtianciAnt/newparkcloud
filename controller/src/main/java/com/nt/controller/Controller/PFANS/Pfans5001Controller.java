@@ -259,7 +259,7 @@ public class Pfans5001Controller {
     @RequestMapping(value="/getList2", method={RequestMethod.GET})
     public ApiResult getList2(HttpServletRequest request,String flag) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyProjectsService.getList2(flag));
+        return ApiResult.success(companyProjectsService.getList2(flag,tokenModel.getOwnerList()));
     }
 
 }
