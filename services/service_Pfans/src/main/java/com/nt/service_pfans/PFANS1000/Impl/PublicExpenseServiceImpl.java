@@ -209,7 +209,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         // 总金额改为人民币支出
         specialMap.put(TOTAL_TAX, Float.parseFloat(publicExpenseVo.getPublicexpense().getRmbexpenditure()) + Float.parseFloat(publicExpenseVo.getPublicexpense().getForeigncurrency()));
         if ( specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0 ) {
-            throw new LogicalException("发票合计金额不能为0");
+            throw new LogicalException("支出总金额应大于0");
         }
 
         List<Object> needMergeList = new ArrayList<>();
