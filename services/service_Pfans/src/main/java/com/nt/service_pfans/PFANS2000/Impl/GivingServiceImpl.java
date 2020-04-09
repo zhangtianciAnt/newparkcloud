@@ -252,8 +252,17 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
-        givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
+        // zqu start 先判断wages表里有没有当月工资数据，有用表里的，没有用sql生成
+        Wages wages = new Wages();
+        wages.setGiving_id(giving_id);
+        List<Wages> wagesList = wagesMapper.select(wages);
+        if (wagesList.size() > 0) {
+            givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
+        } else {
+            givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
+        }
         return givingVo;
+        // zqu end
     }
 
     @Override
@@ -923,6 +932,11 @@ public class GivingServiceImpl implements GivingService {
             comprehensive.setGivingId(givinglist.get(0).getGiving_id());
             comprehensiveMapper.delete(comprehensive);
             // endregion
+            //zqu start 删除wages当月数据
+            Wages del_wage = new Wages();
+            del_wage.setGiving_id(givinglist.get(0).getGiving_id());
+            wagesMapper.delete(del_wage);
+            //zqu end
         }
         // 删除当前月giving表数据
         giving = new Giving();
