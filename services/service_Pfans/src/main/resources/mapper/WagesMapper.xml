@@ -447,5 +447,4 @@
         base.GIVING_ID = #{givingId}
         order by base.USER_ID
     </select>
-
 </mapper>

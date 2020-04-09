@@ -13,7 +13,7 @@ public interface WagesMapper extends MyMapper<Wages> {
 
     List<String> lastMonthWage(@Param("year") int year, @Param("month") int month);
 
-    List<Wages> getWageList(Wages wages);
+//    List<Wages> getWageList(Wages wages);
 
     List<Wages> getWagesByGivingId(@Param("givingId") String givingId);
 }
