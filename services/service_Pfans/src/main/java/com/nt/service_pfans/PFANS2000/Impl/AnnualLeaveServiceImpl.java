@@ -167,14 +167,30 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             enterdaystartCal = "1980-02-29";
         }
         enterdaystartCal = enterdaystartCal.substring(0,10);
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
         //仕事开始年月日
         String workdaystartCal = customer.getUserinfo().getWorkday();
 
         if (StringUtil.isNotEmpty(workdaystartCal)) {
             int year = getYears(workdaystartCal);
             //本年度法定年休（期初）
-            if(year >= 1 && year < 10){
-                annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("5"));
+            if(year < 10){
+                if(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty())
+                {
+                    annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("0"));
+                }
+                else
+                {
+                    String enddate = customer.getUserinfo().getEnddate().substring(0,10);
+                    if (sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enddate)))).compareTo(calendar.getTime()) < 0)
+                    {
+                        annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("5"));
+                    }
+                    else
+                    {
+                        annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("0"));
+                    }
+                }
             }
             if(year >= 10 && year < 20){
                 annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("10"));
@@ -188,14 +204,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //离社年月日
         String resignationDateendCal = customer.getUserinfo().getResignation_date();
         //事业年度开始（4月1日）
-        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar_a = Calendar.getInstance();
         calendar_a.setTime(new Date());
         calendar_a.add(Calendar.DAY_OF_YEAR,-1);
         DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
         DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
 
-
+        /*
         //Ⅰ.途中入职：本事业年度在职期间/12个月*15天
         if(StringUtil.isEmpty(resignationDateendCal))
         {
@@ -233,6 +248,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
             }
         }
+        */
 
         //有以下情形的，不能享受该事业年度的年休：
         //1年以上10年未满  因病休假2个月以上的
