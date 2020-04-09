@@ -87,4 +87,10 @@ public class AuthController {
         annualLeaveService.insertattendancebp(diffday);
         return ApiResult.success();
     }
+
+    @RequestMapping(value = "/creatAnnualLeaveAn",method={RequestMethod.GET})
+    public ApiResult creatAnnualLeaveAn(HttpServletRequest request) throws Exception {
+        annualLeaveService.insert();
+        return ApiResult.success();
+    }
 }
