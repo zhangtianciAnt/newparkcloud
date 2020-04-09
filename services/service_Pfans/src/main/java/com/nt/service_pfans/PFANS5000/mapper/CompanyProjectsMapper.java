@@ -11,8 +11,8 @@ import java.util.List;
 public interface CompanyProjectsMapper extends MyMapper<CompanyProjects> {
 
     List<CompanyProjectsVo2> getList(@Param("owners")List<String> owners);
-    List<CompanyProjectsVo2> getList2();
-    List<CompanyProjectsVo2> getList3();
+    List<CompanyProjectsVo2> getList2(@Param("owners")List<String> owners);
+    List<CompanyProjectsVo2> getList3(@Param("owners")List<String> owners);
     List<CompanyProjectsVo2> getListVo2();
     List<CompanyProjectsVo3> getCompanyProject(@Param("SyspName") String SyspName);
     List<CompanyProjectsVo2> getList4(@Param("user")String user);

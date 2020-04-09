@@ -242,12 +242,12 @@
      where base.status = '0'
      and base.GIVING_ID = 'fb3ae673-df49-4319-9165-f0341ea77c0c')temp)temp1
     </select>
+
     <select id="lastMonthWage" resultType="java.lang.String">
    select USER_ID from wages
    where YEAR(wages.CREATEON) = #{year}
    and MONTH(wages.CREATEON) = #{month}
  </select>
-
 
     <select id="getWagesByGivingId" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         SELECT

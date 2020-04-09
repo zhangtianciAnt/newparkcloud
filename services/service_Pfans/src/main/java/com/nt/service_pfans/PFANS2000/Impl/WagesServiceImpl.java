@@ -38,7 +38,6 @@ public class WagesServiceImpl implements WagesService {
     private BonussendMapper bonussendMapper;
 
 
-
     @Override
     public List<Wages> select(TokenModel tokenModel) {
         Query query = new Query();
@@ -84,22 +83,22 @@ public class WagesServiceImpl implements WagesService {
                             //IF(今月出勤日数="全月",ROUND(基数.当月基本工资,2),IF(今月出勤日数<>"",ROUND(基数.当月基本工资/21.75*今月出勤日数,2),0))
                             if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
                                 retire.setGive(df.format(Double.valueOf(thisMouth)));
-                            }else if(Integer.parseInt(retire.getAttendance())!=0){
-                                    retire.setGive(df.format(Double.valueOf(df.format(Double.valueOf(thisMouth)/21.75*Integer.parseInt(retire.getAttendance())))));
-                                }else{
+                            } else if (Integer.parseInt(retire.getAttendance()) != 0) {
+                                retire.setGive(df.format(Double.valueOf(df.format(Double.valueOf(thisMouth) / 21.75 * Integer.parseInt(retire.getAttendance())))));
+                            } else {
                                 retire.setGive("0");
                             }
                             //IF(今月出勤日数="全月",纳付率.食堂手当,ROUND(纳付率.食堂手当/21.75*今月出勤日数,2)
                             if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
                                 retire.setLunch("105");
-                            }else{
-                                retire.setLunch(df.format(105/21.75*Integer.parseInt(retire.getAttendance())));
+                            } else {
+                                retire.setLunch(df.format(105 / 21.75 * Integer.parseInt(retire.getAttendance())));
                             }
                             //IF(今月出勤日数="全月",纳付率.交通手当,ROUND(纳付率.交通手当/21.75*今月出勤日数,2))
                             if (Integer.parseInt(retire.getAttendance()) == getWorkDays(last.get(Calendar.YEAR), Integer.parseInt(getMouth(sf.format(last.getTime()))))) {
                                 retire.setLunch("84");
-                            }else{
-                                retire.setLunch(df.format(84/21.75*Integer.parseInt(retire.getAttendance())));
+                            } else {
+                                retire.setLunch(df.format(84 / 21.75 * Integer.parseInt(retire.getAttendance())));
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -139,14 +138,14 @@ public class WagesServiceImpl implements WagesService {
     @Override
     public List<Wages> wagesList(Wages wages) throws Exception {
         List<Wages> listw = wagesMapper.select(wages);
-        for(Wages wages1 : listw){
-            if(wages1.getGiving_id() != null){
+        for (Wages wages1 : listw) {
+            if (wages1.getGiving_id() != null) {
                 Giving giving = new Giving();
                 giving.setGiving_id(wages1.getGiving_id());
                 List<Giving> givingList = givingMapper.select(giving);
-                for(Giving giving1 : givingList) {
+                for (Giving giving1 : givingList) {
                     if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
-                    wages1.setGiving_id(giving1.getMonths());
+                        wages1.setGiving_id(giving1.getMonths());
                     }
                 }
 
@@ -171,5 +170,17 @@ public class WagesServiceImpl implements WagesService {
         return wagesMapper.getWagesByGivingId(givingId);
     }
 
+    @Override
+    public int insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {
+        // 先删除当月数据，再插入
+        Wages del_wage = new Wages();
+        del_wage.setGiving_id(wages.get(0).getGiving_id());
+        wagesMapper.delete(del_wage);
 
+        for (Wages wage : wages) {
+            wage.setWages_id(UUID.randomUUID().toString());
+            wage.preInsert(tokenModel);
+        }
+        return wagesMapper.insertListAllCols(wages);
+    }
 }

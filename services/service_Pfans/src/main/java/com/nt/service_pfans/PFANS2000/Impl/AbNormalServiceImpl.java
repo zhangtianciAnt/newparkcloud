@@ -63,7 +63,13 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Override
     public void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        String strtus = abNormal.getStatus();
+
         abNormal.preInsert(tokenModel);
+        //总经理新建自动通过
+        if(strtus.equals(AuthConstants.APPROVED_FLAG_YES)){
+            abNormal.setStatus(AuthConstants.APPROVED_FLAG_YES);
+        }
         abNormal.setAbnormalid(UUID.randomUUID().toString());
         abNormalMapper.insert(abNormal);
     }
@@ -286,7 +292,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 {
                                     if (!abNormal.getErrortype().equals("PR013001"))
                                     {
-                                        timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
+                                        timeLength = df.format(Math.floor(Double.valueOf(timeLength) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
                                     }
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
@@ -582,7 +588,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
                                 {
                                     if(!abNormal.getErrortype().equals("PR013001")) {
-                                        timeLength = df.format(Math.floor(Double.valueOf(abNormal.getLengthtime()) / Double.valueOf(absenteeism)) * Double.valueOf(absenteeism) + Double.valueOf(absenteeism));
+                                        timeLength = df.format(Math.floor(Double.valueOf(timeLength) / Double.valueOf(absenteeism)) * Double.valueOf(absenteeism) + Double.valueOf(absenteeism));
                                     }
                                 }
                                 if (abNormal.getErrortype().equals("PR013001")) {//外出
