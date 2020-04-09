@@ -172,12 +172,15 @@ public class WagesServiceImpl implements WagesService {
 
     @Override
     public int insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {
+        // 先删除当月数据，再插入
+        Wages del_wage = new Wages();
+        del_wage.setGiving_id(wages.get(0).getGiving_id());
+        wagesMapper.delete(del_wage);
+
         for (Wages wage : wages) {
             wage.setWages_id(UUID.randomUUID().toString());
             wage.preInsert(tokenModel);
         }
         return wagesMapper.insertListAllCols(wages);
     }
-
-
 }
