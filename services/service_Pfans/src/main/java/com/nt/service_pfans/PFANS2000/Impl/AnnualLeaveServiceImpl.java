@@ -596,7 +596,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //个人所有进门记录
                     List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //第一条进门记录
-                    Date Time_start = new Date();
+                    //Date Time_start = new Date();
+                    Date Time_start = null;
                     if(punDetaillistevent1.size() > 0){
                         Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                     }
@@ -731,7 +732,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //外出超过15分钟的欠勤时间
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
-                        punchcardrecord.setTime_start(Time_start);
+                        if(Time_start == null){
+
+                            punchcardrecord.setTime_start(Time_end);
+                        }else{
+
+                            punchcardrecord.setTime_start(Time_start);
+                        }
                         if(Time_end == null){
 
                             punchcardrecord.setTime_end(Time_start);
