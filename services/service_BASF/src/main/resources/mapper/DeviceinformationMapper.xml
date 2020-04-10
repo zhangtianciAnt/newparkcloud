@@ -31,26 +31,7 @@
 
     <select id="selectDeviceList" resultType="com.nt.dao_BASF.Deviceinformation">
         SELECT
-        d.deviceinformationid,
-        d.mapid,
-        d.deviceno,
-        d.devicetypesmall,
-        d.devicetype,
-        d.devicename,
-        d.personliable,
-        d.region,
-        d.defencearea,
-        d.device,
-        d.floor,
-        d.subordinatesystem,
-        d.detailedlocation,
-        d.devicestatus,
-        d.GIS,
-        d.remark,
-        d.ip,
-        d.factoryname,
-        d.line,
-        d.`row`
+        d.*
         FROM deviceinformation AS d
         WHERE
         `STATUS`="0"
