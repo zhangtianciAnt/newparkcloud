@@ -26,8 +26,8 @@
         dictionary AS d
         WHERE
         d.PCODE IS NULL AND(
-        d.`STATUS` <![CDATA[ <> ]]> '1' OR
-        d.`STATUS` IS NULL)
+        d.`STATUS` = '0' OR
+		d.`STATUS` IS NULL)
     </select>
 	<select id="smallAtbig" resultType="com.nt.dao_Org.Dictionary">
        SELECT
@@ -54,8 +54,8 @@ FROM
 	dictionary AS d
 WHERE
 	(
-	d.`STATUS` <![CDATA[ <> ]]> '1' OR
-    d.`STATUS` IS NULL)
+	d.`STATUS` = '0' OR
+		d.`STATUS` IS NULL)
     AND
 	d.PCODE LIKE #{code}
     </select>

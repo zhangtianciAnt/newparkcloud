@@ -1,9 +1,14 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
+import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.dao_BASF.VO.FireAlarmStatisticsVo;
 import com.nt.dao_BASF.VO.FireAlarmVo;
+import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
+import com.nt.service_BASF.MapBox_MapLevelServices;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_BASF.mapper.FirealarmMapper;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
@@ -36,6 +41,12 @@ public class FirealarmServicesImpl implements FirealarmServices {
     @Autowired
     private FirealarmMapper firealarmMapper;
 
+    @Autowired
+    private DeviceinformationMapper deviceinformationMapper;
+
+    @Autowired
+    private MapBox_MapLevelServices mapBox_mapLevelServices;
+
     /**
      * @param firealarm
      * @Method list
@@ -48,6 +59,12 @@ public class FirealarmServicesImpl implements FirealarmServices {
     @Override
     public List<Firealarm> list() throws Exception {
         Firealarm firealarm = new Firealarm();
+        return firealarmMapper.select(firealarm);
+    }
+
+    //获取报警单列表
+    @Override
+    public List<Firealarm> list(Firealarm firealarm) throws Exception{
         return firealarmMapper.select(firealarm);
     }
 
@@ -88,6 +105,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
         String ccid = UUID.randomUUID().toString();
         firealarm.setFirealarmid(ccid);
         firealarm.setCompletesta("0");
+        firealarm.setMisinformation("0");
         firealarmMapper.insert(firealarm);
         return ccid;
     }
@@ -134,9 +152,13 @@ public class FirealarmServicesImpl implements FirealarmServices {
     @Override
     public void update(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         firealarm.preUpdate(tokenModel);
-//        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
-//        Date date = new Date(System.currentTimeMillis());
-//        firealarm.setPolicetim(formatter.format(date));
+        //当处于报警单处于完成或者误报状态时，解除地图报警
+        if("1".equals(firealarm.getCompletesta())||"1".equals(firealarm.getMisinformation())){
+            Deviceinformation deviceinformation=deviceinformationMapper.selectByPrimaryKey(firealarm.getDeviceinformationid());
+            if(deviceinformation!=null){
+                mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(),false,tokenModel);
+            }
+        }
         firealarmMapper.updateByPrimaryKey(firealarm);
     }
 
@@ -152,6 +174,13 @@ public class FirealarmServicesImpl implements FirealarmServices {
     @Override
     public void upcompletesta(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         //状态更新（completesta -> "1"）
+        //当处于报警单处于完成或者误报状态时，解除地图报警
+        if("1".equals(firealarm.getCompletesta())||"1".equals(firealarm.getMisinformation())){
+            Deviceinformation deviceinformation=deviceinformationMapper.selectByPrimaryKey(firealarm.getDeviceinformationid());
+            if(deviceinformation!=null){
+                mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(),false,tokenModel);
+            }
+        }
         firealarmMapper.updateByPrimaryKeySelective(firealarm);
     }
 

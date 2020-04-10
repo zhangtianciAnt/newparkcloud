@@ -10,6 +10,7 @@ import com.nt.dao_BASF.ServerInfo;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
+import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.ElementType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +42,9 @@ public class BASF10105Controller {
 
     @Autowired
     private DeviceInformationServices deviceinFormationServices;
+
+    @Autowired
+    private MapBox_MapLevelServices mapBox_mapLevelServices;
 
     @Autowired
     private TokenService tokenService;
@@ -70,33 +73,50 @@ public class BASF10105Controller {
 
     @RequestMapping(value = "/linkagelist", method = {RequestMethod.POST})
     public ApiResult linkagelist(@RequestBody List<ServerInfo> serverinfolist, HttpServletRequest request) throws Exception {
+        //serverinfolist是机柜传来的报警信息列表
+        if (serverinfolist.size() > 0) {
+            TokenModel tokenModel = tokenService.getToken(request);
+            //存储需要更改remark的报警设备的Mapid
+            List<String> alarmMapidList = new ArrayList<>();
+            //存储发送到websocket中的信息
+            List<DeviceinformationVo> list = new ArrayList<>();
 
-        if(serverinfolist.size()>0)
-        {
-            ArrayList list = new ArrayList<>();
-            for(int i = 0;i<serverinfolist.size();i++){
+            for (int i = 0; i < serverinfolist.size(); i++) {
+
+                //根据设备总厂/分厂名称、回路号/寄存器地址、设备地址/寄存器位查询唯一对应设备
                 ServerInfo serverinfo = serverinfolist.get(i);
                 Deviceinformation deviceinformation = new Deviceinformation();
                 deviceinformation.setFactoryname(serverinfo.getFactoryname());
-                deviceinformation.setLine(serverinfo.getLine());
-                deviceinformation.setRow(serverinfo.getRow());
+                deviceinformation.setDevline(serverinfo.getLine());
+                deviceinformation.setDevrow(serverinfo.getRow());
                 List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
-                DeviceinformationVo linkagelistVo = new DeviceinformationVo();
-                if(linkagelist.size() == 1)
-                {
-                    TokenModel tokenModel = tokenService.getToken(request);
-                    Firealarm firealarm = new Firealarm();
-                    String yyMMdd = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
 
+                //添加需要更改remark的报警设备的Mapid
+                if (linkagelist.size() == 1) {
+                    alarmMapidList.add(linkagelist.get(0).getMapid());
+                }
+
+                //创建消防报警单
+                DeviceinformationVo linkagelistVo = new DeviceinformationVo();
+                if (linkagelist.size() == 1) {
+                    Firealarm firealarm = new Firealarm();
+                    String yyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString();
+                    firealarm.setDeviceinformationid(linkagelist.get(0).getDeviceinformationid());
                     firealarm.setAlarmpeo("系统管理员");
-                    firealarm.setAlarmtimes(yyMMdd);
+                    firealarm.setAlarmtimes(yyMMddHHmmss);
                     firealarm.setIndevice(linkagelist.get(0).getDevice());
-                    String firealarmuuid = firealarmServices.insert(firealarm,tokenModel);
+                    firealarm.setCompletesta("0");
+                    firealarm.setMisinformation("0");
+                    String firealarmuuid = firealarmServices.insert(firealarm, tokenModel);
                     linkagelistVo.setDeviceinformation(linkagelist.get(0));
                     linkagelistVo.setFirealarmuuid(firealarmuuid);
                     list.add(linkagelistVo);
                 }
+
             }
+            //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
+            mapBox_mapLevelServices.remarkSet(alarmMapidList,true,tokenModel);
+
             // 接收机柜传过来的报警信息
             webSocketVo.setDeviceinformationList(list);
             ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));

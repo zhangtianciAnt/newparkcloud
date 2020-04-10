@@ -10,6 +10,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>service_BASFSQL</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>dao_BASF</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_BASF</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>

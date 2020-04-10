@@ -60,38 +60,39 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
         return mapBox_mapLevelMapper.select(mapBox_mapLevel);
     }
+
     @Override
     public void add(MapBox_MapLevel info, TokenModel tokenModel) throws Exception {
         info.setId((UUID.randomUUID().toString()));
         info.preInsert(tokenModel);
         mapBox_mapLevelMapper.insert(info);
     }
+
     @Override
     public void edit(MapBox_MapLevel info, TokenModel tokenModel) throws Exception {
         info.preUpdate(tokenModel);
         MapBox_MapLevel map = new MapBox_MapLevel();
         map.setId(info.getId());
-        List maplist =  mapBox_mapLevelMapper.select(map);
+        List maplist = mapBox_mapLevelMapper.select(map);
         String oldname = ((MapBox_MapLevel) maplist.get(0)).getName();
         String newname = info.getName();
         mapBox_mapLevelMapper.updateByPrimaryKeySelective(info);
-        editmapLevelchild(oldname,newname,info.getId());
+        editmapLevelchild(oldname, newname, info.getId());
     }
-    public void editmapLevelchild(String oldname,String newname,String id) {
+
+    public void editmapLevelchild(String oldname, String newname, String id) {
         MapBox_MapLevel mapLevel = new MapBox_MapLevel();
         mapLevel.setParentid(id);
-        List mapLevelchildlist =  mapBox_mapLevelMapper.select(mapLevel);
-        if(mapLevelchildlist.size()>0)
-        {
-            for (int i = 0;i<mapLevelchildlist.size();i++)
-            {
+        List mapLevelchildlist = mapBox_mapLevelMapper.select(mapLevel);
+        if (mapLevelchildlist.size() > 0) {
+            for (int i = 0; i < mapLevelchildlist.size(); i++) {
                 String childname = ((MapBox_MapLevel) mapLevelchildlist.get(i)).getCascname();
-                String newchildname = childname.replace(oldname,newname);
+                String newchildname = childname.replace(oldname, newname);
                 MapBox_MapLevel mapLevelchild = new MapBox_MapLevel();
                 mapLevelchild.setId(((MapBox_MapLevel) mapLevelchildlist.get(i)).getId());
                 mapLevelchild.setCascname(newchildname);
                 mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapLevelchild);
-                editmapLevelchild(oldname,newname,((MapBox_MapLevel) mapLevelchildlist.get(i)).getId());
+                editmapLevelchild(oldname, newname, ((MapBox_MapLevel) mapLevelchildlist.get(i)).getId());
             }
         }
     }
@@ -106,9 +107,9 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
     }
 
 
-
     /**
      * 获取跟节点
+     *
      * @param list
      * @return
      */
@@ -125,6 +126,7 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
 
     /**
      * 递归获取子节点
+     *
      * @param module
      * @param list
      * @return
@@ -156,6 +158,34 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
         }
     }
 
+    // region 根据传来的mapid更改remark(false设置为0；true设置为1)
+    @Override
+    public void remarkSet(List<String> mapidList, boolean zeroOrOne, TokenModel tokenModel) throws Exception {
+        for(String mapid:mapidList){
+            remarkSet(mapid,zeroOrOne,tokenModel);
+        }
+    }
 
+    @Override
+    public void remarkSet(String mapid, boolean zeroOrOne, TokenModel tokenModel) throws Exception {
+        MapBox_MapLevel mapBox_mapLevel = mapBox_mapLevelMapper.selectByPrimaryKey(mapid);
+        if(mapBox_mapLevel!=null){
+            mapBox_mapLevel.setRemark(zeroOrOne == true ? "1" : "0");
+            mapBox_mapLevel.preUpdate(tokenModel);
+            mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel);
+            String[] parentidList=mapBox_mapLevel.getCascids().split("/");
+            if(parentidList.length>=2){
+                for(int i=1;i<parentidList.length;i++){
+                    MapBox_MapLevel mapBox_mapLevel1=mapBox_mapLevelMapper.selectByPrimaryKey(parentidList[i]);
+                    if(mapBox_mapLevel1!=null){
+                        mapBox_mapLevel1.setRemark(zeroOrOne == true ? "1" : "0");
+                        mapBox_mapLevel1.preUpdate(tokenModel);
+                        mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel1);
+                    }
+                }
+            }
+        }
+    }
+    //endregion
 
 }

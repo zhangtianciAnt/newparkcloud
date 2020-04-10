@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.MenuShowMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.MenuShow">
+        <!--
+           WARNING - @mbg.generated
+         -->
+        <result column="_id" property="_id" jdbcType="VARCHAR"/>
+        <result column="loginname" property="CarStatus1" jdbcType="VARCHAR"/>
+        <result column="homepageshowflg" property="CarStatus2" jdbcType="VARCHAR"/>
+        <result column="fireshowflg" property="CarStatus3" jdbcType="VARCHAR"/>
+        <result column="safeshowflg" property="CarStatus4" jdbcType="VARCHAR"/>
+        <result column="onsiteshowflg" property="CarStatus5" jdbcType="VARCHAR"/>
+        <result column="personnelshowflg" property="CarStatus6" jdbcType="VARCHAR"/>
+        <result column="vehicleshowflg" property="CarStatus6" jdbcType="VARCHAR"/>
+        <result column="emergencyshowflg" property="CarStatus6" jdbcType="VARCHAR"/>
+        <result column="trainingshowflg" property="CarStatus6" jdbcType="VARCHAR"/>
+        <result column="riskshowflg" property="CarStatus6" jdbcType="VARCHAR"/>
+        <result column="backstageflg" property="CarStatus6" jdbcType="VARCHAR"/>
+
+    </resultMap>
+</mapper>

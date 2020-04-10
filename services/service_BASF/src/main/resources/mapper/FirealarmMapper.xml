@@ -68,7 +68,8 @@
         inner join dictionary
         on dictionary.code = firealarm.typacc
         where
-		year(alarmtimes)=year(now())
+        firealarm.misinformation &lt;> '1'
+		and year(alarmtimes)=year(now())
         and month(alarmtimes) = month(now())
         and day(alarmtimes) = day(now())
         order by firealarm.alarmtimes desc
@@ -81,7 +82,8 @@
         inner join dictionary
         on dictionary.code = firealarm.typacc
         where
-		YEARWEEK(date_format(alarmtimes,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        firealarm.misinformation &lt;> '1'
+		and YEARWEEK(date_format(alarmtimes,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
         order by firealarm.alarmtimes desc
     </select>
 </mapper>

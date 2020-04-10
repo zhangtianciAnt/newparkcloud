@@ -9,9 +9,9 @@ import com.nt.service_SQL.sqlMapper.SqlUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.nt.dao_BASF.PersonnelPermissions;
+import com.nt.service_BASF.*;
+import java.util.*;
 
 
 @Service
@@ -20,6 +20,9 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
 
     @Autowired
     private SqlUserInfoMapper sqlUserInfoMapper;
+
+    @Autowired
+    private PersonnelPermissionsServices personnelPermissionsServices;
 
     @Override
     public List<SqlUserInfo> list( ) throws Exception {
@@ -33,82 +36,76 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
 
     @Override
     public List<SqlAPBCardHolder> selectapbcard( ) throws Exception {
+        Map<String,String> departmentInfoList=new HashMap<>();
+        List departlist = sqlUserInfoMapper.selectdepartment();
         List apblist = sqlUserInfoMapper.selectapbcard();
         List resultlist = new ArrayList();
-        if(apblist.size()>0)
-        {
-//            resultlist.add(apblist.get(0));
-            for(int i = 0;i<apblist.size();i++)
-            {
-                String lastAPBName = ((SqlAPBCardHolder) apblist.get(i)).getLastapbname();
-                String DepartmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                if(lastAPBName.indexOf("厂外") < 0 )
-                {
-                    SqlViewDepartment sqlviewdepartment1 = sqlUserInfoMapper.selectdepartmentid(DepartmentID);
-                    if(sqlviewdepartment1.getDepartmentpeid().indexOf("-1")==0)
-                    {
-                        String name1 = sqlviewdepartment1.getName();
-                        if("'访客','送货员','临时工作人员','VIP'".indexOf(name1) > 0)
-                        {
-                            ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
-                            resultlist.add(apblist.get(i));
-                        }
-                        else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name1) > 0)
-                        {
-                            ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
-                            resultlist.add(apblist.get(i));
-                        }
-                        else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name1) > 0)
-                        {
-                            ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
-                            resultlist.add(apblist.get(i));
+        List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
+        String companystaff="";
+        String supplier="";
+        String foreignworkers="";
+
+
+        if (apblist.size() > 0) {
+            if (departlist.size() > 0) {
+                for (int i = 0; i < departlist.size(); i++) {
+                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(),((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
+                }
+            }
+            if (personnelPermissionsList.size() > 0) {
+                for (int i = 0; i < personnelPermissionsList.size(); i++) {
+                    if("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                        if("".equals(companystaff)){
+                            companystaff=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }else{
+                            companystaff=companystaff+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
-                    else{
-                        SqlViewDepartment sqlviewdepartment2 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment1.getDepartmentpeid());
+                    if("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                        if("".equals(foreignworkers)){
+                            foreignworkers=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }else{
+                            foreignworkers=foreignworkers+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }
+                    }
+                    if("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
+                        if("".equals(supplier)){
+                            supplier=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }else{
+                            supplier=supplier+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        }
+                    }
+                }
+            }
+            List<String> companystaffList = Arrays.asList(companystaff.split(","));
+            List<String> supplierList = Arrays.asList(supplier.split(","));
+            List<String> foreignworkersList = Arrays.asList(foreignworkers.split(","));
 
-                        if(sqlviewdepartment2.getDepartmentpeid().indexOf("-1")==0)
-                        {
-                            String name2 = sqlviewdepartment2.getName();
-                            if("'访客','送货员','临时工作人员','VIP'".indexOf(name2) > 0)
-                            {
-                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
-                                resultlist.add(apblist.get(i));
-                            }
-                            else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name2) > 0)
-                            {
+            for (int i = 0; i < apblist.size(); i++) {
+                String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
+                for (int j = 1; j<10; j++) {
+                    if ("-1".equals(departmentInfoList.get(departmentID))) {
+                        for(int z = 0; z<companystaffList.size(); z++) {
+                            if(companystaffList.get(z).equals(departmentID)){
                                 ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
                                 resultlist.add(apblist.get(i));
                             }
-                            else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name2) > 0)
-                            {
+                        }
+                        for(int z = 0; z<supplierList.size(); z++) {
+                            if(supplierList.get(z).equals(departmentID)){
                                 ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
                                 resultlist.add(apblist.get(i));
                             }
                         }
-                        else{
-                            SqlViewDepartment sqlviewdepartment3 = sqlUserInfoMapper.selectdepartmentid(sqlviewdepartment2.getDepartmentpeid());
-
-                            if(sqlviewdepartment3.getDepartmentpeid().indexOf("-1")==0)
-                            {
-                                String name3 = sqlviewdepartment3.getName();
-                                if("'访客','送货员','临时工作人员','VIP'".indexOf(name3) > 0)
-                                {
-                                    ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
-                                    resultlist.add(apblist.get(i));
-                                }
-                                else if("'BACH','BASF','BCH','BACH&BACC','BSC'".indexOf(name3) > 0)
-                                {
-                                    ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
-                                    resultlist.add(apblist.get(i));
-                                }
-                                else if("'SCIP','Project','BACH Contractor','BSC Contractor'".indexOf(name3) > 0)
-                                {
-                                    ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
-                                    resultlist.add(apblist.get(i));
-                                }
+                        for(int z = 0; z<foreignworkersList.size(); z++) {
+                            if(foreignworkersList.get(z).equals(departmentID)){
+                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
+                                resultlist.add(apblist.get(i));
                             }
                         }
+                        j=10;
+                    }else {
+                        departmentID=departmentInfoList.get(departmentID);
                     }
                 }
             }

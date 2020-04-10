@@ -18,6 +18,16 @@ public class Firealarm extends BaseModel {
     private String firealarmid;
 
     /**
+     * 接警单编号
+     */
+    private String firealarmno;
+
+    /**
+     * 报警设备id
+     */
+    private String deviceinformationid;
+
+    /**
      * 报警人
      */
     private String alarmpeo;
@@ -122,16 +132,16 @@ public class Firealarm extends BaseModel {
      */
     private String remarks;
 
-    /**
-     * 接警单编号
-     */
-    private String firealarmno;
-
 
     /**
-     * 接警单状态
+     * 接警单状态 0:未完成;1：完成
      */
     private String completesta;
+
+    /**
+     * 是否误报 0：非误报；1：误报
+     */
+    private String misinformation;
 
 
 }

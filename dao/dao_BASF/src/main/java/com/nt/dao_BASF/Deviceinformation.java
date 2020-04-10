@@ -106,12 +106,12 @@ public class Deviceinformation extends BaseModel {
     /**
      * 回路号/寄存器地址
      */
-    private String line;
+    private String devline;
 
     /**
      * 设备地址/寄存器位
      */
-    private String row;
+    private String devrow;
 
 
 

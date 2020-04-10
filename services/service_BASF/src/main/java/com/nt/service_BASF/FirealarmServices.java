@@ -21,6 +21,9 @@ public interface FirealarmServices {
     //获取报警单列表
     List<Firealarm> list() throws Exception;
 
+    //获取报警单列表
+    List<Firealarm> list(Firealarm firealarm) throws Exception;
+
     //创建报警单
     String insert(Firealarm firealarm, TokenModel tokenModel) throws Exception;
 
