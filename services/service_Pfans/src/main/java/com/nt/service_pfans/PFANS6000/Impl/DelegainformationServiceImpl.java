@@ -38,7 +38,8 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     @Override
     public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
         for (Delegainformation delegainformation : delegainformationList) {
-            delegainformation.preInsert(tokenModel);
+//            delegainformation.preInsert(tokenModel);
+            delegainformation.preUpdate(tokenModel);
             delegainformationMapper.updateByPrimaryKey(delegainformation);
         }
     }
