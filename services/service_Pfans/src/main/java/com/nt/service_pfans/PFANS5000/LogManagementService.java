@@ -21,6 +21,7 @@ public interface LogManagementService {
 
     public List<LogManagement> getDataList(LogManagement logmanagemenr) throws Exception;
 
+    public List<LogManagement> getCheckList(LogManagement logmanagemenr) throws Exception;
 
     public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception;
 
