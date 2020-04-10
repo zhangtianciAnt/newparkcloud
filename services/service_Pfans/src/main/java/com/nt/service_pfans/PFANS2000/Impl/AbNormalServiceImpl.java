@@ -63,7 +63,13 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Override
     public void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        String strtus = abNormal.getStatus();
+
         abNormal.preInsert(tokenModel);
+        //总经理新建自动通过
+        if(strtus.equals(AuthConstants.APPROVED_FLAG_YES)){
+            abNormal.setStatus(AuthConstants.APPROVED_FLAG_YES);
+        }
         abNormal.setAbnormalid(UUID.randomUUID().toString());
         abNormalMapper.insert(abNormal);
     }

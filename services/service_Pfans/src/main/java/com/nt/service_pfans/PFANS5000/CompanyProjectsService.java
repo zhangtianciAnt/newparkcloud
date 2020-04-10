@@ -7,6 +7,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
+import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public interface CompanyProjectsService {
     //PJ完了审批
     List<CompanyProjectsVo2> getPjList(String flag) throws Exception;
 
-    List<CompanyProjectsVo2> getList2 (String flag)throws Exception;
+    List<CompanyProjectsVo2> getList2 (String flag,List<String> ownerList)throws Exception;
 
     //获取外住人员所在的项目
     List<CompanyProjectsVo3> getCompanyProject (String SyspName)throws Exception;
