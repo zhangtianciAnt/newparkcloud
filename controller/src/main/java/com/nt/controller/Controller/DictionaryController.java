@@ -3,6 +3,7 @@ package com.nt.controller.Controller;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Auth.AuthService;
+import com.nt.service_BASF.HomePageServices;
 import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -25,6 +26,10 @@ public class DictionaryController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private HomePageServices homepageservice;
+
 
     @RequestMapping(value = "/getForSelect",method={RequestMethod.GET})
     public ApiResult getForSelect(String code, HttpServletRequest request) throws Exception {
@@ -116,7 +121,13 @@ public class DictionaryController {
         return ApiResult.success();
     }
 
-
+    @RequestMapping(value = "/getHomePage",method={RequestMethod.GET})
+    public ApiResult getHomePage(String loginname, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(loginname)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(homepageservice.getHomepagecontrolshowList(loginname));
+    }
 
 
 }
