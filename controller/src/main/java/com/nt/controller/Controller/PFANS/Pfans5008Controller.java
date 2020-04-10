@@ -137,8 +137,15 @@ public class Pfans5008Controller {
         logmanagement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
     }
+    @RequestMapping(value = "/getCheckList", method = {RequestMethod.POST})
+    public ApiResult getCheckList(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(logmanagementService.getCheckList(logmanagement));
+    }
 
-    
     @RequestMapping(value = "/CheckList", method = {RequestMethod.POST})
     public ApiResult CheckList(@RequestBody Projectsystem projectsystem, HttpServletRequest request) throws Exception {
         if (projectsystem == null) {
