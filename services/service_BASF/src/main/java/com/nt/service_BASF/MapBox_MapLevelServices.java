@@ -39,4 +39,9 @@ public interface MapBox_MapLevelServices {
 
     //通过sql获取子节点
     List<String> getChildrensStr(String mapid) throws Exception;
+
+    //根据传来的mapid更改remark
+    void remarkSet(List<String> mapidList,boolean zeroOrOne,TokenModel tokenModel) throws Exception;
+
+    void remarkSet(String mapid,boolean zeroOrOne,TokenModel tokenModel) throws Exception;
 }

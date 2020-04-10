@@ -15,8 +15,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class DeviceinformationVo extends BaseModel {
 
+    //设备信息
     private Deviceinformation deviceinformation;
 
+    //报警单编号
     private String firealarmuuid;
 
 
