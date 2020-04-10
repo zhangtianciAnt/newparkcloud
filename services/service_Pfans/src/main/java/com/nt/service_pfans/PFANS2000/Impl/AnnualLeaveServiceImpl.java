@@ -1666,4 +1666,48 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
     }
+
+    //获取打卡记录（参数）
+    @Override
+    public void getPunchcard(List<Punchcard> Punchcardlist) throws Exception {
+
+        List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
+        //打卡时间
+        String recordTime = "";
+        //员工编号
+        String jobnumber = "";
+        String jobnumberOld = "";
+        //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+        String eventNoOld = "";
+        for(Punchcard punchcard : Punchcardlist){
+            //打卡时间
+            recordTime = punchcard.getRecordTime();
+            //员工编号
+            jobnumber = punchcard.getStaffNo();
+            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+            String eventNo = punchcard.getEventNo();
+            //无效-反潜回
+            if(eventNo.equals("30")){
+                continue;
+            }
+            //PSCDC(本社人员)
+            String departmentName_P = punchcard.getDepartmentName();
+//            if(!departmentName_P.equals("PSDCD")){
+//                continue;
+//            }
+            //判断是否短时间同一人多次打卡
+            if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
+                continue;
+            }
+            eventNoOld = eventNo;
+            jobnumberOld = jobnumber;
+            //员工姓名
+            String staffName = punchcard.getStaffName();
+            //员工部门
+            String departmentName = punchcard.getDepartmentName();
+            //门号
+            String doorID = punchcard.getDoorID();
+
+        }
+    }
 }
