@@ -208,6 +208,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setCustochinese(contractapp.getCustochinese());
                     award.setPlacejapanese(contractapp.getPlacejapanese());
                     award.setPlacechinese(contractapp.getPlacechinese());
+                    award.setGroup_id(contractapp.getGroup_id());
                     award.setDeployment(contractapp.getDeployment());
                     award.setPjnamechinese(contractapp.getConchinese());
                     award.setPjnamejapanese(contractapp.getConjapanese());
