@@ -101,7 +101,7 @@ public class BASF10105Controller {
                 if (linkagelist.size() == 1) {
                     Firealarm firealarm = new Firealarm();
                     String yyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString();
-
+                    firealarm.setDeviceinformationid(linkagelist.get(0).getDeviceinformationid());
                     firealarm.setAlarmpeo("系统管理员");
                     firealarm.setAlarmtimes(yyMMddHHmmss);
                     firealarm.setIndevice(linkagelist.get(0).getDevice());

@@ -18,6 +18,16 @@ public class Firealarm extends BaseModel {
     private String firealarmid;
 
     /**
+     * 接警单编号
+     */
+    private String firealarmno;
+
+    /**
+     * 报警设备id
+     */
+    private String deviceinformationid;
+
+    /**
      * 报警人
      */
     private String alarmpeo;
@@ -121,11 +131,6 @@ public class Firealarm extends BaseModel {
      * 注释
      */
     private String remarks;
-
-    /**
-     * 接警单编号
-     */
-    private String firealarmno;
 
 
     /**

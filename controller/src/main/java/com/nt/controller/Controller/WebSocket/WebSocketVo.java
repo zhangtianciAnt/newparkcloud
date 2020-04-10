@@ -64,8 +64,10 @@ public class WebSocketVo {
     private List<PassingRateVo> passingRateList = new ArrayList<>();
     //培训教育 培训非强制通过率
     private List<PassingRateVo> passingIsRateList = new ArrayList<>();
+
     //接收机柜传过来的报警信息
     private List<DeviceinformationVo> deviceinformationList = new ArrayList<>();
+
     //应急预案列表
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();
     //响应信息列表

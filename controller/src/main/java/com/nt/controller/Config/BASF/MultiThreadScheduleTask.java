@@ -3,13 +3,17 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
+import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.PersonnelPermissions;
+import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
 import com.nt.service_SQL.SqlUserInfoServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import com.nt.service_SQL.sqlMapper.SqlUserInfoMapper;
+import org.apache.commons.collections.ArrayStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -28,6 +32,10 @@ import java.util.*;
 @EnableScheduling   // 1.开启定时任务
 @EnableAsync        // 2.开启多线程
 public class MultiThreadScheduleTask {
+
+    @Autowired
+    @SuppressWarnings("all")
+    DeviceInformationServices deviceInformationServices;
 
     @Autowired
     @SuppressWarnings("all")
@@ -433,6 +441,27 @@ public class MultiThreadScheduleTask {
     public void BASF90921_GetHighriskareaList() throws Exception {
         // 获取高风险作业清单
         webSocketVo.setHighriskareaList(highriskareaServices.list());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF10105_GetDeviceinformationVoList() throws Exception {
+        List<DeviceinformationVo> deviceinformationVos=new ArrayList<>();
+        //获取非误报且未完成的消防报警单
+        Firealarm firealarm=new Firealarm();
+        firealarm.setCompletesta("0");
+        firealarm.setMisinformation("0");
+        List<Firealarm> firealarms=firealarmServices.list(firealarm);
+        //获取消防报警单对应的设备信息
+        for(Firealarm firealarm1:firealarms){
+            DeviceinformationVo deviceinformationVo=new DeviceinformationVo();
+            deviceinformationVo.setFirealarmuuid(firealarm1.getFirealarmid());
+            deviceinformationVo.setDeviceinformation(deviceInformationServices.one(firealarm1.getDeviceinformationid()));
+            deviceinformationVos.add(deviceinformationVo);
+        }
+        webSocketVo.setDeviceinformationList(deviceinformationVos);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion
