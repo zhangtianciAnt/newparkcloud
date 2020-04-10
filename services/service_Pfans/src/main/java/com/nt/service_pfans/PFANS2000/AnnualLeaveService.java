@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
+import com.nt.dao_Pfans.PFANS2000.Punchcard;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface AnnualLeaveService {
 
     void insert() throws Exception;
 
+    //获取打卡记录（参数）
+    void getPunchcard(List<Punchcard> Punchcard) throws Exception;
     /**
      * 数据做成
      */

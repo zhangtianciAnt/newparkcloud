@@ -624,7 +624,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                                 if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -640,7 +640,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                 if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -661,7 +661,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                 if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -677,7 +677,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
                                                 if (Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -696,7 +696,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
                                                 if (Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -715,7 +715,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getLongsickleave() != null && !ad.getLongsickleave().isEmpty()) {
                                                 if (Double.valueOf(ad.getLongsickleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -735,7 +735,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
                                                 if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -756,7 +756,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                 if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                                 {
-                                                    strlengthtime = df.format(workinghours);
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
                                                 }
                                                 else
                                                 {
@@ -1287,7 +1287,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getNormal() != null && !ad.getNormal().isEmpty()) {
                                             if (Double.valueOf(ad.getNormal()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1309,7 +1309,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                             if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1321,7 +1321,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                             if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1341,7 +1341,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                             if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1353,7 +1353,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
                                             if (Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1372,7 +1372,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
                                             if (Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1391,7 +1391,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getLongsickleave() != null && !ad.getLongsickleave().isEmpty()) {
                                             if (Double.valueOf(ad.getLongsickleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1411,7 +1411,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
                                             if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
@@ -1432,7 +1432,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                             if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours))
                                             {
-                                                strlengthtime = df.format(workinghours);
+                                                strlengthtime = df.format(Double.valueOf(workinghours));
                                             }
                                             else
                                             {
