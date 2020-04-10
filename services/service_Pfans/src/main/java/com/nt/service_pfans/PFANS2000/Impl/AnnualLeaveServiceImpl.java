@@ -615,15 +615,27 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //第一条进门记录
                     Date Time_start = null;
+                    //第一条进门时间
+                    long startlfirst = 0L;
                     if(punDetaillistevent1.size() > 0){
                         Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                        //第一条进门时间
+                        startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                     }
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //最后一条出门记录
                     Date Time_end = null;
+                    //第一条出门时间
+                    long endlfirst = 0L;
                     if(punDetaillistevent2.size() > 0){
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                        //第一条出门时间
+                        endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                    }
+                    //个人第一条考勤时出门记录的情况
+                    if(endlfirst < startlfirst){
+                        punDetaillistevent2.remove(0);
                     }
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -951,15 +963,27 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
+                //第一条进门时间
+                long startlfirst = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                    //第一条进门时间
+                    startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
+                //第一条出门时间
+                long endlfirst = 0L;
                 if(punDetaillistevent2.size() > 0){
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                    //第一条出门时间
+                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                }
+                //个人第一条考勤时出门记录的情况
+                if(endlfirst < startlfirst){
+                    punDetaillistevent2.remove(0);
                 }
                 //从第一次出门开始计算
                 for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1258,15 +1282,27 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //第一条进门记录
                     Date Time_start = null;
+                    //第一条进门时间
+                    long startlfirst = 0L;
                     if(punDetaillistevent1.size() > 0){
                         Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                        //第一条进门时间
+                        startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                     }
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                     //最后一条出门记录
                     Date Time_end = null;
+                    //第一条出门时间
+                    long endlfirst = 0L;
                     if(punDetaillistevent2.size() > 0){
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                        //第一条出门时间
+                        endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                    }
+                    //个人第一条考勤时出门记录的情况
+                    if(endlfirst < startlfirst){
+                        punDetaillistevent2.remove(0);
                     }
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1507,15 +1543,28 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
+                //第一条进门时间
+                long startlfirst = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                    //第一条进门时间
+                    startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
+                //第一条出门时间
+                long endlfirst = 0L;
                 if(punDetaillistevent2.size() > 0){
+                    //最后一条出门记录
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                    //第一条出门时间
+                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                }
+                //个人第一条考勤时出门记录的情况
+                if(endlfirst < startlfirst){
+                    punDetaillistevent2.remove(0);
                 }
                 //从第一次出门开始计算
                 for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1754,15 +1803,28 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
+                //第一条进门时间
+                long startlfirst = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
+                    //第一条进门时间
+                    startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
+                //第一条出门时间
+                long endlfirst = 0L;
                 if(punDetaillistevent2.size() > 0){
+                    //最后一条出门记录
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
+                    //第一条出门时间
+                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                }
+                //个人第一条考勤时出门记录的情况
+                if(endlfirst < startlfirst){
+                    punDetaillistevent2.remove(0);
                 }
                 //从第一次出门开始计算
                 for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
