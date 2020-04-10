@@ -414,7 +414,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             throw new LogicalException("明细行金额不能为负数。");
         }
 
-        return rmb > 0 ? FIELD_RMB : FIELD_FOREIGNCURRENCY;
+        return rmb >= 0 ? FIELD_RMB : FIELD_FOREIGNCURRENCY;
     }
 
     private String getProperty(Object o, String key) {

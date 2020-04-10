@@ -99,13 +99,19 @@ public class RecruitJudgement extends BaseModel {
 
     private String education1;
     private String specialty1;
+    private String school1;
     private Date quityear1;
+
     private String education2;
     private String specialty2;
+    private String school2;
     private Date quityear2;
+
     private String education3;
     private String specialty3;
+    private String school3;
     private Date quityear3;
+
     private String english_detail;
     private String janpanese_detail;
     private String other3;
