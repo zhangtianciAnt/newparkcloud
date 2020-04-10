@@ -58,8 +58,8 @@ public class Supplierinfor extends BaseModel {
     /**
      * 供应商编码
      */
-   /* @Column(name = "VENDORNUM")
-    private String vendornum;*/
+   @Column(name = "VENDORNUM")
+    private String vendornum;
 
     /**
      * 收款方全称
