@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PunchcardRecordDetailbpMapper extends MyMapper<PunchcardRecordDetailbp> {
 
-    List<Expatriatesinfor> getexpatriatesinfor(@Param("numbers") List<String> numbers);
+    List<Expatriatesinfor> getexpatriatesinforbp(@Param("ids") List<String> ids);
 
     List<PunchcardRecordDetailbp> getPunDetailbp(@Param("jobnumber") String jobnumber, @Param("punchcardrecord_date") String punchcardrecord_date);
 
