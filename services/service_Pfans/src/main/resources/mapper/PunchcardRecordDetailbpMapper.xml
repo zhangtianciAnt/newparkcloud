@@ -15,10 +15,10 @@
     </select>
 
     <select id="getPunDetailbp" resultType="com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetailbp">
-        select JOBNUMBER,PUNCHCARDRECORD_DATE,EVENTNO from punchcardrecorddetailbp
-        where JOBNUMBER = #{jobnumber}
-        and  date_format(PUNCHCARDRECORD_DATE, '%Y-%m-%d') = #{punchcardrecord_date}
-        order by PUNCHCARDRECORD_DATE
+        select jobnumber,punchcardrecord_date,eventno from punchcardrecorddetailbp
+        where jobnumber = #{jobnumber}
+        and  date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
+        order by punchcardrecord_date
     </select>
 
     <delete id="deletetepunbp">
