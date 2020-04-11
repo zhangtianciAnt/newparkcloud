@@ -44,4 +44,5 @@ public interface ComprojectService {
     //获取外住人员所在的项目
     List<CompanyProjectsVo3> getCompanyProject(String SyspName)throws Exception;
 
+    List<Comproject> getComproject(Comproject comproject) throws Exception;
 }
