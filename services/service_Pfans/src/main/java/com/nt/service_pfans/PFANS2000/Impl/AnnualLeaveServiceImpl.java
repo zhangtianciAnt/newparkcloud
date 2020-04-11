@@ -177,22 +177,26 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             int year = getYears(workdaystartCal);
             //本年度法定年休（期初）
             if(year < 10){
-                if(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty())
-                {
-                    annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("0"));
-                }
-                else
-                {
-                    String enddate = customer.getUserinfo().getEnddate().substring(0,10);
-                    if (sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enddate)))).compareTo(calendar.getTime()) < 0)
-                    {
-                        annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("5"));
-                    }
-                    else
-                    {
-                        annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("0"));
-                    }
-                }
+                //年休计算不考虑试用期，未满10年均有5天年休
+                //del CCM 20200411--from
+//                if(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty())
+//                {
+//                    annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("0"));
+//                }
+//                else
+//                {
+//                    String enddate = customer.getUserinfo().getEnddate().substring(0,10);
+//                    if (sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enddate)))).compareTo(calendar.getTime()) < 0)
+//                    {
+//                        annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("5"));
+//                    }
+//                    else
+//                    {
+//                        annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("0"));
+//                    }
+//                }
+                //del CCM 20200411--to
+                annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("5"));
             }
             if(year >= 10 && year < 20){
                 annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("10"));
