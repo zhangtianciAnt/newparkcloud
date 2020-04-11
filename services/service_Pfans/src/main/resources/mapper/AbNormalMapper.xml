@@ -53,10 +53,9 @@
         WHERE error_type = 'PR013008'
     </select>
     <select id="selectAbNormalDate" resultType="Double">
-        select sum(timestampdiff(day,occurrence_date,finished_date) + 1) as datelength
-        from abnormal
-        where createon
-        between date_sub(now(), interval 365 day) and date_sub(now(), interval 0 day)
+        select sum(timestampdiff(day,occurrence_date,FINISHED_DATE) + 1) as datelength
+        from abnormal where date_format(createon,'%Y-%m-%d')
+        between CONCAT(YEAR(CURDATE()),'-','04','-','01') and CONCAT(YEAR(CURDATE()) +1,'-','03','-','31')
         and error_type = 'PR013009'
         and user_id = #{userid}
     </select>
