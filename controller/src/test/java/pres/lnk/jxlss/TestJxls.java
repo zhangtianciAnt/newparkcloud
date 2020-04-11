@@ -11,8 +11,6 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.ExcelOutPutUtil;
-import com.nt.utils.excel2pdf.Excel2Pdf;
-import com.nt.utils.excel2pdf.ExcelObject;
 import com.nt.utils.jxlsUtil.JxlsBuilder;
 import com.nt.utils.jxlsUtil.JxlsImage;
 import com.nt.utils.jxlsUtil.JxlsUtil;
@@ -150,19 +148,19 @@ public class TestJxls {
 //            template.save(item);
 //        }
 
-        FileInputStream fis1 = new FileInputStream(new File("D:\\仮出金.xls"));
-//        FileInputStream fis2 = new FileInputStream(new File("D:\\pdfexport\\MAD 6-1-47-Octavia NF-20131025.xls"));
-//        FileInputStream fis3 = new FileInputStream(new File("D:\\pdfexport\\MAD 038-Superb FL DS-20131025.xls"));
-        //
-        FileOutputStream fos = new FileOutputStream(new File("D:\\仮出金.pdf"));
-        //
-        List<ExcelObject> objects = new ArrayList<ExcelObject>();
-        objects.add(new ExcelObject("仮出金.xls",fis1));
-//        objects.add(new ExcelObject("2.MAD 6-1-47-Octavia NF-20131025.xls",fis2));
-//        objects.add(new ExcelObject("3.MAD 038-Superb FL DS-20131025.xls",fis3));
-//
-        Excel2Pdf pdf = new Excel2Pdf(objects , fos);
-        pdf.convert();
+//        FileInputStream fis1 = new FileInputStream(new File("D:\\仮出金.xls"));
+////        FileInputStream fis2 = new FileInputStream(new File("D:\\pdfexport\\MAD 6-1-47-Octavia NF-20131025.xls"));
+////        FileInputStream fis3 = new FileInputStream(new File("D:\\pdfexport\\MAD 038-Superb FL DS-20131025.xls"));
+//        //
+//        FileOutputStream fos = new FileOutputStream(new File("D:\\仮出金.pdf"));
+//        //
+//        List<ExcelObject> objects = new ArrayList<ExcelObject>();
+//        objects.add(new ExcelObject("仮出金.xls",fis1));
+////        objects.add(new ExcelObject("2.MAD 6-1-47-Octavia NF-20131025.xls",fis2));
+////        objects.add(new ExcelObject("3.MAD 038-Superb FL DS-20131025.xls",fis3));
+////
+//        Excel2Pdf pdf = new Excel2Pdf(objects , fos);
+//        pdf.convert();
     }
 
     private static Employee getEmployee() {
