@@ -387,6 +387,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     String[] str = contractnumber.split("-");
                     if(str.length == 1){
                         Contractapplication co = new Contractapplication();
+                        co.setCareeryear(citation.getCareeryear());
                         co.setContracttype(citation.getContracttype());
                         co.setGroup_id(citation.getGroup_id());
                         co.setType(citation.getType());
