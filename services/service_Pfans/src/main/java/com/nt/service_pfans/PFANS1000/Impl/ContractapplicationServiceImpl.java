@@ -145,7 +145,6 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     quotation2.setContractnumber(contractapp.getContractnumber());
                     quotation2.setOwner(tokenModel.getUserId());
                     quotationMapper.delete(quotation2);
-
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
