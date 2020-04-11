@@ -61,6 +61,15 @@ public class Pfans5013Controller {
         return ApiResult.success(comprojectService.selectById(comproject_id));
     }
 
+    @RequestMapping(value = "/getMyConProject", method = {RequestMethod.GET})
+    public ApiResult getMyConProject(HttpServletRequest request) throws Exception {
+        Comproject comproject = new Comproject();
+        TokenModel tokenModel = tokenService.getToken(request);
+        comproject.setOwners(tokenModel.getOwnerList());
+        comproject.setOwner(tokenModel.getUserId());
+        return ApiResult.success(comprojectService.getComproject(comproject));
+    }
+
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult List(@RequestBody Comproject Comproject, HttpServletRequest request) throws Exception {
         if (Comproject == null) {
