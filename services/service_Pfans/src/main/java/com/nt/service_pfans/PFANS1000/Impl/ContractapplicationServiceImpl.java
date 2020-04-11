@@ -14,6 +14,7 @@ import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private NapalmMapper napalmMapper;
     @Autowired
     private PetitionMapper PetitionMapper;
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication ) {
@@ -138,6 +141,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             quotation.setEnddate(sdf.parse(startAndEnd[1]));
                     }
 
+                    Quotation quotation2 = new Quotation();
+                    quotation2.setContractnumber(contractapp.getContractnumber());
+                    quotation2.setOwner(tokenModel.getUserId());
+                    quotationMapper.delete(quotation2);
+
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
@@ -158,6 +166,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     nonJudgment.setJaname(contractapp.getConchinese());
                     nonJudgment.setCareer(contractapp.getBusinesscode());
                     nonJudgment.setProductnumber(contractapp.getProductnumber());
+
+                    NonJudgment nonJudgment2 = new NonJudgment();
+                    nonJudgment2.setContractnumber(contractapp.getContractnumber());
+                    nonJudgment2.setOwner(tokenModel.getUserId());
+                    nonJudgmentMapper.delete(nonJudgment2);
 
 
                     nonJudgmentMapper.insert(nonJudgment);
@@ -192,6 +205,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             contract.setEnddate(sdf.parse(startAndEnd[1]));
                     }
 
+                    Contract contract2 = new Contract();
+                    contract2.setContractnumber(contractnumber);
+                    contract2.setOwner(tokenModel.getUserId());
+                    contractMapper.delete(contract2);
 
                     contractMapper.insert(contract);
                 }
@@ -220,6 +237,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setRemarks(contractapp.getRemarks());
                     award.setMaketype(rowindex);
                     award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+                    award2.setOwner(tokenModel.getUserId());
+                    AwardMapper.delete(award2);
 
                     AwardMapper.insert(award);
                 }
@@ -257,6 +279,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 napalm.setEnddate(sdf.parse(startAndEnd[1]));
                         }
 
+                        Napalm napalm2 = new Napalm();
+                        napalm2.setContractnumber(contractnumber);
+                        napalm2.setOwner(tokenModel.getUserId());
+                        napalmMapper.delete(napalm2);
+
                         napalmMapper.insert(napalm);
                         //更新纳品进步状况=纳品完了
                         contractapp.preUpdate(tokenModel);
@@ -291,6 +318,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
                         petition.setRemarks(contractapp.getRemarks());//备注
                         petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+
+                        Petition petition2 = new Petition();
+                        petition2.setContractnumber(contractnumber);
+                        petition2.setOwner(tokenModel.getUserId());
+                        PetitionMapper.delete(petition2);
+
                         PetitionMapper.insert(petition);
                         //更新请求进步状况=請求完了
                         contractapp.preUpdate(tokenModel);
@@ -321,6 +354,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setRemarks(contractapp.getRemarks());
                     award.setMaketype(rowindex);
                     award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+                    award2.setOwner(tokenModel.getUserId());
+                    AwardMapper.delete(award2);
 
                     AwardMapper.insert(award);
                 }
