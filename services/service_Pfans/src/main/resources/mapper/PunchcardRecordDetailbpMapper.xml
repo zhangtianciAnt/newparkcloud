@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordDetailMapper">
-    <select id="getexpatriatesinfor" resultType="com.nt.dao_Pfans.PFANS6000.Expatriatesinfor">
+    <select id="getexpatriatesinforbp" resultType="com.nt.dao_Pfans.PFANS6000.Expatriatesinfor">
         select expatriatesinfor_id,group_id,suppliername from expatriatesinfor
         where 1=1
-        <if test="numbers != null and numbers.size() > 0">
-            and (number not in
-            <foreach item="item" index="index" collection="numbers"
+        <if test="ids != null and ids.size() > 0">
+            and (expatriatesinfor_id not in
+            <foreach item="item" index="index" collection="ids"
                      open="(" separator="," close=")">
                 #{item}
             </foreach>
@@ -15,10 +15,10 @@
     </select>
 
     <select id="getPunDetailbp" resultType="com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetailbp">
-        select JOBNUMBER,PUNCHCARDRECORD_DATE,EVENTNO from punchcardrecorddetailbp
-        where JOBNUMBER = #{jobnumber}
-        and  date_format(PUNCHCARDRECORD_DATE, '%Y-%m-%d') = #{punchcardrecord_date}
-        order by PUNCHCARDRECORD_DATE
+        select jobnumber,punchcardrecord_date,eventno from punchcardrecorddetailbp
+        where jobnumber = #{jobnumber}
+        and  date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
+        order by punchcardrecord_date
     </select>
 
     <delete id="deletetepunbp">

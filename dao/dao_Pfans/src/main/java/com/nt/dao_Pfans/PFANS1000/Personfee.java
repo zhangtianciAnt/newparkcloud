@@ -33,6 +33,9 @@ public class Personfee extends BaseModel {
     @Column(name = "FUNCTIONHOUR1")
     private String functionhour1;
 
+    @Column(name = "APPOINT1")
+    private String appoint1;
+
     @Column(name = "FUNCTIONUNIT1")
     private String functionunit1;
 

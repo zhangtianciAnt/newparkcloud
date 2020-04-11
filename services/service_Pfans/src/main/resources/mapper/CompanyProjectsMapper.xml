@@ -225,6 +225,9 @@
 		select pp.project_name,pp.projecttype,pp.group_id,pp.name,pp.ADMISSIONTIME,pp.EXITTIME
 		from
 		(select ps.ADMISSIONTIME,ps.EXITTIME, cp.project_name,cp.projecttype,cp.group_id,ps.name from companyprojects cp,projectsystem ps
-		where  cp.companyprojects_id = ps.companyprojects_id and ps.name = #{SyspName} ORDER BY ADMISSIONTIME desc) as pp
+		where  cp.companyprojects_id = ps.companyprojects_id and ps.name =  #{SyspName}
+		union
+		select ps.ADMISSIONTIME,ps.EXITTIME, cp.project_name,cp.projecttype,cp.group_id,ps.name from comproject cp,prosystem ps
+		where  cp.COMPROJECT_ID = ps.COMPROJECT_ID and ps.name =  #{SyspName}   ) as pp ORDER BY pp.ADMISSIONTIME desc
 	</select>
 </mapper>

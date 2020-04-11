@@ -25,7 +25,7 @@ public class PunchcardRecordbpServiceImpl implements PunchcardRecordbpService {
     }
 
     @Override
-    public List<PunchcardRecordDetailbp> getPunDetail(PunchcardRecordDetailbp detail) throws Exception{
+    public List<PunchcardRecordDetailbp> getPunDetailbp(PunchcardRecordDetailbp detail) throws Exception{
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String Jobnumber = detail.getJobnumber();
         String Punchcardrecord_date = sdf.format(detail.getPunchcardrecord_date());
