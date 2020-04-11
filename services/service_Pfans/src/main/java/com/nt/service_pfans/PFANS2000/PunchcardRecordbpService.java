@@ -10,5 +10,5 @@ public interface PunchcardRecordbpService {
 
     List<PunchcardRecordbp> list(PunchcardRecordbp punchcardrecord, TokenModel tokenModel) throws Exception;
 
-    List<PunchcardRecordDetailbp> getPunDetail(PunchcardRecordDetailbp detail)throws Exception;
+    List<PunchcardRecordDetailbp> getPunDetailbp(PunchcardRecordDetailbp detail)throws Exception;
 }

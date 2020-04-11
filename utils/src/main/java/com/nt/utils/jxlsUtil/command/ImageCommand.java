@@ -139,7 +139,7 @@ public class ImageCommand extends AbstractCommand {
                 scale_y = Double.valueOf(scaleXObj.toString());
             }
 
-            pict.resize(scale_x, scale_y);
+            pict.resize();
         }else if(JxlsImage.IMAGE_SIZE_TYPE_ORIGINAL.equalsIgnoreCase(size)){
             pict.resize();
         }else{
