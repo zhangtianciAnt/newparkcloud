@@ -636,10 +636,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                         //第一条出门时间
                         endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
-                    }
-                    //个人第一条考勤时出门记录的情况
-                    if(endlfirst < startlfirst){
-                        punDetaillistevent2.remove(0);
+                        //个人第一条考勤时出门记录的情况
+                        if(endlfirst < startlfirst){
+                            punDetaillistevent2.remove(0);
+                        }
                     }
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -984,10 +984,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
                     endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
-                }
-                //个人第一条考勤时出门记录的情况
-                if(endlfirst < startlfirst){
-                    punDetaillistevent2.remove(0);
+                    //个人第一条考勤时出门记录的情况
+                    if(endlfirst < startlfirst){
+                        punDetaillistevent2.remove(0);
+                    }
                 }
                 //从第一次出门开始计算
                 for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1125,8 +1125,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
                 //添加打卡记录end
             }
-            List<String> numbers= Arrays.asList(books);
-            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinfor(numbers);
+            List<String> ids= Arrays.asList(books);
+            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
             for (Expatriatesinfor Expatriatesinfor : inforlist){
                 tokenModel.setUserId(inforlist.get(0).getExpatriatesinfor_id());
                 tokenModel.setExpireDate(new Date());
@@ -1299,10 +1299,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                         //第一条出门时间
                         endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
-                    }
-                    //个人第一条考勤时出门记录的情况
-                    if(endlfirst < startlfirst){
-                        punDetaillistevent2.remove(0);
+                        //个人第一条考勤时出门记录的情况
+                        if(endlfirst < startlfirst){
+                            punDetaillistevent2.remove(0);
+                        }
                     }
                     //从第一次出门开始计算
                     for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1561,10 +1561,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
                     endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
-                }
-                //个人第一条考勤时出门记录的情况
-                if(endlfirst < startlfirst){
-                    punDetaillistevent2.remove(0);
+                    //个人第一条考勤时出门记录的情况
+                    if(endlfirst < startlfirst){
+                        punDetaillistevent2.remove(0);
+                    }
                 }
                 //从第一次出门开始计算
                 for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1711,15 +1711,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             recordTime = punchcard.getRecordTime();
             //员工编号
             jobnumber = punchcard.getStaffNo();
-            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
+            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回;;5/6:搬家)
             String eventNo = punchcard.getEventNo();
             //无效-反潜回
-            if(eventNo.equals("30")){
+            if(eventNo.equals("30") || eventNo.equals("5") || eventNo.equals("6")){
                 continue;
             }
-            //PSCDC(本社人员)
+            //非PSCDC(协力人员)
             String departmentName_P = punchcard.getDepartmentName();
-            if(departmentName_P.equals("PSDCD") || departmentName_P.equals("保洁")){
+            if(departmentName_P.equals("PSDCD") || departmentName_P.equals("保洁")
+                    || departmentName_P.equals("搬家") || departmentName_P.equals("访客")
+                    || departmentName_P.equals("闲置") || departmentName_P.equals("300张临时卡")
+                    || departmentName_P.equals("测试")){
                 continue;
             }
             //判断是否短时间同一人多次打卡
@@ -1742,6 +1745,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setPunchcardrecord_date(sf.parse(recordTime));
             //打卡时间
             punchcardrecorddetail.setUser_id(staffName);
+            //部门
+            punchcardrecorddetail.setCenter_id(departmentName_P);
             //进出状态
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
@@ -1794,6 +1799,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String books[] = new String[punDetaillistCount.size() + 1];
             int x = 0;
             for(PunchcardRecordDetailbp count : punDetaillistCount){
+//                if(count.getJobnumber().equals("00665")){
+//                    String a1 = "";
+//                }
                 x = x + 1;
                 //欠勤时间 全天
                 Double minute = 0D;
@@ -1821,10 +1829,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
                     endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
-                }
-                //个人第一条考勤时出门记录的情况
-                if(endlfirst < startlfirst){
-                    punDetaillistevent2.remove(0);
+                    //个人第一条考勤时出门记录的情况
+                    if(endlfirst < startlfirst){
+                        punDetaillistevent2.remove(0);
+                    }
                 }
                 //从第一次出门开始计算
                 for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
@@ -1961,25 +1969,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     books[x] = exList.get(0).getExpatriatesinfor_id();
                 }
                 //添加打卡记录end
-            }
-            List<String> numbers= Arrays.asList(books);
-            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinfor(numbers);
-            for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(inforlist.get(0).getExpatriatesinfor_id());
-                tokenModel.setExpireDate(new Date());
-                //插入没有打卡记录的员工的考勤
-                Attendancebp attendance = new Attendancebp();
-                attendance.setAbsenteeism("8");
-                attendance.setNormal("0");
-                attendance.setAttendancebpid(UUID.randomUUID().toString());
-                attendance.setGroup_id(inforlist.get(0).getGroup_id());
-                attendance.setUser_id(inforlist.get(0).getExpatriatesinfor_id());
-                attendance.setDates(sf.parse(recordTime));
-                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                attendance.preInsert(tokenModel);
-                attendancebpMapper.insert(attendance);
             }
         }
     }
