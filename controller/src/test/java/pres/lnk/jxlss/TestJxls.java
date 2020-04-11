@@ -31,6 +31,9 @@ import pres.lnk.jxlss.demo.Experience;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.*;
 
 /**
@@ -144,6 +147,20 @@ public class TestJxls {
 //            item.setRoles(rolss);
 //            template.save(item);
 //        }
+
+//        FileInputStream fis1 = new FileInputStream(new File("D:\\仮出金.xls"));
+////        FileInputStream fis2 = new FileInputStream(new File("D:\\pdfexport\\MAD 6-1-47-Octavia NF-20131025.xls"));
+////        FileInputStream fis3 = new FileInputStream(new File("D:\\pdfexport\\MAD 038-Superb FL DS-20131025.xls"));
+//        //
+//        FileOutputStream fos = new FileOutputStream(new File("D:\\仮出金.pdf"));
+//        //
+//        List<ExcelObject> objects = new ArrayList<ExcelObject>();
+//        objects.add(new ExcelObject("仮出金.xls",fis1));
+////        objects.add(new ExcelObject("2.MAD 6-1-47-Octavia NF-20131025.xls",fis2));
+////        objects.add(new ExcelObject("3.MAD 038-Superb FL DS-20131025.xls",fis3));
+////
+//        Excel2Pdf pdf = new Excel2Pdf(objects , fos);
+//        pdf.convert();
     }
 
     private static Employee getEmployee() {
