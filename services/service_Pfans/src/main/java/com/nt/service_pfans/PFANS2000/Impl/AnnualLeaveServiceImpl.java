@@ -1125,32 +1125,28 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
                 //添加打卡记录end
             }
-//            Query query_userid = new Query();
-//            query_userid.addCriteria(Criteria.where("userid").nin(books));
-//            List<CustomerInfo> customerInfoList = mongoTemplate.find(query_userid, CustomerInfo.class);
-//            for (CustomerInfo customerInfo : customerInfoList)
-//            {
-//                //插入没有打卡记录的员工的考勤
-//                Attendance attendance = new Attendance();
-//                attendance.setAbsenteeism("8");
-//                attendance.setNormal("0");
-//                attendance.setAttendanceid(UUID.randomUUID().toString());
-//                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-//                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-//                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-//                attendance.setUser_id(customerInfo.getUserid());
-//                Calendar calendar = Calendar.getInstance();
-//                calendar.setTime(new Date());
-//                calendar.add(Calendar.DAY_OF_YEAR, diffday);
-//                attendance.setDates(calendar.getTime());
-//                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-//                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-//                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-//                tokenModel.setUserId(attendance.getUser_id());
-//                tokenModel.setExpireDate(new Date());
-//                attendance.preInsert(tokenModel);
-//                attendanceMapper.insert(attendance);
-//            }
+            List<String> numbers= Arrays.asList(books);
+            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinfor(numbers);
+            for (Expatriatesinfor Expatriatesinfor : inforlist){
+                tokenModel.setUserId(inforlist.get(0).getExpatriatesinfor_id());
+                tokenModel.setExpireDate(new Date());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.add(Calendar.DAY_OF_YEAR, diffday);
+                //插入没有打卡记录的员工的考勤
+                Attendancebp attendance = new Attendancebp();
+                attendance.setAbsenteeism("8");
+                attendance.setNormal("0");
+                attendance.setAttendancebpid(UUID.randomUUID().toString());
+                attendance.setGroup_id(inforlist.get(0).getGroup_id());
+                attendance.setUser_id(inforlist.get(0).getExpatriatesinfor_id());
+                attendance.setDates(calendar.getTime());
+                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                attendance.preInsert(tokenModel);
+                attendancebpMapper.insert(attendance);
+            }
         }
     }
 
@@ -1723,9 +1719,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
             //PSCDC(本社人员)
             String departmentName_P = punchcard.getDepartmentName();
-//            if(!departmentName_P.equals("PSDCD")){
-//                continue;
-//            }
+            if(departmentName_P.equals("PSDCD") || departmentName_P.equals("保洁")){
+                continue;
+            }
             //判断是否短时间同一人多次打卡
             if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
                 continue;
@@ -1966,32 +1962,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
                 //添加打卡记录end
             }
-//            Query query_userid = new Query();
-//            query_userid.addCriteria(Criteria.where("userid").nin(books));
-//            List<CustomerInfo> customerInfoList = mongoTemplate.find(query_userid, CustomerInfo.class);
-//            for (CustomerInfo customerInfo : customerInfoList)
-//            {
-//                //插入没有打卡记录的员工的考勤
-//                Attendance attendance = new Attendance();
-//                attendance.setAbsenteeism("8");
-//                attendance.setNormal("0");
-//                attendance.setAttendanceid(UUID.randomUUID().toString());
-//                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-//                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-//                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-//                attendance.setUser_id(customerInfo.getUserid());
-//                Calendar calendar = Calendar.getInstance();
-//                calendar.setTime(new Date());
-//                calendar.add(Calendar.DAY_OF_YEAR, diffday);
-//                attendance.setDates(calendar.getTime());
-//                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-//                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-//                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-//                tokenModel.setUserId(attendance.getUser_id());
-//                tokenModel.setExpireDate(new Date());
-//                attendance.preInsert(tokenModel);
-//                attendanceMapper.insert(attendance);
-//            }
+            List<String> numbers= Arrays.asList(books);
+            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinfor(numbers);
+            for (Expatriatesinfor Expatriatesinfor : inforlist){
+                tokenModel.setUserId(inforlist.get(0).getExpatriatesinfor_id());
+                tokenModel.setExpireDate(new Date());
+                //插入没有打卡记录的员工的考勤
+                Attendancebp attendance = new Attendancebp();
+                attendance.setAbsenteeism("8");
+                attendance.setNormal("0");
+                attendance.setAttendancebpid(UUID.randomUUID().toString());
+                attendance.setGroup_id(inforlist.get(0).getGroup_id());
+                attendance.setUser_id(inforlist.get(0).getExpatriatesinfor_id());
+                attendance.setDates(sf.parse(recordTime));
+                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                attendance.preInsert(tokenModel);
+                attendancebpMapper.insert(attendance);
+            }
         }
     }
 }
