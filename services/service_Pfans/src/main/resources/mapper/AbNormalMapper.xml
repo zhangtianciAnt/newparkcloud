@@ -53,7 +53,7 @@
         WHERE error_type = 'PR013008'
     </select>
     <select id="selectAbNormalDate" resultType="Double">
-        select sum(timestampdiff(day,application_date,occurrence_date) + 1) as datelength
+        select sum(timestampdiff(day,occurrence_date,finished_date) + 1) as datelength
         from abnormal
         where createon
         between date_sub(now(), interval 365 day) and date_sub(now(), interval 0 day)
