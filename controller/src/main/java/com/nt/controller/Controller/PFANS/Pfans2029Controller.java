@@ -44,8 +44,8 @@ public class Pfans2029Controller {
         return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
     }
 
-    @RequestMapping(value = "/getPunDetail", method = {RequestMethod.POST})
-    public ApiResult getPunDetail(@RequestBody PunchcardRecordDetailbp detail, HttpServletRequest request) throws Exception {
-        return ApiResult.success(punchcardrecordService.getPunDetail(detail));
+    @RequestMapping(value = "/getPunDetailbp", method = {RequestMethod.POST})
+    public ApiResult getPunDetailbp(@RequestBody PunchcardRecordDetailbp detail, HttpServletRequest request) throws Exception {
+        return ApiResult.success(punchcardrecordService.getPunDetailbp(detail));
     }
 }

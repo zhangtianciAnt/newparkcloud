@@ -1082,10 +1082,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
 
                 if (exList.size() > 0) {
-                    tokenModel.setUserId(exList.get(0).getExpatriatesinfor_id());
+                    tokenModel.setUserId(exList.get(0).getAccount());
                     tokenModel.setExpireDate(new Date());
                     punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
-                    punchcardrecord.setUser_id(exList.get(0).getExpatriatesinfor_id());
+                    punchcardrecord.setUser_id(exList.get(0).getAccount());
                     punchcardrecord.setJobnumber(count.getJobnumber());
                     punchcardrecord.setGroup_id(exList.get(0).getGroup_id());
                     //外出超过15分钟的欠勤时间
@@ -1107,7 +1107,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
                     //创建考勤数据
                     Attendancebp attendance = new Attendancebp();
-                    attendance.setUser_id(exList.get(0).getExpatriatesinfor_id());
+                    attendance.setUser_id(exList.get(0).getAccount());
                     attendance.setDates(sfymd.parse(recordTime));
 
                     attendance.setNormal("8");
@@ -1121,14 +1121,14 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
                     attendancebpMapper.insert(attendance);
-                    books[x] = exList.get(0).getExpatriatesinfor_id();
+                    books[x] = exList.get(0).getAccount();
                 }
                 //添加打卡记录end
             }
             List<String> ids= Arrays.asList(books);
             List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
             for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(inforlist.get(0).getExpatriatesinfor_id());
+                tokenModel.setUserId(inforlist.get(0).getAccount());
                 tokenModel.setExpireDate(new Date());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -1139,7 +1139,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 attendance.setNormal("0");
                 attendance.setAttendancebpid(UUID.randomUUID().toString());
                 attendance.setGroup_id(inforlist.get(0).getGroup_id());
-                attendance.setUser_id(inforlist.get(0).getExpatriatesinfor_id());
+                attendance.setUser_id(inforlist.get(0).getAccount());
                 attendance.setDates(calendar.getTime());
                 attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
                 attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
@@ -1660,10 +1660,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 if (exList.size() > 0) {
                     //打卡记录
                     PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
-                    tokenModel.setUserId(exList.get(0).getExpatriatesinfor_id());
+                    tokenModel.setUserId(exList.get(0).getAccount());
                     tokenModel.setExpireDate(new Date());
                     punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
-                    punchcardrecord.setUser_id(exList.get(0).getExpatriatesinfor_id());
+                    punchcardrecord.setUser_id(exList.get(0).getAccount());
                     punchcardrecord.setJobnumber(count.getJobnumber());
                     punchcardrecord.setCenter_id(exList.get(0).getGroup_id());
                     //外出超过15分钟的欠勤时间
@@ -1927,10 +1927,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
 
                 if (exList.size() > 0) {
-                    tokenModel.setUserId(exList.get(0).getExpatriatesinfor_id());
+                    tokenModel.setUserId(exList.get(0).getAccount());
                     tokenModel.setExpireDate(new Date());
                     punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
-                    punchcardrecord.setUser_id(exList.get(0).getExpatriatesinfor_id());
+                    punchcardrecord.setUser_id(exList.get(0).getAccount());
                     punchcardrecord.setJobnumber(count.getJobnumber());
                     punchcardrecord.setGroup_id(exList.get(0).getGroup_id());
                     //外出超过15分钟的欠勤时间
@@ -1952,7 +1952,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
                     //创建考勤数据
                     Attendancebp attendance = new Attendancebp();
-                    attendance.setUser_id(exList.get(0).getExpatriatesinfor_id());
+                    attendance.setUser_id(exList.get(0).getAccount());
                     attendance.setDates(sfymd.parse(recordTime));
 
                     attendance.setNormal("8");
@@ -1966,7 +1966,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
                     attendancebpMapper.insert(attendance);
-                    books[x] = exList.get(0).getExpatriatesinfor_id();
+                    books[x] = exList.get(0).getAccount();
                 }
                 //添加打卡记录end
             }
