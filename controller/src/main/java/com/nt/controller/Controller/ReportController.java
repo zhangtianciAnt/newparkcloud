@@ -28,7 +28,6 @@ public class ReportController {
     /**
      * 转换为pdf展示
      *
-     * @param parameters
      * @param response
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -37,10 +36,9 @@ public class ReportController {
      */
     @RequestMapping(value="/demo",method = {RequestMethod.GET})
     public void getReportByParam(
-            @RequestBody Map<String, Object> parameters,
             HttpServletResponse response) throws SQLException, ClassNotFoundException, JRException, IOException {
 
-        parameters = parameters == null ? new HashMap<>() : parameters;
+        Map<String, Object> parameters = new HashMap<>();
         //获取文件流
         ClassPathResource resource = new ClassPathResource("jaspers" + File.separator + "demo.jasper");
         InputStream jasperStream = resource.getInputStream();
