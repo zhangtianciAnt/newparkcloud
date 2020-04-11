@@ -54,6 +54,8 @@ public class Prosystem extends BaseModel {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "NAME_ID")
+    private String name_id;
     /**
      * 外注人员ID
      */
