@@ -315,7 +315,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setPjnamejapanese(contractapp.getConjapanese());
                         petition.setClaimamount(number.getClaimamount());//請求金額
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
-                        petition.setRemarks(contractapp.getRemarks());//备注
+                        petition.setRemarks(contractapp.getQingremarks());//备注
                         petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
                         Petition petition2 = new Petition();
