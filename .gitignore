@@ -30,3 +30,5 @@ services/service_Assets/target/classes/com/nt/service_Assets/AssetsService.class
 services/service_Assets/target/
 services/service_PHINE/target/
 dao/dao_PHINE/target/
+dao/dao_Pfans/target/
+services/service_Pfans/target/
