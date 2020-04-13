@@ -102,4 +102,11 @@ public class AuthController {
         annualLeaveService.getPunchcard(Punchcard);
         return ApiResult.success();
     }
+
+    //获取打卡记录bp（参数）
+    @RequestMapping(value = "/getPunchcardbp",method={RequestMethod.POST})
+    public ApiResult getPunchcardbp(@RequestBody List<Punchcard> Punchcard,HttpServletRequest request) throws Exception {
+        annualLeaveService.getPunchcardbp(Punchcard);
+        return ApiResult.success();
+    }
 }
