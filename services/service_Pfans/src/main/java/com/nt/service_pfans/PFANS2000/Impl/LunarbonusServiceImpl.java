@@ -57,7 +57,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
     public void insert(LunardetailVo lunardetailVo, TokenModel tokenModel) throws Exception {
         Lunarbonus lunarbonus = new Lunarbonus();
         SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-        Date Evaluationday = new SimpleDateFormat("yyyy-MM-dd").parse(sd.format(new Date()));
+        Date Evaluationday = new SimpleDateFormat("yyyy-MM-dd").parse(sd.format(lunardetailVo.getEvaluationday()));
         lunarbonus.setEvaluationday(Evaluationday);
         lunarbonus.setSubjectmon(lunardetailVo.getSubjectmon());
         lunarbonus.setEvaluatenum(lunardetailVo.getEvaluatenum());

@@ -240,7 +240,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 }
             }
 
-            methodAttendance_b(tokenModel,customerInfoList,-1);
+            methodAttendance_b(-1);
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
@@ -250,8 +250,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     }
 
-    public void methodAttendance_b(TokenModel tokenModel,List<CustomerInfo> customerInfoList,int diffday) throws Exception
+    public void methodAttendance_b(int diffday) throws Exception
     {
+        TokenModel tokenModel = new TokenModel();
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");

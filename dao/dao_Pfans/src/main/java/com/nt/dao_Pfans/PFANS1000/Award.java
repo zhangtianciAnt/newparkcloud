@@ -42,6 +42,12 @@ public class Award extends BaseModel {
     @Column(name = "PLACECHINESE")
     private String placechinese;
 
+    @Column(name = "MEMBERCOST")
+    private String membercost;
+
+    @Column(name = "INVESTORSPEOPOR")
+    private String investorspeopor;
+
     @Column(name = "DEPLOYMENT")
     private String deployment;
 
