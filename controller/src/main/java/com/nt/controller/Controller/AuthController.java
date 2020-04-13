@@ -90,6 +90,12 @@ public class AuthController {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/insertpunchcard",method={RequestMethod.GET})
+    public ApiResult insertpunchcard(Integer diffday,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertpunchcard(diffday);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/creatAnnualLeaveAn",method={RequestMethod.GET})
     public ApiResult creatAnnualLeaveAn(HttpServletRequest request) throws Exception {
         annualLeaveService.insert();

@@ -487,6 +487,14 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     public void insertattendancebpTask()throws Exception {
         insertattendancebp(-1);
     }
+
+    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
+    public void insertpunchcardTask()throws Exception {
+        //处理异常和加班数据
+        punchcardRecordService.methodAttendance_b(-1);
+    }
+
+
     //系统服务--取打卡记录
     @Override
     public void insertattendance(int diffday) throws Exception {
@@ -728,7 +736,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             }
                         }
                     }
-                    //添加打卡记录start222
+                    //添加打卡记录start
                     double minutess= minute.doubleValue();
                     minute = NumberUtil.round(minutess/60,2).doubleValue();
                     double minutesss= minuteam.doubleValue();
@@ -814,7 +822,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendanceMapper.insert(attendance);
                 }
                 //处理异常和加班数据
-                punchcardRecordService.methodAttendance_b(tokenModel,customerInfoList,diffday);
+//                punchcardRecordService.methodAttendance_b(diffday);
             }
 //        } catch (Exception e) {
 //            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
@@ -1132,6 +1140,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 attendancebpMapper.insert(attendance);
             }
         }
+    }
+
+    @Override
+    public void insertpunchcard(int diffday) throws Exception {
+        punchcardRecordService.methodAttendance_b(diffday);
     }
 
     //取object的值
@@ -1517,8 +1530,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //卡号去重得到打卡总人数
             List<PunchcardRecordDetailbp> punDetaillistCount = new ArrayList<PunchcardRecordDetailbp>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
-
-            String books[] = new String[punDetaillistCount.size() + 1];
             int x = 0;
             for(PunchcardRecordDetailbp count : punDetaillistCount){
                 x = x + 1;
@@ -1727,7 +1738,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
             punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
-            punchcardrecorddetailmapper.insert(punchcardrecorddetail);
+            //punchcardrecorddetailmapper.insert(punchcardrecorddetail);
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
@@ -1770,7 +1781,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //卡号去重得到打卡总人数333
             List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
-            List<String> ids= new ArrayList<String>();
+            String books[] = new String[punDetaillistCount.size() + 1];
             int x = 0;
             for(PunchcardRecordDetail count : punDetaillistCount){
 //                if(count.getJobnumber().equals("00665")){
@@ -1888,7 +1899,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         }
                     }
                 }
-                //添加打卡记录start111
+                //添加打卡记录start
                 double minutess= minute.doubleValue();
                 minute = NumberUtil.round(minutess/60,2).doubleValue();
                 double minutesss= minuteam.doubleValue();
@@ -1923,7 +1934,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     }
                     punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
-                    punchcardrecordMapper.insert(punchcardrecord);
+                    //punchcardrecordMapper.insert(punchcardrecord);
 
                     //创建考勤数据
                     Attendance attendance = new Attendance();
@@ -1942,27 +1953,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setAttendanceid(UUID.randomUUID().toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
-                    attendanceMapper.insert(attendance);
+                    //attendanceMapper.insert(attendance);
+                    books[x] = customerInfo.getUserid();
                 }
                 //添加打卡记录end
-            }
-            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
-            for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(inforlist.get(0).getAccount());
-                tokenModel.setExpireDate(new Date());
-                //插入没有打卡记录的员工的考勤
-                Attendancebp attendance = new Attendancebp();
-                attendance.setAbsenteeism("8");
-                attendance.setNormal("0");
-                attendance.setAttendancebpid(UUID.randomUUID().toString());
-                attendance.setGroup_id(inforlist.get(0).getGroup_id());
-                attendance.setUser_id(inforlist.get(0).getAccount());
-                attendance.setDates(new Date());
-                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                attendance.preInsert(tokenModel);
-                attendancebpMapper.insert(attendance);
             }
         }
     }
@@ -2030,7 +2024,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
             punchcardrecorddetail.setPunchcardrecorddetailbp_id(UUID.randomUUID().toString());
-            punchcardrecorddetailbpmapper.insert(punchcardrecorddetail);
+            //punchcardrecorddetailbpmapper.insert(punchcardrecorddetail);
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
@@ -2222,7 +2216,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     }
                     punchcardrecord.setPunchcardrecordbp_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
-                    punchcardrecordbpMapper.insert(punchcardrecord);
+                    //punchcardrecordbpMapper.insert(punchcardrecord);
 
                     //创建考勤数据
                     Attendancebp attendance = new Attendancebp();
@@ -2239,29 +2233,29 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setAttendancebpid(UUID.randomUUID().toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
-                    attendancebpMapper.insert(attendance);
+                    //attendancebpMapper.insert(attendance);
                     ids.add(exList.get(0).getAccount());
                 }
                 //添加打卡记录end
             }
-            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
-            for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(inforlist.get(0).getAccount());
-                tokenModel.setExpireDate(new Date());
-                //插入没有打卡记录的员工的考勤
-                Attendancebp attendance = new Attendancebp();
-                attendance.setAbsenteeism("8");
-                attendance.setNormal("0");
-                attendance.setAttendancebpid(UUID.randomUUID().toString());
-                attendance.setGroup_id(inforlist.get(0).getGroup_id());
-                attendance.setUser_id(inforlist.get(0).getAccount());
-                attendance.setDates(new Date());
-                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                attendance.preInsert(tokenModel);
-                attendancebpMapper.insert(attendance);
-            }
+//            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
+//            for (Expatriatesinfor Expatriatesinfor : inforlist){
+//                tokenModel.setUserId(inforlist.get(0).getAccount());
+//                tokenModel.setExpireDate(new Date());
+//                //插入没有打卡记录的员工的考勤
+//                Attendancebp attendance = new Attendancebp();
+//                attendance.setAbsenteeism("8");
+//                attendance.setNormal("0");
+//                attendance.setAttendancebpid(UUID.randomUUID().toString());
+//                attendance.setGroup_id(inforlist.get(0).getGroup_id());
+//                attendance.setUser_id(inforlist.get(0).getAccount());
+//                attendance.setDates(new Date());
+//                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+//                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+//                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+//                attendance.preInsert(tokenModel);
+//                attendancebpMapper.insert(attendance);
+//            }
         }
     }
 }
