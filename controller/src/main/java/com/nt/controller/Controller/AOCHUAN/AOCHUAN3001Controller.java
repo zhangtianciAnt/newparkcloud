@@ -32,7 +32,7 @@ public class AOCHUAN3001Controller {
         return ApiResult.success(quotationsService.getOne(id));
     }
 
-    @RequestMapping(value = "/update",method={RequestMethod.GET})
+    @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody Quotations quotations, HttpServletRequest request) throws Exception {
         if(quotations == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -41,7 +41,7 @@ public class AOCHUAN3001Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/insert",method={RequestMethod.GET})
+    @RequestMapping(value = "/insert",method={RequestMethod.POST})
     public ApiResult insert(@RequestBody Quotations quotations, HttpServletRequest request) throws Exception {
         if(quotations == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));

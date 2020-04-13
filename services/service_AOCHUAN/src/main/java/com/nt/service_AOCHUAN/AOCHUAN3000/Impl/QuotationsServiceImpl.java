@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class QuotationsServiceImpl implements QuotationsService {
@@ -33,6 +34,8 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Override
     public void insert(Quotations quotations, TokenModel tokenModel) throws Exception {
+        String id = UUID.randomUUID().toString();
+        quotations.setQuotations_id(id);
         quotations.preInsert(tokenModel);
         quotationsMapper.insert(quotations);
     }

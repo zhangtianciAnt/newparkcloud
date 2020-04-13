@@ -29,7 +29,7 @@ public class Quotations extends BaseModel {
 
     private String targetmarket;
 
-    private String use;
+    private String purpose;
 
     private String terminal;
 
