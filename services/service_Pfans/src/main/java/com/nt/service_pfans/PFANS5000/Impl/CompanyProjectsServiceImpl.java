@@ -944,7 +944,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         CompanyProjects companyProjects = new CompanyProjects();
         BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
         List<CompanyProjects> companyProjectslist = companyprojectsMapper.selectAll();
-        String year = new SimpleDateFormat("yyyy",Locale.CHINESE).format(Calendar.getInstance().getTime());
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+
+        String year = sf1.format(date);
+//        String year = new SimpleDateFormat("yyyymmdd",Locale.CHINESE).format(Calendar.getInstance().getTime());
         int number = 0;
         String Numbers = "";
         String no = "";
