@@ -142,7 +142,7 @@ union
         case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
         from logmanagement
         where status = '0'
-        and project_id = '' or project_id = 'PP024001'
+        and (project_id = '' or project_id = 'PP024001')
         and date_format(LOG_DATE, '%Y-%m') = #{StrDate}
         <if test="owners != null and owners.size() > 0">
             and (owner in
