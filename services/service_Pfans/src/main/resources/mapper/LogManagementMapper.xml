@@ -74,7 +74,65 @@ union
         (select * from Projectsystem where Projectsystem.name = #{userid}) Projectsystem
         on Projectsystem.companyprojects_id = companyprojects.companyprojects_id
         where companyprojects.status = '4'
-
+union
+        select COMPROJECT_ID as projectid,NUMBERS,PROJECT_NAME as projectname,logm.confirm,logm.unconfirm from
+        comproject
+        left join (
+        select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
+        (select project_id,
+        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        from logmanagement
+        where status = '0'
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        group by project_id,confirmstatus
+        ) log
+        group by project_id
+        ) logm
+        on logm.project_id = comproject.COMPROJECT_ID
+        where status = '4'
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+union
+        select comproject.COMPROJECT_ID as projectid,comproject.numbers,comproject.project_name as projectname,logm.confirm,logm.unconfirm from
+        comproject
+        left join (
+        select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
+        (select project_id,
+        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        from logmanagement
+        where status = '0'
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        group by project_id,confirmstatus
+        ) log
+        group by project_id
+        ) logm
+        on logm.project_id = comproject.COMPROJECT_ID
+        inner JOIN
+        (select * from prosystem where prosystem.name = #{userid}) prosystem
+        on prosystem.COMPROJECT_ID = comproject.COMPROJECT_ID
+        where comproject.status = '4'
     </select>
 
     <select id="getunProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
