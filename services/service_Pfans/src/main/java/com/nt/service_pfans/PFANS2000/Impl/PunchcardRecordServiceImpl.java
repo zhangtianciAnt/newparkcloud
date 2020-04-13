@@ -1183,7 +1183,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         }
                                                         if(Double.valueOf(ad.getAbsenteeism())>0)
                                                         {
-                                                            ad.setNormal(df.format(Double.valueOf(workinghours) + Double.valueOf(nomal) - Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime)));
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime)));
                                                         }
                                                         else
                                                         {
