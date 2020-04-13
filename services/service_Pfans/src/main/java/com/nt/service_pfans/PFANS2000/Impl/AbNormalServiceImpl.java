@@ -119,6 +119,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if(abNormal.getStatus().equals("7"))
                 {
+                    abNormal.setRelengthtime(abNormal.getRelengthtime() == null || abNormal.getRelengthtime() == "" ? "0" : abNormal.getRelengthtime());
+                    if(Double.valueOf(abNormal.getRelengthtime()) <= 8)
+                    {
+                        abNormal.setRefinisheddate(abNormal.getReoccurrencedate());
+                    }
                     if(!abNormal.getReoccurrencedate().equals(abNormal.getRefinisheddate()))
                     {
                         List<Attendance> attendancelist = attendanceMapper.selectAttendance(abNormal);
@@ -498,6 +503,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                 }
                 else
                 {
+                    abNormal.setLengthtime(abNormal.getLengthtime() == null || abNormal.getLengthtime() == "" ? "0" : abNormal.getLengthtime());
+                    if(Double.valueOf(abNormal.getLengthtime()) <= 8)
+                    {
+                        abNormal.setFinisheddate(abNormal.getOccurrencedate());
+                    }
                     if(!abNormal.getOccurrencedate().equals(abNormal.getFinisheddate()))
                     {
                         List<Attendance> attendancelist = attendanceMapper.selectAttendance(abNormal);
