@@ -246,6 +246,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //納品書作成
                 else if(rowindex.equals("5")){
+                    Napalm napalm2 = new Napalm();
+                    napalm2.setContractnumber(contractnumber);
+                    napalm2.setOwner(tokenModel.getUserId());
+                    napalmMapper.delete(napalm2);
+
                     for (Contractnumbercount number : countList) {
                         Napalm napalm = new Napalm();
                         napalm.preInsert(tokenModel);
@@ -278,11 +283,6 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 napalm.setEnddate(sdf.parse(startAndEnd[1]));
                         }
 
-                        Napalm napalm2 = new Napalm();
-                        napalm2.setContractnumber(contractnumber);
-                        napalm2.setOwner(tokenModel.getUserId());
-                        napalmMapper.delete(napalm2);
-
                         napalmMapper.insert(napalm);
                         //更新纳品进步状况=纳品完了
                         contractapp.preUpdate(tokenModel);
@@ -292,6 +292,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //請求書作成
                 else if(rowindex.equals("6")){
+                    Petition petition2 = new Petition();
+                    petition2.setContractnumber(contractnumber);
+                    petition2.setOwner(tokenModel.getUserId());
+                    PetitionMapper.delete(petition2);
+
                     for (Contractnumbercount number : countList) {
                         Petition petition = new Petition();
                         petition.preInsert(tokenModel);
@@ -317,11 +322,6 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
                         petition.setRemarks(contractapp.getQingremarks());//备注
                         petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
-
-                        Petition petition2 = new Petition();
-                        petition2.setContractnumber(contractnumber);
-                        petition2.setOwner(tokenModel.getUserId());
-                        PetitionMapper.delete(petition2);
 
                         PetitionMapper.insert(petition);
                         //更新请求进步状况=請求完了
