@@ -37,7 +37,7 @@ public class AOCHUAN3001Controller {
         if(quotations == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        quotationsService.insert(quotations,tokenService.getToken(request));
+        quotationsService.update(quotations,tokenService.getToken(request));
         return ApiResult.success();
     }
 
