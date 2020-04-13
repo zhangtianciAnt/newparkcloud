@@ -91,20 +91,6 @@ public class PHINE50000Controller {
 
     /**
      * @return
-     * @Method updateDeviceInfo
-     * @Author SKAIXX
-     * @Description 更新设备信息
-     * @Date 2020/2/7 16:10
-     * @Param
-     **/
-    @RequestMapping(value = "/updateDeviceInfo",method={RequestMethod.POST})
-    public ApiResult updateDeviceInfo(HttpServletRequest request, @RequestBody DeviceinfoVo deviceinfoVo) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        return deviceinfoService.updateDeviceInfo(tokenModel, deviceinfoVo);
-    }
-
-    /**
-     * @return
      * @Method deleteDeviceInfo
      * @Author SKAIXX
      * @Description 删除设备信息

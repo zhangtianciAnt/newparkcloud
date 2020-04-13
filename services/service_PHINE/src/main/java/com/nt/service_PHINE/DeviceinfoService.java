@@ -27,14 +27,11 @@ public interface DeviceinfoService {
     // 项目创建页面根据企业ID获取设备信息列表
     List<DeviceListVo> getDeviceListByCompanyId(String companyid);
 
-    // 新建设备
+    // 保存设备信息（新建/更新）
     ApiResult saveDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo);
 
     // 获取设备详情
     DeviceinfoVo getDeviceInfo(String id);
-
-    // 更新设备
-    ApiResult updateDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo);
 
     // 删除设备
     ApiResult deleteDeviceInfo(String id);

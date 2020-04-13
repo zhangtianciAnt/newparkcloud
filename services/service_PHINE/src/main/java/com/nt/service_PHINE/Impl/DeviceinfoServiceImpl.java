@@ -178,7 +178,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // endregion
 
         // region 删除板卡&芯片信息
-        deleteBoardChip(deviceinfoVo);
+        if (!isNew) {
+            deleteBoardChip(deviceinfoVo);
+        }
         // endregion
 
         // region 创建板卡&芯片信息
@@ -239,38 +241,6 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         deviceinfoVo.setBoardinfoList(boardinfoListVoList);
 
         return deviceinfoVo;
-    }
-
-    /**
-     * @return
-     * @Method updateDeviceInfo
-     * @Author SKAIXX
-     * @Description 更新设备
-     * @Date 2020/2/7 19:23
-     * @Param
-     **/
-    @Override
-    public ApiResult updateDeviceInfo(TokenModel tokenModel, DeviceinfoVo deviceinfoVo) {
-        // region 设备信息更新
-        Deviceinfo deviceinfo = new Deviceinfo();
-        deviceinfo.setId(deviceinfoVo.getId());                     // 设备ID
-        deviceinfo.setCabinetid(deviceinfoVo.getCabinetid());       // 机柜ID
-        deviceinfo.setDeviceid(deviceinfoVo.getDeviceid());         // 设备编号
-        deviceinfo.setDevicetype(deviceinfoVo.getDevicetype());     // 设备类型
-        deviceinfo.setCompanyid(deviceinfoVo.getCompanyid());       // 所属公司ID
-        deviceinfo.preUpdate(tokenModel);
-        deviceinfoMapper.updateByPrimaryKey(deviceinfo);
-        // endregion
-
-        // region 删除板卡&芯片信息
-        deleteBoardChip(deviceinfoVo);
-        // endregion
-
-        // region 创建板卡&芯片信息
-        createBoardChip(tokenModel, deviceinfoVo.getId(), deviceinfoVo);
-        // endregion
-
-        return ApiResult.success(MsgConstants.INFO_01, deviceinfo.getId());
     }
 
     /**
@@ -879,7 +849,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         ArrayOfint intList = new ArrayOfint();
-        intList.setInt(new ArrayList<Integer>(interConnDetailVoList.size()));
+        intList.setInt(new ArrayList<>(interConnDetailVoList.size()));
         Holder<ArrayOfint> interConnStatus = new Holder<>(intList);
         Holder<String> resultFilePath = new Holder<>();
         Holder<Boolean> result = new Holder<>();
