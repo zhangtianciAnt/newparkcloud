@@ -84,6 +84,8 @@ public class Pfans1025Controller {
         Map<String, Object> data = new HashMap<>();
         if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
             av.getAward().setExtrinsic("有");
+        } else {
+            av.getAward().setExtrinsic("-");
         }
         if (Integer.valueOf(av.getAward().getPlan()) == 1) {
             av.getAward().setPlan("外");
