@@ -80,6 +80,21 @@
             <artifactId>service_Pfans</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>dao_AOCHUAN</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_AOCHUAN</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nt</groupId>
+            <artifactId>service_WorkFlow</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

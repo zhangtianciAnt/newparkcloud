@@ -11,7 +11,7 @@
         <module>service_WorkFlow</module>
         <module>service_Pfans</module>
         <module>service_Assets</module>
-
+        <module>service_AOCHUAN</module>
     </modules>
     <packaging>pom</packaging>
 
