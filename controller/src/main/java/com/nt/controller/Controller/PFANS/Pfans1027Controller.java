@@ -66,7 +66,7 @@ public class Pfans1027Controller {
         TokenModel tokenModel=tokenService.getToken(request);
         QuotationVo qu = quotationService.selectById(quotation.getQuotationid());
         String qq[] = quotation.getClaimdatetime().split(" ~ ");
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
+        List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(qu.getQuotation().getCurrencyposition())) {
                 qu.getQuotation().setCurrencyposition(item.getValue1());
