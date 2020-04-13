@@ -79,14 +79,14 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/getAttendance",method={RequestMethod.GET})
-    public ApiResult getAttendance(Integer diffday,HttpServletRequest request) throws Exception {
-        annualLeaveService.insertattendance(diffday);
+    public ApiResult getAttendance(Integer diffday,String staffId,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertattendance(diffday,staffId);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/getAttendancebp",method={RequestMethod.GET})
-    public ApiResult getAttendancebp(Integer diffday,HttpServletRequest request) throws Exception {
-        annualLeaveService.insertattendancebp(diffday);
+    public ApiResult getAttendancebp(Integer diffday,String staffId,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertattendancebp(diffday,staffId);
         return ApiResult.success();
     }
 

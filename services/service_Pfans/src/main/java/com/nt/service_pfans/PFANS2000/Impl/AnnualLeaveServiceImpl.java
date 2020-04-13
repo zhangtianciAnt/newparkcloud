@@ -480,12 +480,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendanceTask()throws Exception {
-        insertattendance(-1);
+        insertattendance(-1,"");
     }
 
     @Scheduled(cron="0 35 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendancebpTask()throws Exception {
-        insertattendancebp(-1);
+        insertattendancebp(-1,"");
     }
 
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
@@ -497,7 +497,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     @Override
-    public void insertattendance(int diffday) throws Exception {
+    public void insertattendance(int diffday,String staffId) throws Exception {
 //        try {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
@@ -516,7 +516,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetailmapper.deletetepundet(thisDate);
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
-            String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+            String url = "";
+            if(staffId.equals("")){
+                url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+            }
+            else{
+                url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList + "&staffIDList=" + staffId;
+            }
             //請求接口
             ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
             Object obj = JSON.toJSON(getresult.getData());
@@ -840,7 +846,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录BP
     @Override
-    public void insertattendancebp(int diffday) throws Exception {
+    public void insertattendancebp(int diffday,String staffId) throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -859,7 +865,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
         //正式
         String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
-        String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+        String url = "";
+        if(staffId.equals("")){
+            url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
+        }
+        else{
+            url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList+ "&staffIDList=" + staffId;
+        }
         //請求接口
         ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
         Object obj = JSON.toJSON(getresult.getData());
