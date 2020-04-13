@@ -488,11 +488,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         insertattendancebp(-1);
     }
 
-    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
-    public void insertpunchcardTask()throws Exception {
-        //处理异常和加班数据
-        punchcardRecordService.methodAttendance_b(-1);
-    }
+//    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
+//    public void insertpunchcardTask()throws Exception {
+//        //处理异常和加班数据
+//        punchcardRecordService.methodAttendance_b(-1);
+//    }
 
     //系统服务--取打卡记录
     @Override
@@ -821,7 +821,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendanceMapper.insert(attendance);
                 }
                 //处理异常和加班数据
-//                punchcardRecordService.methodAttendance_b(tokenModel,customerInfoList,diffday);
+                punchcardRecordService.methodAttendance_b(diffday);
             }
 //        } catch (Exception e) {
 //            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
