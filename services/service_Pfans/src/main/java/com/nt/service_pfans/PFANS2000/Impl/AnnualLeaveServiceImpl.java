@@ -491,7 +491,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
-        punchcardRecordService.methodAttendance_b(-1);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        punchcardRecordService.methodAttendance_b(cal);
     }
 
 
@@ -669,8 +672,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //个人出门之后再次进门时间
                             long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                            if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
-
+                            //个人出门时间小于8点的数据排除
+                            if(startl < sdhm.parse(workshift_start).getTime()){
+                                if(endl > sdhm.parse(workshift_start).getTime()){
+                                    //时间出门到进门的相差分钟数
+                                    Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                    BigDecimal abnormal = new BigDecimal(minutes);
+                                    minute = minute + minutes;
+                                    minuteam = minuteam + minutes;
+                                }
+                                else{
+                                    //个人出门时间和进门时间同时小于8点的数据
+                                    continue;
+                                }
+                            }
+                            //个人出门时间晚于18点的数据排除
+                            if(startl > sdhm.parse(closingtime_end.replace(":", "")).getTime()){
                                 continue;
                             }
                             //去除午餐时间的情况1
@@ -1016,7 +1033,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //个人出门之后再次进门时间
                         long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                        if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
+                        //个人出门时间小于8点的数据排除
+                        if(startl < sdhm.parse(workshift_start).getTime()){
+                            if(endl > sdhm.parse(workshift_start).getTime()){
+                                //时间出门到进门的相差分钟数
+                                Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                BigDecimal abnormal = new BigDecimal(minutes);
+                                minute = minute + minutes;
+                                minuteam = minuteam + minutes;
+                            }
+                            else{
+                                //个人出门时间和进门时间同时小于8点的数据
+                                continue;
+                            }
+                        }
+                        //个人出门时间晚于18点的数据排除
+                        if(startl > sdhm.parse(closingtime_end.replace(":", "")).getTime()){
                             continue;
                         }
                         //去除午餐时间的情况1
@@ -1175,7 +1207,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Override
     public void insertpunchcard(int diffday) throws Exception {
-        punchcardRecordService.methodAttendance_b(diffday);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_MONTH, diffday);
+        punchcardRecordService.methodAttendance_b(cal);
     }
 
     //取object的值
@@ -1342,7 +1377,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //个人出门之后再次进门时间
                             long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                            if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
+                            //个人出门时间小于8点的数据排除
+                            if(startl < sdhm.parse(workshift_start).getTime()){
+                                if(endl > sdhm.parse(workshift_start).getTime()){
+                                    //时间出门到进门的相差分钟数
+                                    Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                    BigDecimal abnormal = new BigDecimal(minutes);
+                                    minute = minute + minutes;
+                                    minuteam = minuteam + minutes;
+                                }
+                                else{
+                                    //个人出门时间和进门时间同时小于8点的数据
+                                    continue;
+                                }
+                            }
+                            //个人出门时间晚于18点的数据排除
+                            if(startl > sdhm.parse(closingtime_end.replace(":", "")).getTime()){
                                 continue;
                             }
                             //去除午餐时间的情况1
@@ -1614,7 +1664,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //个人出门之后再次进门时间
                         long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                        if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
+                        //个人出门时间小于8点的数据排除
+                        if(startl < sdhm.parse(workshift_start).getTime()){
+                            if(endl > sdhm.parse(workshift_start).getTime()){
+                                //时间出门到进门的相差分钟数
+                                Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                BigDecimal abnormal = new BigDecimal(minutes);
+                                minute = minute + minutes;
+                                minuteam = minuteam + minutes;
+                            }
+                            else{
+                                //个人出门时间和进门时间同时小于8点的数据
+                                continue;
+                            }
+                        }
+                        //个人出门时间晚于18点的数据排除
+                        if(startl > sdhm.parse(closingtime_end.replace(":", "")).getTime()){
                             continue;
                         }
                         //去除午餐时间的情况1
@@ -1879,7 +1944,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //个人出门之后再次进门时间
                         long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                        if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
+                        //个人出门时间小于8点的数据排除
+                        if(startl < sdhm.parse(workshift_start).getTime()){
+                            if(endl > sdhm.parse(workshift_start).getTime()){
+                                //时间出门到进门的相差分钟数
+                                Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                BigDecimal abnormal = new BigDecimal(minutes);
+                                minute = minute + minutes;
+                                minuteam = minuteam + minutes;
+                            }
+                            else{
+                                //个人出门时间和进门时间同时小于8点的数据
+                                continue;
+                            }
+                        }
+                        //个人出门时间晚于18点的数据排除
+                        if(startl > sdhm.parse(closingtime_end.replace(":", "")).getTime()){
                             continue;
                         }
                         //去除午餐时间的情况1
@@ -1995,7 +2075,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     }
                     punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
-                    //punchcardrecordMapper.insert(punchcardrecord);
+                    punchcardrecordMapper.insert(punchcardrecord);
 
                     //创建考勤数据
                     Attendance attendance = new Attendance();
@@ -2014,7 +2094,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setAttendanceid(UUID.randomUUID().toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
-                    //attendanceMapper.insert(attendance);
+                    attendanceMapper.insert(attendance);
                     books[x] = customerInfo.getUserid();
                 }
                 //添加打卡记录end
@@ -2176,7 +2256,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //个人出门之后再次进门时间
                         long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
 
-                        if(startl < sdhm.parse(workshift_start).getTime() || startl > DateUtil.offset(Time_start, DateField.HOUR_OF_DAY, 9).getTime()){
+                        //个人出门时间小于8点的数据排除
+                        if(startl < sdhm.parse(workshift_start).getTime()){
+                            if(endl > sdhm.parse(workshift_start).getTime()){
+                                //时间出门到进门的相差分钟数
+                                Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                BigDecimal abnormal = new BigDecimal(minutes);
+                                minute = minute + minutes;
+                                minuteam = minuteam + minutes;
+                            }
+                            else{
+                                //个人出门时间和进门时间同时小于8点的数据
+                                continue;
+                            }
+                        }
+                        //个人出门时间晚于18点的数据排除
+                        if(startl > sdhm.parse(closingtime_end.replace(":", "")).getTime()){
                             continue;
                         }
                         //去除午餐时间的情况1

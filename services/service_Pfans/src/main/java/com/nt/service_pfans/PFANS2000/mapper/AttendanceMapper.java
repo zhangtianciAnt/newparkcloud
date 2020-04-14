@@ -11,4 +11,5 @@ public interface AttendanceMapper extends MyMapper<Attendance> {
 
     List<Attendance> getAttendance(Attendance attendance);
     List<Attendance> selectAttendance(AbNormal abNormal);
+    Double selectAttenSumSick(Attendance attendance);
 }
