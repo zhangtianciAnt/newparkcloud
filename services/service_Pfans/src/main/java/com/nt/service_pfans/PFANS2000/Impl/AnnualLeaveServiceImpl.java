@@ -520,7 +520,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
             String url = "";
-            if(staffId.equals("")){
+            if(staffId == null){
                 url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
             }
             else{
@@ -883,7 +883,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //正式
         String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
         String url = "";
-        if(staffId.equals("")){
+        if(staffId == null){
             url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
         }
         else{
