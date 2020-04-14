@@ -29,7 +29,10 @@ public class Contractapplication extends BaseModel {
 
     @Column(name = "GROUP_ID")
     private String group_id;
-
+//add-ws-延期理由字段添加
+    @Column(name = "EXTENSIONREASON")
+    private String extensionreason;
+//add-ws-延期理由字段添加
     @Column(name = "DEPARTMENT")
     private String department;
 

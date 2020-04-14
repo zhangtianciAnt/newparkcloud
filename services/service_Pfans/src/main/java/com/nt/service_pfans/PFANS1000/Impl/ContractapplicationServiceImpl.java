@@ -256,7 +256,6 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.preInsert(tokenModel);
                         napalm.setNapalm_id(UUID.randomUUID().toString());
                         napalm.setContractnumber(contractnumber);
-
                         //7
                         napalm.setDepositjapanese(contractapp.getCustojapanese());
                         napalm.setDepositenglish(contractapp.getCustoenglish());
@@ -265,12 +264,15 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setPjnamechinese(contractapp.getConchinese());
                         napalm.setPjnamejapanese(contractapp.getConjapanese());
                         napalm.setClaimtype(contractapp.getClaimtype());
-                        napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                        napalm.setDeliveryfinshdate(number.getDeliverydate());
                         napalm.setDeliverydate(number.getDeliverydate());//納品予定日
+                        //add-ws-添加纳品做成日和出荷判定实施者
+                        napalm.setDeliveryfinshdate(number.getDeliveryfinshdate());
+                        napalm.setLoadingjudge(number.getLoadingjudge());
+                        //add-ws-添加纳品做成日和出荷判定实施者
                         napalm.setCompletiondate(number.getCompletiondate());//検収完了日
                         napalm.setClaimamount(number.getClaimamount());//請求金額
                         napalm.setClaimnumber(number.getClaimnumber());//請求番号
-                        napalm.setLoadingjudge(contractapp.getLoadingjudge());
                         napalm.setCurrencyformat(contractapp.getCurrencyposition());
                         napalm.setContracttype(contractapp.getContracttype());
                         napalm.setToto(contractapp.getVarto());
@@ -312,7 +314,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setPlacechinese(contractapp.getPlacechinese());
                         petition.setClaimdatetime(contractapp.getClaimdatetime());
                         petition.setBusinesscode(contractapp.getBusinesscode());
-                        petition.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                        //add-ws-添加纳品做成日
+                        petition.setDeliveryfinshdate(number.getDeliveryfinshdate());
+                        //add-ws-添加纳品做成日
                         petition.setResponphone(contractapp.getResponphone());
                         petition.setClaimtype(contractapp.getClaimtype());
                         petition.setCurrencyposition(contractapp.getCurrencyposition());
