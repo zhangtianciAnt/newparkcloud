@@ -48,7 +48,13 @@ public class Contractnumbercount extends BaseModel {
      */
     @Column(name = "COMPLETIONDATE")
     private Date completiondate;
+    //add-ws-添加纳品做成日和出荷判定实施者
+    @Column(name = "DELIVERYFINSHDATE")
+    private Date deliveryfinshdate;
 
+    @Column(name = "LOADINGJUDGE")
+    private String loadingjudge;
+    //add-ws-添加纳品做成日和出荷判定实施者
     /**
      * 請求日
      */
