@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.service_pfans.PFANS6000.PricesetService;
 import com.nt.utils.ApiResult;
@@ -32,13 +33,13 @@ public class Pfans6005Controller {
 
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult getpriceset(@RequestBody Priceset priceset, HttpServletRequest request) throws Exception {
-        if (priceset == null) {
+    public ApiResult getpriceset(@RequestBody PricesetGroup pricesetGroup, HttpServletRequest request) throws Exception {
+        if (pricesetGroup == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        priceset.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(pricesetService.gettlist());
+        pricesetGroup.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(pricesetService.gettlist(pricesetGroup));
     }
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})

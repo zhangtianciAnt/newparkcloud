@@ -80,16 +80,16 @@ public class pfans1031Controller {
         } else {
             data.put("statime","");
         }
-        if(na.getContracttype().equals("HT008005") || na.getContracttype().equals("HT008006") || na.getContracttype().equals("HT008007") || na.getContracttype().equals("HT008008")){
-            for(Dictionary item:dictionaryList){
-                if(item.getCode().equals(na.getCurrencyformat())) {
-
-                    na.setCurrencyformat(item.getValue4());
-                }
-            }
-
-            ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(国内受託)","napinshu_guonei.xlsx",data,response);
-        } else if (na.getContracttype().equals("HT008001") || na.getContracttype().equals("HT008002") || na.getContracttype().equals("HT008003") || na.getContracttype().equals("HT008004")){
+//        if(na.getContracttype().equals("HT008005") || na.getContracttype().equals("HT008006") || na.getContracttype().equals("HT008007") || na.getContracttype().equals("HT008008")){
+//            for(Dictionary item:dictionaryList){
+//                if(item.getCode().equals(na.getCurrencyformat())) {
+//
+//                    na.setCurrencyformat(item.getValue4());
+//                }
+//            }
+//
+//            ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(国内受託)","napinshu_guonei.xlsx",data,response);
+//        } else if (na.getContracttype().equals("HT008001") || na.getContracttype().equals("HT008002") || na.getContracttype().equals("HT008003") || na.getContracttype().equals("HT008004")){
             if (na.getCurrencyformat().equals("PG019003")){
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(na.getCurrencyformat())) {
@@ -108,6 +108,6 @@ public class pfans1031Controller {
                 }
                 ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(日本受託‐技術開発-US$)","napinshu_us.xlsx",data,response);
             }
-        }
+//        }
     }
 }

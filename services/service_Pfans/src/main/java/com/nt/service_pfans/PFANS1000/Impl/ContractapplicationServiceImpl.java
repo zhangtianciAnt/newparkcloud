@@ -264,12 +264,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setPjnamechinese(contractapp.getConchinese());
                         napalm.setPjnamejapanese(contractapp.getConjapanese());
                         napalm.setClaimtype(contractapp.getClaimtype());
-                        napalm.setDeliveryfinshdate(number.getDeliverydate());
+                        //del_fjl
+//                        napalm.setDeliveryfinshdate(number.getDeliverydate());
+                        //del_fjl
                         napalm.setDeliverydate(number.getDeliverydate());//納品予定日
                         //add-ws-添加纳品做成日和出荷判定实施者
                         napalm.setDeliveryfinshdate(number.getDeliveryfinshdate());
                         napalm.setLoadingjudge(number.getLoadingjudge());
                         //add-ws-添加纳品做成日和出荷判定实施者
+                        //add_fjl
+                        napalm.setClaimdate(number.getClaimdate()); //请求日
+                        //add_fjl
                         napalm.setCompletiondate(number.getCompletiondate());//検収完了日
                         napalm.setClaimamount(number.getClaimamount());//請求金額
                         napalm.setClaimnumber(number.getClaimnumber());//請求番号

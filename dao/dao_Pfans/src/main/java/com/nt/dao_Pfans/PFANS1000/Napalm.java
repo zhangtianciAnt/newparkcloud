@@ -181,4 +181,10 @@ public class Napalm extends BaseModel {
      */
     @Column(name = "CLAIMDATETIME")
     private String claimdatetime;
+
+    /**
+     * 请求日
+     */
+    @Column(name = "CLAIMDATE")
+    private Date claimdate;
 }
