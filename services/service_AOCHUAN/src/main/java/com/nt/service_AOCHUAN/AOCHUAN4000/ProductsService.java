@@ -10,5 +10,15 @@ public interface ProductsService {
 
     List<Products> get(Products products) throws Exception;
 
+    public void insert(Products offshore, TokenModel tokenModel)throws  Exception;
+
+    public Products One(String ids)throws  Exception;
+
+    public void update(Products products, TokenModel tokenModel)throws  Exception;
+
+    void delete(String id) throws Exception;
+
+
+
 
 }
