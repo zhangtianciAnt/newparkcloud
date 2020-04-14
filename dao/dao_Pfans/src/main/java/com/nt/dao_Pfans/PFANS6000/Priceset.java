@@ -26,6 +26,9 @@ public class Priceset extends BaseModel {
     @Column(name = "PRICESET_ID")
     private String priceset_id;
 
+    @Column(name = "PRICESETGROUP_ID")
+    private String pricesetgroup_id;
+
     /**
      *査定時間
      */
@@ -37,12 +40,6 @@ public class Priceset extends BaseModel {
      */
     @Column(name = "USER_ID")
     private String user_id;
-
-    /**
-     * 外协人员姓名
-     */
-    @Transient
-    private  String username;
 
     /**
      *卒業年
@@ -218,4 +215,9 @@ public class Priceset extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     *名字
+     */
+    @Column(name = "USERNAME")
+    private String username;
 }

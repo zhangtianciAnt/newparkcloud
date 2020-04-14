@@ -82,16 +82,22 @@ public class Pfans1025Controller {
             }
         }
         Map<String, Object> data = new HashMap<>();
-        if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
-            av.getAward().setExtrinsic("有");
-        } else {
-            av.getAward().setExtrinsic("-");
+        //add-ws-只有委托决裁的情况下进行赋值判断
+        if(Integer.valueOf(av.getAward().getMaketype()) == 7){
+            //add-ztc-判断字段值进行赋值
+            if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
+                av.getAward().setExtrinsic("有");
+            } else {
+                av.getAward().setExtrinsic("-");
+            }
+            if (Integer.valueOf(av.getAward().getPlan()) == 1) {
+                av.getAward().setPlan("外");
+            } else {
+                av.getAward().setPlan("内");
+            }
+            //add-ztc-判断字段值进行赋值
         }
-        if (Integer.valueOf(av.getAward().getPlan()) == 1) {
-            av.getAward().setPlan("外");
-        } else {
-            av.getAward().setPlan("内");
-        }
+        //add-ws-只有委托决裁的情况下进行赋值判断
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
         data.put("num",nu.getNumbercounts());
