@@ -115,37 +115,39 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractapplication contractapp : coList) {
                 //見積書作成
                 if(rowindex.equals("1")){
-                    Quotation quotation = new Quotation();
-                    quotation.preInsert(tokenModel);
-                    quotation.setQuotationid(UUID.randomUUID().toString());
-                    quotation.setContractnumber(contractnumber);
+                    for (Contractnumbercount number : countList) {
+                        Quotation quotation = new Quotation();
+                        quotation.preInsert(tokenModel);
+                        quotation.setQuotationid(UUID.randomUUID().toString());
+                        quotation.setContractnumber(contractnumber);
 
-                    //6
-                    quotation.setContracttype(contractapp.getContracttype());
-                    quotation.setContractnumber(contractapp.getContractnumber());
-                    quotation.setTrusteejapanese(contractapp.getCustojapanese());
-                    quotation.setTrusteechinese(contractapp.getCustochinese());
-                    quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
-                    quotation.setEntrustedchinese(contractapp.getPlacechinese());
-                    quotation.setDeployment(contractapp.getDeployment());
-                    quotation.setPjchinese(contractapp.getConchinese());
-                    quotation.setPjjapanese(contractapp.getConjapanese());
-                    quotation.setCurrencyposition(contractapp.getCurrencyposition());
-                    quotation.setClaimamount(contractapp.getClaimamount());
-                    quotation.setLoadingjudge(contractapp.getLoadingjudge());
+                        //6
+                        quotation.setContracttype(contractapp.getContracttype());
+                        quotation.setContractnumber(contractapp.getContractnumber());
+                        quotation.setTrusteejapanese(contractapp.getCustojapanese());
+                        quotation.setTrusteechinese(contractapp.getCustochinese());
+                        quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
+                        quotation.setEntrustedchinese(contractapp.getPlacechinese());
+                        quotation.setDeployment(contractapp.getDeployment());
+                        quotation.setPjchinese(contractapp.getConchinese());
+                        quotation.setPjjapanese(contractapp.getConjapanese());
+                        quotation.setCurrencyposition(contractapp.getCurrencyposition());
+                        quotation.setClaimamount(contractapp.getClaimamount());
+                        quotation.setLoadingjudge(number.getLoadingjudge());
 
-                    if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
+                        if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
                             quotation.setStartdate(sdf.parse(startAndEnd[0]));
                             quotation.setEnddate(sdf.parse(startAndEnd[1]));
-                    }
+                        }
 
-                    Quotation quotation2 = new Quotation();
-                    quotation2.setContractnumber(contractapp.getContractnumber());
-                    quotation2.setOwner(tokenModel.getUserId());
-                    quotationMapper.delete(quotation2);
-                    quotationMapper.insert(quotation);
+                        Quotation quotation2 = new Quotation();
+                        quotation2.setContractnumber(contractapp.getContractnumber());
+                        quotation2.setOwner(tokenModel.getUserId());
+                        quotationMapper.delete(quotation2);
+                        quotationMapper.insert(quotation);
+                    }
                 }
                 //該非判定書作成
                 else if(rowindex.equals("2")){
