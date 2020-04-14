@@ -611,8 +611,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ab.setRefinisheddate(ab.getReoccurrencedate());
                                                 }
                                                 //在申请的日期范围内
-                                                if (ab.getReoccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) <= 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) >= 0) {
-                                                    if (!(ab.getReoccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0)) {
+                                                if (ab.getReoccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) <= 0 && ab.getRefinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) >= 0) {
+                                                    if (!(ab.getReoccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0 && ab.getRefinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0)) {
                                                         strlengthtime = workinghours;
                                                     }
                                                 } else {
@@ -625,8 +625,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ab.setFinisheddate(ab.getOccurrencedate());
                                                 }
                                                 //在申请的日期范围内
-                                                if (ab.getOccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) >= 0) {
-                                                    if (!(ab.getOccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0)) {
+                                                if (ab.getOccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) <= 0 && ab.getFinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) >= 0) {
+                                                    if (!(ab.getOccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0 && ab.getFinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0)) {
                                                         strlengthtime = workinghours;
                                                     }
                                                 } else {
@@ -1143,8 +1143,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (Double.valueOf(strlengthtime) <= 8) {
                                                 ab.setRefinisheddate(ab.getReoccurrencedate());
                                             }
-                                            if (ab.getReoccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) <= 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) >= 0) {
-                                                if (!(ab.getReoccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0 && ab.getRefinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0)) {
+                                            if (ab.getReoccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) <= 0 && ab.getRefinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) >= 0) {
+                                                if (!(ab.getReoccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0 && ab.getRefinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0)) {
 
                                                     strlengthtime = workinghours;
                                                 }
@@ -1157,8 +1157,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (Double.valueOf(strlengthtime) <= 8) {
                                                 ab.setFinisheddate(ab.getOccurrencedate());
                                             }
-                                            if (ab.getOccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) <= 0 && ab.getFinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) >= 0) {
-                                                if (!(ab.getOccurrencedate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0 && ab.getFinisheddate().compareTo(sdfxx.parse(ad.getDates().toString())) == 0)) {
+                                            if (ab.getOccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) <= 0 && ab.getFinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) >= 0) {
+                                                if (!(ab.getOccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0 && ab.getFinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) == 0)) {
                                                     strlengthtime = workinghours;
                                                 }
                                             } else {
