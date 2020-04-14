@@ -68,6 +68,9 @@ public class Quotation extends BaseModel {
     @Column(name = "REQUESTNUMBER")
     private String requestnumber;
 
+    @Column(name = "DRAFTINGDATE")
+    private Date draftingdate;
+
     @Column(name = "BATCH")
     private String batch;
 
