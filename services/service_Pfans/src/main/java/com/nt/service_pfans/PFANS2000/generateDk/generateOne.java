@@ -19,7 +19,7 @@ public class generateOne implements generateFactory {
 
 
         //入 - 8：00
-        dkDao.setLength(DateUtil.toIntSecond (dkDao.getEnd()) - DateUtil.toIntSecond (date));
+        dkDao.setLength(DateUtil.toIntSecond (dkDao.getIn()) - DateUtil.toIntSecond (date));
         return dkDao;
     }
 }
