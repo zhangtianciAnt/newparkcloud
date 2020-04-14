@@ -213,27 +213,28 @@ public class UserServiceImpl implements UserService {
             }
 
 //个人编码重复check
-            Query queryCode = new Query();
-            queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
-            List<CustomerInfo> qcAD = mongoTemplate.find(queryCode, CustomerInfo.class);
-            if(qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())){
-                flg2 = 1;
-            }
-            else {
-                throw new LogicalException("AD域账号重复");
-            }
+//            Query queryCode = new Query();
+//            queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
+//            List<CustomerInfo> qcAD = mongoTemplate.find(queryCode, CustomerInfo.class);
+//            if(qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())){
+//                flg2 = 1;
+//            }
+//            else {
+//                throw new LogicalException("AD域账号重复");
+//            }
 
 //AD域重复check
-            Query queryAD = new Query();
-            queryAD.addCriteria(Criteria.where("userinfo.personalcode").is(userInfo.getPersonalcode()));
-            List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
-            if(qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())){
-                flg3 = 1;
-            }
-            else {
-                throw new LogicalException("个人编码重复");
-            }
-            if(flg1 == 1 && flg2 == 1 && flg3 == 1){
+//            Query queryAD = new Query();
+//            queryAD.addCriteria(Criteria.where("userinfo.personalcode").is(userInfo.getPersonalcode()));
+//            List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
+//            if(qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())){
+//                flg3 = 1;
+//            }
+//            else {
+//                throw new LogicalException("个人编码重复");
+//            }
+            //if(flg1 == 1 && flg2 == 1 && flg3 == 1){
+            if(flg1 == 1){
                 customerInfo.setUserid(_id);
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);
@@ -255,49 +256,49 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
         Query query = new Query();
-//        if (StrUtil.isNotBlank(orgid)) {
-//            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
-//                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
-//        }
-        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
-        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
-                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())){
-            query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
-            List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
-            query = new Query();
-            if(CustomerInfolist.size() > 0){
-                if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
-                    query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
-                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
-                    query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
-                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
-                    query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
-                }
-
-                customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
-
-                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
-                    for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
-                        query = new Query();
-
-                        if(StrUtil.isNotBlank(itemO.getTeamid())){
-                            query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
-                        }else  if(StrUtil.isNotBlank(itemO.getGroupid())){
-                            query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
-                        }else  if(StrUtil.isNotBlank(itemO.getCenterid())){
-                            query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
-                        }
-
-                        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
-                    }
-                }
-            }
-        }else{
-            query = new Query();
-            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+        if (StrUtil.isNotBlank(orgid)) {
+            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
         }
+//        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
+//        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
+//                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())){
+//            query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+//            List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
+//            query = new Query();
+//            if(CustomerInfolist.size() > 0){
+//                if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
+//                    query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
+//                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
+//                    query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
+//                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
+//                    query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
+//                }
+//
+//                customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+//
+//                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
+//                    for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
+//                        query = new Query();
+//
+//                        if(StrUtil.isNotBlank(itemO.getTeamid())){
+//                            query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
+//                        }else  if(StrUtil.isNotBlank(itemO.getGroupid())){
+//                            query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
+//                        }else  if(StrUtil.isNotBlank(itemO.getCenterid())){
+//                            query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
+//                        }
+//
+//                        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+//                    }
+//                }
+//            }
+//        }else{
+//            query = new Query();
+//            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+//        }
 
-
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfos;
     }
 

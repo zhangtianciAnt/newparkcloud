@@ -372,6 +372,8 @@ public class CustomerInfo extends BaseModel {
         private List<Personal> houseData;
         private List<Personal> oldageData;
 
+        private List<OkrsTable> OkrsTable;
+
         // ADD-LXX
         /**
          * 养老保险基数
@@ -662,6 +664,14 @@ public class CustomerInfo extends BaseModel {
         private String basic;   //5000
         private String duty;    //3845
         private String remark;
+    }
+
+    @Data
+    public static class OkrsTable{
+        private String _time;
+        private String target;
+        private String result;
+        private String completed;
     }
 
     @Data
