@@ -75,9 +75,10 @@ public class Pfans1025Controller {
 //        }
         List<Dictionary> valuationList = dictionaryService.getForSelect("HT005");
         for(Dictionary item:valuationList){
-            if(item.getCode().equals(av.getAward().getValuation()) || item.getCode().equals(av.getAward().getIndividual())) {
-
+            if(item.getCode().equals(av.getAward().getValuation())) {
                 av.getAward().setValuation(item.getValue1());
+            }
+            if(item.getCode().equals(av.getAward().getIndividual())) {
                 av.getAward().setIndividual(item.getValue1());
             }
         }

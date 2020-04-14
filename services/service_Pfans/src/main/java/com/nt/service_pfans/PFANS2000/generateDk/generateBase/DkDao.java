@@ -12,10 +12,10 @@ import java.util.Date;
 public class DkDao {
 
     //出
-    public Date start;
+    public Date out;
 
     //进
-    public Date end;
+    public Date in;
 
     //外出时长 (秒)
     public int length;

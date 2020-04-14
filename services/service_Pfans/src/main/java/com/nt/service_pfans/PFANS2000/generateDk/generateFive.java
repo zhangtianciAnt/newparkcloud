@@ -5,13 +5,21 @@ import com.nt.service_pfans.PFANS2000.generateDk.generateBase.DkDao;
 import com.nt.service_pfans.PFANS2000.generateDk.generateBase.generateFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
-public class generateTwo implements generateFactory {
+public class generateFive implements generateFactory {
 
     @Override
     public DkDao generate(DkDao dkDao) throws Exception {
-        //入 - 出
-        dkDao.setLength(DateUtil.toIntSecond (dkDao.getIn()) - DateUtil.toIntSecond (dkDao.getOut()));
+        //18:00
+        Date dateE = new Date();
+        dateE.setHours(18);
+        dateE.setMinutes(0);
+        dateE.setSeconds(0);
+
+        //18:00 - 出
+        dkDao.setLength(DateUtil.toIntSecond (dateE) - DateUtil.toIntSecond (dkDao.getOut()));
         return dkDao;
     }
 }
