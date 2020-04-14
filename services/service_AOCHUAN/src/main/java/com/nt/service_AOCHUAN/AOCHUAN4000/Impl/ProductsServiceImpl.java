@@ -23,4 +23,32 @@ public class ProductsServiceImpl implements ProductsService {
     public List<Products> get(Products products) throws Exception {
         return productsMapper.select(products);
     }
+
+    @Override
+    public void insert(Products products, TokenModel tokenModel) throws Exception {
+        products.preInsert(tokenModel);
+        products.setProducts_id(UUID.randomUUID().toString());
+        productsMapper.insert(products);
+    }
+
+    @Override
+    public Products One(String ids) throws Exception {
+        return productsMapper.selectByPrimaryKey(ids);
+    }
+
+    @Override
+    public void update(Products products, TokenModel tokenModel) throws Exception {
+        products.preUpdate(tokenModel);
+        productsMapper.updateByPrimaryKey(products);
+
+    }
+
+    @Override
+    public void delete(String id) throws Exception {
+        Products products = new Products();
+        products.setProducts_id(id);
+        products.setStatus("1");
+        productsMapper.updateByPrimaryKey(products);
+        productsMapper.deleteByPrimaryKey(id);
+    }
 }
