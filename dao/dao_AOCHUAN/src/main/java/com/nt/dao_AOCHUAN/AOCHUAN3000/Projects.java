@@ -1,5 +1,6 @@
-package com.nt.dao_AOCHUAN.AOCHUAN3000.model;
+package com.nt.dao_AOCHUAN.AOCHUAN3000;
 
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import javax.persistence.Column;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "projects")
-public class AOCHUAN3009 {
+public class Projects extends BaseModel {
     /**
      *
      */
