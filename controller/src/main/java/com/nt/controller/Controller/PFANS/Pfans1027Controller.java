@@ -69,12 +69,12 @@ public class Pfans1027Controller {
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:dictionaryList){
             if(item.getCode().equals(qu.getQuotation().getCurrencyposition())) {
-                qu.getQuotation().setCurrencyposition(item.getValue1());
+                qu.getQuotation().setCurrencyposition(item.getValue4());
             }
         }
         Map<String, Object> data = new HashMap<>();
         data.put("qu",qu.getQuotation());
-//        data.put("qulist",qu.getOthpersonfee());
+        data.put("qulist",qu.getOthpersonfee());
 //        data.put("qualist",qu.getFruit());
         data.put("num", qu.getNumbercounts());
         data.put("qlist", qu.getPersonfee());

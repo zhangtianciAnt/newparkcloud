@@ -333,7 +333,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     //查询更新一天的考勤数据
                     Attendance attendance = new Attendance();
                     attendance.setUser_id(customerInfo.getUserid());
-                    attendance.setDates(cal.getTime());
+                    attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
                     List<Attendance> attendanceList = attendanceMapper.select(attendance);
                     if(attendanceList.size()>0)
                     {
@@ -366,9 +366,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     {
                         attendance.setNormal("0");
                         attendance.setAbsenteeism("0");
-                        attendance.setCenter_id(customerInfo.getUserinfo().getCenterid());
-                        attendance.setGroup_id(customerInfo.getUserinfo().getGroupid());
-                        attendance.setTeam_id(customerInfo.getUserinfo().getTeamid());
+                        attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                        attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                        attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                         attendance.setAttendanceid(UUID.randomUUID().toString());
                         attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
                         attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
