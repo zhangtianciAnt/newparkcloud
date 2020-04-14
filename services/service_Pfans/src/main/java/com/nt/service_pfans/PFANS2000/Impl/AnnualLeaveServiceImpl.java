@@ -491,7 +491,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
-        punchcardRecordService.methodAttendance_b(-1);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        punchcardRecordService.methodAttendance_b(cal);
     }
 
 
@@ -1204,7 +1207,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Override
     public void insertpunchcard(int diffday) throws Exception {
-        punchcardRecordService.methodAttendance_b(diffday);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_MONTH, diffday);
+        punchcardRecordService.methodAttendance_b(cal);
     }
 
     //取object的值

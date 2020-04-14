@@ -84,4 +84,12 @@ GROUP BY
         and attendance.user_id = #{user_id}
         and attendance.recognitionstate = #{recognitionstate}
     </select>
+    <select id="selectAttenSumSick" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance" resultType="java.lang.Double">
+        select
+        sum(CONVERT(IFNULL(tshortsickleave,'0'),SIGNED) + CONVERT(IFNULL(shortsickleave,'0'),SIGNED))
+        from attendance
+        where attendance.dates >= DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d')
+        and attendance.dates &lt;= #{dates}
+        and attendance.user_id = #{user_id}
+    </select>
 </mapper>

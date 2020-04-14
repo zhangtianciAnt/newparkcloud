@@ -77,829 +77,829 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
-        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || abNormal.getStatus().equals("7")){
-            AbNormal ab = new AbNormal();
-            ab.setAbnormalid(abNormal.getAbnormalid());
-            List<AbNormal> abNormallist = abNormalMapper.select(ab);
-            if(!(abNormallist.get(0).getStatus().equals(abNormal.getStatus()))) {
-                if (abNormal.getErrortype().equals("PR013006") || abNormal.getErrortype().equals("PR013007")) {//代休周末
-                    //修改代休记录
-                    updateReplacerest(abNormal, tokenModel);
-                }
-                if (abNormal.getErrortype().equals("PR013005")) //年休
-                {
-                    //修改年休
-                    //updateAnnualleave(abNormal,tokenModel);
-                }
-                //旷工基本计算单位
-                String absenteeism = null;
-                //工作时间
-                String workinghours = null;
-                //事假单位
-                String compassionateleave = null;
-                AttendanceSetting attendancesetting = new AttendanceSetting();
-                List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
-                if (attendancesettinglist.size() > 0) {
-
-                    workinghours = attendancesettinglist.get(0).getWorkinghours();
-                    absenteeism = attendancesettinglist.get(0).getLateearlyleave();
-                    //事假基本计算单位
-                    compassionateleave = attendancesettinglist.get(0).getCompassionateleave();
-                }
-                String dateOccurrence = null;
-                SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
-                Attendance attendance = new Attendance();
-                attendance.setUser_id(abNormal.getUser_id());
-                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-
-                CustomerInfo customer =new CustomerInfo();
-                Query query = new Query();
-                String userid = abNormal.getUser_id();
-                query.addCriteria(Criteria.where("userid").is(userid));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if(abNormal.getStatus().equals("7"))
-                {
-                    abNormal.setRelengthtime(abNormal.getRelengthtime() == null || abNormal.getRelengthtime() == "" ? "0" : abNormal.getRelengthtime());
-                    if(Double.valueOf(abNormal.getRelengthtime()) <= 8)
-                    {
-                        abNormal.setRefinisheddate(abNormal.getReoccurrencedate());
-                    }
-                    if(!abNormal.getReoccurrencedate().equals(abNormal.getRefinisheddate()))
-                    {
-                        List<Attendance> attendancelist = attendanceMapper.selectAttendance(abNormal);
-                        DecimalFormat df = new DecimalFormat("######0.00");
-                        if(attendancelist.size() > 0)
-                        {
-                            for (Attendance attend : attendancelist)
-                            {
-                                WorkingDay workDay = new WorkingDay();
-                                workDay.setWorkingdate(attend.getDates());
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(attend.getDates());
-                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
-
-                                //判断当天是否是休日，青年节，妇女节，周六周日
-                                if(workingDaysList.size()>0)
-                                {
-                                    //振替出勤日
-                                    if(workingDaysList.get(0).getType().equals("4"))
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "0";
-                                    }
-                                }
-                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-                                {
-                                    workinghours = "0";
-                                }
-                                else if(sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
-                                {
-                                    workinghours = "4";
-                                }
-                                else
-                                {
-                                    workinghours = "8";
-                                }
-
-                                if (abNormal.getErrortype().equals("PR013001")) {//外出
-                                    attend.setNormal(df.format(Double.valueOf(workinghours)));
-                                    attend.setAbsenteeism(null);
-
-                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
-                                    attend.setAnnualrest(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
-                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
-                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
-                                    attend.setCompassionateleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
-                                    attend.setShortsickleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
-                                    attend.setLongsickleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
-                                    attend.setNursingleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
-                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
-                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
-                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
-                                        || abNormal.getErrortype().equals("PR013020")) {
-                                    attend.setWelfare(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                    //福利假期
-                                    //家长会假//妊娠檢查休暇
-                                    // 労災休暇//其他休暇
-                                    //婚假 //丧假
-                                    //流产假 //计划生育手术假//工伤
-                                }
-                                //更新考勤表
-                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
-                                {
-                                    attend.setTshortsickleave(attend.getShortsickleave());
-                                    attend.setTlongsickleave(attend.getLongsickleave());
-                                    attend.setTabsenteeism(attend.getAbsenteeism());
-                                    attend.setShortsickleave(null);
-                                    attend.setLongsickleave(null);
-                                    attend.setAbsenteeism(null);
-                                }
-                                else
-                                {
-                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
-                                    {
-                                        attend.setTshortsickleave(attend.getShortsickleave());
-                                        attend.setTlongsickleave(attend.getLongsickleave());
-                                        attend.setTabsenteeism(attend.getAbsenteeism());
-                                        attend.setShortsickleave(null);
-                                        attend.setLongsickleave(null);
-                                        attend.setAbsenteeism(null);
-                                    }
-                                }
-                                attend.preUpdate(tokenModel);
-                                attendanceMapper.updateByPrimaryKey(attend);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        attendance.setDates(abNormal.getOccurrencedate());
-                        List<Attendance> attendancelist = attendanceMapper.select(attendance);
-                        DecimalFormat df = new DecimalFormat("######0.00");
-
-                        //检索打卡记录明细表（用用户id，）
-
-                        if (attendancelist.size() > 0) {
-                            for (Attendance attend : attendancelist) {
-                                WorkingDay workDay = new WorkingDay();
-                                workDay.setWorkingdate(abNormal.getReoccurrencedate());
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(abNormal.getReoccurrencedate());
-                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
-
-                                if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
-                                {
-                                    attend.setAbsenteeism(attend.getTabsenteeism());
-                                }
-                                if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
-                                {
-                                    attend.setShortsickleave(attend.getTshortsickleave());
-                                }
-                                if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
-                                {
-                                    attend.setLongsickleave(attend.getTlongsickleave());
-                                }
-                                //判断当天是否是休日，青年节，妇女节，周六周日
-                                if(workingDaysList.size()>0)
-                                {
-                                    //振替出勤日
-                                    if(workingDaysList.get(0).getType().equals("4"))
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "0";
-                                    }
-                                }
-                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-                                {
-                                    workinghours = "0";
-                                }
-                                else if(sf1ymd.format(abNormal.getReoccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getReoccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
-                                {
-                                    workinghours = "4";
-                                }
-                                else
-                                {
-                                    workinghours = "8";
-                                }
-                                String timeLength=null;
-                                timeLength = df.format(Double.valueOf(abNormal.getRelengthtime()));
-                                attend.setNormal(attend.getNormal() ==null?"0":attend.getNormal());
-                                attend.setAbsenteeism(attend.getAbsenteeism() ==null?"0":attend.getAbsenteeism());
-                                if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
-                                {
-                                    if (!abNormal.getErrortype().equals("PR013001"))
-                                    {
-                                        timeLength = df.format(Math.floor(Double.valueOf(timeLength) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
-                                    }
-                                }
-                                if (abNormal.getErrortype().equals("PR013001")) {//外出
-
-                                    if (Double.valueOf(timeLength) >= Double.valueOf(attend.getAbsenteeism())) {
-                                        if (Double.valueOf(timeLength) >= Double.valueOf(workinghours)) {
-                                            attend.setNormal(workinghours);
-                                            attend.setAbsenteeism(null);
-                                        } else {
-
-                                            attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(attend.getAbsenteeism())));
-                                            attend.setAbsenteeism(null);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(timeLength)));
-                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
-                                        attend.setNormal(df.format(Math.floor(Double.valueOf(attend.getNormal()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism)));
-                                        if (!(Double.valueOf(attend.getAbsenteeism()) % (Double.valueOf(absenteeism))==0))
-                                        {
-                                            attend.setAbsenteeism(df.format(Math.floor(Double.valueOf(attend.getAbsenteeism()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) ));
-                                        }
-                                    }
-
-                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
-                                    if (attend.getAnnualrest() != null && !attend.getAnnualrest().isEmpty()) {
-                                        if (Double.valueOf(attend.getAnnualrest()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getAnnualrest())));
-                                        }
-                                    }
-                                    attend.setAnnualrest(df.format( Double.valueOf(timeLength)));
-                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
-                                    if (attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()) {
-                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
-                                        }
-                                    }
-                                    attend.setDaixiu(df.format( Double.valueOf(timeLength)));
-                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
-                                    if (attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()) {
-                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
-                                        }
-                                    }
-                                    attend.setDaixiu(df.format( Double.valueOf(timeLength)));
-                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
-                                    if (attend.getCompassionateleave() != null && !attend.getCompassionateleave().isEmpty()) {
-                                        if (Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getCompassionateleave())));
-                                        }
-                                    }
-                                    attend.setCompassionateleave(df.format( Double.valueOf(timeLength)));
-                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
-                                    if (attend.getShortsickleave() != null && !attend.getShortsickleave().isEmpty()) {
-                                        if (Double.valueOf(attend.getShortsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getShortsickleave())));
-                                        }
-                                    }
-                                    attend.setShortsickleave(df.format( Double.valueOf(timeLength)));
-
-                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
-                                    if (attend.getLongsickleave() != null && !attend.getLongsickleave().isEmpty()) {
-                                        if (Double.valueOf(attend.getLongsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getLongsickleave())));
-                                        }
-                                    }
-                                    attend.setLongsickleave(df.format( Double.valueOf(timeLength)));
-                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
-                                    if (attend.getNursingleave() != null && !attend.getNursingleave().isEmpty()) {
-                                        if (Double.valueOf(attend.getNursingleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getNursingleave())));
-                                        }
-                                    }
-                                    attend.setNursingleave(df.format( Double.valueOf(timeLength)));
-                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
-                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
-                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
-                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
-                                        || abNormal.getErrortype().equals("PR013020")) {
-                                    //福利假期
-                                    //家长会假//妊娠檢查休暇
-                                    // 労災休暇//其他休暇
-                                    //婚假 //丧假
-                                    //流产假 //计划生育手术假//工伤
-                                    if (attend.getWelfare() != null && !attend.getWelfare().isEmpty()) {
-                                        if (Double.valueOf(attend.getWelfare()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            timeLength = df.format(Double.valueOf(workinghours));
-                                        }
-                                        else
-                                        {
-                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getWelfare())));
-                                        }
-                                    }
-                                    attend.setWelfare(df.format( Double.valueOf(timeLength)));
-                                }
-
-                                if(!abNormal.getErrortype().equals("PR013001"))
-                                {
-                                    attend.setAbsenteeism(attend.getAbsenteeism() == null ? "0" : attend.getAbsenteeism());
-                                    if (Double.valueOf(attend.getAbsenteeism()) > Double.valueOf(timeLength) )
-                                    {
-                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
-                                    }
-                                    else
-                                    {
-                                        attend.setAbsenteeism(null);
-                                    }
-                                }
-                                attend.setNormal(attend.getNormal() == null ? "0" :attend.getNormal());
-                                attend.setAnnualrest(attend.getAnnualrest()==null ? "0"  :attend.getAnnualrest());
-                                attend.setDaixiu(attend.getDaixiu()==null ? "0" :attend.getDaixiu());
-                                attend.setCompassionateleave(attend.getCompassionateleave()==null? "0" :attend.getCompassionateleave());
-                                attend.setShortsickleave(attend.getShortsickleave()==null ? "0" :attend.getShortsickleave());
-                                attend.setLongsickleave(attend.getLongsickleave()==null ? "0" :attend.getLongsickleave());
-                                attend.setNursingleave(attend.getNursingleave()==null ? "0" :attend.getNursingleave());
-                                attend.setWelfare(attend.getWelfare()==null ? "0" :attend.getWelfare());
-                                attend.setAbsenteeism(attend.getAbsenteeism() ==null?"0":attend.getAbsenteeism());
-
-                                String setNormal = null;
-
-                                setNormal = df.format(Double.valueOf(attend.getAbsenteeism()) +  Double.valueOf(attend.getShortsickleave())
-                                        + Double.valueOf(attend.getLongsickleave()) + Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(attend.getAnnualrest())
-                                        + Double.valueOf(attend.getDaixiu()) + Double.valueOf(attend.getNursingleave()) + Double.valueOf(attend.getWelfare()));
-
-                                attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0?null:df.format(Double.valueOf(workinghours) - Double.valueOf(setNormal)));
-
-                                attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
-                                attend.setDaixiu(Double.valueOf(attend.getDaixiu()) <= 0 ? null :attend.getDaixiu());
-                                attend.setCompassionateleave(Double.valueOf(attend.getCompassionateleave()) <= 0 ? null :attend.getCompassionateleave());
-                                attend.setShortsickleave(Double.valueOf(attend.getShortsickleave()) <= 0 ? null :attend.getShortsickleave());
-                                attend.setLongsickleave(Double.valueOf(attend.getLongsickleave()) <= 0 ? null :attend.getLongsickleave());
-                                attend.setNursingleave(Double.valueOf(attend.getNursingleave()) <= 0 ? null :attend.getNursingleave());
-                                attend.setWelfare(Double.valueOf(attend.getWelfare()) <= 0 ? null :attend.getWelfare());
-                                attend.setAbsenteeism(Double.valueOf(attend.getAbsenteeism() ) <= 0 ? null:attend.getAbsenteeism());
-
-                                //更新考勤表
-                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
-                                {
-                                    attend.setTshortsickleave(attend.getShortsickleave());
-                                    attend.setTlongsickleave(attend.getLongsickleave());
-                                    attend.setTabsenteeism(attend.getAbsenteeism());
-                                    attend.setShortsickleave(null);
-                                    attend.setLongsickleave(null);
-                                    attend.setAbsenteeism(null);
-                                }
-                                else
-                                {
-                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
-                                    {
-                                        attend.setTshortsickleave(attend.getShortsickleave());
-                                        attend.setTlongsickleave(attend.getLongsickleave());
-                                        attend.setTabsenteeism(attend.getAbsenteeism());
-                                        attend.setShortsickleave(null);
-                                        attend.setLongsickleave(null);
-                                        attend.setAbsenteeism(null);
-                                    }
-                                }
-                                attend.preUpdate(tokenModel);
-                                attendanceMapper.updateByPrimaryKey(attend);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    abNormal.setLengthtime(abNormal.getLengthtime() == null || abNormal.getLengthtime() == "" ? "0" : abNormal.getLengthtime());
-                    if(Double.valueOf(abNormal.getLengthtime()) <= 8)
-                    {
-                        abNormal.setFinisheddate(abNormal.getOccurrencedate());
-                    }
-                    if(!abNormal.getOccurrencedate().equals(abNormal.getFinisheddate()))
-                    {
-                        List<Attendance> attendancelist = attendanceMapper.selectAttendance(abNormal);
-                        DecimalFormat df = new DecimalFormat("######0.00");
-                        if(attendancelist.size() > 0)
-                        {
-                            for (Attendance attend : attendancelist)
-                            {
-                                WorkingDay workDay = new WorkingDay();
-                                workDay.setWorkingdate(attend.getDates());
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(attend.getDates());
-                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
-
-                                //判断当天是否是休日，青年节，妇女节，周六周日
-                                if(workingDaysList.size()>0)
-                                {
-                                    //振替出勤日
-                                    if(workingDaysList.get(0).getType().equals("4"))
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "0";
-                                    }
-                                }
-                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-                                {
-                                    workinghours = "0";
-                                }
-                                else if(sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
-                                {
-                                    workinghours = "4";
-                                }
-                                else
-                                {
-                                    workinghours = "8";
-                                }
-
-                                if (abNormal.getErrortype().equals("PR013001")) {//外出
-                                    attend.setNormal(df.format(Double.valueOf(workinghours)));
-                                    attend.setAbsenteeism(null);
-
-                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
-                                    attend.setAnnualrest(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
-                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
-                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
-                                    attend.setCompassionateleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
-                                    attend.setShortsickleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
-                                    attend.setLongsickleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
-                                    attend.setNursingleave(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
-                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
-                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
-                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
-                                        || abNormal.getErrortype().equals("PR013020")) {
-                                    attend.setWelfare(df.format(Double.valueOf(workinghours)));
-                                    attend.setNormal(null);
-                                    attend.setAbsenteeism(null);
-                                    //福利假期
-                                    //家长会假//妊娠檢查休暇
-                                    // 労災休暇//其他休暇
-                                    //婚假 //丧假
-                                    //流产假 //计划生育手术假//工伤
-                                }
-                                //更新考勤表
-                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
-                                {
-                                    attend.setTshortsickleave(attend.getShortsickleave());
-                                    attend.setTlongsickleave(attend.getLongsickleave());
-                                    attend.setTabsenteeism(attend.getAbsenteeism());
-                                    attend.setShortsickleave(null);
-                                    attend.setLongsickleave(null);
-                                    attend.setAbsenteeism(null);
-                                }
-                                else
-                                {
-                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
-                                    {
-                                        attend.setTshortsickleave(attend.getShortsickleave());
-                                        attend.setTlongsickleave(attend.getLongsickleave());
-                                        attend.setTabsenteeism(attend.getAbsenteeism());
-                                        attend.setShortsickleave(null);
-                                        attend.setLongsickleave(null);
-                                        attend.setAbsenteeism(null);
-                                    }
-                                }
-                                attend.preUpdate(tokenModel);
-                                attendanceMapper.updateByPrimaryKey(attend);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        attendance.setDates(abNormal.getOccurrencedate());
-                        List<Attendance> attendancelist = attendanceMapper.select(attendance);
-                        DecimalFormat df = new DecimalFormat("######0.00");
-
-                        if (attendancelist.size() > 0) {
-                            for (Attendance attend : attendancelist) {
-                                WorkingDay workDay = new WorkingDay();
-                                workDay.setWorkingdate(abNormal.getOccurrencedate());
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(abNormal.getOccurrencedate());
-                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
-
-                                if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
-                                {
-                                    attend.setAbsenteeism(attend.getTabsenteeism());
-                                }
-                                if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
-                                {
-                                    attend.setShortsickleave(attend.getTshortsickleave());
-                                }
-                                if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
-                                {
-                                    attend.setLongsickleave(attend.getTlongsickleave());
-                                }
-                                //判断当天是否是休日，青年节，妇女节，周六周日
-                                if(workingDaysList.size()>0)
-                                {
-                                    //振替出勤日
-                                    if(workingDaysList.get(0).getType().equals("4"))
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "0";
-                                    }
-                                }
-                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-                                {
-                                    workinghours = "0";
-                                }
-                                else if(sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
-                                {
-                                    workinghours = "4";
-                                }
-                                else
-                                {
-                                    workinghours = "8";
-                                }
-                                String timeLength=null;
-                                timeLength = df.format(Double.valueOf(abNormal.getLengthtime()));
-                                attend.setNormal(attend.getNormal() ==null?"0":attend.getNormal());
-                                if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
-                                {
-                                    if(!abNormal.getErrortype().equals("PR013001")) {
-                                        timeLength = df.format(Math.floor(Double.valueOf(timeLength) / Double.valueOf(absenteeism)) * Double.valueOf(absenteeism) + Double.valueOf(absenteeism));
-                                    }
-                                }
-                                if (abNormal.getErrortype().equals("PR013001")) {//外出
-
-                                    if (Double.valueOf(timeLength) >= Double.valueOf(attend.getAbsenteeism())) {
-                                        if (Double.valueOf(timeLength) >= Double.valueOf(workinghours)) {
-                                            attend.setNormal(workinghours);
-                                            attend.setAbsenteeism(null);
-                                        } else {
-                                            attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(attend.getAbsenteeism())));
-                                            attend.setAbsenteeism(null);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(timeLength)));
-                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
-                                        attend.setNormal(df.format(Math.floor(Double.valueOf(attend.getNormal()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism)));
-                                        if (!(Double.valueOf(attend.getAbsenteeism()) % (Double.valueOf(absenteeism))==0))
-                                        {
-                                            attend.setAbsenteeism(df.format(Math.floor(Double.valueOf(attend.getAbsenteeism()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) ));
-                                        }
-
-                                    }
-
-                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
-                                    if(attend.getAnnualrest() != null && !attend.getAnnualrest().isEmpty()){
-                                        if (Double.valueOf(attend.getAnnualrest()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setAnnualrest(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setAnnualrest(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getAnnualrest())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setAnnualrest(df.format(Double.valueOf(timeLength)));
-                                    }
-                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
-                                    if(attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()){
-                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setDaixiu(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setDaixiu(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setDaixiu(df.format(Double.valueOf(timeLength)));
-                                    }
-                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
-                                    if(attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()){
-                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setDaixiu(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setDaixiu(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setDaixiu(df.format(Double.valueOf(timeLength)));
-                                    }
-                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
-                                    if(attend.getCompassionateleave() != null && !attend.getCompassionateleave().isEmpty()){
-                                        if (Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setCompassionateleave(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setCompassionateleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getCompassionateleave())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setCompassionateleave(df.format(Double.valueOf(timeLength)));
-                                    }
-                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
-                                    if(attend.getShortsickleave() != null && !attend.getShortsickleave().isEmpty()){
-                                        if (Double.valueOf(attend.getShortsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setShortsickleave(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setShortsickleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getShortsickleave())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setShortsickleave(df.format(Double.valueOf(timeLength)));
-                                    }
-
-                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
-
-                                    if(attend.getLongsickleave() != null && !attend.getLongsickleave().isEmpty()){
-                                        if (Double.valueOf(attend.getLongsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setLongsickleave(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setLongsickleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getLongsickleave())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setLongsickleave(df.format(Double.valueOf(timeLength)));
-                                    }
-                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
-                                    if(attend.getNursingleave() != null && !attend.getNursingleave().isEmpty()){
-                                        if (Double.valueOf(attend.getNursingleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setNursingleave(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setNursingleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getNursingleave())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setNursingleave(df.format(Double.valueOf(timeLength)));
-                                    }
-                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
-                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
-                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
-                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
-                                        || abNormal.getErrortype().equals("PR013020")) {
-                                    //福利假期
-                                    //家长会假//妊娠檢查休暇
-                                    // 労災休暇//其他休暇
-                                    //婚假 //丧假
-                                    //流产假 //计划生育手术假//工伤
-                                    if(attend.getWelfare() != null && !attend.getWelfare().isEmpty()){
-                                        if (Double.valueOf(attend.getWelfare()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
-                                        {
-                                            attend.setWelfare(df.format(Double.valueOf(workinghours)));
-                                        }
-                                        else
-                                        {
-                                            attend.setWelfare(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getWelfare())));
-                                        }
-                                    }
-                                    else{
-                                        attend.setWelfare(df.format(Double.valueOf(timeLength)));
-                                    }
-                                }
-
-                                if(!abNormal.getErrortype().equals("PR013001"))
-                                {
-                                    attend.setAbsenteeism(attend.getAbsenteeism() == null ? "0" : attend.getAbsenteeism());
-                                    if (Double.valueOf(attend.getAbsenteeism()) > Double.valueOf(timeLength) )
-                                    {
-                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
-                                    }
-                                    else
-                                    {
-                                        attend.setAbsenteeism(null);
-                                    }
-                                }
-                                attend.setNormal(attend.getNormal() == null ? "0" :attend.getNormal());
-                                attend.setAnnualrest(attend.getAnnualrest()==null ? "0"  :attend.getAnnualrest());
-                                attend.setDaixiu(attend.getDaixiu()==null ? "0" :attend.getDaixiu());
-                                attend.setCompassionateleave(attend.getCompassionateleave()==null? "0" :attend.getCompassionateleave());
-                                attend.setShortsickleave(attend.getShortsickleave()==null ? "0" :attend.getShortsickleave());
-                                attend.setLongsickleave(attend.getLongsickleave()==null ? "0" :attend.getLongsickleave());
-                                attend.setNursingleave(attend.getNursingleave()==null ? "0" :attend.getNursingleave());
-                                attend.setWelfare(attend.getWelfare()==null ? "0" :attend.getWelfare());
-                                attend.setAbsenteeism(attend.getAbsenteeism() ==null?"0":attend.getAbsenteeism());
-
-                                String setNormal = null;
-
-                                setNormal = df.format(Double.valueOf(attend.getAbsenteeism()) +  Double.valueOf(attend.getShortsickleave())
-                                        + Double.valueOf(attend.getLongsickleave()) + Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(attend.getAnnualrest())
-                                        + Double.valueOf(attend.getDaixiu()) + Double.valueOf(attend.getNursingleave()) + Double.valueOf(attend.getWelfare()));
-
-                                attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0 ? null: df.format((Double.valueOf(workinghours) - Double.valueOf(setNormal))));
-
-                                attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
-                                attend.setDaixiu(Double.valueOf(attend.getDaixiu()) <= 0 ? null :attend.getDaixiu());
-                                attend.setCompassionateleave(Double.valueOf(attend.getCompassionateleave()) <= 0 ? null :attend.getCompassionateleave());
-                                attend.setShortsickleave(Double.valueOf(attend.getShortsickleave()) <= 0 ? null :attend.getShortsickleave());
-                                attend.setLongsickleave(Double.valueOf(attend.getLongsickleave()) <= 0 ? null :attend.getLongsickleave());
-                                attend.setNursingleave(Double.valueOf(attend.getNursingleave()) <= 0 ? null :attend.getNursingleave());
-                                attend.setWelfare(Double.valueOf(attend.getWelfare()) <= 0 ? null :attend.getWelfare());
-                                attend.setAbsenteeism(Double.valueOf(attend.getAbsenteeism() ) <= 0 ? null:attend.getAbsenteeism());
-
-                                //更新考勤表
-                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
-                                {
-                                    attend.setTshortsickleave(attend.getShortsickleave());
-                                    attend.setTlongsickleave(attend.getLongsickleave());
-                                    attend.setTabsenteeism(attend.getAbsenteeism());
-                                    attend.setShortsickleave(null);
-                                    attend.setLongsickleave(null);
-                                    attend.setAbsenteeism(null);
-                                }
-                                else
-                                {
-                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
-                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
-                                    {
-                                        attend.setTshortsickleave(attend.getShortsickleave());
-                                        attend.setTlongsickleave(attend.getLongsickleave());
-                                        attend.setTabsenteeism(attend.getAbsenteeism());
-                                        attend.setShortsickleave(null);
-                                        attend.setLongsickleave(null);
-                                        attend.setAbsenteeism(null);
-                                    }
-                                }
-                                attend.preUpdate(tokenModel);
-                                attendanceMapper.updateByPrimaryKey(attend);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        if(abNormal.getStatus().equals(AuthConstants.APPROVED_FLAG_YES) || abNormal.getStatus().equals("7")){
+//            AbNormal ab = new AbNormal();
+//            ab.setAbnormalid(abNormal.getAbnormalid());
+//            List<AbNormal> abNormallist = abNormalMapper.select(ab);
+//            if(!(abNormallist.get(0).getStatus().equals(abNormal.getStatus()))) {
+//                if (abNormal.getErrortype().equals("PR013006") || abNormal.getErrortype().equals("PR013007")) {//代休周末
+//                    //修改代休记录
+//                    updateReplacerest(abNormal, tokenModel);
+//                }
+//                if (abNormal.getErrortype().equals("PR013005")) //年休
+//                {
+//                    //修改年休
+//                    //updateAnnualleave(abNormal,tokenModel);
+//                }
+//                //旷工基本计算单位
+//                String absenteeism = null;
+//                //工作时间
+//                String workinghours = null;
+//                //事假单位
+//                String compassionateleave = null;
+//                AttendanceSetting attendancesetting = new AttendanceSetting();
+//                List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
+//                if (attendancesettinglist.size() > 0) {
+//
+//                    workinghours = attendancesettinglist.get(0).getWorkinghours();
+//                    absenteeism = attendancesettinglist.get(0).getLateearlyleave();
+//                    //事假基本计算单位
+//                    compassionateleave = attendancesettinglist.get(0).getCompassionateleave();
+//                }
+//                String dateOccurrence = null;
+//                SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
+//                Attendance attendance = new Attendance();
+//                attendance.setUser_id(abNormal.getUser_id());
+//                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+//
+//                CustomerInfo customer =new CustomerInfo();
+//                Query query = new Query();
+//                String userid = abNormal.getUser_id();
+//                query.addCriteria(Criteria.where("userid").is(userid));
+//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if(abNormal.getStatus().equals("7"))
+//                {
+//                    abNormal.setRelengthtime(abNormal.getRelengthtime() == null || abNormal.getRelengthtime() == "" ? "0" : abNormal.getRelengthtime());
+//                    if(Double.valueOf(abNormal.getRelengthtime()) <= 8)
+//                    {
+//                        abNormal.setRefinisheddate(abNormal.getReoccurrencedate());
+//                    }
+//                    if(!abNormal.getReoccurrencedate().equals(abNormal.getRefinisheddate()))
+//                    {
+//                        List<Attendance> attendancelist = attendanceMapper.selectAttendance(abNormal);
+//                        DecimalFormat df = new DecimalFormat("######0.00");
+//                        if(attendancelist.size() > 0)
+//                        {
+//                            for (Attendance attend : attendancelist)
+//                            {
+//                                WorkingDay workDay = new WorkingDay();
+//                                workDay.setWorkingdate(attend.getDates());
+//                                Calendar cal = Calendar.getInstance();
+//                                cal.setTime(attend.getDates());
+//                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
+//
+//                                //判断当天是否是休日，青年节，妇女节，周六周日
+//                                if(workingDaysList.size()>0)
+//                                {
+//                                    //振替出勤日
+//                                    if(workingDaysList.get(0).getType().equals("4"))
+//                                    {
+//                                        workinghours = "8";
+//                                    }
+//                                    else
+//                                    {
+//                                        workinghours = "0";
+//                                    }
+//                                }
+//                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+//                                {
+//                                    workinghours = "0";
+//                                }
+//                                else if(sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
+//                                {
+//                                    workinghours = "4";
+//                                }
+//                                else
+//                                {
+//                                    workinghours = "8";
+//                                }
+//
+//                                if (abNormal.getErrortype().equals("PR013001")) {//外出
+//                                    attend.setNormal(df.format(Double.valueOf(workinghours)));
+//                                    attend.setAbsenteeism(null);
+//
+//                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
+//                                    attend.setAnnualrest(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
+//                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
+//                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
+//                                    attend.setCompassionateleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
+//                                    attend.setShortsickleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
+//                                    attend.setLongsickleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
+//                                    attend.setNursingleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
+//                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
+//                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
+//                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
+//                                        || abNormal.getErrortype().equals("PR013020")) {
+//                                    attend.setWelfare(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                    //福利假期
+//                                    //家长会假//妊娠檢查休暇
+//                                    // 労災休暇//其他休暇
+//                                    //婚假 //丧假
+//                                    //流产假 //计划生育手术假//工伤
+//                                }
+//                                //更新考勤表
+//                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
+//                                {
+//                                    attend.setTshortsickleave(attend.getShortsickleave());
+//                                    attend.setTlongsickleave(attend.getLongsickleave());
+//                                    attend.setTabsenteeism(attend.getAbsenteeism());
+//                                    attend.setShortsickleave(null);
+//                                    attend.setLongsickleave(null);
+//                                    attend.setAbsenteeism(null);
+//                                }
+//                                else
+//                                {
+//                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+//                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
+//                                    {
+//                                        attend.setTshortsickleave(attend.getShortsickleave());
+//                                        attend.setTlongsickleave(attend.getLongsickleave());
+//                                        attend.setTabsenteeism(attend.getAbsenteeism());
+//                                        attend.setShortsickleave(null);
+//                                        attend.setLongsickleave(null);
+//                                        attend.setAbsenteeism(null);
+//                                    }
+//                                }
+//                                attend.preUpdate(tokenModel);
+//                                attendanceMapper.updateByPrimaryKey(attend);
+//                            }
+//                        }
+//                    }
+//                    else
+//                    {
+//                        attendance.setDates(abNormal.getOccurrencedate());
+//                        List<Attendance> attendancelist = attendanceMapper.select(attendance);
+//                        DecimalFormat df = new DecimalFormat("######0.00");
+//
+//                        //检索打卡记录明细表（用用户id，）
+//
+//                        if (attendancelist.size() > 0) {
+//                            for (Attendance attend : attendancelist) {
+//                                WorkingDay workDay = new WorkingDay();
+//                                workDay.setWorkingdate(abNormal.getReoccurrencedate());
+//                                Calendar cal = Calendar.getInstance();
+//                                cal.setTime(abNormal.getReoccurrencedate());
+//                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
+//
+//                                if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
+//                                {
+//                                    attend.setAbsenteeism(attend.getTabsenteeism());
+//                                }
+//                                if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
+//                                {
+//                                    attend.setShortsickleave(attend.getTshortsickleave());
+//                                }
+//                                if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
+//                                {
+//                                    attend.setLongsickleave(attend.getTlongsickleave());
+//                                }
+//                                //判断当天是否是休日，青年节，妇女节，周六周日
+//                                if(workingDaysList.size()>0)
+//                                {
+//                                    //振替出勤日
+//                                    if(workingDaysList.get(0).getType().equals("4"))
+//                                    {
+//                                        workinghours = "8";
+//                                    }
+//                                    else
+//                                    {
+//                                        workinghours = "0";
+//                                    }
+//                                }
+//                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+//                                {
+//                                    workinghours = "0";
+//                                }
+//                                else if(sf1ymd.format(abNormal.getReoccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getReoccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
+//                                {
+//                                    workinghours = "4";
+//                                }
+//                                else
+//                                {
+//                                    workinghours = "8";
+//                                }
+//                                String timeLength=null;
+//                                timeLength = df.format(Double.valueOf(abNormal.getRelengthtime()));
+//                                attend.setNormal(attend.getNormal() ==null?"0":attend.getNormal());
+//                                attend.setAbsenteeism(attend.getAbsenteeism() ==null?"0":attend.getAbsenteeism());
+//                                if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
+//                                {
+//                                    if (!abNormal.getErrortype().equals("PR013001"))
+//                                    {
+//                                        timeLength = df.format(Math.floor(Double.valueOf(timeLength) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) );
+//                                    }
+//                                }
+//                                if (abNormal.getErrortype().equals("PR013001")) {//外出
+//
+//                                    if (Double.valueOf(timeLength) >= Double.valueOf(attend.getAbsenteeism())) {
+//                                        if (Double.valueOf(timeLength) >= Double.valueOf(workinghours)) {
+//                                            attend.setNormal(workinghours);
+//                                            attend.setAbsenteeism(null);
+//                                        } else {
+//
+//                                            attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(attend.getAbsenteeism())));
+//                                            attend.setAbsenteeism(null);
+//                                        }
+//                                    }
+//                                    else
+//                                    {
+//                                        attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(timeLength)));
+//                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
+//                                        attend.setNormal(df.format(Math.floor(Double.valueOf(attend.getNormal()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism)));
+//                                        if (!(Double.valueOf(attend.getAbsenteeism()) % (Double.valueOf(absenteeism))==0))
+//                                        {
+//                                            attend.setAbsenteeism(df.format(Math.floor(Double.valueOf(attend.getAbsenteeism()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) ));
+//                                        }
+//                                    }
+//
+//                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
+//                                    if (attend.getAnnualrest() != null && !attend.getAnnualrest().isEmpty()) {
+//                                        if (Double.valueOf(attend.getAnnualrest()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getAnnualrest())));
+//                                        }
+//                                    }
+//                                    attend.setAnnualrest(df.format( Double.valueOf(timeLength)));
+//                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
+//                                    if (attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()) {
+//                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
+//                                        }
+//                                    }
+//                                    attend.setDaixiu(df.format( Double.valueOf(timeLength)));
+//                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
+//                                    if (attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()) {
+//                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
+//                                        }
+//                                    }
+//                                    attend.setDaixiu(df.format( Double.valueOf(timeLength)));
+//                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
+//                                    if (attend.getCompassionateleave() != null && !attend.getCompassionateleave().isEmpty()) {
+//                                        if (Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getCompassionateleave())));
+//                                        }
+//                                    }
+//                                    attend.setCompassionateleave(df.format( Double.valueOf(timeLength)));
+//                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
+//                                    if (attend.getShortsickleave() != null && !attend.getShortsickleave().isEmpty()) {
+//                                        if (Double.valueOf(attend.getShortsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getShortsickleave())));
+//                                        }
+//                                    }
+//                                    attend.setShortsickleave(df.format( Double.valueOf(timeLength)));
+//
+//                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
+//                                    if (attend.getLongsickleave() != null && !attend.getLongsickleave().isEmpty()) {
+//                                        if (Double.valueOf(attend.getLongsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getLongsickleave())));
+//                                        }
+//                                    }
+//                                    attend.setLongsickleave(df.format( Double.valueOf(timeLength)));
+//                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
+//                                    if (attend.getNursingleave() != null && !attend.getNursingleave().isEmpty()) {
+//                                        if (Double.valueOf(attend.getNursingleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getNursingleave())));
+//                                        }
+//                                    }
+//                                    attend.setNursingleave(df.format( Double.valueOf(timeLength)));
+//                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
+//                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
+//                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
+//                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
+//                                        || abNormal.getErrortype().equals("PR013020")) {
+//                                    //福利假期
+//                                    //家长会假//妊娠檢查休暇
+//                                    // 労災休暇//其他休暇
+//                                    //婚假 //丧假
+//                                    //流产假 //计划生育手术假//工伤
+//                                    if (attend.getWelfare() != null && !attend.getWelfare().isEmpty()) {
+//                                        if (Double.valueOf(attend.getWelfare()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            timeLength = df.format(Double.valueOf(workinghours));
+//                                        }
+//                                        else
+//                                        {
+//                                            timeLength = String.valueOf(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getWelfare())));
+//                                        }
+//                                    }
+//                                    attend.setWelfare(df.format( Double.valueOf(timeLength)));
+//                                }
+//
+//                                if(!abNormal.getErrortype().equals("PR013001"))
+//                                {
+//                                    attend.setAbsenteeism(attend.getAbsenteeism() == null ? "0" : attend.getAbsenteeism());
+//                                    if (Double.valueOf(attend.getAbsenteeism()) > Double.valueOf(timeLength) )
+//                                    {
+//                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
+//                                    }
+//                                    else
+//                                    {
+//                                        attend.setAbsenteeism(null);
+//                                    }
+//                                }
+//                                attend.setNormal(attend.getNormal() == null ? "0" :attend.getNormal());
+//                                attend.setAnnualrest(attend.getAnnualrest()==null ? "0"  :attend.getAnnualrest());
+//                                attend.setDaixiu(attend.getDaixiu()==null ? "0" :attend.getDaixiu());
+//                                attend.setCompassionateleave(attend.getCompassionateleave()==null? "0" :attend.getCompassionateleave());
+//                                attend.setShortsickleave(attend.getShortsickleave()==null ? "0" :attend.getShortsickleave());
+//                                attend.setLongsickleave(attend.getLongsickleave()==null ? "0" :attend.getLongsickleave());
+//                                attend.setNursingleave(attend.getNursingleave()==null ? "0" :attend.getNursingleave());
+//                                attend.setWelfare(attend.getWelfare()==null ? "0" :attend.getWelfare());
+//                                attend.setAbsenteeism(attend.getAbsenteeism() ==null?"0":attend.getAbsenteeism());
+//
+//                                String setNormal = null;
+//
+//                                setNormal = df.format(Double.valueOf(attend.getAbsenteeism()) +  Double.valueOf(attend.getShortsickleave())
+//                                        + Double.valueOf(attend.getLongsickleave()) + Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(attend.getAnnualrest())
+//                                        + Double.valueOf(attend.getDaixiu()) + Double.valueOf(attend.getNursingleave()) + Double.valueOf(attend.getWelfare()));
+//
+//                                attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0?null:df.format(Double.valueOf(workinghours) - Double.valueOf(setNormal)));
+//
+//                                attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
+//                                attend.setDaixiu(Double.valueOf(attend.getDaixiu()) <= 0 ? null :attend.getDaixiu());
+//                                attend.setCompassionateleave(Double.valueOf(attend.getCompassionateleave()) <= 0 ? null :attend.getCompassionateleave());
+//                                attend.setShortsickleave(Double.valueOf(attend.getShortsickleave()) <= 0 ? null :attend.getShortsickleave());
+//                                attend.setLongsickleave(Double.valueOf(attend.getLongsickleave()) <= 0 ? null :attend.getLongsickleave());
+//                                attend.setNursingleave(Double.valueOf(attend.getNursingleave()) <= 0 ? null :attend.getNursingleave());
+//                                attend.setWelfare(Double.valueOf(attend.getWelfare()) <= 0 ? null :attend.getWelfare());
+//                                attend.setAbsenteeism(Double.valueOf(attend.getAbsenteeism() ) <= 0 ? null:attend.getAbsenteeism());
+//
+//                                //更新考勤表
+//                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
+//                                {
+//                                    attend.setTshortsickleave(attend.getShortsickleave());
+//                                    attend.setTlongsickleave(attend.getLongsickleave());
+//                                    attend.setTabsenteeism(attend.getAbsenteeism());
+//                                    attend.setShortsickleave(null);
+//                                    attend.setLongsickleave(null);
+//                                    attend.setAbsenteeism(null);
+//                                }
+//                                else
+//                                {
+//                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+//                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
+//                                    {
+//                                        attend.setTshortsickleave(attend.getShortsickleave());
+//                                        attend.setTlongsickleave(attend.getLongsickleave());
+//                                        attend.setTabsenteeism(attend.getAbsenteeism());
+//                                        attend.setShortsickleave(null);
+//                                        attend.setLongsickleave(null);
+//                                        attend.setAbsenteeism(null);
+//                                    }
+//                                }
+//                                attend.preUpdate(tokenModel);
+//                                attendanceMapper.updateByPrimaryKey(attend);
+//                            }
+//                        }
+//                    }
+//                }
+//                else
+//                {
+//                    abNormal.setLengthtime(abNormal.getLengthtime() == null || abNormal.getLengthtime() == "" ? "0" : abNormal.getLengthtime());
+//                    if(Double.valueOf(abNormal.getLengthtime()) <= 8)
+//                    {
+//                        abNormal.setFinisheddate(abNormal.getOccurrencedate());
+//                    }
+//                    if(!abNormal.getOccurrencedate().equals(abNormal.getFinisheddate()))
+//                    {
+//                        List<Attendance> attendancelist = attendanceMapper.selectAttendance(abNormal);
+//                        DecimalFormat df = new DecimalFormat("######0.00");
+//                        if(attendancelist.size() > 0)
+//                        {
+//                            for (Attendance attend : attendancelist)
+//                            {
+//                                WorkingDay workDay = new WorkingDay();
+//                                workDay.setWorkingdate(attend.getDates());
+//                                Calendar cal = Calendar.getInstance();
+//                                cal.setTime(attend.getDates());
+//                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
+//
+//                                //判断当天是否是休日，青年节，妇女节，周六周日
+//                                if(workingDaysList.size()>0)
+//                                {
+//                                    //振替出勤日
+//                                    if(workingDaysList.get(0).getType().equals("4"))
+//                                    {
+//                                        workinghours = "8";
+//                                    }
+//                                    else
+//                                    {
+//                                        workinghours = "0";
+//                                    }
+//                                }
+//                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+//                                {
+//                                    workinghours = "0";
+//                                }
+//                                else if(sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
+//                                {
+//                                    workinghours = "4";
+//                                }
+//                                else
+//                                {
+//                                    workinghours = "8";
+//                                }
+//
+//                                if (abNormal.getErrortype().equals("PR013001")) {//外出
+//                                    attend.setNormal(df.format(Double.valueOf(workinghours)));
+//                                    attend.setAbsenteeism(null);
+//
+//                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
+//                                    attend.setAnnualrest(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
+//                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
+//                                    attend.setDaixiu(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
+//                                    attend.setCompassionateleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
+//                                    attend.setShortsickleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
+//                                    attend.setLongsickleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
+//                                    attend.setNursingleave(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
+//                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
+//                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
+//                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
+//                                        || abNormal.getErrortype().equals("PR013020")) {
+//                                    attend.setWelfare(df.format(Double.valueOf(workinghours)));
+//                                    attend.setNormal(null);
+//                                    attend.setAbsenteeism(null);
+//                                    //福利假期
+//                                    //家长会假//妊娠檢查休暇
+//                                    // 労災休暇//其他休暇
+//                                    //婚假 //丧假
+//                                    //流产假 //计划生育手术假//工伤
+//                                }
+//                                //更新考勤表
+//                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
+//                                {
+//                                    attend.setTshortsickleave(attend.getShortsickleave());
+//                                    attend.setTlongsickleave(attend.getLongsickleave());
+//                                    attend.setTabsenteeism(attend.getAbsenteeism());
+//                                    attend.setShortsickleave(null);
+//                                    attend.setLongsickleave(null);
+//                                    attend.setAbsenteeism(null);
+//                                }
+//                                else
+//                                {
+//                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+//                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
+//                                    {
+//                                        attend.setTshortsickleave(attend.getShortsickleave());
+//                                        attend.setTlongsickleave(attend.getLongsickleave());
+//                                        attend.setTabsenteeism(attend.getAbsenteeism());
+//                                        attend.setShortsickleave(null);
+//                                        attend.setLongsickleave(null);
+//                                        attend.setAbsenteeism(null);
+//                                    }
+//                                }
+//                                attend.preUpdate(tokenModel);
+//                                attendanceMapper.updateByPrimaryKey(attend);
+//                            }
+//                        }
+//                    }
+//                    else
+//                    {
+//                        attendance.setDates(abNormal.getOccurrencedate());
+//                        List<Attendance> attendancelist = attendanceMapper.select(attendance);
+//                        DecimalFormat df = new DecimalFormat("######0.00");
+//
+//                        if (attendancelist.size() > 0) {
+//                            for (Attendance attend : attendancelist) {
+//                                WorkingDay workDay = new WorkingDay();
+//                                workDay.setWorkingdate(abNormal.getOccurrencedate());
+//                                Calendar cal = Calendar.getInstance();
+//                                cal.setTime(abNormal.getOccurrencedate());
+//                                List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
+//
+//                                if(attend.getTabsenteeism() != null && !attend.getTabsenteeism().isEmpty())
+//                                {
+//                                    attend.setAbsenteeism(attend.getTabsenteeism());
+//                                }
+//                                if(attend.getTshortsickleave() != null && !attend.getTshortsickleave().isEmpty())
+//                                {
+//                                    attend.setShortsickleave(attend.getTshortsickleave());
+//                                }
+//                                if(attend.getTlongsickleave() != null && !attend.getTlongsickleave().isEmpty())
+//                                {
+//                                    attend.setLongsickleave(attend.getTlongsickleave());
+//                                }
+//                                //判断当天是否是休日，青年节，妇女节，周六周日
+//                                if(workingDaysList.size()>0)
+//                                {
+//                                    //振替出勤日
+//                                    if(workingDaysList.get(0).getType().equals("4"))
+//                                    {
+//                                        workinghours = "8";
+//                                    }
+//                                    else
+//                                    {
+//                                        workinghours = "0";
+//                                    }
+//                                }
+//                                else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+//                                {
+//                                    workinghours = "0";
+//                                }
+//                                else if(sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-03-08") || sf1ymd.format(abNormal.getOccurrencedate()).equals(DateUtil.format(new Date(),"YYYY").toString() + "-05-04"))
+//                                {
+//                                    workinghours = "4";
+//                                }
+//                                else
+//                                {
+//                                    workinghours = "8";
+//                                }
+//                                String timeLength=null;
+//                                timeLength = df.format(Double.valueOf(abNormal.getLengthtime()));
+//                                attend.setNormal(attend.getNormal() ==null?"0":attend.getNormal());
+//                                if (!(Double.valueOf(timeLength) % (Double.valueOf(absenteeism))==0))
+//                                {
+//                                    if(!abNormal.getErrortype().equals("PR013001")) {
+//                                        timeLength = df.format(Math.floor(Double.valueOf(timeLength) / Double.valueOf(absenteeism)) * Double.valueOf(absenteeism) + Double.valueOf(absenteeism));
+//                                    }
+//                                }
+//                                if (abNormal.getErrortype().equals("PR013001")) {//外出
+//
+//                                    if (Double.valueOf(timeLength) >= Double.valueOf(attend.getAbsenteeism())) {
+//                                        if (Double.valueOf(timeLength) >= Double.valueOf(workinghours)) {
+//                                            attend.setNormal(workinghours);
+//                                            attend.setAbsenteeism(null);
+//                                        } else {
+//                                            attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(attend.getAbsenteeism())));
+//                                            attend.setAbsenteeism(null);
+//                                        }
+//                                    }
+//                                    else
+//                                    {
+//                                        attend.setNormal(df.format(Double.valueOf(attend.getNormal()) + Double.valueOf(timeLength)));
+//                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
+//                                        attend.setNormal(df.format(Math.floor(Double.valueOf(attend.getNormal()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism)));
+//                                        if (!(Double.valueOf(attend.getAbsenteeism()) % (Double.valueOf(absenteeism))==0))
+//                                        {
+//                                            attend.setAbsenteeism(df.format(Math.floor(Double.valueOf(attend.getAbsenteeism()) / Double.valueOf(absenteeism))*Double.valueOf(absenteeism) + Double.valueOf(absenteeism) ));
+//                                        }
+//
+//                                    }
+//
+//                                } else if (abNormal.getErrortype().equals("PR013005")) {//年休
+//                                    if(attend.getAnnualrest() != null && !attend.getAnnualrest().isEmpty()){
+//                                        if (Double.valueOf(attend.getAnnualrest()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setAnnualrest(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setAnnualrest(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getAnnualrest())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setAnnualrest(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                } else if (abNormal.getErrortype().equals("PR013006")) {//代休周末
+//                                    if(attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()){
+//                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setDaixiu(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setDaixiu(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setDaixiu(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                } else if (abNormal.getErrortype().equals("PR013007")) {//代休特殊
+//                                    if(attend.getDaixiu() != null && !attend.getDaixiu().isEmpty()){
+//                                        if (Double.valueOf(attend.getDaixiu()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setDaixiu(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setDaixiu(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getDaixiu())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setDaixiu(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                } else if (abNormal.getErrortype().equals("PR013008")) {//事休
+//                                    if(attend.getCompassionateleave() != null && !attend.getCompassionateleave().isEmpty()){
+//                                        if (Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setCompassionateleave(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setCompassionateleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getCompassionateleave())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setCompassionateleave(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                } else if (abNormal.getErrortype().equals("PR013009")) {//短期病休
+//                                    if(attend.getShortsickleave() != null && !attend.getShortsickleave().isEmpty()){
+//                                        if (Double.valueOf(attend.getShortsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setShortsickleave(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setShortsickleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getShortsickleave())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setShortsickleave(df.format(Double.valueOf(timeLength)));
+//                                    }
+//
+//                                } else if (abNormal.getErrortype().equals("PR013010")) {//長期病休
+//
+//                                    if(attend.getLongsickleave() != null && !attend.getLongsickleave().isEmpty()){
+//                                        if (Double.valueOf(attend.getLongsickleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setLongsickleave(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setLongsickleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getLongsickleave())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setLongsickleave(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                } else if (abNormal.getErrortype().equals("PR013012") || abNormal.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
+//                                    if(attend.getNursingleave() != null && !attend.getNursingleave().isEmpty()){
+//                                        if (Double.valueOf(attend.getNursingleave()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setNursingleave(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setNursingleave(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getNursingleave())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setNursingleave(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                } else if (abNormal.getErrortype().equals("PR013014") || abNormal.getErrortype().equals("PR013016")
+//                                        || abNormal.getErrortype().equals("PR013018") || abNormal.getErrortype().equals("PR013019")
+//                                        || abNormal.getErrortype().equals("PR013011") || abNormal.getErrortype().equals("PR013015")
+//                                        || abNormal.getErrortype().equals("PR013004") || abNormal.getErrortype().equals("PR013017")
+//                                        || abNormal.getErrortype().equals("PR013020")) {
+//                                    //福利假期
+//                                    //家长会假//妊娠檢查休暇
+//                                    // 労災休暇//其他休暇
+//                                    //婚假 //丧假
+//                                    //流产假 //计划生育手术假//工伤
+//                                    if(attend.getWelfare() != null && !attend.getWelfare().isEmpty()){
+//                                        if (Double.valueOf(attend.getWelfare()) + Double.valueOf(timeLength) >= Double.valueOf(workinghours))
+//                                        {
+//                                            attend.setWelfare(df.format(Double.valueOf(workinghours)));
+//                                        }
+//                                        else
+//                                        {
+//                                            attend.setWelfare(df.format(Double.valueOf(timeLength) + Double.valueOf(attend.getWelfare())));
+//                                        }
+//                                    }
+//                                    else{
+//                                        attend.setWelfare(df.format(Double.valueOf(timeLength)));
+//                                    }
+//                                }
+//
+//                                if(!abNormal.getErrortype().equals("PR013001"))
+//                                {
+//                                    attend.setAbsenteeism(attend.getAbsenteeism() == null ? "0" : attend.getAbsenteeism());
+//                                    if (Double.valueOf(attend.getAbsenteeism()) > Double.valueOf(timeLength) )
+//                                    {
+//                                        attend.setAbsenteeism(df.format(Double.valueOf(attend.getAbsenteeism()) - Double.valueOf(timeLength)));
+//                                    }
+//                                    else
+//                                    {
+//                                        attend.setAbsenteeism(null);
+//                                    }
+//                                }
+//                                attend.setNormal(attend.getNormal() == null ? "0" :attend.getNormal());
+//                                attend.setAnnualrest(attend.getAnnualrest()==null ? "0"  :attend.getAnnualrest());
+//                                attend.setDaixiu(attend.getDaixiu()==null ? "0" :attend.getDaixiu());
+//                                attend.setCompassionateleave(attend.getCompassionateleave()==null? "0" :attend.getCompassionateleave());
+//                                attend.setShortsickleave(attend.getShortsickleave()==null ? "0" :attend.getShortsickleave());
+//                                attend.setLongsickleave(attend.getLongsickleave()==null ? "0" :attend.getLongsickleave());
+//                                attend.setNursingleave(attend.getNursingleave()==null ? "0" :attend.getNursingleave());
+//                                attend.setWelfare(attend.getWelfare()==null ? "0" :attend.getWelfare());
+//                                attend.setAbsenteeism(attend.getAbsenteeism() ==null?"0":attend.getAbsenteeism());
+//
+//                                String setNormal = null;
+//
+//                                setNormal = df.format(Double.valueOf(attend.getAbsenteeism()) +  Double.valueOf(attend.getShortsickleave())
+//                                        + Double.valueOf(attend.getLongsickleave()) + Double.valueOf(attend.getCompassionateleave()) + Double.valueOf(attend.getAnnualrest())
+//                                        + Double.valueOf(attend.getDaixiu()) + Double.valueOf(attend.getNursingleave()) + Double.valueOf(attend.getWelfare()));
+//
+//                                attend.setNormal(Double.valueOf(workinghours) - Double.valueOf(setNormal) <=0 ? null: df.format((Double.valueOf(workinghours) - Double.valueOf(setNormal))));
+//
+//                                attend.setAnnualrest(Double.valueOf(attend.getAnnualrest()) <= 0 ? null  :attend.getAnnualrest());
+//                                attend.setDaixiu(Double.valueOf(attend.getDaixiu()) <= 0 ? null :attend.getDaixiu());
+//                                attend.setCompassionateleave(Double.valueOf(attend.getCompassionateleave()) <= 0 ? null :attend.getCompassionateleave());
+//                                attend.setShortsickleave(Double.valueOf(attend.getShortsickleave()) <= 0 ? null :attend.getShortsickleave());
+//                                attend.setLongsickleave(Double.valueOf(attend.getLongsickleave()) <= 0 ? null :attend.getLongsickleave());
+//                                attend.setNursingleave(Double.valueOf(attend.getNursingleave()) <= 0 ? null :attend.getNursingleave());
+//                                attend.setWelfare(Double.valueOf(attend.getWelfare()) <= 0 ? null :attend.getWelfare());
+//                                attend.setAbsenteeism(Double.valueOf(attend.getAbsenteeism() ) <= 0 ? null:attend.getAbsenteeism());
+//
+//                                //更新考勤表
+//                                if(customerInfo.getUserinfo().getEnddate() == null || customerInfo.getUserinfo().getEnddate().isEmpty())
+//                                {
+//                                    attend.setTshortsickleave(attend.getShortsickleave());
+//                                    attend.setTlongsickleave(attend.getLongsickleave());
+//                                    attend.setTabsenteeism(attend.getAbsenteeism());
+//                                    attend.setShortsickleave(null);
+//                                    attend.setLongsickleave(null);
+//                                    attend.setAbsenteeism(null);
+//                                }
+//                                else
+//                                {
+//                                    String enddate = customerInfo.getUserinfo().getEnddate().substring(0,10);
+//                                    if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enddate)))).getTime() > attend.getDates().getTime())
+//                                    {
+//                                        attend.setTshortsickleave(attend.getShortsickleave());
+//                                        attend.setTlongsickleave(attend.getLongsickleave());
+//                                        attend.setTabsenteeism(attend.getAbsenteeism());
+//                                        attend.setShortsickleave(null);
+//                                        attend.setLongsickleave(null);
+//                                        attend.setAbsenteeism(null);
+//                                    }
+//                                }
+//                                attend.preUpdate(tokenModel);
+//                                attendanceMapper.updateByPrimaryKey(attend);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         abNormalMapper.updateByPrimaryKey(abNormal);
     }
