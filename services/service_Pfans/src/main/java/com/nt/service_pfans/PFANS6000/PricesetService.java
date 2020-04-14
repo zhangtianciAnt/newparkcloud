@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS6000;
 
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.dao_Pfans.PFANS6000.Vo.PricesetVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface PricesetService {
 
     //获取单价设定列表
-    List<Priceset> gettlist() throws Exception;
+    List<PricesetVo> gettlist(PricesetGroup pricesetGroup) throws Exception;
 
     List<Priceset> getPricesetList(Priceset priceset) throws Exception;
 

@@ -2,8 +2,11 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
+import com.nt.dao_Pfans.PFANS6000.Vo.PricesetVo;
 import com.nt.service_pfans.PFANS6000.PricesetService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.service_pfans.PFANS6000.mapper.PricesetGroupMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,6 +27,9 @@ public class PricesetServiceImpl implements PricesetService {
     private PricesetMapper pricesetMapper;
 
     @Autowired
+    private PricesetGroupMapper pricesetGroupMapper;
+
+    @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
 
     /**
@@ -33,8 +40,40 @@ public class PricesetServiceImpl implements PricesetService {
      * @throws Exception
      */
     @Override
-    public List<Priceset> gettlist() throws Exception {
-        return pricesetMapper.gettlist();
+    public List<PricesetVo> gettlist(PricesetGroup pricesetGroup) throws Exception {
+        List<PricesetVo> rst = new ArrayList<PricesetVo>();
+        List<PricesetGroup> ms = pricesetGroupMapper.select(pricesetGroup);
+
+        if(ms.size() > 0){
+            for(PricesetGroup item:ms){
+                PricesetVo a = new PricesetVo();
+                Priceset conditon = new Priceset();
+                conditon.setPricesetgroup_id(item.getPricesetgroup_id());
+                a.setMain(item);
+                a.setDetail(pricesetMapper.select(conditon));
+
+                rst.add(a);
+            }
+        }else{
+            PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
+
+            a.getMain().setPd_date(pricesetGroup.getPd_date());
+
+            Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+            expatriatesinfor.setWhetherentry("BP006001");
+            List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
+            for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
+                Priceset priceset = new Priceset();
+                priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
+                priceset.setUsername(expatriatesinforItem.getExpname());
+                priceset.setGraduation(expatriatesinforItem.getGraduation_year());
+                priceset.setCompany(expatriatesinforItem.getSuppliername());
+                a.getDetail().add(priceset);
+            }
+            rst.add(a);
+        }
+
+        return rst;
     }
 
     @Override
