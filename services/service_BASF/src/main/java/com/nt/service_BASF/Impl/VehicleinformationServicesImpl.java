@@ -83,7 +83,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Method getAccessStatistics
      * @Author SKAIXX
      * @Version  1.0
-     * @Description 获取车辆出入统计
+     * @Description 获取本月车辆出入统计
      * @param
      * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
      * @Date 2019/12/17 11:35
@@ -91,6 +91,20 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception {
         return vehicleinformationMapper.getAccessStatistics();
+    }
+
+    /**
+     * @Method getAccessStatistics
+     * @Author GJ
+     * @Version  1.0
+     * @Description 获取本周车辆出入统计
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
+     * @Date 2020/04/14 10:14
+     */
+    @Override
+    public List<VehicleAccessStatisticsVo> getWeekAccessStatistics() throws Exception {
+        return vehicleinformationMapper.getWeekAccessStatistics();
     }
 
     /**

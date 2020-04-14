@@ -43,8 +43,11 @@ public class WebSocketVo {
     // BASF90600 车辆定位模块 在场车辆信息一览Vo
     private List<InsideVehicleinformationVo> insideVehicleinformationVoList = new ArrayList<>();
 
-    // BASF90600 车辆定位模块 车辆出入统计Vo
+    // BASF90600 车辆定位模块 本月车辆出入统计Vo
     private List<VehicleAccessStatisticsVo> vehicleAccessStatisticsVoList = new ArrayList<>();
+
+    // BASF90600 车辆定位模块 本周车辆出入统计Vo
+    private List<VehicleAccessStatisticsVo> vehicleWeekAccessStatisticsVoList = new ArrayList<>();
 
     // BASF90600 车辆定位模块 当日车辆入场信息Vo
     private List<Vehicleinformation> vehicleinformationList = new ArrayList<>();

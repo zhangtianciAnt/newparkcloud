@@ -36,15 +36,27 @@
         where ifnull(outtime,'') = ''
     </select>
 
-    <!--    获取车辆出入统计-->
+    <!--    获取本月车辆出入统计-->
     <select id="getAccessStatistics" resultType="com.nt.dao_BASF.VO.VehicleAccessStatisticsVo">
         select * from (
         select count(*) as cnt,date_format(intime,'%Y-%m-%d') as date
         from vehicleinformation
         where outtime is not NULL
+		and DATE_FORMAT(intime,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         group by date_format(intime,'%Y-%m-%d')
-        order by date desc
-        limit 30) as tmp
+        order by date desc) as tmp
+        order by tmp.date asc
+    </select>
+
+    <!--    获取本周车辆出入统计-->
+    <select id="getWeekAccessStatistics" resultType="com.nt.dao_BASF.VO.VehicleAccessStatisticsVo">
+        select * from (
+        select count(*) as cnt,date_format(intime,'%Y-%m-%d') as date
+        from vehicleinformation
+        where outtime is not NULL
+		and YEARWEEK(date_format(intime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        group by date_format(intime,'%Y-%m-%d')
+        order by date desc) as tmp
         order by tmp.date asc
     </select>
 
