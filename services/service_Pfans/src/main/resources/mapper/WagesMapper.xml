@@ -370,36 +370,36 @@
         @BYYKJSDS := (
         CASE
 
-        WHEN ( @LJYNSSDE >= 0 AND @LJYNSSDE &lt;= 36000 ) THEN
+        WHEN ( @LJYNSSDE >= base.DIC_0JE AND @LJYNSSDE &lt;= base.DIC_1JE ) THEN
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ,2)) ) WHEN ( @LJYNSSDE > 36000
-        AND @LJYNSSDE &lt;= 144000
+        AND @LJYNSSDE &lt;= base.DIC_2JE
         ) THEN
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 144000
-        AND @LJYNSSDE &lt;= 300000
+        AND @LJYNSSDE &lt;= base.DIC_3JE
         ) THEN#20%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 300000
-        AND @LJYNSSDE &lt;= 420000
+        AND @LJYNSSDE &lt;= base.DIC_4JE
         ) THEN#25%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 420000
-        AND @LJYNSSDE &lt;= 660000
+        AND @LJYNSSDE &lt;= base.DIC_5JE
         ) THEN#30%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 660000
-        AND @LJYNSSDE &lt;= 960000
+        AND @LJYNSSDE &lt;= base.DIC_6JE
         ) THEN#35%
         (
         IF
