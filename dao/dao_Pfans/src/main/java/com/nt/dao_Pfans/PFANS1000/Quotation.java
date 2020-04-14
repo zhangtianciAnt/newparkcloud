@@ -91,4 +91,7 @@ public class Quotation extends BaseModel {
 
     @Column(name = "CLAIMDATETIME")
     private String claimdatetime;
+
+    @Column(name = "SUMMANHOUR")
+    private String summanhour;
 }
