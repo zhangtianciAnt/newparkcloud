@@ -30,6 +30,9 @@ public class Award extends BaseModel {
     @Column(name = "CUSTOJAPANESE")
     private String custojapanese;
 
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
     @Column(name = "CUSTOCHINESE")
     private String custochinese;
 

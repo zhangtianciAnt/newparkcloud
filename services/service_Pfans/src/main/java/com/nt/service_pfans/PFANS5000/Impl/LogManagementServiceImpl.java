@@ -82,8 +82,11 @@ public class LogManagementServiceImpl implements LogManagementService {
         return logmanagementmapper.select(logmanagement);
     }
     @Override
+    public List<LogManagement> getCheckList(LogManagement logmanagement) throws Exception {
+        return logmanagementmapper.select(logmanagement);
+    }
+    @Override
     public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception{
-
         return projectsystemMapper.select(projectsystem);
     }
     @Override

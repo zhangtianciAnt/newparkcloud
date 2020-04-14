@@ -3,6 +3,7 @@ package com.nt.controller.Controller;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Pfans.PFANS2000.Punchcard;
 import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @ProjectName: newparkcloud
@@ -85,6 +87,19 @@ public class AuthController {
     @RequestMapping(value = "/getAttendancebp",method={RequestMethod.GET})
     public ApiResult getAttendancebp(Integer diffday,HttpServletRequest request) throws Exception {
         annualLeaveService.insertattendancebp(diffday);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/creatAnnualLeaveAn",method={RequestMethod.GET})
+    public ApiResult creatAnnualLeaveAn(HttpServletRequest request) throws Exception {
+        annualLeaveService.insert();
+        return ApiResult.success();
+    }
+
+    //获取打卡记录（参数）
+    @RequestMapping(value = "/getPunchcard",method={RequestMethod.POST})
+    public ApiResult getPunchcard(@RequestBody List<Punchcard> Punchcard,HttpServletRequest request) throws Exception {
+        annualLeaveService.getPunchcard(Punchcard);
         return ApiResult.success();
     }
 }

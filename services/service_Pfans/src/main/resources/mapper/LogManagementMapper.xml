@@ -47,7 +47,7 @@
             </foreach>
             )
         </if>
-union all
+union
         select companyprojects.companyprojects_id as projectid,companyprojects.numbers,companyprojects.project_name as projectname,logm.confirm,logm.unconfirm from
         companyprojects
         left join (
@@ -84,7 +84,7 @@ union all
         case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
         from logmanagement
         where status = '0'
-        and project_id = ''
+        and project_id = '' or project_id = 'PP024001'
         and date_format(LOG_DATE, '%Y-%m') = #{StrDate}
         <if test="owners != null and owners.size() > 0">
             and (owner in
