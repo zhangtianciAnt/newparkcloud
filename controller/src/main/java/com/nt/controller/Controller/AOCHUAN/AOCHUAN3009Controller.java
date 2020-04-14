@@ -10,7 +10,7 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.ProjectsService;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/AOCHUAN3009")
+@RequestMapping("/projects")
 public class AOCHUAN3009Controller {
 
     @Autowired
