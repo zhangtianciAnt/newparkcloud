@@ -3,6 +3,7 @@ package com.nt.service_BASF.Impl;
 import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
+import com.nt.dao_BASF.VO.VehicleinformationVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_BASF.mapper.VehicleinformationMapper;
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 /**
  * @ProjectName: BASF应急平台
@@ -49,6 +52,39 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         return vehicleinformationMapper.select(vehicleinformation);
     }
 
+    /**
+     * @param VehicleinformationVo
+     * @Method getlistinformation
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 获取车辆信息列表(危化品车辆数用)
+     * @Return java.util.List<VehicleinformationVo>
+     * @Date 2019/11/14 13：27
+     */
+    @Override
+    public List<VehicleinformationVo> getlistinformation() throws Exception {
+        List<Vehicleinformation> getInformatoinlist =vehicleinformationMapper.getlistinformation();
+        List<VehicleinformationVo> infoList =new ArrayList<>();
+        VehicleinformationVo vehicleinformationVo;
+        String month ="";
+        int data[] = new int[12];
+        for(int i=0;i<getInformatoinlist.size();i++)
+        {
+            month=getInformatoinlist.get(i).getIntime().substring(0,10);
+            month=month.substring(6,7);
+            data[Integer.parseInt(month)-1]=data[Integer.parseInt(month)-1]+1;
+        }
+        for(int j=0;j<data.length;j++)
+        {
+            int m =1;
+            vehicleinformationVo =new VehicleinformationVo();
+            vehicleinformationVo.setCnt(data[j]);
+            vehicleinformationVo.setDate(String.valueOf(m+j) + "月");
+            infoList.add(vehicleinformationVo);
+        }
+
+        return infoList;
+    }
     /**
      * @param vehicleinformation
      * @param tokenModel

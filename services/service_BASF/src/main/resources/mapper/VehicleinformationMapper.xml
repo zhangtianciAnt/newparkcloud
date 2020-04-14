@@ -74,4 +74,11 @@
         from vehicleinformation
         where date_format(intime,'%Y-%m-%d') = curdate()
     </select>
+
+    <!--    获取危化品车辆信息-->
+    <select id="getlistinformation" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select *
+        from vehicleinformation
+        where ishazardous='0'
+    </select>
 </mapper>

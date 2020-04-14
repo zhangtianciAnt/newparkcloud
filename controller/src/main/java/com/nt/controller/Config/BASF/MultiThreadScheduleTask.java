@@ -480,5 +480,13 @@ public class MultiThreadScheduleTask {
         webSocketVo.setDeviceinformationList(deviceinformationVos);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetVehicleinformationVolList() throws Exception {
+        //获取培训到期人员列表
+        webSocketVo.setDangerousgoodsList(vehicleinformationServices.getlistinformation());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
     // endregion
 }

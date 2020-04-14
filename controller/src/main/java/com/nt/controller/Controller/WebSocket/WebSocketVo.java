@@ -95,5 +95,7 @@ public class WebSocketVo {
 
     // BASF90921 高风险作业清单
     private List<Highriskarea> highriskareaList = new ArrayList<>();
+    //获取危化品车辆列表
+    private List<VehicleinformationVo> dangerousgoodsList = new ArrayList<>();
     // endregion
 }

@@ -3,10 +3,12 @@ package com.nt.service_BASF;
 import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
+import com.nt.dao_BASF.VO.VehicleinformationVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ProjectName: BASF应急平台
@@ -21,6 +23,10 @@ public interface VehicleinformationServices {
 
     //获取车辆列表
     List<Vehicleinformation> list()throws Exception;
+
+    //获取车辆列表(危化品车辆数用)
+    //Map<Integer,String> getlistinformation()throws Exception;
+    List<VehicleinformationVo> getlistinformation()throws Exception;
 
     //更新车辆信息
     void update(Vehicleinformation vehicleinformation, TokenModel tokenModel)throws Exception;

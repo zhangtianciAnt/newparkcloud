@@ -22,6 +22,9 @@ public interface VehicleinformationMapper extends MyMapper<Vehicleinformation> {
     //获取在场车辆信息一览
     List<InsideVehicleinformationVo> getInsideList() throws Exception;
 
+    //获取在场车辆信息一览(危化品车辆数用)
+    List<Vehicleinformation> getlistinformation() throws Exception;
+
     //获取本月车辆出入统计
     List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception;
 
