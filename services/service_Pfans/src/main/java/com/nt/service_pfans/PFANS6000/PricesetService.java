@@ -18,6 +18,6 @@ public interface PricesetService {
     public Priceset pricesetgenerate(String priceset_id) throws Exception;
 
     //单价设定修改
-    public void updatepriceset(List<Priceset> priceset, TokenModel tokenModel) throws Exception;
+    public void updatepriceset(PricesetVo pricesetVo, TokenModel tokenModel) throws Exception;
 
 }
