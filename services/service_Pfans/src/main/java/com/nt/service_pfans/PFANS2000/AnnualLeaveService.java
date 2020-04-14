@@ -21,14 +21,19 @@ public interface AnnualLeaveService {
      */
     List<AnnualLeave> getDataList(TokenModel tokenModel) throws Exception;
 
-    void insertattendance(int diffday) throws Exception;
+    void insertattendance(int diffday,String staffId) throws Exception;
 
-    void insertattendancebp(int diffday) throws Exception;
+    void insertattendancebp(int diffday,String staffId) throws Exception;
+
+    void insertpunchcard(int diffday) throws Exception;
 
     void insert() throws Exception;
 
     //获取打卡记录（参数）
     void getPunchcard(List<Punchcard> Punchcard) throws Exception;
+
+    //获取打卡记录bp（参数）
+    void getPunchcardbp(List<Punchcard> Punchcard) throws Exception;
     /**
      * 数据做成
      */

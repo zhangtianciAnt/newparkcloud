@@ -3,8 +3,6 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import com.nt.dao_Pfans.PFANS2000.Replacerest;
 import com.nt.service_pfans.PFANS2000.ReplacerestService;
 import com.nt.service_pfans.PFANS2000.mapper.ReplacerestMapper;
-import com.nt.utils.dao.TokenModel;
-import org.apache.poi.ss.formula.functions.EDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

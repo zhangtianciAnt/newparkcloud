@@ -79,14 +79,20 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/getAttendance",method={RequestMethod.GET})
-    public ApiResult getAttendance(Integer diffday,HttpServletRequest request) throws Exception {
-        annualLeaveService.insertattendance(diffday);
+    public ApiResult getAttendance(Integer diffday,String staffId,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertattendance(diffday,staffId);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/getAttendancebp",method={RequestMethod.GET})
-    public ApiResult getAttendancebp(Integer diffday,HttpServletRequest request) throws Exception {
-        annualLeaveService.insertattendancebp(diffday);
+    public ApiResult getAttendancebp(Integer diffday,String staffId,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertattendancebp(diffday,staffId);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/insertpunchcard",method={RequestMethod.GET})
+    public ApiResult insertpunchcard(Integer diffday,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertpunchcard(diffday);
         return ApiResult.success();
     }
 
@@ -100,6 +106,13 @@ public class AuthController {
     @RequestMapping(value = "/getPunchcard",method={RequestMethod.POST})
     public ApiResult getPunchcard(@RequestBody List<Punchcard> Punchcard,HttpServletRequest request) throws Exception {
         annualLeaveService.getPunchcard(Punchcard);
+        return ApiResult.success();
+    }
+
+    //获取打卡记录bp（参数）
+    @RequestMapping(value = "/getPunchcardbp",method={RequestMethod.POST})
+    public ApiResult getPunchcardbp(@RequestBody List<Punchcard> Punchcard,HttpServletRequest request) throws Exception {
+        annualLeaveService.getPunchcardbp(Punchcard);
         return ApiResult.success();
     }
 }

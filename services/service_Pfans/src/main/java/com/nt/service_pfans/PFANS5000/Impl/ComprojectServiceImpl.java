@@ -899,4 +899,24 @@ public class ComprojectServiceImpl implements ComprojectService {
     public List<CompanyProjectsVo3> getCompanyProject(String SyspName) throws Exception {
         return companyprojectsMapper.getCompanyProject(SyspName);
     }
+
+    @Override
+    public List<Comproject> getComproject(Comproject comproject) throws Exception {
+        List<Comproject> rst = new ArrayList<Comproject>();
+        Comproject con = new Comproject();
+        con.setOwners(comproject.getOwners());
+        con.setStatus("4");
+        rst = comProjectMapper.select(con);
+
+        Prosystem prosystem = new Prosystem();
+        prosystem.setName(comproject.getOwner());
+        List<Prosystem> prosystemlist = prosystemMapper.select(prosystem);
+        for(Prosystem item:prosystemlist){
+            Comproject rs = comProjectMapper.selectByPrimaryKey(item.getComproject_id());
+            if("4".equals(rs.getStatus())){
+                rst.add(rs);
+            }
+        }
+        return rst;
+    }
 }

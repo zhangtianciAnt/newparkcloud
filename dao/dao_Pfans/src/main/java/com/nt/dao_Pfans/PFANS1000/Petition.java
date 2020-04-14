@@ -80,6 +80,12 @@ public class Petition extends BaseModel {
     @Column(name = "CURRENCYPOSITION")
     private String currencyposition;
 
+    /**
+     * 请求日
+     */
+    @Column(name = "CLAIMDATE")
+    private Date claimdate;
+
     @Column(name = "REMARKS")
     private String remarks;
 

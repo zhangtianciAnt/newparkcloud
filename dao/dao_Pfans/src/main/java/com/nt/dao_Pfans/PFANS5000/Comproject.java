@@ -25,7 +25,23 @@ public class Comproject extends BaseModel {
     @Column(name = "COMPROJECT_ID")
     private String comproject_id;
 
+    /**
+     * 所属センター
+     */
+    @Column(name = "CENTER_ID")
+    private String center_id;
 
+    /**
+     * 所属グループ
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    /**
+     * 所属チーム
+     */
+    @Column(name = "TEAM_ID")
+    private String team_id;
     /**
      * 项目名称(中)
      */

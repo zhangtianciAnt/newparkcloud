@@ -14,6 +14,7 @@ import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private NapalmMapper napalmMapper;
     @Autowired
     private PetitionMapper PetitionMapper;
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication ) {
@@ -138,6 +141,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             quotation.setEnddate(sdf.parse(startAndEnd[1]));
                     }
 
+                    Quotation quotation2 = new Quotation();
+                    quotation2.setContractnumber(contractapp.getContractnumber());
+                    quotation2.setOwner(tokenModel.getUserId());
+                    quotationMapper.delete(quotation2);
                     quotationMapper.insert(quotation);
                 }
                 //該非判定書作成
@@ -158,6 +165,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     nonJudgment.setJaname(contractapp.getConchinese());
                     nonJudgment.setCareer(contractapp.getBusinesscode());
                     nonJudgment.setProductnumber(contractapp.getProductnumber());
+
+                    NonJudgment nonJudgment2 = new NonJudgment();
+                    nonJudgment2.setContractnumber(contractapp.getContractnumber());
+                    nonJudgment2.setOwner(tokenModel.getUserId());
+                    nonJudgmentMapper.delete(nonJudgment2);
 
 
                     nonJudgmentMapper.insert(nonJudgment);
@@ -192,6 +204,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             contract.setEnddate(sdf.parse(startAndEnd[1]));
                     }
 
+                    Contract contract2 = new Contract();
+                    contract2.setContractnumber(contractnumber);
+                    contract2.setOwner(tokenModel.getUserId());
+                    contractMapper.delete(contract2);
 
                     contractMapper.insert(contract);
                 }
@@ -221,16 +237,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setMaketype(rowindex);
                     award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+                    award2.setOwner(tokenModel.getUserId());
+                    AwardMapper.delete(award2);
+
                     AwardMapper.insert(award);
                 }
                 //納品書作成
                 else if(rowindex.equals("5")){
+                    Napalm napalm2 = new Napalm();
+                    napalm2.setContractnumber(contractnumber);
+                    napalm2.setOwner(tokenModel.getUserId());
+                    napalmMapper.delete(napalm2);
+
                     for (Contractnumbercount number : countList) {
                         Napalm napalm = new Napalm();
                         napalm.preInsert(tokenModel);
                         napalm.setNapalm_id(UUID.randomUUID().toString());
                         napalm.setContractnumber(contractnumber);
-
                         //7
                         napalm.setDepositjapanese(contractapp.getCustojapanese());
                         napalm.setDepositenglish(contractapp.getCustoenglish());
@@ -239,12 +264,15 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setPjnamechinese(contractapp.getConchinese());
                         napalm.setPjnamejapanese(contractapp.getConjapanese());
                         napalm.setClaimtype(contractapp.getClaimtype());
-                        napalm.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                        napalm.setDeliveryfinshdate(number.getDeliverydate());
                         napalm.setDeliverydate(number.getDeliverydate());//納品予定日
+                        //add-ws-添加纳品做成日和出荷判定实施者
+                        napalm.setDeliveryfinshdate(number.getDeliveryfinshdate());
+                        napalm.setLoadingjudge(number.getLoadingjudge());
+                        //add-ws-添加纳品做成日和出荷判定实施者
                         napalm.setCompletiondate(number.getCompletiondate());//検収完了日
                         napalm.setClaimamount(number.getClaimamount());//請求金額
                         napalm.setClaimnumber(number.getClaimnumber());//請求番号
-                        napalm.setLoadingjudge(contractapp.getLoadingjudge());
                         napalm.setCurrencyformat(contractapp.getCurrencyposition());
                         napalm.setContracttype(contractapp.getContracttype());
                         napalm.setToto(contractapp.getVarto());
@@ -266,6 +294,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //請求書作成
                 else if(rowindex.equals("6")){
+                    Petition petition2 = new Petition();
+                    petition2.setContractnumber(contractnumber);
+                    petition2.setOwner(tokenModel.getUserId());
+                    PetitionMapper.delete(petition2);
+
                     for (Contractnumbercount number : countList) {
                         Petition petition = new Petition();
                         petition.preInsert(tokenModel);
@@ -281,16 +314,20 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setPlacechinese(contractapp.getPlacechinese());
                         petition.setClaimdatetime(contractapp.getClaimdatetime());
                         petition.setBusinesscode(contractapp.getBusinesscode());
-                        petition.setDeliveryfinshdate(contractapp.getDeliveryfinshdate());
+                        //add-ws-添加纳品做成日
+                        petition.setDeliveryfinshdate(number.getDeliveryfinshdate());
+                        //add-ws-添加纳品做成日
                         petition.setResponphone(contractapp.getResponphone());
                         petition.setClaimtype(contractapp.getClaimtype());
                         petition.setCurrencyposition(contractapp.getCurrencyposition());
                         petition.setPjnamechinese(contractapp.getConchinese());
                         petition.setPjnamejapanese(contractapp.getConjapanese());
                         petition.setClaimamount(number.getClaimamount());//請求金額
+                        petition.setClaimdate(number.getClaimdate());//請求日
                         petition.setClaimnumber(number.getClaimnumber());//請求番号
-                        petition.setRemarks(contractapp.getRemarks());//备注
+                        petition.setRemarks(contractapp.getQingremarks());//备注
                         petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+
                         PetitionMapper.insert(petition);
                         //更新请求进步状况=請求完了
                         contractapp.preUpdate(tokenModel);
@@ -322,6 +359,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setMaketype(rowindex);
                     award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+                    award2.setOwner(tokenModel.getUserId());
+                    AwardMapper.delete(award2);
+
                     AwardMapper.insert(award);
                 }
                 contractapp.preUpdate(tokenModel);
@@ -350,6 +392,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     String[] str = contractnumber.split("-");
                     if(str.length == 1){
                         Contractapplication co = new Contractapplication();
+                        co.setCareeryear(citation.getCareeryear());
                         co.setContracttype(citation.getContracttype());
                         co.setGroup_id(citation.getGroup_id());
                         co.setType(citation.getType());

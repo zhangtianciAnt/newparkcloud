@@ -55,7 +55,7 @@ public class ShoppingDetailed extends BaseModel {
     private String amount;
 
     /**
-     * 備考
+     * 品名
      */
     @Column(name = "REMARKS")
     private String remarks;
@@ -65,4 +65,10 @@ public class ShoppingDetailed extends BaseModel {
      */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
+
+    /**
+     * 用途
+     */
+    @Column(name = "EMPLOY")
+    private String employ;
 }

@@ -15,7 +15,7 @@ public interface PunchcardRecordService {
     List<PunchcardRecord> list(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception;
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
     //void methodAttendance(TokenModel tokenModel) throws Exception ;
-    void methodAttendance_b(TokenModel tokenModel,List<CustomerInfo> customerInfoList,int diffday) throws Exception ;
+    void methodAttendance_b(int diffday) throws Exception ;
     void saveAttendance(Attendance attendance,String Flg, TokenModel tokenModel) throws Exception ;
 
     List<PunchcardRecord> getDataList(PunchcardRecord punchcardrecord, TokenModel tokenModel)throws Exception;

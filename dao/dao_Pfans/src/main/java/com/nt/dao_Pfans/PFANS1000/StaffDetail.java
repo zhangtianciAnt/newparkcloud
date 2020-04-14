@@ -30,6 +30,9 @@ public class StaffDetail extends BaseModel {
     @Column(name = "BUDGETCODE")
     private String budgetcode;
 
+    @Column(name = "SUBTOTAL")
+    private String subtotal;
+
     @Column(name = "DEPART")
     private String depart;
 

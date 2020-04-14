@@ -33,13 +33,13 @@ public class CompanyProjectsVo3 {
     /**
      * 开始时间
      */
-    private String mintime;
+    private String admissiontime;
 
 
     /**
      * 结束时间
      */
-    private String maxtime;
+    private String exittime;
 
 
 }
