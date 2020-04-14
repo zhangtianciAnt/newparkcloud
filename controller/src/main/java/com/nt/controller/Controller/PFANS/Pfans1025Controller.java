@@ -86,16 +86,26 @@ public class Pfans1025Controller {
         //add-ws-只有委托决裁的情况下进行赋值判断
         if(Integer.valueOf(av.getAward().getMaketype()) == 7){
             //add-ztc-判断字段值进行赋值
-            if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
-                av.getAward().setExtrinsic("有");
-            } else {
-                av.getAward().setExtrinsic("-");
+            //add-ws-判断非空
+            if(av.getAward().getExtrinsic()!= null && av.getAward().getExtrinsic()!= ""){
+                //add-ws-判断非空
+                if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
+                    av.getAward().setExtrinsic("有");
+                } else {
+                    av.getAward().setExtrinsic("-");
+                }
+                //add-ws-判断非空
             }
-            if (Integer.valueOf(av.getAward().getPlan()) == 1) {
-                av.getAward().setPlan("外");
-            } else {
-                av.getAward().setPlan("内");
+            if(av.getAward().getPlan()!= null && av.getAward().getPlan()!= "") {
+                //add-ws-判断非空
+                if (Integer.valueOf(av.getAward().getPlan()) == 1) {
+                    av.getAward().setPlan("外");
+                } else {
+                    av.getAward().setPlan("内");
+                }
+                //add-ws-判断非空
             }
+            //add-ws-判断非空
             //add-ztc-判断字段值进行赋值
         }
         //add-ws-只有委托决裁的情况下进行赋值判断
