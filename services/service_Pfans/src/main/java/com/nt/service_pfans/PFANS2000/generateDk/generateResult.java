@@ -36,6 +36,7 @@ public class generateResult {
             dateE.setMinutes(0);
             dateE.setSeconds(0);
 
+            // region 进 出 在一个时间段内
             //进，出均小于等于8 不处理  或者
             // 进，出均大于等于 18：00 或者
             // 出 大于等12：00 进 小于等于 13：00
@@ -50,13 +51,6 @@ public class generateResult {
                 dkDao.setLength(0);
             }
 
-            //出小予等于 8 ， 进大于等于8 或者
-            if (DateUtil.toIntSecond(dkDao.getOut()) <= DateUtil.toIntSecond(dateS) &&
-                    DateUtil.toIntSecond(dkDao.getIn()) >= DateUtil.toIntSecond(dateS)) {
-                generateFactory generatefactory = new generateOne();
-                generatefactory.generate(dkDao);
-            }
-
             //进，出 在8：00~12：00 或 13：00~18：00 之间
             if ((DateUtil.toIntSecond(dkDao.getOut()) >= DateUtil.toIntSecond(dateS) &&
                     DateUtil.toIntSecond(dkDao.getIn()) <= DateUtil.toIntSecond(dateZS))
@@ -64,6 +58,16 @@ public class generateResult {
                     (DateUtil.toIntSecond(dkDao.getOut()) >= DateUtil.toIntSecond(dateZE) &&
                             DateUtil.toIntSecond(dkDao.getIn()) <= DateUtil.toIntSecond(dateE))) {
                 generateFactory generatefactory = new generateTwo();
+                generatefactory.generate(dkDao);
+            }
+
+            //endregion
+
+            // region 进 出 在两个时间段内
+            //出小予等于 8 ， 进大于等于8 或者
+            if (DateUtil.toIntSecond(dkDao.getOut()) <= DateUtil.toIntSecond(dateS) &&
+                    DateUtil.toIntSecond(dkDao.getIn()) >= DateUtil.toIntSecond(dateS)) {
+                generateFactory generatefactory = new generateOne();
                 generatefactory.generate(dkDao);
             }
 
@@ -87,6 +91,16 @@ public class generateResult {
                 generateFactory generatefactory = new generateFive();
                 generatefactory.generate(dkDao);
             }
+            //endregion
+
+            // region 进 出 在三个时间段内
+
+            //endregion
+
+            // region 进 出 在三个时间段内
+
+            //endregion
+
         }
 
         return dkDao;
