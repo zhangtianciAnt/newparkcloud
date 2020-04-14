@@ -11,7 +11,7 @@ public class generateResult {
 
     public DkDao generate(DkDao dkDao) throws Exception{
         if(dkDao.getStart() == null || dkDao.getEnd() == null){
-            dkDao.setLength(0D);
+            dkDao.setLength(0);
         }else{
             Date date = new Date();
             date.setHours(8);
@@ -20,7 +20,7 @@ public class generateResult {
             //进，出均小于&等于8 不处理
             if(DateUtil.toIntSecond (dkDao.getStart()) <= DateUtil.toIntSecond (date) &&
                     DateUtil.toIntSecond (dkDao.getEnd()) <= DateUtil.toIntSecond (date)){
-                dkDao.setLength(0D);
+                dkDao.setLength(0);
             }
 
             //出小予等于 8 ， 进大于等于8

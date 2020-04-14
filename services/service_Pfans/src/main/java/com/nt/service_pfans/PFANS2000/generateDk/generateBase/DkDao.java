@@ -17,6 +17,6 @@ public class DkDao {
     //进
     public Date end;
 
-    //外出时长
-    public Double length;
+    //外出时长 (秒)
+    public int length;
 }
