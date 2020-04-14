@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/quotations")
@@ -57,5 +62,16 @@ public class AOCHUAN3001Controller {
         }
         quotationsService.delete(id);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/pdf",method={RequestMethod.POST})
+    public void pdf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+//         Quotations quotation = new Quotations();
+//        quotation.setAccount("哈哈哈");
+//         List<Quotations> quotations = new ArrayList<>();
+//         quotations.add(quotation);
+//         data.put("quotations",quotations);
+         ExcelOutPutUtil.OutPut("aochuan","jiejipai.xlsx",data,response);
     }
 }
