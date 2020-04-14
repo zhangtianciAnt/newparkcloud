@@ -53,17 +53,17 @@ public class Pfans1025Controller {
                }
            }
        }
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
-        for(Dictionary item:dictionaryList){
-            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
-
-                av.getAward().setCurrencyposition(item.getValue1());
-            }
-        }
+//        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
+//        for(Dictionary item:dictionaryList){
+//            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
+//
+//                av.getAward().setCurrencyposition(item.getValue1());
+//            }
+//        }
         List<Dictionary> curList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:curList){
-            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
-                av.getAward().setCurrencyposition(item.getValue1());
+            if(item.getValue1().equals(av.getAward().getCurrencyposition())) {
+                av.getAward().setCurrencyposition(item.getValue4());
             }
         }
 //        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
