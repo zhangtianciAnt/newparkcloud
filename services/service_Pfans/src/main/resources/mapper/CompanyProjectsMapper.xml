@@ -28,7 +28,8 @@
         c.ENTRUST as ENTRUST,
         c.WORK as WORK,
         c.LEADERID as LEADERID,
-        c.FIELD as FIELD
+        c.FIELD as FIELD,
+        c.OWNER as OWNER
         from `companyprojects` c
             left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
@@ -83,7 +84,8 @@
         c.ENTRUST as ENTRUST,
         c.WORK as WORK,
         c.LEADERID as LEADERID,
-        c.FIELD as FIELD
+        c.FIELD as FIELD,
+        c.OWNER as OWNER
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
             (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
@@ -146,7 +148,8 @@
             c
             .
             FIELD as
-            FIELD
+            FIELD,
+            c.OWNER as OWNER
         from `companyprojects`
              c
              left
@@ -279,7 +282,8 @@
         c.ENTRUST as ENTRUST,
         c.WORK as WORK,
         c.LEADERID as LEADERID,
-        c.FIELD as FIELD
+        c.FIELD as FIELD,
+        c.OWNER as OWNER
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
             (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
@@ -334,7 +338,8 @@
         c.ENTRUST as ENTRUST,
         c.WORK as WORK,
         c.LEADERID as LEADERID,
-        c.FIELD as FIELD
+        c.FIELD as FIELD,
+        c.OWNER as OWNER
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
             (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
