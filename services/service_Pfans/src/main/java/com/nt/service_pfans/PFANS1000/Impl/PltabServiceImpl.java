@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.convert.Convert;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.Pltab;
@@ -37,7 +38,7 @@ public class PltabServiceImpl implements PltabService {
                 logManagements) {
             for (CustomerInfo customerInfo:
             customerInfos) {
-                if(log.getJobnumber().equals(customerInfo.getUserinfo().getJobnumber())){
+                if(customerInfo.getUserinfo() != null && Convert.toStr(log.getJobnumber()).equals(customerInfo.getUserinfo().getJobnumber())){
                     cm_pjHours += customerInfo.getUserinfo().getGroupid().equals(groupid) ? 1 : 0;
                 }
             }
