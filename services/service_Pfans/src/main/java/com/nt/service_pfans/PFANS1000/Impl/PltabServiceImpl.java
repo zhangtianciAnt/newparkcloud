@@ -38,7 +38,7 @@ public class PltabServiceImpl implements PltabService {
                 logManagements) {
             for (CustomerInfo customerInfo:
             customerInfos) {
-                if(customerInfo.getUserinfo() != null && Convert.toStr(log.getJobnumber()).equals(customerInfo.getUserinfo().getJobnumber())){
+                if(customerInfo.getUserinfo() != null && log.getJobnumber() != null && log.getJobnumber().equals(customerInfo.getUserinfo().getJobnumber())){
                     cm_pjHours += customerInfo.getUserinfo().getGroupid().equals(groupid) ? 1 : 0;
                 }
             }
