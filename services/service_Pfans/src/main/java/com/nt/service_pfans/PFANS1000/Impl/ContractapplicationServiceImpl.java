@@ -149,7 +149,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                         Quotation quotation2 = new Quotation();
                         quotation2.setContractnumber(contractapp.getContractnumber());
-                        quotation2.setOwner(tokenModel.getUserId());
+//                        quotation2.setOwner(tokenModel.getUserId());
                         quotationMapper.delete(quotation2);
                         quotationMapper.insert(quotation);
 
@@ -175,7 +175,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     NonJudgment nonJudgment2 = new NonJudgment();
                     nonJudgment2.setContractnumber(contractapp.getContractnumber());
-                    nonJudgment2.setOwner(tokenModel.getUserId());
+//                    nonJudgment2.setOwner(tokenModel.getUserId());
                     nonJudgmentMapper.delete(nonJudgment2);
 
 
@@ -213,7 +213,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     Contract contract2 = new Contract();
                     contract2.setContractnumber(contractnumber);
-                    contract2.setOwner(tokenModel.getUserId());
+//                    contract2.setOwner(tokenModel.getUserId());
                     contractMapper.delete(contract2);
 
                     contractMapper.insert(contract);
@@ -246,7 +246,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     Award award2 = new Award();
                     award2.setContractnumber(contractnumber);
-                    award2.setOwner(tokenModel.getUserId());
+//                    award2.setOwner(tokenModel.getUserId());
                     AwardMapper.delete(award2);
 
                     AwardMapper.insert(award);
@@ -255,7 +255,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else if(rowindex.equals("5")){
                     Napalm napalm2 = new Napalm();
                     napalm2.setContractnumber(contractnumber);
-                    napalm2.setOwner(tokenModel.getUserId());
+//                    napalm2.setOwner(tokenModel.getUserId());
                     napalmMapper.delete(napalm2);
 
                     for (Contractnumbercount number : countList) {
@@ -308,7 +308,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else if(rowindex.equals("6")){
                     Petition petition2 = new Petition();
                     petition2.setContractnumber(contractnumber);
-                    petition2.setOwner(tokenModel.getUserId());
+//                    petition2.setOwner(tokenModel.getUserId());
                     PetitionMapper.delete(petition2);
 
                     for (Contractnumbercount number : countList) {
@@ -373,7 +373,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                     Award award2 = new Award();
                     award2.setContractnumber(contractnumber);
-                    award2.setOwner(tokenModel.getUserId());
+//                    award2.setOwner(tokenModel.getUserId());
                     AwardMapper.delete(award2);
 
                     AwardMapper.insert(award);
