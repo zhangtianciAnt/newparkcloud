@@ -870,7 +870,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
                         // 日志用外出时长
-                        punchcardrecord.setOutgoinghours(overtimeHours);
+                        punchcardrecord.setOutgoinghours(minutelogs.toString());
                         punchcardrecord.setTime_start(Time_start);
                         punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
@@ -1664,6 +1664,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //外出超过15分钟的欠勤时间
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
+                        // 日志用外出时长
+                        punchcardrecord.setOutgoinghours("0");
                         punchcardrecord.setTime_start(Time_start);
                         punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
@@ -2032,7 +2034,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
             punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
-            //punchcardrecorddetailmapper.insert(punchcardrecorddetail);
+            punchcardrecorddetailmapper.insert(punchcardrecorddetail);
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
@@ -2332,7 +2334,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setWorktime(minute.toString());
                     punchcardrecord.setAbsenteeismam(minuteam.toString());
                     // 日志用外出时长
-                    punchcardrecord.setOutgoinghours(overtimeHours);
+                    punchcardrecord.setOutgoinghours(minutelogs.toString());
                     punchcardrecord.setTime_start(Time_start);
                     punchcardrecord.setTime_end(Time_end);
                     punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
