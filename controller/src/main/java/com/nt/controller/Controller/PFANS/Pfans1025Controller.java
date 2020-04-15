@@ -62,7 +62,7 @@ public class Pfans1025Controller {
 //        }
         List<Dictionary> curList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:curList){
-            if (item.getValue1().equals(av.getAward().getCurrencyposition())) {
+            if(item.getValue1().equals(av.getAward().getCurrencyposition())) {
                 av.getAward().setCurrencyposition(item.getValue4());
             }
         }
