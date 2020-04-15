@@ -1782,14 +1782,24 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public List<CompanyProjectsVo2> getSiteList2(CompanyProjects companyProjects) throws Exception {
         List<CompanyProjectsVo2> rst = companyprojectsMapper.getList(companyProjects.getOwners());
-        rst.addAll(companyprojectsMapper.getList4(companyProjects.getOwner()));
+        List<CompanyProjectsVo2> rst2   =  companyprojectsMapper.getList4(companyProjects.getOwner());
+        for(CompanyProjectsVo2 item:rst2){
+            if(rst.stream().filter(item2 -> item2.getCompanyprojects_id().equals(item.getCompanyprojects_id())).count() == 0){
+                rst.add(item);
+            }
+        }
         return rst;
     }
 
     @Override
     public List<CompanyProjectsVo2> getSiteList3(CompanyProjects companyProjects) throws Exception {
         List<CompanyProjectsVo2> rst = companyprojectsMapper.getList5(companyProjects.getOwners());
-        rst.addAll(companyprojectsMapper.getList4(companyProjects.getOwner()));
+        List<CompanyProjectsVo2> rst2   = companyprojectsMapper.getList4(companyProjects.getOwner());
+        for(CompanyProjectsVo2 item:rst2){
+            if(rst.stream().filter(item2 -> item2.getCompanyprojects_id().equals(item.getCompanyprojects_id())).count() == 0){
+                rst.add(item);
+            }
+        }
         return rst;
     }
 

@@ -19,10 +19,20 @@ public class PunchcardRecordbpServiceImpl implements PunchcardRecordbpService {
     @Autowired
     private PunchcardRecordDetailbpMapper punchcardrecorddetailmapper;
 
+    @Autowired
+    private AttendancebpMapper attendancebpmapper;
+
     @Override
     public List<PunchcardRecordbp> list(PunchcardRecordbp punchcardrecord,TokenModel tokenModel) throws Exception {
         return punchcardrecordMapper.select(punchcardrecord);
     }
+
+    //add-ws-外协人员表查询
+    @Override
+    public List<Attendancebp> getAttendancebplist(Attendancebp attendancebp) throws Exception {
+        return attendancebpmapper.select(attendancebp);
+    }
+    //add-ws-外协人员表查询
 
     @Override
     public List<PunchcardRecordDetailbp> getPunDetailbp(PunchcardRecordDetailbp detail) throws Exception{
