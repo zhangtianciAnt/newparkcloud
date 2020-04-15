@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -46,4 +47,11 @@ public class Quotations extends BaseModel {
     private String productresponsibility;
 
     private String quotationsno;
+
+    private String enquiry;
+    //type = 0 销售询单录入 type = 1 采购待确认 type = 2 销售报价确认
+    private int type;
+
+    @Transient
+    private boolean notice;
 }

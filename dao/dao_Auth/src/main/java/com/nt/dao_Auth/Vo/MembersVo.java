@@ -27,6 +27,10 @@ public class MembersVo {
      */
     private String _id;
     /**
+     * USERID
+     */
+    private String userid;
+    /**
      * 姓名
      */
     private String customername;

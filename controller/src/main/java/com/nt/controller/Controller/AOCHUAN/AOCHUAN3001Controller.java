@@ -67,11 +67,14 @@ public class AOCHUAN3001Controller {
     @RequestMapping(value = "/pdf",method={RequestMethod.POST})
     public void pdf(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
-//         Quotations quotation = new Quotations();
-//        quotation.setAccount("哈哈哈");
-//         List<Quotations> quotations = new ArrayList<>();
-//         quotations.add(quotation);
-//         data.put("quotations",quotations);
-         ExcelOutPutUtil.OutPut("aochuan","jiejipai.xlsx",data,response);
+         Quotations quotation = new Quotations();
+          quotation.setAccount("哈哈哈");
+        Quotations quotation1 = new Quotations();
+        quotation1.setAccount("哈哈哈2");
+         List<Quotations> quotations = new ArrayList<>();
+         quotations.add(quotation);
+        quotations.add(quotation1);
+         data.put("quotations",quotations);
+         ExcelOutPutUtil.OutPut("aochuan","aochuan.xlsx",data,response);
     }
 }
