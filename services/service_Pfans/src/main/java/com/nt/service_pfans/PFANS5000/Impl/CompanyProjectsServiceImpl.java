@@ -15,6 +15,7 @@ import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -954,7 +955,14 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         String no = "";
         if(companyProjectslist.size()>0){
             for(CompanyProjects comprotect :companyProjectslist){
-                number = number+1;
+                //add-ws-根据当前年月日从001开始增加项目编号
+                if(comprotect.getNumbers()!="" && comprotect.getNumbers()!=null){
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 0,8));
+                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
+                        number = number+1;
+                    }
+                }
+                //add-ws-根据当前年月日从001开始增加项目编号
             }
 //            String.format("%2d", number + 1).replace(" ", "00");
             if(number<=8){
