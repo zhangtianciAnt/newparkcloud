@@ -8,7 +8,6 @@
         c.`PROJECT_NAME` as PROJECT_NAME,
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
-        <if test="1 != 1">
             s.`PHASE` as phase,
             s.`PRODUCTSTATUS` as productstatus,
             <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
@@ -24,7 +23,6 @@
             <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
             then '1'
             else "" end contractstatus,
-        </if>
         c.`STATUS` as status,
         c.`COMPANYPROJECTS_ID`,
         c.ENTRUST as ENTRUST,
@@ -32,13 +30,11 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD
         from `companyprojects` c
-        <if test="1 != 1">
-            left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+            left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
             on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
             and s.status = '0'
             <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
-        </if>
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
@@ -68,7 +64,6 @@
         c.`PROJECT_NAME` as PROJECT_NAME,
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
-        <if test="1 != 1">
         s.`PHASE` as phase,
         s.`PRODUCTSTATUS` as productstatus,
         <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
@@ -83,7 +78,6 @@
         <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
         then '1'
         else "" end contractstatus,
-        </if>
         c.`STATUS` as status,
         c.`COMPANYPROJECTS_ID`,
         c.ENTRUST as ENTRUST,
@@ -91,13 +85,11 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD
         from `companyprojects` c
-        <if test="1 != 1">
-        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
         <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
-        </if>
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
@@ -127,7 +119,6 @@
             c.`PROJECT_NAME`   as PROJECT_NAME,
             c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
             c.`NUMBERS`        as NUMBERS,
-        <if test="1 != 1">
             s.`PHASE`          as phase,
             s.`PRODUCTSTATUS`  as productstatus,
         <![CDATA[ case
@@ -142,7 +133,6 @@
         <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(), interval 10 DAY ) >= pp.etime ]]>   then '0'
         <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>   then '1'
                 else "" end       contractstatus,
-        </if>
             c.`STATUS`         as status,
             c.`COMPANYPROJECTS_ID`,
             c.ENTRUST          as ENTRUST,
@@ -159,28 +149,11 @@
             FIELD
         from `companyprojects`
              c
-        <if test="1 != 1">
              left
              outer
              join (
-             select
-             *
-             from
-             stageinformation
-             where (
-             COMPANYPROJECTS_ID,
-             estimatedstarttime)
-             in
-            (
-             select
-             COMPANYPROJECTS_ID,
-             max(
-             estimatedstarttime)
-             from
-             stageinformation
-             group
-             by
-             COMPANYPROJECTS_ID ))
+            select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID ))
              s
         on c
            .
@@ -205,7 +178,6 @@
            ESTIMATEDENDTIME
            >=
            curdate() ]]>
-        </if>
         left
            join (
            select
@@ -288,7 +260,6 @@
         c.`PROJECT_NAME` as PROJECT_NAME,
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
-        <if test="1 != 1">
         s.`PHASE` as phase,
         s.`PRODUCTSTATUS` as productstatus,
         <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
@@ -303,7 +274,6 @@
         <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
         then '1'
         else "" end contractstatus,
-        </if>
         c.`STATUS` as status,
         c.`COMPANYPROJECTS_ID`,
         c.ENTRUST as ENTRUST,
@@ -311,13 +281,11 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD
         from `companyprojects` c
-        <if test="1 != 1">
-        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
         <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
-        </if>
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
@@ -347,7 +315,6 @@
         c.`PROJECT_NAME` as PROJECT_NAME,
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
-        <if test="1 != 1">
         s.`PHASE` as phase,
         s.`PRODUCTSTATUS` as productstatus,
         <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
@@ -362,7 +329,6 @@
         <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
         then '1'
         else "" end contractstatus,
-        </if>
         c.`STATUS` as status,
         c.`COMPANYPROJECTS_ID`,
         c.ENTRUST as ENTRUST,
@@ -370,13 +336,11 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD
         from `companyprojects` c
-        <if test="1 != 1">
-        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
         <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
-        </if>
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
