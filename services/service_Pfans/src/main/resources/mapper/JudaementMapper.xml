@@ -3,6 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.JudgementMapper">
     <select id="selectJudgement"  resultType="com.nt.dao_Pfans.PFANS1000.Judgement">
 select JUDGEMENT_ID as judgementid,
+       judgnumbers,
        USER_ID,
        CENTER_ID,
        GROUP_ID,

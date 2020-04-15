@@ -39,7 +39,10 @@ public class PltabServiceImpl implements PltabService {
             for (CustomerInfo customerInfo:
             customerInfos) {
                 if(customerInfo.getUserinfo() != null && log.getJobnumber() != null && log.getJobnumber().equals(customerInfo.getUserinfo().getJobnumber())){
-                    cm_pjHours += customerInfo.getUserinfo().getGroupid().equals(groupid) ? 1 : 0;
+                    //todo GM等没有group成本如何计算？
+                    if (customerInfo.getUserinfo().getGroupid() != null) {
+                        cm_pjHours += customerInfo.getUserinfo().getGroupid().equals(groupid) ? 1 : 0;
+                    }
                 }
             }
         }
