@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -38,7 +35,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     private VehicleinformationMapper vehicleinformationMapper;
 
     /**
-     * @param Vehicleinformation
+     * @param
      * @Method list
      * @Author Wxz
      * @Version 1.0
@@ -53,7 +50,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
-     * @param VehicleinformationVo
+     * @param
      * @Method getlistinformation
      * @Author Wxz
      * @Version 1.0
@@ -170,4 +167,23 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     public List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception {
         return vehicleinformationMapper.getInsideVehicleType();
     }
+
+    /**
+     * @param vehicleinformation
+     * @param
+     * @Method insert
+     * @Author Sun
+     * @Version 1.0
+     * @Description 创建车辆进出厂信息
+     * @Return void
+     * @Date 2019/11/4 18:48
+     */
+    @Override
+    public void insert(Vehicleinformation vehicleinformation) throws Exception {
+        vehicleinformation.preInsert();
+        vehicleinformation.setVehicleinformationid(UUID.randomUUID().toString());
+        vehicleinformationMapper.insert(vehicleinformation);
+    }
+
+
 }

@@ -1,6 +1,9 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.Vehicleinformation;
+import com.nt.service_BASF.VehicleinformationServices;
+import com.nt.utils.dao.TokenModel;
 import com.nt.service_BASF.BlackListServices;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
@@ -27,6 +30,9 @@ public class BASF10702Controller {
 
     @Autowired
     private BlackListServices blackListServices;
+
+    @Autowired
+    private VehicleinformationServices vehicleinformationServices;
 
     @Autowired
     private TokenService tokenService;
@@ -76,6 +82,28 @@ public class BASF10702Controller {
         }
         blackList.setStatus(AuthConstants.DEL_FLAG_DELETE);
         blackListServices.delete(blackList);
+        return ApiResult.success();
+    }
+
+    /**
+     * @param vehicleinformation
+     * @param
+     * @Method create
+     * @Author Sun
+     * @Version 1.0
+     * @Description 创建车辆进出厂信息
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/4 19:39
+     */
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(String vehiclenumber,String driver) throws Exception {
+
+        Vehicleinformation vehicleinformation = new Vehicleinformation();
+        vehicleinformation.setVehiclenumber(vehiclenumber);
+        vehicleinformation.setDriver(driver);
+        vehicleinformationServices.insert(vehicleinformation);
+
+
         return ApiResult.success();
     }
 }
