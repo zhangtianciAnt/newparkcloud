@@ -42,6 +42,13 @@ public class ProjectContract extends BaseModel {
     @Column(name = "THEME")
     private String theme;
 
+    //add-ws-合同关联项目，分配金额
+    @Column(name = "CONTRACTREQUESTAMOUNT")
+    private String contractrequestamount;
+
+    @Column(name = "CONTRACTAMOUNT")
+    private String contractamount;
+    //add-ws-合同关联项目，分配金额
     /**
      * 工时
      */
