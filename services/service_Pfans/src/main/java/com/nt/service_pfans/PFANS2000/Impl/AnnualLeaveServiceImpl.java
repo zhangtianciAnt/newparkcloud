@@ -1338,6 +1338,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Attendancebp attendance = new Attendancebp();
                 attendance.setAbsenteeism("8");
                 attendance.setNormal("0");
+                // 日志用外出时长
+                attendance.setOutgoinghours("0");
                 attendance.setAttendancebpid(UUID.randomUUID().toString());
                 attendance.setGroup_id(inforlist.get(0).getGroup_id());
                 attendance.setUser_id(inforlist.get(0).getAccount());
@@ -2408,7 +2410,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
             punchcardrecorddetail.setPunchcardrecorddetailbp_id(UUID.randomUUID().toString());
-            //punchcardrecorddetailbpmapper.insert(punchcardrecorddetail);
+            punchcardrecorddetailbpmapper.insert(punchcardrecorddetail);
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
@@ -2677,6 +2679,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
                 List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
+                    String overtimeHours = "";
+                    overtimeHours = timeLength(sdhm.format(Time_start), sdhm.format(Time_end), lunchbreak_start, lunchbreak_end);
+                    if (Double.valueOf(overtimeHours) > Double.valueOf(minutelogs.toString())) {
+                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) - Double.valueOf(minutelogs.toString())));
+                    }
                     //打卡记录
                     PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
                     tokenModel.setUserId(exList.get(0).getAccount());
@@ -2689,7 +2696,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setWorktime(minute.toString());
                     punchcardrecord.setAbsenteeismam(minuteam.toString());
                     // 日志用外出时长
-                    punchcardrecord.setOutgoinghours(minutelogs.toString());
+                    punchcardrecord.setOutgoinghours(overtimeHours);
                     if(Time_start == null){
                         punchcardrecord.setTime_start(Time_end);
                     }else{
@@ -2702,7 +2709,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     }
                     punchcardrecord.setPunchcardrecordbp_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
-                    //punchcardrecordbpMapper.insert(punchcardrecord);
+                    punchcardrecordbpMapper.insert(punchcardrecord);
 
                     //创建考勤数据
                     Attendancebp attendance = new Attendancebp();
@@ -2712,6 +2719,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setNormal("8");
                     // 设置统计外出的时间
                     attendance.setAbsenteeism(minute.toString());
+                    // 日志用外出时长
+                    attendance.setOutgoinghours(overtimeHours);
                     attendance.setGroup_id(exList.get(0).getGroup_id());
 
                     attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
@@ -2719,20 +2728,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setAttendancebpid(UUID.randomUUID().toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
-                    //attendancebpMapper.insert(attendance);
+                    attendancebpMapper.insert(attendance);
                     ids.add(exList.get(0).getAccount());
-                    //
-                    //上班开始时间
-//                    workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
-//                    //下班结束时间
-//                    closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
-//                    //午休时间开始
-//                    lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
-//                    //午休时间结束
-//                    lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
-//
-//                    String shijiworkHours =shijiworkLength(time_start_temp,time_end_temp,lunchbreak_start,lunchbreak_end,PR,ad);
-//                    String a = "";
+
                 }
                 //添加打卡记录end
             }
