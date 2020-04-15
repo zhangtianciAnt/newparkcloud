@@ -58,4 +58,10 @@ public class PunchcardRecordbp extends BaseModel {
     @Column(name = "ABSENTEEISM")
     private String absenteeism;
 
+    /**
+     * 全天实际外出时长
+     */
+    @Column(name = "OUTGOINGHOURS")
+    private String outgoinghours;
+
 }
