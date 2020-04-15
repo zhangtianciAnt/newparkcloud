@@ -12,7 +12,7 @@ public class Excel2Pdf {
     public static boolean getLicense() {
         boolean result = false;
         try {
-            InputStream is = Excel2Pdf.class.getClassLoader().getResourceAsStream("license.xml"); //  license.xml应放在..\WebRoot\WEB-INF\classes路径下
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("license.xml");
             License aposeLic = new License();
             aposeLic.setLicense(is);
             result = true;
