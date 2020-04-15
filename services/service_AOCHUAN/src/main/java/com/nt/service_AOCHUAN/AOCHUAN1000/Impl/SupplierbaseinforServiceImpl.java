@@ -33,11 +33,12 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     }
 
     @Override
-    public void insert(Supplierbaseinfor supplierbaseinfor, TokenModel tokenModel) throws Exception {
+    public String insert(Supplierbaseinfor supplierbaseinfor, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
         supplierbaseinfor.setSupplierbaseinfor_id(id);
         supplierbaseinfor.preInsert(tokenModel);
         supplierbaseinforMapper.insert(supplierbaseinfor);
+        return id;
     }
 
     @Override

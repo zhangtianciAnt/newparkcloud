@@ -21,14 +21,19 @@ public class AOCHUAN1001Controller {
     @Autowired
     private TokenService tokenService;
 
+    private String linkmanBaseinfoId;
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request)throws Exception{
         return ApiResult.success(supplierbaseinforService.get());
     }
 
     @RequestMapping(value = "/getLinkman",method={RequestMethod.GET})
-    public ApiResult getLinkman(@RequestParam String baseinfor_id,HttpServletRequest request)throws Exception{
-        return ApiResult.success(linkmanService.getByBaseinforId(baseinfor_id));
+    public ApiResult getLinkman(@RequestParam String baseinfo_id,HttpServletRequest request)throws Exception{
+        System.out.println("///////////////////////////////////////////////////////"+baseinfo_id);
+        if(!StringUtils.isNotBlank(baseinfo_id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(linkmanService.getByBaseinforId(baseinfo_id));
     }
 
 
@@ -54,7 +59,7 @@ public class AOCHUAN1001Controller {
         if(supplierbaseinfor == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
+        linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
         return ApiResult.success();
     }
 
@@ -64,7 +69,9 @@ public class AOCHUAN1001Controller {
             if(linkmans.get(i) == null){
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
+            linkmans.get(i).setBaseinfor_id(linkmanBaseinfoId);
             linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
+            linkmanBaseinfoId = null;
         }
         return ApiResult.success();
     }

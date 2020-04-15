@@ -10,7 +10,7 @@ public interface SupplierbaseinforService {
 
     void update(Supplierbaseinfor supplierbaseinfor, TokenModel tokenModel) throws Exception;
 
-    void insert(Supplierbaseinfor supplierbaseinfor, TokenModel tokenModel)throws Exception;
+    String insert(Supplierbaseinfor supplierbaseinfor, TokenModel tokenModel)throws Exception;
 
     void delete(String id) throws Exception;
 }
