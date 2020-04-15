@@ -1,39 +1,17 @@
 package pres.lnk.jxlss;
 
-import cn.hutool.core.convert.Convert;
-import cn.hutool.poi.excel.ExcelReader;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
 import com.mongodb.MongoClient;
-import com.nt.controller.Start;
-import com.nt.dao_Auth.Role;
-import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.UserAccount;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.ExcelOutPutUtil;
-import com.nt.utils.jxlsUtil.JxlsBuilder;
-import com.nt.utils.jxlsUtil.JxlsImage;
-import com.nt.utils.jxlsUtil.JxlsUtil;
-import com.nt.utils.services.TokenService;
-import org.apache.poi.ss.formula.functions.T;
+import com.nt.utils.Excel2Pdf;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import pres.lnk.jxlss.demo.Employee;
 import pres.lnk.jxlss.demo.Experience;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.*;
 
 /**
@@ -50,7 +28,7 @@ public class TestJxls {
 
     @Before
     public void init() {
-        MongoDbFactory facotry = new SimpleMongoDbFactory(new MongoClient("39.108.133.62", 27017), "PFANS");
+        MongoDbFactory facotry = new SimpleMongoDbFactory(new MongoClient("59.46.185.130", 27017), "PFANS");
         template = new MongoTemplate(facotry);
     }
 
@@ -161,6 +139,7 @@ public class TestJxls {
 ////
 //        Excel2Pdf pdf = new Excel2Pdf(objects , fos);
 //        pdf.convert();
+        Excel2Pdf.excel2pdf("D:\\仮出金.xls","D:\\仮出金.pdf");
     }
 
     private static Employee getEmployee() {
