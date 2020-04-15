@@ -55,4 +55,10 @@ public class PurchaseApply extends BaseModel {
     @Column(name = "APPLICATION_DATE")
     private Date application_date;
 
+    /**
+     * 预算编码
+     */
+    @Column(name = "BUDGETUNIT")
+    private String budgetunit;
+
 }
