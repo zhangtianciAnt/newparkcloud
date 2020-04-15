@@ -289,7 +289,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         //考勤设定
         AttendanceSetting attendancesetting = new AttendanceSetting();
         List<AttendanceSetting> attendancesettinglist = attendanceSettingMapper.select(attendancesetting);
-        if(attendancesettinglist.size() > 0) {
+        if(attendancesettinglist.size() > 0)
+        {
             //------------------------------查询公司考勤设定数据start-------------
             //公司考勤设定上班开始时间
             workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
@@ -326,7 +327,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             Query query_userid = new Query();
             List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
             for (CustomerInfo customerInfo : customerInfoList) {
-//                if(customerInfo.getUserid().equals("5e78b2034e3b194874180e37"))
+//                if(customerInfo.getUserid().equals("5e78b2394e3b194874180fbd"))
 //                {
                     TokenModel tokenModel = new TokenModel();
 
@@ -386,7 +387,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if(attendancelist.size() > 0){
                 for (Attendance ad : attendancelist)
                 {
-                    //if(ad.getUser_id().equals("5e78b2034e3b194874180e37")) {
+//                    if(ad.getUser_id().equals("5e78b2394e3b194874180fbd")) {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
@@ -1115,9 +1116,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
                                     }
+
+                                    //员工填写日志对应的实际工作时间
+                                    ad.setOutgoinghours(getOutgoinghours(lunchbreak_start,lunchbreak_end,PR,nomal));
                                     saveAttendance(ad, "0", token);
                                 }
-                            } else {
+                            }
+                            else {
                                 //---------处理昨日审批通过的异常考勤申请start-------
                                 AbNormal abnormal = new AbNormal();
                                 abnormal.setUser_id(ad.getUser_id());
@@ -1356,6 +1361,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTlongsickleave(null);
                                     ad.setTabsenteeism(null);
                                 }
+                                PunchcardRecord phr =new PunchcardRecord();
+                                //员工填写日志对应的实际工作时间
+                                ad.setOutgoinghours(getOutgoinghours(lunchbreak_start,lunchbreak_end,phr,nomal));
                                 saveAttendance(ad, "0", token);
                             }
                             //---------查询昨天大打卡记录end-------
@@ -1367,6 +1375,31 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             }
         }
                 //---------查询考勤表是否有数据end-------
+    }
+
+    //员工填写日志时的实际时长
+    public String getOutgoinghours(String lunchbreak_start, String lunchbreak_end,PunchcardRecord PR,String nomal) throws Exception
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+        String outgoinghours = "0";
+        nomal = nomal == null || nomal =="" ? "0" : nomal;
+        if(PR.getUser_id() == null || PR.getUser_id() == "")
+        {
+            outgoinghours = nomal;
+        }
+        else
+        {
+            if(sdf.format(PR.getTime_start()).equals(sdf.format(PR.getTime_end())))
+            {
+                outgoinghours = nomal;
+            }
+            else
+            {
+                outgoinghours = timeLength(sdf.format(PR.getTime_start()),sdf.format(PR.getTime_end()),lunchbreak_start,lunchbreak_end);
+                outgoinghours = String.valueOf(Double.valueOf(outgoinghours) + Double.valueOf(nomal) - Double.valueOf(PR.getOutgoinghours() == null || PR.getOutgoinghours() =="" ? "0" : PR.getOutgoinghours()));
+            }
+        }
+        return outgoinghours;
     }
 
     //考勤管理
