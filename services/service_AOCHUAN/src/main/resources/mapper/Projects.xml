@@ -12,4 +12,11 @@
         where fur.PRODUCT_NM =#{product_nm} AND fur.PROVIDER =#{provider}
         order by fur.SAL_DATE
 	</select>
+
+    <delete id="deleteByDoubleKey">
+        DELETE FROM #{table_nm}
+        WHERE product_nm = #{product_nm}
+        AND provider = #{provider}
+    </delete>
+
 </mapper>
