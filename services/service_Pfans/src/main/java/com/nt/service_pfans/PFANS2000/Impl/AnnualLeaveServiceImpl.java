@@ -37,6 +37,7 @@ import com.nt.utils.services.TokenService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -497,7 +498,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         punchcardRecordService.methodAttendance_b(cal);
     }
 
-
     //系统服务--取打卡记录
     @Override
     public void insertattendance(int diffday,String staffId) throws Exception {
@@ -507,6 +507,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+            DecimalFormat df = new DecimalFormat("######0.00");
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, diffday);
@@ -573,25 +574,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
             }
             if(punDetaillist.size() > 0){
-                String Eventno = "";
-                //去除重复
-                for (int i = 0;i < punDetaillist.size();i++){
-                    if(i < punDetaillist.size() ){
-                        if(punDetaillist.get(i).getEventno().equals(Eventno)){
-                            if(punDetaillist.get(i).getEventno().equals("1")){
-                                //进进选后
-                                punDetaillist.remove(i - 1);
-                            }
-                            else{
-                                //出出选前
-                                punDetaillist.remove(i);
-                            }
-                        }
-                    }
-                    if(i < punDetaillist.size() ){
-                        Eventno = punDetaillist.get(i).getEventno();
-                    }
-                }
                 //考勤设定
                 AttendanceSetting attendancesetting = new AttendanceSetting();
                 //上班开始时间
@@ -613,22 +595,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //午休时间结束
                     lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
                 }
-                PunchcardRecordDetail pd = new PunchcardRecordDetail();
-                //所有记录时间升序
-                Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetail>() {
-                    @Override
-                    public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
-                            Date dt1 = o1.getPunchcardrecord_date();
-                            Date dt2 = o2.getPunchcardrecord_date();
-                            if (dt1.getTime() > dt2.getTime()) {
-                                return 1;
-                            } else if (dt1.getTime() < dt2.getTime()) {
-                                return -1;
-                            } else {
-                                return 0;
-                            }
-                    }
-                });
+
                 //卡号去重得到打卡总人数
                 List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
                 punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
@@ -642,8 +609,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Double minute = 0D;
                     //上午
                     Double minuteam = 0D;
+                    List<PunchcardRecordDetail> punDetaillistx = punDetaillist.stream().filter(p->(count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+
+                    //所有记录时间升序
+                    Collections.sort(punDetaillistx, new Comparator<PunchcardRecordDetail>() {
+                        @Override
+                        public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
+                            Date dt1 = o1.getPunchcardrecord_date();
+                            Date dt2 = o2.getPunchcardrecord_date();
+                            if (dt1.getTime() > dt2.getTime()) {
+                                return 1;
+                            } else if (dt1.getTime() < dt2.getTime()) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+
+                    String Eventno = "";
+                    //去除重复
+                    for (int i = 0;i < punDetaillistx.size();i++){
+                        if(i < punDetaillistx.size() ){
+                            if(punDetaillistx.get(i).getEventno().equals(Eventno)){
+                                if(punDetaillistx.get(i).getEventno().equals("1")){
+                                    //进进选后
+                                    punDetaillistx.remove(i - 1);
+                                }
+                                else{
+                                    //出出选前
+                                    punDetaillistx.remove(i);
+                                }
+                            }
+                        }
+                        if(i < punDetaillistx.size() ){
+                            Eventno = punDetaillistx.get(i).getEventno();
+                        }
+                    }
                     //个人所有进门记录
-                    List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                    List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("1"))).collect(Collectors.toList());
                     //第一条进门记录
                     Date Time_start = null;
                     //第一条进门时间
@@ -654,7 +658,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                     }
                     //个人所有出门记录
-                    List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                    List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
                     //最后一条出门记录
                     Date Time_end = null;
                     //第一条出门时间
@@ -841,6 +845,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
+                        if(Time_start == null){
+                            Time_start = Time_end;
+                        }
+                        if(Time_end == null){
+                            Time_end = Time_start;
+                        }
+                        String overtimeHours = "";
+                        overtimeHours = timeLength(sdhm.format(Time_start), sdhm.format(Time_end), lunchbreak_start, lunchbreak_end);
+                        if (Double.valueOf(overtimeHours) > Double.valueOf(minutelogs.toString())) {
+                            overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) - Double.valueOf(minutelogs.toString())));
+                        }
                         //打卡记录
                         PunchcardRecord punchcardrecord = new PunchcardRecord();
                         tokenModel.setUserId(customerInfo.getUserid());
@@ -856,16 +871,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
                         // 日志用外出时长
                         punchcardrecord.setOutgoinghours(minutelogs.toString());
-                        if(Time_start == null){
-                            punchcardrecord.setTime_start(Time_end);
-                        }else{
-                            punchcardrecord.setTime_start(Time_start);
-                        }
-                        if(Time_end == null){
-                            punchcardrecord.setTime_end(Time_start);
-                        }else{
-                            punchcardrecord.setTime_end(Time_end);
-                        }
+                        punchcardrecord.setTime_start(Time_start);
+                        punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);
@@ -931,6 +938,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        DecimalFormat df = new DecimalFormat("######0.00");
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DAY_OF_MONTH, diffday);
@@ -1002,25 +1010,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         if(punDetaillist.size() > 0){
-            String Eventno = "";
-            //去除重复
-            for (int i = 0;i < punDetaillist.size();i++){
-                if(i < punDetaillist.size() ){
-                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
-                        if(punDetaillist.get(i).getEventno().equals("1")){
-                            //进进选后
-                            punDetaillist.remove(i - 1);
-                        }
-                        else{
-                            //出出选前
-                            punDetaillist.remove(i);
-                        }
-                    }
-                }
-                if(i < punDetaillist.size() ){
-                    Eventno = punDetaillist.get(i).getEventno();
-                }
-            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -1042,22 +1031,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //午休时间结束
                 lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
             }
-            PunchcardRecordDetailbp pd = new PunchcardRecordDetailbp();
-            //所有记录时间升序
-            Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetailbp>() {
-                @Override
-                public int compare(PunchcardRecordDetailbp o1, PunchcardRecordDetailbp o2) {
-                    Date dt1 = o1.getPunchcardrecord_date();
-                    Date dt2 = o2.getPunchcardrecord_date();
-                    if (dt1.getTime() > dt2.getTime()) {
-                        return 1;
-                    } else if (dt1.getTime() < dt2.getTime()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+
             //卡号去重得到打卡总人数
             List<PunchcardRecordDetailbp> punDetaillistCount = new ArrayList<PunchcardRecordDetailbp>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
@@ -1071,8 +1045,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Double minute = 0D;
                 //上午
                 Double minuteam = 0D;
+                List<PunchcardRecordDetailbp> punDetaillistx = punDetaillist.stream().filter(p->(count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+
+                //所有记录时间升序
+                Collections.sort(punDetaillistx, new Comparator<PunchcardRecordDetailbp>() {
+                    @Override
+                    public int compare(PunchcardRecordDetailbp o1, PunchcardRecordDetailbp o2) {
+                        Date dt1 = o1.getPunchcardrecord_date();
+                        Date dt2 = o2.getPunchcardrecord_date();
+                        if (dt1.getTime() > dt2.getTime()) {
+                            return 1;
+                        } else if (dt1.getTime() < dt2.getTime()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+
+                String Eventno = "";
+                //去除重复
+                for (int i = 0;i < punDetaillistx.size();i++){
+                    if(i < punDetaillistx.size() ){
+                        if(punDetaillistx.get(i).getEventno().equals(Eventno)){
+                            if(punDetaillistx.get(i).getEventno().equals("1")){
+                                //进进选后
+                                punDetaillistx.remove(i - 1);
+                            }
+                            else{
+                                //出出选前
+                                punDetaillistx.remove(i);
+                            }
+                        }
+                    }
+                    if(i < punDetaillistx.size() ){
+                        Eventno = punDetaillistx.get(i).getEventno();
+                    }
+                }
                 //个人所有进门记录
-                List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("1"))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
                 //第一条进门时间
@@ -1083,7 +1094,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
-                List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
                 //第一条出门时间
@@ -1267,6 +1278,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
                 List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
+                    if(Time_start == null){
+                        Time_start = Time_end;
+                    }
+                    if(Time_end == null){
+                        Time_end = Time_start;
+                    }
+                    String overtimeHours = "";
+                    overtimeHours = timeLength(sdhm.format(Time_start), sdhm.format(Time_end), lunchbreak_start, lunchbreak_end);
+                    if (Double.valueOf(overtimeHours) > Double.valueOf(minutelogs.toString())) {
+                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) - Double.valueOf(minutelogs.toString())));
+                    }
                     //打卡记录
                     PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
                     tokenModel.setUserId(exList.get(0).getAccount());
@@ -1279,17 +1301,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setWorktime(minute.toString());
                     punchcardrecord.setAbsenteeismam(minuteam.toString());
                     // 日志用外出时长
-                    punchcardrecord.setOutgoinghours(minutelogs.toString());
-                    if(Time_start == null){
-                        punchcardrecord.setTime_start(Time_end);
-                    }else{
-                        punchcardrecord.setTime_start(Time_start);
-                    }
-                    if(Time_end == null){
-                        punchcardrecord.setTime_end(Time_start);
-                    }else{
-                        punchcardrecord.setTime_end(Time_end);
-                    }
+                    punchcardrecord.setOutgoinghours(overtimeHours);
+                    punchcardrecord.setTime_start(Time_start);
+                    punchcardrecord.setTime_end(Time_end);
                     punchcardrecord.setPunchcardrecordbp_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
                     punchcardrecordbpMapper.insert(punchcardrecord);
@@ -1303,7 +1317,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     // 设置统计外出的时间
                     attendance.setAbsenteeism(minute.toString());
                     // 日志用外出时长
-                    attendance.setOutgoinghours(minutelogs.toString());
+                    attendance.setOutgoinghours(overtimeHours);
                     attendance.setGroup_id(exList.get(0).getGroup_id());
 
                     attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
@@ -1327,6 +1341,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Attendancebp attendance = new Attendancebp();
                 attendance.setAbsenteeism("8");
                 attendance.setNormal("0");
+                // 日志用外出时长
+                attendance.setOutgoinghours("0");
                 attendance.setAttendancebpid(UUID.randomUUID().toString());
                 attendance.setGroup_id(inforlist.get(0).getGroup_id());
                 attendance.setUser_id(inforlist.get(0).getAccount());
@@ -1366,6 +1382,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+            DecimalFormat df = new DecimalFormat("######0.00");
             String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
@@ -1418,25 +1435,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
             }
             if(punDetaillist.size() > 0){
-                String Eventno = "";
-                //去除重复
-                for (int i = 0;i < punDetaillist.size();i++){
-                    if(i < punDetaillist.size() ){
-                        if(punDetaillist.get(i).getEventno().equals(Eventno)){
-                            if(punDetaillist.get(i).getEventno().equals("1")){
-                                //进进选后
-                                punDetaillist.remove(i - 1);
-                            }
-                            else{
-                                //出出选前
-                                punDetaillist.remove(i);
-                            }
-                        }
-                    }
-                    if(i < punDetaillist.size() ){
-                        Eventno = punDetaillist.get(i).getEventno();
-                    }
-                }
                 //考勤设定
                 AttendanceSetting attendancesetting = new AttendanceSetting();
                 //上班开始时间
@@ -1458,22 +1456,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //午休时间结束
                     lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
                 }
-                PunchcardRecordDetail pd = new PunchcardRecordDetail();
-                //所有记录时间升序
-                Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetail>() {
-                    @Override
-                    public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
-                            Date dt1 = o1.getPunchcardrecord_date();
-                            Date dt2 = o2.getPunchcardrecord_date();
-                            if (dt1.getTime() > dt2.getTime()) {
-                                return 1;
-                            } else if (dt1.getTime() < dt2.getTime()) {
-                                return -1;
-                            } else {
-                                return 0;
-                            }
-                    }
-                });
+
                 //卡号去重得到打卡总人数
                 List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
                 punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
@@ -1486,8 +1469,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Double minute = 0D;
                     //上午
                     Double minuteam = 0D;
+                    List<PunchcardRecordDetail> punDetaillistx = punDetaillist.stream().filter(p->(count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+
+                    //所有记录时间升序
+                    Collections.sort(punDetaillistx, new Comparator<PunchcardRecordDetail>() {
+                        @Override
+                        public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
+                            Date dt1 = o1.getPunchcardrecord_date();
+                            Date dt2 = o2.getPunchcardrecord_date();
+                            if (dt1.getTime() > dt2.getTime()) {
+                                return 1;
+                            } else if (dt1.getTime() < dt2.getTime()) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+
+                    String Eventno = "";
+                    //去除重复
+                    for (int i = 0;i < punDetaillistx.size();i++){
+                        if(i < punDetaillistx.size() ){
+                            if(punDetaillistx.get(i).getEventno().equals(Eventno)){
+                                if(punDetaillistx.get(i).getEventno().equals("1")){
+                                    //进进选后
+                                    punDetaillistx.remove(i - 1);
+                                }
+                                else{
+                                    //出出选前
+                                    punDetaillistx.remove(i);
+                                }
+                            }
+                        }
+                        if(i < punDetaillistx.size() ){
+                            Eventno = punDetaillistx.get(i).getEventno();
+                        }
+                    }
                     //个人所有进门记录
-                    List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                    List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("1"))).collect(Collectors.toList());
                     //第一条进门记录
                     Date Time_start = null;
                     //第一条进门时间
@@ -1498,7 +1518,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                     }
                     //个人所有出门记录
-                    List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                    List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
                     //最后一条出门记录
                     Date Time_end = null;
                     //第一条出门时间
@@ -1644,6 +1664,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //外出超过15分钟的欠勤时间
                         punchcardrecord.setWorktime(minute.toString());
                         punchcardrecord.setAbsenteeismam(minuteam.toString());
+                        // 日志用外出时长
+                        punchcardrecord.setOutgoinghours("0");
                         punchcardrecord.setTime_start(Time_start);
                         punchcardrecord.setTime_end(Time_end);
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
@@ -1663,6 +1685,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        DecimalFormat df = new DecimalFormat("######0.00");
         String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
@@ -1720,25 +1743,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         if(punDetaillist.size() > 0){
-            String Eventno = "";
-            //去除重复
-            for (int i = 0;i < punDetaillist.size();i++){
-                if(i < punDetaillist.size() ){
-                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
-                        if(punDetaillist.get(i).getEventno().equals("1")){
-                            //进进选后
-                            punDetaillist.remove(i - 1);
-                        }
-                        else{
-                            //出出选前
-                            punDetaillist.remove(i);
-                        }
-                    }
-                }
-                if(i < punDetaillist.size() ){
-                    Eventno = punDetaillist.get(i).getEventno();
-                }
-            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -1760,22 +1764,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //午休时间结束
                 lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
             }
-            PunchcardRecordDetailbp pd = new PunchcardRecordDetailbp();
-            //所有记录时间升序
-            Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetailbp>() {
-                @Override
-                public int compare(PunchcardRecordDetailbp o1, PunchcardRecordDetailbp o2) {
-                    Date dt1 = o1.getPunchcardrecord_date();
-                    Date dt2 = o2.getPunchcardrecord_date();
-                    if (dt1.getTime() > dt2.getTime()) {
-                        return 1;
-                    } else if (dt1.getTime() < dt2.getTime()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+
             //卡号去重得到打卡总人数
             List<PunchcardRecordDetailbp> punDetaillistCount = new ArrayList<PunchcardRecordDetailbp>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
@@ -1786,8 +1775,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Double minute = 0D;
                 //上午
                 Double minuteam = 0D;
+                List<PunchcardRecordDetailbp> punDetaillistx = punDetaillist.stream().filter(p->(count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+
+                //所有记录时间升序
+                Collections.sort(punDetaillistx, new Comparator<PunchcardRecordDetailbp>() {
+                    @Override
+                    public int compare(PunchcardRecordDetailbp o1, PunchcardRecordDetailbp o2) {
+                        Date dt1 = o1.getPunchcardrecord_date();
+                        Date dt2 = o2.getPunchcardrecord_date();
+                        if (dt1.getTime() > dt2.getTime()) {
+                            return 1;
+                        } else if (dt1.getTime() < dt2.getTime()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+
+                String Eventno = "";
+                //去除重复
+                for (int i = 0;i < punDetaillistx.size();i++){
+                    if(i < punDetaillistx.size() ){
+                        if(punDetaillistx.get(i).getEventno().equals(Eventno)){
+                            if(punDetaillistx.get(i).getEventno().equals("1")){
+                                //进进选后
+                                punDetaillistx.remove(i - 1);
+                            }
+                            else{
+                                //出出选前
+                                punDetaillistx.remove(i);
+                            }
+                        }
+                    }
+                    if(i < punDetaillistx.size() ){
+                        Eventno = punDetaillistx.get(i).getEventno();
+                    }
+                }
                 //个人所有进门记录
-                List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("1"))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
                 //第一条进门时间
@@ -1798,7 +1824,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
-                List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
                 //第一条出门时间
@@ -1928,6 +1954,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 minuteam = NumberUtil.round(minutesss/60,2).doubleValue();
                 List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
+                    if(Time_start == null){
+                        Time_start = Time_end;
+                    }
+                    if(Time_end == null){
+                        Time_end = Time_start;
+                    }
                     //打卡记录
                     PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
                     tokenModel.setUserId(exList.get(0).getAccount());
@@ -1939,16 +1971,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //外出超过15分钟的欠勤时间
                     punchcardrecord.setWorktime(minute.toString());
                     punchcardrecord.setAbsenteeismam(minuteam.toString());
-                    if(Time_start == null){
-                        punchcardrecord.setTime_start(Time_end);
-                    }else{
-                        punchcardrecord.setTime_start(Time_start);
-                    }
-                    if(Time_end == null){
-                        punchcardrecord.setTime_end(Time_start);
-                    }else{
-                        punchcardrecord.setTime_end(Time_end);
-                    }
+                    punchcardrecord.setTime_start(Time_start);
+                    punchcardrecord.setTime_end(Time_end);
                     punchcardrecord.setPunchcardrecordbp_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
                     punchcardrecordbpMapper.insert(punchcardrecord);
@@ -1965,6 +1989,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        DecimalFormat df = new DecimalFormat("######0.00");
         List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
         //打卡时间
         String recordTime = "";
@@ -2009,29 +2034,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
             punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
-            //punchcardrecorddetailmapper.insert(punchcardrecorddetail);
+            punchcardrecorddetailmapper.insert(punchcardrecorddetail);
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
-            String Eventno = "";
-            //去除重复
-            for (int i = 0;i < punDetaillist.size();i++){
-                if(i < punDetaillist.size() ){
-                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
-                        if(punDetaillist.get(i).getEventno().equals("1")){
-                            //进进选后
-                            punDetaillist.remove(i - 1);
-                        }
-                        else{
-                            //出出选前
-                            punDetaillist.remove(i);
-                        }
-                    }
-                }
-                if(i < punDetaillist.size() ){
-                    Eventno = punDetaillist.get(i).getEventno();
-                }
-            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -2053,22 +2059,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //午休时间结束
                 lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
             }
-            //所有记录时间升序
-            Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetail>() {
-                @Override
-                public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
-                    Date dt1 = o1.getPunchcardrecord_date();
-                    Date dt2 = o2.getPunchcardrecord_date();
-                    if (dt1.getTime() > dt2.getTime()) {
-                        return 1;
-                    } else if (dt1.getTime() < dt2.getTime()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
-            //卡号去重得到打卡总人数333
+
+            //卡号去重得到打卡总人数
             List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
             String books[] = new String[punDetaillistCount.size() + 1];
@@ -2081,8 +2073,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Double minute = 0D;
                 //上午
                 Double minuteam = 0D;
+                List<PunchcardRecordDetail> punDetaillistx = punDetaillist.stream().filter(p->(count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+
+                //所有记录时间升序
+                Collections.sort(punDetaillistx, new Comparator<PunchcardRecordDetail>() {
+                    @Override
+                    public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
+                        Date dt1 = o1.getPunchcardrecord_date();
+                        Date dt2 = o2.getPunchcardrecord_date();
+                        if (dt1.getTime() > dt2.getTime()) {
+                            return 1;
+                        } else if (dt1.getTime() < dt2.getTime()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+
+                String Eventno = "";
+                //去除重复
+                for (int i = 0;i < punDetaillistx.size();i++){
+                    if(i < punDetaillistx.size() ){
+                        if(punDetaillistx.get(i).getEventno().equals(Eventno)){
+                            if(punDetaillistx.get(i).getEventno().equals("1")){
+                                //进进选后
+                                punDetaillistx.remove(i - 1);
+                            }
+                            else{
+                                //出出选前
+                                punDetaillistx.remove(i);
+                            }
+                        }
+                    }
+                    if(i < punDetaillistx.size() ){
+                        Eventno = punDetaillistx.get(i).getEventno();
+                    }
+                }
                 //个人所有进门记录
-                List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetail> punDetaillistevent1 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("1"))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
                 //第一条进门时间
@@ -2093,7 +2122,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
-                List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
                 //第一条出门时间
@@ -2280,6 +2309,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber()));
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
+                    if(Time_start == null){
+                        Time_start = Time_end;
+                    }
+                    if(Time_end == null){
+                        Time_end = Time_start;
+                    }
+                    String overtimeHours = "";
+                    overtimeHours = timeLength(sdhm.format(Time_start), sdhm.format(Time_end), lunchbreak_start, lunchbreak_end);
+                    if (Double.valueOf(overtimeHours) > Double.valueOf(minutelogs.toString())) {
+                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) - Double.valueOf(minutelogs.toString())));
+                    }
                     //打卡记录
                     PunchcardRecord punchcardrecord = new PunchcardRecord();
                     tokenModel.setUserId(customerInfo.getUserid());
@@ -2295,16 +2335,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setAbsenteeismam(minuteam.toString());
                     // 日志用外出时长
                     punchcardrecord.setOutgoinghours(minutelogs.toString());
-                    if(Time_start == null){
-                        punchcardrecord.setTime_start(Time_end);
-                    }else{
-                        punchcardrecord.setTime_start(Time_start);
-                    }
-                    if(Time_end == null){
-                        punchcardrecord.setTime_end(Time_start);
-                    }else{
-                        punchcardrecord.setTime_end(Time_end);
-                    }
+                    punchcardrecord.setTime_start(Time_start);
+                    punchcardrecord.setTime_end(Time_end);
                     punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
                     punchcardrecordMapper.insert(punchcardrecord);
@@ -2317,8 +2349,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setNormal("8");
                     // 设置统计外出的时间
                     attendance.setAbsenteeism(minute.toString());
-                    // 日志用外出时长
-                    attendance.setOutgoinghours(minutelogs.toString());
                     attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
                     attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                     attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
@@ -2343,6 +2373,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        DecimalFormat df = new DecimalFormat("######0.00");
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
         //外驻人员信息
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
@@ -2390,29 +2421,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punchcardrecorddetail.setEventno(eventNo);
             punchcardrecorddetail.preInsert(tokenModel);
             punchcardrecorddetail.setPunchcardrecorddetailbp_id(UUID.randomUUID().toString());
-            //punchcardrecorddetailbpmapper.insert(punchcardrecorddetail);
+            punchcardrecorddetailbpmapper.insert(punchcardrecorddetail);
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
-            String Eventno = "";
-            //去除重复
-            for (int i = 0;i < punDetaillist.size();i++){
-                if(i < punDetaillist.size() ){
-                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
-                        if(punDetaillist.get(i).getEventno().equals("1")){
-                            //进进选后
-                            punDetaillist.remove(i - 1);
-                        }
-                        else{
-                            //出出选前
-                            punDetaillist.remove(i);
-                        }
-                    }
-                }
-                if(i < punDetaillist.size() ){
-                    Eventno = punDetaillist.get(i).getEventno();
-                }
-            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -2428,28 +2440,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //上班开始时间
                 workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
                 //下班结束时间
-                closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
+                closingtime_end = attendancesettinglist.get(0).getClosingtime_end();
                 //午休时间开始
                 lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
                 //午休时间结束
                 lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
             }
-            PunchcardRecordDetailbp pd = new PunchcardRecordDetailbp();
-            //所有记录时间升序
-            Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetailbp>() {
-                @Override
-                public int compare(PunchcardRecordDetailbp o1, PunchcardRecordDetailbp o2) {
-                    Date dt1 = o1.getPunchcardrecord_date();
-                    Date dt2 = o2.getPunchcardrecord_date();
-                    if (dt1.getTime() > dt2.getTime()) {
-                        return 1;
-                    } else if (dt1.getTime() < dt2.getTime()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+
             //卡号去重得到打卡总人数
             List<PunchcardRecordDetailbp> punDetaillistCount = new ArrayList<PunchcardRecordDetailbp>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
@@ -2463,8 +2460,45 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Double minute = 0D;
                 //上午
                 Double minuteam = 0D;
+                List<PunchcardRecordDetailbp> punDetaillistx = punDetaillist.stream().filter(p->(count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+
+                //所有记录时间升序
+                Collections.sort(punDetaillistx, new Comparator<PunchcardRecordDetailbp>() {
+                    @Override
+                    public int compare(PunchcardRecordDetailbp o1, PunchcardRecordDetailbp o2) {
+                        Date dt1 = o1.getPunchcardrecord_date();
+                        Date dt2 = o2.getPunchcardrecord_date();
+                        if (dt1.getTime() > dt2.getTime()) {
+                            return 1;
+                        } else if (dt1.getTime() < dt2.getTime()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+
+                String Eventno = "";
+                //去除重复
+                for (int i = 0;i < punDetaillistx.size();i++){
+                    if(i < punDetaillistx.size() ){
+                        if(punDetaillistx.get(i).getEventno().equals(Eventno)){
+                            if(punDetaillistx.get(i).getEventno().equals("1")){
+                                //进进选后
+                                punDetaillistx.remove(i - 1);
+                            }
+                            else{
+                                //出出选前
+                                punDetaillistx.remove(i);
+                            }
+                        }
+                    }
+                    if(i < punDetaillistx.size() ){
+                        Eventno = punDetaillistx.get(i).getEventno();
+                    }
+                }
                 //个人所有进门记录
-                List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("1") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetailbp> punDetaillistevent1 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("1"))).collect(Collectors.toList());
                 //第一条进门记录
                 Date Time_start = null;
                 //第一条进门时间
@@ -2475,7 +2509,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
-                List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillist.stream().filter(p->(p.getEventno().equalsIgnoreCase("2") && count.getJobnumber().equalsIgnoreCase(p.getJobnumber()))).collect(Collectors.toList());
+                List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
                 //最后一条出门记录
                 Date Time_end = null;
                 //第一条出门时间
@@ -2659,6 +2693,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
                 List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
+                    if(Time_start == null){
+                        Time_start = Time_end;
+                    }
+                    if(Time_end == null){
+                        Time_end = Time_start;
+                    }
+                    String overtimeHours = "";
+                    overtimeHours = timeLength(sdhm.format(Time_start), sdhm.format(Time_end), lunchbreak_start, lunchbreak_end);
+                    if (Double.valueOf(overtimeHours) > Double.valueOf(minutelogs.toString())) {
+                        overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) - Double.valueOf(minutelogs.toString())));
+
+                    }
                     //打卡记录
                     PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
                     tokenModel.setUserId(exList.get(0).getAccount());
@@ -2672,19 +2718,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setAbsenteeismam(minuteam.toString());
                     // 日志用外出时长
                     punchcardrecord.setOutgoinghours(minutelogs.toString());
-                    if(Time_start == null){
-                        punchcardrecord.setTime_start(Time_end);
-                    }else{
-                        punchcardrecord.setTime_start(Time_start);
-                    }
-                    if(Time_end == null){
-                        punchcardrecord.setTime_end(Time_start);
-                    }else{
-                        punchcardrecord.setTime_end(Time_end);
-                    }
+                    punchcardrecord.setTime_start(Time_start);
+                    punchcardrecord.setTime_end(Time_end);
                     punchcardrecord.setPunchcardrecordbp_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
-                    //punchcardrecordbpMapper.insert(punchcardrecord);
+                    punchcardrecordbpMapper.insert(punchcardrecord);
 
                     //创建考勤数据
                     Attendancebp attendance = new Attendancebp();
@@ -2694,6 +2732,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setNormal("8");
                     // 设置统计外出的时间
                     attendance.setAbsenteeism(minute.toString());
+                    // 日志用外出时长
+                    attendance.setOutgoinghours(overtimeHours);
                     attendance.setGroup_id(exList.get(0).getGroup_id());
 
                     attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
@@ -2701,20 +2741,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setAttendancebpid(UUID.randomUUID().toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.preInsert(tokenModel);
-                    //attendancebpMapper.insert(attendance);
+                    attendancebpMapper.insert(attendance);
                     ids.add(exList.get(0).getAccount());
-                    //
-                    //上班开始时间
-//                    workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
-//                    //下班结束时间
-//                    closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
-//                    //午休时间开始
-//                    lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
-//                    //午休时间结束
-//                    lunchbreak_end = attendancesettinglist.get(0).getLunchbreak_end().replace(":", "");
-//
-//                    String shijiworkHours =shijiworkLength(time_start_temp,time_end_temp,lunchbreak_start,lunchbreak_end,PR,ad);
-//                    String a = "";
+
                 }
                 //添加打卡记录end
             }
@@ -2739,41 +2768,48 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
     }
 
-    public String shijiworkLength(String time_start,String time_end,String lunchbreak_start, String lunchbreak_end,PunchcardRecord PR,Attendance ad) throws Exception {
+    //实际工作时间
+    public String timeLength(String time_start,String time_end,String lunchbreak_start, String lunchbreak_end) throws Exception
+    {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
-        String shijiworkHours ="0";
-        if(sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime())
+        String overtimeHours =null;
+        if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
         {
+            //午休都包括在内
+            //打卡开始-结束时间
             long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
-            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(PR.getAbsenteeismam()));
+            //午休时间
+            long result2 = sdf.parse(lunchbreak_end).getTime() - sdf.parse(lunchbreak_start).getTime();
+            //打卡记录加班时间
+            Double result3 = Double.valueOf(String.valueOf(result1 - result2)) / 60 / 60 / 1000;
+            overtimeHours = String.valueOf(result3);
         }
-        else if(sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime())
+        else if(sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime() || sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime())
         {
+            //午休不包括在内
+            //打卡开始-结束时间
             long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
-            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
+            //打卡记录加班时间
+            Double result3 = Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000;
+            overtimeHours = String.valueOf(result3);
+
         }
-        else if(sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime())
+        else if(sdf.parse(time_start).getTime() < sdf.parse(lunchbreak_start).getTime() && (sdf.parse(lunchbreak_start).getTime() < sdf.parse(time_end).getTime() ||sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime()))
         {
+            //午休包括在内一部分（打卡结束时间在午休内）
+            //打卡开始-午休开始时间
             long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(PR.getAbsenteeismam()));
-        }
-        else if(sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime())
-        {
-            long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000)-Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam()));
+            Double result3 = Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000;
+            overtimeHours = String.valueOf(result3);
         }
         else
         {
-            //下午上班时间
+            //午休包括在内一部分（打卡开始时间在午休内）
+            //午休结束-打开结束时间
             long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-            //上午上班时间
-            long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
-
-            Double result3 = Double.valueOf(result1)/ 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
-            Double result4 = Double.valueOf(result2)/ 60 / 60 / 1000 - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(PR.getAbsenteeismam());
-            shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
-
+            Double result3 = Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000;
+            overtimeHours = String.valueOf(result3);
         }
-        return shijiworkHours;
+        return overtimeHours;
     }
 }

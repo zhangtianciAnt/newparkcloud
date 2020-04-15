@@ -81,6 +81,14 @@ public class ApiResult {
         return apiResult;
     }
 
+    public static ApiResult failAuth(String message) {
+        ApiResult apiResult = new ApiResult();
+        apiResult.setCustomerMessage(message);
+        apiResult.setCode(20102);
+        log.warn(message);
+        return apiResult;
+    }
+
     public static ApiResult failtoken(String message) {
         ApiResult apiResult = new ApiResult();
 

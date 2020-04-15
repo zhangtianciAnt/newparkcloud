@@ -107,4 +107,8 @@ public class CompanyProjectsVo2 {
      */
     private Date actualendtime;
 
+    /**
+     * 负责人
+     */
+    private String owner;
 }
