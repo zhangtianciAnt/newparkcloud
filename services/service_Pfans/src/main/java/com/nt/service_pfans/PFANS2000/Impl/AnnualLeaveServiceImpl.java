@@ -501,7 +501,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     //系统服务--取打卡记录
     @Override
     public void insertattendance(int diffday,String staffId) throws Exception {
-//        try {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
             //测试接口 GBB add
@@ -534,9 +533,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String recordTime = "";
             //员工编号
             String jobnumber = "";
-            String jobnumberOld = "";
-            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
-            String eventNoOld = "";
             if(jsonArray.size() > 0){
                 for(Object ob : jsonArray){
                     //打卡时间
@@ -554,12 +550,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     if(!departmentName_P.equals("PSDCD")){
                         continue;
                     }
-                    //判断是否短时间同一人多次打卡
-                    if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
-                        continue;
-                    }
-                    eventNoOld = eventNo;
-                    jobnumberOld = jobnumber;
                     //员工姓名
                     String staffName = getProperty(ob, "staffName");
                     //员工部门
@@ -583,6 +573,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
             }
             if(punDetaillist.size() > 0){
+                String Eventno = "";
+                //去除重复
+                for (int i = 0;i < punDetaillist.size();i++){
+                    if(i < punDetaillist.size() ){
+                        if(punDetaillist.get(i).getEventno().equals(Eventno)){
+                            if(punDetaillist.get(i).getEventno().equals("1")){
+                                //进进选后
+                                punDetaillist.remove(i - 1);
+                            }
+                            else{
+                                //出出选前
+                                punDetaillist.remove(i);
+                            }
+                        }
+                    }
+                    if(i < punDetaillist.size() ){
+                        Eventno = punDetaillist.get(i).getEventno();
+                    }
+                }
                 //考勤设定
                 AttendanceSetting attendancesetting = new AttendanceSetting();
                 //上班开始时间
@@ -609,7 +618,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Collections.sort(punDetaillist, new Comparator<PunchcardRecordDetail>() {
                     @Override
                     public int compare(PunchcardRecordDetail o1, PunchcardRecordDetail o2) {
-//                        try {
                             Date dt1 = o1.getPunchcardrecord_date();
                             Date dt2 = o2.getPunchcardrecord_date();
                             if (dt1.getTime() > dt2.getTime()) {
@@ -619,10 +627,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             } else {
                                 return 0;
                             }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                        return 0;
                     }
                 });
                 //卡号去重得到打卡总人数
@@ -856,9 +860,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //处理异常和加班数据
 //                punchcardRecordService.methodAttendance_b(diffday);
             }
-//        } catch (Exception e) {
-//            throw new LogicalException("获取打卡记录数据异常，请通知管理员");
-//        }
     }
 
     //系统服务--取打卡记录BP
@@ -897,9 +898,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String recordTime = "";
         //员工编号
         String jobnumber = "";
-        String jobnumberOld = "";
-        //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
-        String eventNoOld = "";
         if(jsonArray.size() > 0){
             for(Object ob : jsonArray){
                 //打卡时间
@@ -920,12 +918,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         || departmentName_P.equals("测试")){
                     continue;
                 }
-                //判断是否短时间同一人多次打卡
-                if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
-                    continue;
-                }
-                eventNoOld = eventNo;
-                jobnumberOld = jobnumber;
                 //员工姓名
                 String staffName = getProperty(ob, "staffName");
                 //员工部门
@@ -949,6 +941,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         if(punDetaillist.size() > 0){
+            String Eventno = "";
+            //去除重复
+            for (int i = 0;i < punDetaillist.size();i++){
+                if(i < punDetaillist.size() ){
+                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
+                        if(punDetaillist.get(i).getEventno().equals("1")){
+                            //进进选后
+                            punDetaillist.remove(i - 1);
+                        }
+                        else{
+                            //出出选前
+                            punDetaillist.remove(i);
+                        }
+                    }
+                }
+                if(i < punDetaillist.size() ){
+                    Eventno = punDetaillist.get(i).getEventno();
+                }
+            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -1243,9 +1254,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String recordTime = "";
             //员工编号
             String jobnumber = "";
-            String jobnumberOld = "";
-            //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
-            String eventNoOld = "";
             if(jsonArray.size() > 0){
                 for(Object ob : jsonArray){
                     //打卡时间
@@ -1263,12 +1271,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     if(!departmentName_P.equals("PSDCD")){
                         continue;
                     }
-                    //判断是否短时间同一人多次打卡
-                    if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
-                        continue;
-                    }
-                    eventNoOld = eventNo;
-                    jobnumberOld = jobnumber;
                     //员工姓名
                     String staffName = getProperty(ob, "staffName");
                     //员工部门
@@ -1292,6 +1294,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
             }
             if(punDetaillist.size() > 0){
+                String Eventno = "";
+                //去除重复
+                for (int i = 0;i < punDetaillist.size();i++){
+                    if(i < punDetaillist.size() ){
+                        if(punDetaillist.get(i).getEventno().equals(Eventno)){
+                            if(punDetaillist.get(i).getEventno().equals("1")){
+                                //进进选后
+                                punDetaillist.remove(i - 1);
+                            }
+                            else{
+                                //出出选前
+                                punDetaillist.remove(i);
+                            }
+                        }
+                    }
+                    if(i < punDetaillist.size() ){
+                        Eventno = punDetaillist.get(i).getEventno();
+                    }
+                }
                 //考勤设定
                 AttendanceSetting attendancesetting = new AttendanceSetting();
                 //上班开始时间
@@ -1529,9 +1550,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String recordTime = "";
         //员工编号
         String jobnumber = "";
-        String jobnumberOld = "";
-        //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
-        String eventNoOld = "";
         if(jsonArray.size() > 0){
             for(Object ob : jsonArray){
                 //打卡时间
@@ -1552,12 +1570,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         || departmentName_P.equals("测试")){
                     continue;
                 }
-                //判断是否短时间同一人多次打卡
-                if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
-                    continue;
-                }
-                eventNoOld = eventNo;
-                jobnumberOld = jobnumber;
                 //员工姓名
                 String staffName = getProperty(ob, "staffName");
                 //员工部门
@@ -1581,6 +1593,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         if(punDetaillist.size() > 0){
+            String Eventno = "";
+            //去除重复
+            for (int i = 0;i < punDetaillist.size();i++){
+                if(i < punDetaillist.size() ){
+                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
+                        if(punDetaillist.get(i).getEventno().equals("1")){
+                            //进进选后
+                            punDetaillist.remove(i - 1);
+                        }
+                        else{
+                            //出出选前
+                            punDetaillist.remove(i);
+                        }
+                    }
+                }
+                if(i < punDetaillist.size() ){
+                    Eventno = punDetaillist.get(i).getEventno();
+                }
+            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -1809,9 +1840,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String recordTime = "";
         //员工编号
         String jobnumber = "";
-        String jobnumberOld = "";
-        //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
-        String eventNoOld = "";
         for(Punchcard punchcard : Punchcardlist){
             //打卡时间
             recordTime = punchcard.getRecordTime();
@@ -1828,14 +1856,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             if(!departmentName_P.equals("PSDCD")){
                 continue;
             }
-            //判断是否短时间同一人多次打卡
-            if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
-                continue;
-            }
-            eventNoOld = eventNo;
-            jobnumberOld = jobnumber;
             //员工姓名
             String staffName = punchcard.getStaffName();
+//            if(!staffName.equals("张建波")){
+//                continue;
+//            }
             //员工部门
             String departmentName = punchcard.getDepartmentName();
             //门号
@@ -1858,6 +1883,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
+            String Eventno = "";
+            //去除重复
+            for (int i = 0;i < punDetaillist.size();i++){
+                if(i < punDetaillist.size() ){
+                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
+                        if(punDetaillist.get(i).getEventno().equals("1")){
+                            //进进选后
+                            punDetaillist.remove(i - 1);
+                        }
+                        else{
+                            //出出选前
+                            punDetaillist.remove(i);
+                        }
+                    }
+                }
+                if(i < punDetaillist.size() ){
+                    Eventno = punDetaillist.get(i).getEventno();
+                }
+            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -1900,9 +1944,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String books[] = new String[punDetaillistCount.size() + 1];
             int x = 0;
             for(PunchcardRecordDetail count : punDetaillistCount){
-//                if(count.getJobnumber().equals("00665")){
-//                    String a1 = "";
-//                }
                 x = x + 1;
                 //欠勤时间 全天
                 Double minute = 0D;
@@ -2117,9 +2158,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String recordTime = "";
         //员工编号
         String jobnumber = "";
-        String jobnumberOld = "";
-        //进出状态(1，正常进入；2，正常外出;30:无效-反潜回)
-        String eventNoOld = "";
         for(Punchcard punchcard : Punchcardlist){
             //打卡时间
             recordTime = punchcard.getRecordTime();
@@ -2139,12 +2177,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     || departmentName_P.equals("测试")){
                 continue;
             }
-            //判断是否短时间同一人多次打卡
-            if(eventNo.equals(eventNoOld) && jobnumber.equals(jobnumberOld)){
-                continue;
-            }
-            eventNoOld = eventNo;
-            jobnumberOld = jobnumber;
             //员工姓名
             String staffName = punchcard.getStaffName();
             //员工部门
@@ -2169,6 +2201,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             punDetaillist.add(punchcardrecorddetail);
         }
         if(punDetaillist.size() > 0){
+            String Eventno = "";
+            //去除重复
+            for (int i = 0;i < punDetaillist.size();i++){
+                if(i < punDetaillist.size() ){
+                    if(punDetaillist.get(i).getEventno().equals(Eventno)){
+                        if(punDetaillist.get(i).getEventno().equals("1")){
+                            //进进选后
+                            punDetaillist.remove(i - 1);
+                        }
+                        else{
+                            //出出选前
+                            punDetaillist.remove(i);
+                        }
+                    }
+                }
+                if(i < punDetaillist.size() ){
+                    Eventno = punDetaillist.get(i).getEventno();
+                }
+            }
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -2212,9 +2263,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             List<String> ids= new ArrayList<String>();
             int x = 0;
             for(PunchcardRecordDetailbp count : punDetaillistCount){
-//                if(count.getJobnumber().equals("00665")){
-//                    String a1 = "";
-//                }
                 x = x + 1;
                 //欠勤时间 全天
                 Double minute = 0D;
