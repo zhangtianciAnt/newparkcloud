@@ -37,6 +37,9 @@ public class PunchcardRecordDetailbp extends BaseModel {
     @Column(name = "TEAM_ID")
     private String team_id;
 
+    @Column(name = "DATES")
+    private Date dates;
+
     @Column(name = "PUNCHCARDRECORD_DATE")
     private Date punchcardrecord_date;
 
