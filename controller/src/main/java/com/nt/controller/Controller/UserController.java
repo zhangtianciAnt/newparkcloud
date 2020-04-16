@@ -49,9 +49,9 @@ public class UserController {
 
     //注册
     @RequestMapping(value = "/register", method = {RequestMethod.POST})
-    public ApiResult addUser(@RequestBody UserAccount userAccount,HttpServletRequest request) throws Exception {
+    public ApiResult addUser(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         if (userAccount == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         userAccount.preInsert();
         userService.inUserAccount(userAccount);
@@ -60,9 +60,9 @@ public class UserController {
 
     //获取用户账户
     @RequestMapping(value = "/getCurrentUserAccount", method = {RequestMethod.POST})
-    public ApiResult getCurrentUserAccount(@RequestBody UserAccount userAccount,HttpServletRequest request) throws Exception {
+    public ApiResult getCurrentUserAccount(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         if (userAccount == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
         var list = userService.getUserAccount(userAccount);
@@ -74,9 +74,9 @@ public class UserController {
     public ApiResult login(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         try {
             if (userAccount == null) {
-                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
-            TokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
+            TokenModel tokenModel = userService.login(userAccount, RequestUtils.CurrentLocale(request));
 
             var log = new Log();
             log.setType(AuthConstants.LOG_TYPE_LOGIN);
@@ -93,6 +93,13 @@ public class UserController {
             return ApiResult.fail(ex.getMessage());
         }
 
+    }
+
+    //退出登陆
+    @RequestMapping(value = "/logout", method = {RequestMethod.GET})
+    public ApiResult logout(HttpServletRequest request) throws Exception {
+        tokenService.clearToken(request);
+        return ApiResult.success();
     }
 
     //获取当前用户信息
@@ -131,9 +138,9 @@ public class UserController {
         userAccount.setUserid(RequestUtils.CurrentUserId(request));
         val userAccountlist = userService.getUserAccount(userAccount);
         if (userAccountlist.size() <= 0) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_04,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_04, RequestUtils.CurrentLocale(request)));
         } else if (userAccountlist.get(0).getStatus().equals(AuthConstants.APPLYTENANTID)) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_05,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_05, RequestUtils.CurrentLocale(request)));
         } else {
             TokenModel tokenModel = tokenService.getToken(request);
             userAccountlist.get(0).setStatus(AuthConstants.APPLYTENANTID);
@@ -256,7 +263,7 @@ public class UserController {
     @RequestMapping(value = "/updUserInfo", method = {RequestMethod.POST})
     public ApiResult updUserInfo(@RequestBody CustomerInfo customerInfo, HttpServletRequest request) throws Exception {
         if (customerInfo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
         return ApiResult.success(userService.updUserInfo(customerInfo));
