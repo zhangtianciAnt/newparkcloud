@@ -120,4 +120,18 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     public List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception {
         return vehicleinformationMapper.getInsideVehicleType();
     }
+
+    /**
+     * @Method getQueryVehiclesRegularlyInfo
+     * @Author SKAIXX
+     * @Version  1.0
+     * @Description 定时查询车辆信息表（出场时间为空的数据）
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.Vehicleinformation>
+     * @Date 2020/04/13 14:49
+     */
+    @Override
+    public List<Vehicleinformation> getQueryVehiclesRegularlyInfo() throws Exception {
+        return vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
+    }
 }
