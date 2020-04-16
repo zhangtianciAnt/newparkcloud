@@ -29,7 +29,7 @@
     </resultMap>
     <!--    获取在场车辆信息一览-->
     <select id="getInsideList" resultType="com.nt.dao_BASF.VO.InsideVehicleinformationVo">
-        select a.vehiclenumber,a.transporter,a.intime,a.goodsname, a.destination,b.speed
+        select a.vehiclenumber,a.transporter,a.intime,a.goodsname, a.destination,b.speed,a.ishazardous
         from vehicleinformation a
 				INNER JOIN vehicletrajectory b
 				on a.vehicleinformationid = b.vehicleinformationid
