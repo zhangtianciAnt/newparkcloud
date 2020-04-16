@@ -159,7 +159,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         String Confirmstatus = logmanagement.getConfirmstatus();
         logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
-        logmanagementmapper.updateByPrimaryKey(logmanagement);
+        logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
 
     @Override
