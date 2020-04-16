@@ -492,10 +492,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DAY_OF_MONTH, -1);
-        punchcardRecordService.methodAttendance_b(cal);
+        //上月1号
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTime(new Date());
+        calStart.add(Calendar.MONTH, -1);
+        calStart.set(Calendar.DAY_OF_MONTH, 1);
+
+        //本月末日
+        Calendar calend = Calendar.getInstance();
+        calend.setTime(new Date());
+        int maxCurrentMonthDay=calend.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calend  .set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
+
+        for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1)){
+            punchcardRecordService.methodAttendance_b(item);
+        }
+
     }
 
     //系统服务--取打卡记录
@@ -1358,10 +1370,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Override
     public void insertpunchcard(int diffday) throws Exception {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal= Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DAY_OF_MONTH, diffday);
+        cal.set(Calendar.DAY_OF_MONTH, diffday);
+
         punchcardRecordService.methodAttendance_b(cal);
+
     }
 
     //取object的值
