@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Linkman;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
@@ -119,7 +120,8 @@ public class AOCHUAN1001Controller {
         if(product == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
-        return ApiResult.success();
+        //linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
+        String products_id = productsService.insertForSupplier(product,tokenService.getToken(request));
+        return ApiResult.success(products_id);
     }
 }
