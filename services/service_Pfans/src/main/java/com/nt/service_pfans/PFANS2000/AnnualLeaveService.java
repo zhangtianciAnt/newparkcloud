@@ -21,9 +21,9 @@ public interface AnnualLeaveService {
      */
     List<AnnualLeave> getDataList(TokenModel tokenModel) throws Exception;
 
-    void insertattendance(int diffday,String staffId) throws Exception;
+    void insertattendance(int diffday,String staffId,String staffNo) throws Exception;
 
-    void insertattendancebp(int diffday,String staffId) throws Exception;
+    void insertattendancebp(int diffday,String staffId,String staffNo) throws Exception;
 
     void insertpunchcard(int diffday) throws Exception;
 

@@ -210,4 +210,9 @@ public class Judgement extends BaseModel {
      */
     @Column(name = "TYPE")
     private String type;
+
+    //add-ws-决裁编号添加
+    @Column(name = "JUDGNUMBERS")
+    private String judgnumbers;
+    //add-ws-决裁编号添加
 }

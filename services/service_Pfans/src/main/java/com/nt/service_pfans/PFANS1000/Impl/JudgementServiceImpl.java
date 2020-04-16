@@ -3,10 +3,12 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Unusedevice;
 import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementMapper;
 import com.nt.service_pfans.PFANS1000.mapper.UnusedeviceMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -85,9 +89,38 @@ public class JudgementServiceImpl implements JudgementService {
     public void insert(JudgementVo judgementVo, TokenModel tokenModel) throws Exception {
         String judgementid = UUID.randomUUID().toString();
         Judgement judgement = new Judgement();
+        //add-ws-根据当前年月日从001开始增加决裁编号
+        List<Judgement> judgementlist = judgementMapper.selectAll();
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String year = sf1.format(date);
+        int number = 0;
+        String Numbers = "";
+        String no = "";
+        if(judgementlist.size()>0){
+            for(Judgement judge :judgementlist){
+                if(judge.getJudgnumbers()!="" && judge.getJudgnumbers()!=null){
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 0,8));
+                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
+                        number = number+1;
+                    }
+                }
+
+            }
+            if(number<=8){
+                no="00"+(number + 1);
+            }else{
+                no="0"+(number + 1);
+            }
+        }else{
+            no = "001";
+        }
+        Numbers = year+ no;
+        //add-ws-根据当前年月日从001开始增加决裁编号
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
         judgement.preInsert(tokenModel);
         judgement.setJudgementid(judgementid);
+        judgement.setJudgnumbers(Numbers);
 //        judgement.setEquipment("0");
         judgementMapper.insertSelective(judgement);
         List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();

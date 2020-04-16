@@ -238,4 +238,10 @@ public class Attendancebp extends BaseModel {
      */
     @Column(name = "TABSENTEEISM")
     private String tabsenteeism;
+
+    /**
+     * 全天实际外出时长
+     */
+    @Column(name = "OUTGOINGHOURS")
+    private String outgoinghours;
 }

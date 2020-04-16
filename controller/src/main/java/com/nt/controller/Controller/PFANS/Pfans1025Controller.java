@@ -53,17 +53,17 @@ public class Pfans1025Controller {
                }
            }
        }
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
-        for(Dictionary item:dictionaryList){
-            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
-
-                av.getAward().setCurrencyposition(item.getValue1());
-            }
-        }
+//        List<Dictionary> dictionaryList = dictionaryService.getForSelect("HT006");
+//        for(Dictionary item:dictionaryList){
+//            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
+//
+//                av.getAward().setCurrencyposition(item.getValue1());
+//            }
+//        }
         List<Dictionary> curList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:curList){
-            if(item.getCode().equals(av.getAward().getCurrencyposition())) {
-                av.getAward().setCurrencyposition(item.getValue1());
+            if(item.getValue1().equals(av.getAward().getCurrencyposition())) {
+                av.getAward().setCurrencyposition(item.getValue4());
             }
         }
 //        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
@@ -75,23 +75,40 @@ public class Pfans1025Controller {
 //        }
         List<Dictionary> valuationList = dictionaryService.getForSelect("HT005");
         for(Dictionary item:valuationList){
-            if(item.getCode().equals(av.getAward().getValuation()) || item.getCode().equals(av.getAward().getIndividual())) {
-
+            if(item.getCode().equals(av.getAward().getValuation())) {
                 av.getAward().setValuation(item.getValue1());
+            }
+            if(item.getCode().equals(av.getAward().getIndividual())) {
                 av.getAward().setIndividual(item.getValue1());
             }
         }
         Map<String, Object> data = new HashMap<>();
-        if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
-            av.getAward().setExtrinsic("有");
-        } else {
-            av.getAward().setExtrinsic("-");
+        //add-ws-只有委托决裁的情况下进行赋值判断
+        if(Integer.valueOf(av.getAward().getMaketype()) == 7){
+            //add-ztc-判断字段值进行赋值
+            //add-ws-判断非空
+            if(av.getAward().getExtrinsic()!= null && av.getAward().getExtrinsic()!= ""){
+                //add-ws-判断非空
+                if (Integer.valueOf(av.getAward().getExtrinsic()) == 1) {
+                    av.getAward().setExtrinsic("有");
+                } else {
+                    av.getAward().setExtrinsic("-");
+                }
+                //add-ws-判断非空
+            }
+            if(av.getAward().getPlan()!= null && av.getAward().getPlan()!= "") {
+                //add-ws-判断非空
+                if (Integer.valueOf(av.getAward().getPlan()) == 1) {
+                    av.getAward().setPlan("外");
+                } else {
+                    av.getAward().setPlan("内");
+                }
+                //add-ws-判断非空
+            }
+            //add-ws-判断非空
+            //add-ztc-判断字段值进行赋值
         }
-        if (Integer.valueOf(av.getAward().getPlan()) == 1) {
-            av.getAward().setPlan("外");
-        } else {
-            av.getAward().setPlan("内");
-        }
+        //add-ws-只有委托决裁的情况下进行赋值判断
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
         data.put("num",nu.getNumbercounts());

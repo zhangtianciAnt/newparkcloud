@@ -73,11 +73,11 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                     String Burl = url.replace("Form","").replace("ToRole","").replace("Point","");
                     List<String> ownerLists = getOwnerList(Burl, tokenModel);
                     if(ownerLists.size() > 0 && "XXXXX".equals(ownerLists.get(0))){
-                        errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
+                        errorResponse(response, ApiResult.failAuth(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
                         return false;
                     }
                 }else{
-                    errorResponse(response, ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
+                    errorResponse(response, ApiResult.failAuth(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
                     return false;
                 }
             }
