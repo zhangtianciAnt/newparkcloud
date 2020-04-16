@@ -18,7 +18,14 @@ public interface ProductsService {
 
     void delete(String id) throws Exception;
 
-
+    /**
+     * @param product
+     * @param tokenModel
+     * @return id
+     * @throws Exception
+     * @author zhaoyoubing
+     */
+    public String insertForSupplier(Products product, TokenModel tokenModel)throws  Exception;
 
 
 }
