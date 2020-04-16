@@ -80,5 +80,6 @@
         select *
         from vehicleinformation
         where ishazardous='0'
+        AND YEAR ( intime )= YEAR (now())
     </select>
 </mapper>
