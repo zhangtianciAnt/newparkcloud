@@ -45,6 +45,18 @@
                     <enabled>false</enabled>
                 </snapshots>
             </repository>
+<!--            <repository>-->
+<!--                <id>central1</id>-->
+<!--                <name>artifact.aspose</name>-->
+<!--                <url>https://artifact.aspose.com/repo/</url>-->
+<!--                <layout>default</layout>-->
+<!--                <releases>-->
+<!--                    <enabled>true</enabled>-->
+<!--                </releases>-->
+<!--                <snapshots>-->
+<!--                    <enabled>false</enabled>-->
+<!--                </snapshots>-->
+<!--            </repository>-->
         </repositories>
     <dependencies>
         <dependency>
@@ -146,6 +158,12 @@
             <groupId>com.github.stuxuhai</groupId>
             <artifactId>jpinyin</artifactId>
             <version>1.1.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.aspose/aspose-cells -->
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-cells</artifactId>
+            <version>20.3</version>
         </dependency>
     </dependencies>
 </project>
