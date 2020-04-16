@@ -17,4 +17,6 @@ public interface LinkmanService {
     void insert(Linkman linkman, TokenModel tokenModel)throws Exception;
 
     void delete(String id) throws Exception;
+
+    void deleteByByBaseinforId(String baseinfor_id) throws Exception;
 }

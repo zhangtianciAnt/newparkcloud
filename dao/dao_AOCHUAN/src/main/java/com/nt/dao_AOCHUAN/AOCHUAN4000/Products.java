@@ -210,4 +210,16 @@ public class Products extends BaseModel {
     @Column(name = "CHANGELOG")
     private String changelog;
 
+    @Column(name = "REGISTRATIONPLAN")
+    private String registrationplan;
+
+    @Column(name = "REGISTRATIONPROGRESS")
+    private String registrationprogress;
+
+    @Column(name = "AUDITPROGRESS")
+    private String auditprogress;
+
+    @Column(name = "APPROVALPROGRESS")
+    private String approvalprogress;
+
 }

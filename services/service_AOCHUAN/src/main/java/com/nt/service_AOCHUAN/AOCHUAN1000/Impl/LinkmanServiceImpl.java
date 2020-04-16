@@ -47,4 +47,9 @@ public class LinkmanServiceImpl implements LinkmanService {
     public void delete(String id) throws Exception {
         linkmanMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public void deleteByByBaseinforId(String baseinfor_id) throws Exception {
+        linkmanMapper.deleteByByBaseinforId(baseinfor_id);
+    }
 }

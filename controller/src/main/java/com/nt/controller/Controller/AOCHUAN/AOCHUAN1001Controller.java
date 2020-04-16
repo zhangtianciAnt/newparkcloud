@@ -96,7 +96,15 @@ public class AOCHUAN1001Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         supplierbaseinforService.delete(id);
+        linkmanService.deleteByByBaseinforId(id);
         return ApiResult.success();
     }
-
+    @RequestMapping(value = "/deleteLinkman",method={RequestMethod.GET})
+    public ApiResult deleteLinkman(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        linkmanService.delete(id);
+        return ApiResult.success();
+    }
 }

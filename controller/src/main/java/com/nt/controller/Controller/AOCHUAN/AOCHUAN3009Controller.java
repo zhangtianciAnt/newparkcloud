@@ -3,6 +3,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Projects;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProjectsAndFollowUpRecord;
 import com.nt.utils.*;
+import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.ProjectsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/projects")
@@ -20,13 +22,15 @@ public class AOCHUAN3009Controller {
     @Autowired
     private ProjectsService projectsSerivce;
 
+    @Autowired
+    private TokenService tokenService;
+
     /**
      * 获取projectschedule表数据
      */
     @RequestMapping(value = "/getProjectList", method = {RequestMethod.POST})
     public ApiResult getProjectList(HttpServletRequest request) throws Exception {
-        Projects projects = new Projects();
-        return ApiResult.success(projectsSerivce.getProjectList(projects));
+        return ApiResult.success(projectsSerivce.getProjectList());
     }
 
     /**
@@ -34,7 +38,6 @@ public class AOCHUAN3009Controller {
      */
     @RequestMapping(value = "/getFollowUpRecordList", method = {RequestMethod.POST})
     public ApiResult getFollowUpRecordList(@RequestBody FollowUpRecord followUpRecord, HttpServletRequest request) throws Exception {
-
         return ApiResult.success(projectsSerivce.getFollowUpRecordList(followUpRecord));
     }
 
@@ -48,17 +51,47 @@ public class AOCHUAN3009Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
-        Projects projects = projectsAndFollowUpRecord.getProjectsForm();
-        List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
+        //随机主键
+        String id;
 
         //INSERT:PROJECTS
-        projectsSerivce.insert(projects);
+        Projects projects = projectsAndFollowUpRecord.getProjectsForm();
+
+        id= UUID.randomUUID().toString();
+        projects.setProjects_id(id);
+
+        //存在Check
+        if (!projectsSerivce.existCheck(projects)) {
+            //唯一性Check
+            if(! projectsSerivce.uniqueCheck(projects)){
+            projectsSerivce.insert(projects, tokenService.getToken(request));
+            }
+            else {
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+        }else{
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
         //INSERT:FOLLOWUPRECORD
+        List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
         for(FollowUpRecord followUpRecord:followUpRecordList){
+
+            id= UUID.randomUUID().toString();
+            followUpRecord.setFollowuprecord_id(id);
             followUpRecord.setProduct_nm(projects.getProduct_nm());
             followUpRecord.setProvider(projects.getProvider());
-            projectsSerivce.insert(followUpRecord);
+
+            //存在Check
+            if (!projectsSerivce.existCheck(followUpRecord)) {
+
+                projectsSerivce.insert(followUpRecord,tokenService.getToken(request));
+            }else{
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
         }
+
+        //正常结束
         return ApiResult.success();
     }
 
@@ -66,15 +99,44 @@ public class AOCHUAN3009Controller {
      * 更新
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Projects projects ,@RequestBody FollowUpRecord followUpRecord, HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody ProjectsAndFollowUpRecord projectsAndFollowUpRecord, HttpServletRequest request) throws Exception {
 
-        if(projects == null || followUpRecord == null){
+        if (projectsAndFollowUpRecord == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+
         //UPDATE:PROJECTS
-        projectsSerivce.update(projects);
-        //UPDATE:FOLLOWUPRECORD
-        projectsSerivce.update(followUpRecord);
+        Projects projects = projectsAndFollowUpRecord.getProjectsForm();
+        //存在Check
+        if (projectsSerivce.existCheck(projects)) {
+            //唯一性Check
+            if(! projectsSerivce.uniqueCheck(projects)) {
+                projectsSerivce.update(projects, tokenService.getToken(request));
+
+            //UPDATE:FOLLOWUPRECORD
+            List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
+            for(FollowUpRecord followUpRecord:followUpRecordList){
+
+                followUpRecord.setProduct_nm(projects.getProduct_nm());
+                followUpRecord.setProvider(projects.getProvider());
+
+                //存在Check
+                if (projectsSerivce.existCheck(followUpRecord)) {
+                    projectsSerivce.update(followUpRecord, tokenService.getToken(request));
+                }else{
+                    String id= UUID.randomUUID().toString();
+                    followUpRecord.setFollowuprecord_id(id);
+                    projectsSerivce.insert(followUpRecord,tokenService.getToken(request));
+                }
+            }
+            }else{
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+        }else{
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        //正常结束
         return ApiResult.success();
     }
 
@@ -82,16 +144,35 @@ public class AOCHUAN3009Controller {
      * 删除
      */
     @RequestMapping(value = "/del", method = {RequestMethod.POST})
-    public ApiResult del(@RequestBody Projects projects, HttpServletRequest request) throws Exception {
+    public ApiResult del(@RequestBody ProjectsAndFollowUpRecord projectsAndFollowUpRecord, HttpServletRequest request) throws Exception {
 
-        if(projects == null){
+        if (projectsAndFollowUpRecord == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        String product_nm = projects.getProduct_nm();
-        String provider = projects.getProvider();
 
-        //DELETE:PROJECTS & FOLLOWUPRECORD
-        projectsSerivce.delete(product_nm,provider);
+        //DELETE:PROJECTS
+        Projects projects = projectsAndFollowUpRecord.getProjectsForm();
+        //存在Check
+        if (projectsSerivce.existCheck(projects)) {
+            projectsSerivce.delete(projects, tokenService.getToken(request));
+
+            //DELETE:FOLLOWUPRECORD
+            List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
+            for(FollowUpRecord followUpRecord:followUpRecordList){
+
+                followUpRecord.setProduct_nm(projects.getProduct_nm());
+                followUpRecord.setProvider(projects.getProvider());
+
+                //存在Check
+                if (projectsSerivce.existCheck(followUpRecord)) {
+                    projectsSerivce.delete(followUpRecord, tokenService.getToken(request));
+                }
+            }
+        }else{
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        //正常结束
         return ApiResult.success();
     }
 }

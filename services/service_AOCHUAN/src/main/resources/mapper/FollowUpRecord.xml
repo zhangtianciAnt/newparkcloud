@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.FollowUpRecordMapper">
+
+    <!--  存在Check  -->
+    <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select * from followuprecord where FOLLOWUPRECORD_ID = #{id} AND  STATUS = #{status}
+    </select>
+
+    <!--  获取记录表数据  -->
+    <select id="getFollowUpRecordList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select
+        fur.FOLLOWUPRECORD_ID,fur.PRODUCT_NM,fur.PROVIDER,
+        fur.SAL_CUSTOMER,fur.SAL_DATE,fur.SAL_EVENT,fur.SAL_CONTENT,
+        fur.PROC_DATE,fur.PROC_ANSWER
+        from followuprecord as fur
+        inner join projects as pro
+        on fur.PRODUCT_NM = pro.PRODUCT_NM and fur.PROVIDER = pro.PROVIDER
+        where fur.PRODUCT_NM =#{product_nm} AND fur.PROVIDER =#{provider} AND fur.STATUS = #{status}
+        order by fur.SAL_DATE
+	</select>
+
+    <!--  记录表删除  -->
+    <update id="deleteFromFollowUpRecordByDoubleKey">
+         UPDATE followuprecord
+		SET STATUS = #{status},
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		 WHERE PRODUCT_NM = #{product_nm}
+        AND PROVIDER = #{provider}
+    </update>
+</mapper>
