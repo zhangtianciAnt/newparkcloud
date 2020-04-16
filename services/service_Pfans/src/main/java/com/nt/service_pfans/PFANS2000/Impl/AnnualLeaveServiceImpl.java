@@ -1410,11 +1410,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Override
     public void insertpunchcard(int diffday) throws Exception {
-        Calendar cal= Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.set(Calendar.DAY_OF_MONTH, diffday);
+        //处理异常和加班数据
+        //上月1号
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTime(new Date());
+        calStart.add(Calendar.MONTH, -1);
+        calStart.set(Calendar.DAY_OF_MONTH, 1);
 
-        punchcardRecordService.methodAttendance_b(cal);
+        //本月末日
+        Calendar calend = Calendar.getInstance();
+        calend.setTime(new Date());
+        int maxCurrentMonthDay=calend.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calend  .set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
+
+        for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1)){
+            punchcardRecordService.methodAttendance_b(item);
+        }
 
     }
 
