@@ -116,6 +116,8 @@ public class RecruitJudgement extends BaseModel {
     private String janpanese_detail;
     private String other3;
     private String remark;
+    private String remark1;
+    private String remark2;
 
     private Date intime;
     private Date expectedtime;
