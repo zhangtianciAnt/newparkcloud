@@ -13,6 +13,7 @@ import com.nt.service_pfans.PFANS5000.ComprojectService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,6 +222,37 @@ public class ComprojectServiceImpl implements ComprojectService {
 //        BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
         Comproject comproject = new Comproject();
         BeanUtils.copyProperties(companyProjectsVo.getComproject(), comproject);
+        //add-ws-项目编码添加
+        List<Comproject> comprojectlist = comProjectMapper.selectAll();
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String year = sf1.format(date);
+        int number = 0;
+        String Numbers = "";
+        String no = "";
+        if(comprojectlist.size()>0){
+            for(Comproject comprotect :comprojectlist){
+                //add-ws-根据当前年月日从001开始增加项目编号
+                if(comprotect.getNumbers()!="" && comprotect.getNumbers()!=null){
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 0,8));
+                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
+                        number = number+1;
+                    }
+                }
+                //add-ws-根据当前年月日从001开始增加项目编号
+            }
+//            String.format("%2d", number + 1).replace(" ", "00");
+            if(number<=8){
+                no="00"+(number + 1);
+            }else{
+                no="0"+(number + 1);
+            }
+        }else{
+            no = "001";
+        }
+        Numbers = year+ no;
+        comproject.setNumbers(Numbers);
+        //add-ws-项目编码添加
         comproject.preInsert(tokenModel);
         comproject.setComproject_id(comprojectid);
         comProjectMapper.insertSelective(comproject);
