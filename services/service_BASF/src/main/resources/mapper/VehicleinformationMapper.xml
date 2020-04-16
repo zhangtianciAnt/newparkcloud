@@ -63,7 +63,15 @@
         where date_format(intime,'%Y-%m-%d') = curdate()
     </select>
 
-    <!--    定时查询车辆（出场时间为空的数据）-->
+    <!--    获取危化品车辆信息-->
+    <select id="getlistinformation" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select *
+        from vehicleinformation
+        where ishazardous='0'
+        AND YEAR ( intime )= YEAR (now())
+    </select>
+
+        <!--    定时查询车辆（出场时间为空的数据）-->
     <select id="getQueryVehiclesRegularlyInfo" resultType="com.nt.dao_BASF.Vehicleinformation">
         select *
         from vehicleinformation

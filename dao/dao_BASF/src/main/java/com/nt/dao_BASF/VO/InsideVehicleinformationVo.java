@@ -38,4 +38,9 @@ public class InsideVehicleinformationVo extends BaseModel {
      * 即时速度
      */
     private String speed;
+
+    /**
+     * 是否是危化品车辆
+     */
+    private String ishazardous;
 }

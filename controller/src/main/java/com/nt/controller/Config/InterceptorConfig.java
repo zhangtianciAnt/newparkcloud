@@ -15,6 +15,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/user/getCurrentUserAccount")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/BASF10702/checkblack")
+                .excludePathPatterns("/BASF10702/create")
         ;
     }
 

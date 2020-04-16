@@ -37,6 +37,11 @@ public interface VehicleinformationServices {
     //获取在场车辆类别统计
     List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception;
 
+    //创建车辆进出厂信息
+    void insert(Vehicleinformation vehicleinformation) throws Exception;
+
     //定时查询车辆信息表（出场时间为空的数据）
     List<Vehicleinformation> getQueryVehiclesRegularlyInfo() throws Exception;
+
+
 }

@@ -122,6 +122,23 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param vehicleinformation
+     * @param
+     * @Method insert
+     * @Author Sun
+     * @Version 1.0
+     * @Description 创建车辆进出厂信息
+     * @Return void
+     * @Date 2019/11/4 18:48
+     */
+    @Override
+    public void insert(Vehicleinformation vehicleinformation) throws Exception {
+        vehicleinformation.preInsert();
+        vehicleinformation.setVehicleinformationid(UUID.randomUUID().toString());
+        vehicleinformationMapper.insert(vehicleinformation);
+    }
+
+    /**
      * @Method getQueryVehiclesRegularlyInfo
      * @Author SKAIXX
      * @Version  1.0
