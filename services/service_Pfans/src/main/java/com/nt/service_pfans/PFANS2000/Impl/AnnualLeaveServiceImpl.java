@@ -481,12 +481,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendanceTask()throws Exception {
-        insertattendance(-1,"");
+        insertattendance(-1,"","");
     }
 
     @Scheduled(cron="0 35 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendancebpTask()throws Exception {
-        insertattendancebp(-1,"");
+        insertattendancebp(-1,"","");
     }
 
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
@@ -512,7 +512,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     @Override
-    public void insertattendance(int diffday,String staffId) throws Exception {
+    public void insertattendance(int diffday,String staffId,String staffNo) throws Exception {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
             //测试接口 GBB add
@@ -526,9 +526,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepun(thisDate);
+            punchcardrecorddetailmapper.deletetepun(thisDate,staffNo);
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepundet(thisDate);
+            punchcardrecorddetailmapper.deletetepundet(thisDate,staffNo);
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
             String url = "";
@@ -691,9 +691,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                             Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                             //个人出门时间
-                            long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
 
                             //region 日志用外出时间合计
                             //12点前出门：1、12点后进门；2、13点后进门
@@ -769,9 +769,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                             {
                                 //个人出门时间
-                                long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                                long from = sf.parse(sf.format(DateStart)).getTime();
                                 //个人出门之后再次进门时间
-                                long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                                long to = sf.parse(sf.format(DateEnd)).getTime();
                                 //时间出门到进门的相差分钟数
                                 Double minutes =Convert.toDouble((to - from)/(1000 * 60));
                                 BigDecimal abnormal = new BigDecimal(minutes);
@@ -781,11 +781,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             else if((startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime()))
                             {
                                 //个人出门时间
-                                long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                                long from = sf.parse(sf.format(DateStart)).getTime();
                                 //个人出门之后再次进门时间
-                                long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                                long to = sf.parse(sf.format(DateEnd)).getTime();
                                 //下班结束时间
-                                long closingtime = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date()).substring(0,10) + " " + closingtime_end + ":00").getTime();
+                                long closingtime = sf.parse(sf.format(DateEnd).substring(0,10) + " " + closingtime_end + ":00").getTime();
                                 if(closingtime < to){
                                     //时间出门到进门的相差分钟数
                                     Double minutes = Convert.toDouble((closingtime - from)/(1000 * 60));
@@ -944,7 +944,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录BP
     @Override
-    public void insertattendancebp(int diffday,String staffId) throws Exception {
+    public void insertattendancebp(int diffday,String staffId,String staffNo) throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -956,9 +956,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         cal.add(Calendar.DAY_OF_MONTH, diffday);
         String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
         //删除昨天的临时数据
-        punchcardrecorddetailbpmapper.deletetepunbp(thisDate);
+        punchcardrecorddetailbpmapper.deletetepunbp(thisDate,staffNo);
         //删除昨天的临时数据
-        punchcardrecorddetailbpmapper.deletetepundetbp(thisDate);
+        punchcardrecorddetailbpmapper.deletetepundetbp(thisDate,staffNo);
         //外驻人员信息
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
@@ -1127,9 +1127,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                         Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                         //个人出门时间
-                        long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                        long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
                         //个人出门之后再次进门时间
-                        long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                        long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
 
                         //region 日志用外出时间合计
                         //12点前出门：1、12点后进门；2、13点后进门
@@ -1205,9 +1205,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                         {
                             //个人出门时间
-                            long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long from = sf.parse(sf.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long to = sf.parse(sf.format(DateEnd)).getTime();
                             //时间出门到进门的相差分钟数
                             Double minutes =Convert.toDouble((to - from)/(1000 * 60));
                             BigDecimal abnormal = new BigDecimal(minutes);
@@ -1217,11 +1217,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else if((startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime()))
                         {
                             //个人出门时间
-                            long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long from = sf.parse(sf.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long to = sf.parse(sf.format(DateEnd)).getTime();
                             //下班结束时间
-                            long closingtime = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date()).substring(0,10) + " " + closingtime_end + ":00").getTime();
+                            long closingtime = sf.parse(sf.format(DateEnd).substring(0,10) + " " + closingtime_end + ":00").getTime();
                             if(closingtime < to){
                                 //时间出门到进门的相差分钟数
                                 Double minutes = Convert.toDouble((closingtime - from)/(1000 * 60));
@@ -1553,9 +1553,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                             Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                             //个人出门时间
-                            long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
 
                             //region 考勤用外出时间合计
                             //个人出门时间小于8点的数据排除
@@ -1580,9 +1580,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                             {
                                 //个人出门时间
-                                long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                                long from = sf.parse(sf.format(DateStart)).getTime();
                                 //个人出门之后再次进门时间
-                                long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                                long to = sf.parse(sf.format(DateEnd)).getTime();
                                 //时间出门到进门的相差分钟数
                                 Double minutes =Convert.toDouble((to - from)/(1000 * 60));
                                 BigDecimal abnormal = new BigDecimal(minutes);
@@ -1592,11 +1592,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             else if((startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime()))
                             {
                                 //个人出门时间
-                                long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                                long from = sf.parse(sf.format(DateStart)).getTime();
                                 //个人出门之后再次进门时间
-                                long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                                long to = sf.parse(sf.format(DateEnd)).getTime();
                                 //下班结束时间
-                                long closingtime = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date()).substring(0,10) + " " + closingtime_end + ":00").getTime();
+                                long closingtime = sf.parse(sf.format(DateEnd).substring(0,10) + " " + closingtime_end + ":00").getTime();
                                 if(closingtime < to){
                                     //时间出门到进门的相差分钟数
                                     Double minutes = Convert.toDouble((closingtime - from)/(1000 * 60));
@@ -1859,9 +1859,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                         Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                         //个人出门时间
-                        long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                        long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
                         //个人出门之后再次进门时间
-                        long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                        long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
 
                         //region 考勤用外出时间合计
                         //个人出门时间小于8点的数据排除
@@ -1886,9 +1886,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                         {
                             //个人出门时间
-                            long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long from = sf.parse(sf.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long to = sf.parse(sf.format(DateEnd)).getTime();
                             //时间出门到进门的相差分钟数
                             Double minutes =Convert.toDouble((to - from)/(1000 * 60));
                             BigDecimal abnormal = new BigDecimal(minutes);
@@ -1898,11 +1898,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else if((startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime()))
                         {
                             //个人出门时间
-                            long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long from = sf.parse(sf.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long to = sf.parse(sf.format(DateEnd)).getTime();
                             //下班结束时间
-                            long closingtime = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date()).substring(0,10) + " " + closingtime_end + ":00").getTime();
+                            long closingtime = sf.parse(sf.format(DateEnd).substring(0,10) + " " + closingtime_end + ":00").getTime();
                             if(closingtime < to){
                                 //时间出门到进门的相差分钟数
                                 Double minutes = Convert.toDouble((closingtime - from)/(1000 * 60));
@@ -2544,9 +2544,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                         Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                         //个人出门时间
-                        long startl = sdhm.parse(sdhm.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                        long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
                         //个人出门之后再次进门时间
-                        long endl = sdhm.parse(sdhm.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                        long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
 
                         //region 日志用外出时间合计
                         //12点前出门：1、12点后进门；2、13点后进门
@@ -2622,9 +2622,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         if((startl < sdhm.parse(lunchbreak_start).getTime() && endl < sdhm.parse(lunchbreak_start).getTime()))
                         {
                             //个人出门时间
-                            long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long from = sf.parse(sf.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long to = sf.parse(sf.format(DateEnd)).getTime();
                             //时间出门到进门的相差分钟数
                             Double minutes =Convert.toDouble((to - from)/(1000 * 60));
                             BigDecimal abnormal = new BigDecimal(minutes);
@@ -2634,11 +2634,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         else if((startl > sdhm.parse(lunchbreak_end).getTime() && endl > sdhm.parse(lunchbreak_end).getTime()))
                         {
                             //个人出门时间
-                            long from = sf.parse(sf.format(punDetaillistevent2.get(i).getPunchcardrecord_date())).getTime();
+                            long from = sf.parse(sf.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long to = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date())).getTime();
+                            long to = sf.parse(sf.format(DateEnd)).getTime();
                             //下班结束时间
-                            long closingtime = sf.parse(sf.format(punDetaillistevent1.get(i + 1).getPunchcardrecord_date()).substring(0,10) + " " + closingtime_end + ":00").getTime();
+                            long closingtime = sf.parse(sf.format(DateEnd).substring(0,10) + " " + closingtime_end + ":00").getTime();
                             if(closingtime < to){
                                 //时间出门到进门的相差分钟数
                                 Double minutes = Convert.toDouble((closingtime - from)/(1000 * 60));

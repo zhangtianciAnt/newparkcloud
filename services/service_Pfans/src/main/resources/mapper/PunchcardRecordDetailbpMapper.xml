@@ -22,10 +22,18 @@
     </select>
 
     <delete id="deletetepunbp">
-        DELETE FROM punchcardrecordbp WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date};
+        DELETE FROM punchcardrecordbp
+        WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
+        <if test="staffNo != null and staffNo != ''" >
+            AND jobnumber = #{staffNo,jdbcType=VARCHAR}
+        </if>
     </delete>
 
     <delete id="deletetepundetbp">
-        DELETE FROM punchcardrecorddetailbp WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date};
+        DELETE FROM punchcardrecorddetailbp
+        WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
+        <if test="staffNo != null and staffNo != ''" >
+            AND jobnumber = #{staffNo,jdbcType=VARCHAR}
+        </if>
     </delete>
 </mapper>

@@ -150,4 +150,12 @@ public class Award extends BaseModel {
      */
     @Column(name = "CONJAPANESE")
     private String conjapanese;
+
+
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
+
 }
