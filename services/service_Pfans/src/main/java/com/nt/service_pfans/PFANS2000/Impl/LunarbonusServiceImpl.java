@@ -158,6 +158,21 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     item.setLunardetail_id("");
                 }
                 LunarAllVo.setLunardetail(detal);
+            }else{
+                if(lunarbonus.getEvaluatenum().equals("PJ104003")){
+                    con.setEvaluatenum("PJ104001");
+
+                    lunars = lunarbonusMapper.select(con);
+                    if (lunars.size() > 0) {
+                        lunardetailCondition.setLunarbonus_id(lunars.get(0).getLunarbonus_id());
+                        detal = lunardetailMapper.select(lunardetailCondition);
+                        for(Lunardetail item:detal){
+                            item.setLunarbonus_id("");
+                            item.setLunardetail_id("");
+                        }
+                        LunarAllVo.setLunardetail(detal);
+                    }
+                }
             }
 //            LunarAllVo.setLunardetail();
         }

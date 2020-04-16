@@ -481,12 +481,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendanceTask()throws Exception {
-        insertattendance(-1,"");
+        insertattendance(-1,"","");
     }
 
     @Scheduled(cron="0 35 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertattendancebpTask()throws Exception {
-        insertattendancebp(-1,"");
+        insertattendancebp(-1,"","");
     }
 
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
@@ -500,7 +500,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录
     @Override
-    public void insertattendance(int diffday,String staffId) throws Exception {
+    public void insertattendance(int diffday,String staffId,String staffNo) throws Exception {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
             //测试接口 GBB add
@@ -514,9 +514,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepun(thisDate);
+            punchcardrecorddetailmapper.deletetepun(thisDate,staffNo);
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepundet(thisDate);
+            punchcardrecorddetailmapper.deletetepundet(thisDate,staffNo);
             //正式
             String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
             String url = "";
@@ -932,7 +932,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //系统服务--取打卡记录BP
     @Override
-    public void insertattendancebp(int diffday,String staffId) throws Exception {
+    public void insertattendancebp(int diffday,String staffId,String staffNo) throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -944,9 +944,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         cal.add(Calendar.DAY_OF_MONTH, diffday);
         String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
         //删除昨天的临时数据
-        punchcardrecorddetailbpmapper.deletetepunbp(thisDate);
+        punchcardrecorddetailbpmapper.deletetepunbp(thisDate,staffNo);
         //删除昨天的临时数据
-        punchcardrecorddetailbpmapper.deletetepundetbp(thisDate);
+        punchcardrecorddetailbpmapper.deletetepundetbp(thisDate,staffNo);
         //外驻人员信息
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
