@@ -1,8 +1,11 @@
 package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Linkman;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
+import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierproductrelationService;
+import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,10 @@ public class AOCHUAN1001Controller {
     private SupplierbaseinforService supplierbaseinforService;
     @Autowired
     private LinkmanService linkmanService;
+    @Autowired
+    private SupplierproductrelationService supplierproductrelationService;
+    @Autowired
+    private ProductsService productsService;
     @Autowired
     private TokenService tokenService;
 
@@ -105,6 +112,14 @@ public class AOCHUAN1001Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         linkmanService.delete(id);
+        return ApiResult.success();
+    }
+    @RequestMapping(value = "/insertProduct",method={RequestMethod.POST})
+    public ApiResult insertProduct(@RequestBody Products product, HttpServletRequest request) throws Exception {
+        if(product == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
         return ApiResult.success();
     }
 }
