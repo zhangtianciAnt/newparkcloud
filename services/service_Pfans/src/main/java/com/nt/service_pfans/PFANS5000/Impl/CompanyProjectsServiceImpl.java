@@ -203,12 +203,14 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             String marchThatFirst_s = tThatYeatThat_s + initial_s_02;
             Date marchThatFirst_d = sdf.parse(marchThatFirst_s);
             for (Projectsystem pro : projectsystemList) {
-                rowundex = rowundex + 1;
-                pro.preInsert(tokenModel);
-                pro.setProjectsystem_id(UUID.randomUUID().toString());
-                pro.setCompanyprojects_id(companyprojectsid);
-                pro.setRowindex(rowundex);
-                projectsystemMapper.insertSelective(pro);
+                if(pro.getName()!=""&&pro.getName()!=null){
+                    rowundex = rowundex + 1;
+                    pro.preInsert(tokenModel);
+                    pro.setProjectsystem_id(UUID.randomUUID().toString());
+                    pro.setCompanyprojects_id(companyprojectsid);
+                    pro.setRowindex(rowundex);
+                    projectsystemMapper.insertSelective(pro);
+                }
                 //活用情报
                 if (pro.getAdmissiontime() != null && pro.getType().equals("1")) {
                     Delegainformation delegainformation = new Delegainformation();
@@ -1019,13 +1021,14 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             Date marchThatFirst_d = sdf.parse(marchThatFirst_s);
             int rowundex = 0;
             for (Projectsystem projectsystem : projectsystemList) {
-                rowundex = rowundex + 1;
-                projectsystem.preInsert(tokenModel);
-                projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
-                projectsystem.setCompanyprojects_id(companyprojectsid);
-                projectsystem.setRowindex(rowundex);
-                projectsystemMapper.insertSelective(projectsystem);
-
+                if(projectsystem.getName()!=""&&projectsystem.getName()!=null) {
+                    rowundex = rowundex + 1;
+                    projectsystem.preInsert(tokenModel);
+                    projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                    projectsystem.setCompanyprojects_id(companyprojectsid);
+                    projectsystem.setRowindex(rowundex);
+                    projectsystemMapper.insertSelective(projectsystem);
+                }
                 //外驻
                 String suppliernameid = projectsystem.getSuppliernameid();
                 Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
