@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -67,7 +69,8 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         int data[] = new int[12];
         for(int i=0;i<getInformatoinlist.size();i++)
         {
-            month=getInformatoinlist.get(i).getIntime().substring(0,10);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") ;
+            month= dateFormat.format(getInformatoinlist.get(i).getIntime());
             month=month.substring(6,7);
             data[Integer.parseInt(month)-1]=data[Integer.parseInt(month)-1]+1;
         }
@@ -193,9 +196,44 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2019/11/4 18:48
      */
     @Override
-    public void insert(Vehicleinformation vehicleinformation) throws Exception {
+    public String insert(Vehicleinformation vehicleinformation) throws Exception {
         vehicleinformation.preInsert();
-        vehicleinformation.setVehicleinformationid(UUID.randomUUID().toString());
+        String vehicleinformationid = UUID.randomUUID().toString();
+        vehicleinformation.setVehicleinformationid(vehicleinformationid);
         vehicleinformationMapper.insert(vehicleinformation);
+        return vehicleinformationid;
+    }
+
+    /**
+     * @param
+     * @param
+     * @Method update
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 更新车辆gps信息
+     * @Return void
+     * @Date 2019/11/14 13：39
+     */
+    @Override
+    public void updategps(Vehicleinformation vehicleinformation) throws Exception {
+        vehicleinformation.setModifyon(new Date());
+        vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
+    }
+
+    /**
+     * @param
+     * @param
+     * @Method update
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 更新车辆信息出场时间
+     * @Return void
+     * @Date 2019/11/14 13：39
+     */
+    @Override
+    public void updateouttime(Vehicleinformation vehicleinformation) throws Exception {
+        vehicleinformation.setModifyon(new Date());
+        vehicleinformation.setOuttime(new Date());
+        vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
     }
 }

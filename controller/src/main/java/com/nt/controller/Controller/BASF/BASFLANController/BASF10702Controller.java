@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * @ProjectName: BASF应急平台
@@ -86,7 +87,7 @@ public class BASF10702Controller {
     }
 
     /**
-     * @param vehicleinformation
+     * @param
      * @param
      * @Method create
      * @Author Sun
@@ -96,14 +97,57 @@ public class BASF10702Controller {
      * @Date 2019/11/4 19:39
      */
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(String vehiclenumber,String driver) throws Exception {
+    public ApiResult create(String vehiclenumber,String driver,String driverid,String vehicletype,String destination,String ishazardous) throws Exception {
 
         Vehicleinformation vehicleinformation = new Vehicleinformation();
         vehicleinformation.setVehiclenumber(vehiclenumber);
         vehicleinformation.setDriver(driver);
-        vehicleinformationServices.insert(vehicleinformation);
+        vehicleinformation.setDriverid(driverid);
+        vehicleinformation.setVehicletype(vehicletype);
+        vehicleinformation.setDestination(destination);
+        ishazardous = ishazardous.equals("是")?"0":"1";
+        vehicleinformation.setIshazardous(ishazardous);
+        vehicleinformation.setIntime(new Date());
+        return ApiResult.success(vehicleinformationServices.insert(vehicleinformation));
+    }
+
+    /**
+     * @param
+     * @param
+     * @Method updategps
+     * @Author Sun
+     * @Version 1.0
+     * @Description 更新车辆信息中的GPS
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/4 19:39
+     */
+    @RequestMapping(value = "/updategps", method = {RequestMethod.POST})
+    public ApiResult updategps(String vehicleinformationid,String gps) throws Exception {
+
+        Vehicleinformation vehicleinformation = new Vehicleinformation();
+        vehicleinformation.setVehicleinformationid(vehicleinformationid);
+        vehicleinformation.setGps(gps);
+        vehicleinformationServices.updategps(vehicleinformation);
+        return ApiResult.success();
+    }
 
 
+    /**
+     * @param
+     * @param
+     * @Method updateouttime
+     * @Author Sun
+     * @Version 1.0
+     * @Description 更新车辆信息中出场时间
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/4 19:39
+     */
+    @RequestMapping(value = "/updateouttime", method = {RequestMethod.POST})
+    public ApiResult updateouttime(String vehicleinformationid) throws Exception {
+
+        Vehicleinformation vehicleinformation = new Vehicleinformation();
+        vehicleinformation.setVehicleinformationid(vehicleinformationid);
+        vehicleinformationServices.updateouttime(vehicleinformation);
         return ApiResult.success();
     }
 }

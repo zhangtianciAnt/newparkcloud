@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @ProjectName: BASF应急平台
@@ -88,16 +89,29 @@ public class Vehicleinformation extends BaseModel {
     /**
      *入厂时间
      */
-    private String intime;
+    private Date intime;
 
     /**
      *出厂时间
      */
-    private String outtime;
+    private Date outtime;
 
     /**
      *目的地
      */
     private String destination;
+
+    /**
+     *是否是危险品车辆
+     * 0：是  1：否
+     */
+    private String ishazardous;
+
+    /**
+     *GPS
+     */
+    private String gps;
+
+
 
 }
