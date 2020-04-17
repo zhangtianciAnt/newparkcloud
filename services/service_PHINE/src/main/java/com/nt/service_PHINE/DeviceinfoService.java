@@ -3,8 +3,10 @@ package com.nt.service_PHINE;
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.utils.ApiResult;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -17,6 +19,9 @@ import java.util.List;
  * @Version: 1.0
  */
 public interface DeviceinfoService {
+
+    // 根据设备编号获取服务地址
+    URL getWsdlLocation(String deviceNo) throws LogicalException;
 
     // 设备一览画面获取设备列表
     List<DeviceListVo> getDeviceInfoList();

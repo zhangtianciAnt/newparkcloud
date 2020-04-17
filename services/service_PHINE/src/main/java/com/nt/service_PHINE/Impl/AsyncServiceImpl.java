@@ -7,8 +7,10 @@ import com.nt.service_PHINE.AsyncService;
 import com.nt.service_PHINE.DeviceService.ConfigStatus;
 import com.nt.service_PHINE.DeviceService.DeviceService;
 import com.nt.service_PHINE.DeviceService.IDeviceService;
+import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.mapper.DeviceinfoMapper;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ import java.util.stream.Collectors;
 public class AsyncServiceImpl implements AsyncService {
 
     private final DeviceinfoMapper deviceinfoMapper;
+
+    @Autowired
+    private DeviceinfoService deviceinfoService;
 
     // 全局变量：存储FpgaConfig进度
 //    private static Map<String, List<Fileinfo>> configProgressMap = new HashMap<String, List<Fileinfo>>();
@@ -47,9 +52,11 @@ public class AsyncServiceImpl implements AsyncService {
 
     @Override
     @Async
-    public Future<List<Operationdetail>> doLogicFileLoad(List<Fileinfo> fileinfoList, TokenModel tokenModel, String operationId, URL WSDL_LOCATION, QName SERVICE_NAME, Map<String, List<Fileinfo>> configProgressMap) {
+    public Future<List<Operationdetail>> doLogicFileLoad(List<Fileinfo> fileinfoList, TokenModel tokenModel, String operationId, QName SERVICE_NAME, Map<String, List<Fileinfo>> configProgressMap) throws Exception {
         // 设备通信-->逻辑加载处理
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        // 获取当前设备服务地址
+        URL wsdlLocation = deviceinfoService.getWsdlLocation(deviceinfoMapper.selectByPrimaryKey(fileinfoList.get(0).getDeviceid()).getDeviceid());
+        DeviceService ss = new DeviceService(wsdlLocation, SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         Boolean result = false;     // 加载操作执行结果
 
@@ -113,7 +120,6 @@ public class AsyncServiceImpl implements AsyncService {
                     configurationtype = "FPGA加载";
                     break;
                 case "FMC":         // 执行FMC加载
-                    // Todo By Skaixx At 2020/4/17 :  FMC电压加载
                     result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
                     configurationtype = "FMC加载";
                     break;

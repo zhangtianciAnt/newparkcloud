@@ -101,7 +101,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Date 2020/4/17 11:46
      * @Param [deviceNo] 设备编号
      **/
-    private URL getWsdlLocation(String deviceNo) throws LogicalException {
+    @Override
+    public URL getWsdlLocation(String deviceNo) throws LogicalException {
         QName routerServiceName = new QName("http://tempuri.org/", "RouterService");
         try {
             RouterService ss = new RouterService(RouterService.WSDL_LOCATION, routerServiceName);
@@ -598,14 +599,16 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         }
         configProgressMap.put(tokenModel.getToken(), fileinfoList);
         // 循环Map分组
-        fileInfoMap.forEach((key, value) -> {
+        for (Map.Entry<String, List<Fileinfo>> entry : fileInfoMap.entrySet()) {
+            String k = entry.getKey();
+            List<Fileinfo> v = entry.getValue();
             // 判断当前设备是否已连接
-            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(key) && !s.getConnstatus().equals("已连接"))) {
-                return;
+            if (currentConnStatusVoList.stream().anyMatch(s -> s.getId().equals(k) && !s.getConnstatus().equals("已连接"))) {
+                continue;
             }
-            configFileCnt.addAndGet(value.size());
-            asyncReturnMap.put(key, asyncService.doLogicFileLoad(value, tokenModel, operationId, WSDL_LOCATION, SERVICE_NAME, configProgressMap));
-        });
+            configFileCnt.addAndGet(v.size());
+            asyncReturnMap.put(k, asyncService.doLogicFileLoad(v, tokenModel, operationId, SERVICE_NAME, configProgressMap));
+        }
 
         while (true) {
             AtomicReference<Boolean> temp = new AtomicReference<>(false);
@@ -821,6 +824,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
                 interConnProgress = new HashMap<>();
             }
             // 调用WCF接口：获取系统互联检测进度
+            // Todo By Skaixx At 2020/4/17 :  动态获取服务地址
             DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
             IDeviceService port = ss.getBasicHttpBindingIDeviceService();
             InterConnTestState interConnTestState = new InterConnTestState();
