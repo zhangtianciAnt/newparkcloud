@@ -98,4 +98,8 @@ public class WebSocketVo {
     //获取危化品车辆列表
     private List<VehicleinformationVo> dangerousgoodsList = new ArrayList<>();
     // endregion
+
+    //道路占用/临时封闭区域列表
+    private List<Application> roadClosed=new ArrayList<>();
+
 }

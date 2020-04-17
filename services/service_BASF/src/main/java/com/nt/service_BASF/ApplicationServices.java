@@ -32,4 +32,7 @@ public interface ApplicationServices {
     //获取详情
     Application one(String applicationid) throws Exception;
 
+    //前端大屏道路占用/临时封闭区域列表（审批通过的并且使用时间≤系统时间≤归还时间）
+    List<Application> roadClosed() throws Exception;
+
 }

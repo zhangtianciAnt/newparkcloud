@@ -65,5 +65,19 @@
         a.applicationtime &lt;= CURDATE() AND
         a.returntime &gt;= CURDATE()
     </select>
+
+
+    <select id="roadClosed" resultType="com.nt.dao_BASF.Application">
+SELECT
+	*
+FROM
+	application AS a
+WHERE
+	a.`STATUS` = '0'
+	AND a.applicationstatus = 'BC012002'
+	AND a.applicationtype = '03702'
+	AND DATEDIFF(a.returntime,CURRENT_DATE ())>=0
+	AND DATEDIFF(CURRENT_DATE (),a.applicationtime)>=0
+    </select>
 </mapper>
 
