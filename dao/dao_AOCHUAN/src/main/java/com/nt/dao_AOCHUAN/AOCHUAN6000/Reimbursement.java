@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class Reimbursement extends BaseModel {
 
     //申请时间
     @Column(name = "APPLICATION_DATE")
-    private String application_date;
+    private Date application_date;
 
     //费用类型
     @Column(name = "CHARGE_TYPE")
@@ -53,8 +54,12 @@ public class Reimbursement extends BaseModel {
     private String accompanying_person;
 
     //出差日期
-    @Column(name = "BUSINESS_TRIP_DATE")
-    private String business_trip_date;
+    @Column(name = "BUSINESS_TRIP_DATE_FROM")
+    private Date business_trip_date_from;
+
+    //出差日期
+    @Column(name = "BUSINESS_TRIP_DATE_TO")
+    private Date business_trip_date_to;
 
     //行程
     @Column(name = "JOURNEY")

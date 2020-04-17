@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -56,12 +57,17 @@ public class AOCHUAN6006Controller {
         //随机主键
         String id;
         String number;
+        Date date = new Date();
+        SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMdd" );
 
         //INSERT:PROJECTS
         Reimbursement reimbursement = reimAndReimDetail.getReimForm();
 
         id= UUID.randomUUID().toString();
+        number ="BX"+ sdf.format(date) + UUID.randomUUID().toString().substring(0,6);
+
         reimbursement.setReimbursement_id(id);
+        reimbursement.setReimbursement_no(number);
 
         //存在Check
         if (!reimbursementService.existCheck(reimbursement)) {
@@ -81,15 +87,13 @@ public class AOCHUAN6006Controller {
         for(ReimbursementDetail reimbursementDetail:reimDetailList){
 
             id= UUID.randomUUID().toString();
-            Date date = new Date();
-            number ="BX"+ date.toString() + UUID.randomUUID().toString();
-
             reimbursementDetail.setReimbursement_detail_id(id);
             reimbursementDetail.setReimbursement_no(reimbursement.getReimbursement_no());
 
             //存在Check
             if (!reimbursementService.existCheck(reimbursementDetail)) {
 
+                reimbursementDetail.setReimbursement_no(number);
                 reimbursementService.insert(reimbursementDetail,tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));

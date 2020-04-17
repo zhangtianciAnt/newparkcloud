@@ -1,7 +1,5 @@
 package com.nt.dao_AOCHUAN.AOCHUAN6000.Vo;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Projects;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail;
 import lombok.AllArgsConstructor;
