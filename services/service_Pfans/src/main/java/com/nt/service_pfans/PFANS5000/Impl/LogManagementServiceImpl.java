@@ -12,10 +12,12 @@ import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -62,6 +64,9 @@ public class LogManagementServiceImpl implements LogManagementService {
     @Autowired
     private ToDoNoticeService toDoNoticeService;
 
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
+
     @Override
     public void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
         logmanagement.preInsert(tokenModel);
@@ -91,6 +96,25 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
     @Override
     public List<LogmanagementConfirmVo> getProjectList(String StrFlg,String strDate,TokenModel tokenModel) throws Exception {
+        //获取查看人的groupid
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        String Groupid = "";
+        if (customerInfo != null) {
+            Groupid = customerInfo.getUserinfo().getGroupid();
+        }
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setGroup_id(Groupid);
+        //groupid下所有外协人员
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        if(expatriatesinforList.size() > 0){
+            List<String> ownerList = new ArrayList<String>();
+            for(Expatriatesinfor ex : expatriatesinforList){
+                //ownerList.add(ex.getAccount());
+                tokenModel.getOwnerList().add(ex.getAccount());
+            }
+        }
         List<LogmanagementConfirmVo> Result = new ArrayList<LogmanagementConfirmVo>();
         if(StrFlg.equals("1")){
             Result = logmanagementmapper.getProjectList(tokenModel.getOwnerList(),tokenModel.getUserId());
@@ -98,7 +122,6 @@ public class LogManagementServiceImpl implements LogManagementService {
         else{
             Result = logmanagementmapper.getunProjectList(strDate,tokenModel.getOwnerList());
         }
-
         return Result;
     }
 
