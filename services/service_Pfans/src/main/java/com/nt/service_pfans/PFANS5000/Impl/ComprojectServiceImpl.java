@@ -59,7 +59,7 @@ public class ComprojectServiceImpl implements ComprojectService {
 
     @Override
     public List<Comproject> list(Comproject comproject) throws Exception {
-        return comProjectMapper.select(comproject);
+        return comProjectMapper.select(comproject).stream().filter(item -> (!"9".equals(item.getStatus()))).collect(Collectors.toList());
     }
 
     @Override
