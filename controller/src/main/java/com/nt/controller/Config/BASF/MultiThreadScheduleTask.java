@@ -3,9 +3,11 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.PersonnelPermissions;
+import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
@@ -85,6 +87,9 @@ public class MultiThreadScheduleTask {
 
     @Autowired
     private PersonnelPermissionsServices personnelPermissionsServices;
+
+    @Autowired
+    private DeviceinformationMapper deviceinformationMapper;
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
@@ -335,6 +340,22 @@ public class MultiThreadScheduleTask {
         webSocketVo.setVehicleinformationList(vehicleinformationServices.getDailyVehicleInfo());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    /**
+     * @return
+     * @Method BASF90600_GetQueryVehiclesRegularlyInfo
+     * @Author SKAIXX
+     * @Description ERC定时查询车辆信息表（出场时间为空的数据）
+     * @Date 2020/04/13 14:56
+     * @Param
+     **/
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90600_GetQueryVehiclesRegularlyInfo() throws Exception {
+        // 定时查询车辆信息表（出场时间为空的数据）
+        webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationServices.getQueryVehiclesRegularlyInfo());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
     // endregion
 
     // region BASF90200 ERC-火灾消防
@@ -398,6 +419,14 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASFSQL60001_GetSelectapbcard() throws Exception {
+        //在厂人员列表
+        webSocketVo.setSelectapbcardList(sqluserinfoservices.selectapbcard());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASFSQL60001_GetSelectapbid() throws Exception {
         //在厂人员列表
         webSocketVo.setSelectapbcardList(sqluserinfoservices.selectapbcard());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
@@ -488,5 +517,30 @@ public class MultiThreadScheduleTask {
         webSocketVo.setDangerousgoodsList(vehicleinformationServices.getlistinformation());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF10105_GetDeviceAndSqlUserinfoVoList() throws Exception {
+        DeviceAndSqlUserinfoVo deviceAndSqlUserinfoVo = new DeviceAndSqlUserinfoVo();
+        List<DeviceAndSqlUserinfoVo> deviceAndSqlUserinfoVoList = new ArrayList<>();
+
+        Deviceinformation deviceinformation = new Deviceinformation();
+        deviceinformation.setDevicetype("BC004003");
+        List<Deviceinformation> deviceinformationList = deviceinformationMapper.select(deviceinformation);
+        for (int i = 0; i < deviceinformationList.size(); i++) {
+
+//            for (int j = 0; j < departlist.size(); j++) {
+//                if (deviceinformationList.get(i).getDeviceno() == departlist.get(j).getApbid()) {
+            List<SqlAPBCardHolder> departlist = sqlUserInfoMapper.selectapbid(deviceinformationList.get(i).getDeviceno());
+            if (departlist.size() > 0) {
+                deviceAndSqlUserinfoVo.setDeviceinformation(deviceinformationList.get(i));
+                deviceAndSqlUserinfoVo.setSqlUserInfoCnt(departlist.size());
+                deviceAndSqlUserinfoVoList.add(deviceAndSqlUserinfoVo);
+            }
+        }
+        webSocketVo.setDeviceAndSqlUserinfoVoList(deviceAndSqlUserinfoVoList);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
     // endregion
 }

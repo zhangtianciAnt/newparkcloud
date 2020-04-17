@@ -43,17 +43,17 @@ public class WebSocketVo {
     // BASF90600 车辆定位模块 在场车辆信息一览Vo
     private List<InsideVehicleinformationVo> insideVehicleinformationVoList = new ArrayList<>();
 
-    // BASF90600 车辆定位模块 本月车辆出入统计Vo
+    // BASF90600 车辆定位模块 车辆出入统计Vo
     private List<VehicleAccessStatisticsVo> vehicleAccessStatisticsVoList = new ArrayList<>();
-
-    // BASF90600 车辆定位模块 本周车辆出入统计Vo
-    private List<VehicleAccessStatisticsVo> vehicleWeekAccessStatisticsVoList = new ArrayList<>();
 
     // BASF90600 车辆定位模块 当日车辆入场信息Vo
     private List<Vehicleinformation> vehicleinformationList = new ArrayList<>();
 
     // BASF90600 车辆定位模块 在场车辆类别统计Vo
     private List<InsideVehicleTypeVo> insideVehicleTypeVoList = new ArrayList<>();
+
+    // BASF90600 定时查询车辆信息表（出场时间为空的数据）
+    private List<Vehicleinformation> QueryVehiclesRegularlyInfoList = new ArrayList<>();
     // endregion
 
     // region BASF90200 火灾消防模块
@@ -70,6 +70,9 @@ public class WebSocketVo {
 
     //接收机柜传过来的报警信息
     private List<DeviceinformationVo> deviceinformationList = new ArrayList<>();
+
+    //紧急集合点
+    private List<DeviceAndSqlUserinfoVo> deviceAndSqlUserinfoVoList = new ArrayList<>();
 
     //应急预案列表
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();
@@ -95,7 +98,5 @@ public class WebSocketVo {
 
     // BASF90921 高风险作业清单
     private List<Highriskarea> highriskareaList = new ArrayList<>();
-    //获取危化品车辆列表
-    private List<VehicleinformationVo> dangerousgoodsList = new ArrayList<>();
     // endregion
 }

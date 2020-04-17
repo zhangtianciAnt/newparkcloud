@@ -17,4 +17,6 @@ public interface SqlUserInfoServices {
     List<SqlAPBCardHolder> selectapbcardholder() throws Exception;
 
     List<SqlViewDepartment> selectdepartment() throws Exception;
+
+    List<SqlAPBCardHolder> selectapbid(String APBID) throws Exception;
 }
