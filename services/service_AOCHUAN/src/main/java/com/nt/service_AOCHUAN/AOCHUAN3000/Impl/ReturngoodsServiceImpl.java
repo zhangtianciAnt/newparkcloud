@@ -43,6 +43,9 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
     public void insert(Returngoods returngoods, TokenModel tokenModel) throws Exception {
         returngoods.preInsert(tokenModel);
         returngoods.setReturngoods_id(UUID.randomUUID().toString());
+        if(returngoods.getType() == null){
+            returngoods.setType(0);
+        }
         if(returngoods.isNotice()){
             ToDoNotice(tokenModel,returngoods);
         }
