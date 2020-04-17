@@ -1,5 +1,6 @@
 package com.nt.dao_AOCHUAN.AOCHUAN6000;
 
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "reimbursement")
-public class Reimbursement {
+public class Reimbursement extends BaseModel {
     /**
      *
      */
