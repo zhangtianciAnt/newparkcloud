@@ -67,4 +67,11 @@ public class PurchaseApply extends BaseModel {
     @Column(name = "PURCHASENUMBERS")
     private String purchasenumbers;
 //add-ws-4/17-费用编号添加
+//add-ws-4/17-摘要添加
+    /**
+     * 费用编号
+     */
+    @Column(name = "REMARKS")
+    private String remarks;
+//add-ws-4/17-费用编号添加
 }
