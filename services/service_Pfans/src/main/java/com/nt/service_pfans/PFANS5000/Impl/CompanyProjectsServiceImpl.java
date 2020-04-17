@@ -15,6 +15,7 @@ import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -167,7 +168,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if (projectsystemList != null && projectsystemList.size() > 0) {
             Projectsystem projectsystem = new Projectsystem();
             projectsystem.setCompanyprojects_id(companyprojectsid);
-            projectsystemMapper.delete(projectsystem);
+            List<Projectsystem> ps = projectsystemMapper.select(projectsystem);
+            for(Projectsystem item:ps){
+                item.setStatus(AuthConstants.DEL_FLAG_DELETE);
+                projectsystemMapper.updateByPrimaryKey(item);
+            }
             Delegainformation delegainformation1 = new Delegainformation();
             delegainformation1.setCompanyprojects_id(companyprojectsid);
             delegainformationMapper.delete(delegainformation1);
