@@ -612,7 +612,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //卡号去重得到打卡总人数
                 List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
                 punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
-                String books[] = new String[punDetaillistCount.size() + 1];
+                //String books[] = new String[punDetaillistCount.size() + 1];
                 int x = 0;
                 for(PunchcardRecordDetail count : punDetaillistCount){
                     x = x + 1;
@@ -909,55 +909,55 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);
 
-                        //创建考勤数据
-                        Attendance attendance = new Attendance();
-                        attendance.setUser_id(customerInfo.getUserid());
-                        attendance.setDates(sfymd.parse(recordTime));
-
-                        attendance.setNormal("8");
-                        // 设置统计外出的时间
-                        attendance.setAbsenteeism(minute.toString());
-                        attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                        attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                        attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-
-                        attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
-                        attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
-                        attendance.setAttendanceid(UUID.randomUUID().toString());
-                        attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                        attendance.preInsert(tokenModel);
-                        attendanceMapper.insert(attendance);
-                        books[x] = customerInfo.getUserid();
+//                        //创建考勤数据
+//                        Attendance attendance = new Attendance();
+//                        attendance.setUser_id(customerInfo.getUserid());
+//                        attendance.setDates(sfymd.parse(recordTime));
+//
+//                        attendance.setNormal("8");
+//                        // 设置统计外出的时间
+//                        attendance.setAbsenteeism(minute.toString());
+//                        attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+//                        attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+//                        attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+//
+//                        attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
+//                        attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
+//                        attendance.setAttendanceid(UUID.randomUUID().toString());
+//                        attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+//                        attendance.preInsert(tokenModel);
+//                        attendanceMapper.insert(attendance);
+                        //books[x] = customerInfo.getUserid();
                     }
                     //添加打卡记录end
                 }
-                Query query_userid = new Query();
-                query_userid.addCriteria(Criteria.where("userid").nin(books));
-                List<CustomerInfo> customerInfoList = mongoTemplate.find(query_userid, CustomerInfo.class);
-                for (CustomerInfo customerInfo : customerInfoList)
-                {
-                    //插入没有打卡记录的员工的考勤
-                    Attendance attendance = new Attendance();
-                    attendance.setAbsenteeism("8");
-                    attendance.setNormal("0");
-                    attendance.setAttendanceid(UUID.randomUUID().toString());
-                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                    attendance.setUser_id(customerInfo.getUserid());
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(new Date());
-                    calendar.add(Calendar.DAY_OF_YEAR, diffday);
-                    attendance.setDates(calendar.getTime());
-                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                    tokenModel.setUserId(attendance.getUser_id());
-                    tokenModel.setExpireDate(new Date());
-                    attendance.preInsert(tokenModel);
-                    attendanceMapper.insert(attendance);
-                }
-                //处理异常和加班数据
+//                Query query_userid = new Query();
+//                query_userid.addCriteria(Criteria.where("userid").nin(books));
+//                List<CustomerInfo> customerInfoList = mongoTemplate.find(query_userid, CustomerInfo.class);
+//                for (CustomerInfo customerInfo : customerInfoList)
+//                {
+//                    //插入没有打卡记录的员工的考勤
+//                    Attendance attendance = new Attendance();
+//                    attendance.setAbsenteeism("8");
+//                    attendance.setNormal("0");
+//                    attendance.setAttendanceid(UUID.randomUUID().toString());
+//                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+//                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+//                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+//                    attendance.setUser_id(customerInfo.getUserid());
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.setTime(new Date());
+//                    calendar.add(Calendar.DAY_OF_YEAR, diffday);
+//                    attendance.setDates(calendar.getTime());
+//                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+//                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+//                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+//                    tokenModel.setUserId(attendance.getUser_id());
+//                    tokenModel.setExpireDate(new Date());
+//                    attendance.preInsert(tokenModel);
+//                    attendanceMapper.insert(attendance);
+//                }
+//                //处理异常和加班数据
 //                punchcardRecordService.methodAttendance_b(diffday);
             }
     }
@@ -1526,8 +1526,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //卡号去重得到打卡总人数
                 List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
                 punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
-
-                String books[] = new String[punDetaillistCount.size() + 1];
                 int x = 0;
                 for(PunchcardRecordDetail count : punDetaillistCount){
                     x = x + 1;
@@ -2118,9 +2116,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
             //员工姓名
             String staffName = punchcard.getStaffName();
-//            if(!staffName.equals("张建波")){
-//                continue;
-//            }
             //员工部门
             String departmentName = punchcard.getDepartmentName();
             //门号
@@ -2169,7 +2164,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //卡号去重得到打卡总人数
             List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
-            String books[] = new String[punDetaillistCount.size() + 1];
+            //String books[] = new String[punDetaillistCount.size() + 1];
             int x = 0;
             for(PunchcardRecordDetail count : punDetaillistCount){
                 x = x + 1;
@@ -2466,25 +2461,25 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.preInsert(tokenModel);
                     punchcardrecordMapper.insert(punchcardrecord);
 
-                    //创建考勤数据
-                    Attendance attendance = new Attendance();
-                    attendance.setUser_id(customerInfo.getUserid());
-                    attendance.setDates(sfymd.parse(recordTime));
-
-                    attendance.setNormal("8");
-                    // 设置统计外出的时间
-                    attendance.setAbsenteeism(minute.toString());
-                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-
-                    attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
-                    attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
-                    attendance.setAttendanceid(UUID.randomUUID().toString());
-                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                    attendance.preInsert(tokenModel);
-                    attendanceMapper.insert(attendance);
-                    books[x] = customerInfo.getUserid();
+//                    //创建考勤数据
+//                    Attendance attendance = new Attendance();
+//                    attendance.setUser_id(customerInfo.getUserid());
+//                    attendance.setDates(sfymd.parse(recordTime));
+//
+//                    attendance.setNormal("8");
+//                    // 设置统计外出的时间
+//                    attendance.setAbsenteeism(minute.toString());
+//                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+//                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+//                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+//
+//                    attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
+//                    attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
+//                    attendance.setAttendanceid(UUID.randomUUID().toString());
+//                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+//                    attendance.preInsert(tokenModel);
+//                    attendanceMapper.insert(attendance);
+                    //books[x] = customerInfo.getUserid();
                 }
                 //添加打卡记录end
             }
