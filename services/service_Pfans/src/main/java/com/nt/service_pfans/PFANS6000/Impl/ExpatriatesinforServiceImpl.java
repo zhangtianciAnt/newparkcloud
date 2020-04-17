@@ -156,6 +156,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 }
             }
         }
+        expatriatesinfor.preUpdate(tokenModel);
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
             String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
