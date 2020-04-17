@@ -29,22 +29,34 @@
     </resultMap>
     <!--    获取在场车辆信息一览-->
     <select id="getInsideList" resultType="com.nt.dao_BASF.VO.InsideVehicleinformationVo">
-        select a.vehiclenumber,a.transporter,a.intime,a.goodsname, a.destination,b.speed
+        select a.vehiclenumber,a.transporter,a.intime,a.goodsname, a.destination,b.speed,a.ishazardous
         from vehicleinformation a
 				INNER JOIN vehicletrajectory b
 				on a.vehicleinformationid = b.vehicleinformationid
         where ifnull(outtime,'') = ''
     </select>
 
-    <!--    获取车辆出入统计-->
+    <!--    获取本月车辆出入统计-->
     <select id="getAccessStatistics" resultType="com.nt.dao_BASF.VO.VehicleAccessStatisticsVo">
         select * from (
         select count(*) as cnt,date_format(intime,'%Y-%m-%d') as date
         from vehicleinformation
         where outtime is not NULL
+		and DATE_FORMAT(intime,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         group by date_format(intime,'%Y-%m-%d')
-        order by date desc
-        limit 30) as tmp
+        order by date desc) as tmp
+        order by tmp.date asc
+    </select>
+
+    <!--    获取本周车辆出入统计-->
+    <select id="getWeekAccessStatistics" resultType="com.nt.dao_BASF.VO.VehicleAccessStatisticsVo">
+        select * from (
+        select count(*) as cnt,date_format(intime,'%Y-%m-%d') as date
+        from vehicleinformation
+        where outtime is not NULL
+		and YEARWEEK(date_format(intime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        group by date_format(intime,'%Y-%m-%d')
+        order by date desc) as tmp
         order by tmp.date asc
     </select>
 
@@ -61,6 +73,14 @@
         select *
         from vehicleinformation
         where date_format(intime,'%Y-%m-%d') = curdate()
+    </select>
+
+    <!--    获取危化品车辆信息-->
+    <select id="getlistinformation" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select *
+        from vehicleinformation
+        where ishazardous='0'
+        AND YEAR ( intime )= YEAR (now())
     </select>
 
     <!--    定时查询车辆（出场时间为空的数据）-->

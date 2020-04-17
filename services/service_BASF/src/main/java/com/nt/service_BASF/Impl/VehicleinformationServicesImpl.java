@@ -3,6 +3,7 @@ package com.nt.service_BASF.Impl;
 import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
+import com.nt.dao_BASF.VO.VehicleinformationVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_BASF.mapper.VehicleinformationMapper;
@@ -13,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -35,7 +35,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     private VehicleinformationMapper vehicleinformationMapper;
 
     /**
-     * @param Vehicleinformation
+     * @param
      * @Method list
      * @Author Wxz
      * @Version 1.0
@@ -49,6 +49,39 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         return vehicleinformationMapper.select(vehicleinformation);
     }
 
+    /**
+     * @param
+     * @Method getlistinformation
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 获取车辆信息列表(危化品车辆数用)
+     * @Return java.util.List<VehicleinformationVo>
+     * @Date 2019/11/14 13：27
+     */
+    @Override
+    public List<VehicleinformationVo> getlistinformation() throws Exception {
+        List<Vehicleinformation> getInformatoinlist =vehicleinformationMapper.getlistinformation();
+        List<VehicleinformationVo> infoList =new ArrayList<>();
+        VehicleinformationVo vehicleinformationVo;
+        String month ="";
+        int data[] = new int[12];
+        for(int i=0;i<getInformatoinlist.size();i++)
+        {
+            month=getInformatoinlist.get(i).getIntime().substring(0,10);
+            month=month.substring(6,7);
+            data[Integer.parseInt(month)-1]=data[Integer.parseInt(month)-1]+1;
+        }
+        for(int j=0;j<data.length;j++)
+        {
+            int m =1;
+            vehicleinformationVo =new VehicleinformationVo();
+            vehicleinformationVo.setCnt(data[j]);
+            vehicleinformationVo.setDate(String.valueOf(m+j) + "月");
+            infoList.add(vehicleinformationVo);
+        }
+
+        return infoList;
+    }
     /**
      * @param vehicleinformation
      * @param tokenModel
@@ -83,7 +116,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Method getAccessStatistics
      * @Author SKAIXX
      * @Version  1.0
-     * @Description 获取车辆出入统计
+     * @Description 获取本月车辆出入统计
      * @param
      * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
      * @Date 2019/12/17 11:35
@@ -91,6 +124,20 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception {
         return vehicleinformationMapper.getAccessStatistics();
+    }
+
+    /**
+     * @Method getAccessStatistics
+     * @Author GJ
+     * @Version  1.0
+     * @Description 获取本周车辆出入统计
+     * @param
+     * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
+     * @Date 2020/04/14 10:14
+     */
+    @Override
+    public List<VehicleAccessStatisticsVo> getWeekAccessStatistics() throws Exception {
+        return vehicleinformationMapper.getWeekAccessStatistics();
     }
 
     /**
@@ -133,5 +180,22 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public List<Vehicleinformation> getQueryVehiclesRegularlyInfo() throws Exception {
         return vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
+    }
+
+    /**
+     * @param vehicleinformation
+     * @param
+     * @Method insert
+     * @Author Sun
+     * @Version 1.0
+     * @Description 创建车辆进出厂信息
+     * @Return void
+     * @Date 2019/11/4 18:48
+     */
+    @Override
+    public void insert(Vehicleinformation vehicleinformation) throws Exception {
+        vehicleinformation.preInsert();
+        vehicleinformation.setVehicleinformationid(UUID.randomUUID().toString());
+        vehicleinformationMapper.insert(vehicleinformation);
     }
 }
