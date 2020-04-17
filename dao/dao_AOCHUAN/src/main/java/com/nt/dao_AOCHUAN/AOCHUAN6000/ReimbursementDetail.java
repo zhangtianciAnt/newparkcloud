@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class ReimbursementDetail extends BaseModel {
 
     //费用明细日期
     @Column(name = "REIMBURSEMENT_DETAIL_DATE")
-    private String reimbursement_detail_date;
+    private Date reimbursement_detail_date;
 
     //当日事由
     @Column(name = "DAY_MATTER")
