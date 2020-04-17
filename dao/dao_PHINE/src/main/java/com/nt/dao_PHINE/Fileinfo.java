@@ -29,3 +29,4 @@ public class Fileinfo extends BaseModel {
 
     private String remarks;
 }
+

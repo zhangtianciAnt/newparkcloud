@@ -32,6 +32,19 @@ public class AsyncServiceImpl implements AsyncService {
         this.deviceinfoMapper = deviceinfoMapper;
     }
 
+    // 设备文件类型排序方法
+    private int myCompareTemp(String fileType) {
+        int temp = 0;
+        if ("FMC".equals(fileType)) {
+            temp = 1;
+        } else if ("FPGA".equals(fileType)) {
+            temp = 2;
+        } else if ("PLL".equals(fileType)) {
+            temp = 3;
+        }
+        return temp;
+    }
+
     @Override
     @Async
     public Future<List<Operationdetail>> doLogicFileLoad(List<Fileinfo> fileinfoList, TokenModel tokenModel, String operationId, URL WSDL_LOCATION, QName SERVICE_NAME, Map<String, List<Fileinfo>> configProgressMap) {
@@ -41,6 +54,14 @@ public class AsyncServiceImpl implements AsyncService {
         Boolean result = false;     // 加载操作执行结果
 
         List<Operationdetail> detailist = new ArrayList<>();
+
+        //  先加载 FMC、然后 FPGA、最后 PLL
+        Collections.sort(fileinfoList, (f1, f2) -> {
+            int f1Temp, f2Temp = 0;
+            f1Temp = myCompareTemp(f1.getFiletype());
+            f2Temp = myCompareTemp(f2.getFiletype());
+            return f1Temp - f2Temp;
+        });
 
         for (Fileinfo fileinfo : fileinfoList) {
             Operationdetail operationdetail = new Operationdetail();
@@ -113,7 +134,6 @@ public class AsyncServiceImpl implements AsyncService {
             operationdetail.setFileid(fileinfo.getFileid());
             detailist.add(operationdetail);
         }
-
         return new AsyncResult<>(detailist);
     }
 
