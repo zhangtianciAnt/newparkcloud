@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.TrainingRecordsExportMapper">
+    <select id="exportRecordData" resultType="com.nt.dao_BASF.VO.TrainingRecordsExportVo">
+SELECT
+	t.trainjoinlistid,
+	t.departmentname,
+	t.personnelid,
+	s.programname,
+	s.starttheorydate,
+	t.finallyexamdate,
+	s.insideoutside,
+	s.isonline,
+	s.mandatory,
+	s.isfirst,
+	t.throughtype,
+	t.performance,
+	t.number
+FROM
+	trainjoinlist AS t
+	INNER JOIN
+	startprogram AS s
+	ON
+		t.startprogramid = s.startprogramid
+ORDER BY
+	t.departmentname ASC
+    </select>
+</mapper>

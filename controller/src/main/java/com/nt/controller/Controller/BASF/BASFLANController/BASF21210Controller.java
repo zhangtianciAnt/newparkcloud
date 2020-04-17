@@ -82,5 +82,9 @@ public class BASF21210Controller {
         return ApiResult.success(sendEmailServices.sendmail(tokenModel,sendemail));
     }
 
-
+    //培训档案导出
+    @PostMapping("/exportRecordData")
+    public ApiResult exportData(HttpServletRequest request) throws Exception{
+        return ApiResult.success(trainjoinlistServices.exportRecordData());
+    }
 }

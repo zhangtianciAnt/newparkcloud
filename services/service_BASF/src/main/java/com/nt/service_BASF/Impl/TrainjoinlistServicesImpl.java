@@ -6,11 +6,13 @@ import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.OverduePersonnelListVo;
+import com.nt.dao_BASF.VO.TrainingRecordsExportVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
+import com.nt.service_BASF.mapper.TrainingRecordsExportMapper;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -50,6 +52,9 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
 
     @Autowired
     private ProgramlistMapper programlistMapper;
+
+    @Autowired
+    private TrainingRecordsExportMapper trainingRecordsExportMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -490,5 +495,11 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             }
         }
         return trainjoinlists;
+    }
+
+    //培训档案导出
+    @Override
+    public List<TrainingRecordsExportVo> exportRecordData() throws Exception{
+        return trainingRecordsExportMapper.exportRecordData();
     }
 }

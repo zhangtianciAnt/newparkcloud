@@ -2,12 +2,12 @@ package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.OverduePersonnelListVo;
+import com.nt.dao_BASF.VO.TrainingRecordsExportVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,4 +77,7 @@ public interface TrainjoinlistServices {
 
     //获取参加过培训的人员信息（用于培训档案）
     List<CustomerInfo> joinPersonnel(List<String> joinPersonnelid) throws Exception;
+
+    //培训档案导出
+    List<TrainingRecordsExportVo> exportRecordData() throws Exception;
 }
