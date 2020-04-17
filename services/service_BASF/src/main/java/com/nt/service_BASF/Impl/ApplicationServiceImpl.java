@@ -94,4 +94,10 @@ public class ApplicationServiceImpl implements ApplicationServices {
     public Application one(String applicationid) throws Exception {
         return applicationMapper.selectByPrimaryKey(applicationid);
     }
+
+    //前端大屏道路占用/临时封闭区域列表（审批通过的并且使用时间≤系统时间≤归还时间）
+    @Override
+    public List<Application> roadClosed() throws Exception{
+        return applicationMapper.roadClosed();
+    }
 }

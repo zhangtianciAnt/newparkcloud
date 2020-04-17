@@ -86,6 +86,10 @@ public class MultiThreadScheduleTask {
     private HighriskareaServices highriskareaServices;
 
     @Autowired
+    @SuppressWarnings("all")
+    private ApplicationServices applicationServices;
+
+    @Autowired
     private PersonnelPermissionsServices personnelPermissionsServices;
 
     @Autowired
@@ -543,4 +547,12 @@ public class MultiThreadScheduleTask {
     }
 
     // endregion
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90620_GetRoadClosed() throws Exception{
+        //道路占用/临时封闭区域列表
+        webSocketVo.setRoadClosed(applicationServices.roadClosed());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
 }

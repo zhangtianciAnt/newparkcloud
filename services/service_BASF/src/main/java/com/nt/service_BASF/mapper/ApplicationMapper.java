@@ -12,4 +12,6 @@ public interface ApplicationMapper extends MyMapper<Application> {
     List<ApplicationVo> selectApplicationVoList() throws Exception;
 
     List<Application> selectBarricades() throws Exception;
+
+    List<Application> roadClosed() throws Exception;
 }

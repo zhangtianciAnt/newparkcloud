@@ -99,4 +99,8 @@ public class WebSocketVo {
     // BASF90921 高风险作业清单
     private List<Highriskarea> highriskareaList = new ArrayList<>();
     // endregion
+
+    //道路占用/临时封闭区域列表
+    private List<Application> roadClosed=new ArrayList<>();
+
 }
