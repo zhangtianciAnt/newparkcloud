@@ -7,6 +7,7 @@ import com.nt.service_PHINE.AsyncService;
 import com.nt.service_PHINE.DeviceService.ConfigStatus;
 import com.nt.service_PHINE.DeviceService.DeviceService;
 import com.nt.service_PHINE.DeviceService.IDeviceService;
+import com.nt.service_PHINE.DeviceService.PllConfigStatus;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.mapper.DeviceinfoMapper;
 import com.nt.utils.dao.TokenModel;
@@ -77,10 +78,8 @@ public class AsyncServiceImpl implements AsyncService {
             switch (fileinfo.getFiletype()) {
                 case "FPGA":        // 执行FPGA加载
                     result = port.startConfigFpgaByFile(deviceinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), fileinfo.getUrl());
-                    boolean loopFlg = false;
-                    int idx = 0;
-                    while (!loopFlg) {
-                        idx++;
+                    boolean configLoopFlg = false;
+                    while (!configLoopFlg) {
                         // 循环获取Fpga执行结果
                         Holder<ConfigStatus> configResult = new Holder<>();
                         Holder<Boolean> getFpgaConfigStatusResult = new Holder<>(false);
@@ -108,12 +107,12 @@ public class AsyncServiceImpl implements AsyncService {
                             // 配置成功
                             case "Succeed":
                                 result = true;
-                                loopFlg = true;
+                                configLoopFlg = true;
                                 break;
                             // 配置失败
                             default:
                                 result = false;
-                                loopFlg = true;
+                                configLoopFlg = true;
                                 break;
                         }
                     }
@@ -124,8 +123,41 @@ public class AsyncServiceImpl implements AsyncService {
                     configurationtype = "FMC加载";
                     break;
                 case "PLL":         // 执行PLL加载
-                    // Todo By Skaixx At 2020/4/17 :  PLL时钟加载
                     port.startSetPllClockByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
+                    boolean loopFlg = false;
+                    while (!loopFlg) {
+                        // 循环获取Pll执行结果
+                        Holder<PllConfigStatus> configResult = new Holder<>();
+                        Holder<Boolean> getPllStatusResult = new Holder<>(false);
+                        // 获取当前Config状态
+                        port.getPllConfigStatus(deviceinfo.getDeviceid(), configResult, getPllStatusResult);
+                        switch (configResult.value.getConfigStatus().value()) {
+                            // 配置中
+                            case "Configing":
+                                // 获取当前token的FileList
+                                List<Fileinfo> tmpList = configProgressMap.get(tokenModel.getToken());
+                                // 更新处理进度到全局Map中
+                                tmpList.stream().filter(item -> item.getFileid().equals(fileinfo.getFileid())).collect(Collectors.toList()).forEach(item -> item.setRemarks(configResult.value.getProgress().toString()));
+                                configProgressMap.put(tokenModel.getToken(), tmpList);
+                                try {
+
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            // 配置成功
+                            case "Succeed":
+                                result = true;
+                                loopFlg = true;
+                                break;
+                            // 配置失败
+                            default:
+                                result = false;
+                                loopFlg = true;
+                                break;
+                        }
+                    }
                     configurationtype = "PLL加载";
                     break;
             }
