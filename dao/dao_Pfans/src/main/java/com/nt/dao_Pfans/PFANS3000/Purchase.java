@@ -215,4 +215,10 @@ public class Purchase  extends BaseModel {
     @Column(name = "FINDATE")
     private Date findate;
 
+    /**
+     * 拒绝理由
+     */
+    @Column(name = "REFUSEREASON")
+    private String refusereason;
+
 }
