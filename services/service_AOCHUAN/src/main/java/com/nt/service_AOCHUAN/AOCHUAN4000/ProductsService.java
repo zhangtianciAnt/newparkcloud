@@ -25,7 +25,7 @@ public interface ProductsService {
      * @throws Exception
      * @author zhaoyoubing
      */
-    public String insertForSupplier(Products product, TokenModel tokenModel)throws  Exception;
+    public Products insertForSupplier(Products product, TokenModel tokenModel)throws  Exception;
 
 
 }

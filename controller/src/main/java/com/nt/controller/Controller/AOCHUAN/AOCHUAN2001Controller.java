@@ -1,11 +1,11 @@
 package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Linkman;
-import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
-import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierproductrelationService;
+import com.nt.service_AOCHUAN.AOCHUAN2000.CustomerbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
@@ -15,12 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-
 @RestController
-@RequestMapping("/supplierbaseinfor")
-public class AOCHUAN1001Controller {
+@RequestMapping("/customerbaseinfor")
+public class AOCHUAN2001Controller {
     @Autowired
-    private SupplierbaseinforService supplierbaseinforService;
+    private CustomerbaseinforService customerbaseinforService;
     @Autowired
     private LinkmanService linkmanService;
     @Autowired
@@ -33,11 +32,11 @@ public class AOCHUAN1001Controller {
     private String linkmanBaseinfoId;
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request)throws Exception{
-        return ApiResult.success(supplierbaseinforService.get());
+        return ApiResult.success(customerbaseinforService.get());
     }
 
     @RequestMapping(value = "/getLinkman",method={RequestMethod.GET})
-    public ApiResult getLinkman(@RequestParam String baseinfo_id,HttpServletRequest request)throws Exception{
+    public ApiResult getLinkman(@RequestParam String baseinfo_id, HttpServletRequest request)throws Exception{
         if(!StringUtils.isNotBlank(baseinfo_id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -50,15 +49,15 @@ public class AOCHUAN1001Controller {
         if(!StringUtils.isNotBlank(id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(supplierbaseinforService.getOne(id));
+        return ApiResult.success(customerbaseinforService.getOne(id));
     }
 
     @RequestMapping(value = "/update",method={RequestMethod.POST})
-    public ApiResult update(@RequestBody Supplierbaseinfor supplierbaseinfor, HttpServletRequest request) throws Exception {
-        if(supplierbaseinfor == null){
+    public ApiResult update(@RequestBody Customerbaseinfor customerbaseinfor, HttpServletRequest request) throws Exception {
+        if(customerbaseinfor == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        supplierbaseinforService.update(supplierbaseinfor,tokenService.getToken(request));
+        customerbaseinforService.update(customerbaseinfor,tokenService.getToken(request));
         return ApiResult.success();
     }
 
@@ -78,11 +77,11 @@ public class AOCHUAN1001Controller {
     }
 
     @RequestMapping(value = "/insert",method={RequestMethod.POST})
-    public ApiResult insert(@RequestBody Supplierbaseinfor supplierbaseinfor, HttpServletRequest request) throws Exception {
-        if(supplierbaseinfor == null){
+    public ApiResult insert(@RequestBody Customerbaseinfor customerbaseinfor, HttpServletRequest request) throws Exception {
+        if(customerbaseinfor == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
+        linkmanBaseinfoId = customerbaseinforService.insert(customerbaseinfor,tokenService.getToken(request));
         return ApiResult.success();
     }
 
@@ -104,7 +103,7 @@ public class AOCHUAN1001Controller {
         if(!StringUtils.isNotBlank(id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        supplierbaseinforService.delete(id);
+        customerbaseinforService.delete(id);
         linkmanService.deleteByByBaseinforId(id);
         return ApiResult.success();
     }
@@ -121,7 +120,7 @@ public class AOCHUAN1001Controller {
         if(product == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        //linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
+        //linkmanBaseinfoId = customerbaseinforService.insert(customerbaseinfor,tokenService.getToken(request));
         product  = productsService.insertForSupplier(product,tokenService.getToken(request));
         return ApiResult.success(product);
     }

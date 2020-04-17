@@ -53,11 +53,11 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
-    public String insertForSupplier(Products product, TokenModel tokenModel) throws Exception {
+    public Products insertForSupplier(Products product, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
         product.preInsert(tokenModel);
         product.setProducts_id(id);
         productsMapper.insert(product);
-        return id;
+        return product;
     }
 }
