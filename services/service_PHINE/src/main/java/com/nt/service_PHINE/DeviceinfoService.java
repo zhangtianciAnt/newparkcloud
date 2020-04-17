@@ -43,16 +43,16 @@ public interface DeviceinfoService {
     List<DeviceListVo> getCommunicationDeviceInfo(TokenModel tokenModel, String projectid);
 
     // 设备创建连接
-    ApiResult createConnection(TokenModel tokenModel, String deviceid);
+    ApiResult createConnection(TokenModel tokenModel, String deviceid) throws Exception;
 
     // 设备关闭连接
-    ApiResult closeConnection(TokenModel tokenModel, String deviceid);
+    ApiResult closeConnection(TokenModel tokenModel, String deviceid) throws Exception;
 
     // 逻辑加载
-    ApiResult logicFileLoad(TokenModel tokenMode, List<Fileinfo> fileinfoList);
+    ApiResult logicFileLoad(TokenModel tokenMode, List<Fileinfo> fileinfoList) throws Exception;
 
     // 测试读写
-    List<ReadWriteTestVo> readWriteTest(TokenModel tokenModel, String projectid);
+    List<ReadWriteTestVo> readWriteTest(TokenModel tokenModel, String projectid) throws Exception;
 
     // 获取企业/设备数据
     List<ChartDataRow> getDeviceChartInfo();
@@ -61,7 +61,7 @@ public interface DeviceinfoService {
     List<ChartDataRow> getDeviceStatusChartInfo();
 
     // 获取设备当前连接状态
-    List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid);
+    List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid) throws Exception;
 
     List<Fileinfo> getConfigProgressMap(TokenModel tokenModel);
 

@@ -8,11 +8,16 @@ import com.nt.service_PHINE.AsyncService;
 import com.nt.service_PHINE.DeviceService.*;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
+import com.nt.service_PHINE.RouterService.IRouter;
+import com.nt.service_PHINE.RouterService.RouterService;
 import com.nt.service_PHINE.mapper.*;
 import com.nt.utils.ApiResult;
+import com.nt.utils.LogicalException;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.util.StringUtil;
@@ -41,6 +46,8 @@ import java.util.stream.Collectors;
 @Service
 public class DeviceinfoServiceImpl implements DeviceinfoService {
 
+    private static Logger log = LoggerFactory.getLogger(DeviceinfoServiceImpl.class);
+
     // WCF接口名称
     private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "DeviceService");
     // 全局变量：存储FpgaConfig进度
@@ -49,7 +56,9 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     private static Map<String, Map<String, Integer>> interConnProgressMap = new HashMap<>();
     // 全局变量：前回互联测试项目
     private static String preTestId = "";
-    // WCF服务地址
+
+    // Todo By Skaixx At 2020/4/17 :  delete wsdl_location
+//    // WCF服务地址
     private static URL WSDL_LOCATION;
 
     static {
@@ -82,6 +91,34 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 
     public DeviceinfoServiceImpl(AsyncService asyncService) {
         this.asyncService = asyncService;
+    }
+
+    /**
+     * @return java.lang.String
+     * @Method getWsdlLocation
+     * @Author SKAIXX
+     * @Description 通过设备编号从RouterService中获取对应的WSDL服务地址
+     * @Date 2020/4/17 11:46
+     * @Param [deviceNo] 设备编号
+     **/
+    private URL getWsdlLocation(String deviceNo) throws LogicalException {
+        QName routerServiceName = new QName("http://tempuri.org/", "RouterService");
+        try {
+            RouterService ss = new RouterService(RouterService.WSDL_LOCATION, routerServiceName);
+            IRouter port = ss.getBasicHttpBindingIRouter();
+            Holder<String> _getDeviceServiceUrl_serviceUrl = new Holder<>();
+            Holder<Boolean> _getDeviceServiceUrl_getDeviceServiceUrlResult = new Holder<>();
+            port.getDeviceServiceUrl(deviceNo, _getDeviceServiceUrl_serviceUrl, _getDeviceServiceUrl_getDeviceServiceUrlResult);
+
+            // 判断是否获取到WCF服务地址
+            if (StringUtils.isEmpty(_getDeviceServiceUrl_serviceUrl.value)) {
+                throw new LogicalException("【设备编号：" + deviceNo + "】获取服务地址失败！");
+            }
+            return new URL(_getDeviceServiceUrl_serviceUrl.value);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new LogicalException("【设备编号：" + deviceNo + "】获取服务地址失败！");
+        }
     }
 
     /**
@@ -387,7 +424,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Date 2020/2/10 15:27
      **/
     @Override
-    public List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid) {
+    public List<CurrentConnStatusVo> getCurrentConnStatus(TokenModel tokenModel, String projectid) throws Exception {
         // 获取当前项目的设备列表
         // region 通过项目ID获取所有设备ID
         Project2device tmpModel = new Project2device();
@@ -398,51 +435,62 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             return null;
         }
         // endregion
+
+        // 获取该项目中各设备的WCF服务地址
+        List<URL> wcfLocationList = new ArrayList<>();
+        for (Project2device project2device : project2deviceList) {
+            wcfLocationList.add(getWsdlLocation(deviceinfoMapper.selectByPrimaryKey(project2device.getDeviceid()).getDeviceid()));
+        }
+        // 去除重复WCF地址
+        wcfLocationList = wcfLocationList.stream().distinct().collect(Collectors.toList());
         List<CurrentConnStatusVo> currentConnStatusVoList = new ArrayList<>();
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-        Holder<ArrayOfDeviceConnState> deviceConnStates = new Holder<>();
-        Holder<Boolean> getCurrentConnStatusResult = new Holder<>(false);
-        port.getCurrentConnStatus(deviceConnStates, getCurrentConnStatusResult);
-        ArrayOfDeviceConnState arrayOfDeviceConnState = deviceConnStates.value;
-        arrayOfDeviceConnState.getDeviceConnState().forEach(item -> {
-            CurrentConnStatusVo currentConnStatusVo = new CurrentConnStatusVo();
-            Deviceinfo deviceinfo = new Deviceinfo();
-            deviceinfo.setDeviceid(item.getDeviceId().getValue());
-            Deviceinfo deviceinfo1 = deviceinfoMapper.selectOne(deviceinfo);
-            if (deviceinfo1 != null) {
-                List<Project2device> dummy = project2deviceList.stream().filter(s -> s.getDeviceid().equals(deviceinfo1.getId())).collect(Collectors.toList());
-                if (dummy.size() > 0) {
-                    currentConnStatusVo.setId(deviceinfo1.getId());
+        wcfLocationList.forEach(item -> {
+            DeviceService ss = new DeviceService(item, SERVICE_NAME);
+            IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+            Holder<ArrayOfDeviceConnState> deviceConnStates = new Holder<>();
+            Holder<Boolean> getCurrentConnStatusResult = new Holder<>(false);
+            port.getCurrentConnStatus(deviceConnStates, getCurrentConnStatusResult);
+            ArrayOfDeviceConnState arrayOfDeviceConnState = deviceConnStates.value;
+            arrayOfDeviceConnState.getDeviceConnState().forEach(subItem -> {
+                CurrentConnStatusVo currentConnStatusVo = new CurrentConnStatusVo();
+                Deviceinfo deviceinfo = new Deviceinfo();
+                deviceinfo.setDeviceid(subItem.getDeviceId().getValue());
+                Deviceinfo deviceinfo1 = deviceinfoMapper.selectOne(deviceinfo);
+                if (deviceinfo1 != null) {
+                    List<Project2device> dummy = project2deviceList.stream().filter(s -> s.getDeviceid().equals(deviceinfo1.getId())).collect(Collectors.toList());
+                    if (dummy.size() > 0) {
+                        currentConnStatusVo.setId(deviceinfo1.getId());
+                    } else {
+                        return;
+                    }
                 } else {
                     return;
                 }
-            } else {
-                return;
-            }
-            currentConnStatusVo.setDeviceid(item.getDeviceId().getValue());
-            String status;
-            switch (item.getConnStatus()) {
-                case 2:
-                    status = "未连接";
-                    break;
-                case 1:
-                    if (tokenModel.getUserId().equals(deviceinfo1.getCurrentuser())) {
-                        status = "已连接";
-                    } else {
-                        status = "已占用";
-                    }
-                    break;
-                case 0:
-                    status = "离线";
-                    break;
-                default:
-                    status = "未知";
-                    break;
-            }
-            currentConnStatusVo.setConnstatus(status);
-            currentConnStatusVoList.add(currentConnStatusVo);
+                currentConnStatusVo.setDeviceid(subItem.getDeviceId().getValue());
+                String status;
+                switch (subItem.getConnStatus()) {
+                    case 2:
+                        status = "未连接";
+                        break;
+                    case 1:
+                        if (tokenModel.getUserId().equals(deviceinfo1.getCurrentuser())) {
+                            status = "已连接";
+                        } else {
+                            status = "已占用";
+                        }
+                        break;
+                    case 0:
+                        status = "离线";
+                        break;
+                    default:
+                        status = "未知";
+                        break;
+                }
+                currentConnStatusVo.setConnstatus(status);
+                currentConnStatusVoList.add(currentConnStatusVo);
+            });
         });
+
         return currentConnStatusVoList;
     }
 
@@ -453,11 +501,11 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Date 2020/2/10 15:27
      **/
     @Override
-    public ApiResult createConnection(TokenModel tokenModel, String deviceid) {
+    public ApiResult createConnection(TokenModel tokenModel, String deviceid) throws Exception {
         // TODO :操作用户权限暂时不封装
         // region 通信连接
         Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        DeviceService ss = new DeviceService(getWsdlLocation(deviceinfo.getDeviceid()), SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         ConnectionResult result = port.openConnection(deviceinfo.getDeviceid());
         String message = "通信连接成功";
@@ -492,7 +540,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Date 2020/2/10 15:27
      **/
     @Override
-    public ApiResult closeConnection(TokenModel tokenModel, String deviceid) {
+    public ApiResult closeConnection(TokenModel tokenModel, String deviceid) throws Exception {
         // 判断操作用户权限
         Deviceinfo di = deviceinfoMapper.selectByPrimaryKey(deviceid);
         // 仅当前连接者和平台管理员可以断开连接
@@ -501,7 +549,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         }
         // region 通信关闭
         Deviceinfo deviceinfo = deviceinfoMapper.selectByPrimaryKey(deviceid);
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+        DeviceService ss = new DeviceService(getWsdlLocation(deviceinfo.getDeviceid()), SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         Boolean result = port.closeConnection(deviceinfo.getDeviceid());
         if (!result) {
@@ -526,7 +574,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
      * @Param
      **/
     @Override
-    public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) {
+    public ApiResult logicFileLoad(TokenModel tokenModel, List<Fileinfo> fileinfoList) throws Exception {
         // 从逻辑文件加载列表中除去设备未连接的加载文件
         List<CurrentConnStatusVo> currentConnStatusVoList = getCurrentConnStatus(tokenModel, fileinfoList.get(0).getProjectid());
 
@@ -599,7 +647,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
     }
 
     @Override
-    public List<ReadWriteTestVo> readWriteTest(TokenModel tokenModel, String projectid) {
+    public List<ReadWriteTestVo> readWriteTest(TokenModel tokenModel, String projectid) throws Exception {
 
         List<ReadWriteTestVo> readWriteTestVoList = new ArrayList<>();
 
@@ -612,10 +660,10 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         // endregion
 
         // region 设备读写测试
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        deviceinfoList.forEach(item -> {
+        for (Deviceinfo item : deviceinfoList) {
+            DeviceService ss = new DeviceService(getWsdlLocation(item.getDeviceid()), SERVICE_NAME);
+            IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             ReadWriteTestVo readWriteTestVo = new ReadWriteTestVo();
             String msg = df.format(new Date()) + "-FPGA1 ";
             // 读寄存器
@@ -629,7 +677,7 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
             readWriteTestVo.setDeviceid(item.getDeviceid());
             readWriteTestVo.setResult(msg);
             readWriteTestVoList.add(readWriteTestVo);
-        });
+        }
         // endregion
 
         return readWriteTestVoList;
