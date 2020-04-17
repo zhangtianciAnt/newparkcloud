@@ -4,9 +4,9 @@ import com.nt.dao_PHINE.Deviceinfo;
 import com.nt.dao_PHINE.Fileinfo;
 import com.nt.dao_PHINE.Operationdetail;
 import com.nt.service_PHINE.AsyncService;
-import com.nt.service_PHINE.DeviceCommunication.ConfigStatus;
-import com.nt.service_PHINE.DeviceCommunication.DeviceService;
-import com.nt.service_PHINE.DeviceCommunication.IDeviceService;
+import com.nt.service_PHINE.DeviceService.ConfigStatus;
+import com.nt.service_PHINE.DeviceService.DeviceService;
+import com.nt.service_PHINE.DeviceService.IDeviceService;
 import com.nt.service_PHINE.mapper.DeviceinfoMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.scheduling.annotation.Async;
@@ -92,11 +92,13 @@ public class AsyncServiceImpl implements AsyncService {
                     configurationtype = "FPGA加载";
                     break;
                 case "FMC":         // 执行FMC加载
-                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), 0L, fileinfo.getUrl());
+                    // Todo By Skaixx At 2020/4/17 :  FMC电压加载
+                    result = port.setFmcVoltageByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
                     configurationtype = "FMC加载";
                     break;
                 case "PLL":         // 执行PLL加载
-                    result = port.setPllClockByFile(fileinfo.getDeviceid(), Long.parseLong(fileinfo.getFpgaid()), 0L, fileinfo.getUrl());
+                    // Todo By Skaixx At 2020/4/17 :  PLL时钟加载
+                    port.startSetPllClockByFile(fileinfo.getDeviceid(), fileinfo.getUrl());
                     configurationtype = "PLL加载";
                     break;
             }

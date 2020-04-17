@@ -5,7 +5,7 @@ import com.nt.dao_PHINE.*;
 import com.nt.dao_PHINE.Vo.*;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_PHINE.AsyncService;
-import com.nt.service_PHINE.DeviceCommunication.*;
+import com.nt.service_PHINE.DeviceService.*;
 import com.nt.service_PHINE.DeviceinfoService;
 import com.nt.service_PHINE.OperationrecordService;
 import com.nt.service_PHINE.mapper.*;
@@ -744,12 +744,13 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
 //        interConnProgress.put("GT互联测试", 0);
 //        interConnProgressMap.put(tokenModel.getToken(), interConnProgress);
         // 准备WCF接口参数
-        ArrayOfDeviceSlotInfo arrayOfDeviceSlotInfo = new ArrayOfDeviceSlotInfo();
-        arrayOfDeviceSlotInfo.setDeviceSlotInfo(deviceSlotInfoList);
+        // Todo By Skaixx At 2020/4/17 :  测试读写
+//        ArrayOfDeviceSlotInfo arrayOfDeviceSlotInfo = new ArrayOfDeviceSlotInfo();
+//        arrayOfDeviceSlotInfo.setDeviceSlotInfo(deviceSlotInfoList);
         // 开始调用WCF_API:InterconnTestStart
-        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
-        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
-        boolean result = port.interconnTestStart(arrayOfDeviceSlotInfo, filePath);
+//        DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
+//        IDeviceService port = ss.getBasicHttpBindingIDeviceService();
+//        boolean result = port.interconnTestStart(arrayOfDeviceSlotInfo, filePath);
         // endregion
         return ApiResult.success();
     }
@@ -849,7 +850,8 @@ public class DeviceinfoServiceImpl implements DeviceinfoService {
         DeviceService ss = new DeviceService(WSDL_LOCATION, SERVICE_NAME);
         IDeviceService port = ss.getBasicHttpBindingIDeviceService();
         ArrayOfint intList = new ArrayOfint();
-        intList.setInt(new ArrayList<>(interConnDetailVoList.size()));
+        // Todo By Skaixx At 2020/4/17 :  获取互联检测结果
+//        intList.setInt(new ArrayList<>(interConnDetailVoList.size()));
         Holder<ArrayOfint> interConnStatus = new Holder<>(intList);
         Holder<String> resultFilePath = new Holder<>();
         Holder<Boolean> result = new Holder<>();
