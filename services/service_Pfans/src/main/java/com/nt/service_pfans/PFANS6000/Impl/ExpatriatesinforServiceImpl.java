@@ -6,6 +6,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -143,19 +144,19 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setDistriobjects("1");
             expatriatesinfor.setVenuetarget("1");
         }
-        Expatriatesinfor e = new Expatriatesinfor();
-        e.setEmail(expatriatesinfor.getEmail());
-
-//        e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
-        List<Expatriatesinfor> list = expatriatesinforMapper.select(e);
-
-        if(list.size() == 0 || list.get(0).getExpname() .equals(expatriatesinfor.getExpname())){
-            expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+        List<Expatriatesinfor> list = new ArrayList<>();
+        String Expname = "";
+        if(!StringUtils.isNullOrEmpty(expatriatesinfor.getEmail())){
+            Expatriatesinfor e = new Expatriatesinfor();
+            e.setEmail(expatriatesinfor.getEmail());
+            list = expatriatesinforMapper.select(e);
+            if(list.size() > 0){
+                if(!list.get(0).getExpname().equals(expatriatesinfor.getExpname())){
+                    throw new LogicalException("邮箱重复,请重新确认！");
+                }
+            }
         }
-        else {
-            throw new LogicalException("邮箱已重复");
-        }
-
+        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
             String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
             Priceset priceset = new Priceset();
@@ -169,7 +170,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             pricesetMapper.insert(priceset);
         }
     }
-
 
     @Override
     public void createexpatriatesinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {

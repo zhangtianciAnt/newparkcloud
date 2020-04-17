@@ -93,7 +93,6 @@ on l.PROJECT_ID = c.COMPANYPROJECTS_ID
  where c.GROUP_ID = #{groupid}
  and l.LOG_DATE &gt;= #{startday}
  and l.LOG_DATE &lt;= #{endday}
- and l.CONFIRMSTATUS = '1'
 group by MONTH(l.LOG_DATE)
 
 ) a
