@@ -168,11 +168,12 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if (projectsystemList != null && projectsystemList.size() > 0) {
             Projectsystem projectsystem = new Projectsystem();
             projectsystem.setCompanyprojects_id(companyprojectsid);
-            List<Projectsystem> ps = projectsystemMapper.select(projectsystem);
-            for(Projectsystem item:ps){
-                item.setStatus(AuthConstants.DEL_FLAG_DELETE);
-                projectsystemMapper.updateByPrimaryKey(item);
-            }
+            projectsystemMapper.delete(projectsystem);
+//            List<Projectsystem> ps = projectsystemMapper.select(projectsystem);
+//            for(Projectsystem item:ps){
+//                item.setStatus(AuthConstants.DEL_FLAG_DELETE);
+//                projectsystemMapper.updateByPrimaryKey(item);
+//            }
             Delegainformation delegainformation1 = new Delegainformation();
             delegainformation1.setCompanyprojects_id(companyprojectsid);
             delegainformationMapper.delete(delegainformation1);
