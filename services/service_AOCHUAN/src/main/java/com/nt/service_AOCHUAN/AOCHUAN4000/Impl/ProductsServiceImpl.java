@@ -51,4 +51,13 @@ public class ProductsServiceImpl implements ProductsService {
         productsMapper.updateByPrimaryKey(products);
         productsMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public Products insertForSupplier(Products product, TokenModel tokenModel) throws Exception {
+        String id = UUID.randomUUID().toString();
+        product.preInsert(tokenModel);
+        product.setProducts_id(id);
+        productsMapper.insert(product);
+        return product;
+    }
 }

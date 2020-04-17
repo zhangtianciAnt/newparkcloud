@@ -1,14 +1,19 @@
 package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Linkman;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
+import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierproductrelationService;
+import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,6 +23,10 @@ public class AOCHUAN1001Controller {
     private SupplierbaseinforService supplierbaseinforService;
     @Autowired
     private LinkmanService linkmanService;
+    @Autowired
+    private SupplierproductrelationService supplierproductrelationService;
+    @Autowired
+    private ProductsService productsService;
     @Autowired
     private TokenService tokenService;
 
@@ -59,7 +68,7 @@ public class AOCHUAN1001Controller {
             if(linkmans.get(i) == null){
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
-            if(linkmans.get(i).getLinkman_id() == null || linkmans.get(i).getLinkman_id().equals("")){
+            if(linkmans.get(i).getLinkman_id() == null || "".equals(linkmans.get(i).getLinkman_id())){
                 linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
             }else{
                 linkmanService.update(linkmans.get(i),tokenService.getToken(request));
@@ -106,5 +115,39 @@ public class AOCHUAN1001Controller {
         }
         linkmanService.delete(id);
         return ApiResult.success();
+    }
+    @RequestMapping(value = "/insertProduct",method={RequestMethod.POST})
+    public ApiResult insertProduct(@RequestBody Products product, HttpServletRequest request) throws Exception {
+        if(product == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        //linkmanBaseinfoId = supplierbaseinforService.insert(supplierbaseinfor,tokenService.getToken(request));
+        product  = productsService.insertForSupplier(product,tokenService.getToken(request));
+        return ApiResult.success(product);
+    }
+
+    @RequestMapping(value = "/insertSupplierproductrelation",method={RequestMethod.POST})
+    public ApiResult insertSupplierproductrelation(@RequestBody Supplierproductrelation[] supplierproductrelation, HttpServletRequest request) throws Exception {
+        if(supplierproductrelation == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        for(int i = 0;i < supplierproductrelation.length;i++ ){
+            supplierproductrelationService.insert(supplierproductrelation[i],tokenService.getToken(request));
+        }
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getProductByRelation",method={RequestMethod.GET})
+    public ApiResult getProductByRelation(@RequestParam String baseinfo_id,HttpServletRequest request)throws Exception{
+        if(!StringUtils.isNotBlank(baseinfo_id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<Supplierproductrelation> list =  supplierproductrelationService.getBySupplierbaseinforId(baseinfo_id);
+        List<Products> productList = new ArrayList<Products>();
+        for(int i = 0;i < list.size();i++){
+            Products p = productsService.One(list.get(i).getProducts_id());
+            productList.add(p);
+        }
+        return ApiResult.success(productList);
     }
 }
