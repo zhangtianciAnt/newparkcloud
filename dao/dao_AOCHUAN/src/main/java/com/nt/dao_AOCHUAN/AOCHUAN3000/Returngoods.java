@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Data
 @AllArgsConstructor
@@ -77,5 +78,12 @@ public class Returngoods extends BaseModel {
 
     @Column(name = "AOCHUANCOMMITMENT")
     private String aochuancommitment;
+
+    @Column(name = "TYPE")
+    //type = 0 销售询单录入 ,type = 1 采购待确认 ,type = 2 单据待确认 ，type = 3 完结
+    private Integer type;
+
+    @Transient
+    private boolean notice;
 
 }
