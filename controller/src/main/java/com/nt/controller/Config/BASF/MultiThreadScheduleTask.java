@@ -292,7 +292,7 @@ public class MultiThreadScheduleTask {
      * @return
      * @Method BASF90600_GetAccessStatistics
      * @Author SKAIXX
-     * @Description ERC大屏车辆定位模块车辆出入统计
+     * @Description ERC大屏车辆定位模块本月车辆出入统计
      * @Date 2019/12/30 19:09
      * @Param
      **/
@@ -301,6 +301,22 @@ public class MultiThreadScheduleTask {
     public void BASF90600_GetAccessStatistics() throws Exception {
         // 车辆出入统计
         webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    /**
+     * @return
+     * @Method BASF90600_GetWeekAccessStatistics
+     * @Author GJ
+     * @Description ERC大屏车辆定位模块本周车辆出入统计
+     * @Date 2020/04/14 10:19
+     * @Param
+     **/
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90600_GetWeekAccessStatistics() throws Exception {
+        // 车辆出入统计
+        webSocketVo.setVehicleWeekAccessStatisticsVoList(vehicleinformationServices.getWeekAccessStatistics());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
@@ -462,6 +478,14 @@ public class MultiThreadScheduleTask {
             deviceinformationVos.add(deviceinformationVo);
         }
         webSocketVo.setDeviceinformationList(deviceinformationVos);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetVehicleinformationVolList() throws Exception {
+        //获取培训到期人员列表
+        webSocketVo.setDangerousgoodsList(vehicleinformationServices.getlistinformation());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
     // endregion

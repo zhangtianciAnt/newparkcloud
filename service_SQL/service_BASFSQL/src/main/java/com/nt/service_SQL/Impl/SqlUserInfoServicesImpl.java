@@ -1,10 +1,6 @@
 package com.nt.service_SQL.Impl;
 
 
-import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
-import com.nt.service_BASF.mapper.DeviceinformationMapper;
-import com.nt.service_BASF.Impl.DeviceInformationServicesImpl;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlUserInfo;
 import com.nt.dao_SQL.SqlViewDepartment;
@@ -21,9 +17,6 @@ import java.util.*;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
-
-    @Autowired
-    private DeviceinformationMapper deviceinformationMapper;
 
     @Autowired
     private SqlUserInfoMapper sqlUserInfoMapper;
@@ -118,31 +111,6 @@ public class SqlUserInfoServicesImpl implements SqlUserInfoServices {
             }
         }
         return resultlist;
-    }
-
-//    紧急集合点
-    @Override
-    public List<SqlAPBCardHolder> selectapbid(String APBID) throws Exception {
-
-//        DeviceAndSqlUserinfoVo deviceAndSqlUserinfoVo = new DeviceAndSqlUserinfoVo();
-//
-//        List<SqlAPBCardHolder> departlist = sqlUserInfoMapper.selectapbid();
-//        Deviceinformation deviceinformation = new Deviceinformation();
-//        List<Deviceinformation> deviceinformationList = deviceinformationMapper.select(deviceinformation);
-//        for (int i = 0; i < deviceinformationList.size(); i++) {
-//            int cnt = 0;
-//            for (int j = 0; j < departlist.size(); j++) {
-//                if (deviceinformationList.get(i).getDeviceno() == departlist.get(j).getApbid()) {
-//                    cnt++;
-//                }
-//            }
-//            if (cnt != 0) {
-//                deviceAndSqlUserinfoVo.setDeviceinformation(deviceinformationList.get(i));
-//                deviceAndSqlUserinfoVo.setSqlUserInfoCnt(cnt);
-//            }
-//        }
-
-        return sqlUserInfoMapper.selectapbid(APBID);
     }
 
     @Override

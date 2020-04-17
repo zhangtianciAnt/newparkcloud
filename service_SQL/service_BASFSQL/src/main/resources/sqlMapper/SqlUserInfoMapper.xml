@@ -49,29 +49,6 @@ AND APBName &lt;> '厂外'
 order by intime desc
     </select>
 
-    <select id="selectapbid" resultType="com.nt.dao_SQL.SqlAPBCardHolder">
-select
-[DepartmentName],
-[DepartmentID],
-[PersonNO],
-[CardID],
-[UserName],
-[APBID],
-[APBName],
-[LastAPB],
-[LastAPBName],
-[InTime],
-[LastInTime],
-[RdrDvcID],
-[LastRdrDvcID]
-from VIEW_APBCardHolder
-where
-datediff(day,intime,GETDATE()) = 0
-AND APBID = #{APBID}
-order by intime desc
-    </select>
-
-
     <select id="selectdepartmentid" resultType="com.nt.dao_SQL.SqlViewDepartment">
 select * from View_Department
 where
