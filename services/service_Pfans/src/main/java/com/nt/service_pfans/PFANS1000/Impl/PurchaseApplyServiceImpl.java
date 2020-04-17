@@ -1,18 +1,22 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
 import com.nt.dao_Pfans.PFANS1000.ShoppingDetailed;
 import com.nt.dao_Pfans.PFANS1000.Vo.PurchaseApplyVo;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
 import com.nt.service_pfans.PFANS1000.mapper.PurchaseApplyMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ShoppingDetailedMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -81,9 +85,38 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
     public void insert(PurchaseApplyVo purchaseApplyVo, TokenModel tokenModel) throws Exception {
         String purchaseApplyid = UUID.randomUUID().toString();
         PurchaseApply purchaseApply = new PurchaseApply();
+        //add-ws-根据当前年月日从001开始增加费用编号
+        List<PurchaseApply> purchaseApplylist = purchaseApplyMapper.selectAll();
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String year = sf1.format(date);
+        int number = 0;
+        String Numbers = "";
+        String no = "";
+        if(purchaseApplylist.size()>0){
+            for(PurchaseApply purchase :purchaseApplylist){
+                if(purchase.getPurchasenumbers()!="" && purchase.getPurchasenumbers()!=null){
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purchase.getPurchasenumbers(), 0,8));
+                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
+                        number = number+1;
+                    }
+                }
+
+            }
+            if(number<=8){
+                no="00"+(number + 1);
+            }else{
+                no="0"+(number + 1);
+            }
+        }else{
+            no = "001";
+        }
+        Numbers = year+ no;
+        //add-ws-根据当前年月日从001开始增加费用编号
         BeanUtils.copyProperties(purchaseApplyVo.getPurchaseApply(), purchaseApply);
         purchaseApply.preInsert(tokenModel);
         purchaseApply.setPurchaseapply_id(purchaseApplyid);
+        purchaseApply.setPurchasenumbers(Numbers);
         purchaseApplyMapper.insertSelective(purchaseApply);
         List<ShoppingDetailed> shoppingDetailedlist = purchaseApplyVo.getShoppingDetailed();
         if (shoppingDetailedlist != null) {
