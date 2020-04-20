@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -194,7 +192,25 @@ public class FirealarmServicesImpl implements FirealarmServices {
      **/
     @Override
     public List<FireAlarmStatisticsVo> getFireAlarmStatistics() throws Exception {
-        return firealarmMapper.getFireAlarmStatistics();
+        //获取当前月天数
+        Calendar aCalendar = Calendar.getInstance(Locale.CHINA);
+        int daySum=aCalendar.getActualMaximum(Calendar.DATE);
+        //获取当月数据
+        List<FireAlarmStatisticsVo> fireAlarmStatisticsVos=firealarmMapper.getFireAlarmStatistics();
+        //构建vo
+        List<FireAlarmStatisticsVo> buildVo=new ArrayList<>();
+        for(int i=0;i<daySum;i++){
+            FireAlarmStatisticsVo f=new FireAlarmStatisticsVo();
+            f.setDate(String.valueOf(i+1));
+            f.setCnt(0);
+            for(FireAlarmStatisticsVo a:fireAlarmStatisticsVos){
+                if(a.getDate().equals(String.valueOf(i+1))){
+                    f.setCnt(a.getCnt());
+                }
+            }
+            buildVo.add(f);
+        }
+        return buildVo;
     }
 
     /**

@@ -39,15 +39,28 @@
 
     <!--    当月接警数据分析-->
     <select id="getFireAlarmStatistics" resultType="com.nt.dao_BASF.VO.FireAlarmStatisticsVo">
-        select * from (
-        select count(*) as cnt,date_format(alarmtimes,'%Y-%m-%d') as date
-        from firealarm
-        where completesta = '1'
-        group by date_format(alarmtimes,'%Y-%m-%d')
-        order by date desc
-        limit 30) as tmp
-	    where date is not null
-        order by tmp.date asc
+       SELECT
+	*
+FROM
+	(
+	SELECT
+		count(*) AS cnt,
+		date_format( alarmtimes, '%e' ) AS date
+	FROM
+		firealarm
+	WHERE
+		completesta = '1'
+		AND MONTH ( alarmtimes )= MONTH (
+		NOW())
+	GROUP BY
+		date_format( alarmtimes, '%e' )
+	ORDER BY
+		date DESC
+	) AS tmp
+WHERE
+	date IS NOT NULL
+ORDER BY
+	tmp.date ASC
     </select>
 
     <!--    接警事件记录-->
