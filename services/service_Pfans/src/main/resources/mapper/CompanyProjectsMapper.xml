@@ -31,8 +31,8 @@
         c.FIELD as FIELD,
         c.OWNER as OWNER
         from `companyprojects` c
-            left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
             on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
             and s.status = '0'
             <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
@@ -87,8 +87,8 @@
         c.FIELD as FIELD,
         c.OWNER as OWNER
         from `companyprojects` c
-        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
         <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
@@ -152,12 +152,8 @@
             c.OWNER as OWNER
         from `companyprojects`
              c
-             left
-             outer
-             join (
-            select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID ))
-             s
+             left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c
            .
            `COMPANYPROJECTS_ID` =
@@ -285,8 +281,8 @@
         c.FIELD as FIELD,
         c.OWNER as OWNER
         from `companyprojects` c
-        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
         <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
@@ -341,8 +337,8 @@
         c.FIELD as FIELD,
         c.OWNER as OWNER
         from `companyprojects` c
-        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE)from stageinformation group by COMPANYPROJECTS_ID )) s
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
         <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
