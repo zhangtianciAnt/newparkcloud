@@ -49,6 +49,12 @@ public class Fixedassets extends BaseModel {
     private String user_id;
 
     /**
+     * RFID资产编号
+     */
+    @Column(name = "RFID")
+    private String rfid;
+
+    /**
      * 申请日期
      */
     @Column(name = "CASEDATE")

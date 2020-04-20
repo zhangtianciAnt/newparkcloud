@@ -17,7 +17,7 @@
        sum(CASE a.code WHEN 'PJ11114' THEN a.rmb ELSE 0 END) AS 'other',
        sum(CASE a.code WHEN 'WORKTIME' THEN a.rmb ELSE 0 END) AS 'emhours',
        sum(CASE a.code WHEN 'WORKTIME0' THEN a.rmb ELSE 0 END) AS 'inhours',
-       sum(CASE a.code WHEN 'WORKTIME1' THEN a.rmb ELSE 0 END) AS 'outhours',
+       sum(CASE a.code WHEN 'WORKTIMEEX' THEN a.rmb ELSE 0 END) AS 'outhours',
        sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inwetuo',
 			 sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inst'
     from
@@ -86,7 +86,7 @@ inner join projectcontract
 on projectcontract.CONTRACT = ca.CONTRACTNUMBER
 inner join companyprojects
 on companyprojects.COMPANYPROJECTS_ID = projectcontract.COMPANYPROJECTS_ID
-where ca.state=#{youxiao}
+where ca.state= '有效'
 and ca.type = "1"
 and ca.GROUP_ID = #{groupid}
 and year(cn.DELIVERYDATE) = #{year} and month(cn.DELIVERYDATE) = #{month}
@@ -103,18 +103,15 @@ and month(l.LOG_DATE) = #{month}
  group by `code`,c.PROJECT_NAME
 
 union all
-select concat('WORKTIME', if(e.VENUETARGET = #{shi},'0','1')) as CODE, (IFNULL(sum(APRIL),0) + IFNULL(sum(MAY),0) + IFNULL(sum(JUNE),0)  + IFNULL(sum(JULY),0) + IFNULL(sum(AUGUST),0) + IFNULL(sum(SEPTEMBER),0) + IFNULL(sum(OCTOBER),0) + IFNULL(sum(NOVEMBER),0) + IFNULL(sum(DECEMBER),0)  + IFNULL(sum(JANUARY),0) + IFNULL(sum(FEBRUARY),0) + IFNULL(sum(MARCH),0)) as money,c.PROJECT_NAME
-from delegainformation d
+select 'WORKTIMEEX' as `code`,SUM(l.TIME_START) as worktime,c.PROJECT_NAME from logmanagement l
 inner join companyprojects c
-on d.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
-inner join projectsystem p
-on d.PROJECTSYSTEM_ID = p.PROJECTSYSTEM_ID
+on l.PROJECT_ID = c.COMPANYPROJECTS_ID
 inner join expatriatesinfor e
-on p.SUPPLIERNAMEID = e.EXPATRIATESINFOR_ID
- where c.GROUP_ID = #{groupid}
- and year(d.year) = #{year}
- and month(d.year) = #{month}
-group by CODE,c.PROJECT_NAME
+on e.ACCOUNT = l.owner
+where c.GROUP_ID = #{groupid}
+and year(l.LOG_DATE) = #{year}
+and month(l.LOG_DATE) = #{month}
+ group by `code`,c.PROJECT_NAME
 
 union all
 select "neibu" as code,(sum(cost.COST4) + sum(cost.COST5) + sum(cost.COST6) + sum(cost.COST7) + sum(cost.COST8) + sum(cost.COST9) +sum(cost.COST10) + sum(cost.COST11) + sum(cost.COST12) + sum(cost.COST1) + sum(cost.COST2) + sum(cost.COST3)) as rmb,cp.PROJECT_NAME
