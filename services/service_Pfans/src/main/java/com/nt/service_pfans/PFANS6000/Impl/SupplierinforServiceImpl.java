@@ -308,9 +308,9 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                             if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                                 supplierinfor.setPerscale("BP007001");  //改数据
                             }
-                            if(Integer.parseInt(person)>50 && Integer.parseInt(person)<100){
+                            if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
                                 supplierinfor.setPerscale("BP007002");  //改数据
-                            } if(Integer.parseInt(person)>100 && Integer.parseInt(person)<500){
+                            } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
                                 supplierinfor.setPerscale("BP007003");  //改数据
                             }
                             if(Integer.parseInt(person)>500){
