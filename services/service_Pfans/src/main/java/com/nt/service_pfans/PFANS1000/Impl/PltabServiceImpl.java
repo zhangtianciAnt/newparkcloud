@@ -46,7 +46,7 @@ public class PltabServiceImpl implements PltabService {
                 }
             }
         }
-        List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month,"是","有效");
+        List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month);
         return pltabs;
     }
 }

@@ -168,7 +168,7 @@ public abstract class JxlsBuilder {
                 transformer.deleteSheet(sheetName);
             }
         }
-        transformer.deleteSheet("Sheet");
+//        transformer.deleteSheet("Sheet");
         transformer.write();
     }
 

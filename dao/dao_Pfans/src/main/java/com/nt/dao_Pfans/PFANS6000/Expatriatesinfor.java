@@ -236,6 +236,12 @@ public class Expatriatesinfor extends BaseModel {
     private String interviewdep;
 
     /**
+     * 面试时间
+     */
+    @Column(name = "INTERVIEW_DATE")
+    private String interview_date;
+
+    /**
      * 面试结果
      */
     @Column(name = "RESULT")
