@@ -157,8 +157,8 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     }
                     if(value.size()>5)
                     {
-                        supplierinfor.setVendorcode(Convert.toStr(value.get(5)));
-                        if(supplierinfor.getVendorcode() != null && supplierinfor.getVendorcode().length() > 50)
+                        supplierinfor.setVendornum(Convert.toStr(value.get(5)));
+                        if(supplierinfor.getVendornum() != null && supplierinfor.getVendornum().length() > 50)
                         {
                             throw new LogicalException("第" + i + "行 供应商编码（合同用） 长度超长，最大长度为50");
                         }
