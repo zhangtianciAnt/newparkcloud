@@ -175,12 +175,14 @@ public class ComprojectServiceImpl implements ComprojectService {
             prosystemMapper.delete(prosystem);
             int rowundex = 0;
             for (Prosystem pro : prosystemList) {
-                rowundex = rowundex + 1;
-                pro.preInsert(tokenModel);
-                pro.setProsystem_id(UUID.randomUUID().toString());
-                pro.setComproject_id(comprojectid);
-                pro.setRowindex(rowundex);
-                prosystemMapper.insertSelective(pro);
+              if(pro.getName()!=""&&pro.getName()!=null)  {
+                  rowundex = rowundex + 1;
+                  pro.preInsert(tokenModel);
+                  pro.setProsystem_id(UUID.randomUUID().toString());
+                  pro.setComproject_id(comprojectid);
+                  pro.setRowindex(rowundex);
+                  prosystemMapper.insertSelective(pro);
+              }
             }
         }
         //项目合同
@@ -266,12 +268,14 @@ public class ComprojectServiceImpl implements ComprojectService {
         if (projectsystemList != null) {
             int rowundex = 0;
             for (Prosystem prosystem : projectsystemList) {
-                rowundex = rowundex + 1;
-                prosystem.preInsert(tokenModel);
-                prosystem.setProsystem_id(UUID.randomUUID().toString());
-                prosystem.setComproject_id(comprojectid);
-                prosystem.setRowindex(rowundex);
-                prosystemMapper.insertSelective(prosystem);
+                if(prosystem.getName()!=""&&prosystem.getName()!=null) {
+                    rowundex = rowundex + 1;
+                    prosystem.preInsert(tokenModel);
+                    prosystem.setProsystem_id(UUID.randomUUID().toString());
+                    prosystem.setComproject_id(comprojectid);
+                    prosystem.setRowindex(rowundex);
+                    prosystemMapper.insertSelective(prosystem);
+                }
 
                 //外驻
                 String suppliernameid = prosystem.getSuppliernameid();
