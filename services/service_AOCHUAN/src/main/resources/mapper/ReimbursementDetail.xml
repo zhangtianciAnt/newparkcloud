@@ -4,19 +4,19 @@
 
     <!--  存在Check  -->
     <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail">
-        select * from reimbursementdetail where REIMBURSEMENT_DETAIL_ID = #{id} AND  STATUS = #{status}
+        select * from reimbursement_detail where REIMBURSEMENT_DETAIL_ID = #{id} AND  STATUS = #{status}
     </select>
 
     <!--  获取记录表数据  -->
     <select id="getReimbursementDetailList" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail">
         select *
-        from reimbursementdetail
+        from reimbursement_detail
         where REIMBURSEMENT_NO =#{remd_no} AND STATUS = #{status}
 	</select>
 
     <!--  记录表删除  -->
     <update id="deleteFromReimbursementDetailByPrikey">
-         UPDATE reimbursementdetail
+         UPDATE reimbursement_detail
 		SET STATUS = #{status},
 		MODIFYBY = #{modifyby},
 		MODIFYON = now()

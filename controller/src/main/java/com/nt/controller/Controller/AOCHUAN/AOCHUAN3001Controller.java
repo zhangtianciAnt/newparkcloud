@@ -67,7 +67,7 @@ public class AOCHUAN3001Controller {
     }
 
     @RequestMapping(value = "/pdf",method={RequestMethod.POST})
-    public void pdf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void pdf(HttpServletRequest request) throws Exception {
             //Map<String, Object> data = new HashMap<>();
 //         Quotations quotation = new Quotations();
 //          quotation.setAccount("哈哈哈");
@@ -77,12 +77,14 @@ public class AOCHUAN3001Controller {
 //         quotations.add(quotation);
 //        quotations.add(quotation1);
 //         data.put("quotations",quotations);
- //        ExcelOutPutUtil.OutPut1("aochuan","aochuan.xlsx",data,response);
+      //   ExcelOutPutUtil.OutPut1("aochuan","aochuan.xlsx",data,response);
        // Excel2pdf.excel2pdf("C:\\Users\\Administrator\\Desktop\\jiaban.xlsx","C:\\Users\\Administrator\\Desktop\\jiaban.pdf");
         //File pdfFile = new File("C:\\Users\\Administrator\\Desktop\\jiaban.pdf");// 输出路径
-        Workbook wb = new Workbook("C:\\Users\\Administrator\\Desktop\\jiaban.xlsx");// 原始excel路径
+        //Workbook wb = new Workbook("C:\\Users\\Administrator\\Desktop\\jiaban.xlsx");// 原始excel路径
         //FileOutputStream fileOS = new FileOutputStream(pdfFile);
-        wb.save(response.getOutputStream(), SaveFormat.PDF);
+        //wb.save(response.getOutputStream(), SaveFormat.PDF);
         //fileOS.close();
+        Office2Pdf office2Pdf = new Office2Pdf();
+        office2Pdf.excel2Pdf("C:\\Users\\Administrator\\Desktop\\jiaban.xlsx","C:\\Users\\Administrator\\Desktop\\jiabana.pdf");
     }
 }
