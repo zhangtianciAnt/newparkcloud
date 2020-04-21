@@ -22,6 +22,9 @@ public interface CompanyProjectsService {
 
     public List<CompanyProjects> getPjnameList(CompanyProjects companyprojects) throws Exception;
 
+    public List<CompanyProjects> getPjnameList6007(String account) throws Exception;
+    public List<CompanyProjects> listPsdcd(String numbers) throws Exception;
+
     public LogmanageMentVo logmanageMentVo(CompanyProjects companyprojects) throws Exception;
 
     //编辑

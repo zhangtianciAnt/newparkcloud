@@ -403,12 +403,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     String contractnumber = citation.getContractnumber();
                     String[] str = contractnumber.split("-");
                     if(str.length == 1){
+                        //年、契約种类、部门、契约类型、
                         Contractapplication co = new Contractapplication();
                         co.setCareeryear(citation.getCareeryear());
                         co.setContracttype(citation.getContracttype());
                         co.setGroup_id(citation.getGroup_id());
                         co.setType(citation.getType());
                         if(citation.getType().equals("0")){
+                            //取引先会社
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
                             coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
@@ -421,7 +423,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             }
                             newcontractnumber = contractnumber + number;
                         }
-                        else{
+                        else if(citation.getType().equals("1")){
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
                             coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "0001";
@@ -432,6 +434,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 number = "00" + coListcount;
                             } else if (coListcount.length() == 3) {
                                 number = "0" + coListcount;
+                            }
+                            newcontractnumber = contractnumber + number;
+                        }
+                        else {
+                            //co.setCustojapanese(citation.getCustojapanese());
+                            List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            String number = "01";
+                            String coListcount = String.valueOf(coList.size() + 1);
+                            if (coListcount.length() == 1) {
+                                number = "0" + coListcount;
+                            } else if (coListcount.length() == 2) {
+                                number = coListcount;
                             }
                             newcontractnumber = contractnumber + number;
                         }

@@ -157,8 +157,8 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     }
                     if(value.size()>5)
                     {
-                        supplierinfor.setVendorcode(Convert.toStr(value.get(5)));
-                        if(supplierinfor.getVendorcode() != null && supplierinfor.getVendorcode().length() > 50)
+                        supplierinfor.setVendornum(Convert.toStr(value.get(5)));
+                        if(supplierinfor.getVendornum() != null && supplierinfor.getVendornum().length() > 50)
                         {
                             throw new LogicalException("第" + i + "行 供应商编码（合同用） 长度超长，最大长度为50");
                         }
@@ -174,9 +174,9 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     if(value.size()>7)
                     {
                         supplierinfor.setPayeebankaccountnumber(Convert.toStr(value.get(7)));
-                        if(supplierinfor.getPayeebankaccountnumber() != null && supplierinfor.getPayeebankaccountnumber().length() > 20)
+                        if(supplierinfor.getPayeebankaccountnumber() != null && supplierinfor.getPayeebankaccountnumber().length() > 100)
                         {
-                            throw new LogicalException("第" + i + "行 收款方银行账号 长度超长，最大长度为20");
+                            throw new LogicalException("第" + i + "行 收款方银行账号 长度超长，最大长度为100");
                         }
                     }
                     if(value.size()>8)
@@ -308,9 +308,9 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                             if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                                 supplierinfor.setPerscale("BP007001");  //改数据
                             }
-                            if(Integer.parseInt(person)>50 && Integer.parseInt(person)<100){
+                            if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
                                 supplierinfor.setPerscale("BP007002");  //改数据
-                            } if(Integer.parseInt(person)>100 && Integer.parseInt(person)<500){
+                            } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
                                 supplierinfor.setPerscale("BP007003");  //改数据
                             }
                             if(Integer.parseInt(person)>500){

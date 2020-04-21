@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.Vo.UserVo;
@@ -519,6 +520,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+            SimpleDateFormat sdhms = new SimpleDateFormat("HHmmss");
             DecimalFormat df = new DecimalFormat("######0.00");
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
@@ -665,10 +667,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Date Time_start = null;
                     //第一条进门时间
                     long startlfirst = 0L;
+                    //第一条进门时间
+                    long startlfirsts = 0L;
                     if(punDetaillistevent1.size() > 0){
                         Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                         //第一条进门时间
                         startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
+                        startlfirsts = sdhms.parse(sdhms.format(Time_start)).getTime();
                     }
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
@@ -680,9 +685,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //最后一条出门记录
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                         //第一条出门时间
-                        endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                        endlfirst = sdhms.parse(sdhms.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
                         //个人第一条考勤时出门记录的情况
-                        if(endlfirst < startlfirst){
+                        if(endlfirst < startlfirsts){
                             punDetaillistevent2.remove(0);
                         }
                     }
@@ -970,6 +975,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        SimpleDateFormat sdhms = new SimpleDateFormat("HHmmss");
         DecimalFormat df = new DecimalFormat("######0.00");
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -982,6 +988,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //外驻人员信息
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        expatriatesinforList = expatriatesinforList.stream().filter(coi ->(!StringUtils.isNullOrEmpty(coi.getNumber()))).collect(Collectors.toList());
         //正式
         String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
         String url = "";
@@ -1121,10 +1128,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Date Time_start = null;
                 //第一条进门时间
                 long startlfirst = 0L;
+                //第一条进门时间
+                long startlfirsts = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                     //第一条进门时间
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
+                    startlfirsts = sdhms.parse(sdhms.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
@@ -1136,9 +1146,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //最后一条出门记录
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
-                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                    endlfirst = sdhms.parse(sdhms.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
                     //个人第一条考勤时出门记录的情况
-                    if(endlfirst < startlfirst){
+                    if(endlfirst < startlfirsts){
                         punDetaillistevent2.remove(0);
                     }
                 }
@@ -1384,7 +1394,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
             List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
             for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(inforlist.get(0).getAccount());
+                tokenModel.setUserId(Expatriatesinfor.getAccount());
                 tokenModel.setExpireDate(new Date());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -1396,8 +1406,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 // 日志用外出时长
                 attendance.setOutgoinghours("0");
                 attendance.setAttendancebpid(UUID.randomUUID().toString());
-                attendance.setGroup_id(inforlist.get(0).getGroup_id());
-                attendance.setUser_id(inforlist.get(0).getAccount());
+                attendance.setGroup_id(Expatriatesinfor.getGroup_id());
+                attendance.setUser_id(Expatriatesinfor.getAccount());
                 attendance.setDates(calendar.getTime());
                 attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
                 attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
@@ -1447,6 +1457,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+            SimpleDateFormat sdhms = new SimpleDateFormat("HHmmss");
             DecimalFormat df = new DecimalFormat("######0.00");
             String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //正式
@@ -1576,10 +1587,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     Date Time_start = null;
                     //第一条进门时间
                     long startlfirst = 0L;
+                    //第一条进门时间
+                    long startlfirsts = 0L;
                     if(punDetaillistevent1.size() > 0){
                         Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                         //第一条进门时间
                         startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
+                        startlfirsts = sdhms.parse(sdhms.format(Time_start)).getTime();
                     }
                     //个人所有出门记录
                     List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
@@ -1591,9 +1605,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //最后一条出门记录
                         Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                         //第一条出门时间
-                        endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                        endlfirst = sdhms.parse(sdhms.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
                         //个人第一条考勤时出门记录的情况
-                        if(endlfirst < startlfirst){
+                        if(endlfirst < startlfirsts){
                             punDetaillistevent2.remove(0);
                         }
                     }
@@ -1768,10 +1782,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        SimpleDateFormat sdhms = new SimpleDateFormat("HHmmss");
         DecimalFormat df = new DecimalFormat("######0.00");
         String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        expatriatesinforList = expatriatesinforList.stream().filter(coi ->(!StringUtils.isNullOrEmpty(coi.getNumber()))).collect(Collectors.toList());
         //正式
         String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
         String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
@@ -1902,10 +1918,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Date Time_start = null;
                 //第一条进门时间
                 long startlfirst = 0L;
+                //第一条进门时间
+                long startlfirsts = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                     //第一条进门时间
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
+                    startlfirsts = sdhms.parse(sdhms.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
@@ -1917,9 +1936,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //最后一条出门记录
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
-                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                    endlfirst = sdhms.parse(sdhms.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
                     //个人第一条考勤时出门记录的情况
-                    if(endlfirst < startlfirst){
+                    if(endlfirst < startlfirsts){
                         punDetaillistevent2.remove(0);
                     }
                 }
@@ -2092,6 +2111,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        SimpleDateFormat sdhms = new SimpleDateFormat("HHmmss");
         DecimalFormat df = new DecimalFormat("######0.00");
         List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
         //打卡时间
@@ -2217,10 +2237,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Date Time_start = null;
                 //第一条进门时间
                 long startlfirst = 0L;
+                //第一条进门时间
+                long startlfirsts = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                     //第一条进门时间
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
+                    startlfirsts = sdhms.parse(sdhms.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetail> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
@@ -2232,9 +2255,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //最后一条出门记录
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
-                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                    endlfirst = sdhms.parse(sdhms.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
                     //个人第一条考勤时出门记录的情况
-                    if(endlfirst < startlfirst){
+                    if(endlfirst < startlfirsts){
                         punDetaillistevent2.remove(0);
                     }
                 }
@@ -2493,11 +2516,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdhm = new SimpleDateFormat("HHmm");
+        SimpleDateFormat sdhms = new SimpleDateFormat("HHmmss");
         DecimalFormat df = new DecimalFormat("######0.00");
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
         //外驻人员信息
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        expatriatesinforList = expatriatesinforList.stream().filter(coi ->(!StringUtils.isNullOrEmpty(coi.getNumber()))).collect(Collectors.toList());
         //打卡时间
         String recordTime = "";
         //员工编号
@@ -2624,10 +2649,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Date Time_start = null;
                 //第一条进门时间
                 long startlfirst = 0L;
+                //第一条进门时间
+                long startlfirsts = 0L;
                 if(punDetaillistevent1.size() > 0){
                     Time_start = punDetaillistevent1.get(0).getPunchcardrecord_date();
                     //第一条进门时间
                     startlfirst = sdhm.parse(sdhm.format(Time_start)).getTime();
+                    startlfirsts = sdhms.parse(sdhms.format(Time_start)).getTime();
                 }
                 //个人所有出门记录
                 List<PunchcardRecordDetailbp> punDetaillistevent2 = punDetaillistx.stream().filter(p->(p.getEventno().equalsIgnoreCase("2"))).collect(Collectors.toList());
@@ -2639,9 +2667,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //最后一条出门记录
                     Time_end = punDetaillistevent2.get(punDetaillistevent2.size() - 1).getPunchcardrecord_date();
                     //第一条出门时间
-                    endlfirst = sdhm.parse(sdhm.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
+                    endlfirst = sdhms.parse(sdhms.format(punDetaillistevent2.get(0).getPunchcardrecord_date())).getTime();
                     //个人第一条考勤时出门记录的情况
-                    if(endlfirst < startlfirst){
+                    if(endlfirst < startlfirsts){
                         punDetaillistevent2.remove(0);
                     }
                 }
