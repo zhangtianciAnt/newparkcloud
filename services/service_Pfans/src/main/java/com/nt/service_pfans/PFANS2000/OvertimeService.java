@@ -8,6 +8,8 @@ import java.util.List;
 public interface OvertimeService {
     List<Overtime> getOvertime(Overtime overtime) throws Exception;
 
+    List<Overtime> getOvertimeDay(Overtime overtime) throws Exception;
+
     List<Overtime> getOvertimelist(Overtime overtime) throws Exception;
 
     public Overtime One(String overtimeid) throws Exception;

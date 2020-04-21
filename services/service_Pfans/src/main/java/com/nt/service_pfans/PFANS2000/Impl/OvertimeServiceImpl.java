@@ -35,6 +35,13 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Autowired
     private ReplacerestMapper replacerestmapper;
+
+
+    @Override
+    public List<Overtime> getOvertimeDay(Overtime overtime) throws Exception {
+        return overtimeMapper.getOvertimeDay(overtime.getOvertimetype(),DateUtil.format(overtime.getReserveovertimedate(),"YYYY-MM-dd"),overtime.getUserid());
+    }
+
     @Override
     public List<Overtime> getOvertime(Overtime overtime) throws Exception {
         return overtimeMapper.select(overtime);
