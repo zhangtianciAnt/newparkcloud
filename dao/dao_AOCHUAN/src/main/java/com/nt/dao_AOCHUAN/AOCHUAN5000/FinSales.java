@@ -72,8 +72,8 @@ public class FinSales extends BaseModel {
     @Column(name = "ARRIVALTIME")
     private String arrivaltime;
     //订单需求
-    @Column(name = "ORDER")
-    private String order;
+    @Column(name = "ORDERS")
+    private String orders;
     //回款状态
     @Column(name = "ARRIVAL_STATUS")
     private String arrival_status;

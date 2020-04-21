@@ -11,12 +11,4 @@
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
         SELECT * FROM fin_sales WHERE SALES_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS = '0'
     </select>
-
-    <!--  ????-????  -->
-    <select id="getFinSalesListByArrivalStatus" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
-        SELECT * FROM fin_sales
-        WHERE ARRIVAL_STATUS = #{arrivalStatus}
-        AND STATUS = #{status}
-    </select>
-
 </mapper>

@@ -1,8 +1,7 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
-import com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement;
-import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
+import com.nt.service_AOCHUAN.AOCHUAN5000.FinPurchaseSerivce;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -15,15 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/finsales")
-public class AOCHUAN5001Controller {
+@RequestMapping("/finpurchase")
+public class AOCHUAN5002Controller {
 
     @Autowired
-    private FinSalesService finSalesService;
+    private FinPurchaseSerivce finPurchaseSerivce;
 
     @Autowired
     private TokenService tokenService;
@@ -31,38 +28,36 @@ public class AOCHUAN5001Controller {
     /**
      * 获取费用表数据
      */
-    @RequestMapping(value = "/getFinSalesList", method = {RequestMethod.POST})
-    public ApiResult getFinSalesList(HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getFinPurchaseList", method = {RequestMethod.POST})
+    public ApiResult getFinPurchaseList(HttpServletRequest request) throws Exception {
 
-        FinSales finSales = new FinSales();
-        return ApiResult.success(finSalesService.getFinSalesList(finSales));
+        FinPurchase finPurchase = new FinPurchase();
+        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList(finPurchase));
     }
 
     /**
      * 更新
      */
-    @RequestMapping(value = "/confirmStatus", method = {RequestMethod.POST})
-    public ApiResult confirmStatus(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/paymentConfirm", method = {RequestMethod.POST})
+    public ApiResult paymentConfirm(@RequestBody FinPurchase finPurchase, HttpServletRequest request) throws Exception {
 
-        if (finSales == null){
+        if (finPurchase == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
         //UPDATE:FIN_SALES
         //存在Check
-        if (finSalesService.existCheck(finSales)) {
+        if (finPurchaseSerivce.existCheck(finPurchase)) {
             //唯一性Check
-            if(! finSalesService.uniqueCheck(finSales)) {
-                finSalesService.update(finSales, tokenService.getToken(request));
+            if(! finPurchaseSerivce.uniqueCheck(finPurchase)) {
+                finPurchaseSerivce.update(finPurchase, tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
         }else{
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-
         //正常结束
-        FinSales finSales1 = new FinSales();
-        return ApiResult.success(finSalesService.getFinSalesList(finSales));
+        return ApiResult.success();
     }
 }

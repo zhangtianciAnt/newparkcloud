@@ -19,8 +19,7 @@ public class FinSalesServiceImpl implements FinSalesService {
     //获取财务-销售数据
     @Override
     public List<FinSales> getFinSalesList(FinSales finSales) throws Exception {
-
-        return finSalesMapper.getFinSalesListByArrivalStatus(finSales.getArrival_status(), finSales.getStatus());
+        return finSalesMapper.select(finSales);
     }
 
     //更新
