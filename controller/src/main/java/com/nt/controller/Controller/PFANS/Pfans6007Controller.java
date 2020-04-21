@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.service_pfans.PFANS6000.VariousfundsService;
+import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -21,6 +22,9 @@ public class Pfans6007Controller {
     private VariousfundsService variousfundsService;
 
     @Autowired
+    private CompanyProjectsService companyProjectsService;
+
+    @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
@@ -38,6 +42,21 @@ public class Pfans6007Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(variousfundsService.getvariousfundsApplyOne(variousfunds.getVariousfunds_id()));
+    }
+    @RequestMapping(value = "/getPjnameList6007", method = {RequestMethod.POST})
+    public ApiResult getPjnameList6007(@RequestBody Variousfunds variousfunds, HttpServletRequest request) throws Exception {
+        String account = variousfunds.getBpplayer();
+        if (account == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.getPjnameList6007(account));
+    }
+    @RequestMapping(value = "/listPsdcd", method = {RequestMethod.GET})
+    public ApiResult listPsdcd(String numbers, HttpServletRequest request) throws Exception {
+        if (numbers == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.listPsdcd(numbers));
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
