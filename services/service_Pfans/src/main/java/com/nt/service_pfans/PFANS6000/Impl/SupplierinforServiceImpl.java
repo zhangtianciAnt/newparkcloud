@@ -174,9 +174,9 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     if(value.size()>7)
                     {
                         supplierinfor.setPayeebankaccountnumber(Convert.toStr(value.get(7)));
-                        if(supplierinfor.getPayeebankaccountnumber() != null && supplierinfor.getPayeebankaccountnumber().length() > 20)
+                        if(supplierinfor.getPayeebankaccountnumber() != null && supplierinfor.getPayeebankaccountnumber().length() > 100)
                         {
-                            throw new LogicalException("第" + i + "行 收款方银行账号 长度超长，最大长度为20");
+                            throw new LogicalException("第" + i + "行 收款方银行账号 长度超长，最大长度为100");
                         }
                     }
                     if(value.size()>8)
