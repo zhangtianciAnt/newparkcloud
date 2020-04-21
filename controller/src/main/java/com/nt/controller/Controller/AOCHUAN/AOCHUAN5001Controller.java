@@ -31,20 +31,18 @@ public class AOCHUAN5001Controller {
     /**
      * 获取费用表数据
      */
-    @RequestMapping(value = "/getFinSalesList", method = {RequestMethod.GET})
-    public ApiResult getFinSalesList(String refundType,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getFinSalesList", method = {RequestMethod.POST})
+    public ApiResult getFinSalesList(HttpServletRequest request) throws Exception {
 
         FinSales finSales = new FinSales();
-        finSales.setArrival_status(refundType);
-        finSales.setStatus("0");
         return ApiResult.success(finSalesService.getFinSalesList(finSales));
     }
 
     /**
      * 更新
      */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/confirmStatus", method = {RequestMethod.POST})
+    public ApiResult confirmStatus(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
 
         if (finSales == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -62,7 +60,9 @@ public class AOCHUAN5001Controller {
         }else{
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+
         //正常结束
-        return ApiResult.success();
+        FinSales finSales1 = new FinSales();
+        return ApiResult.success(finSalesService.getFinSalesList(finSales));
     }
 }
