@@ -30,7 +30,6 @@ public class ReimbursementServiceImpl implements ReimbursementService {
     @Override
     public List<ReimbursementDetail> getReimbursementDetailList(ReimbursementDetail reimbursementDetail) throws Exception {
         String reimNO = reimbursementDetail.getReimbursement_no();
-        List<ReimbursementDetail> aa = reimbursementDetailMapper.getReimbursementDetailList(reimNO,"0");
         return reimbursementDetailMapper.getReimbursementDetailList(reimNO,"0");
     }
 

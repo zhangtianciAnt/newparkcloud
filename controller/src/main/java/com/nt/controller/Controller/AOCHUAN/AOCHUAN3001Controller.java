@@ -84,7 +84,7 @@ public class AOCHUAN3001Controller {
         //FileOutputStream fileOS = new FileOutputStream(pdfFile);
         //wb.save(response.getOutputStream(), SaveFormat.PDF);
         //fileOS.close();
-        Office2Pdf office2Pdf = new Office2Pdf();
-        office2Pdf.excel2Pdf("C:\\Users\\Administrator\\Desktop\\jiaban.xlsx","C:\\Users\\Administrator\\Desktop\\jiabana.pdf");
+//        Office2Pdf office2Pdf = new Office2Pdf();
+//        office2Pdf.excel2Pdf("C:\\Users\\Administrator\\Desktop\\jiaban.xlsx","C:\\Users\\Administrator\\Desktop\\jiabana.pdf");
     }
 }
