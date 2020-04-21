@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -37,5 +38,5 @@ public class Docurule extends BaseModel {
     private String createby;
 
     @Column(name = "CREATEON")
-    private String createon;
+    private Date createon;
 }
