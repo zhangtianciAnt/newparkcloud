@@ -1384,7 +1384,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
             List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
             for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(inforlist.get(0).getAccount());
+                tokenModel.setUserId(Expatriatesinfor.getAccount());
                 tokenModel.setExpireDate(new Date());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -1396,8 +1396,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 // 日志用外出时长
                 attendance.setOutgoinghours("0");
                 attendance.setAttendancebpid(UUID.randomUUID().toString());
-                attendance.setGroup_id(inforlist.get(0).getGroup_id());
-                attendance.setUser_id(inforlist.get(0).getAccount());
+                attendance.setGroup_id(Expatriatesinfor.getGroup_id());
+                attendance.setUser_id(Expatriatesinfor.getAccount());
                 attendance.setDates(calendar.getTime());
                 attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
                 attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
