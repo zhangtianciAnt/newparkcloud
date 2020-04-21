@@ -7,7 +7,7 @@
         SELECT * FROM fin_sales WHERE SALES_ID = #{id} AND  STATUS = #{status}
     </select>
 
-    <!--  ??Check  -->
+    <!--  ???Check  -->
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
         SELECT * FROM fin_sales WHERE SALES_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS = '0'
     </select>
