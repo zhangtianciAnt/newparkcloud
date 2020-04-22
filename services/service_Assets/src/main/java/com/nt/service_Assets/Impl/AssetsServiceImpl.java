@@ -121,6 +121,9 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public void insert(Assets assets, TokenModel tokenModel) throws Exception {
+
+        checkBarCode(assets);
+
         assets.preInsert(tokenModel);
         if (StrUtil.isNotBlank(assets.getBarcode())) {
             assets.setBarcode(assets.getBarcode());
@@ -131,6 +134,25 @@ public class AssetsServiceImpl implements AssetsService {
         assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         assets.setAssets_id(UUID.randomUUID().toString());
         assetsMapper.insert(assets);
+    }
+
+    private void checkBarCode(Assets assets)throws Exception{
+
+        if(StrUtil.isNotBlank(assets.getBarcode())){
+            Assets conditon = new Assets();
+            conditon.setBarcode(assets.getBarcode());
+            List<Assets> rst = assetsMapper.select(conditon);
+            if(rst.size() > 0){
+                for(Assets item:rst){
+                    if(!"PA003002".equals(assets.getAssetstatus())){
+                        if(!item.getAssets_id().equals(assets.getAssets_id())){
+                            throw new LogicalException("资产编号重复！");
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private String getBarCode(Assets assets){
@@ -150,6 +172,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public void update(Assets assets, TokenModel tokenModel) throws Exception {
+        checkBarCode(assets);
         assets.preUpdate(tokenModel);
         assetsMapper.updateByPrimaryKey(assets);
     }
@@ -482,16 +505,20 @@ public class AssetsServiceImpl implements AssetsService {
 
 
     private int isDate(String str) {
-        if ( StrUtil.isNotEmpty(str) ) {
-            String month = str.substring(5, 7);
-            String day = str.substring(8, 10);
-            if ( Integer.parseInt(day) > 31 ) {
-                //"模板第" + lineNo + "行的日期格式错误，请输入正确的日子，导入失败"
-                return 3;
-            } else if ( Integer.parseInt(month) > 12 ) {
-                //"模板第" + lineNo + "行的日期格式错误，请输入正确的月份，导入失败"
-                return 2;
+        try{
+            if ( StrUtil.isNotEmpty(str) ) {
+                String month = str.substring(5, 7);
+                String day = str.substring(8, 10);
+                if ( Integer.parseInt(day) > 31 ) {
+                    //"模板第" + lineNo + "行的日期格式错误，请输入正确的日子，导入失败"
+                    return 3;
+                } else if ( Integer.parseInt(month) > 12 ) {
+                    //"模板第" + lineNo + "行的日期格式错误，请输入正确的月份，导入失败"
+                    return 2;
+                }
             }
+        }catch (Exception e){
+            return 2;
         }
         return 0;
     }

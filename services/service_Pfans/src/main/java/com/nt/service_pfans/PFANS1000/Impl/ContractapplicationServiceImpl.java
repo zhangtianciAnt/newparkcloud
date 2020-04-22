@@ -7,6 +7,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
+import com.nt.service_pfans.PFANS1000.mapper.ContractcompoundMapper;
 import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
@@ -31,6 +32,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
     private ContractnumbercountMapper contractnumbercountMapper;
+    @Autowired
+    private ContractcompoundMapper contractcompoundMapper;
     @Autowired
     private QuotationMapper quotationMapper;
     @Autowired
@@ -60,6 +63,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             numberList = numberList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
         }
         vo.setContractnumbercount(numberList);
+        //契约番号回数
+        Contractcompound compound = new Contractcompound();
+        compound.setContractnumber(contractapplication.getContractnumber());
+        List<Contractcompound> compoundList = contractcompoundMapper.select(compound);
+        if ( compoundList!=null && compoundList.size()>1 ) {
+            compoundList = compoundList.stream().sorted(Comparator.comparing(Contractcompound::getRowindex)).collect(Collectors.toList());
+        }
+        vo.setContractcompound(compoundList);
         return vo;
     }
 
@@ -95,6 +106,24 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.preInsert(tokenModel);
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
+                }
+            }
+        }
+        //复合合同金额分配
+        List<Contractcompound> compoundList = contractapplication.getContractcompound();
+        if (cnList != null) {
+            int rowindex = 0;
+            if(compoundList != null){
+                Contractcompound Co = new Contractcompound();
+                Co.setContractnumber(cnList.get(0).getContractnumber());
+                contractcompoundMapper.delete(Co);
+                for (Contractcompound compound : compoundList) {
+                    rowindex = rowindex + 1;
+                    compound.setRowindex(rowindex);
+                    compound.preInsert(tokenModel);
+                    compound.setContractnumber(cnList.get(0).getContractnumber());
+                    compound.setContractcompound_id(UUID.randomUUID().toString());
+                    contractcompoundMapper.insert(compound);
                 }
             }
         }
@@ -475,6 +504,24 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
+                }
+            }
+        }
+        //复合合同金额分配
+        List<Contractcompound> compoundList = contractapplication.getContractcompound();
+        if (cnList != null) {
+            int rowindex = 0;
+            if(compoundList != null){
+                Contractcompound Co = new Contractcompound();
+                Co.setContractnumber(cnList.get(0).getContractnumber());
+                contractcompoundMapper.delete(Co);
+                for (Contractcompound compound : compoundList) {
+                    rowindex = rowindex + 1;
+                    compound.setRowindex(rowindex);
+                    compound.preInsert(tokenModel);
+                    compound.setContractnumber(cnList.get(0).getContractnumber());
+                    compound.setContractcompound_id(UUID.randomUUID().toString());
+                    contractcompoundMapper.insert(compound);
                 }
             }
         }

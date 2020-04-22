@@ -197,8 +197,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             if ( SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
-                if ( rate <= 0 ) {
-                    throw new LogicalException("专票税率不能为0");
+                if(publicExpenseVo.getPublicexpense().getType()=="PJ001002"){
+                    if ( rate <= 0 ) {
+                        throw new LogicalException("专票税率不能为0");
+                    }
                 }
                 specialMap.put(invoice.getInvoicenumber(), rate);
             }
@@ -365,9 +367,15 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 String lineRate = FNUM.format((money/(1+rate))*rate);
                 if ( money>0 ) {
                     // 税
+                    //add-ws-4/22-税金不为0存2302-00-01A0
+                    if(!lineRate.equals("0")){
+                        taxCost.setSubjectnumber("2302-00-01A0");
+                    }else{
+                        taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                    }
+                    //add-ws-4/22-税金不为0存2302-00-01A0
                     taxCost.setLineamount(lineRate);
                     taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                    taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
                     taxCost.setRemark(getProperty(detail, "accountcode"));
                     //币种

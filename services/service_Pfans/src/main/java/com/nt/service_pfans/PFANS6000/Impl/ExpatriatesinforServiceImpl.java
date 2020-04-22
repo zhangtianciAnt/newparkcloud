@@ -1,22 +1,31 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
+import com.mysql.fabric.Response;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
+import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,6 +39,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -42,7 +52,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     private ExpatriatesinforMapper expatriatesinforMapper;
 
     @Autowired
+    private SupplierinforMapper supplierinforMapper;
+
+    @Autowired
     private PricesetMapper pricesetMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -205,13 +221,25 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 //            标准模板
             model.add("姓名");
             model.add("性别");
-            model.add("供应商名称");
             model.add("毕业院校");
             model.add("学历");
-            model.add("技术分类");
+            model.add("毕业年");
+            model.add("供应商名称");
             model.add("Rn");
-            model.add("作業形態");
+            model.add("邮箱地址");
+            model.add("group");
+            model.add("作業場所");
+            model.add("卡号");
             model.add("作業分類");
+            model.add("入场时间");
+            model.add("经验特长");
+            model.add("退场与否");
+            model.add("退场时间");
+            model.add("退场理由");
+            model.add("所有技術");
+            model.add("現場評価");
+            model.add("业务影响");
+            model.add("対策");
             List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
             for (int i = 0; i < key.size(); i++) {
@@ -222,20 +250,276 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             int k = 1;
             int accesscount = 0;
             int error = 0;
+            SimpleDateFormat sff = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy");
             for (int i = 1; i < list.size(); i++) {
                 Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
-                    expatriatesinfor.setExpname(value.get(0).toString());
-                    expatriatesinfor.setSex(value.get(1).toString());
-                    expatriatesinfor.setSuppliername(value.get(2).toString());
-                    expatriatesinfor.setGraduateschool(value.get(3).toString());
-                    expatriatesinfor.setEducation(value.get(4).toString());
-                    expatriatesinfor.setTechnology(value.get(5).toString());
-                    expatriatesinfor.setRn(value.get(6).toString());
-                    expatriatesinfor.setOperationform(value.get(7).toString());
-                    expatriatesinfor.setJobclassification(value.get(8).toString());
+                    if(value.size()>0)
+                    {
+                        expatriatesinfor.setExpname(Convert.toStr(value.get(0)));
+                        if(expatriatesinfor.getExpname() != null && expatriatesinfor.getExpname().trim().length() > 36)
+                        {
+                            throw new LogicalException("第" + i + "行 姓名 长度超长，最大长度为36");
+                        }
+                    }
+                    if(value.size()>1)
+                    {
+                        String sex = Convert.toStr(value.get(1));
+                        if(sex!=null && !sex.isEmpty())
+                        {
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(sex.trim());
+                            dictionary.setType("GT");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
+                            {
+                                expatriatesinfor.setSex(dictionaryList.get(0).getCode());
+                            }
+                        }
+                    }
+                    if(value.size()>2)
+                    {
+                        expatriatesinfor.setGraduateschool(Convert.toStr(value.get(2)));
+                    }
+                    if(value.size()>3)
+                    {
+                        String education = Convert.toStr(value.get(3));
+                        if(education!=null && !education.isEmpty())
+                        {
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(education.trim());
+                            dictionary.setType("RS");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
+                            {
+                                expatriatesinfor.setEducation(dictionaryList.get(0).getCode());
+                            }
+                        }
+                    }
+                    if(value.size()>4)
+                    {
+                        String graduation_year = Convert.toStr(value.get(4));
+                        if(graduation_year !=null && graduation_year.length()>3)
+                        {
+                            graduation_year = graduation_year.trim().substring(0,4);
+                            expatriatesinfor.setGraduation_year(sf.parse(graduation_year));
+                        }
+                    }
+                    if(value.size()>5)
+                    {
+                        String suppliername = Convert.toStr(value.get(5));
+                        Supplierinfor supplierinfor = new Supplierinfor();
+                        supplierinfor.setSupchinese(suppliername);
+                        List<Supplierinfor> supplierinforList = new ArrayList<>();
+                        supplierinforList = supplierinforMapper.select(supplierinfor);
+                        if(supplierinforList.size()>0)
+                        {
+                            expatriatesinfor.setSuppliername(supplierinforList.get(0).getSupchinese());
+                            expatriatesinfor.setSupplierinfor_id(supplierinforList.get(0).getSupplierinfor_id());
+                        }
+                        else
+                        {
+                            expatriatesinfor.setSuppliername(suppliername);
+                        }
+                    }
+                    if(value.size()>6)
+                    {
+                        String rn = Convert.toStr(value.get(6));
+                        if(rn!=null && !rn.isEmpty())
+                        {
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(rn.trim());
+                            dictionary.setType("RS");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
+                            {
+                                expatriatesinfor.setRn(dictionaryList.get(0).getCode());
+                            }
+                        }
+                    }
+                    if(value.size()>7)
+                    {
+                        expatriatesinfor.setEmail(Convert.toStr(value.get(7)));
+                        if(expatriatesinfor.getEmail() != null && expatriatesinfor.getEmail().length() > 255)
+                        {
+                            throw new LogicalException("第" + i + "行 邮箱 长度超长，最大长度为255");
+                        }
+                    }
+                    if(value.size()>8)
+                    {
+                        String groupName = Convert.toStr(value.get(8));
+                        if(groupName!=null && !groupName.isEmpty())
+                        {
+                            Query query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
+                            List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                            customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
+                            if(customerInfoList.size()>0)
+                            {
+                                expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                            }
+                            else
+                            {
+                                expatriatesinfor.setGroup_id(groupName);
+                            }
+                        }
+                    }
+                    if(value.size()>9)
+                    {
+                        String operationform = Convert.toStr(value.get(9));
+                        if(operationform!=null && !operationform.isEmpty())
+                        {
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(operationform.trim());
+                            dictionary.setType("BP");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
+                            {
+                                expatriatesinfor.setOperationform(dictionaryList.get(0).getCode());
+                            }
+                        }
+                    }
+                    if(value.size()>10)
+                    {
+                        expatriatesinfor.setNumber(Convert.toStr(value.get(10)));
+                        if(expatriatesinfor.getNumber() != null && expatriatesinfor.getNumber().length() > 36)
+                        {
+                            throw new LogicalException("第" + i + "行 卡号 长度超长，最大长度为36");
+                        }
+                    }
+                    if(value.size()>11)
+                    {
+                        String jobclassification = Convert.toStr(value.get(11));
+                        if(jobclassification!=null && !jobclassification.isEmpty())
+                        {
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(jobclassification.trim());
+                            dictionary.setType("BP");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
+                            {
+                                expatriatesinfor.setJobclassification(dictionaryList.get(0).getCode());
+                            }
+                        }
+                    }
+                    if(value.size()>12)
+                    {
+                        String admissiontime = Convert.toStr(value.get(12));
+                        if(admissiontime!=null && admissiontime.length() > 9)
+                        {
+                            admissiontime = admissiontime.trim().substring(0,10);
+                            expatriatesinfor.setAdmissiontime(sff.parse(admissiontime));
+                        }
+                    }
+                    if(value.size()>13)
+                    {
+                        expatriatesinfor.setSpeciality(Convert.toStr(value.get(13)));
+                    }
+                    if(value.size()>14)
+                    {
+                        String exits = Convert.toStr(value.get(14));
+                        if(exits!=null && !exits.isEmpty())
+                        {
+                            if(exits.trim().equals("是"))
+                            {
+                                expatriatesinfor.setExits("0");
+                            }
+                            else if(exits.trim().equals("否"))
+                            {
+                                expatriatesinfor.setExits("1");
+                            }
+                        }
+                        if(expatriatesinfor.getExits().equals("0"))
+                        {
+                            if(value.size()>15)
+                            {
+                                String exitime = Convert.toStr(value.get(15));
+                                if(exitime!=null && exitime.length() > 9)
+                                {
+                                    exitime = exitime.trim().substring(0,10);
+                                    expatriatesinfor.setExitime(sff.parse(exitime));
+                                }
+                            }
+                            if(value.size()>16)
+                            {
+                                String exitreason = Convert.toStr(value.get(16));
+                                if(exitreason!=null && !exitreason.isEmpty())
+                                {
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(exitreason.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
+                                    {
+                                        expatriatesinfor.setExitreason(dictionaryList.get(0).getCode());
+                                    }
+                                }
+                            }
+                            if(value.size()>17)
+                            {
+                                String alltechnology = Convert.toStr(value.get(17));
+                                if(alltechnology!=null && !alltechnology.isEmpty())
+                                {
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(alltechnology.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
+                                    {
+                                        expatriatesinfor.setAlltechnology(dictionaryList.get(0).getCode());
+                                    }
+                                }
+                            }
+                            if(value.size()>18)
+                            {
+                                String sitevaluation = Convert.toStr(value.get(18));
+                                if(sitevaluation!=null && !sitevaluation.isEmpty())
+                                {
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(sitevaluation.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
+                                    {
+                                        expatriatesinfor.setSitevaluation(dictionaryList.get(0).getCode());
+                                    }
+                                }
+                            }
+                            if(value.size()>19)
+                            {
+                                String businessimpact = Convert.toStr(value.get(19));
+                                if(businessimpact!=null && !businessimpact.isEmpty())
+                                {
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(businessimpact.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
+                                    {
+                                        expatriatesinfor.setBusinessimpact(dictionaryList.get(0).getCode());
+                                    }
+                                }
+                            }
+                            if(value.size()>20)
+                            {
+                                String countermeasure = Convert.toStr(value.get(20));
+                                if(countermeasure!=null && !countermeasure.isEmpty())
+                                {
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(countermeasure.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
+                                    {
+                                        expatriatesinfor.setCountermeasure(dictionaryList.get(0).getCode());
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 expatriatesinfor.preInsert();
                 expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
