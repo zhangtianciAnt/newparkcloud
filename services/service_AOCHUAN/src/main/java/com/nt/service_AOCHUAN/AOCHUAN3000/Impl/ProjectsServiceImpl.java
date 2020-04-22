@@ -32,9 +32,9 @@ public class ProjectsServiceImpl implements ProjectsService {
     @Override
     public List<FollowUpRecord> getFollowUpRecordList(FollowUpRecord followUpRecord) throws Exception {
 
-        String productName = followUpRecord.getProduct_nm();
-        String provider = followUpRecord.getProvider();
-        return followUpRecordMapper.getFollowUpRecordList(productName,provider,"0");
+        String products_id = followUpRecord.getProducts_id();
+        String supplier_id = followUpRecord.getSupplier_id();
+        return followUpRecordMapper.getFollowUpRecordList(products_id,supplier_id,"0");
     }
 
     //新建
@@ -88,14 +88,14 @@ public class ProjectsServiceImpl implements ProjectsService {
             Projects projects = new Projects();
             BeanUtils.copyProperties(projects,object);
             projects.preUpdate(tokenModel);
-            projectsMapper.deleteFromProjectsByDoubleKey(projects.getModifyby(),projects.getProduct_nm(),projects.getProvider(),"1");
+            projectsMapper.deleteFromProjectsByDoubleKey(projects.getModifyby(),projects.getProducts_id(),projects.getSupplier_id(),"1");
 
         } else if(object instanceof FollowUpRecord){
 
             FollowUpRecord followUpRecord = new FollowUpRecord();
             BeanUtils.copyProperties(followUpRecord,object);
             followUpRecord.preUpdate(tokenModel);
-            followUpRecordMapper.deleteFromFollowUpRecordByDoubleKey(followUpRecord.getModifyby(),followUpRecord.getProduct_nm(),followUpRecord.getProvider(),"1");
+            followUpRecordMapper.deleteFromFollowUpRecordByDoubleKey(followUpRecord.getModifyby(),followUpRecord.getProducts_id(),followUpRecord.getSupplier_id(),"1");
         }
     }
 
@@ -126,7 +126,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     //唯一性Check
     @Override
     public Boolean uniqueCheck(Projects projects) throws Exception {
-        List<Projects> resultLst = projectsMapper.uniqueCheck(projects.getProjects_id(), projects.getProduct_nm(),projects.getProvider());
+        List<Projects> resultLst = projectsMapper.uniqueCheck(projects.getProjects_id(), projects.getProducts_id(),projects.getSupplier_id());
 
         if (resultLst.isEmpty()){
             return false;

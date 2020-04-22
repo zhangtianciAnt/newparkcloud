@@ -24,13 +24,25 @@ public class FollowUpRecord extends BaseModel {
     @Column(name = "FOLLOWUPRECORD_ID")
     private String followuprecord_id;
 
+    //产品id
+    @Column(name = "PRODUCTS_ID")
+    private String products_id;
+
+    //供应商id
+    @Column(name = "SUPPLIER_ID")
+    private String supplier_id;
+
     //产品名称
     @Column(name = "PRODUCT_NM")
     private String product_nm;
 
     //供应商
-    @Column(name = "PROVIDER")
-    private String provider;
+    @Column(name = "SUPPLIER")
+    private String supplier;
+
+    //销售：客户ID
+    @Column(name = "CUSTOMER_ID")
+    private String customer_id;
 
     //销售：客户
     @Column(name = "SAL_CUSTOMER")

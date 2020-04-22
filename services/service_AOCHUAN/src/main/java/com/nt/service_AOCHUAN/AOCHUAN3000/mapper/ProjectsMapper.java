@@ -10,10 +10,10 @@ public interface ProjectsMapper extends MyMapper<Projects> {
     //获取-项目表
     public List<Projects> getProjectList();
     //删除-项目表
-    void deleteFromProjectsByDoubleKey(@Param("modifyby") String modifyby,@Param("product_nm") String product_nm,@Param("provider") String provider,@Param("status") String status);
+    void deleteFromProjectsByDoubleKey(@Param("modifyby") String modifyby,@Param("products_id") String products_id,@Param("supplier_id") String supplier_id,@Param("status") String status);
     //存在Check
     public List<Projects> existCheck(@Param("id") String id,@Param("status") String status);
     //唯一性Check
-    public List<Projects> uniqueCheck(@Param("id") String id,@Param("product_nm") String product_nm,@Param("provider") String provider);
+    public List<Projects> uniqueCheck(@Param("id") String id,@Param("products_id") String products_id,@Param("supplier_id") String supplier_id);
 }
 
