@@ -1,12 +1,15 @@
 package com.nt.controller.Controller.AOCHUAN;
 
 
+import com.nt.dao_AOCHUAN.AOCHUAN7000.Account;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
+import com.nt.service_AOCHUAN.AOCHUAN7000.AccountService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 public class AOCHUAN7002Controller {
     @Autowired
     private DocuruleService docuruleService;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private TokenService tokenService;
@@ -63,7 +69,12 @@ public class AOCHUAN7002Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value="/getaccount" ,method = {RequestMethod.POST})
+    public ApiResult getaccount( HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Account account = new Account();
+        return ApiResult.success(accountService.get(account));
 
-
+    }
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface DocuruleService {
     List<Docurule> get(Docurule docurule) throws Exception;
 
-    Docurule One(String id) throws Exception;
+    DocuruleVo One(String docurule_id) throws Exception;
 
     void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception;
 
