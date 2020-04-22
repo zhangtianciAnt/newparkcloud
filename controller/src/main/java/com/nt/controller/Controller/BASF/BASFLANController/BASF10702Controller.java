@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.ElementType;
 import java.util.Date;
 
 /**
@@ -123,11 +124,9 @@ public class BASF10702Controller {
      */
     @RequestMapping(value = "/updategps", method = {RequestMethod.POST})
     public ApiResult updategps(String vehicleinformationid,String gps) throws Exception {
-
-        Vehicleinformation vehicleinformation = new Vehicleinformation();
-        vehicleinformation.setVehicleinformationid(vehicleinformationid);
-        vehicleinformation.setGps(gps);
-        vehicleinformationServices.updategps(vehicleinformation);
+        if(StringUtils.isNotEmpty(vehicleinformationid)&&StringUtils.isNotEmpty(gps)){
+            vehicleinformationServices.updategps(vehicleinformationid,gps);
+        }
         return ApiResult.success();
     }
 

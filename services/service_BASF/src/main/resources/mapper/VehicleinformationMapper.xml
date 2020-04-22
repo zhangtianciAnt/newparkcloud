@@ -89,4 +89,14 @@
         from vehicleinformation
         where outtime is NULL
     </select>
+
+<!--    增量更新GPS点位信息-->
+    <update id="updategps">
+UPDATE vehicleinformation
+SET `gps` = CONCAT( IFNULL(`gps`,''), #{gps} ),
+`MODIFYON` =#{modifyon}
+WHERE
+	`vehicleinformationid` = #{vehicleinformationid};
+    </update>
+
 </mapper>

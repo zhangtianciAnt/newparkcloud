@@ -215,9 +215,8 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2019/11/14 13：39
      */
     @Override
-    public void updategps(Vehicleinformation vehicleinformation) throws Exception {
-        vehicleinformation.setModifyon(new Date());
-        vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
+    public void updategps(String vehicleinformationid,String gps) throws Exception {
+        vehicleinformationMapper.updategps(vehicleinformationid,gps,new Date());
     }
 
     /**
