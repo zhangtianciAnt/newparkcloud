@@ -79,8 +79,8 @@ public class AOCHUAN3009Controller {
 
             id= UUID.randomUUID().toString();
             followUpRecord.setFollowuprecord_id(id);
-            followUpRecord.setProduct_nm(projects.getProduct_nm());
-            followUpRecord.setProvider(projects.getProvider());
+            followUpRecord.setProducts_id(projects.getProducts_id());
+            followUpRecord.setSupplier_id(projects.getSupplier_id());
 
             //存在Check
             if (!projectsSerivce.existCheck(followUpRecord)) {
@@ -117,8 +117,8 @@ public class AOCHUAN3009Controller {
             List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
             for(FollowUpRecord followUpRecord:followUpRecordList){
 
-                followUpRecord.setProduct_nm(projects.getProduct_nm());
-                followUpRecord.setProvider(projects.getProvider());
+                followUpRecord.setProducts_id(projects.getProducts_id());
+                followUpRecord.setSupplier_id(projects.getSupplier_id());
 
                 //存在Check
                 if (projectsSerivce.existCheck(followUpRecord)) {
@@ -160,8 +160,8 @@ public class AOCHUAN3009Controller {
             List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
             for(FollowUpRecord followUpRecord:followUpRecordList){
 
-                followUpRecord.setProduct_nm(projects.getProduct_nm());
-                followUpRecord.setProvider(projects.getProvider());
+                followUpRecord.setProducts_id(projects.getProducts_id());
+                followUpRecord.setSupplier_id(projects.getSupplier_id());
 
                 //存在Check
                 if (projectsSerivce.existCheck(followUpRecord)) {
