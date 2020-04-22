@@ -197,8 +197,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             if ( SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
-                if ( rate <= 0 ) {
-                    throw new LogicalException("专票税率不能为0");
+                if(publicExpenseVo.getPublicexpense().getType()=="PJ001002"){
+                    if ( rate <= 0 ) {
+                        throw new LogicalException("专票税率不能为0");
+                    }
                 }
                 specialMap.put(invoice.getInvoicenumber(), rate);
             }
