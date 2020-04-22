@@ -112,19 +112,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         //复合合同金额分配
         List<Contractcompound> compoundList = contractapplication.getContractcompound();
         if (cnList != null) {
+            int rowindex = 0;
             if(compoundList != null){
                 Contractcompound Co = new Contractcompound();
                 Co.setContractnumber(cnList.get(0).getContractnumber());
                 contractcompoundMapper.delete(Co);
-            }
-            int rowindex = 0;
-            for (Contractcompound compound : compoundList) {
-                rowindex = rowindex + 1;
-                compound.setRowindex(rowindex);
-                compound.preInsert(tokenModel);
-                compound.setContractnumber(cnList.get(0).getContractnumber());
-                compound.setContractcompound_id(UUID.randomUUID().toString());
-                contractcompoundMapper.insert(compound);
+                for (Contractcompound compound : compoundList) {
+                    rowindex = rowindex + 1;
+                    compound.setRowindex(rowindex);
+                    compound.preInsert(tokenModel);
+                    compound.setContractnumber(cnList.get(0).getContractnumber());
+                    compound.setContractcompound_id(UUID.randomUUID().toString());
+                    contractcompoundMapper.insert(compound);
+                }
             }
         }
     }
@@ -515,14 +515,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 Contractcompound Co = new Contractcompound();
                 Co.setContractnumber(cnList.get(0).getContractnumber());
                 contractcompoundMapper.delete(Co);
-            }
-            for (Contractcompound compound : compoundList) {
-                rowindex = rowindex + 1;
-                compound.setRowindex(rowindex);
-                compound.preInsert(tokenModel);
-                compound.setContractnumber(cnList.get(0).getContractnumber());
-                compound.setContractcompound_id(UUID.randomUUID().toString());
-                contractcompoundMapper.insert(compound);
+                for (Contractcompound compound : compoundList) {
+                    rowindex = rowindex + 1;
+                    compound.setRowindex(rowindex);
+                    compound.preInsert(tokenModel);
+                    compound.setContractnumber(cnList.get(0).getContractnumber());
+                    compound.setContractcompound_id(UUID.randomUUID().toString());
+                    contractcompoundMapper.insert(compound);
+                }
             }
         }
         result.put("contractnumbercount", numberList);
