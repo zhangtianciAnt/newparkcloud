@@ -43,6 +43,12 @@ public class Contractcompound extends BaseModel {
     private String group_id;
 
     /**
+     * 请求金额
+     */
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
+
+    /**
      * 分配金额
      */
     @Column(name = "CONTRACTREQUESTAMOUNT")
