@@ -1,12 +1,10 @@
 package com.nt.service_BASF.Impl;
 
-import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
-import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
-import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
-import com.nt.dao_BASF.VO.VehicleinformationVo;
+import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_BASF.mapper.VehicleinformationMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,8 +179,14 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2020/04/13 14:49
      */
     @Override
-    public List<Vehicleinformation> getQueryVehiclesRegularlyInfo() throws Exception {
-        return vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
+    public List<VehicleinformationGpsArrVo> getQueryVehiclesRegularlyInfo() throws Exception {
+        List<VehicleinformationGpsArrVo> list=vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
+        for(VehicleinformationGpsArrVo vehicleinformationGpsArrVo:list){
+            if(StringUtils.isNotEmpty(vehicleinformationGpsArrVo.getGps())){
+                vehicleinformationGpsArrVo.setGpsArr(vehicleinformationGpsArrVo.getGps().split(";"));
+            }
+        }
+        return list;
     }
 
     /**

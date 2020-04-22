@@ -56,7 +56,7 @@ public class WebSocketVo {
     private List<InsideVehicleTypeVo> insideVehicleTypeVoList = new ArrayList<>();
 
     // BASF90600 定时查询车辆信息表（出场时间为空的数据）
-    private List<Vehicleinformation> QueryVehiclesRegularlyInfoList = new ArrayList<>();
+    private List<VehicleinformationGpsArrVo> QueryVehiclesRegularlyInfoList = new ArrayList<>();
     // endregion
 
     // region BASF90200 火灾消防模块

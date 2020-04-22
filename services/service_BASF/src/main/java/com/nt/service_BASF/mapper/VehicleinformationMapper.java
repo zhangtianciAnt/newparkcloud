@@ -3,6 +3,7 @@ package com.nt.service_BASF.mapper;
 import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
+import com.nt.dao_BASF.VO.VehicleinformationGpsArrVo;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
@@ -41,7 +42,7 @@ public interface VehicleinformationMapper extends MyMapper<Vehicleinformation> {
     List<InsideVehicleTypeVo> getInsideVehicleType() throws Exception;
 
     //定时查询车辆信息表（出场时间为空的数据）
-    List<Vehicleinformation> getQueryVehiclesRegularlyInfo() throws Exception;
+    List<VehicleinformationGpsArrVo> getQueryVehiclesRegularlyInfo() throws Exception;
 
     //增量更新GPS点位信息
     void updategps(@Param("vehicleinformationid") String vehicleinformationid,@Param("gps") String gps, @Param("modifyon") Date modifyon) throws Exception;

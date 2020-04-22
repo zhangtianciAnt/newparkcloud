@@ -84,7 +84,7 @@
     </select>
 
     <!--    定时查询车辆（出场时间为空的数据）-->
-    <select id="getQueryVehiclesRegularlyInfo" resultType="com.nt.dao_BASF.Vehicleinformation">
+    <select id="getQueryVehiclesRegularlyInfo" resultType="com.nt.dao_BASF.VO.VehicleinformationGpsArrVo">
         select *
         from vehicleinformation
         where outtime is NULL
