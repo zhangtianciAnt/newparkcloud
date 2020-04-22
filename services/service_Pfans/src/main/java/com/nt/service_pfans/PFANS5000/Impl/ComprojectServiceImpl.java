@@ -175,7 +175,7 @@ public class ComprojectServiceImpl implements ComprojectService {
             prosystemMapper.delete(prosystem);
             int rowundex = 0;
             for (Prosystem pro : prosystemList) {
-              if(pro.getName()!=""&&pro.getName()!=null)  {
+              if(pro.getName_id()!=""&&pro.getName_id()!=null)  {
                   rowundex = rowundex + 1;
                   pro.preInsert(tokenModel);
                   pro.setProsystem_id(UUID.randomUUID().toString());
