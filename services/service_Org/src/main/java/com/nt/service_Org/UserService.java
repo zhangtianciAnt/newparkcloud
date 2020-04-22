@@ -84,5 +84,7 @@ public interface UserService {
 
     List<CustomerInfo> getAllCustomerInfo();
 
+    List<CustomerInfo> getOKRS(String orgid) throws Exception;
+
     List<String> importUser(HttpServletRequest request) throws Exception ;
 }
