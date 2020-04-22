@@ -2,9 +2,13 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
+import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
+import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.dao.TokenModel;
@@ -21,6 +25,12 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private FinPurchaseMapper finPurchaseMapper;
+
+    @Autowired
+    private FinSalesMapper finSalesMapper;
 
 
     @Override
@@ -50,5 +60,20 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Override
     public void delete(String id) throws Exception {
         transportGoodMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void insertCW(FinPurchase finPurchase, TokenModel token) {
+        finPurchase.setPurchase_id(UUID.randomUUID().toString());
+        finPurchase.setCredential_status("0");
+        finPurchase.preInsert();
+        finPurchaseMapper.insert(finPurchase);
+    }
+
+    @Override
+    public void insertHK(FinSales finSales, TokenModel token) {
+        finSales.setSales_id(UUID.randomUUID().toString());
+        finSales.preInsert();
+        finSalesMapper.insert(finSales);
     }
 }

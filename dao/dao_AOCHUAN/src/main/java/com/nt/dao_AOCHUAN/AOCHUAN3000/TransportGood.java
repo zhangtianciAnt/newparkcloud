@@ -116,4 +116,12 @@ public class TransportGood extends BaseModel {
 
     private String enclosure3;
 
+    private String productsid;
+
+    private String supplierid;
+
+    private String customerid;
+
+
+
 }
