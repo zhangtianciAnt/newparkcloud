@@ -56,9 +56,9 @@ public class ExcelOutPutUtil {
 
 //        ClassPathResource Pdf_resource = new ClassPathResource("pdf_files");
 
-        String pdfRoot = ExcelOutPutUtil.class.getClassLoader().getResource("pdf_files").getPath();
-
-        response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
+//        String pdfRoot = ExcelOutPutUtil.class.getClassLoader().getResource("pdf_files").getPath();
+        String pdfRoot ="D://PFANS/pdf";
+                response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
         ServletOutputStream out=response.getOutputStream();
 
         JxlsBuilder jxlsBuilder = JxlsBuilder
@@ -80,11 +80,11 @@ public class ExcelOutPutUtil {
 
         jxlsBuilder.build();
 
-        new jacob2pdf().excel2Pdf(pdfRoot.substring(1,pdfRoot.length()) + "/" + templetName,
-                pdfRoot.substring(1,pdfRoot.length()) + "/" + templetName.split("\\.")[0]+".pdf");
+        new jacob2pdf().excel2Pdf(pdfRoot + "/" + templetName,
+                pdfRoot + "/" + templetName.split("\\.")[0]+".pdf");
 
 
-        FileInputStream fileInput = new FileInputStream(pdfRoot.substring(1,pdfRoot.length()) + "/" + templetName.split("\\.")[0]+".pdf");
+        FileInputStream fileInput = new FileInputStream(pdfRoot + "/" + templetName.split("\\.")[0]+".pdf");
         int i = fileInput.available();
         byte[] content = new byte[i];
         fileInput.read(content);
@@ -94,7 +94,7 @@ public class ExcelOutPutUtil {
         fileInput.close();
         out.close();
 
-        FileUtil.del(pdfRoot.substring(1,pdfRoot.length()) + "/" + templetName);
-        FileUtil.del(pdfRoot.substring(1,pdfRoot.length()) + "/" + templetName.split("\\.")[0]+".pdf");
+        FileUtil.del(pdfRoot + "/" + templetName);
+        FileUtil.del(pdfRoot + "/" + templetName.split("\\.")[0]+".pdf");
     }
 }
