@@ -38,8 +38,8 @@ public class AOCHUAN5002Controller {
     /**
      * 更新
      */
-    @RequestMapping(value = "/paymentConfirm", method = {RequestMethod.POST})
-    public ApiResult paymentConfirm(@RequestBody FinPurchase finPurchase, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/updateStatus", method = {RequestMethod.POST})
+    public ApiResult updateStatus(@RequestBody FinPurchase finPurchase, HttpServletRequest request) throws Exception {
 
         if (finPurchase == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));

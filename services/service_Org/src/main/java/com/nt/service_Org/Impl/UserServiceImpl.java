@@ -597,6 +597,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<CustomerInfo> getOKRS(String orgid) throws Exception{
+        Query query = new Query();
+        if (StrUtil.isNotBlank(orgid)) {
+            query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
+        }
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        return customerInfos;
+    }
+
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request) throws Exception {
         try {

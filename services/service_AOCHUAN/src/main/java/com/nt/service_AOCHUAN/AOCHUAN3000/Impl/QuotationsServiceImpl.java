@@ -5,10 +5,14 @@ import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReturngoodsMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
+import com.nt.utils.MyMapper;
+import com.nt.utils.StringUtils;
+import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -32,6 +36,7 @@ public class QuotationsServiceImpl implements QuotationsService {
     @Autowired
     private RoleService roleService;
 
+
     @Override
     public List<Quotations> get() throws Exception {
         return quotationsMapper.selectAll();
@@ -49,6 +54,7 @@ public class QuotationsServiceImpl implements QuotationsService {
                    ToDoNotice(tokenModel,quotations);
                    quotations.setType(quotations.getType() + 1);
                }
+              quotations.preUpdate(tokenModel);
               quotationsMapper.updateByPrimaryKeySelective(quotations);
         //ToDoNotice(tokenModel,quotations.getQuotations_id());
     }
@@ -106,6 +112,6 @@ public class QuotationsServiceImpl implements QuotationsService {
             toDoNotice.setOwner(quotations.getSaleresponsibility());
             toDoNoticeService.save(toDoNotice);
         }
-
     }
+
 }

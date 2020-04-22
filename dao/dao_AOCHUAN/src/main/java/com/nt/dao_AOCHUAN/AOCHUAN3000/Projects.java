@@ -23,13 +23,19 @@ public class Projects extends BaseModel {
     @Column(name = "PROJECTS_ID")
     private String projects_id;
 
+    @Column(name = "PRODUCTS_ID")
+    private String products_id;
+
+    @Column(name = "SUPPLIER_ID")
+    private String supplier_id;
+
     //项目名称
     @Column(name = "PRODUCT_NM")
     private String product_nm;
 
     //供应商
-    @Column(name = "PROVIDER")
-    private String provider;
+    @Column(name = "SUPPLIER")
+    private String supplier;
 
     //客户
     @Column(name = "CUSTOMER")

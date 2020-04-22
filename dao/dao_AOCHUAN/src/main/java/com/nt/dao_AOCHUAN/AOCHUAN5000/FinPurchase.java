@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -55,10 +56,10 @@ public class FinPurchase extends BaseModel {
     private String dangerous;
     //计划发货时间（提醒）
     @Column(name = "DELIVERYTIME")
-    private String deliverytime;
+    private Date deliverytime;
     //预计付款时间（提醒）
     @Column(name = "PAYMENTTIME")
-    private String paymenttime;
+    private Date paymenttime;
     //唛头
     @Column(name = "MARKS")
     private String marks;

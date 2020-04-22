@@ -10,13 +10,22 @@
     <!--  获取记录表数据  -->
     <select id="getFollowUpRecordList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
         select
-        fur.FOLLOWUPRECORD_ID,fur.PRODUCT_NM,fur.PROVIDER,
-        fur.SAL_CUSTOMER,fur.SAL_DATE,fur.SAL_EVENT,fur.SAL_CONTENT,
-        fur.PROC_DATE,fur.PROC_ANSWER
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID,
+        fur.SAL_CUSTOMER,
+        fur.SAL_DATE,
+        fur.SAL_EVENT,
+        fur.SAL_CONTENT,
+        fur.PROC_DATE,
+        fur.PROC_ANSWER
         from followuprecord as fur
         inner join projects as pro
-        on fur.PRODUCT_NM = pro.PRODUCT_NM and fur.PROVIDER = pro.PROVIDER
-        where fur.PRODUCT_NM =#{product_nm} AND fur.PROVIDER =#{provider} AND fur.STATUS = #{status}
+        on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
+        where fur.PRODUCTS_ID =#{products_id} AND fur.SUPPLIER_ID =#{supplier_id} AND fur.STATUS = #{status}
         order by fur.SAL_DATE
 	</select>
 
@@ -26,7 +35,7 @@
 		SET STATUS = #{status},
 		MODIFYBY = #{modifyby},
 		MODIFYON = now()
-		 WHERE PRODUCT_NM = #{product_nm}
-        AND PROVIDER = #{provider}
+		 WHERE PRODUCTS_ID = #{products_id}
+        AND SUPPLIER_ID = #{supplier_id}
     </update>
 </mapper>

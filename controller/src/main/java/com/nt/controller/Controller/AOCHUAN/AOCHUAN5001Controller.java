@@ -39,10 +39,10 @@ public class AOCHUAN5001Controller {
     }
 
     /**
-     * 更新
+     * 状态更新
      */
-    @RequestMapping(value = "/confirmStatus", method = {RequestMethod.POST})
-    public ApiResult confirmStatus(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
 
         if (finSales == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));

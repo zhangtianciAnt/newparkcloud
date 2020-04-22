@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -471,6 +473,21 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      */
     public static boolean isEmail(String email) {
         return Pattern.matches(REGEX_EMAIL, email);
+    }
+
+    //获取合同号
+    public static<T>  String getContractNo(String code, MyMapper<T> mapper) throws Exception{
+        if(!StringUtils.isNotBlank(code)){
+            throw new Exception("请输入code值");
+        }
+        StringBuffer sb = new StringBuffer(code);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String date = dateFormat.format(new Date());
+        int count = mapper.selectAll().size() + 1;
+        String str = String.format("%07d", count);
+        sb.append(date).append(str);
+
+        return sb.toString();
     }
 }
 

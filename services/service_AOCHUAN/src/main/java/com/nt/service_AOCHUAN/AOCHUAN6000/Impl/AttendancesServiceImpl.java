@@ -128,9 +128,9 @@ public class AttendancesServiceImpl implements AttendancesService {
                     attendance.setWorkinghours(working);
                     attendance.setOffhours(off);
 
-                    Attendance attendance1 = new Attendance();
-                    attendance1.setNames(value.get(1).toString());
-                    attendanceMapper.delete(attendance1);
+//                    Attendance attendance1 = new Attendance();
+//                    attendance1.setNames(value.get(1).toString());
+//                    attendanceMapper.delete(attendance1);
 
                 }
                 attendance.setAttendance_id(UUID.randomUUID().toString());

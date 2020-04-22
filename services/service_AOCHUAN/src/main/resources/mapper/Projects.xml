@@ -9,7 +9,7 @@
 
     <!--  唯一性Check  -->
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
-        SELECT * FROM projects 	WHERE PROJECTS_ID != #{id} AND PRODUCT_NM = #{product_nm} AND PROVIDER = #{provider} AND STATUS = '0'
+        SELECT * FROM projects 	WHERE PROJECTS_ID != #{id} AND PRODUCTS_ID = #{products_id} AND SUPPLIER_ID = #{supplier_id} AND STATUS = '0'
     </select>
 
     <!--  获取项目表数据  -->
@@ -23,8 +23,8 @@
 		SET STATUS = #{status},
 		MODIFYBY = #{modifyby},
 		MODIFYON = now()
-		 WHERE PRODUCT_NM = #{product_nm}
-        AND PROVIDER = #{provider}
+		 WHERE PRODUCTS_ID = #{products_id}
+        AND SUPPLIER_ID = #{supplier_id}
     </update>
 
 </mapper>

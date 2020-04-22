@@ -31,7 +31,6 @@
         <skipTests>true</skipTests>
     </properties>
 
-
         <repositories>
             <repository>
                 <id>central</id>
@@ -45,18 +44,11 @@
                     <enabled>false</enabled>
                 </snapshots>
             </repository>
-<!--            <repository>-->
-<!--                <id>central1</id>-->
-<!--                <name>artifact.aspose</name>-->
-<!--                <url>https://artifact.aspose.com/repo/</url>-->
-<!--                <layout>default</layout>-->
-<!--                <releases>-->
-<!--                    <enabled>true</enabled>-->
-<!--                </releases>-->
-<!--                <snapshots>-->
-<!--                    <enabled>false</enabled>-->
-<!--                </snapshots>-->
-<!--            </repository>-->
+                <repository>
+                    <id>com.e-iceblue</id>
+                    <name>e-iceblue</name>
+                    <url>http://repo.e-iceblue.com/nexus/content/groups/public/</url>
+                </repository>
         </repositories>
     <dependencies>
         <dependency>
@@ -160,15 +152,20 @@
             <version>1.1.8</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.aspose/aspose-cells -->
+<!--        <dependency>-->
+<!--            <groupId>com.aspose</groupId>-->
+<!--            <artifactId>aspose-cells</artifactId>-->
+<!--            <version>20.3</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.jacob</groupId>-->
+<!--            <artifactId>jacob</artifactId>-->
+<!--            <version>1.19</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-cells</artifactId>
-            <version>20.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jacob</groupId>
-            <artifactId>jacob</artifactId>
-            <version>1.19</version>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.pdf.free</artifactId>
+            <version>2.2.2</version>
         </dependency>
     </dependencies>
 </project>
