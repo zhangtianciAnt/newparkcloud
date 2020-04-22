@@ -9,7 +9,7 @@
 
     <!--  唯一性Check  -->
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
-        SELECT * FROM projects 	WHERE PROJECTS_ID != #{id} AND PRODUCT_NM = #{product_nm} AND PROVIDER = #{provider}
+        SELECT * FROM projects 	WHERE PROJECTS_ID != #{id} AND PRODUCT_NM = #{product_nm} AND PROVIDER = #{provider} AND STATUS = '0'
     </select>
 
     <!--  获取项目表数据  -->

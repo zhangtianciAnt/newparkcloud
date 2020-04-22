@@ -9,7 +9,7 @@
 
     <!--  唯一性Check  -->
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement">
-        SELECT * FROM reimbursement WHERE REIMBURSEMENT_ID != #{id} AND REIMBURSEMENT_NO = #{reim_no}
+        SELECT * FROM reimbursement WHERE REIMBURSEMENT_ID != #{id} AND REIMBURSEMENT_NO = #{reim_no} AND STATUS = '0'
     </select>
 
     <!--  项目表删除  -->
