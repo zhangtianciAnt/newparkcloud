@@ -1044,7 +1044,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             Date marchThatFirst_d = sdf.parse(marchThatFirst_s);
             int rowundex = 0;
             for (Projectsystem projectsystem : projectsystemList) {
-                if(projectsystem.getName()!=""&&projectsystem.getName()!=null) {
+                if(projectsystem.getName_id()!=""&&projectsystem.getName_id()!=null) {
                     rowundex = rowundex + 1;
                     projectsystem.preInsert(tokenModel);
                     projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
