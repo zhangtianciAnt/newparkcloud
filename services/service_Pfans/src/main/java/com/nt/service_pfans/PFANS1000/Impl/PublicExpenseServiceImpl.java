@@ -365,9 +365,15 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 String lineRate = FNUM.format((money/(1+rate))*rate);
                 if ( money>0 ) {
                     // 税
+                    //add-ws-4/22-税金不为0存2302-00-01A0
+                    if(!lineRate.equals("0")){
+                        taxCost.setSubjectnumber("2302-00-01A0");
+                    }else{
+                        taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                    }
+                    //add-ws-4/22-税金不为0存2302-00-01A0
                     taxCost.setLineamount(lineRate);
                     taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                    taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     //发票说明
                     taxCost.setRemark(getProperty(detail, "accountcode"));
                     //币种
