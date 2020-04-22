@@ -505,16 +505,20 @@ public class AssetsServiceImpl implements AssetsService {
 
 
     private int isDate(String str) {
-        if ( StrUtil.isNotEmpty(str) ) {
-            String month = str.substring(5, 7);
-            String day = str.substring(8, 10);
-            if ( Integer.parseInt(day) > 31 ) {
-                //"模板第" + lineNo + "行的日期格式错误，请输入正确的日子，导入失败"
-                return 3;
-            } else if ( Integer.parseInt(month) > 12 ) {
-                //"模板第" + lineNo + "行的日期格式错误，请输入正确的月份，导入失败"
-                return 2;
+        try{
+            if ( StrUtil.isNotEmpty(str) ) {
+                String month = str.substring(5, 7);
+                String day = str.substring(8, 10);
+                if ( Integer.parseInt(day) > 31 ) {
+                    //"模板第" + lineNo + "行的日期格式错误，请输入正确的日子，导入失败"
+                    return 3;
+                } else if ( Integer.parseInt(month) > 12 ) {
+                    //"模板第" + lineNo + "行的日期格式错误，请输入正确的月份，导入失败"
+                    return 2;
+                }
             }
+        }catch (Exception e){
+            return 2;
         }
         return 0;
     }
