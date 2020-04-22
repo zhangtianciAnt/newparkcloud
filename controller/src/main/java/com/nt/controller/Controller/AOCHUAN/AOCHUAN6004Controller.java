@@ -53,6 +53,18 @@ public class AOCHUAN6004Controller {
         return ApiResult.success(attendanceService.getNowMons(attendancetim));
     }
 
+    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request,String flag){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(attendanceService.importUser(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
+
 
 
 }
