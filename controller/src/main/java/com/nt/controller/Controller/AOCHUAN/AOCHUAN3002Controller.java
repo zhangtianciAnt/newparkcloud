@@ -1,8 +1,10 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
+import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,23 +12,22 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/quotations")
-public class AOCHUAN3001Controller {
+@RequestMapping("/transportgood")
+public class AOCHUAN3002Controller {
 
     @Autowired
-    private QuotationsService quotationsService;
+    private TransportGoodService transportGoodService;
     @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
-        return ApiResult.success(quotationsService.get());
+        return ApiResult.success(transportGoodService.get());
     }
 
     @RequestMapping(value = "/getone",method={RequestMethod.GET})
@@ -34,24 +35,24 @@ public class AOCHUAN3001Controller {
         if(!StringUtils.isNotBlank(id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(quotationsService.getOne(id));
+        return ApiResult.success(transportGoodService.getOne(id));
     }
 
     @RequestMapping(value = "/update",method={RequestMethod.POST})
-    public ApiResult update(@RequestBody Quotations quotations, HttpServletRequest request) throws Exception {
-        if(quotations == null){
+    public ApiResult update(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
+        if(transportGood == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        quotationsService.update(quotations,tokenService.getToken(request));
+        transportGoodService.update(transportGood,tokenService.getToken(request));
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/insert",method={RequestMethod.POST})
-    public ApiResult insert(@RequestBody Quotations quotations, HttpServletRequest request) throws Exception {
-        if(quotations == null){
+    public ApiResult insert(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
+        if(transportGood == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        quotationsService.insert(quotations,tokenService.getToken(request));
+        transportGoodService.insert(transportGood,tokenService.getToken(request));
         return ApiResult.success();
     }
 
@@ -60,23 +61,16 @@ public class AOCHUAN3001Controller {
         if(!StringUtils.isNotBlank(id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        quotationsService.delete(id);
+        transportGoodService.delete(id);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/pdf",method={RequestMethod.POST})
-    public void pdf(@RequestBody List<Enquiry> enquiry, HttpServletRequest request, HttpServletResponse response) throws Exception {
-            Map<String, Object> data = new HashMap<>();
-//            List<Enquiry> en = new ArrayList<>();
-//            Enquiry enquiry1 = new Enquiry();
-//            enquiry1.setSupplier("123");
-//            enquiry1.setQuotedprice("123");
-//            enquiry1.setExchangerate("123");
-//            en.add(enquiry1);
-         data.put("enquiry",enquiry);
-         data.put("productus","ao_chuan");
-         data.put("producten","奥川");
-         ExcelOutPutUtil.OutPut("aochuan.xlsx",data,response);
-
+    @RequestMapping(value = "/insertcw",method={RequestMethod.POST})
+    public ApiResult delete(@RequestBody TransportGood transportGood,HttpServletRequest request) throws Exception {
+        if (transportGood == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        transportGoodService.insert(transportGood, tokenService.getToken(request));
+        return ApiResult.success();
     }
 }
