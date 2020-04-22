@@ -12,10 +12,12 @@ import com.mysql.fabric.Response;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
@@ -54,6 +56,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private PricesetMapper pricesetMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -265,13 +270,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         String sex = Convert.toStr(value.get(1));
                         if(sex!=null && !sex.isEmpty())
                         {
-                            if(sex.trim().equals("男"))
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(sex.trim());
+                            dictionary.setType("GT");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
                             {
-                                expatriatesinfor.setSex("PR019001");
-                            }
-                            else if(sex.trim().equals("女"))
-                            {
-                                expatriatesinfor.setSex("PR019002");
+                                expatriatesinfor.setSex(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -284,25 +289,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         String education = Convert.toStr(value.get(3));
                         if(education!=null && !education.isEmpty())
                         {
-                            if(education.trim().equals("本科"))
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(education.trim());
+                            dictionary.setType("RS");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
                             {
-                                expatriatesinfor.setEducation("PR022001");
-                            }
-                            else if(education.trim().equals("专科"))
-                            {
-                                expatriatesinfor.setEducation("PR022002");
-                            }
-                            else if(education.trim().equals("中专"))
-                            {
-                                expatriatesinfor.setEducation("PR022003");
-                            }
-                            else if(education.trim().equals("研究生"))
-                            {
-                                expatriatesinfor.setEducation("PR022004");
-                            }
-                            else if(education.trim().equals("博士"))
-                            {
-                                expatriatesinfor.setEducation("PR022005");
+                                expatriatesinfor.setEducation(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -337,53 +330,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         String rn = Convert.toStr(value.get(6));
                         if(rn!=null && !rn.isEmpty())
                         {
-                            if(rn.trim().equals("R3"))
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(rn.trim());
+                            dictionary.setType("RS");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
                             {
-                                expatriatesinfor.setRn("PR021001");
-                            }
-                            else if(rn.trim().equals("R4"))
-                            {
-                                expatriatesinfor.setRn("PR021002");
-                            }
-                            else if(rn.trim().equals("R5"))
-                            {
-                                expatriatesinfor.setRn("PR021003");
-                            }
-                            else if(rn.trim().equals("R6"))
-                            {
-                                expatriatesinfor.setRn("PR021004");
-                            }
-                            else if(rn.trim().equals("R7"))
-                            {
-                                expatriatesinfor.setRn("PR021005");
-                            }
-                            else if(rn.trim().equals("R8C"))
-                            {
-                                expatriatesinfor.setRn("PR021006");
-                            }
-                            else if(rn.trim().equals("R8B"))
-                            {
-                                expatriatesinfor.setRn("PR021007");
-                            }
-                            else if(rn.trim().equals("R8A"))
-                            {
-                                expatriatesinfor.setRn("PR021008");
-                            }
-                            else if(rn.trim().equals("R9A"))
-                            {
-                                expatriatesinfor.setRn("PR021009");
-                            }
-                            else if(rn.trim().equals("R9B"))
-                            {
-                                expatriatesinfor.setRn("PR021010");
-                            }
-                            else if(rn.trim().equals("R10"))
-                            {
-                                expatriatesinfor.setRn("PR021011");
-                            }
-                            else if(rn.trim().equals("R11A"))
-                            {
-                                expatriatesinfor.setRn("PR021012");
+                                expatriatesinfor.setRn(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -402,8 +355,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         {
                             Query query = new Query();
                             query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
-                            //ObjectMapper objectMapper = new ObjectMapper();
-                            //Response response = objectMapper.readValue(query, Response.class);
                             List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                             customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
                             if(customerInfoList.size()>0)
@@ -421,13 +372,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         String operationform = Convert.toStr(value.get(9));
                         if(operationform!=null && !operationform.isEmpty())
                         {
-                            if(operationform.trim().equals("構内外注"))
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(operationform.trim());
+                            dictionary.setType("BP");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
                             {
-                                expatriatesinfor.setOperationform("BP024001");
-                            }
-                            else if(operationform.trim().equals("構外外注"))
-                            {
-                                expatriatesinfor.setOperationform("BP024002");
+                                expatriatesinfor.setOperationform(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -444,25 +395,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         String jobclassification = Convert.toStr(value.get(11));
                         if(jobclassification!=null && !jobclassification.isEmpty())
                         {
-                            if(jobclassification.trim().equals("委任開発"))
+                            Dictionary dictionary =new Dictionary();
+                            dictionary.setValue1(jobclassification.trim());
+                            dictionary.setType("BP");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if(dictionaryList.size()>0)
                             {
-                                expatriatesinfor.setJobclassification("BP025001");
-                            }
-                            else if(jobclassification.trim().equals("委任テスト"))
-                            {
-                                expatriatesinfor.setJobclassification("BP025002");
-                            }
-                            else if(jobclassification.trim().equals("構内請負"))
-                            {
-                                expatriatesinfor.setJobclassification("BP025003");
-                            }
-                            else if(jobclassification.trim().equals("構外請負"))
-                            {
-                                expatriatesinfor.setJobclassification("BP025004");
-                            }
-                            else if(jobclassification.trim().equals("スタッフ"))
-                            {
-                                expatriatesinfor.setJobclassification("BP025005");
+                                expatriatesinfor.setJobclassification(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -509,13 +448,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String exitreason = Convert.toStr(value.get(16));
                                 if(exitreason!=null && !exitreason.isEmpty())
                                 {
-                                    if(exitreason.trim().equals("離職"))
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(exitreason.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
                                     {
-                                        expatriatesinfor.setExitreason("BP012001");
-                                    }
-                                    else if(exitreason.trim().equals("PJ完了"))
-                                    {
-                                        expatriatesinfor.setExitreason("BP012002");
+                                        expatriatesinfor.setExitreason(dictionaryList.get(0).getCode());
                                     }
                                 }
                             }
@@ -524,13 +463,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String alltechnology = Convert.toStr(value.get(17));
                                 if(alltechnology!=null && !alltechnology.isEmpty())
                                 {
-                                    if(alltechnology.trim().equals("集成电路"))
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(alltechnology.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
                                     {
-                                        expatriatesinfor.setAlltechnology("BP008001");
-                                    }
-                                    else if(alltechnology.trim().equals("Java"))
-                                    {
-                                        expatriatesinfor.setAlltechnology("BP008002");
+                                        expatriatesinfor.setAlltechnology(dictionaryList.get(0).getCode());
                                     }
                                 }
                             }
@@ -539,13 +478,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String sitevaluation = Convert.toStr(value.get(18));
                                 if(sitevaluation!=null && !sitevaluation.isEmpty())
                                 {
-                                    if(sitevaluation.trim().equals("△"))
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(sitevaluation.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
                                     {
-                                        expatriatesinfor.setSitevaluation("BP009001");
-                                    }
-                                    else if(sitevaluation.trim().equals("○"))
-                                    {
-                                        expatriatesinfor.setSitevaluation("BP009002");
+                                        expatriatesinfor.setSitevaluation(dictionaryList.get(0).getCode());
                                     }
                                 }
                             }
@@ -554,17 +493,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String businessimpact = Convert.toStr(value.get(19));
                                 if(businessimpact!=null && !businessimpact.isEmpty())
                                 {
-                                    if(businessimpact.trim().equals("低い"))
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(businessimpact.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
                                     {
-                                        expatriatesinfor.setBusinessimpact("BP010001");
-                                    }
-                                    else if(businessimpact.trim().equals("無し"))
-                                    {
-                                        expatriatesinfor.setBusinessimpact("BP010002");
-                                    }
-                                    else if(businessimpact.trim().equals("なし"))
-                                    {
-                                        expatriatesinfor.setBusinessimpact("BP010003");
+                                        expatriatesinfor.setBusinessimpact(dictionaryList.get(0).getCode());
                                     }
                                 }
                             }
@@ -573,19 +508,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String countermeasure = Convert.toStr(value.get(20));
                                 if(countermeasure!=null && !countermeasure.isEmpty())
                                 {
-                                    if(countermeasure.trim().equals("対策不要"))
+                                    Dictionary dictionary =new Dictionary();
+                                    dictionary.setValue1(countermeasure.trim());
+                                    dictionary.setType("BP");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if(dictionaryList.size()>0)
                                     {
-                                        expatriatesinfor.setCountermeasure("BP011001");
-                                    }
-                                    else if(countermeasure.trim().equals("引継ぎ不要"))
-                                    {
-                                        expatriatesinfor.setCountermeasure("BP011002");
+                                        expatriatesinfor.setCountermeasure(dictionaryList.get(0).getCode());
                                     }
                                 }
                             }
                         }
                     }
-
                 }
                 expatriatesinfor.preInsert();
                 expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
