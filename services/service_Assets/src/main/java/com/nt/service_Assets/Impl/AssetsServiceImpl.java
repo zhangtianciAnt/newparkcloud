@@ -121,6 +121,9 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public void insert(Assets assets, TokenModel tokenModel) throws Exception {
+
+        checkBarCode(assets);
+
         assets.preInsert(tokenModel);
         if (StrUtil.isNotBlank(assets.getBarcode())) {
             assets.setBarcode(assets.getBarcode());
@@ -131,6 +134,25 @@ public class AssetsServiceImpl implements AssetsService {
         assets.setRfidcd(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
         assets.setAssets_id(UUID.randomUUID().toString());
         assetsMapper.insert(assets);
+    }
+
+    private void checkBarCode(Assets assets)throws Exception{
+
+        if(StrUtil.isNotBlank(assets.getBarcode())){
+            Assets conditon = new Assets();
+            conditon.setBarcode(assets.getBarcode());
+            List<Assets> rst = assetsMapper.select(conditon);
+            if(rst.size() > 0){
+                for(Assets item:rst){
+                    if(!"PA003002".equals(assets.getAssetstatus())){
+                        if(!item.getAssets_id().equals(assets.getAssets_id())){
+                            throw new LogicalException("资产编号重复！");
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private String getBarCode(Assets assets){
@@ -150,6 +172,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public void update(Assets assets, TokenModel tokenModel) throws Exception {
+        checkBarCode(assets);
         assets.preUpdate(tokenModel);
         assetsMapper.updateByPrimaryKey(assets);
     }
