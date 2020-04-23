@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,11 +94,11 @@ public class Pfans1009Controller {
         return ApiResult.success(assetsService.getAssetsnameList(assets, request));
     }
 
-    @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
-    public void downLoad1(@RequestBody List<String> fixedassetsList, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/downLoad1", method = {RequestMethod.GET})
+    public void downLoad1(String fixedassetsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        for (int i = 0; i < fixedassetsList.size(); i++) {
-            Fixedassets fxs = fixedassetsService.One(fixedassetsList.get(i));
+//        for (int i = 0; i < fixedassetsList.size(); i++) {
+            Fixedassets fxs = fixedassetsService.One(fixedassetsId);
             String pp[] = fxs.getRepair().split(" ~ ");
             if (fxs.getRepairkits().equals("PJ010001")) {
                 fxs.setRepairkits("有");
@@ -164,7 +165,7 @@ public class Pfans1009Controller {
                 data.put("statime", "");
             }
             ExcelOutPutUtil.OutPutPdf("固定資産貸出修理持出決裁願", "gudingzichan_jiechuxiulichichu.xls", data, response);
-        }
+//        }
     }
 }
 

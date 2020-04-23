@@ -175,14 +175,27 @@ public class ComprojectServiceImpl implements ComprojectService {
             prosystemMapper.delete(prosystem);
             int rowundex = 0;
             for (Prosystem pro : prosystemList) {
-              if(pro.getName()!=""&&pro.getName()!=null)  {
-                  rowundex = rowundex + 1;
-                  pro.preInsert(tokenModel);
-                  pro.setProsystem_id(UUID.randomUUID().toString());
-                  pro.setComproject_id(comprojectid);
-                  pro.setRowindex(rowundex);
-                  prosystemMapper.insertSelective(pro);
-              }
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
+                if (pro.getType().equals("1")) {
+                    if (prosystem.getName_id() != "" && prosystem.getName_id() != null) {
+                        rowundex = rowundex + 1;
+                        pro.preInsert(tokenModel);
+                        pro.setProsystem_id(UUID.randomUUID().toString());
+                        pro.setComproject_id(comprojectid);
+                        pro.setRowindex(rowundex);
+                        prosystemMapper.insertSelective(pro);
+                    }
+                } else if (pro.getType().equals("0")) {
+                    if (prosystem.getName() != "" && prosystem.getName() != null) {
+                        rowundex = rowundex + 1;
+                        pro.preInsert(tokenModel);
+                        pro.setProsystem_id(UUID.randomUUID().toString());
+                        pro.setComproject_id(comprojectid);
+                        pro.setRowindex(rowundex);
+                        prosystemMapper.insertSelective(pro);
+                    }
+                }
+//add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
             }
         }
         //项目合同
@@ -232,27 +245,27 @@ public class ComprojectServiceImpl implements ComprojectService {
         int number = 0;
         String Numbers = "";
         String no = "";
-        if(comprojectlist.size()>0){
-            for(Comproject comprotect :comprojectlist){
+        if (comprojectlist.size() > 0) {
+            for (Comproject comprotect : comprojectlist) {
                 //add-ws-根据当前年月日从001开始增加项目编号
-                if(comprotect.getNumbers()!="" && comprotect.getNumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 0,8));
-                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
-                        number = number+1;
+                if (comprotect.getNumbers() != "" && comprotect.getNumbers() != null) {
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 0, 8));
+                    if (Integer.valueOf(year).equals(Integer.valueOf(checknumber))) {
+                        number = number + 1;
                     }
                 }
                 //add-ws-根据当前年月日从001开始增加项目编号
             }
 //            String.format("%2d", number + 1).replace(" ", "00");
-            if(number<=8){
-                no="00"+(number + 1);
-            }else{
-                no="0"+(number + 1);
+            if (number <= 8) {
+                no = "00" + (number + 1);
+            } else {
+                no = "0" + (number + 1);
             }
-        }else{
+        } else {
             no = "001";
         }
-        Numbers = year+ no;
+        Numbers = year + no;
         comproject.setNumbers(Numbers);
         //add-ws-项目编码添加
         comproject.preInsert(tokenModel);
@@ -268,15 +281,27 @@ public class ComprojectServiceImpl implements ComprojectService {
         if (projectsystemList != null) {
             int rowundex = 0;
             for (Prosystem prosystem : projectsystemList) {
-                if(prosystem.getName()!=""&&prosystem.getName()!=null) {
-                    rowundex = rowundex + 1;
-                    prosystem.preInsert(tokenModel);
-                    prosystem.setProsystem_id(UUID.randomUUID().toString());
-                    prosystem.setComproject_id(comprojectid);
-                    prosystem.setRowindex(rowundex);
-                    prosystemMapper.insertSelective(prosystem);
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
+                if(prosystem.getType().equals("0")){
+                    if (prosystem.getName() != "" && prosystem.getName() != null) {
+                        rowundex = rowundex + 1;
+                        prosystem.preInsert(tokenModel);
+                        prosystem.setProsystem_id(UUID.randomUUID().toString());
+                        prosystem.setComproject_id(comprojectid);
+                        prosystem.setRowindex(rowundex);
+                        prosystemMapper.insertSelective(prosystem);
+                    }
+                }else  if(prosystem.getType().equals("1")){
+                    if (prosystem.getName_id() != "" && prosystem.getName_id() != null) {
+                        rowundex = rowundex + 1;
+                        prosystem.preInsert(tokenModel);
+                        prosystem.setProsystem_id(UUID.randomUUID().toString());
+                        prosystem.setComproject_id(comprojectid);
+                        prosystem.setRowindex(rowundex);
+                        prosystemMapper.insertSelective(prosystem);
+                    }
                 }
-
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
                 //外驻
                 String suppliernameid = prosystem.getSuppliernameid();
                 Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
@@ -947,9 +972,9 @@ public class ComprojectServiceImpl implements ComprojectService {
         Prosystem prosystem = new Prosystem();
         prosystem.setName(comproject.getOwner());
         List<Prosystem> prosystemlist = prosystemMapper.select(prosystem);
-        for(Prosystem item:prosystemlist){
+        for (Prosystem item : prosystemlist) {
             Comproject rs = comProjectMapper.selectByPrimaryKey(item.getComproject_id());
-            if("4".equals(rs.getStatus())){
+            if ("4".equals(rs.getStatus())) {
                 rst.add(rs);
             }
         }
