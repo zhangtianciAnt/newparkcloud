@@ -35,4 +35,6 @@ public class Crerule  extends BaseModel {
 
     @Column(name = "SUACCOUNTING")
     private String suaccounting;
+
+
 }

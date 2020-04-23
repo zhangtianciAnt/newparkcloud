@@ -2,6 +2,7 @@ package com.nt.dao_AOCHUAN.AOCHUAN7000.Vo;
 
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Crerule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
+import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,9 @@ public class DocuruleVo {
     /*
      * 分录规则*/
     private List<Crerule> crerules;
+
+    /*
+     * 辅助项目
+     * */
+    private List<Helprule> helprules;
 }
