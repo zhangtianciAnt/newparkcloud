@@ -43,6 +43,11 @@ public class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public List<Overtime> getOvertimeOne(Overtime overtime) throws Exception {
+        return overtimeMapper.getOvertimeOne(DateUtil.format(overtime.getReserveovertimedate(),"YYYY-MM-dd"),overtime.getUserid());
+    }
+
+    @Override
     public List<Overtime> getOvertime(Overtime overtime) throws Exception {
         return overtimeMapper.select(overtime);
     }

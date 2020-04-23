@@ -10,6 +10,8 @@ public interface OvertimeService {
 
     List<Overtime> getOvertimeDay(Overtime overtime) throws Exception;
 
+    List<Overtime> getOvertimeOne(Overtime overtime) throws Exception;
+
     List<Overtime> getOvertimelist(Overtime overtime) throws Exception;
 
     public Overtime One(String overtimeid) throws Exception;

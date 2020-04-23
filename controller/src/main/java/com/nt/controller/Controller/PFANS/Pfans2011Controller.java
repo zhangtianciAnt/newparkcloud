@@ -82,4 +82,12 @@ public class Pfans2011Controller {
         return ApiResult.success(overtimeService.getOvertimeDay(overtime));
     }
 
+    @RequestMapping(value = "/getOvertimeOneday", method = {RequestMethod.POST})
+    public ApiResult getOvertimeOneday(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
+        if (overtime == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(overtimeService.getOvertimeOne(overtime));
+    }
+
 }
