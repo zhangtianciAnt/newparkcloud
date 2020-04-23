@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper">
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN7000.mapper.DocuruleMapper">
 
     <!--  ????-??????  -->
-    <select id="getAcctgEntrByCrdl_id" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
-
+    <select id="One" resultType="com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule">
         SELECT
         cr.ROWINDEX,
-        cr.CRERULE_ID
+        cr.CRERULE_ID cre,
         cr.DOCURULE_ID,
         cr.REMARKS,
         cr.DEBIT,
         cr.CREDIT,
         cr.CRERATE,
-        cr.SUACCOUNTING,
-        hr.???????
-        FROM crerule cr --????
-        LEFT JOIN ???? as hr
-        ON hr.????id = cr.??id
+
+        hr.HELPRULE_ID,
+        hr.CRERULE_ID rule,
+        hr.BANKACCOUNT,
+        hr.DEPART,
+        hr.EXPENDITURE,
+        hr.ACCOUNTING,
+        hr.MAINCASH,
+        hr.FLOWCASH
+        FROM crerule cr
+        INNER JOIN helprule as hr
+        ON hr.CRERULE_ID = cr.CRERULE_ID
         WHERE cr.DOCURULE_ID = #{docurule_id}
     </select>
+
 
 </mapper>
