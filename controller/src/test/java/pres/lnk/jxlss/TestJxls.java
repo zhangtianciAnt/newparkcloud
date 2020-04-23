@@ -45,26 +45,26 @@ public class TestJxls {
     @Before
     public void init() {
 
-//        String host = "59.46.185.130";
-//        int port = 27017;
-//        String userName = "pfansroot";
-//        String password = "password1!";
-//        String databaseName = "PFANS";
-//
-//        MongoCredential credential = MongoCredential.createScramSha1Credential(
-//                userName, databaseName, password.toCharArray());
-//        ServerAddress serverAddress = new ServerAddress(host, port);
-//        MongoClient mongoClient = new MongoClient(serverAddress,
-//                Arrays.asList(credential));
-//        SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(
-//                mongoClient, databaseName);
-//        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-//        MappingMongoConverter converter = new MappingMongoConverter(
-//                dbRefResolver, new MongoMappingContext());
-//
-//        converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-//        template = new MongoTemplate(mongoDbFactory,
-//                converter);
+        String host = "124.93.4.170";
+        int port = 27017;
+        String userName = "pfansroot";
+        String password = "password1!";
+        String databaseName = "PFANS";
+
+        MongoCredential credential = MongoCredential.createScramSha1Credential(
+                userName, databaseName, password.toCharArray());
+        ServerAddress serverAddress = new ServerAddress(host, port);
+        MongoClient mongoClient = new MongoClient(serverAddress,
+                Arrays.asList(credential));
+        SimpleMongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(
+                mongoClient, databaseName);
+        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
+        MappingMongoConverter converter = new MappingMongoConverter(
+                dbRefResolver, new MongoMappingContext());
+
+        converter.setTypeMapper(new DefaultMongoTypeMapper(null));
+        template = new MongoTemplate(mongoDbFactory,
+                converter);
 
 //        MongoDbFactory facotry = new SimpleMongoDbFactory(new MongoClient("59.46.185.130", 27017), "PFANS");
 //        template = new MongoTemplate(facotry);
@@ -86,10 +86,12 @@ public class TestJxls {
 //        ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
 //        String i = "" ;
 //        for(Map<String,Object> item :readAll) {
-//            Query query = new Query();
-//            query.addCriteria(Criteria.where("_id").is(item.get("id")));
-//            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
-//            if(customerInfos.size() > 0){
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userinfo.groupname").is("住空間・業務空間開発グループ"));
+            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
+            if(customerInfos.size() > 0) {
+
+            }
 //                customerInfos.get(0).getUserinfo().setCaiwupersonalcode(item.get("code").toString());
 //                template.save( customerInfos.get(0));
 //                Map<String, Object> row1 = new LinkedHashMap<>();
@@ -190,7 +192,7 @@ public class TestJxls {
 //        a.insertpunchcard(0);
 
 //        String path = "D:/仮出金.xls";
-        new jacob2pdf().excel2Pdf("D:/仮出金.xls", "D:/仮出金.pdf");
+//        new jacob2pdf().excel2Pdf("D:/仮出金.xls", "D:/仮出金.pdf");
     }
 
     private static Employee getEmployee() {
