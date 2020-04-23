@@ -38,4 +38,40 @@
 		 WHERE PRODUCTS_ID = #{products_id}
         AND SUPPLIER_ID = #{supplier_id}
     </update>
+
+    <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID,
+        fur.SAL_CUSTOMER,
+        fur.SAL_DATE,
+        fur.SAL_EVENT,
+        fur.SAL_CONTENT,
+        fur.PROC_DATE,
+        fur.PROC_ANSWER
+        from followuprecord as fur
+        where SUPPLIER_ID = #{id}
+    </select>
+
+    <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID,
+        fur.SAL_CUSTOMER,
+        fur.SAL_DATE,
+        fur.SAL_EVENT,
+        fur.SAL_CONTENT,
+        fur.PROC_DATE,
+        fur.PROC_ANSWER
+        from followuprecord as fur
+        where CUSTOMER_ID = #{id}
+    </select>
 </mapper>

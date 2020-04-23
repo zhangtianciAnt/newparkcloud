@@ -44,6 +44,16 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
     @Override
+    public List<TransportGood> getForSupplier(String id) throws Exception {
+        return transportGoodMapper.getForSupplier(id);
+    }
+
+    @Override
+    public List<TransportGood> getForCustomer(String id) throws Exception {
+        return transportGoodMapper.getForCustomer(id);
+    }
+
+    @Override
     public void update(TransportGood transportGood, TokenModel tokenModel) throws Exception {
         transportGood.preUpdate(tokenModel);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
