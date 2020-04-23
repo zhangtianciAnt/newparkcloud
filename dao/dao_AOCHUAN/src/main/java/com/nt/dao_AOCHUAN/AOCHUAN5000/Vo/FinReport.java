@@ -1,6 +1,7 @@
 package com.nt.dao_AOCHUAN.AOCHUAN5000.Vo;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
+import jxl.write.DateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -90,7 +91,7 @@ public class FinReport{
     private String customsdeclaration;
     //提单时间
     @Column(name = "BILLTIME")
-    private String billtime;
+    private DateTime billtime;
     //运费
     @Column(name = "FREIGHT")
     private String freight;
@@ -99,13 +100,13 @@ public class FinReport{
     private String premium;
     //收款时间
     @Column(name = "COLLECTIONDATE")
-    private String collectiondate;
+    private DateTime collectiondate;
     //收款金额
     @Column(name = "COLLECTIONAMOUNT")
     private String collectionamount;
     //付款时间
     @Column(name = "PAYMENTTIME")
-    private String paymenttime;
+    private DateTime paymenttime;
     //付款金额
     @Column(name = "PAYMENTAMOUNT")
     private String paymentamount;
@@ -117,7 +118,7 @@ public class FinReport{
     private String purchaseinvoiceno;
     //开票日期
     @Column(name = "INVOICEDATE")
-    private String invoicedate;
+    private DateTime invoicedate;
     //佣金
     @Column(name = "COMMISSION")
     private String commission;

@@ -1,0 +1,63 @@
+package com.nt.dao_AOCHUAN.AOCHUAN5000.Vo;
+
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.nt.utils.dao.BaseModel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class AccountingRule extends BaseModel {
+    //分录规则id
+    @Column(name = "ACCTGRUL_ID")
+    private String acctgrul_id;
+    //外键：凭证信息id
+    @Column(name = "CRDLINFO_FID")
+    private String crdlinfo_fid;
+    //摘要
+    @Column(name = "REMARKS")
+    private String remarks;
+    //借方科目
+    @Column(name = "DEBIT")
+    private String debit;
+    //贷方科目
+    @Column(name = "CREDIT")
+    private String credit;
+    //税率
+    @Column(name = "TAXRATE")
+    private String taxrate;
+    //金额
+    @Column(name = "AMOUNT")
+    private String amount;
+    //辅助核算项目id
+    @Column(name = "AUXACCTG_ID")
+    private String auxacctg_id;
+    //外键：分录规则id
+    @Column(name = "ACCTGRUL_FID")
+    private String acctgrul_fid;
+    //银行账号
+    @Column(name = "BANKACCOUNT")
+    private String bankaccount;
+    //部门
+    @Column(name = "DEPT")
+    private String dept;
+    //收支内容
+    @Column(name = "IAE_CONTG")
+    private String iae_contg;
+    //核算项目
+    @Column(name = "AUXACCTG")
+    private String auxacctg;
+    //主现金流项目
+    @Column(name = "MAINCASHFLOW")
+    private String maincashflow;
+    //附现金流项目
+    @Column(name = "ATTACHCASHFLOW")
+    private String attachcashflow;
+    //辅助账金额
+    @Column(name = "AUXACCTG_AMOUNT")
+    private String auxacctg_amount;
+}
