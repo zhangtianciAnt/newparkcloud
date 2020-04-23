@@ -63,15 +63,15 @@ public class Pfans1008Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
-    public void downLoad1(@RequestBody List<String> softwaretransferList, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/downLoad1", method = {RequestMethod.GET})
+    public void downLoad1(String softwaretransferId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        for (int i = 0; i < softwaretransferList.size(); i++) {
-            SoftwaretransferVo soft = softwaretransferService.selectById(softwaretransferList.get(i));
+//        for (int i = 0; i < softwaretransferList.size(); i++) {
+        SoftwaretransferVo soft = softwaretransferService.selectById(softwaretransferId);
             Map<String, Object> data = new HashMap<>();
             data.put("soft", soft);
             data.put("notn", soft.getNotification());
             ExcelOutPutUtil.OutPutPdf("固定资产·软件移转申请", "gudingzichanfq.xls", data, response);
         }
-    }
+//    }
 }

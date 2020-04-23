@@ -80,17 +80,17 @@ public class Pfans1007Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
-    public void downLoad1(@RequestBody List<String> assetinformationList, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/downLoad1", method = {RequestMethod.GET})
+    public void downLoad1(String assetinformationId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        for (int i = 0; i < assetinformationList.size(); i++) {
+//        for (int i = 0; i < assetinformationList.size(); i++) {
             String wfList1 = "";
             String wfList2 = "";
             String wfList3 = "";
             String wfList4 = "";
             String wfList5 = "";
             String wfList6 = "";
-            AssetinformationVo asvo = assetinformationService.selectById(assetinformationList.get(i));
+        AssetinformationVo asvo = assetinformationService.selectById(assetinformationId);
             StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
             startWorkflowVo.setDataId(asvo.getAssetinformation().getAssetinformationid());
             List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
@@ -160,5 +160,5 @@ public class Pfans1007Controller {
             data.put("scList", asvo.getScrapdetails());
             ExcelOutPutUtil.OutPutPdf("固定资产·软件处理决裁", "gudingzichanzy.xls", data, response);
         }
-    }
+//    }
 }
