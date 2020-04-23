@@ -1,6 +1,16 @@
 package com.nt.service_AOCHUAN.AOCHUAN4000.Impl;
 
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
+import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
+import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierproductrelationMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SampleMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.utils.dao.TokenModel;
@@ -8,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +28,16 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Autowired
     private ProductsMapper productsMapper;
+    @Autowired
+    private SupplierproductrelationMapper supplierproductrelationMapper;
+    @Autowired
+    private SupplierbaseinforMapper supplierbaseinforMapper;
+    @Autowired
+    private TransportGoodMapper transportGoodMapper;
+    @Autowired
+    private SampleMapper sampleMapper;
+    @Autowired
+    private QuotationsMapper quotationsMapper;
 
 
     @Override
@@ -50,6 +71,42 @@ public class ProductsServiceImpl implements ProductsService {
         products.setStatus("1");
         productsMapper.updateByPrimaryKey(products);
         productsMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Supplierbaseinfor> getGYS(String ids) throws Exception {
+        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
+        Supplierproductrelation supplierproductrelation = new Supplierproductrelation();
+        supplierproductrelation.setProducts_id(ids);
+        List<Supplierproductrelation> list = supplierproductrelationMapper.select(supplierproductrelation);
+        List<Supplierbaseinfor> supplierbaseinforList = new ArrayList<>();
+        for(Supplierproductrelation supplierproductrelation1 : list){
+            supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(supplierproductrelation1.getSupplierbaseinfor_id());
+            supplierbaseinforList.add(supplierbaseinfor);
+        }
+
+        return supplierbaseinforList;
+    }
+
+    @Override
+    public List<TransportGood> getZH(String ids) throws Exception {
+        TransportGood transportGood = new TransportGood();
+        transportGood.setProductsid(ids);
+        return transportGoodMapper.select(transportGood);
+    }
+
+    @Override
+    public List<Sample> getYP(String ids) throws Exception {
+        Sample sample = new Sample();
+        sample.setProducts_id(ids);
+        return sampleMapper.select(sample);
+    }
+
+    @Override
+    public List<Quotations> getBJ(String ids) throws Exception {
+        Quotations quotations = new Quotations();
+        quotations.setProductsid(ids);
+        return quotationsMapper.select(quotations);
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.nt.service_AOCHUAN.AOCHUAN4000;
 
 
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.utils.dao.TokenModel;
 
@@ -17,6 +21,14 @@ public interface ProductsService {
     public void update(Products products, TokenModel tokenModel)throws  Exception;
 
     void delete(String id) throws Exception;
+
+    List<Supplierbaseinfor> getGYS(String ids) throws Exception;
+
+    List<TransportGood> getZH(String ids) throws Exception;
+
+    List<Sample> getYP(String ids) throws Exception;
+
+    List<Quotations> getBJ(String ids) throws Exception;
 
     /**
      * @param product
