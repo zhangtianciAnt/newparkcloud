@@ -120,6 +120,15 @@ public class BASF10105Controller {
             // 接收机柜传过来的报警信息
             webSocketVo.setDeviceinformationList(list);
             ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+
+            //获取并立即推送非误报且未完成的消防报警单
+            Firealarm firealarm=new Firealarm();
+            firealarm.setCompletesta("0");
+            firealarm.setMisinformation("0");
+            List<Firealarm> firealarms=firealarmServices.list(firealarm);
+            webSocketVo.setTopfirealarmList(firealarms);
+            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+
         }
         return ApiResult.success();
     }
