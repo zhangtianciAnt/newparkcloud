@@ -77,6 +77,9 @@ public class WebSocketVo {
     //紧急集合点
     private List<DeviceAndSqlUserinfoVo> deviceAndSqlUserinfoVoList = new ArrayList<>();
 
+    //大屏报警数据
+    private List<Firealarm> topfirealarmList = new ArrayList<>();
+
     //应急预案列表
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();
     //响应信息列表

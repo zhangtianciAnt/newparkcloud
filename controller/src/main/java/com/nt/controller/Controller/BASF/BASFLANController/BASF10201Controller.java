@@ -45,6 +45,23 @@ public class BASF10201Controller {
     }
 
     /**
+     * @param request
+     * @Method list
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 获取报警单列表
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/12 13：10
+     */
+    @RequestMapping(value = "/listdialog",method = {RequestMethod.POST})
+    public ApiResult listdialog(HttpServletRequest request)throws Exception{
+        Firealarm firealarm = new Firealarm();
+        firealarm.setCompletesta("0");
+        firealarm.setMisinformation("0");
+        return ApiResult.success(firealarmServices.list(firealarm));
+    }
+
+    /**
      * @param firealarm
      * @param request
      * @Method create
