@@ -57,7 +57,7 @@ public class ExcelOutPutUtil {
 //        ClassPathResource Pdf_resource = new ClassPathResource("pdf_files");
 
 //        String pdfRoot = ExcelOutPutUtil.class.getClassLoader().getResource("pdf_files").getPath();
-        String pdfRoot ="D://PFANS/pdf";
+        String pdfRoot ="D:\\PFANS\\pdf";
                 response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
         ServletOutputStream out=response.getOutputStream();
 
