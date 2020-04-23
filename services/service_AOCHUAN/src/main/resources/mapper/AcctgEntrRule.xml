@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper">
+
+    <!--  ????-??????  -->
+    <select id="getAcctgEntrByCrdl_id" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
+
+        SELECT
+        cr.ROWINDEX,
+        cr.CRERULE_ID
+        cr.DOCURULE_ID,
+        cr.REMARKS,
+        cr.DEBIT,
+        cr.CREDIT,
+        cr.CRERATE,
+        cr.SUACCOUNTING,
+        hr.???????
+        FROM crerule cr --????
+        LEFT JOIN ???? as hr
+        ON hr.????id = cr.??id
+        WHERE cr.DOCURULE_ID = #{docurule_id}
+    </select>
+
+</mapper>
