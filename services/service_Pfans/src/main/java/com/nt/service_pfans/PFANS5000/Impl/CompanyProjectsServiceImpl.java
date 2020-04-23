@@ -226,14 +226,28 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             String marchThatFirst_s = tThatYeatThat_s + initial_s_02;
             Date marchThatFirst_d = sdf.parse(marchThatFirst_s);
             for (Projectsystem pro : projectsystemList) {
-                if(pro.getName()!=""&&pro.getName()!=null){
-                    rowundex = rowundex + 1;
-                    pro.preInsert(tokenModel);
-                    pro.setProjectsystem_id(UUID.randomUUID().toString());
-                    pro.setCompanyprojects_id(companyprojectsid);
-                    pro.setRowindex(rowundex);
-                    projectsystemMapper.insertSelective(pro);
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
+                if(pro.getType().equals("1")){
+                    if(pro.getName_id()!=""&&pro.getName_id()!=null){
+                        rowundex = rowundex + 1;
+                        pro.preInsert(tokenModel);
+                        pro.setProjectsystem_id(UUID.randomUUID().toString());
+                        pro.setCompanyprojects_id(companyprojectsid);
+                        pro.setRowindex(rowundex);
+                        projectsystemMapper.insertSelective(pro);
+                    }
+                }else if(pro.getType().equals("0")){
+                    if(pro.getName()!=""&&pro.getName()!=null){
+                        rowundex = rowundex + 1;
+                        pro.preInsert(tokenModel);
+                        pro.setProjectsystem_id(UUID.randomUUID().toString());
+                        pro.setCompanyprojects_id(companyprojectsid);
+                        pro.setRowindex(rowundex);
+                        projectsystemMapper.insertSelective(pro);
+                    }
                 }
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
+
                 //活用情报
                 if (pro.getAdmissiontime() != null && pro.getType().equals("1")) {
                     Delegainformation delegainformation = new Delegainformation();
@@ -1044,14 +1058,27 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             Date marchThatFirst_d = sdf.parse(marchThatFirst_s);
             int rowundex = 0;
             for (Projectsystem projectsystem : projectsystemList) {
-                if(projectsystem.getName_id()!=""&&projectsystem.getName_id()!=null) {
-                    rowundex = rowundex + 1;
-                    projectsystem.preInsert(tokenModel);
-                    projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
-                    projectsystem.setCompanyprojects_id(companyprojectsid);
-                    projectsystem.setRowindex(rowundex);
-                    projectsystemMapper.insertSelective(projectsystem);
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
+                if(projectsystem.getType().equals("1")){
+                    if(projectsystem.getName_id()!=""&&projectsystem.getName_id()!=null) {
+                        rowundex = rowundex + 1;
+                        projectsystem.preInsert(tokenModel);
+                        projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                        projectsystem.setCompanyprojects_id(companyprojectsid);
+                        projectsystem.setRowindex(rowundex);
+                        projectsystemMapper.insertSelective(projectsystem);
+                    }
+                }else  if(projectsystem.getType().equals("0")){
+                    if(projectsystem.getName()!=""&&projectsystem.getName()!=null) {
+                        rowundex = rowundex + 1;
+                        projectsystem.preInsert(tokenModel);
+                        projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                        projectsystem.setCompanyprojects_id(companyprojectsid);
+                        projectsystem.setRowindex(rowundex);
+                        projectsystemMapper.insertSelective(projectsystem);
+                    }
                 }
+                //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
                 //外驻
                 String suppliernameid = projectsystem.getSuppliernameid();
                 Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
