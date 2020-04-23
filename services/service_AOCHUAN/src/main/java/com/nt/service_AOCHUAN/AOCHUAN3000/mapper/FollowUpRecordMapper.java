@@ -13,4 +13,8 @@ public interface FollowUpRecordMapper extends MyMapper<FollowUpRecord> {
     void deleteFromFollowUpRecordByDoubleKey(@Param("modifyby") String modifyby,@Param("products_nid") String products_nid, @Param("supplier_id") String supplier_id,@Param("status") String status);
     //存在Check
     public List<FollowUpRecord> existCheck(@Param("id") String id,@Param("status") String status);
+
+    public List<FollowUpRecord> getForSupplier(@Param("id") String id);
+
+    public List<FollowUpRecord> getForCustomer(@Param("id") String id);
 }

@@ -10,6 +10,10 @@ public interface SampleService {
 
     Sample getOne(String id) throws Exception;
 
+    List<Sample> getForSupplier(String id) throws Exception;
+
+    List<Sample> getForCustomer(String id) throws Exception;
+
     void update(Sample sample, TokenModel tokenModel) throws Exception;
 
     void insert(Sample sample, TokenModel tokenModel)throws Exception;

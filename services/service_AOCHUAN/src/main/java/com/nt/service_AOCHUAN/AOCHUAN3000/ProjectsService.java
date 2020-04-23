@@ -12,6 +12,11 @@ public interface ProjectsService {
     List<Projects> getProjectList() throws Exception;
     //获取记录表数据
     List<FollowUpRecord> getFollowUpRecordList(FollowUpRecord followUpRecord) throws Exception;
+
+    List<FollowUpRecord> getForSupplier(String id) throws Exception;
+
+    List<FollowUpRecord> getForCustomer(String id) throws Exception;
+
     //新建
     void insert(Object object, TokenModel tokenModel)throws Exception;
     //更新
