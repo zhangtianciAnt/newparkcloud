@@ -115,13 +115,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             int rowindex = 0;
             if(compoundList != null){
                 Contractcompound Co = new Contractcompound();
-                Co.setContractnumber(cnList.get(0).getContractnumber());
+                Co.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
                 contractcompoundMapper.delete(Co);
                 for (Contractcompound compound : compoundList) {
                     rowindex = rowindex + 1;
                     compound.setRowindex(rowindex);
                     compound.preInsert(tokenModel);
-                    compound.setContractnumber(cnList.get(0).getContractnumber());
+                    compound.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
                     compound.setContractcompound_id(UUID.randomUUID().toString());
                     contractcompoundMapper.insert(compound);
                 }
