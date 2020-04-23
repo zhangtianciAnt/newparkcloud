@@ -91,7 +91,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/resources/lib</directory>
+                <directory>src/main/resources/lib</directory>
                 <targetPath>BOOT-INF/lib/</targetPath>
             </resource>
         </resources>
