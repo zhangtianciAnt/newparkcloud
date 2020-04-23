@@ -106,6 +106,11 @@ public class Overtime extends BaseModel {
      */
     @Column(name = "WORKTIME")
     private String worktime;
+    /**
+     * 加班时长
+     */
+    @Column(name = "OVERTIMELENGTH")
+    private String overtimelength;
 }
 
 

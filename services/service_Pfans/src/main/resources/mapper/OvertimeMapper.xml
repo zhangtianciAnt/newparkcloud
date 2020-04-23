@@ -8,7 +8,14 @@
 	<select id="getOvertimeDay" parameterType="com.nt.dao_Pfans.PFANS2000.Overtime" resultType="com.nt.dao_Pfans.PFANS2000.Overtime">
 		select * from overtime
 		where overtime_type = #{overtimet}
-		and DATE_FORMAT( RESERVEOVERTIME_DATE, '%Y-%m-%d') = #{reserdate}
+		and DATE_FORMAT(RESERVEOVERTIME_DATE, '%Y-%m-%d') = #{reserdate}
+		and user_id = #{userid}
+	</select>
+
+	<select id="getOvertimeOne" parameterType="com.nt.dao_Pfans.PFANS2000.Overtime" resultType="com.nt.dao_Pfans.PFANS2000.Overtime">
+		select * from overtime
+		where overtime_type in ('PR001001','PR001002','PR001003')
+		and DATE_FORMAT(RESERVEOVERTIME_DATE, '%Y-%m-%d') = #{reserdate}
 		and user_id = #{userid}
 	</select>
 </mapper>

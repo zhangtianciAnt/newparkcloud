@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface OvertimeMapper extends MyMapper<Overtime> {
     List<Overtime> getOvertimeDay(@Param("overtimet") String overtimet,@Param("reserdate") String reserdate,@Param("userid") String userid);
+    List<Overtime> getOvertimeOne(@Param("reserdate") String reserdate,@Param("userid") String userid);
 
 }
