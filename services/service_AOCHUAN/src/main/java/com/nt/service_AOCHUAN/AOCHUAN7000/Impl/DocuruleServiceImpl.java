@@ -3,10 +3,12 @@ package com.nt.service_AOCHUAN.AOCHUAN7000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Crerule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
+import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.CreruleMapper;
 import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.DocuruleMapper;
+import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.HelpruleMapper;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class DocuruleServiceImpl  implements DocuruleService {
 
     @Autowired
     private CreruleMapper creruleMapper;
+
+    @Autowired
+    private HelpruleMapper helpruleMapper;
 
     @Override
     public List<Docurule> get(Docurule docurule) throws Exception {
@@ -71,16 +76,20 @@ public class DocuruleServiceImpl  implements DocuruleService {
     public void insert(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
         String docuruleid= UUID.randomUUID().toString();
         Docurule docurule=new Docurule();
+        Helprule helprule=new Helprule();
         docurule = docuruleVo.getDocurule();
         BeanUtils.copyProperties(docuruleVo.getDocurule(),docurule);
         docurule.preInsert(tokenModel);
         docurule.setDocurule_id(docuruleid);
-       docuruleMapper.insertSelective(docurule);
+      docuruleMapper.insertSelective(docurule);
        List<Crerule> crulelist=docuruleVo.getCrerules();
         if (crulelist != null) {
             for (Crerule crerule  : crulelist) {
                 crerule.preInsert(tokenModel);
                 crerule.setCrerule_id(UUID.randomUUID().toString());
+                helprule.setCrerule_id(crerule.getCrerule_id());
+                helprule.setHelprule_id(UUID.randomUUID().toString());
+                helpruleMapper.insertSelective(helprule);
                 crerule.setDocurule_id(docuruleid);
                 creruleMapper.insertSelective(crerule);
             }
@@ -92,4 +101,7 @@ public class DocuruleServiceImpl  implements DocuruleService {
     public void delete(String id) throws Exception {
    docuruleMapper.deleteByPrimaryKey(id);
     }
+
+
+
 }

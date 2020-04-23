@@ -33,8 +33,8 @@ public class Crerule  extends BaseModel {
     @Column(name = "CRERATE")
     private String crerate;
 
-    @Column(name = "SUACCOUNTING")
-    private String suaccounting;
+    @Column(name = "ROWINDEX")
+    private String rowindex;
 
 
 }

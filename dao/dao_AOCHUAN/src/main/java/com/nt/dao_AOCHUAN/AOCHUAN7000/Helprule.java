@@ -40,4 +40,7 @@ public class Helprule extends BaseModel {
     @Column(name = "FLOWCASH")
     private String flowcash;
 
+    @Column(name = "ROWINDEX")
+    private String rowindex;
+
 }
