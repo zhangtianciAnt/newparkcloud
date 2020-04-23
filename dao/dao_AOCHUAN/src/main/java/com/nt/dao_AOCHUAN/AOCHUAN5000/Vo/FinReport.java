@@ -1,4 +1,4 @@
-package com.nt.dao_AOCHUAN.AOCHUAN3000.Vo;
+package com.nt.dao_AOCHUAN.AOCHUAN5000.Vo;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.utils.dao.BaseModel;

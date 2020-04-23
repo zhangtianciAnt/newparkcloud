@@ -1,6 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.Impl;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.FinReport;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinReportService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinReportMapper;
 import org.springframework.beans.factory.annotation.Autowired;

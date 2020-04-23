@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.FinReport;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinReportService;
 import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;

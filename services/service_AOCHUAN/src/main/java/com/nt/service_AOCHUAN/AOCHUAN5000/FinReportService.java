@@ -1,6 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.FinReport;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport;
 
 import java.util.List;
 
