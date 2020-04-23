@@ -6,7 +6,7 @@
     <select id="One" resultType="com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule">
         SELECT
         cr.ROWINDEX,
-        cr.CRERULE_ID,
+        cr.CRERULE_ID cre,
         cr.DOCURULE_ID,
         cr.REMARKS,
         cr.DEBIT,
@@ -14,15 +14,15 @@
         cr.CRERATE,
 
         hr.HELPRULE_ID,
-        hr.CRERULE_ID,
+        hr.CRERULE_ID rule,
         hr.BANKACCOUNT,
         hr.DEPART,
         hr.EXPENDITURE,
         hr.ACCOUNTING,
         hr.MAINCASH,
-        hr.FLOWCASH,
+        hr.FLOWCASH
         FROM crerule cr
-        LEFT JOIN helprule as hr
+        INNER JOIN helprule as hr
         ON hr.CRERULE_ID = cr.CRERULE_ID
         WHERE cr.DOCURULE_ID = #{docurule_id}
     </select>

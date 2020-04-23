@@ -14,10 +14,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class DocuruleServiceImpl  implements DocuruleService {
@@ -36,16 +34,18 @@ public class DocuruleServiceImpl  implements DocuruleService {
     }
 
     @Override
-    public DocuruleVo One(String docurule_id) throws Exception {
-       DocuruleVo docuruleVo=new DocuruleVo();
-        Crerule crerul=new Crerule();
-        crerul.setDocurule_id(docurule_id);
-        List<Crerule> creruleList=creruleMapper.select(crerul);
-        creruleList=creruleList.stream().sorted(Comparator.comparing(Crerule::getCrerule_id)).collect(Collectors.toList());
-        Docurule docurule=docuruleMapper.selectByPrimaryKey(docurule_id);
-        docuruleVo.setDocurule(docurule);
-        docuruleVo.setCrerules(creruleList);
-        return docuruleVo;
+    public List<Docurule> One(String docurule_id) throws Exception {
+
+
+//       DocuruleVo docuruleVo=new DocuruleVo();
+//       Crerule crerul=new Crerule();
+//       crerul.setDocurule_id(docurule_id);
+//        List<Crerule> creruleList=creruleMapper.select(crerul);
+//        creruleList=creruleList.stream().sorted(Comparator.comparing(Crerule::getCrerule_id)).collect(Collectors.toList());
+
+        //Docurule docurule=docuruleMapper.selectByPrimaryKey(docurule_id);
+
+        return docuruleMapper.One(docurule_id);
     }
 
     @Override
