@@ -30,8 +30,8 @@ public class Crerule  extends BaseModel {
     @Column(name = "CREDIT")
     private String credit;
 
-    @Column(name = "RATE")
-    private String rate;
+    @Column(name = "CRERATE")
+    private String crerate;
 
     @Column(name = "SUACCOUNTING")
     private String suaccounting;
