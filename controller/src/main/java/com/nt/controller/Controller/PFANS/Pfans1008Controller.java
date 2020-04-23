@@ -74,6 +74,8 @@ public class Pfans1008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
 //        for (int i = 0; i < softwaretransferList.size(); i++) {
         SoftwaretransferVo soft = softwaretransferService.selectById(softwaretransferId);
+        String groupName1 = "";
+        String groupName2 = "";
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(soft.getSoftwaretransfer().getUser_id()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
