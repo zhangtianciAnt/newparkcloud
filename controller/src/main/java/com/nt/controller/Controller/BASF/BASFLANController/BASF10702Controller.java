@@ -123,9 +123,9 @@ public class BASF10702Controller {
      * @Date 2019/11/4 19:39
      */
     @RequestMapping(value = "/updategps", method = {RequestMethod.POST})
-    public ApiResult updategps(String vehicleinformationid,String gps) throws Exception {
-        if(StringUtils.isNotEmpty(vehicleinformationid)&&StringUtils.isNotEmpty(gps)){
-            vehicleinformationServices.updategps(vehicleinformationid,gps);
+    public ApiResult updategps(String vehicleinformationid,String gps,String speed) throws Exception {
+        if(StringUtils.isNotEmpty(vehicleinformationid)&&StringUtils.isNotEmpty(speed)){
+            vehicleinformationServices.updategps(vehicleinformationid,gps,speed);
         }
         return ApiResult.success();
     }

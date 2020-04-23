@@ -112,6 +112,9 @@ public class Vehicleinformation extends BaseModel {
      */
     private String gps;
 
-
+    /**
+     *实时速度
+     */
+    private String speed;
 
 }

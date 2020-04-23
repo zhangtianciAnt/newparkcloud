@@ -29,11 +29,20 @@
     </resultMap>
     <!--    获取在场车辆信息一览-->
     <select id="getInsideList" resultType="com.nt.dao_BASF.VO.InsideVehicleinformationVo">
-        select a.vehiclenumber,a.transporter,a.intime,a.goodsname, a.destination,b.speed,a.ishazardous
-        from vehicleinformation a
-				INNER JOIN vehicletrajectory b
-				on a.vehicleinformationid = b.vehicleinformationid
-        where ifnull(outtime,'') = ''
+       SELECT
+	v.vehiclenumber,
+	v.transporter,
+	v.intime,
+	v.goodsname,
+	v.destination,
+	v.speed,
+	v.ishazardous
+FROM
+	vehicleinformation AS v
+WHERE
+	ifnull(outtime,'') = ''
+ORDER BY
+	v.intime DESC
     </select>
 
     <!--    获取本月车辆出入统计-->
@@ -93,8 +102,9 @@
 <!--    增量更新GPS点位信息-->
     <update id="updategps">
 UPDATE vehicleinformation
-SET `gps` = CONCAT( IFNULL(`gps`,''), #{gps} ),
-`MODIFYON` =#{modifyon}
+SET `gps` = CONCAT( IFNULL(`gps`,''), IFNULL(#{gps},'') ),
+`MODIFYON` =#{modifyon},
+`speed`=#{speed}
 WHERE
 	`vehicleinformationid` = #{vehicleinformationid};
     </update>

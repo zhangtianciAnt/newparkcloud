@@ -219,8 +219,8 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2019/11/14 13：39
      */
     @Override
-    public void updategps(String vehicleinformationid,String gps) throws Exception {
-        vehicleinformationMapper.updategps(vehicleinformationid,gps,new Date());
+    public void updategps(String vehicleinformationid,String gps,String speed) throws Exception {
+        vehicleinformationMapper.updategps(vehicleinformationid,gps,new Date(),speed);
     }
 
     /**

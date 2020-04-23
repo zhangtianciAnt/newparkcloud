@@ -51,7 +51,7 @@ public interface VehicleinformationServices {
 	
 	
     //更新车辆gps信息
-    void updategps(String vehicleinformationid,String gps)throws Exception;
+    void updategps(String vehicleinformationid,String gps,String speed)throws Exception;
 
     //更新车辆出场时间
     void updateouttime(Vehicleinformation vehicleinformation)throws Exception;
