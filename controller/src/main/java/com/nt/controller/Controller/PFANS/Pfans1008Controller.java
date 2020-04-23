@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
 import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
@@ -7,6 +8,9 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +28,8 @@ public class Pfans1008Controller {
 
     @Autowired
     private SoftwaretransferService softwaretransferService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
     @Autowired
     private TokenService tokenService;
 
@@ -68,6 +74,12 @@ public class Pfans1008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
 //        for (int i = 0; i < softwaretransferList.size(); i++) {
         SoftwaretransferVo soft = softwaretransferService.selectById(softwaretransferId);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(soft.getSoftwaretransfer().getUser_id()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        if (customerInfo != null) {
+            soft.getSoftwaretransfer().setUser_id(customerInfo.getUserinfo().getCustomername());
+        }
             Map<String, Object> data = new HashMap<>();
             data.put("soft", soft);
             data.put("notn", soft.getNotification());
