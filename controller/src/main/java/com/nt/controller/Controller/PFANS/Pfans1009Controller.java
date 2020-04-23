@@ -2,10 +2,12 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Fixedassets;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Assets.AssetsService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.FixedassetsService;
 import com.nt.utils.*;
@@ -40,6 +42,8 @@ public class Pfans1009Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -99,12 +103,13 @@ public class Pfans1009Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         for (int i = 0; i < fixedassetsList.size(); i++) {
             Fixedassets fxs = fixedassetsService.One(fixedassetsList.get(i));
-            String pp[] = fxs.getRepair().split(" ~ ");
-            if (fxs.getRepairkits().equals("PJ010001")) {
-                fxs.setRepairkits("有");
-            } else {
-                fxs.setRepairkits("无");
+            List<Dictionary> curList1 = dictionaryService.getForSelect("PJ010");
+            for (Dictionary item : curList1) {
+                if (item.getValue1().equals(fxs.getRepairkits())) {
+                    fxs.setRepairkits(item.getValue1());
+                }
             }
+            String pp[] = fxs.getRepair().split(" ~ ");
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(fxs.getUser_id()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -164,7 +169,7 @@ public class Pfans1009Controller {
             } else {
                 data.put("statime", "");
             }
-            ExcelOutPutUtil.OutPutPdf("固定資産貸出修理持出決裁願", "gudingzichan_jiechuxiulichichu.xls", data, response);
+            ExcelOutPutUtil.OutPutPdf("固定資産貸出修理持出決裁願", "gdzcjcxl.xls", data, response);
         }
     }
 }
