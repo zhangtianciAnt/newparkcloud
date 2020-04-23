@@ -34,9 +34,5 @@ public class Docurule extends BaseModel {
     @Column(name = "ANNEXNO")
     private String annexno;
 
-    @Column(name = "CREATEBY")
-    private String createby;
 
-    @Column(name = "CREATEON")
-    private Date createon;
 }
