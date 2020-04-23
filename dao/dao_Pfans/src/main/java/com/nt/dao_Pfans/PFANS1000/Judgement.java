@@ -36,7 +36,10 @@ public class Judgement extends BaseModel {
      */
     @Column(name = "CENTER_ID")
     private String center_id;
-
+    //add-ws-4/23-总务担当得group选择预算编码
+    @Column(name = "GROUP_NAME")
+    private String group_name;
+    //add-ws-4/23-总务担当得group选择预算编码
     /**
      * 申请グループ
      */
