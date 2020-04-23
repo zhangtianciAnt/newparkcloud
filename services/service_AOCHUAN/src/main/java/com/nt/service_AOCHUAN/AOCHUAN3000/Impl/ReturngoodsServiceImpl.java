@@ -2,11 +2,13 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Returngoods;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.ReturngoodsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReturngoodsMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_Auth.RoleService;
@@ -26,6 +28,10 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
 
     @Autowired
     private ReturngoodsMapper returngoodsMapper;
+
+    @Autowired
+    private TransportGoodMapper transportGoodMapper;
+
 
     @Autowired
     private RoleService roleService;
@@ -103,7 +109,15 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
             toDoNotice.setDataid(returngoods.getReturngoods_id());
             toDoNotice.setUrl("/AOCHUAN3005FormView");
             toDoNotice.preInsert(tokenModel);
-            toDoNotice.setOwner("5e956171e52fa71970c1a097");//发送给采购
+
+            TransportGood transportGood = new TransportGood();
+            transportGood.setContractnumber(returngoods.getContractno());
+            List<TransportGood> list = transportGoodMapper.select(transportGood);
+            for(TransportGood tr : list){
+                toDoNotice.setOwner(tr.getSaleresponsibility());//发送给采购
+            }
+
+//            toDoNotice.setOwner("5e956171e52fa71970c1a097");//发送给采购
             toDoNoticeService.save(toDoNotice);
         }
         else if(returngoods.getType() == 2){
@@ -114,7 +128,14 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
             toDoNotice.setDataid(returngoods.getReturngoods_id());
             toDoNotice.setUrl("/AOCHUAN3005FormView");
             toDoNotice.preInsert(tokenModel);
-            toDoNotice.setOwner("5e956171e52fa71970c1a097");//发送给单据
+            TransportGood transportGood = new TransportGood();
+            transportGood.setContractnumber(returngoods.getContractno());
+            List<TransportGood> list = transportGoodMapper.select(transportGood);
+            for(TransportGood tr : list){
+                toDoNotice.setOwner(tr.getBillresponsibility());//发送给单据
+            }
+
+//            toDoNotice.setOwner("5e956171e52fa71970c1a097");//发送给单据
             toDoNoticeService.save(toDoNotice);
         }
 

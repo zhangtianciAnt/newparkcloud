@@ -122,6 +122,7 @@ public class TransportGood extends BaseModel {
 
     private String customerid;
 
+    private int type;
 
 
 }

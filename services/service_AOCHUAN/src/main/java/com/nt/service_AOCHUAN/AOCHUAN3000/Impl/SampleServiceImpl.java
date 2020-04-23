@@ -37,6 +37,16 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
+    public List<Sample> getForSupplier(String id) throws Exception {
+        return sampleMapper.getForSupplier(id);
+    }
+
+    @Override
+    public List<Sample> getForCustomer(String id) throws Exception {
+        return sampleMapper.getForCustomer(id);
+    }
+
+    @Override
     public void update(Sample sample, TokenModel tokenModel) throws Exception {
         sample.preUpdate(tokenModel);
         if(sample.isNotice()){

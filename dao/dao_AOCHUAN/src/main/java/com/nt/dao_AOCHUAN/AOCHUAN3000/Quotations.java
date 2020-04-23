@@ -54,6 +54,8 @@ public class Quotations extends BaseModel {
 
     private String productsid;
 
+    private String accountid;
+
     @Transient
     private boolean notice;
 }

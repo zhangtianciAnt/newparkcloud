@@ -37,6 +37,16 @@ public class ProjectsServiceImpl implements ProjectsService {
         return followUpRecordMapper.getFollowUpRecordList(products_id,supplier_id,"0");
     }
 
+    @Override
+    public List<FollowUpRecord> getForSupplier(String id) throws Exception {
+        return followUpRecordMapper.getForSupplier(id);
+    }
+
+    @Override
+    public List<FollowUpRecord> getForCustomer(String id) throws Exception {
+        return followUpRecordMapper.getForCustomer(id);
+    }
+
     //新建
     @Override
     public void insert(Object object, TokenModel tokenModel) throws Exception {
