@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -48,13 +49,15 @@ public class Quotations extends BaseModel {
 
     private String quotationsno;
 
-    private String enquiry;
     //type = 0 销售询单录入 type = 1 采购待确认 type = 2 销售报价确认
     private int type;
 
     private String productsid;
 
     private String accountid;
+
+    @Transient
+    private List<Enquiry> enquiry;
 
     @Transient
     private boolean notice;

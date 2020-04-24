@@ -1,6 +1,5 @@
 package com.nt.dao_AOCHUAN.AOCHUAN3000;
 
-
 import cn.hutool.core.util.StrUtil;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
@@ -10,7 +9,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 //询价情况
 @Data
@@ -18,8 +19,10 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name="enquiry")
 public class Enquiry {
-
+     //主键
      private String enquiry_id;
+     //询报价外键
+     private String quotations_id;
      //供应商
      private String supplier;
      //供应商id
@@ -49,7 +52,11 @@ public class Enquiry {
      //海外官方机构认证
      private String antecedents;
      //文件情况
-     private String document;
+     private String doc;
+
+     @Transient
+     private String[] document;
+
      //产品状态
      private String productstatus;
      //备注
@@ -80,25 +87,20 @@ public class Enquiry {
       * 负责人
       */
      private String owner;
-     public void preInsert(){
-          this.createon = new Date();
-          this.status = AuthConstants.DEL_FLAG_NORMAL;
-     }
 
-     public void preInsert(TokenModel tokenModel){
-          this.createby = tokenModel.getUserId();
-          this.createon = new Date();
-          if(StrUtil.isEmpty(this.owner)){
-               this.owner = tokenModel.getUserId();
-          }
-          this.status = AuthConstants.DEL_FLAG_NORMAL;
-     }
+     @Transient
+     private List<String> owners;
 
-     public void preUpdate(TokenModel tokenModel){
-          this.modifyby = tokenModel.getUserId();
-          this.modifyon = new Date();
-     }
+     @Transient
+     private Integer currentPage;
 
+     @Transient
+     private Integer pageSize;
 
+     @Transient
+     private List<String> ids;
+
+     @Transient
+     private String httpOriginType;
 
 }

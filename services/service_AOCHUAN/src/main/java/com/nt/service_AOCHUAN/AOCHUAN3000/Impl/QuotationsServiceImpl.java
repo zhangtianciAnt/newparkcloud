@@ -1,9 +1,11 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.EnquiryMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReturngoodsMapper;
 import com.nt.service_Auth.RoleService;
@@ -11,9 +13,9 @@ import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.MyMapper;
-import com.nt.utils.StringUtils;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class QuotationsServiceImpl implements QuotationsService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private EnquiryMapper enquiryMapper;
+
 
     @Override
     public List<Quotations> get() throws Exception {
@@ -44,9 +49,19 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Override
     public Quotations getOne(String id) throws Exception {
-        return quotationsMapper.selectByPrimaryKey(id);
+        Quotations quotations = new Quotations();
+        Enquiry enquiry = new Enquiry();
+        enquiry.setQuotations_id(id);
+        quotations = quotationsMapper.selectByPrimaryKey(id);
+        List<Enquiry> enquiries = enquiryMapper.select(enquiry);
+        for (Enquiry _enquiry:
+        enquiries) {
+         String[] document = _enquiry.getDoc().length() > 0 ? _enquiry.getDoc().split(","):new String[0];
+         _enquiry.setDocument(document);
+        }
+        quotations.setEnquiry(enquiries);
+        return quotations;
     }
-
     @Override
     public void update(Quotations quotations, TokenModel tokenModel) throws Exception {
               quotations.preUpdate(tokenModel);
@@ -56,6 +71,7 @@ public class QuotationsServiceImpl implements QuotationsService {
                }
               quotations.preUpdate(tokenModel);
               quotationsMapper.updateByPrimaryKeySelective(quotations);
+        insertEnquiry(quotations.getEnquiry(),quotations.getQuotations_id());
         //ToDoNotice(tokenModel,quotations.getQuotations_id());
     }
 
@@ -76,6 +92,7 @@ public class QuotationsServiceImpl implements QuotationsService {
             quotations.setType(1);
         }
         quotationsMapper.insert(quotations);
+        insertEnquiry(quotations.getEnquiry(),quotations.getQuotations_id());
     }
 
     @Override
@@ -114,4 +131,19 @@ public class QuotationsServiceImpl implements QuotationsService {
         }
     }
 
+    private void insertEnquiry(List<Enquiry> enquiryList,String quotationsId){
+         if(enquiryList != null){
+             Enquiry enquiry = new Enquiry();
+             enquiry.setQuotations_id(quotationsId);
+             enquiryMapper.delete(enquiry);
+             for (Enquiry _enquiry:
+             enquiryList) {
+                 _enquiry.setEnquiry_id(UUID.randomUUID().toString());
+                 _enquiry.setQuotations_id(quotationsId);
+             String document = _enquiry.getDocument().length > 0 ? StringUtils.join(_enquiry.getDocument()) : "";
+             _enquiry.setDoc(document);
+             }
+             enquiryMapper.insertEnquiryList(enquiryList);
+         }
+    }
 }
