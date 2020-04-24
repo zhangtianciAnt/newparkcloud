@@ -122,6 +122,11 @@ public class TransportGood extends BaseModel {
 
     private String customerid;
 
+    private Date firstordertime;
+
+    private String firstorderduration;
+
+
 
 
 }
