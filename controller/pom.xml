@@ -89,12 +89,23 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-<!--        <resources>-->
-<!--            <resource>-->
-<!--                <directory>src/main/resources/lib</directory>-->
-<!--                <targetPath>BOOT-INF/lib/</targetPath>-->
-<!--            </resource>-->
-<!--        </resources>-->
+
+        <resources>
+            <resource>
+                <directory>src/main/lib</directory><!--此处的地址为上一步你建立的文件夹路径-->
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
 
 

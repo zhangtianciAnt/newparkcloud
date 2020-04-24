@@ -20,12 +20,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/resources/lib</directory>
-                <targetPath>BOOT-INF/lib/</targetPath>
-            </resource>
-        </resources>
     </build>
     <dependencies>
         <dependency>
