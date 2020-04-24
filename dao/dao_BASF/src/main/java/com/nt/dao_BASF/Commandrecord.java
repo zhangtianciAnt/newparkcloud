@@ -188,6 +188,8 @@ public class Commandrecord extends BaseModel {
         private String uptime;
         //最后修改的措施
         private String mark2;
+        //音频id
+        private String songid;
     }
 
     //应急处置
@@ -201,6 +203,8 @@ public class Commandrecord extends BaseModel {
         private String uptime;
         //最后修改的措施
         private String mark2;
+        //音频id
+        private String songid;
     }
 
     //医疗
