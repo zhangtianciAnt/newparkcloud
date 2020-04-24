@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface DocuruleMapper extends MyMapper<Docurule> {
 
-     List<Docurule> One(@Param("docurule_id") String docurule_id);
+    Docurule selectByDocutype(@Param("docutype") String docutype);
+
 }

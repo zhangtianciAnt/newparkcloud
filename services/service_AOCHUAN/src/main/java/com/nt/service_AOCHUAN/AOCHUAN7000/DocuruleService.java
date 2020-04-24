@@ -10,7 +10,9 @@ import java.util.List;
 public interface DocuruleService {
     List<Docurule> get(Docurule docurule) throws Exception;
 
-    List<Docurule> One(String docurule_id) throws Exception;
+    DocuruleVo One(String docurule_id) throws Exception;
+
+    List<Docurule> helpOne(String docurule_id) throws Exception;
 
     void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception;
 
@@ -18,5 +20,5 @@ public interface DocuruleService {
 
     void delete(String id) throws Exception;
 
-
+    Docurule selectByDocutype(String docutype);
 }
