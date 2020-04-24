@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-        query.addCriteria(Criteria.where("password").is(new String(decoder.decode(userAccount.getPassword()), "UTF-8")));
+        query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
         query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
