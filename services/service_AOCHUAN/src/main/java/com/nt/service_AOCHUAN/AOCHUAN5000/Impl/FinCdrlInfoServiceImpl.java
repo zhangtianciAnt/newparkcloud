@@ -1,10 +1,12 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.Impl;
 
+import com.nt.dao_AOCHUAN.AOCHUAN5000.AuxAcctg;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAcctgRulMapper;
+import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAuxAcctgMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinCrdlInfoMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,9 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
 
     @Autowired
     private FinAcctgRulMapper finAcctgRulMapper;
+
+    @Autowired
+    private FinAuxAcctgMapper finAuxAcctgMapper;
 
     //获取凭证信息
     @Override
@@ -100,7 +105,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
     @Override
     public Boolean insert(CrdlInfo crdlInfo, TokenModel tokenModel) throws Exception {
 
-        //主键
+        //凭证insert
         String crdlId= UUID.randomUUID().toString();
 
         CredentialInformation credentialInformation = crdlInfo.getCredentialInformation();
@@ -113,16 +118,30 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
 
             for (AccountingRule item: accountingRuleList) {
 
+                //分录insert
                 item.setCrdlinfo_fid(crdlId);
                 item.setAcctgrul_id(UUID.randomUUID().toString());
                 item.preInsert(tokenModel);
                 finAcctgRulMapper.insertSelective(item);
 
-
+                //辅助核算项目insert
+                AuxAcctg auxAcctg = new AuxAcctg();
+                auxAcctg.setAuxacctg_id(UUID.randomUUID().toString());
+                auxAcctg.setAcctgrul_fid(item.getAcctgrul_id());
+                auxAcctg.setBankaccount(item.getBankaccount());
+                auxAcctg.setDept(item.getDept());
+                auxAcctg.setIae_contg(item.getIae_contg());
+                auxAcctg.setAuxacctg(item.getAuxacctg());
+                auxAcctg.setMaincashflow(item.getMaincashflow());
+                auxAcctg.setAttachcashflow(item.getAttachcashflow());
+                auxAcctg.setAuxacctg_amount(item.getAuxacctg_amount());
+                auxAcctg.preInsert(tokenModel);
+                finAuxAcctgMapper.insertSelective(auxAcctg);
             }
+        }else{
+            return false;
         }
-
-        return null;
+        return true;
     }
 
     //存在Check

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -37,10 +38,10 @@ public class CredentialInformation extends BaseModel {
     private String crdlword;
     //业务日期
     @Column(name = "BUS_DATE")
-    private String bus_date;
+    private Date bus_date;
     //记账日期
     @Column(name = "ACCT_DATE")
-    private String acct_date;
+    private Date acct_date;
     //附件数
     @Column(name = "ATTACHMENTS")
     private String attachments;

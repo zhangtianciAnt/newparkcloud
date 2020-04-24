@@ -48,7 +48,7 @@ public class DocuruleServiceImpl  implements DocuruleService {
         return docuruleVo;
     }
     @Override
-    public List<Docurule> helpOne(String docurule_id) throws Exception {
+    public List<Helprule> helpOne(String docurule_id) throws Exception {
 
         return helpruleMapper.helpOne(docurule_id);
     }

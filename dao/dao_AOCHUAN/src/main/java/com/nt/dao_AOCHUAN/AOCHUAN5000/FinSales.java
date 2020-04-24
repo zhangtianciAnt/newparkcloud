@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -70,7 +71,7 @@ public class FinSales extends BaseModel {
     private String saleresponsibility;
     //回款日期
     @Column(name = "ARRIVALTIME")
-    private String arrivaltime;
+    private Date arrivaltime;
     //订单需求
     @Column(name = "ORDERS")
     private String orders;
