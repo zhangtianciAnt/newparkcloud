@@ -126,7 +126,7 @@ public class TransportGood extends BaseModel {
 
     private String firstorderduration;
 
-
+    private int type;
 
 
 }

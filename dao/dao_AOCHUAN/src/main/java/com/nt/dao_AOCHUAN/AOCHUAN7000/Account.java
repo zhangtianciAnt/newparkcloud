@@ -22,4 +22,18 @@ public class Account {
 
     @Column(name = "FName")
     private String fname;
+
+    @Column(name = "FLevel")
+    private String flevel;
+
+    @Column(name = "FDetail")
+    private String fdetail;
+
+    @Column(name = "FParentID")
+    private String FParentID;
+
+
+
+
+
 }

@@ -5,10 +5,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProjectsAndFollowUpRecord;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.nt.service_AOCHUAN.AOCHUAN3000.ProjectsService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +36,22 @@ public class AOCHUAN3009Controller {
     @RequestMapping(value = "/getFollowUpRecordList", method = {RequestMethod.POST})
     public ApiResult getFollowUpRecordList(@RequestBody FollowUpRecord followUpRecord, HttpServletRequest request) throws Exception {
         return ApiResult.success(projectsSerivce.getFollowUpRecordList(followUpRecord));
+    }
+
+    @RequestMapping(value = "/getForSupplier",method={RequestMethod.GET})
+    public ApiResult getForSupplier(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(projectsSerivce.getForSupplier(id));
+    }
+
+    @RequestMapping(value = "/getForCustomer",method={RequestMethod.GET})
+    public ApiResult getForCustomer(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(projectsSerivce.getForCustomer(id));
     }
 
     /**

@@ -13,6 +13,10 @@ public interface TransportGoodService {
 
     TransportGood getOne(String id) throws Exception;
 
+    List<TransportGood> getForSupplier(String id) throws Exception;
+
+    List<TransportGood> getForCustomer(String id) throws Exception;
+
     void update(TransportGood quotations, TokenModel tokenModel) throws Exception;
 
     void insert(TransportGood quotations, TokenModel tokenModel)throws Exception;

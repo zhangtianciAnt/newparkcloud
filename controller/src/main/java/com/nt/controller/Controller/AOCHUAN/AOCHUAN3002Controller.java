@@ -40,6 +40,22 @@ public class AOCHUAN3002Controller {
         return ApiResult.success(transportGoodService.getOne(id));
     }
 
+    @RequestMapping(value = "/getForSupplier",method={RequestMethod.GET})
+    public ApiResult getForSupplier(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(transportGoodService.getForSupplier(id));
+    }
+
+    @RequestMapping(value = "/getForCustomer",method={RequestMethod.GET})
+    public ApiResult getForCustomer(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(transportGoodService.getForCustomer(id));
+    }
+
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
         if(transportGood == null){

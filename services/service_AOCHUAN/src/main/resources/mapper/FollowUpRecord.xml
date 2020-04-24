@@ -4,7 +4,7 @@
 
     <!--  存在Check  -->
     <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
-        select * from followuprecord where FOLLOWUPRECORD_ID = #{id} AND  STATUS = #{status}
+        select * from followuprecord where FOLLOWUPRECORD_ID = #{id} AND  STATUS != '1'
     </select>
 
     <!--  获取记录表数据  -->
@@ -25,7 +25,7 @@
         from followuprecord as fur
         inner join projects as pro
         on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
-        where fur.PRODUCTS_ID =#{products_id} AND fur.SUPPLIER_ID =#{supplier_id} AND fur.STATUS = #{status}
+        where fur.PRODUCTS_ID =#{products_id} AND fur.SUPPLIER_ID =#{supplier_id} AND fur.STATUS != '1'
         order by fur.SAL_DATE
 	</select>
 
@@ -38,4 +38,40 @@
 		 WHERE PRODUCTS_ID = #{products_id}
         AND SUPPLIER_ID = #{supplier_id}
     </update>
+
+    <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID,
+        fur.SAL_CUSTOMER,
+        fur.SAL_DATE,
+        fur.SAL_EVENT,
+        fur.SAL_CONTENT,
+        fur.PROC_DATE,
+        fur.PROC_ANSWER
+        from followuprecord as fur
+        where SUPPLIER_ID = #{id}
+    </select>
+
+    <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID,
+        fur.SAL_CUSTOMER,
+        fur.SAL_DATE,
+        fur.SAL_EVENT,
+        fur.SAL_CONTENT,
+        fur.PROC_DATE,
+        fur.PROC_ANSWER
+        from followuprecord as fur
+        where CUSTOMER_ID = #{id}
+    </select>
 </mapper>
