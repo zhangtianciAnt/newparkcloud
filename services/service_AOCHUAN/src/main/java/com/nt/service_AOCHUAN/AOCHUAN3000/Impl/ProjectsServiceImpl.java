@@ -38,13 +38,13 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public List<FollowUpRecord> getForSupplier(String id) throws Exception {
-        return followUpRecordMapper.getForSupplier(id);
+    public List<Projects> getForSupplier(String id) throws Exception {
+        return projectsMapper.getForSupplier(id);
     }
 
     @Override
-    public List<FollowUpRecord> getForCustomer(String id) throws Exception {
-        return followUpRecordMapper.getForCustomer(id);
+    public List<Projects> getForCustomer(String id) throws Exception {
+        return projectsMapper.getForCustomer(id);
     }
 
     //新建
