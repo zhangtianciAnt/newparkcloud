@@ -116,7 +116,6 @@ public class RoleServiceImpl implements RoleService {
                     if (userInfo != null) {
                         MembersVo membersVo = new MembersVo();
                         membersVo.set_id(customerInfo.get_id());
-                        membersVo.setUserid(customerInfo.getUserid());
                         membersVo.setCustomername(userInfo.getCustomername());
                         membersVo.setMobilenumber(userInfo.getMobilenumber());
                         membersVo.setDepartments(userInfo.getDepartmentid());

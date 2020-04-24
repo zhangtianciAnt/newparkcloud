@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "workflowinstance")
 public class Workflowinstance extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     /**
      * 流程实例ID
      */

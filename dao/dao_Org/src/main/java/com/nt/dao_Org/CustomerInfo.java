@@ -245,9 +245,13 @@ public class CustomerInfo extends BaseModel {
          */
         private String budgetunit;
         /**
-         * 个人编码
+         * 人事编码
          */
         private String personalcode;
+        /**
+         * 财务编码
+         */
+        private String caiwupersonalcode;
         /**
          * 職務
          */

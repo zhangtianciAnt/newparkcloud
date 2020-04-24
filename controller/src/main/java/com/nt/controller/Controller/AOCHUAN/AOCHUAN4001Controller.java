@@ -1,11 +1,7 @@
 package com.nt.controller.Controller.AOCHUAN;
 
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
-import com.nt.dao_Assets.Assets;
-import com.nt.dao_Pfans.PFANS1000.Fixedassets;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
-import com.nt.service_Assets.AssetsService;
-import com.nt.service_pfans.PFANS1000.FixedassetsService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;

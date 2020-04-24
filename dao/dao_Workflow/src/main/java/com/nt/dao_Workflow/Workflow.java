@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "workflow")
 public class Workflow extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
-	/**
-	 * 流程ID
-	 */
+    private static final long serialVersionUID = 1L;
+    /**
+     * 流程ID
+     */
     @Id
     @Column(name = "WORKFLOWID")
     private String workflowid;
