@@ -54,12 +54,15 @@ public class FinPurchase extends BaseModel {
     //危险品
     @Column(name = "DANGEROUS")
     private String dangerous;
-    //计划发货时间（提醒）
+    //计划发货时间
     @Column(name = "DELIVERYTIME")
     private Date deliverytime;
-    //预计付款时间（提醒）
+    //预计付款时间
     @Column(name = "PAYMENTTIME")
     private Date paymenttime;
+    //实际付款时间
+    @Column(name = "AP_DATE")
+    private Date ap_date;
     //唛头
     @Column(name = "MARKS")
     private String marks;
