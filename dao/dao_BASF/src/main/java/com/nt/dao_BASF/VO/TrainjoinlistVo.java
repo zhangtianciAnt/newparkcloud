@@ -30,4 +30,14 @@ public class TrainjoinlistVo {
      * 人员id
      */
     private List<Trainjoinlist> trainjoinlists;
+
+    /**
+     * 通过状态个数
+     */
+    private int count;
+
+    /**
+     * 部门id
+     */
+    private String departmentid;
 }

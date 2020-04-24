@@ -4,6 +4,7 @@ import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
+import com.nt.service_BASF.StartprogramTrainServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -41,6 +42,9 @@ public class BASF21211Controller {
     @Autowired
     private StartprogramServices startprogramServices;
 
+    @Autowired
+    private StartprogramTrainServices startprogramTrainServices;
+
     //更新培训参加人员
     @PostMapping("/upTrain")
     public ApiResult upTrain(@RequestBody Trainjoinlist trainjoinlist, HttpServletRequest request) throws Exception {
@@ -77,5 +81,23 @@ public class BASF21211Controller {
         //useraccount表的_id。customerinfo表的_userid
         String userid = tokenModel.getUserId();
         return ApiResult.success(roleService.getThisRoleUsers(userid));
+    }
+
+    //获取培训通过率（强制）
+    @GetMapping("/getDeptThrough")
+    public ApiResult getDeptThrough(String year, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(year)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(startprogramTrainServices.getDeptThrough(year));
+    }
+
+    //获取培训通过率（非强制）
+    @GetMapping("/getUnDeptThrough")
+    public ApiResult getUnDeptThrough(String year, HttpServletRequest request) throws Exception {
+        if (StringUtils.isEmpty(year)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(startprogramTrainServices.getUnDeptThrough(year));
     }
 }

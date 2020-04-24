@@ -3,6 +3,8 @@ package com.nt.service_BASF.mapper;
 import com.nt.dao_BASF.Emergencytemplate;
 import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.OverduePersonnelListVo;
+import com.nt.dao_BASF.VO.StartprogramTrainVo;
+import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -30,4 +32,15 @@ public interface TrainjoinlistMapper extends MyMapper<Trainjoinlist> {
     //获取参加培训的人员id们
     List<String> joinPersonnelid() throws Exception;
 
+    //获取部门名和通过状态（强制）
+    List<TrainjoinlistVo> selectDeptThrough(String year) throws Exception;
+
+    //获取部门名和所有通过状态（强制）
+    List<TrainjoinlistVo> selectAllDeptThrough(String year) throws Exception;
+
+    //获取部门名和通过状态（非强制）
+    List<TrainjoinlistVo> selectUnDeptThrough(String year) throws Exception;
+
+    //获取部门名和所有通过状态（非强制）
+    List<TrainjoinlistVo> selectUnAllDeptThrough(String year) throws Exception;
 }

@@ -100,4 +100,77 @@
 	        trainjoinlist AS t
     </select>
 
+    <!--    获取部门名和所有通过状态(强制)-->
+    <select id="selectAllDeptThrough" resultType="com.nt.dao_BASF.VO.TrainjoinlistVo">
+        SELECT
+        COUNT(*) AS COUNT,
+        trainjoinlist.departmentid AS departmentid
+        FROM trainjoinlist
+        RIGHT JOIN startprogram
+        ON startprogram.startprogramid=trainjoinlist.startprogramid
+        AND startprogram.programtype='BC039004'
+        AND startprogram.isonline='BC032002'
+        AND startprogram.mandatory='BC033001'
+        AND YEAR(startprogram.starttheorydate) = #{year}
+
+        WHERE trainjoinlist.departmentid IS NOT NULL
+        AND trainjoinlist.departmentid &lt;> ''
+        GROUP BY trainjoinlist.departmentid
+    </select>
+
+    <!--    获取部门名和通过状态（强制）-->
+    <select id="selectDeptThrough" resultType="com.nt.dao_BASF.VO.TrainjoinlistVo">
+        SELECT
+        COUNT(*) AS COUNT,
+        trainjoinlist.departmentid AS departmentid
+        FROM trainjoinlist
+        RIGHT JOIN startprogram
+        ON startprogram.startprogramid=trainjoinlist.startprogramid
+        AND startprogram.programtype='BC039004'
+        AND startprogram.isonline='BC032002'
+        AND startprogram.mandatory='BC033001'
+        AND YEAR(startprogram.starttheorydate) = #{year}
+
+        WHERE trainjoinlist.departmentid IS NOT NULL
+        AND trainjoinlist.departmentid &lt;> ''
+        AND trainjoinlist.throughtype ='通过'
+        GROUP BY trainjoinlist.departmentid
+    </select>
+
+    <!--    获取部门名和所有通过状态(非强制)-->
+    <select id="selectUnAllDeptThrough" resultType="com.nt.dao_BASF.VO.TrainjoinlistVo">
+        SELECT
+        COUNT(*) AS COUNT,
+        trainjoinlist.departmentid AS departmentid
+        FROM trainjoinlist
+        RIGHT JOIN startprogram
+        ON startprogram.startprogramid=trainjoinlist.startprogramid
+        AND startprogram.programtype='BC039004'
+        AND startprogram.isonline='BC032002'
+        AND startprogram.mandatory='BC033002'
+        AND YEAR(startprogram.starttheorydate) = #{year}
+
+        WHERE trainjoinlist.departmentid IS NOT NULL
+        AND trainjoinlist.departmentid &lt;> ''
+        GROUP BY trainjoinlist.departmentid
+    </select>
+
+    <!--    获取部门名和通过状态（非强制）-->
+    <select id="selectUnDeptThrough" resultType="com.nt.dao_BASF.VO.TrainjoinlistVo">
+        SELECT
+        COUNT(*) AS COUNT,
+        trainjoinlist.departmentid AS departmentid
+        FROM trainjoinlist
+        RIGHT JOIN startprogram
+        ON startprogram.startprogramid=trainjoinlist.startprogramid
+        AND startprogram.programtype='BC039004'
+        AND startprogram.isonline='BC032002'
+        AND startprogram.mandatory='BC033002'
+        AND YEAR(startprogram.starttheorydate) = #{year}
+
+        WHERE trainjoinlist.departmentid IS NOT NULL
+        AND trainjoinlist.departmentid &lt;> ''
+        AND trainjoinlist.throughtype ='通过'
+        GROUP BY trainjoinlist.departmentid
+    </select>
 </mapper>
