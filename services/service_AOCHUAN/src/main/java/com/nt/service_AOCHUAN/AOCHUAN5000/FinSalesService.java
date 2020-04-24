@@ -18,4 +18,7 @@ public interface FinSalesService {
 
     //唯一性Check
     Boolean uniqueCheck(FinSales finSales) throws Exception;
+
+    //获取财务-销售数据
+    List<FinSales> getHK() throws  Exception;
 }

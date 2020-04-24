@@ -13,4 +13,6 @@ public interface FinSalesMapper extends MyMapper<FinSales> {
 
     //唯一性Check
     public List<FinSales> uniqueCheck(@Param("id") String id,@Param("contractnumber") String contractnumber);
+
+    public List<FinSales> getHK();
 }

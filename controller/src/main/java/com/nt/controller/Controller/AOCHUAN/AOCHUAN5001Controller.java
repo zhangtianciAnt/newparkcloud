@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
@@ -10,6 +9,11 @@ import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
+import com.nt.utils.dao.TokenModel;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
@@ -201,5 +205,14 @@ public class AOCHUAN5001Controller {
         crdlInfo.setAccountingRuleList(actgrulist);
 
         return crdlInfo;
+    }
+
+    //  获取每个月确认回款总和
+    @RequestMapping(value="/getHK",method = {RequestMethod.GET})
+    public ApiResult getList(HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+
+        return ApiResult.success(finSalesService.getHK());
+
     }
 }

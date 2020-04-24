@@ -51,4 +51,9 @@ public class FinSalesServiceImpl implements FinSalesService {
         }
         return true;
     }
+
+    @Override
+    public List<FinSales> getHK() throws Exception {
+        return finSalesMapper.getHK();
+    }
 }
