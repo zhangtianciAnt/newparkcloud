@@ -73,7 +73,7 @@ public class Pfans1012Controller {
                             tl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ119");
+                    List<Dictionary> curListA = dictionaryService.getForSelect(tl.getAccountcode().substring(0,5));
                     for (Dictionary iteA : curListA) {
                         if (iteA.getCode().equals(tl.getAccountcode())) {
                             //科目名
@@ -96,7 +96,7 @@ public class Pfans1012Controller {
                             pl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ121");
+                    List<Dictionary> curListA = dictionaryService.getForSelect(pl.getAccountcode().substring(0,5));
                     for (Dictionary iteA : curListA) {
                         if (iteA.getCode().equals(pl.getAccountcode())) {
                             //科目名
@@ -120,7 +120,7 @@ public class Pfans1012Controller {
                             ol.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ130");
+                    List<Dictionary> curListA = dictionaryService.getForSelect(ol.getAccountcode().substring(0,5));
                     for (Dictionary iteA : curListA) {
                         if (iteA.getCode().equals(ol.getAccountcode())) {
                             //科目名
