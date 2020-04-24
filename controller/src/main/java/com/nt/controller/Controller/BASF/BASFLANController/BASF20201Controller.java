@@ -17,11 +17,9 @@ import com.nt.utils.services.TokenService;
 import com.sun.mail.util.BASE64EncoderStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.nt.service_BASF.CommandrecordServices;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.serial.SerialBlob;
@@ -51,7 +49,7 @@ public class BASF20201Controller {
     private TokenService tokenService;
 
     @Autowired
-    private SoundRecordingServices soundRecordingService;
+    private SoundRecordingServices soundrecordingService;
 
 
     @RequestMapping(value = "/getcommandrecord", method = {RequestMethod.GET})
@@ -103,21 +101,44 @@ public class BASF20201Controller {
     public ApiResult savesoundrecording(@RequestBody SoundRecording soundRecording, HttpServletRequest request) throws Exception {
 
         //新建一个input输入流用来读取mp3
-        InputStream in=new FileInputStream(soundRecording.getSongurl());
-        byte[] b=new byte[10000000];
-
-        int len=0;
-
-        while((len=in.read(b))!=-1){
-        }
-        Blob blob=new SerialBlob(b);
-        soundRecording.setLuyin(blob);
+//        InputStream in=new FileInputStream(soundRecording.getSongurl());
+//        byte[] b=new byte[10000000];
+//
+//        int len=0;
+//
+//        while((len=in.read(b))!=-1){
+//        }
+//        Blob blob=new SerialBlob(b);
+//        soundRecording.setLuyin(blob);
         if (soundRecording == null || StringUtils.isEmpty(soundRecording)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        soundRecordingService.insert(soundRecording, tokenModel);
+        soundrecordingService.insert(soundRecording, tokenModel);
 
         return ApiResult.success();
     }
+//    public ApiResult savesoundrecording(@RequestParam MultipartFile file, HttpServletRequest request) throws Exception {
+//
+//        if (file == null || StringUtils.isEmpty(file)) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+//        }
+//
+//        //新建一个input输入流用来读取mp3
+//        InputStream in=new FileInputStream("C:\\Users\\mingjian.cui\\AppData\\Local\\Temp\\tomcat.3957014563269708622.5556\\work\\Tomcat\\localhost\\ROOT\\upload_5b063af1_a737_4036_b0b0_2fdb5f93fa8f_00000001 - コピー.wav");
+//        byte[] b=new byte[10000000];
+//
+//        int len=0;
+//
+//        while((len=in.read(b))!=-1){
+//        }
+//        Blob blob=new SerialBlob(b);
+//
+//        SoundRecording soundrecording = new SoundRecording();
+//        soundrecording.setLuyin(blob);
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        soundrecordingService.insert(soundrecording, tokenModel);
+//
+//        return ApiResult.success();
+//    }
 }

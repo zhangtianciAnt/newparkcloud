@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.sql.Blob;
 
@@ -20,16 +21,16 @@ import java.sql.Blob;
  * @Version: 1.0
  */
 
-@Document(collection = "soundrecording")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "soundrecording")
 public class SoundRecording extends BaseModel {
     @Id
-    private String luyinID;
-    //录音
-    @Transient
-    private Blob luyin;
+    private String songid;
+//    //录音
+//    @Transient
+//    private Blob luyin;
     //url
-    private String songurl;
+    private String info;
 }

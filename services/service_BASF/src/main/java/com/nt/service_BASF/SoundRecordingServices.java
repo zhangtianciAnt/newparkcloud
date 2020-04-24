@@ -14,5 +14,5 @@ import com.nt.utils.dao.TokenModel;
  */
 public interface SoundRecordingServices {
     //录音保存
-    void insert(SoundRecording soundRecording, TokenModel tokenModel) throws Exception;
+    void insert(SoundRecording soundrecording, TokenModel tokenModel) throws Exception;
 }

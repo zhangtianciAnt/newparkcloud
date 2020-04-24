@@ -14,11 +14,11 @@ import java.util.UUID;
 @Transactional(rollbackFor = Exception.class)
 public class SoundRecordingServicesImpl implements SoundRecordingServices {
     @Autowired
-    private SoundRecordingMapper soundRecordingMapper;
+    private SoundRecordingMapper soundrecordingMapper;
     @Override
-    public void insert(SoundRecording soundRecording, TokenModel tokenModel) throws Exception {
-        soundRecording.preInsert(tokenModel);
-        soundRecording.setLuyinID(UUID.randomUUID().toString());
-        soundRecordingMapper.insert(soundRecording);
+    public void insert(SoundRecording soundrecording, TokenModel tokenModel) throws Exception {
+        soundrecording.preInsert(tokenModel);
+//        soundrecording.setLuyinid(UUID.randomUUID().toString());
+        soundrecordingMapper.insert(soundrecording);
     }
 }
