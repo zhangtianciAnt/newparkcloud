@@ -37,7 +37,7 @@ public class ExcelOutPutUtil {
                 //指定输出的文件流
                .out(out)
                 //设置图片路径的根目录
-                .imageRoot(imgRoot)
+                .imageRoot(AuthConstants.FILE_DIRECTORY + "image")
                 //设置如果图片缺失不终止生成
                 .ignoreImageMiss(true);
 
@@ -57,7 +57,7 @@ public class ExcelOutPutUtil {
 //        ClassPathResource Pdf_resource = new ClassPathResource("pdf_files");
 
 //        String pdfRoot = ExcelOutPutUtil.class.getClassLoader().getResource("pdf_files").getPath();
-        String pdfRoot ="D:\\PFANS\\pdf";
+        String pdfRoot = AuthConstants.FILE_DIRECTORY + "pdf";
                 response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
         ServletOutputStream out=response.getOutputStream();
 
