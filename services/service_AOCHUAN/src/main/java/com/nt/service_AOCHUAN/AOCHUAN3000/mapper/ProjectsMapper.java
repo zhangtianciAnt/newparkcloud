@@ -17,5 +17,8 @@ public interface ProjectsMapper extends MyMapper<Projects> {
     //唯一性Check
     public List<Projects> uniqueCheck(@Param("id") String id,@Param("products_id") String products_id,@Param("supplier_id") String supplier_id);
 
+    public List<Projects> getForSupplier(@Param("id") String id);
+
+    public List<Projects> getForCustomer(@Param("id") String id);
 }
 
