@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class WorkflowServicesImpl implements WorkflowServices {
 
     private static Logger log = LoggerFactory.getLogger(WorkflowServicesImpl.class);
-private String upFlg = "0";
+    private String upFlg = "0";
     @Autowired
     private WorkflowMapper workflowMapper;
 
@@ -1001,7 +1001,7 @@ private String upFlg = "0";
         }
 
         // 生成节点操作
-       return cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
+        return cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
                 startWorkflowVo.getDataUrl(), startWorkflowVo.getMenuUrl(), workflow.getWorkflowname(), startWorkflowVo.getUserList());
 
     }

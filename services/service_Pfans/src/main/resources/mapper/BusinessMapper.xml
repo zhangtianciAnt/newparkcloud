@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.BusinessMapper">
-    <select id="getBuse" resultType="com.nt.dao_Pfans.PFANS1000.Business">
-        select * from business where `STATUS` = '4' and CREATEON>DATE_SUB(CURDATE(), INTERVAL 3 MONTH) ORDER BY CREATEON DESC
-    </select>
-</mapper>
-

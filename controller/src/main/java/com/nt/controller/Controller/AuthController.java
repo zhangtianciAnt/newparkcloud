@@ -5,7 +5,6 @@ import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
 import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
-import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -39,8 +38,6 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
-    @Autowired
-    private AnnualLeaveService annualLeaveService;
     /**
      * @方法名：getActionsAuth
      * @描述：获取按钮权限（新建，编辑，删除）
@@ -74,11 +71,5 @@ public class AuthController {
         TokenModel tokenModel = tokenService.getToken(request);
         String userid = tokenModel.getUserId();
         return ApiResult.success(authService.getNewActionAuth(url,userid));
-    }
-
-    @RequestMapping(value = "/getAttendance",method={RequestMethod.GET})
-    public ApiResult getAttendance(Integer diffday,HttpServletRequest request) throws Exception {
-        annualLeaveService.insertattendance(diffday);
-        return ApiResult.success();
     }
 }

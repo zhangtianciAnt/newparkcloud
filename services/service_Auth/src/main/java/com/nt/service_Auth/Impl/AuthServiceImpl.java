@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
         newquery.addCriteria(Criteria.where("_id").in(tokenModel.getRoleIds()));
         newquery.addCriteria(Criteria.where("menus.menuurl").is(url));
         List<Role> list = mongoTemplate.find(newquery, Role.class);
-        if (list != null) {
+        if (list != null && list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
                 List<AppPermission.menu> menus = list.get(i).getMenus();
                 var menu = menus.stream()
@@ -82,6 +82,12 @@ public class AuthServiceImpl implements AuthService {
                         }
                         if (auth == 5) {
                             flg = "1";
+                        }
+                        if (auth == 2) {
+                            flg = "2";
+                        }
+                        if (auth == 3) {
+                            flg = "3";
                         }
                     }
                 }
@@ -146,6 +152,88 @@ public class AuthServiceImpl implements AuthService {
                     }
                 }
 
+
+                result = resultTeam;
+            }else if(flg.equals("2")){
+                //根据人员查询所在组织的所有人人
+                Query cusquery = new Query();
+                cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
+                if(cus == null){
+                    return new ArrayList<String>();
+                }
+                List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
+                String groupid = cus.getUserinfo().getGroupid();
+
+                if(StrUtil.isNotBlank(groupid)){
+                    Query cusquerygroupid = new Query();
+                    cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(groupid));
+                    cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+
+                    if(cuslist.size() > 0){
+                        for(CustomerInfo cusinfo : cuslist){
+                            resultTeam.add(cusinfo.getUserid());
+                        }
+                    }
+                }
+
+
+                if(cus.getUserinfo().getOtherorgs() != null && cus.getUserinfo().getOtherorgs().size() > 0){
+                    for(CustomerInfo.OtherOrgs itemO:cus.getUserinfo().getOtherorgs()){
+                        if(StrUtil.isNotBlank(itemO.getGroupid())){
+                            Query cusquerygroupid = new Query();
+                            cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
+                            cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+
+                            if(cuslist.size() > 0){
+                                for(CustomerInfo cusinfo : cuslist){
+                                    resultTeam.add(cusinfo.getUserid());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                result = resultTeam;
+            }else if(flg.equals("3")){
+                //根据人员查询所在组织的所有人人
+                Query cusquery = new Query();
+                cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
+                if(cus == null){
+                    return new ArrayList<String>();
+                }
+                List<CustomerInfo> cuslist = new ArrayList<CustomerInfo>();
+                String centerid = cus.getUserinfo().getCenterid();
+
+                if(StrUtil.isNotBlank(centerid)){
+                    Query cusquerycenterid = new Query();
+                    cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
+                    cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+                }
+
+
+                if(cuslist.size() > 0){
+                    for(CustomerInfo cusinfo : cuslist){
+                        resultTeam.add(cusinfo.getUserid());
+                    }
+                }
+
+                if(cus.getUserinfo().getOtherorgs() != null && cus.getUserinfo().getOtherorgs().size() > 0){
+                    for(CustomerInfo.OtherOrgs itemO:cus.getUserinfo().getOtherorgs()){
+                        if(StrUtil.isNotBlank(itemO.getCenterid())){
+                            Query cusquerycenterid = new Query();
+                            cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
+                            cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+
+                            if(cuslist.size() > 0){
+                                for(CustomerInfo cusinfo : cuslist){
+                                    resultTeam.add(cusinfo.getUserid());
+                                }
+                            }
+                        }
+                    }
+                }
 
                 result = resultTeam;
             }

@@ -14,8 +14,10 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DocuruleServiceImpl  implements DocuruleService {
@@ -34,18 +36,21 @@ public class DocuruleServiceImpl  implements DocuruleService {
     }
 
     @Override
-    public List<Docurule> One(String docurule_id) throws Exception {
+    public DocuruleVo One(String docurule_id) throws Exception {
+        DocuruleVo docuruleVo=new DocuruleVo();
+        Crerule crerul=new Crerule();
+        crerul.setDocurule_id(docurule_id);
+        List<Crerule> creruleList=creruleMapper.select(crerul);
+        creruleList=creruleList.stream().sorted(Comparator.comparing(Crerule::getCrerule_id)).collect(Collectors.toList());
+        Docurule docurule=docuruleMapper.selectByPrimaryKey(docurule_id);
+        docuruleVo.setDocurule(docurule);
+        docuruleVo.setCrerules(creruleList);
+        return docuruleVo;
+    }
+    @Override
+    public List<Docurule> helpOne(String docurule_id) throws Exception {
 
-
-//       DocuruleVo docuruleVo=new DocuruleVo();
-//       Crerule crerul=new Crerule();
-//       crerul.setDocurule_id(docurule_id);
-//        List<Crerule> creruleList=creruleMapper.select(crerul);
-//        creruleList=creruleList.stream().sorted(Comparator.comparing(Crerule::getCrerule_id)).collect(Collectors.toList());
-
-        //Docurule docurule=docuruleMapper.selectByPrimaryKey(docurule_id);
-
-        return docuruleMapper.One(docurule_id);
+        return helpruleMapper.helpOne(docurule_id);
     }
 
     @Override
@@ -75,22 +80,23 @@ public class DocuruleServiceImpl  implements DocuruleService {
     public void insert(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
         String docuruleid= UUID.randomUUID().toString();
         Docurule docurule=new Docurule();
-        Helprule helprule=new Helprule();
         docurule = docuruleVo.getDocurule();
         BeanUtils.copyProperties(docuruleVo.getDocurule(),docurule);
         docurule.preInsert(tokenModel);
         docurule.setDocurule_id(docuruleid);
       docuruleMapper.insertSelective(docurule);
        List<Crerule> crulelist=docuruleVo.getCrerules();
+        Helprule helprule=new Helprule();
+        List<Helprule> helpruleList=docuruleVo.getHelprules();
         if (crulelist != null) {
-            for (Crerule crerule  : crulelist) {
-                crerule.preInsert(tokenModel);
-                crerule.setCrerule_id(UUID.randomUUID().toString());
-                helprule.setCrerule_id(crerule.getCrerule_id());
-                helprule.setHelprule_id(UUID.randomUUID().toString());
-                helpruleMapper.insertSelective(helprule);
-                crerule.setDocurule_id(docuruleid);
-                creruleMapper.insertSelective(crerule);
+            for ( int i = 0;i< crulelist.size();i++) {
+                crulelist.get(i).preInsert(tokenModel);
+                crulelist.get(i).setCrerule_id(UUID.randomUUID().toString());
+                helpruleList.get(i).setCrerule_id(crulelist.get(i).getCrerule_id());
+                helpruleList.get(i).setHelprule_id(UUID.randomUUID().toString());
+                crulelist.get(i).setDocurule_id(docuruleid);
+                helpruleMapper.insertSelective(helpruleList.get(i));
+                creruleMapper.insertSelective(crulelist.get(i));
             }
         }
 
@@ -101,6 +107,9 @@ public class DocuruleServiceImpl  implements DocuruleService {
    docuruleMapper.deleteByPrimaryKey(id);
     }
 
-
+    @Override
+    public Docurule selectByDocutype(String docutype) {
+        return docuruleMapper.selectByDocutype(docutype);
+    }
 
 }
