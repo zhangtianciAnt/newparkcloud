@@ -37,6 +37,21 @@ public class AOCHUAN3001Controller {
         return ApiResult.success(quotationsService.getOne(id));
     }
 
+    @RequestMapping(value = "/getForSupplier",method={RequestMethod.GET})
+    public ApiResult getForSupplier(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(quotationsService.getForSupplier(id));
+    }
+
+    @RequestMapping(value = "/getForCustomer",method={RequestMethod.GET})
+    public ApiResult getForCustomer(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(id)){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(quotationsService.getForCustomer(id));
+    }
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody Quotations quotations, HttpServletRequest request) throws Exception {
         if(quotations == null){

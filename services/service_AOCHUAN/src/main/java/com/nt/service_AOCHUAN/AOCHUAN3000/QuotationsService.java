@@ -1,6 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuotationsAndEnquiry;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,10 @@ public interface QuotationsService {
     List<Quotations> get() throws Exception;
 
     Quotations getOne(String id) throws Exception;
+
+    List<QuotationsAndEnquiry> getForSupplier(String id) throws Exception;
+
+    List<Quotations> getForCustomer(String id) throws Exception;
 
     void update(Quotations quotations, TokenModel tokenModel) throws Exception;
 
