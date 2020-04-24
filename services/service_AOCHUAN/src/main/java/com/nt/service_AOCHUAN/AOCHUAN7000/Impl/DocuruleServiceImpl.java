@@ -71,7 +71,6 @@ public class DocuruleServiceImpl  implements DocuruleService {
         }
 
     }
-
     @Override
     public void insert(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
         String docuruleid= UUID.randomUUID().toString();

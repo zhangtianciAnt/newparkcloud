@@ -4,7 +4,7 @@
 
     <select id="getAll" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport">
        select * from transportgood tpg
-       where tpg.STATUS = '0'
+       where tpg.STATUS != '1'
     </select>
 
 </mapper>

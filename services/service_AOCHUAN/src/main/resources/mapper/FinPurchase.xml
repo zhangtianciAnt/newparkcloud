@@ -4,11 +4,11 @@
 
     <!--  ??Check  -->
     <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase">
-        SELECT * FROM fin_purchase WHERE PURCHASE_ID = #{id} AND  STATUS = #{status}
+        SELECT * FROM fin_purchase WHERE PURCHASE_ID = #{id} AND  STATUS != '1'
     </select>
 
     <!--  ???Check  -->
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase">
-        SELECT * FROM fin_purchase WHERE PURCHASE_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS = '0'
+        SELECT * FROM fin_purchase WHERE PURCHASE_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS != '1'
     </select>
 </mapper>
