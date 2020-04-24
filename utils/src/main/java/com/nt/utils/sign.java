@@ -54,9 +54,10 @@ public class sign {
             g.drawString(name, CENTERX-75, CENTERY+20);
         }
 
-        String filePath = AuthConstants.FILE_DIRECTORY + "image\\"+new Date().getTime()+ name + ".png";
+        String filename = new Date().getTime()+ name + ".png";
+        String filePath = AuthConstants.FILE_DIRECTORY + "image\\"+ filename;
         ImageIO.write(buffImg, "png", new File(filePath));
 
-        return filePath;
+        return filename;
     }
 }
