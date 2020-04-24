@@ -11,6 +11,7 @@ import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.Impl.AnnualLeaveServiceImpl;
 import com.nt.utils.Excel2Pdf;
 import com.nt.utils.jacob2pdf;
+import com.nt.utils.sign;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -28,6 +29,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import pres.lnk.jxlss.demo.Employee;
 import pres.lnk.jxlss.demo.Experience;
 
+import javax.imageio.ImageIO;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -86,12 +91,12 @@ public class TestJxls {
 //        ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
 //        String i = "" ;
 //        for(Map<String,Object> item :readAll) {
-            Query query = new Query();
-            query.addCriteria(Criteria.where("userinfo.groupname").is("住空間・業務空間開発グループ"));
-            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
-            if(customerInfos.size() > 0) {
-
-            }
+//            Query query = new Query();
+//            query.addCriteria(Criteria.where("userinfo.groupname").is("住空間・業務空間開発グループ"));
+//            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
+//            if(customerInfos.size() > 0) {
+//
+//            }
 //                customerInfos.get(0).getUserinfo().setCaiwupersonalcode(item.get("code").toString());
 //                template.save( customerInfos.get(0));
 //                Map<String, Object> row1 = new LinkedHashMap<>();
@@ -193,6 +198,9 @@ public class TestJxls {
 
 //        String path = "D:/仮出金.xls";
 //        new jacob2pdf().excel2Pdf("D:/仮出金.xls", "D:/仮出金.pdf");
+
+        sign.startGraphics2D("张建");
+
     }
 
     private static Employee getEmployee() {
