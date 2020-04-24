@@ -242,9 +242,22 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             model.add("対策");
             List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
+
             for (int i = 0; i < key.size(); i++) {
-                if (!key.get(i).toString().trim().equals(model.get(i))) {
+                if (!key.get(i).toString().replace("●","").trim().equals(model.get(i))) {
                     throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+                }
+            }
+
+            List<Integer> updint = new  ArrayList<Integer>();
+            //resultInsUpd true:插入 false:更新
+            boolean resultInsUpd = true;
+            for (int j = 0; j < key.size(); j++)
+            {
+                if(key.get(j).toString().trim().contains("●"))
+                {
+                    resultInsUpd = false;
+                    updint.add(j);
                 }
             }
             int k = 1;
@@ -252,281 +265,631 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             int error = 0;
             SimpleDateFormat sff = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sf = new SimpleDateFormat("yyyy");
-            for (int i = 1; i < list.size(); i++) {
-                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                List<Object> value = list.get(k);
-                k++;
-                if (value != null && !value.isEmpty()) {
-                    if(value.size()>0)
-                    {
-                        expatriatesinfor.setExpname(Convert.toStr(value.get(0)));
-                        if(expatriatesinfor.getExpname() != null && expatriatesinfor.getExpname().trim().length() > 36)
+            if(resultInsUpd)
+            {
+                for (int i = 1; i < list.size(); i++)
+                {
+                    Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                    List<Object> value = list.get(k);
+                    k++;
+                    if (value != null && !value.isEmpty()) {
+                        if(value.size()>0)
                         {
-                            throw new LogicalException("第" + i + "行 姓名 长度超长，最大长度为36");
-                        }
-                    }
-                    if(value.size()>1)
-                    {
-                        String sex = Convert.toStr(value.get(1));
-                        if(sex!=null && !sex.isEmpty())
-                        {
-                            Dictionary dictionary =new Dictionary();
-                            dictionary.setValue1(sex.trim());
-                            dictionary.setType("GT");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if(dictionaryList.size()>0)
+                            expatriatesinfor.setExpname(Convert.toStr(value.get(0)));
+                            if(expatriatesinfor.getExpname() != null && expatriatesinfor.getExpname().trim().length() > 36)
                             {
-                                expatriatesinfor.setSex(dictionaryList.get(0).getCode());
+                                throw new LogicalException("第" + i + "行 姓名 长度超长，最大长度为36");
                             }
-                        }
-                    }
-                    if(value.size()>2)
-                    {
-                        expatriatesinfor.setGraduateschool(Convert.toStr(value.get(2)));
-                    }
-                    if(value.size()>3)
-                    {
-                        String education = Convert.toStr(value.get(3));
-                        if(education!=null && !education.isEmpty())
-                        {
-                            Dictionary dictionary =new Dictionary();
-                            dictionary.setValue1(education.trim());
-                            dictionary.setType("RS");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if(dictionaryList.size()>0)
+                            Expatriatesinfor expatriatesinforName = new Expatriatesinfor();
+                            expatriatesinforName.setExpname(expatriatesinfor.getExpname().trim());
+                            List<Expatriatesinfor> expatriatesinforList = new ArrayList<Expatriatesinfor>();
+                            expatriatesinforList = expatriatesinforMapper.select(expatriatesinforName);
+                            if(expatriatesinforList.size()>0)
                             {
-                                expatriatesinfor.setEducation(dictionaryList.get(0).getCode());
-                            }
-                        }
-                    }
-                    if(value.size()>4)
-                    {
-                        String graduation_year = Convert.toStr(value.get(4));
-                        if(graduation_year !=null && graduation_year.length()>3)
-                        {
-                            graduation_year = graduation_year.trim().substring(0,4);
-                            expatriatesinfor.setGraduation_year(sf.parse(graduation_year));
-                        }
-                    }
-                    if(value.size()>5)
-                    {
-                        String suppliername = Convert.toStr(value.get(5));
-                        Supplierinfor supplierinfor = new Supplierinfor();
-                        supplierinfor.setSupchinese(suppliername);
-                        List<Supplierinfor> supplierinforList = new ArrayList<>();
-                        supplierinforList = supplierinforMapper.select(supplierinfor);
-                        if(supplierinforList.size()>0)
-                        {
-                            expatriatesinfor.setSuppliername(supplierinforList.get(0).getSupchinese());
-                            expatriatesinfor.setSupplierinfor_id(supplierinforList.get(0).getSupplierinfor_id());
-                        }
-                        else
-                        {
-                            expatriatesinfor.setSuppliername(suppliername);
-                        }
-                    }
-                    if(value.size()>6)
-                    {
-                        String rn = Convert.toStr(value.get(6));
-                        if(rn!=null && !rn.isEmpty())
-                        {
-                            Dictionary dictionary =new Dictionary();
-                            dictionary.setValue1(rn.trim());
-                            dictionary.setType("RS");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if(dictionaryList.size()>0)
-                            {
-                                expatriatesinfor.setRn(dictionaryList.get(0).getCode());
-                            }
-                        }
-                    }
-                    if(value.size()>7)
-                    {
-                        expatriatesinfor.setEmail(Convert.toStr(value.get(7)));
-                        if(expatriatesinfor.getEmail() != null && expatriatesinfor.getEmail().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 邮箱 长度超长，最大长度为255");
-                        }
-                    }
-                    if(value.size()>8)
-                    {
-                        String groupName = Convert.toStr(value.get(8));
-                        if(groupName!=null && !groupName.isEmpty())
-                        {
-                            Query query = new Query();
-                            query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
-                            List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
-                            customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
-                            if(customerInfoList.size()>0)
-                            {
-                                expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                                throw new LogicalException("第" + i + "行 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
                             }
                             else
                             {
-                                expatriatesinfor.setGroup_id(groupName);
+                                UserAccount userAccount = new UserAccount();
+                                userAccount.setAccount("KK-"+PinyinHelper.convertToPinyinString(expatriatesinfor.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                                userAccount.setUsertype("1");
+                                Query query = new Query();
+                                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                if(userAccountlist.size()>0)
+                                {
+                                    throw new LogicalException("第" + i + "行 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                }
                             }
                         }
-                    }
-                    if(value.size()>9)
-                    {
-                        String operationform = Convert.toStr(value.get(9));
-                        if(operationform!=null && !operationform.isEmpty())
+                        if(value.size()>1)
                         {
-                            Dictionary dictionary =new Dictionary();
-                            dictionary.setValue1(operationform.trim());
-                            dictionary.setType("BP");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if(dictionaryList.size()>0)
+                            String sex = Convert.toStr(value.get(1));
+                            if(sex!=null && !sex.isEmpty())
                             {
-                                expatriatesinfor.setOperationform(dictionaryList.get(0).getCode());
+                                Dictionary dictionary =new Dictionary();
+                                dictionary.setValue1(sex.trim());
+                                dictionary.setType("GT");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if(dictionaryList.size()>0)
+                                {
+                                    expatriatesinfor.setSex(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if(value.size()>2)
+                        {
+                            expatriatesinfor.setGraduateschool(Convert.toStr(value.get(2)));
+                        }
+                        if(value.size()>3)
+                        {
+                            String education = Convert.toStr(value.get(3));
+                            if(education!=null && !education.isEmpty())
+                            {
+                                Dictionary dictionary =new Dictionary();
+                                dictionary.setValue1(education.trim());
+                                dictionary.setType("RS");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if(dictionaryList.size()>0)
+                                {
+                                    expatriatesinfor.setEducation(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if(value.size()>4)
+                        {
+                            String graduation_year = Convert.toStr(value.get(4));
+                            if(graduation_year !=null && graduation_year.length()>3)
+                            {
+                                graduation_year = graduation_year.trim().substring(0,4);
+                                expatriatesinfor.setGraduation_year(sf.parse(graduation_year));
+                            }
+                        }
+                        if(value.size()>5)
+                        {
+                            String suppliername = Convert.toStr(value.get(5));
+                            Supplierinfor supplierinfor = new Supplierinfor();
+                            supplierinfor.setSupchinese(suppliername);
+                            List<Supplierinfor> supplierinforList = new ArrayList<>();
+                            supplierinforList = supplierinforMapper.select(supplierinfor);
+                            if(supplierinforList.size()>0)
+                            {
+                                expatriatesinfor.setSuppliername(supplierinforList.get(0).getSupchinese());
+                                expatriatesinfor.setSupplierinfor_id(supplierinforList.get(0).getSupplierinfor_id());
+                            }
+                            else
+                            {
+                                expatriatesinfor.setSuppliername(suppliername);
+                            }
+                        }
+                        if(value.size()>6)
+                        {
+                            String rn = Convert.toStr(value.get(6));
+                            if(rn!=null && !rn.isEmpty())
+                            {
+                                Dictionary dictionary =new Dictionary();
+                                dictionary.setValue1(rn.trim());
+                                dictionary.setType("RS");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if(dictionaryList.size()>0)
+                                {
+                                    expatriatesinfor.setRn(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if(value.size()>7)
+                        {
+                            expatriatesinfor.setEmail(Convert.toStr(value.get(7)));
+                            if(expatriatesinfor.getEmail() != null && expatriatesinfor.getEmail().length() > 255)
+                            {
+                                throw new LogicalException("第" + i + "行 邮箱 长度超长，最大长度为255");
+                            }
+                        }
+                        if(value.size()>8)
+                        {
+                            String groupName = Convert.toStr(value.get(8));
+                            if(groupName!=null && !groupName.isEmpty())
+                            {
+                                Query query = new Query();
+                                query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
+                                List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                                customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
+                                if(customerInfoList.size()>0)
+                                {
+                                    expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                                }
+                                else
+                                {
+                                    expatriatesinfor.setGroup_id(groupName);
+                                }
+                            }
+                        }
+                        if(value.size()>9)
+                        {
+                            String operationform = Convert.toStr(value.get(9));
+                            if(operationform!=null && !operationform.isEmpty())
+                            {
+                                Dictionary dictionary =new Dictionary();
+                                dictionary.setValue1(operationform.trim());
+                                dictionary.setType("BP");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if(dictionaryList.size()>0)
+                                {
+                                    expatriatesinfor.setOperationform(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if(value.size()>10)
+                        {
+                            expatriatesinfor.setNumber(Convert.toStr(value.get(10)));
+                            if(expatriatesinfor.getNumber() == null || expatriatesinfor.getNumber().isEmpty())
+                            {
+                                throw new LogicalException("第" + i + "行 卡号 不能为空，请确认。");
+                            }
+                            if(expatriatesinfor.getNumber() != null && expatriatesinfor.getNumber().length() > 36)
+                            {
+                                throw new LogicalException("第" + i + "行 卡号 长度超长，最大长度为36");
+                            }
+                            Expatriatesinfor expatriatesinforName = new Expatriatesinfor();
+                            expatriatesinforName.setNumber(expatriatesinfor.getNumber().trim());
+                            List<Expatriatesinfor> expatriatesinforList = new ArrayList<Expatriatesinfor>();
+                            expatriatesinforList = expatriatesinforMapper.select(expatriatesinforName);
+                            if(expatriatesinforList.size()>0)
+                            {
+                                throw new LogicalException("第" + i + "行的卡号在外驻人员表中已有人使用，请确认。");
+                            }
+                        }
+                        if(value.size()>11)
+                        {
+                            String jobclassification = Convert.toStr(value.get(11));
+                            if(jobclassification!=null && !jobclassification.isEmpty())
+                            {
+                                Dictionary dictionary =new Dictionary();
+                                dictionary.setValue1(jobclassification.trim());
+                                dictionary.setType("BP");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if(dictionaryList.size()>0)
+                                {
+                                    expatriatesinfor.setJobclassification(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if(value.size()>12)
+                        {
+                            String admissiontime = Convert.toStr(value.get(12));
+                            if(admissiontime!=null && admissiontime.length() > 9)
+                            {
+                                admissiontime = admissiontime.trim().substring(0,10);
+                                expatriatesinfor.setAdmissiontime(sff.parse(admissiontime));
+                            }
+                        }
+                        if(value.size()>13)
+                        {
+                            expatriatesinfor.setSpeciality(Convert.toStr(value.get(13)));
+                        }
+                        if(value.size()>14)
+                        {
+                            String exits = Convert.toStr(value.get(14));
+                            if(exits!=null && !exits.isEmpty())
+                            {
+                                if(exits.trim().equals("是"))
+                                {
+                                    expatriatesinfor.setExits("0");
+                                }
+                                else if(exits.trim().equals("否"))
+                                {
+                                    expatriatesinfor.setExits("1");
+                                }
+                            }
+                            if(expatriatesinfor.getExits().equals("0"))
+                            {
+                                if(value.size()>15)
+                                {
+                                    String exitime = Convert.toStr(value.get(15));
+                                    if(exitime!=null && exitime.length() > 9)
+                                    {
+                                        exitime = exitime.trim().substring(0,10);
+                                        expatriatesinfor.setExitime(sff.parse(exitime));
+                                    }
+                                }
+                                if(value.size()>16)
+                                {
+                                    String exitreason = Convert.toStr(value.get(16));
+                                    if(exitreason!=null && !exitreason.isEmpty())
+                                    {
+                                        Dictionary dictionary =new Dictionary();
+                                        dictionary.setValue1(exitreason.trim());
+                                        dictionary.setType("BP");
+                                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                        if(dictionaryList.size()>0)
+                                        {
+                                            expatriatesinfor.setExitreason(dictionaryList.get(0).getCode());
+                                        }
+                                    }
+                                }
+                                if(value.size()>17)
+                                {
+                                    String alltechnology = Convert.toStr(value.get(17));
+                                    if(alltechnology!=null && !alltechnology.isEmpty())
+                                    {
+                                        Dictionary dictionary =new Dictionary();
+                                        dictionary.setValue1(alltechnology.trim());
+                                        dictionary.setType("BP");
+                                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                        if(dictionaryList.size()>0)
+                                        {
+                                            expatriatesinfor.setAlltechnology(dictionaryList.get(0).getCode());
+                                        }
+                                    }
+                                }
+                                if(value.size()>18)
+                                {
+                                    String sitevaluation = Convert.toStr(value.get(18));
+                                    if(sitevaluation!=null && !sitevaluation.isEmpty())
+                                    {
+                                        Dictionary dictionary =new Dictionary();
+                                        dictionary.setValue1(sitevaluation.trim());
+                                        dictionary.setType("BP");
+                                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                        if(dictionaryList.size()>0)
+                                        {
+                                            expatriatesinfor.setSitevaluation(dictionaryList.get(0).getCode());
+                                        }
+                                    }
+                                }
+                                if(value.size()>19)
+                                {
+                                    String businessimpact = Convert.toStr(value.get(19));
+                                    if(businessimpact!=null && !businessimpact.isEmpty())
+                                    {
+                                        Dictionary dictionary =new Dictionary();
+                                        dictionary.setValue1(businessimpact.trim());
+                                        dictionary.setType("BP");
+                                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                        if(dictionaryList.size()>0)
+                                        {
+                                            expatriatesinfor.setBusinessimpact(dictionaryList.get(0).getCode());
+                                        }
+                                    }
+                                }
+                                if(value.size()>20)
+                                {
+                                    String countermeasure = Convert.toStr(value.get(20));
+                                    if(countermeasure!=null && !countermeasure.isEmpty())
+                                    {
+                                        Dictionary dictionary =new Dictionary();
+                                        dictionary.setValue1(countermeasure.trim());
+                                        dictionary.setType("BP");
+                                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                        if(dictionaryList.size()>0)
+                                        {
+                                            expatriatesinfor.setCountermeasure(dictionaryList.get(0).getCode());
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                    if(value.size()>10)
+                    expatriatesinfor.preInsert();
+                    expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
+                    expatriatesinforMapper.insert(expatriatesinfor);
+                    listVo.add(expatriatesinfor);
+                    accesscount = accesscount + 1;
+                }
+            }
+            else
+            {
+                for (int i = 1; i < list.size(); i++)
+                {
+                    Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                    List<Object> value = list.get(i);
+                    if (value != null && !value.isEmpty() && value .size()>10)
                     {
                         expatriatesinfor.setNumber(Convert.toStr(value.get(10)));
-                        if(expatriatesinfor.getNumber() != null && expatriatesinfor.getNumber().length() > 36)
+                        List<Expatriatesinfor> expatriatesinforList = new ArrayList<Expatriatesinfor>();
+                        expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+                        if(expatriatesinforList.size()>0)
                         {
-                            throw new LogicalException("第" + i + "行 卡号 长度超长，最大长度为36");
+                            for(int j = 0;j < updint.size();j++)
+                            {
+                                if(value.size() > updint.get(j))
+                                {
+                                    switch (updint.get(j))
+                                    {
+                                        case 0:
+                                            String name = Convert.toStr(value.get(0));
+                                            expatriatesinforList.get(0).setExpname(Convert.toStr(value.get(0)));
+                                            if(name != null && name.trim().length() > 36)
+                                            {
+                                                throw new LogicalException("第" + i + "行 姓名 长度超长，最大长度为36");
+                                            }
+                                            if(!(name.equals(expatriatesinforList.get(0).getExpname())))
+                                            {
+                                                Expatriatesinfor expatriatesinforName = new Expatriatesinfor();
+                                                expatriatesinforName.setExpname(expatriatesinforList.get(0).getExpname().trim());
+                                                List<Expatriatesinfor> inforList = new ArrayList<Expatriatesinfor>();
+                                                inforList = expatriatesinforMapper.select(expatriatesinforName);
+                                                if(inforList.size()>0)
+                                                {
+                                                    throw new LogicalException("第" + i + "行 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                                }
+                                                else
+                                                {
+                                                    UserAccount userAccount = new UserAccount();
+                                                    userAccount.setAccount("KK-"+PinyinHelper.convertToPinyinString(expatriatesinforList.get(0).getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                                                    userAccount.setUsertype("1");
+                                                    Query query = new Query();
+                                                    query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                                    query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                                    if(userAccountlist.size()>0)
+                                                    {
+                                                        throw new LogicalException("第" + i + "行 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 1:
+                                            String sex = Convert.toStr(value.get(1));
+                                            if(sex!=null && !sex.isEmpty())
+                                            {
+                                                Dictionary dictionary =new Dictionary();
+                                                dictionary.setValue1(sex.trim());
+                                                dictionary.setType("GT");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if(dictionaryList.size()>0)
+                                                {
+                                                    expatriatesinforList.get(0).setSex(dictionaryList.get(0).getCode());
+                                                }
+                                            }
+                                            break;
+                                        case 2:
+                                            expatriatesinforList.get(0).setGraduateschool(Convert.toStr(value.get(2)));
+                                            break;
+                                        case 3:
+                                            String education = Convert.toStr(value.get(3));
+                                            if(education!=null && !education.isEmpty())
+                                            {
+                                                Dictionary dictionary =new Dictionary();
+                                                dictionary.setValue1(education.trim());
+                                                dictionary.setType("RS");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if(dictionaryList.size()>0)
+                                                {
+                                                    expatriatesinforList.get(0).setEducation(dictionaryList.get(0).getCode());
+                                                }
+                                            }
+                                            break;
+                                        case 4:
+                                            String graduation_year = Convert.toStr(value.get(4));
+                                            if(graduation_year !=null && graduation_year.length()>3)
+                                            {
+                                                graduation_year = graduation_year.trim().substring(0,4);
+                                                expatriatesinforList.get(0).setGraduation_year(sf.parse(graduation_year));
+                                            }
+                                            break;
+                                        case 5:
+                                            String suppliername = Convert.toStr(value.get(5));
+                                            Supplierinfor supplierinfor = new Supplierinfor();
+                                            supplierinfor.setSupchinese(suppliername);
+                                            List<Supplierinfor> supplierinforList = new ArrayList<>();
+                                            supplierinforList = supplierinforMapper.select(supplierinfor);
+                                            if(supplierinforList.size()>0)
+                                            {
+                                                expatriatesinforList.get(0).setSuppliername(supplierinforList.get(0).getSupchinese());
+                                                expatriatesinforList.get(0).setSupplierinfor_id(supplierinforList.get(0).getSupplierinfor_id());
+                                            }
+                                            else
+                                            {
+                                                expatriatesinforList.get(0).setSuppliername(suppliername);
+                                            }
+                                            break;
+                                        case 6:
+                                            String rn = Convert.toStr(value.get(6));
+                                            if(rn!=null && !rn.isEmpty())
+                                            {
+                                                Dictionary dictionary =new Dictionary();
+                                                dictionary.setValue1(rn.trim());
+                                                dictionary.setType("RS");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if(dictionaryList.size()>0)
+                                                {
+                                                    expatriatesinforList.get(0).setRn(dictionaryList.get(0).getCode());
+                                                }
+                                            }
+                                            break;
+                                        case 7:
+                                            expatriatesinforList.get(0).setEmail(Convert.toStr(value.get(7)));
+                                            if(expatriatesinforList.get(0).getEmail() != null && expatriatesinforList.get(0).getEmail().length() > 255)
+                                            {
+                                                throw new LogicalException("第" + i + "行 邮箱 长度超长，最大长度为255");
+                                            }
+                                            break;
+                                        case 8:
+                                            String groupName = Convert.toStr(value.get(8));
+                                            if(groupName!=null && !groupName.isEmpty())
+                                            {
+                                                Query query = new Query();
+                                                query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
+                                                List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                                                customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
+                                                if(customerInfoList.size()>0)
+                                                {
+                                                    expatriatesinforList.get(0).setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                                                }
+                                                else
+                                                {
+                                                    expatriatesinforList.get(0).setGroup_id(groupName);
+                                                }
+                                            }
+                                            break;
+                                        case 9:
+                                            String operationform = Convert.toStr(value.get(9));
+                                            if(operationform!=null && !operationform.isEmpty())
+                                            {
+                                                Dictionary dictionary =new Dictionary();
+                                                dictionary.setValue1(operationform.trim());
+                                                dictionary.setType("BP");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if(dictionaryList.size()>0)
+                                                {
+                                                    expatriatesinforList.get(0).setOperationform(dictionaryList.get(0).getCode());
+                                                }
+                                            }
+                                            break;
+                                        case 10:
+                                            break;
+                                        case 11:
+                                            String jobclassification = Convert.toStr(value.get(11));
+                                            if(jobclassification!=null && !jobclassification.isEmpty())
+                                            {
+                                                Dictionary dictionary =new Dictionary();
+                                                dictionary.setValue1(jobclassification.trim());
+                                                dictionary.setType("BP");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if(dictionaryList.size()>0)
+                                                {
+                                                    expatriatesinforList.get(0).setJobclassification(dictionaryList.get(0).getCode());
+                                                }
+                                            }
+                                            break;
+                                        case 12:
+                                            String admissiontime = Convert.toStr(value.get(12));
+                                            if(admissiontime!=null && admissiontime.length() > 9)
+                                            {
+                                                admissiontime = admissiontime.trim().substring(0,10);
+                                                expatriatesinforList.get(0).setAdmissiontime(sff.parse(admissiontime));
+                                            }
+                                            break;
+                                        case 13:
+                                            expatriatesinforList.get(0).setSpeciality(Convert.toStr(value.get(13)));
+                                            break;
+                                        case 14:
+                                            String exits = Convert.toStr(value.get(14));
+                                            if(exits!=null && !exits.isEmpty())
+                                            {
+                                                if(exits.trim().equals("是"))
+                                                {
+                                                    expatriatesinforList.get(0).setExits("0");
+                                                }
+                                                else if(exits.trim().equals("否"))
+                                                {
+                                                    expatriatesinforList.get(0).setExits("1");
+                                                }
+                                            }
+                                            break;
+                                        case 15:
+                                            if(expatriatesinforList.get(0).getExits().equals("0"))
+                                            {
+                                                String exitime = Convert.toStr(value.get(15));
+                                                if(exitime!=null && exitime.length() > 9)
+                                                {
+                                                    exitime = exitime.trim().substring(0,10);
+                                                    expatriatesinforList.get(0).setExitime(sff.parse(exitime));
+                                                }
+                                            }
+                                            break;
+                                        case 16:
+                                            if(expatriatesinforList.get(0).getExits().equals("0"))
+                                            {
+                                                String exitreason = Convert.toStr(value.get(16));
+                                                if(exitreason!=null && !exitreason.isEmpty())
+                                                {
+                                                    Dictionary dictionary =new Dictionary();
+                                                    dictionary.setValue1(exitreason.trim());
+                                                    dictionary.setType("BP");
+                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                    if(dictionaryList.size()>0)
+                                                    {
+                                                        expatriatesinforList.get(0).setExitreason(dictionaryList.get(0).getCode());
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 17:
+                                            if(expatriatesinforList.get(0).getExits().equals("0"))
+                                            {
+                                                String alltechnology = Convert.toStr(value.get(17));
+                                                if(alltechnology!=null && !alltechnology.isEmpty())
+                                                {
+                                                    Dictionary dictionary =new Dictionary();
+                                                    dictionary.setValue1(alltechnology.trim());
+                                                    dictionary.setType("BP");
+                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                    if(dictionaryList.size()>0)
+                                                    {
+                                                        expatriatesinforList.get(0).setAlltechnology(dictionaryList.get(0).getCode());
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 18:
+                                            if(expatriatesinforList.get(0).getExits().equals("0"))
+                                            {
+                                                String sitevaluation = Convert.toStr(value.get(18));
+                                                if(sitevaluation!=null && !sitevaluation.isEmpty())
+                                                {
+                                                    Dictionary dictionary =new Dictionary();
+                                                    dictionary.setValue1(sitevaluation.trim());
+                                                    dictionary.setType("BP");
+                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                    if(dictionaryList.size()>0)
+                                                    {
+                                                        expatriatesinforList.get(0).setSitevaluation(dictionaryList.get(0).getCode());
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 19:
+                                            if(expatriatesinforList.get(0).getExits().equals("0"))
+                                            {
+                                                String businessimpact = Convert.toStr(value.get(19));
+                                                if(businessimpact!=null && !businessimpact.isEmpty())
+                                                {
+                                                    Dictionary dictionary =new Dictionary();
+                                                    dictionary.setValue1(businessimpact.trim());
+                                                    dictionary.setType("BP");
+                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                    if(dictionaryList.size()>0)
+                                                    {
+                                                        expatriatesinforList.get(0).setBusinessimpact(dictionaryList.get(0).getCode());
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 20:
+                                            if(expatriatesinforList.get(0).getExits().equals("0"))
+                                            {
+                                                String countermeasure = Convert.toStr(value.get(20));
+                                                if(countermeasure!=null && !countermeasure.isEmpty())
+                                                {
+                                                    Dictionary dictionary =new Dictionary();
+                                                    dictionary.setValue1(countermeasure.trim());
+                                                    dictionary.setType("BP");
+                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                    if(dictionaryList.size()>0)
+                                                    {
+                                                        expatriatesinforList.get(0).setCountermeasure(dictionaryList.get(0).getCode());
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                            }
+                            expatriatesinforList.get(0).preUpdate(tokenModel);
+                            expatriatesinforMapper.updateByPrimaryKey(expatriatesinforList.get(0));
+                            accesscount = accesscount + 1;
                         }
-                    }
-                    if(value.size()>11)
-                    {
-                        String jobclassification = Convert.toStr(value.get(11));
-                        if(jobclassification!=null && !jobclassification.isEmpty())
+                        else
                         {
-                            Dictionary dictionary =new Dictionary();
-                            dictionary.setValue1(jobclassification.trim());
-                            dictionary.setType("BP");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if(dictionaryList.size()>0)
-                            {
-                                expatriatesinfor.setJobclassification(dictionaryList.get(0).getCode());
-                            }
-                        }
-                    }
-                    if(value.size()>12)
-                    {
-                        String admissiontime = Convert.toStr(value.get(12));
-                        if(admissiontime!=null && admissiontime.length() > 9)
-                        {
-                            admissiontime = admissiontime.trim().substring(0,10);
-                            expatriatesinfor.setAdmissiontime(sff.parse(admissiontime));
-                        }
-                    }
-                    if(value.size()>13)
-                    {
-                        expatriatesinfor.setSpeciality(Convert.toStr(value.get(13)));
-                    }
-                    if(value.size()>14)
-                    {
-                        String exits = Convert.toStr(value.get(14));
-                        if(exits!=null && !exits.isEmpty())
-                        {
-                            if(exits.trim().equals("是"))
-                            {
-                                expatriatesinfor.setExits("0");
-                            }
-                            else if(exits.trim().equals("否"))
-                            {
-                                expatriatesinfor.setExits("1");
-                            }
-                        }
-                        if(expatriatesinfor.getExits().equals("0"))
-                        {
-                            if(value.size()>15)
-                            {
-                                String exitime = Convert.toStr(value.get(15));
-                                if(exitime!=null && exitime.length() > 9)
-                                {
-                                    exitime = exitime.trim().substring(0,10);
-                                    expatriatesinfor.setExitime(sff.parse(exitime));
-                                }
-                            }
-                            if(value.size()>16)
-                            {
-                                String exitreason = Convert.toStr(value.get(16));
-                                if(exitreason!=null && !exitreason.isEmpty())
-                                {
-                                    Dictionary dictionary =new Dictionary();
-                                    dictionary.setValue1(exitreason.trim());
-                                    dictionary.setType("BP");
-                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                    if(dictionaryList.size()>0)
-                                    {
-                                        expatriatesinfor.setExitreason(dictionaryList.get(0).getCode());
-                                    }
-                                }
-                            }
-                            if(value.size()>17)
-                            {
-                                String alltechnology = Convert.toStr(value.get(17));
-                                if(alltechnology!=null && !alltechnology.isEmpty())
-                                {
-                                    Dictionary dictionary =new Dictionary();
-                                    dictionary.setValue1(alltechnology.trim());
-                                    dictionary.setType("BP");
-                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                    if(dictionaryList.size()>0)
-                                    {
-                                        expatriatesinfor.setAlltechnology(dictionaryList.get(0).getCode());
-                                    }
-                                }
-                            }
-                            if(value.size()>18)
-                            {
-                                String sitevaluation = Convert.toStr(value.get(18));
-                                if(sitevaluation!=null && !sitevaluation.isEmpty())
-                                {
-                                    Dictionary dictionary =new Dictionary();
-                                    dictionary.setValue1(sitevaluation.trim());
-                                    dictionary.setType("BP");
-                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                    if(dictionaryList.size()>0)
-                                    {
-                                        expatriatesinfor.setSitevaluation(dictionaryList.get(0).getCode());
-                                    }
-                                }
-                            }
-                            if(value.size()>19)
-                            {
-                                String businessimpact = Convert.toStr(value.get(19));
-                                if(businessimpact!=null && !businessimpact.isEmpty())
-                                {
-                                    Dictionary dictionary =new Dictionary();
-                                    dictionary.setValue1(businessimpact.trim());
-                                    dictionary.setType("BP");
-                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                    if(dictionaryList.size()>0)
-                                    {
-                                        expatriatesinfor.setBusinessimpact(dictionaryList.get(0).getCode());
-                                    }
-                                }
-                            }
-                            if(value.size()>20)
-                            {
-                                String countermeasure = Convert.toStr(value.get(20));
-                                if(countermeasure!=null && !countermeasure.isEmpty())
-                                {
-                                    Dictionary dictionary =new Dictionary();
-                                    dictionary.setValue1(countermeasure.trim());
-                                    dictionary.setType("BP");
-                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                    if(dictionaryList.size()>0)
-                                    {
-                                        expatriatesinfor.setCountermeasure(dictionaryList.get(0).getCode());
-                                    }
-                                }
-                            }
+                            throw new LogicalException("第" + i + "行的卡号在外驻人员表中不存在，无法更新，请确认。");
                         }
                     }
                 }
-                expatriatesinfor.preInsert();
-                expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
-                expatriatesinforMapper.insert(expatriatesinfor);
-                listVo.add(expatriatesinfor);
-                accesscount = accesscount + 1;
             }
+
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
