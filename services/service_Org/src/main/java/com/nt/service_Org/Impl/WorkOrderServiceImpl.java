@@ -38,28 +38,28 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     public void save(WorkOrder workorder, TokenModel tokenModel) throws Exception {
 
 
-            //来源  1.PC后台；2.微信服务号
-            if(workorder.getSource().equals("2")&&workorder.getWorkorderlog()==null)
-            {
-                String createby = tokenModel.getUserId();
+        //来源  1.PC后台；2.微信服务号
+        if(workorder.getSource().equals("2")&&workorder.getWorkorderlog()==null)
+        {
+            String createby = tokenModel.getUserId();
 
-                UserVo userVo = userservice.getAccountCustomerById(createby);
-                String createname = userVo.getCustomerInfo().getUserinfo().getCustomername();
-                String createphoto = userVo.getCustomerInfo().getUserinfo().getMobilenumber();
+            UserVo userVo = userservice.getAccountCustomerById(createby);
+            String createname = userVo.getCustomerInfo().getUserinfo().getCustomername();
+            String createphoto = userVo.getCustomerInfo().getUserinfo().getMobilenumber();
 
-                workorder.setContacts(createname);
-                workorder.setPhonenumber(createphoto);
-                //工单日志
-                List<WorkOrder.WorkOrderLog> wloginfos = new ArrayList<WorkOrder.WorkOrderLog>();
-                WorkOrder.WorkOrderLog log = new WorkOrder.WorkOrderLog();
-                log.setUsername(createname);
-                log.setWorkorderstatus("1");
-                log.setActiondescribe("新建工单");
-                wloginfos.add(log);
-                workorder.setWorkorderlog(wloginfos);
+            workorder.setContacts(createname);
+            workorder.setPhonenumber(createphoto);
+            //工单日志
+            List<WorkOrder.WorkOrderLog> wloginfos = new ArrayList<WorkOrder.WorkOrderLog>();
+            WorkOrder.WorkOrderLog log = new WorkOrder.WorkOrderLog();
+            log.setUsername(createname);
+            log.setWorkorderstatus("1");
+            log.setActiondescribe("新建工单");
+            wloginfos.add(log);
+            workorder.setWorkorderlog(wloginfos);
 
-                workorder.preInsert(tokenModel);
-            }
+            workorder.preInsert(tokenModel);
+        }
 
 
 

@@ -11,8 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class WorkflowLogDetailVo implements Serializable {
 	/**
-	*
-	*/
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 	// 操作人
 	private String userId;

@@ -7,16 +7,18 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
-import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+//import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,8 +45,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-     private AnnualLeaveService annualLeaveService;
+//    @Autowired
+//    private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private TokenService tokenService;
@@ -183,9 +185,9 @@ public class UserController {
             id = info.getUserid();
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
-            userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getMobilenumber());
+            userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());
             info = userService.addAccountCustomer(userVo);
-           // annualLeaveService.insertannualLeave(info);
+//            annualLeaveService.insertannualLeave(info);
             id = info.getUserid();
         }
 

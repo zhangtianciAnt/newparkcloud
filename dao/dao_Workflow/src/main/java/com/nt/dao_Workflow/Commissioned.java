@@ -19,25 +19,25 @@ public class Commissioned extends BaseModel {
 	 * 委托人ID
 	 */
 	@Id
-    @Column(name = "COMMISSIONEDID")
-    private String commissionedid;
+	@Column(name = "COMMISSIONEDID")
+	private String commissionedid;
 
 	/**
 	 * 被委托人
 	 */
-    @Column(name = "FROMUSER")
-    private String fromuser;
+	@Column(name = "FROMUSER")
+	private String fromuser;
 
 	/**
 	 * 委托人
 	 */
-    @Column(name = "TOUSER")
-    private String touser;
+	@Column(name = "TOUSER")
+	private String touser;
 
 	/**
 	 * 截止日期
 	 */
-    @Column(name = "DATE")
-    private Date date;
+	@Column(name = "DATE")
+	private Date date;
 
 }
