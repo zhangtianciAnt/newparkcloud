@@ -1,11 +1,15 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
-import com.nt.dao_Pfans.PFANS1000.LoanApplication;
-import com.nt.dao_Pfans.PFANS1000.PublicExpense;
-import com.nt.dao_Pfans.PFANS1000.TotalCost;
+import cn.hutool.core.io.FileUtil;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
+import com.nt.service_Org.DictionaryService;
+import com.nt.dao_Workflow.Vo.StartWorkflowVo;
+import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
@@ -14,12 +18,19 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/publicexpense")
@@ -32,11 +43,184 @@ public class Pfans1012Controller {
     private TokenService tokenService;
 
     @Autowired
+    private WorkflowServices workflowServices;
+
+    @Autowired
     private JudgementService judgementService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private LoanApplicationService loanapplicationService;
 
+    @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
+    public void exportjs(String publicexpenseid , HttpServletRequest request, HttpServletResponse response) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+            PublicExpenseVo pubvo = publicExpenseService.selectById(publicexpenseid);
+            String trr = "";
+            //交通费的预算编码
+            List<TrafficDetails> tralist = pubvo.getTrafficdetails();
+            if(tralist.size() > 0){
+                trr = "交通费";
+                for(TrafficDetails tl : tralist){
+                    List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                    for (Dictionary ite : curListT) {
+                        if (ite.getCode().equals(tl.getBudgetcoding())) {
+                            tl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
+                        }
+                    }
+                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ119");
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(tl.getAccountcode())) {
+                            //科目名
+                            tl.setAccountcode(iteA.getValue1());
+                            //科目代码
+//                            tl.setSubjectnumber(iteA.getValue2());
+                        }
+                    }
+
+                }
+            }
+            //采购明细
+            List<PurchaseDetails> purlist = pubvo.getPurchasedetails();
+            if(purlist.size() > 0){
+                trr = "采购费";
+                for(PurchaseDetails pl : purlist){
+                    List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                    for (Dictionary ite : curListT) {
+                        if (ite.getCode().equals(pl.getBudgetcoding())) {
+                            pl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
+                        }
+                    }
+                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ121");
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(pl.getAccountcode())) {
+                            //科目名
+                            pl.setAccountcode(iteA.getValue1());
+                            //科目代码
+//                            tl.setSubjectnumber(iteA.getValue2());
+                        }
+                    }
+
+                }
+            }
+            //其他费用明细
+            List<OtherDetails> othlist = pubvo.getOtherdetails();
+            String tro = "";
+            if(othlist.size() > 0){
+                tro = "其他费用";
+                for(OtherDetails ol : othlist){
+                    List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                    for (Dictionary ite : curListT) {
+                        if (ite.getCode().equals(ol.getBudgetcoding())) {
+                            ol.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
+                        }
+                    }
+                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ130");
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(ol.getAccountcode())) {
+                            //科目名
+                            ol.setAccountcode(iteA.getValue1());
+                            //科目代码
+//                            tl.setSubjectnumber(iteA.getValue2());
+                        }
+                    }
+
+                }
+            }
+            String str = "";
+            if(pubvo.getTrafficdetails().size() > 0){
+                str = "交通费";
+            }
+            if(pubvo.getPurchasedetails().size() > 0){
+                if(str == ""){
+                    str = "采购费";
+                } else {
+                    str += ","+"采购费";
+                }
+            }
+            if(pubvo.getOtherdetails().size() > 0){
+                if(str == ""){
+                    str = "其他费用";
+                } else {
+                    str += ","+"其他费用";
+                }
+            }
+            //模块
+            List<Dictionary> curList1 = dictionaryService.getForSelect("PJ002");
+            for (Dictionary item : curList1) {
+                if (item.getCode().equals(pubvo.getPublicexpense().getModuleid())) {
+                    pubvo.getPublicexpense().setModuleid(item.getValue1());
+                }
+            }
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(pubvo.getPublicexpense().getUser_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                //申请人
+                pubvo.getPublicexpense().setUser_id(customerInfo.getUserinfo().getCustomername());
+                //部门
+                pubvo.getPublicexpense().setGroupid(customerInfo.getUserinfo().getGroupname());
+            }
+            //获取审批节点的负责人
+            String wfList1 = "";
+            String wfList2 = "";
+            String wfList3 = "";
+            String wfList4 = "";
+            StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+            startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
+            List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+            if (wfList.size() > 0) {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList3 = customerInfo.getUserinfo().getCustomername();
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList4 = customerInfo.getUserinfo().getCustomername();
+                }
+            }
+            Map<String, Object> data = new HashMap<>();
+            data.put("wfList1", wfList1);
+            data.put("wfList2", wfList2);
+            data.put("wfList3", wfList3);
+            data.put("wfList4", wfList4);
+            data.put("trr", trr);
+            data.put("tro", tro);
+            data.put("pub", pubvo.getPublicexpense());
+            data.put("tra", pubvo.getTrafficdetails());
+            data.put("pur", pubvo.getPurchasedetails());
+            data.put("otd", pubvo.getOtherdetails());
+            data.put("str", str);
+            if(pubvo.getTrafficdetails().size() > 0){
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
+//                FileUtil.del(pdfRoot + "/" + templetName);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+            }
+    }
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
