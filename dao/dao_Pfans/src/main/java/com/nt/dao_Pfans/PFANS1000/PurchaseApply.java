@@ -66,6 +66,10 @@ public class PurchaseApply extends BaseModel {
      */
     @Column(name = "PURCHASENUMBERS")
     private String purchasenumbers;
+    //add-ws-4/23-总务担当可用选择部门带出预算编码
+    @Column(name = "GROUP_NAME")
+    private String group_name;
+    //add-ws-4/23-总务担当可用选择部门带出预算编码
 //add-ws-4/17-费用编号添加
 //add-ws-4/17-摘要添加
     /**
