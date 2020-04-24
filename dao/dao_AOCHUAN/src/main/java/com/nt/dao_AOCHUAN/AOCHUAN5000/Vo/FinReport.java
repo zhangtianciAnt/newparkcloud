@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -91,7 +92,7 @@ public class FinReport{
     private String customsdeclaration;
     //提单时间
     @Column(name = "BILLTIME")
-    private DateTime billtime;
+    private Date billtime;
     //运费
     @Column(name = "FREIGHT")
     private String freight;
@@ -100,13 +101,13 @@ public class FinReport{
     private String premium;
     //收款时间
     @Column(name = "COLLECTIONDATE")
-    private DateTime collectiondate;
+    private Date collectiondate;
     //收款金额
     @Column(name = "COLLECTIONAMOUNT")
     private String collectionamount;
     //付款时间
     @Column(name = "PAYMENTTIME")
-    private DateTime paymenttime;
+    private Date paymenttime;
     //付款金额
     @Column(name = "PAYMENTAMOUNT")
     private String paymentamount;
@@ -118,7 +119,7 @@ public class FinReport{
     private String purchaseinvoiceno;
     //开票日期
     @Column(name = "INVOICEDATE")
-    private DateTime invoicedate;
+    private Date invoicedate;
     //佣金
     @Column(name = "COMMISSION")
     private String commission;
