@@ -974,9 +974,13 @@ public class ComprojectServiceImpl implements ComprojectService {
         List<Prosystem> prosystemlist = prosystemMapper.select(prosystem);
         for (Prosystem item : prosystemlist) {
             Comproject rs = comProjectMapper.selectByPrimaryKey(item.getComproject_id());
-            if ("4".equals(rs.getStatus())) {
-                rst.add(rs);
+            //add-ws-4/24-因数据问题没匹配上会报错，因此进行非空判断
+            if(rs!=null){
+                if ("4".equals(rs.getStatus())) {
+                    rst.add(rs);
+                }
             }
+            //add-ws-4/24-因数据问题没匹配上会报错，因此进行非空判断
         }
         return rst;
     }
