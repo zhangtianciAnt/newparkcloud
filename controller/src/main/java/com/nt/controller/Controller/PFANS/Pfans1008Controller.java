@@ -2,9 +2,13 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS1000.Notification;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
+import com.nt.dao_Workflow.Vo.StartWorkflowVo;
+import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -32,6 +36,8 @@ public class Pfans1008Controller {
     private SoftwaretransferService softwaretransferService;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private WorkflowServices workflowServices;
     @Autowired
     private DictionaryService dictionaryService;
     @Autowired
@@ -77,27 +83,54 @@ public class Pfans1008Controller {
     public void downLoad1(String softwaretransferId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
 //        for (int i = 0; i < softwaretransferList.size(); i++) {
+        String wfList1 = "";
         SoftwaretransferVo soft = softwaretransferService.selectById(softwaretransferId);
-
+        StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+        startWorkflowVo.setDataId(soft.getSoftwaretransfer().getSoftwaretransferid());
+        List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+        List<Notification> noto = soft.getNotification();
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(soft.getSoftwaretransfer().getUser_id()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         if (customerInfo != null) {
             soft.getSoftwaretransfer().setUser_id(customerInfo.getUserinfo().getCustomername());
         }
+        for (int i = 0; i < noto.size(); i++) {
+            query = new Query();
+            query.addCriteria(Criteria.where("userid").is(noto.get(i).getPerson()));
+            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                noto.get(i).setPerson(customerInfo.getUserinfo().getCustomername());
+            }
+            query = new Query();
+            query.addCriteria(Criteria.where("userid").is(noto.get(i).getEafter()));
+            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                noto.get(i).setEafter(customerInfo.getUserinfo().getCustomername());
+            }
+        }
+
+        if (wfList.size() > 0) {
+            query = new Query();
+            query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                wfList1 = customerInfo.getUserinfo().getCustomername();
+            }
+        }
+        //字典
         List<Dictionary> curList = dictionaryService.getForSelect("JY002");
         for (Dictionary item : curList) {
             if (item.getCode().equals(soft.getSoftwaretransfer().getFerrybudgetunit())) {
-                soft.getSoftwaretransfer().setFerrybudgetunit(item.getValue1());
+                soft.getSoftwaretransfer().setFerrybudgetunit(item.getValue3());
             }
         }
         List<Dictionary> curList1 = dictionaryService.getForSelect("JY002");
         for (Dictionary item : curList1) {
             if (item.getCode().equals(soft.getSoftwaretransfer().getTubebudgetunit())) {
-                soft.getSoftwaretransfer().setTubebudgetunit(item.getValue1());
+                soft.getSoftwaretransfer().setTubebudgetunit(item.getValue3());
             }
         }
-
 
         //region 查询TL
         String StrTl = "";
@@ -143,13 +176,28 @@ public class Pfans1008Controller {
             CtrGM = customerInfo.getUserinfo().getCustomername();
         }
         //endregion
-            Map<String, Object> data = new HashMap<>();
-            data.put("soft", soft);
+        query = new Query();
+        query.addCriteria(Criteria.where("userinfo.groupid").is(soft.getSoftwaretransfer().getFerrygroup_id()));
+        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        if (customerInfo != null) {
+            soft.getSoftwaretransfer().setFerrygroup_id(customerInfo.getUserinfo().getGroupname());
+        }
+        query = new Query();
+        query.addCriteria(Criteria.where("userinfo.groupid").is(soft.getSoftwaretransfer().getTubegroup_id()));
+        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        if (customerInfo != null) {
+            soft.getSoftwaretransfer().setTubegroup_id(customerInfo.getUserinfo().getGroupname());
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("wfList1", wfList1);
+        data.put("wfList", wfList);
+        data.put("soft", soft.getSoftwaretransfer());
+        data.put("notn", soft.getNotification());
         data.put("StrTl", StrTl);
         data.put("StrGM", StrGM);
         data.put("CtrTL", CtrTL);
         data.put("CtrGM", CtrGM);
-            ExcelOutPutUtil.OutPutPdf("固定资产·软件移转申请", "gudingzichanfq.xls", data, response);
+        ExcelOutPutUtil.OutPutPdf("固定资产·软件移转申请", "gudingzichanzy.xls", data, response);
         }
 //    }
 }

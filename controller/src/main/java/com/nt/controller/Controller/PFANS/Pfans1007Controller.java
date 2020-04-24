@@ -158,7 +158,7 @@ public class Pfans1007Controller {
             data.put("asvo", asvo);
             data.put("saList", asvo.getSalesdetails());
             data.put("scList", asvo.getScrapdetails());
-            ExcelOutPutUtil.OutPutPdf("固定资产·软件处理决裁", "gudingzichanzy.xls", data, response);
+        ExcelOutPutUtil.OutPutPdf("固定资产·软件处理决裁", "gudingzichanfq.xls", data, response);
         }
 //    }
 }
