@@ -38,6 +38,11 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    public Projects getForm(String id) throws Exception {
+        return projectsMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public List<FollowUpRecord> getForSupplier(String id) throws Exception {
         return followUpRecordMapper.getForSupplier(id);
     }

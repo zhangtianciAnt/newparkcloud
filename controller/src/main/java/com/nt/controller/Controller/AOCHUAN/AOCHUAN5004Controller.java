@@ -11,6 +11,7 @@ import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,18 @@ public class AOCHUAN5004Controller {
     public ApiResult getCdrlList(HttpServletRequest request) throws Exception {
         CredentialInformation credentialInformation = new CredentialInformation();
         return ApiResult.success(finCrdlInfoService.getCrdlInfo(credentialInformation));
+    }
+
+    /**
+     * 获取凭证表
+     * @param id
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getForm",method={RequestMethod.GET})
+    public ApiResult getForm(@RequestParam String id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(finCrdlInfoService.getForm(id));
     }
 
     /**

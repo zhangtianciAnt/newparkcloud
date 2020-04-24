@@ -26,6 +26,11 @@ public class ReimbursementServiceImpl implements ReimbursementService {
         return reimbursementMapper.select(reimbursement);
     }
 
+    @Override
+    public Reimbursement getForm(String id) throws Exception {
+        return reimbursementMapper.selectByPrimaryKey(id);
+    }
+
     //获取费用明细表
     @Override
     public List<ReimbursementDetail> getReimbursementDetailList(ReimbursementDetail reimbursementDetail) throws Exception {

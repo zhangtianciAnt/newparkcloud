@@ -12,6 +12,9 @@ public interface ReimbursementService {
     List<Reimbursement> getReimbursementList(Reimbursement reimbursement) throws Exception;
     //获取费用明细表
     List<ReimbursementDetail> getReimbursementDetailList(ReimbursementDetail reimbursementDetail) throws Exception;
+
+    Reimbursement getForm(String id) throws Exception;
+
     //新建
     void insert(Object object, TokenModel tokenModel)throws Exception;
     //更新

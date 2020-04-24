@@ -10,6 +10,8 @@ public interface FinPurchaseSerivce {
     //获取财务-采购数据
     List<FinPurchase> getFinPurchaseList(FinPurchase finPurchase) throws  Exception;
 
+    FinPurchase getForm(String id) throws Exception;
+
     //更新
     void update(FinPurchase finSales, TokenModel tokenModel) throws Exception;
 

@@ -6,10 +6,7 @@ import com.nt.service_AOCHUAN.AOCHUAN6000.ReimbursementService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
@@ -34,6 +31,14 @@ public class AOCHUAN6006Controller {
     public ApiResult getReimbursementList(HttpServletRequest request) throws Exception {
         Reimbursement reimbursement = new Reimbursement();
         return ApiResult.success(reimbursementService.getReimbursementList(reimbursement));
+    }
+
+    /**
+     * 获取费用表
+     */
+    @RequestMapping(value = "/getForm",method={RequestMethod.GET})
+    public ApiResult getForm(@RequestParam String id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(reimbursementService.getForm(id));
     }
 
     /**

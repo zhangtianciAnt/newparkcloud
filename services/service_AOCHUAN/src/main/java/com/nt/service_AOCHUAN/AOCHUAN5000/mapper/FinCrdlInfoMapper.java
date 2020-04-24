@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public interface FinCrdlInfoMapper extends MyMapper<CredentialInformation> {
     //更新
-    void updateKisCrdlNo(@Param("modifyby") String modifyby, @Param("crdlkis_num") String crdlkis_num, @Param("crdlinfo_id") String crdlinfo_id);
+    void updateKisCrdlNo(@Param("modifyby") String modifyby, @Param("crdlkis_num") String crdlkis_num,@Param("push_status") String push_status, @Param("crdlinfo_id") String crdlinfo_id);
 
     //删除
     void delCrdlInfoById(@Param("modifyby") String modifyby,@Param("crdlinfo_id") String crdlinfo_id);

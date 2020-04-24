@@ -13,6 +13,9 @@ public interface ProjectsService {
     //获取记录表数据
     List<FollowUpRecord> getFollowUpRecordList(FollowUpRecord followUpRecord) throws Exception;
 
+    //获取项目表
+    Projects getForm(String id) throws Exception;
+
     List<FollowUpRecord> getForSupplier(String id) throws Exception;
 
     List<FollowUpRecord> getForCustomer(String id) throws Exception;

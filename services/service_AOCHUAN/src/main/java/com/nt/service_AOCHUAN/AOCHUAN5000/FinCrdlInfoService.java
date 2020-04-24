@@ -23,4 +23,6 @@ public interface FinCrdlInfoService {
 
     //新增
     Boolean insert(CrdlInfo crdlInfo, TokenModel tokenModel) throws  Exception;
+
+    CredentialInformation getForm(String id) throws  Exception;
 }
