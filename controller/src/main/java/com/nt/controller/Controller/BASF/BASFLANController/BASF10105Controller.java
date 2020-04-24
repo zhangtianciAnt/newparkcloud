@@ -87,8 +87,8 @@ public class BASF10105Controller {
                 ServerInfo serverinfo = serverinfolist.get(i);
                 Deviceinformation deviceinformation = new Deviceinformation();
                 deviceinformation.setFactoryname(serverinfo.getFactoryname());
-                deviceinformation.setDevline(serverinfo.getLine());
-                deviceinformation.setDevrow(serverinfo.getRow());
+                deviceinformation.setDevline(serverinfo.getDevline());
+                deviceinformation.setDevrow(serverinfo.getDevrow());
                 List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
 
                 //添加需要更改remark的报警设备的Mapid
