@@ -115,6 +115,12 @@ public class Fixedassets extends BaseModel {
     private String repairkits;
 
     /**
+     * 合同号
+     */
+    @Column(name = "CONTRACTNO")
+    private String contractno;
+
+    /**
      * 固定資産名称
      */
     @Column(name = "ASSETNAME")

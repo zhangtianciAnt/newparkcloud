@@ -72,7 +72,7 @@ public class ExcelOutPutUtil {
                 //设置图片路径的根目录
                 .imageRoot(imgRoot)
                 //设置如果图片缺失不终止生成
-                .ignoreImageMiss(true);
+                .ignoreImageMiss(false);
 
         for(Map.Entry<String, Object> entry : data.entrySet()){
             jxlsBuilder.putVar(entry.getKey(),entry.getValue());

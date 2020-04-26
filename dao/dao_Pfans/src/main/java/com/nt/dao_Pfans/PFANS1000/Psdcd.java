@@ -86,5 +86,11 @@ public class Psdcd extends BaseModel {
     @Column(name = "IDTYPE")
     private String idtype;
 
+    /**
+     * 备注
+     */
+    @Column(name = "REMARK")
+    private String remark;
+
 
 }
