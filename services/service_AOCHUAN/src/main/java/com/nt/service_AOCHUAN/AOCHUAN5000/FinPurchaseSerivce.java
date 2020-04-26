@@ -3,6 +3,7 @@ package com.nt.service_AOCHUAN.AOCHUAN5000;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.utils.dao.TokenModel;
 
+import java.util.Date;
 import java.util.List;
 
 public interface FinPurchaseSerivce {
@@ -20,4 +21,7 @@ public interface FinPurchaseSerivce {
 
     //唯一性Check
     Boolean uniqueCheck(FinPurchase finPurchase) throws Exception;
+
+    //更新走货表
+    void updateTransportGood(FinPurchase finPurchase, TokenModel tokenModel) throws Exception;
 }

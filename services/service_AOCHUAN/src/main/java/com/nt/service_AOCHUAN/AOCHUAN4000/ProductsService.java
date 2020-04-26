@@ -39,5 +39,10 @@ public interface ProductsService {
      */
     public Products insertForSupplier(Products product, TokenModel tokenModel)throws  Exception;
 
-
+    /**
+     * 获取不在项目表中的数据
+     * @return
+     * @throws Exception
+     */
+    List<Products> getProdutsExceptUnique() throws Exception;
 }

@@ -117,4 +117,14 @@ public class ProductsServiceImpl implements ProductsService {
         productsMapper.insert(product);
         return product;
     }
+
+    /**
+     * 获取不在项目表中的数据
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<Products> getProdutsExceptUnique() throws Exception {
+        return productsMapper.getProdutsExceptUnique();
+    }
 }

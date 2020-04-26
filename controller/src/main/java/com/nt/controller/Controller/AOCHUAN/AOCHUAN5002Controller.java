@@ -74,6 +74,7 @@ public class AOCHUAN5002Controller {
             //唯一性Check
             if(! finPurchaseSerivce.uniqueCheck(finPurchase)) {
                 finPurchaseSerivce.update(finPurchase, tokenService.getToken(request));
+                finPurchaseSerivce.updateTransportGood(finPurchase, tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
