@@ -1,11 +1,6 @@
 package com.nt.utils;
 
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,7 +12,9 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.nt.utils.mapper.NumberMapper;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
@@ -31,6 +28,9 @@ import com.google.common.collect.Lists;
  * @version 2013-05-22
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
+
+    @Autowired
+    private NumberMapper numberMapper;
 
     private static final char   SEPARATOR    = '_';
     private static final String CHARSET_NAME = "UTF-8";
@@ -476,16 +476,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     //获取合同号
-    public static<T>  String getContractNo(String code, MyMapper<T> mapper) throws Exception{
+
+    public<T> String getContractNo(String code,String tableName) throws Exception{
         if(!StringUtils.isNotBlank(code)){
             throw new Exception("请输入code值");
         }
         StringBuffer sb = new StringBuffer(code);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormat.format(new Date());
-        int count = mapper.selectAll().size() + 1;
-        String str = String.format("%07d", count);
-        sb.append(date).append(str);
+        int i = numberMapper.selectCounts();
+        //int count = mapper.selectAll().size() + 1;
+       // String str = String.format("%02d", count);
+       // sb.append(date).append(str);
 
         return sb.toString();
     }
