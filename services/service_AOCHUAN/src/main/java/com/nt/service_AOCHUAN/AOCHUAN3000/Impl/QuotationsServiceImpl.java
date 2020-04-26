@@ -9,6 +9,8 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.EnquiryMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReturngoodsMapper;
+import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
+import com.nt.service_AOCHUAN.AOCHUAN8000.mapper.NumberMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.MessageUtil;
@@ -42,12 +44,12 @@ public class QuotationsServiceImpl implements QuotationsService {
     @Autowired
     private EnquiryMapper enquiryMapper;
 
+    @Autowired
+    private ContractNumber contractNumber;
+
 
     @Override
     public List<Quotations> get() throws Exception {
-       // com.nt.utils.StringUtils stringUtils = new com.nt.utils.StringUtils();
-        //stringUtils.getContractNo("123","quotations");
-
         return quotationsMapper.selectAll();
     }
 
@@ -92,15 +94,9 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Override
     public void insert(Quotations quotations, TokenModel tokenModel) throws Exception {
-        StringBuffer sb = new StringBuffer("YW");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        String date = dateFormat.format(new Date());
-        int count =  quotationsMapper.select_Count() + 1;
-        String str = String.format("%07d", count);
-        sb.append(date).append(str);
-        String id = UUID.randomUUID().toString();
-        quotations.setQuotationsno(sb.toString());
-        quotations.setQuotations_id(id);
+        String number = contractNumber.getContractNumber("XBD","quotations");
+        quotations.setQuotationsno(number);
+        quotations.setQuotations_id(UUID.randomUUID().toString());
         quotations.preInsert(tokenModel);
         if(quotations.isNotice()){
             ToDoNotice(tokenModel,quotations);

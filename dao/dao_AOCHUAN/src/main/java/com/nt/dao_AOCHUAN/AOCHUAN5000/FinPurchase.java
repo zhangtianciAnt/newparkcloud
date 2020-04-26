@@ -84,4 +84,7 @@ public class FinPurchase extends BaseModel {
     //附件
     @Column(name = "ATTACHMENT")
     private  String attachment;
+    //走货主键
+    @Column(name = "TRANSPORTGOOD_ID")
+    private  String transportgood_id;
 }

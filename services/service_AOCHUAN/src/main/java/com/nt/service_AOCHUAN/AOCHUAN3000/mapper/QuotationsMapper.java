@@ -3,8 +3,10 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.mapper;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuotationsAndEnquiry;
 import com.nt.utils.MyMapper;
+import com.nt.service_AOCHUAN.AOCHUAN8000.NumberSql;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
 
@@ -17,4 +19,5 @@ public interface QuotationsMapper extends MyMapper<Quotations> {
 
     @Select("select QUOTATIONSNO,PRODUCTCH,PRODUCTEN,ACCOUNT,QUOTE from quotations WHERE ACCOUNTID = #{id}")
     List<Quotations> getForCustomer(@Param("id") String id);
+
 }

@@ -49,6 +49,8 @@ public class Helprule extends BaseModel {
     @Column(name = "BANKACCOUNTID")
     private String bankaccountid;
 
+    @Column(name = "DEPARTID")
+    private String departid;
 
     @Column(name = "EXPENDITUREID")
     private String expenditureid;

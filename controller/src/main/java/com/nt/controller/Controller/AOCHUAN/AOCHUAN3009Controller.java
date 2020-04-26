@@ -2,6 +2,9 @@ package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Projects;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProjectsAndFollowUpRecord;
+import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
+import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
+import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,12 @@ public class AOCHUAN3009Controller {
 
     @Autowired
     private ProjectsService projectsSerivce;
+
+    @Autowired
+    private ProductsService productsService;
+
+    @Autowired
+    private SupplierbaseinforService supplierbaseinforService;
 
     @Autowired
     private TokenService tokenService;
@@ -60,6 +69,26 @@ public class AOCHUAN3009Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(projectsSerivce.getForCustomer(id));
+    }
+
+    /**
+     * 获取不在项目表中的产品
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getProdutsExceptUnique", method = {RequestMethod.POST})
+    public ApiResult getProdutsExceptUnique(HttpServletRequest request) throws Exception {
+        return ApiResult.success(productsService.getProdutsExceptUnique());
+    }
+
+    /**
+     * 获取不在项目表中的供应商
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getSuppliersExceptUnique", method = {RequestMethod.POST})
+    public ApiResult getSuppliersExceptUnique(HttpServletRequest request) throws Exception {
+        return ApiResult.success(supplierbaseinforService.getSuppliersExceptUnique());
     }
 
     /**

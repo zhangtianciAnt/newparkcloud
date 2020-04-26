@@ -56,4 +56,25 @@ public class All  {
     @Column(name = "ROWINDEX")
     private int rowindex;
 
+    @Column(name = "ACCOUNTID")
+    private String accountid;
+
+    @Column(name = "BANKACCOUNTID")
+    private String bankaccountid;
+
+    @Column(name = "DEPARTID")
+    private String departid;
+
+    @Column(name = "EXPENDITUREID")
+    private String expenditureid;
+
+    @Column(name = "ACCOUNTINGID")
+    private String accountingid;
+
+    @Column(name = "MAINCASHID")
+    private String maincashid;
+
+    @Column(name = "FLOWCASHID")
+    private String flowcashid;
+
 }

@@ -25,6 +25,9 @@ public class AcctgRul extends BaseModel {
     //摘要
     @Column(name = "REMARKS")
     private String remarks;
+    //科目编码
+    @Column(name = "ACCT_CODE")
+    private String acct_code;
     //借方科目
     @Column(name = "DEBIT")
     private String debit;
