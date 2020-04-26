@@ -160,14 +160,14 @@ public class ImageCommand extends AbstractCommand {
 
                     //判断是相对路径还是绝对路径
                     if (!JxlsUtil.me().isAbsolutePath(imgSrc)) {
-                        if(JxlsConfig.getImageRoot().startsWith("classpath:")){
+                        if(context.getVar("_iamgeRoot").toString().startsWith("classpath:")){
                             //文件在jar包内
-                            String templateRoot = JxlsConfig.getImageRoot().replaceFirst("classpath:", "");
+                            String templateRoot = context.getVar("_iamgeRoot").toString().replaceFirst("classpath:", "");
                             InputStream resourceAsStream = JxlsBuilder.class.getResourceAsStream(templateRoot + "/" + imgSrc);
                             return JxlsUtil.me().getJxlsImage(resourceAsStream, imgSrc);
                         }else{
                             //相对路径就从模板目录获取文件
-                            return JxlsUtil.me().getJxlsImage(JxlsConfig.getImageRoot() + File.separator + imgSrc);
+                            return JxlsUtil.me().getJxlsImage(context.getVar("_iamgeRoot").toString() + File.separator + imgSrc);
                         }
                     } else {
                         //绝对路径
