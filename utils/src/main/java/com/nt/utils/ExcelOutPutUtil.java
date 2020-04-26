@@ -22,7 +22,7 @@ public class ExcelOutPutUtil {
 
         ClassPathResource resource = new ClassPathResource("jxls_templates");
 
-        String imgRoot = resource.getPath();
+        String imgRoot = AuthConstants.FILE_DIRECTORY + "image";
 
 //        response.setContentType("application/vnd.ms-excel;charset=utf-8");
 //        response.setHeader("Content-Disposition","attachment;filename="+fileName+".xlsx");
@@ -52,12 +52,12 @@ public class ExcelOutPutUtil {
 
         ClassPathResource resource = new ClassPathResource("jxls_templates");
 
-        String imgRoot = resource.getPath();
+        String imgRoot = AuthConstants.FILE_DIRECTORY + "image";
 
 //        ClassPathResource Pdf_resource = new ClassPathResource("pdf_files");
 
 //        String pdfRoot = ExcelOutPutUtil.class.getClassLoader().getResource("pdf_files").getPath();
-        String pdfRoot ="E:\\PFANS\\pdf";
+        String pdfRoot = AuthConstants.FILE_DIRECTORY + "pdf";
                 response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
         ServletOutputStream out=response.getOutputStream();
 

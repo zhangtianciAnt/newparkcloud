@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.convert.Convert;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Salesdetails;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +96,7 @@ public class Pfans1007Controller {
             StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
             startWorkflowVo.setDataId(asvo.getAssetinformation().getAssetinformationid());
             List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
             List<Salesdetails> saList = asvo.getSalesdetails();
             List<Scrapdetails> scList = asvo.getScrapdetails();
             Query query = new Query();
@@ -154,11 +157,13 @@ public class Pfans1007Controller {
             data.put("wfList3", wfList3);
             data.put("wfList4", wfList4);
             data.put("wfList5", wfList5);
-            data.put("wfList", wfList);
+        data.put("wfList6", wfList6);
+        data.put("wfList7", sf.format(wfList.get(0).getEdata()));
+        data.put("wfList8", sf.format(wfList.get(5).getEdata()));
             data.put("asvo", asvo);
             data.put("saList", asvo.getSalesdetails());
             data.put("scList", asvo.getScrapdetails());
-            ExcelOutPutUtil.OutPutPdf("固定资产·软件处理决裁", "gudingzichanzy.xls", data, response);
+        ExcelOutPutUtil.OutPutPdf("固定资产·软件处理决裁", "gudingzichanfq.xls", data, response);
         }
 //    }
 }

@@ -75,13 +75,18 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                     if(ownerLists.size() > 0 && "XXXXX".equals(ownerLists.get(0))){
                         errorResponse(response, ApiResult.failAuth(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
                         return false;
+                    }else{
+
+                        tokenModel.setOwnerList(ownerLists);
                     }
                 }else{
                     errorResponse(response, ApiResult.failAuth(MessageUtil.getMessage(MsgConstants.ERROR_06,locale)));
                     return false;
                 }
+            }else{
+
+                tokenModel.setOwnerList(ownerList);
             }
-            tokenModel.setOwnerList(ownerList);
         }
         jsTokenService.createTokenModel(tokenModel);
 
