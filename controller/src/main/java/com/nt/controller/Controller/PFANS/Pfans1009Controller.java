@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.Fixedassets;
@@ -125,30 +126,35 @@ public class Pfans1009Controller {
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList1 = customerInfo.getUserinfo().getCustomername();
+                wfList1 = sign.startGraphics2D(wfList1);
             }
             query = new Query();
             query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList2 = customerInfo.getUserinfo().getCustomername();
+                wfList2 = sign.startGraphics2D(wfList2);
             }
             query = new Query();
             query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList3 = customerInfo.getUserinfo().getCustomername();
+                wfList3 = sign.startGraphics2D(wfList3);
             }
             query = new Query();
             query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList4 = customerInfo.getUserinfo().getCustomername();
+                wfList4 = sign.startGraphics2D(wfList4);
             }
             query = new Query();
             query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList5 = customerInfo.getUserinfo().getCustomername();
+                wfList5 = sign.startGraphics2D(wfList5);
             }
         }
         Map<String, Object> data = new HashMap<>();
@@ -165,6 +171,11 @@ public class Pfans1009Controller {
             data.put("statime", "");
         }
         ExcelOutPutUtil.OutPutPdf("固定資産貸出修理持出決裁願", "gdzcjcxl.xls", data, response);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
 //        }
     }
 }
