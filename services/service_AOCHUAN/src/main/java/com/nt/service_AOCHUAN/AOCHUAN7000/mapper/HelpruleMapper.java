@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface HelpruleMapper  extends MyMapper<Helprule> {
-    List<Helprule> helpOne(@Param("docurule_id") String docurule_id);
 
+
+    void delCrerule(@Param("helprule_id") String helprule_id);
 }

@@ -51,4 +51,7 @@ public class CredentialInformation extends BaseModel {
     //推送状态名称
     @Column(name = "PUSH_STATUS_NM")
     private String push_status_nm;
+    //币种
+    @Column(name = "CURRENCY")
+    private String currency;
 }

@@ -174,6 +174,7 @@ public class AOCHUAN5001Controller {
         crdl.setAttachments(docurule.getAnnexno());
         crdl.setPush_status("PZ005001");
         crdl.setPush_status_nm("未推送");
+        crdl.setCurrency(finSales.getCurrency());
 
         List<AccountingRule> actgrulist = new ArrayList<>();
 
@@ -187,10 +188,18 @@ public class AOCHUAN5001Controller {
 
             //分录
             accountingRule.setRemarks(remarks);
+            accountingRule.setAcct_code(item.getAccountid());
             accountingRule.setDebit(item.getDebit());
             accountingRule.setCredit(item.getCredit());
+            accountingRule.setTaxrate(item.getCrerate());
             accountingRule.setAmount(finSales.getSalesamount());
             //辅助项目
+            accountingRule.setBankaccount_code(item.getBankaccountid());
+            accountingRule.setDept_code(item.getDepartid());
+            accountingRule.setIae_contg_code(item.getExpenditureid());
+            accountingRule.setAuxacctg_code(item.getAccountingid());
+            accountingRule.setMaincash_code(item.getMaincashid());
+            accountingRule.setAttachcash_code(item.getFlowcashid());
             accountingRule.setBankaccount(item.getBankaccount());
             accountingRule.setDept(item.getDepart());
             accountingRule.setIae_contg(item.getExpenditure());

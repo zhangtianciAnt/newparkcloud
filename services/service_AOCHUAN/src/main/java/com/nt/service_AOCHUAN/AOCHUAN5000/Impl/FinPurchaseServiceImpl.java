@@ -56,4 +56,12 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
         }
         return true;
     }
+
+    //更新
+    @Override
+    public void updateTransportGood(FinPurchase finPurchase, TokenModel tokenModel) throws Exception {
+
+        finPurchase.preUpdate(tokenModel);
+        finPurchaseMapper.updateTransportGood(finPurchase.getAp_date(),finPurchase.getModifyby(),finPurchase.getTransportgood_id());
+    }
 }

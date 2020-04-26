@@ -71,12 +71,12 @@ public class AOCHUAN7002Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/delete",method={RequestMethod.GET})
-    public ApiResult delete(@RequestParam String id, HttpServletRequest request) throws Exception {
-        if(!StringUtils.isNotBlank(id)){
+    @RequestMapping(value = "/delCrerule",method={RequestMethod.GET})
+    public ApiResult delete(@RequestParam String helprule_id, HttpServletRequest request) throws Exception {
+        if(!StringUtils.isNotBlank(helprule_id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        docuruleService.delete(id);
+        docuruleService.delCrerule(helprule_id);
         return ApiResult.success();
     }
 

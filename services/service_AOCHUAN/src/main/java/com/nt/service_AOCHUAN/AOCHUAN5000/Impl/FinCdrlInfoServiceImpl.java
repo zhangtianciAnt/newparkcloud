@@ -125,6 +125,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 acctgRul.setAcctgrul_id(UUID.randomUUID().toString());
                 acctgRul.setCrdlinfo_fid(crdlId);
                 acctgRul.setRemarks(item.getRemarks());
+                acctgRul.setAcct_code(item.getAcct_code());
                 acctgRul.setDebit(item.getDebit());
                 acctgRul.setCredit(item.getCredit());
                 acctgRul.setTaxrate(item.getTaxrate());
@@ -136,6 +137,12 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 AuxAcctg auxAcctg = new AuxAcctg();
                 auxAcctg.setAuxacctg_id(UUID.randomUUID().toString());
                 auxAcctg.setAcctgrul_fid(acctgRul.getAcctgrul_id());
+                auxAcctg.setBankaccount_code(item.getBankaccount_code());
+                auxAcctg.setDept_code(item.getDept_code());
+                auxAcctg.setIae_contg_code(item.getIae_contg_code());
+                auxAcctg.setAuxacctg_code(item.getAuxacctg_code());
+                auxAcctg.setMaincash_code(item.getMaincash_code());
+                auxAcctg.setAttachcash_code(item.getAttachcash_code());
                 auxAcctg.setBankaccount(item.getBankaccount());
                 auxAcctg.setDept(item.getDept());
                 auxAcctg.setIae_contg(item.getIae_contg());

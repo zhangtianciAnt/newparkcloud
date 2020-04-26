@@ -74,6 +74,7 @@ public class AOCHUAN5002Controller {
             //唯一性Check
             if(! finPurchaseSerivce.uniqueCheck(finPurchase)) {
                 finPurchaseSerivce.update(finPurchase, tokenService.getToken(request));
+                finPurchaseSerivce.updateTransportGood(finPurchase, tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
@@ -172,6 +173,7 @@ public class AOCHUAN5002Controller {
         crdl.setAttachments(docurule.getAnnexno());
         crdl.setPush_status("PZ005001");
         crdl.setPush_status_nm("未推送");
+        crdl.setCurrency(finPurchase.getCurrency1());
 
         List<AccountingRule> actgrulist = new ArrayList<>();
 
@@ -185,10 +187,18 @@ public class AOCHUAN5002Controller {
 
             //分录
             accountingRule.setRemarks(remarks);
+            accountingRule.setAcct_code(item.getAccountid());
             accountingRule.setDebit(item.getDebit());
             accountingRule.setCredit(item.getCredit());
+            accountingRule.setTaxrate(item.getCrerate());
             accountingRule.setAmount(finPurchase.getPurchaseamount());
             //辅助项目
+            accountingRule.setBankaccount_code(item.getBankaccountid());
+            accountingRule.setDept_code(item.getDepartid());
+            accountingRule.setIae_contg_code(item.getExpenditureid());
+            accountingRule.setAuxacctg_code(item.getAccountingid());
+            accountingRule.setMaincash_code(item.getMaincashid());
+            accountingRule.setAttachcash_code(item.getFlowcashid());
             accountingRule.setBankaccount(item.getBankaccount());
             accountingRule.setDept(item.getDepart());
             accountingRule.setIae_contg(item.getExpenditure());
