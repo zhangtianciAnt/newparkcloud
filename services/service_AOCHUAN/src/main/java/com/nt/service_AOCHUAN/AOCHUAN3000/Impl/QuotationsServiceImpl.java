@@ -45,6 +45,9 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Override
     public List<Quotations> get() throws Exception {
+       // com.nt.utils.StringUtils stringUtils = new com.nt.utils.StringUtils();
+        //stringUtils.getContractNo("123","quotations");
+
         return quotationsMapper.selectAll();
     }
 

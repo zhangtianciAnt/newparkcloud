@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.AOCHUAN;
 
+import cn.hutool.json.JSON;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
@@ -9,10 +10,7 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,7 +49,7 @@ public class AOCHUAN5004Controller {
      * 获取分录-辅助核算
      */
     @RequestMapping(value = "/getAccAuxList", method = {RequestMethod.POST})
-    public ApiResult getAccAuxList(CredentialInformation credentialInformation, HttpServletRequest request) throws Exception {
+    public ApiResult getAccAuxList(@RequestBody  CredentialInformation credentialInformation, HttpServletRequest request) throws Exception {
 
         if(credentialInformation == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -63,7 +61,7 @@ public class AOCHUAN5004Controller {
      * 更新金蝶KIS
      */
     @RequestMapping(value = "/updateKis", method = {RequestMethod.POST})
-    public ApiResult updateKis(CredentialInformation credentialInformation,HttpServletRequest request) throws Exception {
+    public ApiResult updateKis(@RequestBody CredentialInformation credentialInformation,HttpServletRequest request) throws Exception {
 
         if(credentialInformation == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -88,5 +86,4 @@ public class AOCHUAN5004Controller {
         }
         return ApiResult.success();
     }
-
 }
