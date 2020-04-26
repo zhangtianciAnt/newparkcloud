@@ -2,6 +2,7 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuotationsAndEnquiry;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
@@ -62,6 +63,17 @@ public class QuotationsServiceImpl implements QuotationsService {
         quotations.setEnquiry(enquiries);
         return quotations;
     }
+
+    @Override
+    public List<QuotationsAndEnquiry> getForSupplier(String id) throws Exception {
+        return quotationsMapper.getForSupplier(id);
+    }
+
+    @Override
+    public List<Quotations> getForCustomer(String id) throws Exception {
+        return quotationsMapper.getForCustomer(id);
+    }
+
     @Override
     public void update(Quotations quotations, TokenModel tokenModel) throws Exception {
               quotations.preUpdate(tokenModel);

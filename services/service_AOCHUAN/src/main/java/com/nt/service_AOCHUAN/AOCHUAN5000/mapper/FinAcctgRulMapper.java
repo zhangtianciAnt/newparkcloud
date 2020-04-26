@@ -1,13 +1,13 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.mapper;
 
-import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.AcctgRul;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface FinAcctgRulMapper extends MyMapper<AccountingRule> {
+public interface FinAcctgRulMapper extends MyMapper<AcctgRul> {
 
     //获取分录规则+辅助项目
     public List<AccountingRule> getAcctgEntrInfoByCrdl_id(@Param("crdlinfo_id") String crdlinfo_id);

@@ -52,65 +52,29 @@ public class Supplierbaseinfor extends BaseModel {
 
     private String auditexperience;
 
-    private String lastyearturnover;
+    private String qaqcnumber;
+    private String plantarea;
+    private String producttype;
+    private String advtechnology;
+    private String planttype;
+    private String newproduct;
+    private String other;
 
     private String registeredcapital2;
-
+    private String detectability;
+    private String envprotection;
+    private String productcapacity;
+    private String gmpcapacity;
+    private String devability;
+    private String costcontrol;
+    private String qualitylevel;
+    private String documentability;
+    private String relation;
     private String industrystatus;
-
-    private String qualitysystem;
-
+    private String decision;
     private String communication;
+    private String cooperation;
+    private String jkmarket;
+    private String paymentterms;
 
-    private String upperrelationship;
-
-    private String support;
-
-    private String exportexperience;
-
-    private String documentation;
-
-    private String marketawareness;
-
-    private String deliverystatus;
-
-    private String productadvantage;
-
-    private String lastyearturnoverscore;
-
-    private String registeredcapital2score;
-
-    private String industrystatusscore;
-
-    private String qualitysystemscore;
-
-    private String communicationscore;
-
-    private String upperrelationshipscore;
-
-    private String supportscorescore;
-
-    private String exportexperiencescore;
-
-    private String documentationscore;
-
-    private String marketawarenessscore;
-
-    private String deliverystatusscore;
-
-    private String productadvantagescore;
-
-    private String lastyearturnoverstandard;
-
-    private String registeredcapital2standard;
-
-    private String productadvantagestandard;
-
-    private String lastyearturnoverratio;
-
-    private String registeredcapital2ratio;
-
-    private String productadvantageratio;
-
-    private String totalscore;
 }

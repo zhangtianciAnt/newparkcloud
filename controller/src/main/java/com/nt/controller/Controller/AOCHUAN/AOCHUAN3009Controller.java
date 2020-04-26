@@ -38,6 +38,14 @@ public class AOCHUAN3009Controller {
         return ApiResult.success(projectsSerivce.getFollowUpRecordList(followUpRecord));
     }
 
+    /**
+     * 获取项目表
+     */
+    @RequestMapping(value = "/getForm",method={RequestMethod.GET})
+    public ApiResult getForm(@RequestParam String id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(projectsSerivce.getForm(id));
+    }
+
     @RequestMapping(value = "/getForSupplier",method={RequestMethod.GET})
     public ApiResult getForSupplier(@RequestParam String id, HttpServletRequest request) throws Exception {
         if(!StringUtils.isNotBlank(id)){

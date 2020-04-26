@@ -11,4 +11,14 @@
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
         SELECT * FROM fin_sales WHERE SALES_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS != '1'
     </select>
+<!--???????????-->
+    <select id="getHK" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.Totalmoney">
+        select
+        month(ARRIVALTIME) as months
+        ,sum(SALESAMOUNT) as sumSALESAMOUNT
+        from `fin_sales`
+        where ARRIVALTIME is not null
+        group by month (ARRIVALTIME)
+        ORDER BY months
+    </select>
 </mapper>

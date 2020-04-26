@@ -22,6 +22,11 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
         return finPurchaseMapper.select(finPurchase);
     }
 
+    @Override
+    public FinPurchase getForm(String id) throws Exception {
+        return finPurchaseMapper.selectByPrimaryKey(id);
+    }
+
     //更新
     @Override
     public void update(FinPurchase finPurchase, TokenModel tokenModel) throws Exception {

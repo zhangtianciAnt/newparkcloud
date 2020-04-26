@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.Impl;
 
+import com.nt.dao_AOCHUAN.AOCHUAN5000.AcctgRul;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.AuxAcctg;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
@@ -47,7 +48,8 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
             if (!uniqueCheckCdrl(credentialInformation)) {
 
                 credentialInformation.preUpdate(tokenModel);
-                finCrdlInfoMapper.updateKisCrdlNo(credentialInformation.getModifyby(), credentialInformation.getCrdlkis_num(), credentialInformation.getCrdlinfo_id());
+                String pushStatus = "'PZ0051002'";
+                finCrdlInfoMapper.updateKisCrdlNo(credentialInformation.getModifyby(), credentialInformation.getCrdlkis_num(),pushStatus, credentialInformation.getCrdlinfo_id());
             }else{
                 return false;
             }
@@ -119,15 +121,21 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
             for (AccountingRule item: accountingRuleList) {
 
                 //分录insert
-                item.setCrdlinfo_fid(crdlId);
-                item.setAcctgrul_id(UUID.randomUUID().toString());
-                item.preInsert(tokenModel);
-                finAcctgRulMapper.insertSelective(item);
+                AcctgRul acctgRul = new AcctgRul();
+                acctgRul.setAcctgrul_id(UUID.randomUUID().toString());
+                acctgRul.setCrdlinfo_fid(crdlId);
+                acctgRul.setRemarks(item.getRemarks());
+                acctgRul.setDebit(item.getDebit());
+                acctgRul.setCredit(item.getCredit());
+                acctgRul.setTaxrate(item.getTaxrate());
+                acctgRul.setAmount(item.getAmount());
+                acctgRul.preInsert(tokenModel);
+                finAcctgRulMapper.insertSelective(acctgRul);
 
                 //辅助核算项目insert
                 AuxAcctg auxAcctg = new AuxAcctg();
                 auxAcctg.setAuxacctg_id(UUID.randomUUID().toString());
-                auxAcctg.setAcctgrul_fid(item.getAcctgrul_id());
+                auxAcctg.setAcctgrul_fid(acctgRul.getAcctgrul_id());
                 auxAcctg.setBankaccount(item.getBankaccount());
                 auxAcctg.setDept(item.getDept());
                 auxAcctg.setIae_contg(item.getIae_contg());
@@ -142,6 +150,11 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public CredentialInformation getForm(String id) throws Exception {
+        return finCrdlInfoMapper.selectByPrimaryKey(id);
     }
 
     //存在Check

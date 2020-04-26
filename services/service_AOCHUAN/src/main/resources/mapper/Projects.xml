@@ -27,4 +27,22 @@
         AND SUPPLIER_ID = #{supplier_id}
     </update>
 
+
+    <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
+        select
+        product_nm,
+        supplier
+        from projects
+        where SUPPLIER_ID = #{id}
+    </select>
+
+    <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
+        select
+        pro.product_nm,
+        pro.supplier
+        from projects as pro
+        inner join followuprecord as foll
+        on pro.products_id = foll.products_id
+        where CUSTOMER_ID = #{id}
+    </select>
 </mapper>
