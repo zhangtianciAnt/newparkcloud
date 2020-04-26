@@ -68,4 +68,14 @@ public class Vacation extends BaseModel {
     private String remarks;
 
 
+    @Column(name = "ANNUALYEAR")
+    private String annualyear;
+
+
+    @Column(name = "DATETYPE")
+    private String datetype;
+
+
+
+
 }

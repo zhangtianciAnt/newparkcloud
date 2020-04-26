@@ -29,6 +29,9 @@ public class Attendance extends BaseModel {
     @Column(name = "ATTENDANCETIM")
     private String attendancetim;
 
+    @Column(name = "JOBNUM")
+    private String jobnum;
+
 
     @Column(name = "NAMES")
     private String names;
