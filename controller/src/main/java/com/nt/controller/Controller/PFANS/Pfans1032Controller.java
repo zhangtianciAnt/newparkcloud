@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,45 +64,68 @@ public class Pfans1032Controller {
 
     @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
     public void downLoad1(@RequestBody Petition petition, HttpServletRequest request, HttpServletResponse response) throws Exception{
-        TokenModel tokenModel=tokenService.getToken(request);
+        TokenModel tokenModel = tokenService.getToken(request);
         Petition pd = petitionService.one(petition.getPetition_id());
-        String pp[] = petition.getClaimdatetime().split(" ~ ");
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
         Map<String, Object> data = new HashMap<>();
-        data.put("pd",pd);
-        if(pp.length > 0){
-            data.put("statime",pp);
+
+        //20200427 add by lin format data start
+        //請求日
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date tem_date = null;
+        String str_format = "";
+        str_format = new SimpleDateFormat("dd/MM/yyyy").format(pd.getClaimdate());
+        data.put("claimdate", str_format);
+        //請求金額
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        BigDecimal bd = new BigDecimal(pd.getClaimamount());
+        str_format = df.format(bd);
+        pd.setClaimamount(str_format);
+        //20200427 add by lin format data end
+
+        data.put("pd", pd);
+
+        String pp[] = petition.getClaimdatetime().split(" ~ ");
+        if (pp.length > 0) {
+            //20200427 add by lin format date start
+            str_format = pp[0];
+            tem_date = sdf.parse(str_format);
+            pp[0] = new SimpleDateFormat("dd/MM/yyyy").format(tem_date);
+            str_format = pp[1];
+            tem_date = sdf.parse(str_format);
+            pp[1] = new SimpleDateFormat("dd/MM/yyyy").format(tem_date);
+            //20200427 add by lin format date end
+            data.put("statime", pp);
         } else {
-            data.put("statime","");
+            data.put("statime", "");
         }
-        if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")){
-            for(Dictionary item:dictionaryList){
-                if(item.getCode().equals(pd.getCurrencyposition())) {
+        List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
+        if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")) {
+            for (Dictionary item : dictionaryList) {
+                if (item.getCode().equals(pd.getCurrencyposition())) {
 
                     pd.setCurrencyposition(item.getValue4());
                 }
             }
 
-            ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(国内受託)","qingqiushu_guonei.xlsx",data,response);
-        } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")){
-            if(pd.getCurrencyposition().equals("PG019003")){
-                for(Dictionary item:dictionaryList){
-                    if(item.getCode().equals(pd.getCurrencyposition())) {
+            ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(国内受託)", "qingqiushu_guonei.xlsx", data, response);
+        } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")) {
+            if (pd.getCurrencyposition().equals("PG019003")) {
+                for (Dictionary item : dictionaryList) {
+                    if (item.getCode().equals(pd.getCurrencyposition())) {
 
                         pd.setCurrencyposition(item.getValue4());
                     }
                 }
-                ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(日本受託-RMB)","qingqiushu_ribenrmb.xlsx",data,response);
-            }else if(pd.getCurrencyposition().equals("PG019001")){
-                for(Dictionary item:dictionaryList){
-                    if(item.getCode().equals(pd.getCurrencyposition())) {
+                ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(日本受託-RMB)", "qingqiushu_ribenrmb.xlsx", data, response);
+            } else if (pd.getCurrencyposition().equals("PG019001")) {
+                for (Dictionary item : dictionaryList) {
+                    if (item.getCode().equals(pd.getCurrencyposition())) {
 
                         pd.setCurrencyposition(item.getValue4());
                     }
                 }
-                ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase()+"_請求書(日本受託-US$)","qingqiushu_ribenus.xlsx",data,response);
+                ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(日本受託-US$)", "qingqiushu_ribenus.xlsx", data, response);
             }
         }
     }
-
 }
