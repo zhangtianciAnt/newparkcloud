@@ -1,6 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.Totalmoney;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.utils.dao.TokenModel;
@@ -53,7 +54,7 @@ public class FinSalesServiceImpl implements FinSalesService {
     }
 
     @Override
-    public List<FinSales> getHK() throws Exception {
+    public List<Totalmoney> getHK() throws Exception {
         return finSalesMapper.getHK();
     }
 }

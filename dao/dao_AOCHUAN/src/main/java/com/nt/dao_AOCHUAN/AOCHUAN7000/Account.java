@@ -30,7 +30,7 @@ public class Account {
     private String fdetail;
 
     @Column(name = "FParentID")
-    private String FParentID;
+    private String fparentid;
 
 
 

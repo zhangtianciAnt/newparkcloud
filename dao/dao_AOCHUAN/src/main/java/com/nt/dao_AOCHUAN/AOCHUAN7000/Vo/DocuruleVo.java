@@ -26,8 +26,4 @@ public class DocuruleVo {
      * 辅助项目*/
     private List<Helprule> helprules;
 
-
-
-
-
 }

@@ -19,8 +19,8 @@ public class Helprule extends BaseModel {
     @Column(name = "HELPRULE_ID")
     private String helprule_id;
 
-    @Column(name = "CRERULE_ID")
-    private String crerule_id;
+    @Column(name = "CRERULE_FID")
+    private String crerule_fid;
 
     @Column(name = "BANKACCOUNT")
     private String bankaccount;
@@ -41,6 +41,6 @@ public class Helprule extends BaseModel {
     private String flowcash;
 
     @Column(name = "ROWINDEX")
-    private String rowindex;
+    private int rowindex;
 
 }

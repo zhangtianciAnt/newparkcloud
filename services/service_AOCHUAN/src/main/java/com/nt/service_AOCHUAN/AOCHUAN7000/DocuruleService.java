@@ -1,8 +1,8 @@
 package com.nt.service_AOCHUAN.AOCHUAN7000;
 
-import com.nt.dao_AOCHUAN.AOCHUAN6000.Secrecy;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
+import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -13,7 +13,7 @@ public interface DocuruleService {
 
     DocuruleVo One(String docurule_id) throws Exception;
 
-    List<Helprule> helpOne(String docurule_id) throws Exception;
+//    List<Helprule> helpOne(String docurule_id) throws Exception;
 
     void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception;
 
@@ -22,4 +22,7 @@ public interface DocuruleService {
     void delete(String id) throws Exception;
 
     Docurule selectByDocutype(String docutype);
+
+    List<All> selectrule(String docurule_id) throws  Exception;
+
 }
