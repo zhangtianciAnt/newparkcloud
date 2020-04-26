@@ -7,7 +7,6 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Crerule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
@@ -97,7 +96,8 @@ public class AOCHUAN5001Controller {
         }
 
         Docurule docurule = new Docurule();
-        List<All> accAndauxList  = new ArrayList<>();
+        DocuruleVo crerule = new DocuruleVo();
+        List<Helprule> helpruleLst = null;
 
         CrdlInfo crdlInfo = new CrdlInfo();
 
@@ -107,14 +107,17 @@ public class AOCHUAN5001Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
-        //获取分录规则 + 辅助核算项目
-        accAndauxList = docuruleService.selectrule(docurule.getDocurule_id());
-        if(accAndauxList== null){
+        //获取分录规则
+        crerule = docuruleService.One(docurule.getDocurule_id());
+        if(crerule== null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
+        //获取辅助核算项目
+        //helpruleLst = docuruleService.helpOne(docurule.getDocurule_id());
+
         //根据规则替换
-        crdlInfo=replaceRule(tokenService.getToken(request).getUserId(),finSales, docurule,accAndauxList);
+        crdlInfo=replaceRule(tokenService.getToken(request).getUserId(),finSales, docurule,crerule,helpruleLst);
 
         //生成凭证
         finCrdlInfoService.insert(crdlInfo,tokenService.getToken(request));
@@ -139,13 +142,11 @@ public class AOCHUAN5001Controller {
 
     /**
      * 替换
-     * @param userName
-     * @param finSales
      * @param docurule
-     * @param accAndauxList
+     * @param crerule
      * @return
      */
-    public CrdlInfo replaceRule(String userName,FinSales finSales, Docurule docurule, List<All> accAndauxList){
+    public CrdlInfo replaceRule(String userName,FinSales finSales, Docurule docurule, DocuruleVo crerule, List<Helprule> helpruleList){
 
         CrdlInfo crdlInfo = new CrdlInfo();
 
@@ -153,11 +154,9 @@ public class AOCHUAN5001Controller {
         Date accDate  = new Date();
         Date crdlNoDate = new Date();
 
-        //业务日期
         if(("1").equals(docurule.getBusinessday())){
             busDate = finSales.getArrivaltime();
         }
-        //记账日期
         if(("1").equals(docurule.getNowday())){
             accDate = finSales.getArrivaltime();
         }
@@ -174,38 +173,30 @@ public class AOCHUAN5001Controller {
         crdl.setAttachments(docurule.getAnnexno());
         crdl.setPush_status("PZ005001");
         crdl.setPush_status_nm("未推送");
-        crdl.setCurrency(finSales.getCurrency());
 
         List<AccountingRule> actgrulist = new ArrayList<>();
+        List<Crerule> creruleList = crerule.getCrerules();
 
-        for (All item:accAndauxList) {
+        for (int i = 0; i<creruleList.size(); i++) {
             AccountingRule accountingRule = new AccountingRule();
 
             String remarks = "";
-            if(StringUtils.isNotBlank(item.getRemarks())){
-                remarks = item.getRemarks().replace("{0}", finSales.getCustomer()).replace("{1}", finSales.getContractnumber());
+            if(StringUtils.isNotBlank(creruleList.get(i).getRemarks())){
+                remarks = creruleList.get(i).getRemarks().replace("{0}", finSales.getCustomer()).replace("{1}", finSales.getContractnumber());
             }
 
             //分录
             accountingRule.setRemarks(remarks);
-            accountingRule.setAcct_code(item.getAccountid());
-            accountingRule.setDebit(item.getDebit());
-            accountingRule.setCredit(item.getCredit());
-            accountingRule.setTaxrate(item.getCrerate());
+            accountingRule.setDebit(creruleList.get(i).getDebit());
+            accountingRule.setCredit(creruleList.get(i).getCredit());
             accountingRule.setAmount(finSales.getSalesamount());
             //辅助项目
-            accountingRule.setBankaccount_code(item.getBankaccountid());
-            accountingRule.setDept_code(item.getDepartid());
-            accountingRule.setIae_contg_code(item.getExpenditureid());
-            accountingRule.setAuxacctg_code(item.getAccountingid());
-            accountingRule.setMaincash_code(item.getMaincashid());
-            accountingRule.setAttachcash_code(item.getFlowcashid());
-            accountingRule.setBankaccount(item.getBankaccount());
-            accountingRule.setDept(item.getDepart());
-            accountingRule.setIae_contg(item.getExpenditure());
-            accountingRule.setAuxacctg(item.getAccounting());
-            accountingRule.setMaincashflow(item.getMaincash());
-            accountingRule.setAttachcashflow(item.getFlowcash());
+            accountingRule.setBankaccount(helpruleList.get(i).getBankaccount());
+            accountingRule.setDept(helpruleList.get(i).getDepart());
+            accountingRule.setIae_contg(helpruleList.get(i).getExpenditure());
+            accountingRule.setAuxacctg(helpruleList.get(i).getAccounting());
+            accountingRule.setMaincashflow(helpruleList.get(i).getMaincash());
+            accountingRule.setAttachcashflow(helpruleList.get(i).getFlowcash());
             accountingRule.setAuxacctg_amount(finSales.getSalesamount());
 
             actgrulist.add(accountingRule);

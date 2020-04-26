@@ -30,6 +30,7 @@
 
     <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
         select
+        projects_id,
         product_nm,
         supplier
         from projects
@@ -38,6 +39,7 @@
 
     <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
         select
+        pro.projects_id,
         pro.product_nm,
         pro.supplier
         from projects as pro

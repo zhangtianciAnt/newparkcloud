@@ -2,21 +2,14 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuotationsAndEnquiry;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuoAndEnq;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.EnquiryMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
-import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReturngoodsMapper;
-import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
-import com.nt.service_AOCHUAN.AOCHUAN8000.mapper.NumberMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.MyMapper;
-import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +17,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -43,9 +35,6 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Autowired
     private EnquiryMapper enquiryMapper;
-
-    @Autowired
-    private ContractNumber contractNumber;
 
 
     @Override
@@ -70,7 +59,7 @@ public class QuotationsServiceImpl implements QuotationsService {
     }
 
     @Override
-    public List<QuotationsAndEnquiry> getForSupplier(String id) throws Exception {
+    public List<QuoAndEnq> getForSupplier(String id) throws Exception {
         return quotationsMapper.getForSupplier(id);
     }
 
@@ -94,9 +83,15 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Override
     public void insert(Quotations quotations, TokenModel tokenModel) throws Exception {
-        String number = contractNumber.getContractNumber("XBD","quotations");
-        quotations.setQuotationsno(number);
-        quotations.setQuotations_id(UUID.randomUUID().toString());
+        StringBuffer sb = new StringBuffer("YW");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String date = dateFormat.format(new Date());
+        int count =  quotationsMapper.select_Count() + 1;
+        String str = String.format("%07d", count);
+        sb.append(date).append(str);
+        String id = UUID.randomUUID().toString();
+        quotations.setQuotationsno(sb.toString());
+        quotations.setQuotations_id(id);
         quotations.preInsert(tokenModel);
         if(quotations.isNotice()){
             ToDoNotice(tokenModel,quotations);
