@@ -157,12 +157,16 @@ public class Pfans1012Controller {
                     pubvo.getPublicexpense().setModuleid(item.getValue1());
                 }
             }
+            //申请人图片
+            String userim = "";
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(pubvo.getPublicexpense().getUser_id()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 //申请人
                 pubvo.getPublicexpense().setUser_id(customerInfo.getUserinfo().getCustomername());
+                userim = customerInfo.getUserinfo().getCustomername();
+                userim = sign.startGraphics2D(userim);
                 //部门
                 pubvo.getPublicexpense().setGroupid(customerInfo.getUserinfo().getGroupname());
             }
@@ -180,26 +184,28 @@ public class Pfans1012Controller {
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList1 = customerInfo.getUserinfo().getCustomername();
-//                    wfList1 = sign.startGraphics2D(wfList1);
+                    wfList1 = sign.startGraphics2D(wfList1);
                 }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList2 = customerInfo.getUserinfo().getCustomername();
-//                    wfList2 = sign.startGraphics2D(wfList2);
+                    wfList2 = sign.startGraphics2D(wfList2);
                 }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList3 = customerInfo.getUserinfo().getCustomername();
+                    wfList3 = sign.startGraphics2D(wfList3);
                 }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList4 = customerInfo.getUserinfo().getCustomername();
+                    wfList4 = sign.startGraphics2D(wfList4);
                 }
             }
             Map<String, Object> data = new HashMap<>();
@@ -207,6 +213,7 @@ public class Pfans1012Controller {
             data.put("wfList2", wfList2);
             data.put("wfList3", wfList3);
             data.put("wfList4", wfList4);
+            data.put("userim", userim);
             data.put("trr", trr);
             data.put("tro", tro);
             data.put("pub", pubvo.getPublicexpense());
@@ -216,10 +223,14 @@ public class Pfans1012Controller {
             data.put("str", str);
             if(pubvo.getTrafficdetails().size() > 0){
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
-//                FileUtil.del("D:\\PFANS\\image\\" + "/" + wfList1);
             } else {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
             }
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+            FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception{
