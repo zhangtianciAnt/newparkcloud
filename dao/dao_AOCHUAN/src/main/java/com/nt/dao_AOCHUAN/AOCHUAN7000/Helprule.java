@@ -44,20 +44,22 @@ public class Helprule extends BaseModel {
     private int rowindex;
 
     @Column(name = "BANKACCOUNTID")
-    private int bankaccountid;
+    private String bankaccountid;
 
+    @Column(name = "DEPARTID")
+    private String departid;
 
     @Column(name = "EXPENDITUREID")
-    private int expenditureid;
+    private String expenditureid;
 
     @Column(name = "ACCOUNTINGID")
-    private int accountingid;
+    private String accountingid;
 
     @Column(name = "MAINCASHID")
-    private int maincashid;
+    private String maincashid;
 
     @Column(name = "FLOWCASHID")
-    private int flowcashid;
+    private String flowcashid;
 
 
 }
