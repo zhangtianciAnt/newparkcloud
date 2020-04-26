@@ -78,4 +78,6 @@ public class AuthConstants {
      */
     public static final String RECOGNITION_FLAG_NO = "0";
     public static final String RECOGNITION_FLAG_YES = "1";
+
+    public static final String FILE_DIRECTORY = "E:\\PFANS\\";
 }
