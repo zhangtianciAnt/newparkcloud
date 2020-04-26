@@ -18,8 +18,8 @@ public class Crerule  extends BaseModel {
     @Column(name = "CRERULE_ID")
     private String crerule_id;
 
-    @Column(name = "DOCURULE_ID")
-    private String docurule_id;
+    @Column(name = "DOCURULE_FID")
+    private String docurule_fid;
 
     @Column(name = "REMARKS")
     private String remarks;
@@ -34,7 +34,7 @@ public class Crerule  extends BaseModel {
     private String crerate;
 
     @Column(name = "ROWINDEX")
-    private String rowindex;
+    private int rowindex;
 
 
 }

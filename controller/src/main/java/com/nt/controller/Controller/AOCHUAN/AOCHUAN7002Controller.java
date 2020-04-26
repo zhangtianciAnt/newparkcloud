@@ -43,12 +43,12 @@ public class AOCHUAN7002Controller {
         return ApiResult.success(docuruleService.One(id));
     }
 
-    @RequestMapping(value = "/helpOne",method={RequestMethod.GET})
-    public ApiResult helpOne(@RequestParam String id, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/selectrule",method={RequestMethod.GET})
+    public ApiResult selectrule(@RequestParam String id, HttpServletRequest request) throws Exception {
         if(!StringUtils.isNotBlank(id)){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(docuruleService.helpOne(id));
+        return ApiResult.success(docuruleService.selectrule(id));
     }
 
 
