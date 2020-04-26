@@ -45,4 +45,14 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     public void delete(String id) throws Exception {
         supplierbaseinforMapper.deleteByPrimaryKey(id);
     }
+
+    /**
+     * 获取不在项目表中的供应商
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<Supplierbaseinfor> getSuppliersExceptUnique() throws Exception {
+        return supplierbaseinforMapper.getSuppliersExceptUnique();
+    }
 }
