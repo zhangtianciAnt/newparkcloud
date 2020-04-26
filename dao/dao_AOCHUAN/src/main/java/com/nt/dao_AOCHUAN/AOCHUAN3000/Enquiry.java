@@ -53,6 +53,8 @@ public class Enquiry {
      private String antecedents;
      //文件情况
      private String doc;
+     //数量
+     private String counts;
 
      @Transient
      private String[] document;
