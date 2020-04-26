@@ -13,6 +13,8 @@ import com.nt.utils.dao.TokenModel;
  * @Version: 1.0
  */
 public interface SoundRecordingServices {
+    //获取录音
+    SoundRecording selectById(String songid) throws Exception;
     //录音保存
     void insert(SoundRecording soundrecording, TokenModel tokenModel) throws Exception;
 }

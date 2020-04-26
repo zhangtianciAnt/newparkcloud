@@ -21,4 +21,9 @@ public class SoundRecordingServicesImpl implements SoundRecordingServices {
 //        soundrecording.setLuyinid(UUID.randomUUID().toString());
         soundrecordingMapper.insert(soundrecording);
     }
+
+    @Override
+    public SoundRecording selectById(String songid) throws Exception {
+        return soundrecordingMapper.selectByPrimaryKey(songid);
+    }
 }

@@ -118,6 +118,22 @@ public class BASF20201Controller {
 
         return ApiResult.success();
     }
+
+    /**
+     * @方法名：selectsoundrecording
+     * @描述：录音取得
+     * @创建日期：2020/04/24
+     * @作者：SUNXU
+     * @参数：[information, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/selectsoundrecording", method = {RequestMethod.GET})
+    public ApiResult selectsoundrecording(String songid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(songid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(soundrecordingService.selectById(songid));
+    }
 //    public ApiResult savesoundrecording(@RequestParam MultipartFile file, HttpServletRequest request) throws Exception {
 //
 //        if (file == null || StringUtils.isEmpty(file)) {
