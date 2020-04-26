@@ -4,13 +4,14 @@
 
     <!--  ????-??????  -->
     <select id="selectrule" resultType="com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All">
-        SELECT
+ SELECT
         cr.CRERULE_ID ,
         cr.DOCURULE_FID,
         cr.REMARKS,
         cr.DEBIT,
         cr.CREDIT,
         cr.CRERATE,
+		cr.ACCOUNTID,
 
         hr.HELPRULE_ID,
         hr.CRERULE_FID ,
@@ -20,6 +21,12 @@
         hr.ACCOUNTING,
         hr.MAINCASH,
         hr.FLOWCASH,
+		hr.BANKACCOUNTID,
+		hr.DEPARTID,
+		hr.EXPENDITUREID,
+		hr.ACCOUNTINGID,
+		hr.MAINCASHID,
+		hr.FLOWCASHID,
         hr.rowindex
         FROM crerule cr
         INNER JOIN helprule as hr
@@ -27,13 +34,6 @@
         WHERE cr.DOCURULE_FID = #{docurule_id}
     </select>
 
-<!--    <select id="selectByDocutype" resultType="com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule">-->
-<!--        SELECT *-->
-<!--        FROM docurule-->
-<!--        WHERE-->
-<!--        DOCUTYPE = #{docutype}-->
-<!--        AND-->
-<!--        STATUS != '1'-->
-<!--    </select>-->
+
 
 </mapper>

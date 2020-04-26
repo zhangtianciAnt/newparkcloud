@@ -11,4 +11,6 @@ public interface DocuruleMapper extends MyMapper<Docurule> {
 
     Docurule selectByDocutype(@Param("docutype") String docutype);
 
+    void delDocurule(@Param("modifyby") String modifyby, @Param("docurule_id") String docurule_id);
+
 }

@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN7000;
 
+import com.nt.dao_AOCHUAN.AOCHUAN7000.Crerule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
@@ -15,11 +16,18 @@ public interface DocuruleService {
 
 //    List<Helprule> helpOne(String docurule_id) throws Exception;
 
+/*编辑凭证*/
     void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception;
+
+//    /*编辑分录*/
+//    void updateCr(Crerule crerule, TokenModel tokenModel) throws Exception;
+//
+//    /*编辑辅助*/
+//    void updateHe(Helprule helprule, TokenModel tokenModel) throws Exception;
 
     void insert(DocuruleVo docuruleVo, TokenModel tokenModel)throws Exception;
 
-    void delete(String id) throws Exception;
+    void delCrerule(String helprule_id) throws Exception;
 
     Docurule selectByDocutype(String docutype);
 

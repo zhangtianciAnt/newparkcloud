@@ -43,4 +43,21 @@ public class Helprule extends BaseModel {
     @Column(name = "ROWINDEX")
     private int rowindex;
 
+    @Column(name = "BANKACCOUNTID")
+    private int bankaccountid;
+
+
+    @Column(name = "EXPENDITUREID")
+    private int expenditureid;
+
+    @Column(name = "ACCOUNTINGID")
+    private int accountingid;
+
+    @Column(name = "MAINCASHID")
+    private int maincashid;
+
+    @Column(name = "FLOWCASHID")
+    private int flowcashid;
+
+
 }

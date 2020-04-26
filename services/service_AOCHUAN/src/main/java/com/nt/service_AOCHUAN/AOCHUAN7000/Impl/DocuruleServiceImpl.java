@@ -37,9 +37,8 @@ public class DocuruleServiceImpl  implements DocuruleService {
 
     @Override
     public List<Docurule> get(Docurule docurule) throws Exception {
-        return docuruleMapper.selectAll();
+        return docuruleMapper.select(docurule);
     }
-
 
 
     @Override
@@ -54,11 +53,26 @@ public class DocuruleServiceImpl  implements DocuruleService {
         docuruleVo.setCrerules(creruleList);
         return docuruleVo;
     }
+
 //    @Override
-//    public List<Helprule> helpOne(String docurule_id) throws Exception {
-//
-//        return helpruleMapper.helpOne(docurule_id);
+//    public void updateDo(Docurule docurule, TokenModel tokenModel) throws Exception {
+//        docurule.preUpdate(tokenModel);
+//        docuruleMapper.updateByPrimaryKey(docurule);
 //    }
+//
+//    @Override
+//    public void updateCr(Crerule crerule, TokenModel tokenModel) throws Exception {
+//   crerule.preUpdate(tokenModel);
+//   creruleMapper.updateByPrimaryKey(crerule);
+//    }
+//
+//    @Override
+//    public void updateHe(Helprule helprule, TokenModel tokenModel) throws Exception {
+//helprule.preUpdate(tokenModel);
+//helpruleMapper.updateByPrimaryKey(helprule);
+//    }
+
+
 
     @Override
     public void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
@@ -66,11 +80,18 @@ public class DocuruleServiceImpl  implements DocuruleService {
         BeanUtils.copyProperties(docuruleVo.getDocurule(),docurule);
         docurule.preUpdate(tokenModel);
        docuruleMapper.updateByPrimaryKey(docurule);
+
        String docuid=docurule.getDocurule_id();
        Crerule crerul=new Crerule();
        crerul.setDocurule_fid(docuid);
        creruleMapper.delete(crerul);
        List<Crerule> crerules=docuruleVo.getCrerules();
+
+      String creid=crerul.getCrerule_id();
+      Helprule help1=new Helprule();
+      help1.setCrerule_fid(creid);
+      helpruleMapper.delete(help1);
+      List<Helprule> helprules=docuruleVo.getHelprules();
         if (crerules != null) {
             int rowundex = 0;
             for (Crerule crerule : crerules) {
@@ -81,8 +102,19 @@ public class DocuruleServiceImpl  implements DocuruleService {
                 creruleMapper.insertSelective(crerule);
             }
         }
+        if (helprules != null) {
+            int rowundex = 0;
+            for (Helprule helprule : helprules) {
+                rowundex = rowundex + 1;
+                helprule.preInsert(tokenModel);
+                helprule.setHelprule_id(UUID.randomUUID().toString());
+               helprule.setCrerule_fid(creid);
+                helpruleMapper.insertSelective(helprule);
+            }
+        }
 
     }
+
     @Override
     public void insert(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
         String docuruleid= UUID.randomUUID().toString();
@@ -110,8 +142,9 @@ public class DocuruleServiceImpl  implements DocuruleService {
     }
 
     @Override
-    public void delete(String id) throws Exception {
-   docuruleMapper.deleteByPrimaryKey(id);
+    public void delCrerule(String helprule_id) throws Exception {
+
+        helpruleMapper.delCrerule(helprule_id);
     }
 
     @Override
@@ -122,8 +155,13 @@ public class DocuruleServiceImpl  implements DocuruleService {
     @Override
     public List<All> selectrule(String docurule_id) throws Exception {
         return allMapper.selectrule(docurule_id);
-       // return allMapper.selectAll();
-
     }
+
+
+
+
+
+
+
 
 }

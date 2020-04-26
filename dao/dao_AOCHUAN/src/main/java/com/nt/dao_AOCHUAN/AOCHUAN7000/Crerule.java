@@ -36,5 +36,8 @@ public class Crerule  extends BaseModel {
     @Column(name = "ROWINDEX")
     private int rowindex;
 
+    @Column(name = "ACCOUNTID")
+    private String accountid;
+
 
 }
