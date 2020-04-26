@@ -7,6 +7,8 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.service_BASF.BlackListServices;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
+import org.bytedeco.javacpp.presets.opencv_core;
+import org.opencv.tracking.TrackerBoosting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,18 +100,40 @@ public class BASF10702Controller {
      * @Date 2019/11/4 19:39
      */
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(String vehiclenumber,String driver,String driverid,String vehicletype,String destination,String ishazardous) throws Exception {
+    public ApiResult create(
+            String vehiclenumber,
+            String driver,
+            String driverid,
+            String escortname,
+            String escortid,
+            String vehicletype,
+            String supplier,
+            String transporter,
+            String transtype,
+            String linkdepartment,
+            String goodsname,
+            String weight,
+            String ishazardous
+    ) throws Exception {
 
         Vehicleinformation vehicleinformation = new Vehicleinformation();
         vehicleinformation.setVehiclenumber(vehiclenumber);
         vehicleinformation.setDriver(driver);
         vehicleinformation.setDriverid(driverid);
+        vehicleinformation.setEscortname(escortname);
+        vehicleinformation.setEscortid(escortid);
         vehicleinformation.setVehicletype(vehicletype);
-        vehicleinformation.setDestination(destination);
+        vehicleinformation.setSupplier(supplier);
+        vehicleinformation.setTransporter(transporter);
+        vehicleinformation.setTranstype(transtype);
+        vehicleinformation.setLinkdepartment(linkdepartment);
+        vehicleinformation.setGoodsname(goodsname);
+        vehicleinformation.setWeight(weight);
         ishazardous = ishazardous.equals("是")?"0":"1";
         vehicleinformation.setIshazardous(ishazardous);
         vehicleinformation.setIntime(new Date());
         return ApiResult.success(vehicleinformationServices.insert(vehicleinformation));
+
     }
 
     /**
