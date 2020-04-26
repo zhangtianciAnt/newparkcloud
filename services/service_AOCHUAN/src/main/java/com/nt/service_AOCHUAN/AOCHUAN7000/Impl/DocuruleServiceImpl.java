@@ -77,39 +77,41 @@ public class DocuruleServiceImpl  implements DocuruleService {
     @Override
     public void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
         Docurule docurule=new Docurule();
-        BeanUtils.copyProperties(docuruleVo.getDocurule(),docurule);
+        BeanUtils.copyProperties(docurule,docuruleVo.getDocurule());
         docurule.preUpdate(tokenModel);
        docuruleMapper.updateByPrimaryKey(docurule);
 
        String docuid=docurule.getDocurule_id();
        Crerule crerul=new Crerule();
        crerul.setDocurule_fid(docuid);
+
+
+      Helprule help1=new Helprule();
+      help1.setCrerule_wid(docuid);
+
        creruleMapper.delete(crerul);
        List<Crerule> crerules=docuruleVo.getCrerules();
-
-      String creid=crerul.getCrerule_id();
-      Helprule help1=new Helprule();
-      help1.setCrerule_fid(creid);
-      helpruleMapper.delete(help1);
+       helpruleMapper.delete(help1);
       List<Helprule> helprules=docuruleVo.getHelprules();
         if (crerules != null) {
             int rowundex = 0;
             for (Crerule crerule : crerules) {
+                String id = UUID.randomUUID().toString();
                 rowundex = rowundex + 1;
                 crerule.preInsert(tokenModel);
-                crerule.setCrerule_id(UUID.randomUUID().toString());
+                crerule.setCrerule_id(id);
                 crerule.setDocurule_fid(docuid);
                 creruleMapper.insertSelective(crerule);
-            }
-        }
         if (helprules != null) {
-            int rowundex = 0;
             for (Helprule helprule : helprules) {
                 rowundex = rowundex + 1;
                 helprule.preInsert(tokenModel);
                 helprule.setHelprule_id(UUID.randomUUID().toString());
-               helprule.setCrerule_fid(creid);
+                helprule.setCrerule_wid(docuid);
+                helprule.setCrerule_fid(id);
                 helpruleMapper.insertSelective(helprule);
+            }
+        }
             }
         }
 
