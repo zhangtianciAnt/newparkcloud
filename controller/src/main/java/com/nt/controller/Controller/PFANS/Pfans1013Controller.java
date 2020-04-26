@@ -79,8 +79,12 @@ public class Pfans1013Controller {
         if(tralist.size() > 0){
             trr = "交通费";
             for(TrafficDetails tl : tralist){
-                rmbtra += Double.valueOf(tl.getRmb());
-                tratra += Double.valueOf(tl.getForeigncurrency());
+                if(tl.getRmb() != null){
+                    rmbtra += Double.valueOf(tl.getRmb());
+                }
+                if(tl.getForeigncurrency() != null){
+                    tratra += Double.valueOf(tl.getForeigncurrency());
+                }
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(tl.getBudgetcoding())) {
@@ -104,7 +108,9 @@ public class Pfans1013Controller {
                         if (iteA.getCode().equals(tl.getCurrency())) {
                             //币种
                             tl.setCurrency(iteA.getValue1());
-                            curflg += Double.valueOf(iteA.getValue2()) * tratra;
+                            if(iteA.getValue2() != null){
+                                curflg += Double.valueOf(iteA.getValue2()) * tratra;
+                            }
                         }
                     }
 //                }
@@ -119,8 +125,12 @@ public class Pfans1013Controller {
         if(acclist.size() > 0){
             tro = "住宿费";
             for(AccommodationDetails ac : acclist){
-                rmbacc += Double.valueOf(ac.getRmb());
-                traacc += Double.valueOf(ac.getTravel());
+                if(ac.getRmb() != null){
+                    rmbacc += Double.valueOf(ac.getRmb());
+                }
+                if(ac.getTravel() != null){
+                    traacc += Double.valueOf(ac.getTravel());
+                }
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(ac.getBudgetcoding())) {
@@ -142,7 +152,9 @@ public class Pfans1013Controller {
                         if (iteA.getCode().equals(ac.getCurrency())) {
                             //币种
                             ac.setCurrency(iteA.getValue1());
-                            accflg += Double.valueOf(iteA.getValue2()) * traacc;
+                            if(iteA.getValue2() != null){
+                                accflg += Double.valueOf(iteA.getValue2()) * traacc;
+                            }
                         }
                     }
 //                }
