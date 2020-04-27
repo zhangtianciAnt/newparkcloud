@@ -45,15 +45,15 @@ FROM
 	(
 	SELECT
 		count(*) AS cnt,
-		date_format( alarmtimes, '%e' ) AS date
+		date_format( policetim, '%e' ) AS date
 	FROM
 		firealarm
 	WHERE
 		completesta = '1'
-		AND MONTH ( alarmtimes )= MONTH (
+		AND MONTH ( policetim )= MONTH (
 		NOW())
 	GROUP BY
-		date_format( alarmtimes, '%e' )
+		date_format( policetim, '%e' )
 	ORDER BY
 		date DESC
 	) AS tmp
