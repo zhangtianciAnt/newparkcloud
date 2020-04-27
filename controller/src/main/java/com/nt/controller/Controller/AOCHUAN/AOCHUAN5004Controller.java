@@ -84,7 +84,7 @@ public class AOCHUAN5004Controller {
      * 删除
      */
     @RequestMapping(value = "/del", method = {RequestMethod.POST})
-    public ApiResult del(CrdlInfo crdlInfo, HttpServletRequest request) throws Exception {
+    public ApiResult del(@RequestBody CrdlInfo crdlInfo, HttpServletRequest request) throws Exception {
 
         if(crdlInfo == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));

@@ -67,27 +67,31 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
 
         List<AccountingRule> accountingRuleList = crdlInfo.getAccountingRuleList();
 
-        //辅助核算项目
-        for (AccountingRule item : accountingRuleList) {
+        if(accountingRuleList.isEmpty()){
+            return false;
+        }else{
+            //辅助核算项目
+            for (AccountingRule item : accountingRuleList) {
 
-            if (existCheckAcc(item.getAuxacctg_id())) {
+                if (existCheckAux(item.getAuxacctg_id())) {
 
-                item.preUpdate(tokenModel);
-                finAcctgRulMapper.delAuxAcctgByFid(item.getModifyby(), item.getAcctgrul_fid());
+                    item.preUpdate(tokenModel);
+                    finAcctgRulMapper.delAuxAcctgByFid(item.getModifyby(), item.getAcctgrul_fid());
+                }
+            }
+
+            //分录
+            if (existCheckAcc(accountingRuleList.get(0).getAcctgrul_id())) {
+                accountingRuleList.get(0).preUpdate(tokenModel);
+                finAcctgRulMapper.delAcctgRulByFid(accountingRuleList.get(0).getModifyby(), accountingRuleList.get(0).getCrdlinfo_fid());
             } else {
                 return false;
             }
         }
 
-        //分录
-        if (existCheckAux(accountingRuleList.get(0).getAcctgrul_id())) {
-
-            accountingRuleList.get(0).preUpdate(tokenModel);
-            finAcctgRulMapper.delAcctgRulByFid(accountingRuleList.get(0).getModifyby(), accountingRuleList.get(0).getCrdlinfo_fid());
-        } else {
+        if(credentialInformation == null){
             return false;
-        }
-
+        }else{
         //凭证信息
         if (existCheckCdrl(credentialInformation)) {
             if (!uniqueCheckCdrl(credentialInformation)) {
@@ -98,6 +102,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
             }
         } else {
             return false;
+        }
         }
 
         return true;
