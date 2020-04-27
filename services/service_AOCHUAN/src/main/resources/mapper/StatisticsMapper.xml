@@ -4,7 +4,7 @@
 
     <select id="getVo" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.StatisticsVo">
             select
-            distinct v.APPLICANTER names,
+            distinct v.APPLICANTERID names,
 
             typ1.res thingleave,
 
