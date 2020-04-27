@@ -146,6 +146,18 @@ public class Contractnumbercount extends BaseModel {
      */
     @Column(name = "CLAIMDATETIME")
     private String claimdatetimeqh;
+
+    /**
+     * 资金回收状况
+     */
+    @Column(name = "RECOVERYSTATUS")
+    private String recoverystatus;
+
+    /**
+     * 回收日期
+     */
+    @Column(name = "RECOVERYDATE")
+    private Date recoverydate;
 //    ADD_FJL
 
 }
