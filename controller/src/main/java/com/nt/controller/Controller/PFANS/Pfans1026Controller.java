@@ -48,6 +48,16 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 
+    @RequestMapping(value="/getList",method = {RequestMethod.POST})
+    public ApiResult getList(@RequestBody List<Contractapplication> contractapplicationlist  ,HttpServletRequest request) throws Exception{
+        if(contractapplicationlist==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(contractapplicationService.getList(contractapplicationlist));
+    }
+
+
+
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody ContractapplicationVo contractapplication, HttpServletRequest request) throws Exception{
         if (contractapplication == null) {
