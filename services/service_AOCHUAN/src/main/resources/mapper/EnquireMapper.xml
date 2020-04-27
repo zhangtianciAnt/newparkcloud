@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.EnquiryMapper" >
     <insert id="insertEnquiryList" parameterType="java.util.List">
-        INSERT INTO enquiry (enquiry_id, quotations_id, supplier, supplierid, flag, amount, quotedprice, exchangerate, tariffrate, addtax, drawback, profitpoint, salesquotation, iso, process, antecedents, doc, productstatus,note,status,createon,createby,modifyon,modifyby,owner)
+        INSERT INTO enquiry (enquiry_id, quotations_id, supplier, supplierid, flag, amount, quotedprice, exchangerate, tariffrate, addtax, drawback, profitpoint, salesquotation, iso, process, antecedents, doc, productstatus,note,status,createon,createby,modifyon,modifyby,owner,counts)
         values
         <foreach item="item" collection="list" separator=",">
             (#{item.enquiry_id}, #{item.quotations_id}, #{item.supplier}, #{item.supplierid}, #{item.flag}, #{item.amount}, #{item.quotedprice},
             #{item.exchangerate}, #{item.tariffrate}, #{item.addtax}, #{item.drawback}, #{item.profitpoint}, #{item.salesquotation}, #{item.iso},
-            #{item.process}, #{item.antecedents}, #{item.doc}, #{item.productstatus}, #{item.note}, #{item.status}, #{item.createon}, #{item.createby}, #{item.modifyon}, #{item.modifyby}, #{item.owner})
+            #{item.process}, #{item.antecedents}, #{item.doc}, #{item.productstatus}, #{item.note}, #{item.status}, #{item.createon}, #{item.createby}, #{item.modifyon}, #{item.modifyby}, #{item.owner}, #{item.counts})
         </foreach>
     </insert>
 </mapper>
