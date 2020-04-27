@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000;
 
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
@@ -35,6 +36,7 @@ public interface CompanyProjectsService {
     //按id查询
     CompanyProjectsVo selectById(String companyprojectsid) throws Exception;
 
+    List<ProjectContract> selectAll() throws Exception;
     List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception;
 
     //现场管理list

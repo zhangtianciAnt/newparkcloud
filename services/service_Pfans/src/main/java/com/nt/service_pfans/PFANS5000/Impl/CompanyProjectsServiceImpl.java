@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class CompanyProjectsServiceImpl implements CompanyProjectsService {
+    @Override
+    public List<ProjectContract> selectAll() throws Exception {
+        return projectcontractMapper.selectAll();
+    }
 
     @Autowired
     private CompanyProjectsMapper companyprojectsMapper;

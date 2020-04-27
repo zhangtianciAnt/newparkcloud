@@ -59,6 +59,11 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.selectById(companyprojectsid));
     }
 
+    @RequestMapping(value = "/selectAll", method = {RequestMethod.GET})
+    public ApiResult selectAll(HttpServletRequest request) throws Exception {
+        return ApiResult.success(companyProjectsService.selectAll());
+    }
+
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult List(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
         if (companyProjects == null) {
