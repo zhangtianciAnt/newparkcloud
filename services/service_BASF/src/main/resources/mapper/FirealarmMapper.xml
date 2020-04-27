@@ -70,6 +70,8 @@ ORDER BY
         inner join dictionary
         on dictionary.code = firealarm.typacc
         where
+        firealarm.policetim is not null
+        and
 		firealarm.`STATUS` = 0
         order by firealarm.alarmtimes desc
     </select>
