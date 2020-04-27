@@ -51,6 +51,20 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
 
     /**
      * @param
+     * @Method
+     * @Author
+     * @Version 1.0
+     * @Description 获取危化品车数量
+     * @Return int
+     * @Date 2019/11/14 13：27
+     */
+    @Override
+    public int getcountinformation() throws Exception {
+        return vehicleinformationMapper.getcountinformation();
+    }
+
+    /**
+     * @param
      * @Method getlistinformation
      * @Author Wxz
      * @Version 1.0

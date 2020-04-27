@@ -21,6 +21,8 @@ public interface VehicleinformationServices {
     //获取车辆列表
     List<Vehicleinformation> list()throws Exception;
 
+    int getcountinformation() throws Exception;
+
     //获取车辆列表(危化品车辆数用)
     //Map<Integer,String> getlistinformation()throws Exception;
     List<VehicleinformationVo> getlistinformation()throws Exception;

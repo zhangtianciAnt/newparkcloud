@@ -92,6 +92,14 @@ ORDER BY
         AND YEAR ( intime )= YEAR (now())
     </select>
 
+    <select id="getcountinformation" resultType="Integer">
+        select count(0)
+        from vehicleinformation
+        where ishazardous='0'
+				and
+				outtime is null
+    </select>
+
     <!--    定时查询车辆（出场时间为空的数据）-->
     <select id="getQueryVehiclesRegularlyInfo" resultType="com.nt.dao_BASF.VO.VehicleinformationGpsArrVo">
         select *

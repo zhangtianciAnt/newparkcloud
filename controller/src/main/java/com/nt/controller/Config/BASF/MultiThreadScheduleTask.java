@@ -531,8 +531,16 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void BASF90800_GetVehicleinformationVolList() throws Exception {
-        //获取培训到期人员列表
+        //获取车辆列表(危化品车辆数用)
         webSocketVo.setDangerousgoodsList(vehicleinformationServices.getlistinformation());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90800_GetVehicleinformationCount() throws Exception {
+        //获取车辆列表(危化品车辆数用)
+        webSocketVo.setCountdangerousgoods(vehicleinformationServices.getcountinformation());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

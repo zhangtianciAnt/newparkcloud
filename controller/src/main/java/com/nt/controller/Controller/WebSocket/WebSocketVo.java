@@ -106,6 +106,8 @@ public class WebSocketVo {
     private List<Highriskarea> highriskareaList = new ArrayList<>();
     //获取危化品车辆列表
     private List<VehicleinformationVo> dangerousgoodsList = new ArrayList<>();
+    //获取危化品车辆数量
+    private Integer countdangerousgoods;
     // endregion
 
     //道路占用/临时封闭区域列表
