@@ -94,7 +94,7 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Override
     public void insert(Quotations quotations, TokenModel tokenModel) throws Exception {
-        String number = contractNumber.getContractNumber("XBD","quotations");
+        String number = contractNumber.getContractNumber("PT001001","quotations");
         quotations.setQuotationsno(number);
         quotations.setQuotations_id(UUID.randomUUID().toString());
         quotations.preInsert(tokenModel);
