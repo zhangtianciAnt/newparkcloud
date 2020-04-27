@@ -18,6 +18,7 @@ import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
@@ -70,7 +71,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception {
-        return expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor_id);
+        Expatriatesinfor infor = new Expatriatesinfor();
+        infor = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor_id);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(infor.getAccount()));
+        UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+        if (account != null) {
+            infor.setAccount(account.getAccount());
+        }
+        return infor;
     }
 
     @Override
