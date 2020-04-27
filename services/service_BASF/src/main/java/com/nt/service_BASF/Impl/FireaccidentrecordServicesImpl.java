@@ -8,6 +8,7 @@ import com.nt.service_BASF.FireaccidentrecordServices;
 import com.nt.service_BASF.mapper.FireaccidentrecordMapper;
 import com.nt.service_Org.DictionaryService;
 import com.nt.utils.ExcelOutPutUtil;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.jxlsUtil.JxlsConfig;
 import org.slf4j.Logger;
@@ -121,7 +122,7 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         data.put("command", command);
         data.put("casualties", commandrecord.getCasualties().getNumber());
         String imgname = null;
-        if (commandrecord.getGisimage() != null) {
+        if (commandrecord.getGisimage() != null&& StringUtils.isNotEmpty(commandrecord.getGisimage())) {
             byte[] a = DatatypeConverter.parseBase64Binary(commandrecord.getGisimage().split(",")[1]);
             String b = commandrecord.getGisimage().split(",")[1];
             imgname = BASE64CodeToBeImage(b, JxlsConfig.getImageRoot(), "png");
