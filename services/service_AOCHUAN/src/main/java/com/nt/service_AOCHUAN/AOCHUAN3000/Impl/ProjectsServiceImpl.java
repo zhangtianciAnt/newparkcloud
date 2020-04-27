@@ -2,6 +2,7 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Projects;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProAndFoll;
 import com.nt.service_AOCHUAN.AOCHUAN3000.ProjectsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.FollowUpRecordMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ProjectsMapper;
@@ -43,12 +44,12 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public List<FollowUpRecord> getForSupplier(String id) throws Exception {
+    public List<ProAndFoll> getForSupplier(String id) throws Exception {
         return followUpRecordMapper.getForSupplier(id);
     }
 
     @Override
-    public List<FollowUpRecord> getForCustomer(String id) throws Exception {
+    public List<ProAndFoll> getForCustomer(String id) throws Exception {
         return followUpRecordMapper.getForCustomer(id);
     }
 

@@ -1,9 +1,8 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuotationsAndEnquiry;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuoAndEnq;
 import com.nt.utils.dao.TokenModel;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface QuotationsService {
 
     Quotations getOne(String id) throws Exception;
 
-    List<QuotationsAndEnquiry> getForSupplier(String id) throws Exception;
+    List<QuoAndEnq> getForSupplier(String id) throws Exception;
 
     List<Quotations> getForCustomer(String id) throws Exception;
 

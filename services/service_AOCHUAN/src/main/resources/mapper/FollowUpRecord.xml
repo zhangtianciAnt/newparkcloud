@@ -39,39 +39,33 @@
         AND SUPPLIER_ID = #{supplier_id}
     </update>
 
-    <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
-        select
+    <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProAndFoll">
+       select
+        pro.PROJECTS_ID,
         fur.FOLLOWUPRECORD_ID,
         fur.PRODUCTS_ID,
         fur.PRODUCT_NM,
         fur.SUPPLIER_ID,
         fur.SUPPLIER,
-        fur.CUSTOMER_ID,
-        fur.SAL_CUSTOMER,
-        fur.SAL_DATE,
-        fur.SAL_EVENT,
-        fur.SAL_CONTENT,
-        fur.PROC_DATE,
-        fur.PROC_ANSWER
+        fur.CUSTOMER_ID
         from followuprecord as fur
-        where SUPPLIER_ID = #{id}
+        inner join projects as pro
+        on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
+        where fur.SUPPLIER_ID = #{id}
     </select>
 
-    <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
-        select
+    <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProAndFoll">
+         select
+        pro.PROJECTS_ID,
         fur.FOLLOWUPRECORD_ID,
         fur.PRODUCTS_ID,
         fur.PRODUCT_NM,
         fur.SUPPLIER_ID,
         fur.SUPPLIER,
-        fur.CUSTOMER_ID,
-        fur.SAL_CUSTOMER,
-        fur.SAL_DATE,
-        fur.SAL_EVENT,
-        fur.SAL_CONTENT,
-        fur.PROC_DATE,
-        fur.PROC_ANSWER
+        fur.CUSTOMER_ID
         from followuprecord as fur
-        where CUSTOMER_ID = #{id}
+        inner join projects as pro
+        on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
+        where fur.CUSTOMER_ID = #{id}
     </select>
 </mapper>

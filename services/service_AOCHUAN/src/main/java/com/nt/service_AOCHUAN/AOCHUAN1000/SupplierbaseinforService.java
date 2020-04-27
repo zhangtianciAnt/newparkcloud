@@ -14,9 +14,5 @@ public interface SupplierbaseinforService {
 
     void delete(String id) throws Exception;
 
-    /**
-     * 获取不在项目表中的供应商
-     * @return
-     */
     List<Supplierbaseinfor> getSuppliersExceptUnique() throws Exception;
 }

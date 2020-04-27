@@ -8,9 +8,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface SampleMapper extends MyMapper<Sample> {
-    @Select("select SAMPLEORDER,PRODUCTNAMECH,PRODUCTNAMEEN,AMOUNT,CUSTOMERNAME,TYPE from sample WHERE SUPPLIERBASEINFOR_ID = #{id}")
+    @Select("select SAMPLE_ID,SAMPLEORDER,PRODUCTNAMECH,PRODUCTNAMEEN,AMOUNT,CUSTOMERNAME,TYPE from sample WHERE SUPPLIERBASEINFOR_ID = #{id}")
     List<Sample> getForSupplier(@Param("id") String id);
 
-    @Select("select SAMPLEORDER,PRODUCTNAMECH,PRODUCTNAMEEN,AMOUNT,CUSTOMERNAME,TYPE from sample WHERE CUSTOMERBASEINFOR_ID = #{id}")
+    @Select("select SAMPLE_ID,SAMPLEORDER,PRODUCTNAMECH,PRODUCTNAMEEN,AMOUNT,CUSTOMERNAME,TYPE from sample WHERE CUSTOMERBASEINFOR_ID = #{id}")
     List<Sample> getForCustomer(@Param("id") String id);
 }
