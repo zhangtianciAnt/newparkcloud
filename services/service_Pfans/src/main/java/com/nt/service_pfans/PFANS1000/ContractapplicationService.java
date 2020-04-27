@@ -5,11 +5,14 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.utils.dao.TokenModel;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
+
+    List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) throws Exception;
 
     public void update(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception;
 

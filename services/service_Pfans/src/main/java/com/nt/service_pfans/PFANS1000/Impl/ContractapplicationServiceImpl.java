@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
@@ -25,7 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class ContractapplicationServiceImpl implements ContractapplicationService {
 
     @Autowired
@@ -50,7 +51,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private TokenService tokenService;
 
     @Override
-    public ContractapplicationVo get(Contractapplication contractapplication ) {
+    public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
         List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
@@ -59,7 +60,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         Contractnumbercount number = new Contractnumbercount();
         number.setContractnumber(contractapplication.getContractnumber());
         List<Contractnumbercount> numberList = contractnumbercountMapper.select(number);
-        if ( numberList!=null && numberList.size()>1 ) {
+        if (numberList != null && numberList.size() > 1) {
             numberList = numberList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
         }
         vo.setContractnumbercount(numberList);
@@ -67,11 +68,42 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         Contractcompound compound = new Contractcompound();
         compound.setContractnumber(contractapplication.getContractnumber());
         List<Contractcompound> compoundList = contractcompoundMapper.select(compound);
-        if ( compoundList!=null && compoundList.size()>1 ) {
+        if (compoundList != null && compoundList.size() > 1) {
             compoundList = compoundList.stream().sorted(Comparator.comparing(Contractcompound::getRowindex)).collect(Collectors.toList());
         }
         vo.setContractcompound(compoundList);
         return vo;
+    }
+
+    @Override
+    public List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) {
+        List<ContractapplicationVo> listvo = new ArrayList<ContractapplicationVo>();
+        for (Contractapplication listcontract : contractapplicationlist) {
+            ContractapplicationVo vo = new ContractapplicationVo();
+            Contractapplication contractapplication = new Contractapplication();
+            contractapplication.setContractnumber(listcontract.getContractnumber());
+            //契约番号申请
+            List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+            vo.setContractapplication(coList);
+            //契约番号回数
+            Contractnumbercount number = new Contractnumbercount();
+            number.setContractnumber(contractapplication.getContractnumber());
+            List<Contractnumbercount> numberList = contractnumbercountMapper.select(number);
+            if (numberList != null && numberList.size() > 1) {
+                numberList = numberList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+            }
+            vo.setContractnumbercount(numberList);
+            //契约番号回数
+            Contractcompound compound = new Contractcompound();
+            compound.setContractnumber(contractapplication.getContractnumber());
+            List<Contractcompound> compoundList = contractcompoundMapper.select(compound);
+            if (compoundList != null && compoundList.size() > 1) {
+                compoundList = compoundList.stream().sorted(Comparator.comparing(Contractcompound::getRowindex)).collect(Collectors.toList());
+            }
+            vo.setContractcompound(compoundList);
+            listvo.add(vo);
+        }
+        return listvo;
     }
 
     @Override
@@ -80,11 +112,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
-                if(!StringUtils.isNullOrEmpty(citation.getContractapplication_id())){
+                if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                }
-                else{
+                } else {
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
                     contractapplicationMapper.insert(citation);
@@ -98,11 +129,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
-                if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
+                if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
-                }
-                else{
+                } else {
                     number.preInsert(tokenModel);
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
@@ -113,7 +143,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractcompound> compoundList = contractapplication.getContractcompound();
         if (cnList != null) {
             int rowindex = 0;
-            if(compoundList != null){
+            if (compoundList != null) {
                 Contractcompound Co = new Contractcompound();
                 Co.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
                 contractcompoundMapper.delete(Co);
@@ -143,48 +173,48 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         if (coList != null) {
             for (Contractapplication contractapp : coList) {
                 //見積書作成
-                if(rowindex.equals("1")){
+                if (rowindex.equals("1")) {
                     //add-ws-获取出荷判定実施者
-                    String Loadingjudge="";
+                    String Loadingjudge = "";
                     for (Contractnumbercount number : countList) {
                         Loadingjudge = number.getLoadingjudge();
                         break;
                     }
                     //add-ws-获取出荷判定実施者
-                        Quotation quotation = new Quotation();
-                        quotation.preInsert(tokenModel);
-                        quotation.setQuotationid(UUID.randomUUID().toString());
-                        quotation.setContractnumber(contractnumber);
-                        //6
-                        quotation.setContracttype(contractapp.getContracttype());
-                        quotation.setContractnumber(contractapp.getContractnumber());
-                        quotation.setTrusteejapanese(contractapp.getCustojapanese());
-                        quotation.setTrusteechinese(contractapp.getCustochinese());
-                        quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
-                        quotation.setEntrustedchinese(contractapp.getPlacechinese());
-                        quotation.setDeployment(contractapp.getDeployment());
-                        quotation.setPjchinese(contractapp.getConchinese());
-                        quotation.setPjjapanese(contractapp.getConjapanese());
-                        quotation.setCurrencyposition(contractapp.getCurrencyposition());
-                        quotation.setClaimamount(contractapp.getClaimamount());
-                        quotation.setLoadingjudge(Loadingjudge);
+                    Quotation quotation = new Quotation();
+                    quotation.preInsert(tokenModel);
+                    quotation.setQuotationid(UUID.randomUUID().toString());
+                    quotation.setContractnumber(contractnumber);
+                    //6
+                    quotation.setContracttype(contractapp.getContracttype());
+                    quotation.setContractnumber(contractapp.getContractnumber());
+                    quotation.setTrusteejapanese(contractapp.getCustojapanese());
+                    quotation.setTrusteechinese(contractapp.getCustochinese());
+                    quotation.setEntrustedjapanese(contractapp.getPlacejapanese());
+                    quotation.setEntrustedchinese(contractapp.getPlacechinese());
+                    quotation.setDeployment(contractapp.getDeployment());
+                    quotation.setPjchinese(contractapp.getConchinese());
+                    quotation.setPjjapanese(contractapp.getConjapanese());
+                    quotation.setCurrencyposition(contractapp.getCurrencyposition());
+                    quotation.setClaimamount(contractapp.getClaimamount());
+                    quotation.setLoadingjudge(Loadingjudge);
 
-                        if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
-                            quotation.setStartdate(sdf.parse(startAndEnd[0]));
-                            quotation.setEnddate(sdf.parse(startAndEnd[1]));
-                        }
+                    if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
+                        quotation.setStartdate(sdf.parse(startAndEnd[0]));
+                        quotation.setEnddate(sdf.parse(startAndEnd[1]));
+                    }
 
-                        Quotation quotation2 = new Quotation();
-                        quotation2.setContractnumber(contractapp.getContractnumber());
+                    Quotation quotation2 = new Quotation();
+                    quotation2.setContractnumber(contractapp.getContractnumber());
 //                        quotation2.setOwner(tokenModel.getUserId());
-                        quotationMapper.delete(quotation2);
-                        quotationMapper.insert(quotation);
+                    quotationMapper.delete(quotation2);
+                    quotationMapper.insert(quotation);
 
                 }
                 //該非判定書作成
-                else if(rowindex.equals("2")){
+                else if (rowindex.equals("2")) {
                     NonJudgment nonJudgment = new NonJudgment();
                     nonJudgment.preInsert(tokenModel);
                     nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
@@ -211,7 +241,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     nonJudgmentMapper.insert(nonJudgment);
                 }
                 //契約書作成
-                else if(rowindex.equals("3")){
+                else if (rowindex.equals("3")) {
                     int numberSum = 0;
                     for (Contractnumbercount number : countList) {
                         numberSum += Integer.valueOf(number.getClaimamount());
@@ -236,8 +266,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
-                            contract.setOpeningdate(sdf.parse(startAndEnd[0]));
-                            contract.setEnddate(sdf.parse(startAndEnd[1]));
+                        contract.setOpeningdate(sdf.parse(startAndEnd[0]));
+                        contract.setEnddate(sdf.parse(startAndEnd[1]));
                     }
 
                     Contract contract2 = new Contract();
@@ -248,7 +278,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contractMapper.insert(contract);
                 }
                 //決裁書作成(受託)
-                else if(rowindex.equals("4")){
+                else if (rowindex.equals("4")) {
                     Award award = new Award();
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
@@ -281,7 +311,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     AwardMapper.insert(award);
                 }
                 //納品書作成
-                else if(rowindex.equals("5")){
+                else if (rowindex.equals("5")) {
                     Napalm napalm2 = new Napalm();
                     napalm2.setContractnumber(contractnumber);
 //                    napalm2.setOwner(tokenModel.getUserId());
@@ -322,8 +352,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                             String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
-                                napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
-                                napalm.setEnddate(sdf.parse(startAndEnd[1]));
+                            napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
+                            napalm.setEnddate(sdf.parse(startAndEnd[1]));
                         }
 
                         napalmMapper.insert(napalm);
@@ -334,7 +364,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     }
                 }
                 //請求書作成
-                else if(rowindex.equals("6")){
+                else if (rowindex.equals("6")) {
                     Petition petition2 = new Petition();
                     petition2.setContractnumber(contractnumber);
 //                    petition2.setOwner(tokenModel.getUserId());
@@ -377,7 +407,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     }
                 }
                 //決裁書作成(委託)
-                else if(rowindex.equals("7")){
+                else if (rowindex.equals("7")) {
                     Award award = new Award();
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
@@ -422,27 +452,26 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
-                if(!StringUtils.isNullOrEmpty(citation.getContractapplication_id())){
+                if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                }
-                else{
+                } else {
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
                     String contractnumber = citation.getContractnumber();
                     String[] str = contractnumber.split("-");
-                    if(str.length == 1){
+                    if (str.length == 1) {
                         //年、契約种类、部门、契约类型、
                         Contractapplication co = new Contractapplication();
                         co.setCareeryear(citation.getCareeryear());
                         co.setContracttype(citation.getContracttype());
                         co.setGroup_id(citation.getGroup_id());
                         co.setType(citation.getType());
-                        if(citation.getType().equals("0")){
+                        if (citation.getType().equals("0")) {
                             //取引先会社
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
-                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
@@ -451,10 +480,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 number = coListcount;
                             }
                             newcontractnumber = contractnumber + number;
-                        }
-                        else if(citation.getType().equals("1")){
+                        } else if (citation.getType().equals("1")) {
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
-                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "0001";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
@@ -465,11 +493,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 number = "0" + coListcount;
                             }
                             newcontractnumber = contractnumber + number;
-                        }
-                        else {
+                        } else {
                             //co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
-                            coList = coList.stream().filter(coi ->(!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
+                            coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if (coListcount.length() == 1) {
@@ -494,12 +521,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
-                if(!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())){
+                if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     number.setContractnumber(cnList.get(0).getContractnumber());
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
-                }
-                else{
+                } else {
                     number.preInsert(tokenModel);
                     number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
@@ -511,7 +537,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractcompound> compoundList = contractapplication.getContractcompound();
         if (cnList != null) {
             int rowindex = 0;
-            if(compoundList != null){
+            if (compoundList != null) {
                 Contractcompound Co = new Contractcompound();
                 Co.setContractnumber(cnList.get(0).getContractnumber());
                 contractcompoundMapper.delete(Co);
@@ -530,7 +556,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public ExistVo existCheck(String contractNumber) throws Exception{
+    public ExistVo existCheck(String contractNumber) throws Exception {
         ExistVo existVo = new ExistVo();
         existVo = contractapplicationMapper.existCheck(contractNumber);
         return existVo;
