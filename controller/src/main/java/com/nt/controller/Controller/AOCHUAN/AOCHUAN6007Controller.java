@@ -3,6 +3,7 @@ package com.nt.controller.Controller.AOCHUAN;
 
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Secrecy;
 import com.nt.service_AOCHUAN.AOCHUAN6000.SecrecyService;
+import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -21,6 +22,8 @@ public class AOCHUAN6007Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private ContractNumber contractNumber;
 
     @RequestMapping(value="/getList",method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request)throws  Exception{
@@ -65,6 +68,14 @@ public class AOCHUAN6007Controller {
         }
         secrecyService.delete(id);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getNumber",method={RequestMethod.GET})
+    public ApiResult getNumber( HttpServletRequest request) throws Exception {
+        String number = contractNumber.getContractNumber("PT001008","secrecy");
+        Secrecy secrecy=new Secrecy();
+        secrecy.setNo(number);
+        return ApiResult.success( secrecy);
     }
 
 }
