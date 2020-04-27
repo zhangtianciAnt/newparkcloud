@@ -252,7 +252,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 if (pro.getAdmissiontime() != null && pro.getType().equals("1")) {
 
                     String supplierinfor_id = "";
-                    String group_id = "";
                     if(pro.getName()  != null){
                         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
                         expatriatesinfor.setAccount(pro.getName());
@@ -260,14 +259,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                         if (expatriatesinforList != null) {
                             if (expatriatesinforList.size() > 0) {
                                 supplierinfor_id = expatriatesinforList.get(0).getSupplierinfor_id();
-                                group_id = expatriatesinforList.get(0).getGroup_id();
                             }
                         }
                     }
                     Delegainformation delegainformation = new Delegainformation();
                     delegainformation.preInsert(tokenModel);
-                    delegainformation.setSupplierinfor_id(supplierinfor_id);
-                    delegainformation.setGroup_id(group_id);
+//                    delegainformation.setSupplierinfor_id(supplierinfor_id);
+//                    delegainformation.setGroup_id(companyProjects.getGroup_id());
                     delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
                     delegainformation.setCompanyprojects_id(companyprojectsid);
                     delegainformation.setProjectsystem_id(pro.getProjectsystem_id());
@@ -1095,26 +1093,31 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                     }
                 }
                 //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
-                //外驻
-                String suppliernameid = projectsystem.getSuppliernameid();
-                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                expatriatesinfor.setExpatriatesinfor_id(suppliernameid);
-                List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
-                if (expatriatesinforList != null) {
-                    expatriatesinfor.setProject_name(companyProjects.getProject_name());
-                    expatriatesinfor.setManagerid(companyProjects.getManagerid());
-                    expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-                }
                 //活用情报
                 if (projectsystem.getAdmissiontime() != null && projectsystem.getType().equals("1")) {
+                    //外驻
+                    String supplierinfor_id = "";
+                    String suppliernameid = projectsystem.getName();
+                    Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                    expatriatesinfor.setAccount(suppliernameid);
+                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+                    if (expatriatesinforList != null) {
+                        supplierinfor_id = expatriatesinforList.get(0).getSupplierinfor_id();
+                        expatriatesinfor.setExpatriatesinfor_id(expatriatesinforList.get(0).getExpatriatesinfor_id());
+                        expatriatesinfor.setProject_name(companyProjects.getProject_name());
+                        expatriatesinfor.setManagerid(companyProjects.getManagerid());
+                        expatriatesinfor.preUpdate(tokenModel);
+                        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+                    }
                     Delegainformation delegainformation = new Delegainformation();
                     delegainformation.preInsert(tokenModel);
+                    delegainformation.setGroup_id(companyProjects.getGroup_id());
                     delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
                     delegainformation.setCompanyprojects_id(companyprojectsid);
                     delegainformation.setProjectsystem_id(projectsystem.getProjectsystem_id());
                     delegainformation.setAdmissiontime(projectsystem.getAdmissiontime());
                     delegainformation.setExittime(projectsystem.getExittime());
-                    delegainformation.setSupplierinfor_id(projectsystem.getSuppliernameid());
+                    delegainformation.setSupplierinfor_id(supplierinfor_id);
                     String admissiontimeMonth_s = DateUtil.format(delegainformation.getAdmissiontime(), "MM");
                     String exitimeMonth_s = DateUtil.format(delegainformation.getExittime(), "MM");
                     //入退场都不为空
