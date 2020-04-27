@@ -140,4 +140,9 @@ public class PublicExpense extends BaseModel {
 
     @Column(name = "INVOICENO")
     private String invoiceno;
+
+//add-ws-4/27-BS科目添加
+    @Column(name = "BSEXTERNAL")
+    private String bsexternal;
+//add-ws-4/27-BS科目添加
 }
