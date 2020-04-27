@@ -264,8 +264,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                     }
                     Delegainformation delegainformation = new Delegainformation();
                     delegainformation.preInsert(tokenModel);
-//                    delegainformation.setSupplierinfor_id(supplierinfor_id);
-//                    delegainformation.setGroup_id(companyProjects.getGroup_id());
+                    delegainformation.setSupplierinfor_id(supplierinfor_id);
+                    delegainformation.setGroup_id(companyProjects.getGroup_id());
                     delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
                     delegainformation.setCompanyprojects_id(companyprojectsid);
                     delegainformation.setProjectsystem_id(pro.getProjectsystem_id());
@@ -1102,8 +1102,10 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                     expatriatesinfor.setAccount(suppliernameid);
                     List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
                     if (expatriatesinforList != null) {
-                        supplierinfor_id = expatriatesinforList.get(0).getSupplierinfor_id();
-                        expatriatesinfor.setExpatriatesinfor_id(expatriatesinforList.get(0).getExpatriatesinfor_id());
+                        if(expatriatesinforList.size() >  0){
+                            supplierinfor_id = expatriatesinforList.get(0).getSupplierinfor_id();
+                            expatriatesinfor.setExpatriatesinfor_id(expatriatesinforList.get(0).getExpatriatesinfor_id());
+                        }
                         expatriatesinfor.setProject_name(companyProjects.getProject_name());
                         expatriatesinfor.setManagerid(companyProjects.getManagerid());
                         expatriatesinfor.preUpdate(tokenModel);
