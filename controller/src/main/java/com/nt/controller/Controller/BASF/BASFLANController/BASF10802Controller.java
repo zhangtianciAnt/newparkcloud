@@ -74,19 +74,21 @@ public class BASF10802Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Emergencyplan  emergencyplan = emergencyplanvo.getEmergencyplan();
 
-        String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken="+emergencyplanvo.getToken();
-        HttpHeaders headers = new HttpHeaders();
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        String path = emergencyplan.getUploadfile().split(",")[1];
-        map.add("dataArr", "[{\"type\":\"file\",\"path\":\""+path.substring(0,path.length()-1)+"\"}]");
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
-        ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.POST,requestEntity,String.class);
-        String value = rst.getBody();
-        JSONObject string_to_json = JSONUtil.parseObj(value);
-        Object data = string_to_json.get("data");
-        String downloadPath = ((JSONObject) data).getStr("downloadPath");
-        emergencyplan.setDownloadpath(downloadPath);
+        if (emergencyplan.getUploadfile() != null && !"".equals(emergencyplan.getUploadfile())) {
+            String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken=" + emergencyplanvo.getToken();
+            HttpHeaders headers = new HttpHeaders();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            String path = emergencyplan.getUploadfile().split(",")[1];
+            map.add("dataArr", "[{\"type\":\"file\",\"path\":\"" + path.substring(0, path.length() - 1) + "\"}]");
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
+            ResponseEntity<String> rst = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            String value = rst.getBody();
+            JSONObject string_to_json = JSONUtil.parseObj(value);
+            Object data = string_to_json.get("data");
+            String downloadPath = ((JSONObject) data).getStr("downloadPath");
+            emergencyplan.setDownloadpath(downloadPath);
+        }
         emergencyplanServices.insert(emergencyplan, tokenModel);
         return ApiResult.success();
     }
@@ -147,19 +149,22 @@ public class BASF10802Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Emergencyplan  emergencyplan = emergencyplanvo.getEmergencyplan();
 
-        String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken="+ emergencyplanvo.getToken();
-        HttpHeaders headers = new HttpHeaders();
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        String path = emergencyplan.getUploadfile().split(",")[1];
-        map.add("dataArr", "[{\"type\":\"file\",\"path\":\""+path.substring(0,path.length()-1)+"\"}]");
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
-        ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.POST,requestEntity,String.class);
-        String value = rst.getBody();
-        JSONObject string_to_json = JSONUtil.parseObj(value);
-        Object data = string_to_json.get("data");
-        String downloadPath = ((JSONObject) data).getStr("downloadPath");
-        emergencyplan.setDownloadpath(downloadPath);
+        if (emergencyplan.getUploadfile() != null && !"".equals(emergencyplan.getUploadfile())){
+
+            String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken="+ emergencyplanvo.getToken();
+            HttpHeaders headers = new HttpHeaders();
+            MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            String path = emergencyplan.getUploadfile().split(",")[1];
+            map.add("dataArr", "[{\"type\":\"file\",\"path\":\""+path.substring(0,path.length()-1)+"\"}]");
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
+            ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.POST,requestEntity,String.class);
+            String value = rst.getBody();
+            JSONObject string_to_json = JSONUtil.parseObj(value);
+            Object data = string_to_json.get("data");
+            String downloadPath = ((JSONObject) data).getStr("downloadPath");
+            emergencyplan.setDownloadpath(downloadPath);
+        }
 
         emergencyplanServices.update(emergencyplan, tokenModel);
         return ApiResult.success();
