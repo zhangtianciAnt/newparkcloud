@@ -139,6 +139,12 @@ public class Delegainformation extends BaseModel {
     @Column(name = "SUPPLIERINFOR_ID")
     private String supplierinfor_id;
 
+    /**
+     * GROUP_ID
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
 
 
 }

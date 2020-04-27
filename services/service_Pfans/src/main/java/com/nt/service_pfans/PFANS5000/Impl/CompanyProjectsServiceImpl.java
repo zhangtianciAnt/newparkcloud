@@ -250,8 +250,24 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
                 //活用情报
                 if (pro.getAdmissiontime() != null && pro.getType().equals("1")) {
+
+                    String supplierinfor_id = "";
+                    String group_id = "";
+                    if(pro.getName()  != null){
+                        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                        expatriatesinfor.setAccount(pro.getName());
+                        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+                        if (expatriatesinforList != null) {
+                            if (expatriatesinforList.size() > 0) {
+                                supplierinfor_id = expatriatesinforList.get(0).getSupplierinfor_id();
+                                group_id = expatriatesinforList.get(0).getGroup_id();
+                            }
+                        }
+                    }
                     Delegainformation delegainformation = new Delegainformation();
                     delegainformation.preInsert(tokenModel);
+                    delegainformation.setSupplierinfor_id(supplierinfor_id);
+                    delegainformation.setGroup_id(group_id);
                     delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
                     delegainformation.setCompanyprojects_id(companyprojectsid);
                     delegainformation.setProjectsystem_id(pro.getProjectsystem_id());
