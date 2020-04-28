@@ -215,4 +215,10 @@ public class DelegainformationVo {
      */
     @Column(name = "VENUETARGET")
     private String venuetarget;
+
+    /**
+     * GROUP_ID
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
 }

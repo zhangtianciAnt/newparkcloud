@@ -213,17 +213,17 @@ public class UserServiceImpl implements UserService {
                 flg1 = 1;
             }
             else {
-                throw new LogicalException("邮箱已重复");
+                throw new LogicalException("邮箱已存在！");
             }
 //add-ws-4/28-人员重复check
             Query queryname = new Query();
-            queryname.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
+            queryname.addCriteria(Criteria.where("userinfo.customername").is(userInfo.getCustomername()));
             List<CustomerInfo> qcname = mongoTemplate.find(queryname, CustomerInfo.class);
             if(qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())){
                 flg4 = 1;
             }
             else {
-                throw new LogicalException("人员已重复");
+                throw new LogicalException("人名已存在！");
             }
 //add-ws-4/28-人员重复check
 //个人编码重复check
