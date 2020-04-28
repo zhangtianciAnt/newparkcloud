@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
             }
 //add-ws-4/28-人员重复check
             Query queryname = new Query();
-            queryname.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
+            queryname.addCriteria(Criteria.where("userInfo.customername ").is(userInfo.getCustomername()));
             List<CustomerInfo> qcname = mongoTemplate.find(queryname, CustomerInfo.class);
             if(qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())){
                 flg4 = 1;
