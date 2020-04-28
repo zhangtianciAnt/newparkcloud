@@ -73,16 +73,18 @@ public class Pfans1012Controller {
                             tl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect(tl.getAccountcode().substring(0,5));
-                    for (Dictionary iteA : curListA) {
-                        if (iteA.getCode().equals(tl.getAccountcode())) {
-                            //科目名
-                            tl.setAccountcode(iteA.getValue1());
-                            //科目代码
+                    if(tl.getAccountcode().length() > 5){
+                        String traAccountcode = tl.getAccountcode().substring(0,5);
+                        List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                        for (Dictionary iteA : curListA) {
+                            if (iteA.getCode().equals(tl.getAccountcode())) {
+                                //科目名
+                                tl.setAccountcode(iteA.getValue1());
+                                //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                            }
                         }
                     }
-
                 }
             }
             //采购明细
@@ -96,40 +98,44 @@ public class Pfans1012Controller {
                             pl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect(pl.getAccountcode().substring(0,5));
-                    for (Dictionary iteA : curListA) {
-                        if (iteA.getCode().equals(pl.getAccountcode())) {
-                            //科目名
-                            pl.setAccountcode(iteA.getValue1());
-                            //科目代码
+                    if(pl.getAccountcode().length() > 5) {
+                        String purAccountcode = pl.getAccountcode().substring(0,5);
+                        List<Dictionary> curListA = dictionaryService.getForSelect(purAccountcode);
+                        for (Dictionary iteA : curListA) {
+                            if (iteA.getCode().equals(pl.getAccountcode())) {
+                                //科目名
+                                pl.setAccountcode(iteA.getValue1());
+                                //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                            }
                         }
                     }
-
                 }
             }
             //其他费用明细
             List<OtherDetails> othlist = pubvo.getOtherdetails();
             String tro = "";
-            if(othlist.size() > 0){
+            if(othlist.size() > 0) {
                 tro = "其他费用";
-                for(OtherDetails ol : othlist){
+                for (OtherDetails ol : othlist) {
                     List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                     for (Dictionary ite : curListT) {
                         if (ite.getCode().equals(ol.getBudgetcoding())) {
-                            ol.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
+                            ol.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect(ol.getAccountcode().substring(0,5));
-                    for (Dictionary iteA : curListA) {
-                        if (iteA.getCode().equals(ol.getAccountcode())) {
-                            //科目名
-                            ol.setAccountcode(iteA.getValue1());
-                            //科目代码
+                    if (ol.getAccountcode().length() > 5) {
+                        String othAccountcode = ol.getAccountcode().substring(0,5);
+                        List<Dictionary> curListA = dictionaryService.getForSelect(othAccountcode);
+                        for (Dictionary iteA : curListA) {
+                            if (iteA.getCode().equals(ol.getAccountcode())) {
+                                //科目名
+                                ol.setAccountcode(iteA.getValue1());
+                                //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                            }
                         }
                     }
-
                 }
             }
             String str = "";

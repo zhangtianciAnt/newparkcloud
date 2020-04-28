@@ -46,9 +46,9 @@ public class Pfans6007Controller {
     @RequestMapping(value = "/getPjnameList6007", method = {RequestMethod.POST})
     public ApiResult getPjnameList6007(@RequestBody Variousfunds variousfunds, HttpServletRequest request) throws Exception {
         String account = variousfunds.getBpplayer();
-        if (account == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
+//        if (account == null) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
         return ApiResult.success(companyProjectsService.getPjnameList6007(account));
     }
     @RequestMapping(value = "/listPsdcd", method = {RequestMethod.GET})

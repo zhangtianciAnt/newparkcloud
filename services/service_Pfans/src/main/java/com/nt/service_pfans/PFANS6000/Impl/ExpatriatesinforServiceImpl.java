@@ -18,6 +18,7 @@ import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
@@ -70,7 +71,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception {
-        return expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor_id);
+        Expatriatesinfor infor = new Expatriatesinfor();
+        infor = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor_id);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(infor.getAccount()));
+        UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+        if (account != null) {
+            infor.setAccount(account.getAccount());
+        }
+        return infor;
     }
 
     @Override
@@ -141,8 +150,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 userAccount.preInsert(tokenModel);
                 mongoTemplate.save(userAccount);
 
-                item.setAccount(userAccount.get_id());
-                expatriatesinforMapper.updateByPrimaryKeySelective(item);
+                Expatriatesinfor exp = new Expatriatesinfor();
+                exp.setExpatriatesinfor_id(item.getExpatriatesinfor_id());
+                List<Expatriatesinfor> explist = expatriatesinforMapper.select(exp);
+                if(explist.size()>0)
+                {
+                    explist.get(0).setAccountname(userAccount.getAccount());
+                    explist.get(0).setAccount(userAccount.get_id());
+                    expatriatesinforMapper.updateByPrimaryKeySelective(explist.get(0));
+                }
             }
         }
 
@@ -593,14 +609,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         String alltechnology = Convert.toStr(value.get(23));
                                         if(alltechnology!=null && !alltechnology.isEmpty())
                                         {
-                                            Dictionary dictionary =new Dictionary();
-                                            dictionary.setValue1(alltechnology.trim());
-                                            dictionary.setType("BP");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if(dictionaryList.size()>0)
-                                            {
-                                                expatriatesinfor.setAlltechnology(dictionaryList.get(0).getCode());
-                                            }
+                                            expatriatesinfor.setAlltechnology(alltechnology.trim());
+//                                            Dictionary dictionary =new Dictionary();
+//                                            dictionary.setValue1(alltechnology.trim());
+//                                            dictionary.setType("BP");
+//                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+//                                            if(dictionaryList.size()>0)
+//                                            {
+//                                                expatriatesinfor.setAlltechnology(dictionaryList.get(0).getCode());
+//                                            }
                                         }
                                     }
                                     if(value.size()>24)
@@ -638,14 +655,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         String countermeasure = Convert.toStr(value.get(26));
                                         if(countermeasure!=null && !countermeasure.isEmpty())
                                         {
-                                            Dictionary dictionary =new Dictionary();
-                                            dictionary.setValue1(countermeasure.trim());
-                                            dictionary.setType("BP");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if(dictionaryList.size()>0)
-                                            {
-                                                expatriatesinfor.setCountermeasure(dictionaryList.get(0).getCode());
-                                            }
+                                            expatriatesinfor.setCountermeasure(countermeasure.trim());
+//                                            Dictionary dictionary =new Dictionary();
+//                                            dictionary.setValue1(countermeasure.trim());
+//                                            dictionary.setType("BP");
+//                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+//                                            if(dictionaryList.size()>0)
+//                                            {
+//                                                expatriatesinfor.setCountermeasure(dictionaryList.get(0).getCode());
+//                                            }
                                         }
                                     }
                                 }
@@ -962,14 +980,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 String alltechnology = Convert.toStr(value.get(23));
                                                 if(alltechnology!=null && !alltechnology.isEmpty())
                                                 {
-                                                    Dictionary dictionary =new Dictionary();
-                                                    dictionary.setValue1(alltechnology.trim());
-                                                    dictionary.setType("BP");
-                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                    if(dictionaryList.size()>0)
-                                                    {
-                                                        expatriatesinforList.get(0).setAlltechnology(dictionaryList.get(0).getCode());
-                                                    }
+                                                    expatriatesinforList.get(0).setAlltechnology(alltechnology.trim());
+//                                                    Dictionary dictionary =new Dictionary();
+//                                                    dictionary.setValue1(alltechnology.trim());
+//                                                    dictionary.setType("BP");
+//                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+//                                                    if(dictionaryList.size()>0)
+//                                                    {
+//                                                        expatriatesinforList.get(0).setAlltechnology(dictionaryList.get(0).getCode());
+//                                                    }
                                                 }
                                             }
                                             break;
@@ -1013,14 +1032,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 String countermeasure = Convert.toStr(value.get(26));
                                                 if(countermeasure!=null && !countermeasure.isEmpty())
                                                 {
-                                                    Dictionary dictionary =new Dictionary();
-                                                    dictionary.setValue1(countermeasure.trim());
-                                                    dictionary.setType("BP");
-                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                    if(dictionaryList.size()>0)
-                                                    {
-                                                        expatriatesinforList.get(0).setCountermeasure(dictionaryList.get(0).getCode());
-                                                    }
+                                                    expatriatesinforList.get(0).setCountermeasure(countermeasure.trim());
+//                                                    Dictionary dictionary =new Dictionary();
+//                                                    dictionary.setValue1(countermeasure.trim());
+//                                                    dictionary.setType("BP");
+//                                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+//                                                    if(dictionaryList.size()>0)
+//                                                    {
+//                                                        expatriatesinforList.get(0).setCountermeasure(dictionaryList.get(0).getCode());
+//                                                    }
                                                 }
                                             }
                                             break;

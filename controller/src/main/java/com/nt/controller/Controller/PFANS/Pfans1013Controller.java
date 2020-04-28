@@ -60,15 +60,15 @@ public class Pfans1013Controller {
         List<Currencyexchange> curlist = evevo.getCurrencyexchanges();
         if(curlist.size() > 0){
             for(Currencyexchange ac : curlist){
-                if(!ac.getCurrency().equals("")){
-                    List<Dictionary> curListA = dictionaryService.getForSelect(ac.getCurrency().substring(0,5));
+//                if(!ac.getCurrency().equals("")){
+                    List<Dictionary> curListA = dictionaryService.getForSelect("PG019");
                     for (Dictionary iteA : curListA) {
                         if (iteA.getCode().equals(ac.getCurrency())) {
                             //币种
                             ac.setCurrency(iteA.getValue1());
                         }
                     }
-                }
+//                }
             }
         }
         //交通费的预算编码
@@ -91,8 +91,9 @@ public class Pfans1013Controller {
                         tl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                     }
                 }
-                if(!tl.getAccountcode().equals("")){
-                    List<Dictionary> curListA = dictionaryService.getForSelect(tl.getAccountcode().substring(0,5));
+                if(tl.getAccountcode().length() > 5){
+                    String traAccountcode = tl.getAccountcode().substring(0,5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
                     for (Dictionary iteA : curListA) {
                         if (iteA.getCode().equals(tl.getAccountcode())) {
                             //科目名
@@ -137,13 +138,16 @@ public class Pfans1013Controller {
                         ac.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                     }
                 }
-                List<Dictionary> curListA = dictionaryService.getForSelect(ac.getAccountcode().substring(0,5));
-                for (Dictionary iteA : curListA) {
-                    if (iteA.getCode().equals(ac.getAccountcode())) {
-                        //科目名
-                        ac.setAccountcode(iteA.getValue1());
-                        //科目代码
+                if(ac.getAccountcode().length() > 5){
+                    String accAccountcode = ac.getAccountcode().substring(0,5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(accAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(ac.getAccountcode())) {
+                            //科目名
+                            ac.setAccountcode(iteA.getValue1());
+                            //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                        }
                     }
                 }
 //                if(!ac.getCurrency().equals("")){

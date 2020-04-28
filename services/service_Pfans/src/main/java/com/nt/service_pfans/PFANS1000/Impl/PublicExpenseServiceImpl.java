@@ -270,27 +270,32 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
         int rowindex = 0;
         for (TotalCost insertInfo: csvList) {
-            rowindex = rowindex + 1;
-            insertInfo.preInsert(tokenModel);
-            insertInfo.setTotalcost_id(UUID.randomUUID().toString());
-            insertInfo.setPublicexpenseid(publicexpenseid);
-            insertInfo.setNumber(rowindex);
-            //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
-            insertInfo.setInvoicedate(date);
-            insertInfo.setConditiondate(date);
-            if(publicExpenseVo.getPublicexpense().getPayeecode()!=""){
-                insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getPayeecode());//供应商编号
+            if(insertInfo.getLineamount().equals("0")) {
+                continue;
             }else{
-                insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getCode());//个人编号
-            }
-            insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
-            //发票说明
-            if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
-                insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
-            }
+                rowindex = rowindex + 1;
+                insertInfo.preInsert(tokenModel);
+                insertInfo.setTotalcost_id(UUID.randomUUID().toString());
+                insertInfo.setPublicexpenseid(publicexpenseid);
+                insertInfo.setNumber(rowindex);
+                //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
+                insertInfo.setInvoicedate(date);
+                insertInfo.setConditiondate(date);
+                if(publicExpenseVo.getPublicexpense().getPayeecode()!=""){
+                    insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getPayeecode());//供应商编号
+                }else{
+                    insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getCode());//个人编号
+                }
+                insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
+                //发票说明
+                if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
+                    insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+                }
 
-            insertInfo.setInvoicenumber(invoiceNo);
-            totalCostMapper.insertSelective(insertInfo);
+                insertInfo.setInvoicenumber(invoiceNo);
+
+                totalCostMapper.insertSelective(insertInfo);
+            }
         }
     }
 

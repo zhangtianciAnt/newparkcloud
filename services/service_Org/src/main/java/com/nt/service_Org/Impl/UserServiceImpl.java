@@ -204,6 +204,7 @@ public class UserServiceImpl implements UserService {
             int flg1 = 0;
             int flg2 = 0;
             int flg3 = 0;
+            int flg4 = 0;
 //邮箱重复check
             Query queryEmail = new Query();
             queryEmail.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
@@ -212,9 +213,19 @@ public class UserServiceImpl implements UserService {
                 flg1 = 1;
             }
             else {
-                throw new LogicalException("邮箱已重复");
+                throw new LogicalException("邮箱已存在！");
             }
-
+//add-ws-4/28-人员重复check
+            Query queryname = new Query();
+            queryname.addCriteria(Criteria.where("userinfo.customername").is(userInfo.getCustomername()));
+            List<CustomerInfo> qcname = mongoTemplate.find(queryname, CustomerInfo.class);
+            if(qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())){
+                flg4 = 1;
+            }
+            else {
+                throw new LogicalException("人名已存在！");
+            }
+//add-ws-4/28-人员重复check
 //个人编码重复check
             Query queryCode = new Query();
             queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
@@ -236,7 +247,7 @@ public class UserServiceImpl implements UserService {
             else {
                 throw new LogicalException("个人编码重复");
             }
-            if(flg1 == 1 && flg2 == 1 && flg3 == 1){
+            if(flg1 == 1 && flg2 == 1 && flg3 == 1&& flg4 == 1){
                 customerInfo.setUserid(_id);
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);

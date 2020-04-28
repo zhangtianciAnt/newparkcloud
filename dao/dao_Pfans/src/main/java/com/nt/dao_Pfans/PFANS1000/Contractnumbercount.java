@@ -103,4 +103,61 @@ public class Contractnumbercount extends BaseModel {
      */
     @Column(name = "COMPANYPROJECTSID")
     private String companyprojectsid;
+
+//    ADD_FJL
+    /**
+     * 备考
+     */
+    @Column(name = "REMARKS")
+    private String remarksqh;
+
+    /**
+     * 请求书特殊备考
+     */
+    @Column(name = "QINGREMARKS")
+    private String qingremarksqh;
+
+    /**
+     * 请求推进状况_对象
+     */
+    @Column(name = "CLAIM")
+    private String claimqh;
+
+    /**
+     * 请求推进状况_状况
+     */
+    @Column(name = "CLAIMCONDITION")
+    private String claimconditionqh;
+
+    /**
+     * 纳品推进状况_对象
+     */
+    @Column(name = "DELIVERY")
+    private String deliveryqh;
+
+    /**
+     * 纳品推进状况_状况
+     */
+    @Column(name = "DELIVERYCONDITION")
+    private String deliveryconditionqh;
+
+    /**
+     * 請求期间
+     */
+    @Column(name = "CLAIMDATETIME")
+    private String claimdatetimeqh;
+
+    /**
+     * 资金回收状况
+     */
+    @Column(name = "RECOVERYSTATUS")
+    private String recoverystatus;
+
+    /**
+     * 回收日期
+     */
+    @Column(name = "RECOVERYDATE")
+    private Date recoverydate;
+//    ADD_FJL
+
 }
