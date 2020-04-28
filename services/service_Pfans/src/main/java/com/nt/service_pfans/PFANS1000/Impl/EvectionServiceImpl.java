@@ -234,23 +234,28 @@ public class EvectionServiceImpl implements EvectionService {
 
         int rowindex = 0;
         for (TravelCost insertInfo : csvList) {
-            rowindex = rowindex + 1;
-            insertInfo.preInsert(tokenModel);
-            insertInfo.setTravelcost_id(UUID.randomUUID().toString());
-            insertInfo.setEvectionid(evectionid);
-            insertInfo.setNumber(rowindex);
-            //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
-            insertInfo.setInvoicedate(date);
-            insertInfo.setConditiondate(date);
-            insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
-            insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
-            //发票说明
-            if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
-                insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+            if(insertInfo.getLineamount().equals("0")) {
+                continue;
+            }else {
+                rowindex = rowindex + 1;
+                insertInfo.preInsert(tokenModel);
+                insertInfo.setTravelcost_id(UUID.randomUUID().toString());
+                insertInfo.setEvectionid(evectionid);
+                insertInfo.setNumber(rowindex);
+                //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
+                insertInfo.setInvoicedate(date);
+                insertInfo.setConditiondate(date);
+                insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
+                insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
+                //发票说明
+                if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
+                    insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+                }
+
+                insertInfo.setInvoicenumber(invoiceNo);
+                travelcostmapper.insertSelective(insertInfo);
             }
 
-            insertInfo.setInvoicenumber(invoiceNo);
-            travelcostmapper.insertSelective(insertInfo);
         }
     }
 

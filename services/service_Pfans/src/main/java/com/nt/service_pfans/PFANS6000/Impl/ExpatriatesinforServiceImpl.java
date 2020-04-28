@@ -149,9 +149,16 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 userAccount.setRoles(rolss);
                 userAccount.preInsert(tokenModel);
                 mongoTemplate.save(userAccount);
-                item.setAccountname(userAccount.getAccount());
-                item.setAccount(userAccount.get_id());
-                expatriatesinforMapper.updateByPrimaryKeySelective(item);
+
+                Expatriatesinfor exp = new Expatriatesinfor();
+                exp.setExpatriatesinfor_id(item.getExpatriatesinfor_id());
+                List<Expatriatesinfor> explist = expatriatesinforMapper.select(exp);
+                if(explist.size()>0)
+                {
+                    explist.get(0).setAccountname(userAccount.getAccount());
+                    explist.get(0).setAccount(userAccount.get_id());
+                    expatriatesinforMapper.updateByPrimaryKeySelective(explist.get(0));
+                }
             }
         }
 
