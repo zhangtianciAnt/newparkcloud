@@ -65,6 +65,13 @@ public class AOCHUAN6004Controller {
         }
     }
 
-
+    @RequestMapping(value = "/getByUserId",method={RequestMethod.GET})
+    public ApiResult getByUserId(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (!StringUtils.isNotBlank(id)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(attendanceService.getByUserId(id));
+    }
 
 }

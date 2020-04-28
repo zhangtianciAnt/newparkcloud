@@ -15,6 +15,7 @@ public interface AttendancesService {
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
+    List<Attendance> getByUserId(String userId) throws Exception;
 
 
 

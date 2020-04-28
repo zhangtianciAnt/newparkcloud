@@ -20,10 +20,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -144,5 +141,17 @@ public class AttendancesServiceImpl implements AttendancesService {
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<Attendance> getByUserId(String userId) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM");
+        Date now = new Date();
+        String nowMons = sdf.format(now);
+        Calendar date=Calendar.getInstance();
+        date.setTime(now);
+        date.set(Calendar.MONTH, date.get(Calendar.MONTH)-1);
+        String lastMons = sdf.format(date.getTime());
+        return attendanceMapper.getByUserId(userId,nowMons,lastMons);
     }
 }
