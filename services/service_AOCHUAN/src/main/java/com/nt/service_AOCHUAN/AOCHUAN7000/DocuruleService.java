@@ -33,4 +33,7 @@ public interface DocuruleService {
 
     List<All> selectrule(String docurule_id) throws  Exception;
 
+    //删除
+    Boolean delete(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception;
+
 }
