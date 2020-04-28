@@ -24,6 +24,11 @@ public class PublicExpense extends BaseModel {
     @Column(name = "USER_ID")
     private String user_id;
 
+    //add-ws-4/28-报销人添加
+    @Column(name = "USER_NAME")
+    private String user_name;
+    //add-ws-4/28-报销人添加
+
     @Column(name = "CENTER_ID")
     private String centerid;
 
