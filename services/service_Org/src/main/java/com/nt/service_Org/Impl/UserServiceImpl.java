@@ -289,8 +289,9 @@ public class UserServiceImpl implements UserService {
 //            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
 //                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
 //        }
+        //根据登陆用户id查看人员信息
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
-        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
+        if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
                 && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())){
             query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
