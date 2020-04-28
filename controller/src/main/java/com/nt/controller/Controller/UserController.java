@@ -199,8 +199,7 @@ public class UserController {
     public ApiResult importUser( HttpServletRequest request) throws Exception {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            CustomerInfo info = new CustomerInfo();
-            return ApiResult.success(userService.importUser(request));
+            return ApiResult.success(userService.importUser(request, tokenModel));
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
