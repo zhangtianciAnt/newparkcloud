@@ -47,6 +47,15 @@ public class Pfans5008Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/deleteLog", method = {RequestMethod.POST})
+    public ApiResult deleteLog(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        logmanagementService.delete(logmanagement);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/getListcheck", method = {RequestMethod.POST})
     public ApiResult getListcheck(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {

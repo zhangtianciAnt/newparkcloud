@@ -49,6 +49,11 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 public class LogManagementServiceImpl implements LogManagementService {
 
+    @Override
+    public void delete(LogManagement logmanagement) throws Exception {
+        logmanagementmapper.delete(logmanagement);
+    }
+
     @Autowired
     private LogManagementMapper logmanagementmapper;
 
