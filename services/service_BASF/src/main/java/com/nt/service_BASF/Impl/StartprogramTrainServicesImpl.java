@@ -45,7 +45,14 @@ public class StartprogramTrainServicesImpl implements StartprogramTrainServices 
             String departmentid = list.get(i).getDepartmentid();
             orglist = orgTreeService.getById(orgTree);
             String name =getDepartmentname(orglist,departmentid);
-            startprogramTrainVo.setDepartment(name);
+            if(name != null && name.length() !=0)
+            {
+                startprogramTrainVo.setDepartment(name);
+            }
+            else
+            {
+                continue;
+            }
             startprogramTrainVo.setThroughtype(type);
             infoList.add(startprogramTrainVo);
         }
@@ -71,7 +78,14 @@ public class StartprogramTrainServicesImpl implements StartprogramTrainServices 
             String departmentid = list.get(i).getDepartmentid();
             orglist = orgTreeService.getById(orgTree);
             String name =getDepartmentname(orglist,departmentid);
-            startprogramTrainVo.setDepartment(name);
+            if(name != null && name.length() !=0)
+            {
+                startprogramTrainVo.setDepartment(name);
+            }
+            else
+            {
+                continue;
+            }
             startprogramTrainVo.setThroughtype(type);
             infoList.add(startprogramTrainVo);
         }

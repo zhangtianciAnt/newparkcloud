@@ -115,7 +115,10 @@
 
         WHERE trainjoinlist.departmentid IS NOT NULL
         AND trainjoinlist.departmentid &lt;> ''
+        AND trainjoinlist.jointype ='正常'
+
         GROUP BY trainjoinlist.departmentid
+        ORDER BY trainjoinlist.departmentid
     </select>
 
     <!--    获取部门名和通过状态（强制）-->
@@ -134,7 +137,10 @@
         WHERE trainjoinlist.departmentid IS NOT NULL
         AND trainjoinlist.departmentid &lt;> ''
         AND trainjoinlist.throughtype ='通过'
+        AND trainjoinlist.jointype ='正常'
+
         GROUP BY trainjoinlist.departmentid
+        ORDER BY trainjoinlist.departmentid
     </select>
 
     <!--    获取部门名和所有通过状态(非强制)-->
@@ -152,7 +158,10 @@
 
         WHERE trainjoinlist.departmentid IS NOT NULL
         AND trainjoinlist.departmentid &lt;> ''
+        AND trainjoinlist.jointype ='正常'
+
         GROUP BY trainjoinlist.departmentid
+        ORDER BY trainjoinlist.departmentid
     </select>
 
     <!--    获取部门名和通过状态（非强制）-->
@@ -171,6 +180,9 @@
         WHERE trainjoinlist.departmentid IS NOT NULL
         AND trainjoinlist.departmentid &lt;> ''
         AND trainjoinlist.throughtype ='通过'
+        AND trainjoinlist.jointype ='正常'
+
         GROUP BY trainjoinlist.departmentid
+        ORDER BY trainjoinlist.departmentid
     </select>
 </mapper>
