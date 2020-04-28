@@ -7,6 +7,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
+import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.*;
 import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.AllMapper;
 import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.CreruleMapper;
 import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.DocuruleMapper;
@@ -34,6 +35,16 @@ public class DocuruleServiceImpl  implements DocuruleService {
 
     @Autowired
     private AllMapper allMapper;
+
+    @Autowired
+    private VoucherRulesMapper voucherRuiesMapper;
+
+    @Autowired
+    private EntryRulesMapper entryRulesMapper;
+
+    @Autowired
+    private AuxiliaryAccountingItemsMapper auxiliaryAccountingItemsMapper;
+
 
     @Override
     public List<Docurule> get(Docurule docurule) throws Exception {
@@ -93,25 +104,21 @@ public class DocuruleServiceImpl  implements DocuruleService {
        List<Crerule> crerules=docuruleVo.getCrerules();
        helpruleMapper.delete(help1);
       List<Helprule> helprules=docuruleVo.getHelprules();
+        String[] crerulesid = new String[crerules.size()];
         if (crerules != null) {
             int rowundex = 0;
-            for (Crerule crerule : crerules) {
+            for (int i =0 ; i< crerules.size() ; i++) {
                 String id = UUID.randomUUID().toString();
                 rowundex = rowundex + 1;
-                crerule.preInsert(tokenModel);
-                crerule.setCrerule_id(id);
-                crerule.setDocurule_fid(docuid);
-                creruleMapper.insertSelective(crerule);
-        if (helprules != null) {
-            for (Helprule helprule : helprules) {
-                rowundex = rowundex + 1;
-                helprule.preInsert(tokenModel);
-                helprule.setHelprule_id(UUID.randomUUID().toString());
-                helprule.setCrerule_wid(docuid);
-                helprule.setCrerule_fid(id);
-                helpruleMapper.insertSelective(helprule);
-            }
-        }
+                //crerule.preInsert(tokenModel);
+                crerules.get(i).setCrerule_id(id);
+                crerules.get(i).setDocurule_fid(docuid);
+                creruleMapper.insertSelective(crerules.get(i));
+                helprules.get(i).setHelprule_id(UUID.randomUUID().toString());
+                helprules.get(i).setCrerule_wid(docuid);
+                helprules.get(i).setCrerule_fid(id);
+                helpruleMapper.insertSelective(helprules.get(i));
+                //crerulesid[i] = id;
             }
         }
 
@@ -135,6 +142,7 @@ public class DocuruleServiceImpl  implements DocuruleService {
                 crulelist.get(i).setCrerule_id(UUID.randomUUID().toString());
                 helpruleList.get(i).setCrerule_fid(crulelist.get(i).getCrerule_id());
                 helpruleList.get(i).setHelprule_id(UUID.randomUUID().toString());
+                helpruleList.get(i).setCrerule_wid(docuruleid);
                 crulelist.get(i).setDocurule_fid(docuruleid);
                 helpruleMapper.insertSelective(helpruleList.get(i));
                 creruleMapper.insertSelective(crulelist.get(i));
@@ -146,7 +154,51 @@ public class DocuruleServiceImpl  implements DocuruleService {
     @Override
     public void delCrerule(String helprule_id) throws Exception {
 
-        helpruleMapper.delCrerule(helprule_id);
+    }
+
+//    @Override
+//    public void delCrerule(String helprule_id) throws Exception {
+//
+//        helpruleMapper.delCrerule(helprule_id);
+//    }
+
+    //删除
+    @Override
+    public Boolean delete(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
+
+        Docurule docurule  = docuruleVo.getDocurule();
+
+        List<Crerule> crerules = docuruleVo.getCrerules();
+
+        List<Helprule> helprules = docuruleVo.getHelprules() ;
+
+        //凭证规则
+        voucherRuiesMapper.delDocuruleid(docurule.getModifyby(), docurule.getDocurule_id());
+
+        if(crerules.isEmpty()){
+
+        }else{
+
+        //分录规则
+        for (Crerule item : crerules) {
+            if (existCheckAcc(item.getDocurule_fid())) {
+                item.preUpdate(tokenModel);
+                entryRulesMapper.delCreruleid(item.getModifyby(), item.getDocurule_fid());
+            }
+        }
+        }
+
+        if(helprules.isEmpty()){
+        }else{
+            //辅助核算项目
+            for (Helprule item : helprules) {
+                if (existCheckAch(item.getCrerule_wid())) {
+                    item.preUpdate(tokenModel);
+                    auxiliaryAccountingItemsMapper.delHelpruleid(item.getModifyby(), item.getCrerule_wid());
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -159,11 +211,27 @@ public class DocuruleServiceImpl  implements DocuruleService {
         return allMapper.selectrule(docurule_id);
     }
 
+    public Boolean existCheckAux(String id) throws Exception {
+        int count = voucherRuiesMapper.existCheckAux(id);
+        if (count == 0) {
+            return false;
+        }
+        return true;
+    }
 
+    public Boolean existCheckAcc(String id) throws Exception {
+        int count = entryRulesMapper.existCheckAcc(id);
+        if (count == 0) {
+            return false;
+        }
+        return true;
+    }
 
-
-
-
-
-
+    public Boolean existCheckAch(String id) throws Exception {
+        int count = auxiliaryAccountingItemsMapper.existCheckAch(id);
+        if (count == 0) {
+            return false;
+        }
+        return true;
+    }
 }
