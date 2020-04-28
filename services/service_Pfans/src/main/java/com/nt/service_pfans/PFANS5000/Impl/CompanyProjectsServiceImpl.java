@@ -85,15 +85,18 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public List<CompanyProjects> getPjnameList6007(String account) throws Exception {
         List<CompanyProjects> companyProjectList = new ArrayList<CompanyProjects>();
-        List<Projectsystem> projectsystemList = new ArrayList<Projectsystem>();
-        Projectsystem projectsystem = new Projectsystem();
-        projectsystem.setName(account);
-        projectsystemList = projectsystemMapper.select(projectsystem);
-        for (int i = 0; i < projectsystemList.size(); i++)
+        if(account!= null && !account.isEmpty())
         {
-            CompanyProjects companyProjects = new CompanyProjects();
-            companyProjects.setCompanyprojects_id(projectsystemList.get(i).getCompanyprojects_id());
-            companyProjectList.add(companyprojectsMapper.selectByPrimaryKey(companyProjects));
+            List<Projectsystem> projectsystemList = new ArrayList<Projectsystem>();
+            Projectsystem projectsystem = new Projectsystem();
+            projectsystem.setName(account);
+            projectsystemList = projectsystemMapper.select(projectsystem);
+            for (int i = 0; i < projectsystemList.size(); i++)
+            {
+                CompanyProjects companyProjects = new CompanyProjects();
+                companyProjects.setCompanyprojects_id(projectsystemList.get(i).getCompanyprojects_id());
+                companyProjectList.add(companyprojectsMapper.selectByPrimaryKey(companyProjects));
+            }
         }
         return companyProjectList;
     }
