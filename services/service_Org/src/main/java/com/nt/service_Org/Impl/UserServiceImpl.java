@@ -1039,27 +1039,27 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                     }
                     //养老保险基数
                     if (value.get(36) != null) {
-                        userinfo.setYanglaoinsurance(value.get(37).toString());
+                        userinfo.setYanglaoinsurance(value.get(36).toString());
                     }
                     //医疗保险基数
                     if (value.get(37) != null) {
-                        userinfo.setYiliaoinsurance(value.get(38).toString());
+                        userinfo.setYiliaoinsurance(value.get(37).toString());
                     }
                     //失业保险基数
                     if (value.get(38) != null) {
-                        userinfo.setShiyeinsurance(value.get(39).toString());
+                        userinfo.setShiyeinsurance(value.get(38).toString());
                     }
                     //工伤保险基数
                     if (value.get(39) != null) {
-                        userinfo.setGongshanginsurance(value.get(40).toString());
+                        userinfo.setGongshanginsurance(value.get(39).toString());
                     }
                     //生育保险基数
                     if (value.get(40) != null) {
-                        userinfo.setShengyuinsurance(value.get(41).toString());
+                        userinfo.setShengyuinsurance(value.get(40).toString());
                     }
                     //住房公积金缴纳基数
                     if (value.get(41) != null) {
-                        userinfo.setHouseinsurance(value.get(42).toString());
+                        userinfo.setHouseinsurance(value.get(41).toString());
                     }
                 }
                 UserVo uservo = new UserVo();
@@ -1140,7 +1140,7 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
 //                                            customerInfoList.get(0).getUserinfo().setTeamname(Convert.toStr(value.get(5)));
                                         break;
                                     case 5:
-                                        customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(value.get(6)));
+                                        customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(value.get(5)));
                                         break;
                                     case 6:
                                         String post = value.get(6).toString();
