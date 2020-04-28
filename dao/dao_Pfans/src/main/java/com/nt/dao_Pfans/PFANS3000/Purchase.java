@@ -220,5 +220,11 @@ public class Purchase  extends BaseModel {
      */
     @Column(name = "REFUSEREASON")
     private String refusereason;
-
+//add-ws-4/28-采购编号添加
+    /**
+     * 采购编号
+     */
+    @Column(name = "PURNUMBERS")
+    private String purnumbers;
+    //add-ws-4/28-采购编号添加
 }
