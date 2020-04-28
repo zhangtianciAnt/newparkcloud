@@ -28,14 +28,14 @@
     </select>
 
     <!--  delete  -->
-    <update id="delAcctgRul">
+    <update id="delAcctgRulByFid">
         UPDATE acctgrul
 		SET STATUS = '1',
 		MODIFYBY = #{modifyby},
 		MODIFYON = now()
 		WHERE CRDLINFO_FID = #{crdlinfo_fid}
     </update>
-    <update id="delAuxAcctg">
+    <update id="delAuxAcctgByFid">
         UPDATE auxacctg
 		SET STATUS = '1',
 		MODIFYBY = #{modifyby},

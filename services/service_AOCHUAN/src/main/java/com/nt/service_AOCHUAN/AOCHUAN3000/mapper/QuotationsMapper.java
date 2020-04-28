@@ -17,7 +17,7 @@ public interface QuotationsMapper extends MyMapper<Quotations> {
     @Select("select qu.quotations_id,qu.quotationsno,qu.productch,qu.producten,qu.account,qu.type,en.quotedprice,en.salesquotation,qu.quote from quotations as qu inner join enquiry as en on qu.QUOTATIONS_ID = en.quotations_id where en.supplierid = #{id}")
     List<QuoAndEnq> getForSupplier(@Param("id") String id);
 
-    @Select("select QUOTATIONS_ID,QUOTATIONSNO,PRODUCTCH,PRODUCTEN,ACCOUNT,QUOTE,TYPE from quotations WHERE ACCOUNTID = #{id}")
+    @Select("select * from quotations WHERE ACCOUNTID = #{id}")
     List<Quotations> getForCustomer(@Param("id") String id);
 
 }

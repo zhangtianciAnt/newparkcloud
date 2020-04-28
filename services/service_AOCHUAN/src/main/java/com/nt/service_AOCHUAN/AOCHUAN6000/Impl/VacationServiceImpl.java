@@ -2,6 +2,7 @@ package com.nt.service_AOCHUAN.AOCHUAN6000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vacation;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.StatisticsVo;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.VacationService;
@@ -53,5 +54,11 @@ public class VacationServiceImpl implements VacationService {
         vacationMapper.updateByPrimaryKey(vacation);
 
 
+    }
+
+    @Override
+    public List<StatisticsVo> getVo() throws Exception {
+
+        return vacationMapper.getVo();
     }
 }

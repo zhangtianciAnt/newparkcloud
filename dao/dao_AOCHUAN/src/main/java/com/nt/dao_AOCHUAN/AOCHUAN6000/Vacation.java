@@ -33,6 +33,9 @@ public class Vacation extends BaseModel {
     @Column(name = "APPLICANTER")
     private String applicanter;
 
+    @Column(name = "APPLICANTERID")
+    private String applicanterid;
+
 
     @Column(name = "APPLICATIONTIM")
     private Date applicationtim;

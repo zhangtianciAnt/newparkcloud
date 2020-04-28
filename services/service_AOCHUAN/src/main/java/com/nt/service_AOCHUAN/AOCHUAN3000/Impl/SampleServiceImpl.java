@@ -5,6 +5,7 @@ import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.SampleService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SampleMapper;
+import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.dao.TokenModel;
@@ -22,6 +23,9 @@ public class SampleServiceImpl implements SampleService {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private ContractNumber contractNumber;
 
     @Autowired
     private RoleService roleService;
@@ -59,6 +63,8 @@ public class SampleServiceImpl implements SampleService {
     @Override
     public void insert(Sample sample, TokenModel tokenModel) throws Exception {
         sample.setSample_id(UUID.randomUUID().toString());
+        String number = contractNumber.getContractNumber("PT001009","sample");
+        sample.setSampleorder(number);
         sample.preInsert(tokenModel);
         if(sample.isNotice()){
             ToDoNotice(tokenModel,sample);

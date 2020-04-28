@@ -67,6 +67,14 @@ public class AOCHUAN6003Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value="/getTJ",method = {RequestMethod.GET})
+    public ApiResult getTJ(HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+
+        return ApiResult.success(vacationService.getVo());
+
+    }
+
 
 
 
