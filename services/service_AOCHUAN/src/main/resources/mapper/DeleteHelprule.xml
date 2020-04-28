@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN7000.mapper.AuxiliaryAccountingItemsMapper">
+
+    <!--  delete  -->
+
+    <update id="delHelpruleid">
+        UPDATE helprule
+		SET STATUS = '1',
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		WHERE CRERULE_WID = #{crerule_wid}
+    </update>
+
+    <!--  ??Check  -->
+    <select id="existCheckAch" resultType="int">
+        SELECT COUNT(*) FROM helprule WHERE CRERULE_WID = #{id} AND  STATUS != '1'
+    </select>
+
+</mapper>
