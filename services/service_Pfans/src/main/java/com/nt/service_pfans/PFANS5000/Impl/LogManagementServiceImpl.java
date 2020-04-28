@@ -93,7 +93,9 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
     @Override
     public List<LogManagement> getCheckList(LogManagement logmanagement) throws Exception {
-        return logmanagementmapper.select(logmanagement);
+        LogManagement logmanage = new LogManagement();
+        logmanage.setCreateby(logmanagement.getCreateby());
+        return logmanagementmapper.select(logmanage);
     }
     @Override
     public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception{
