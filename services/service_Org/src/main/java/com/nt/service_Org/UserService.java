@@ -84,5 +84,5 @@ public interface UserService {
 
     List<CustomerInfo> getAllCustomerInfo();
 
-    List<String> importUser(HttpServletRequest request) throws Exception ;
+    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 }

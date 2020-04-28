@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/award")
@@ -109,11 +109,60 @@ public class Pfans1025Controller {
             //add-ztc-判断字段值进行赋值
         }
         //add-ws-只有委托决裁的情况下进行赋值判断
+        //20200427 add by ztc format data start
+        //請求日
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat str = new SimpleDateFormat("dd/MM/yyyy");
+        Date tem_date = null;
+        String str_format = "";
+        str_format = str.format(av.getAward().getDraftingdate());
+        data.put("draftingdate", str_format);
+        str_format = str.format(av.getAward().getScheduleddate());
+        data.put("scheduleddate", str_format);
+        //請求金額
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        BigDecimal bd = new BigDecimal(av.getAward().getClaimamount());
+        str_format = df.format(bd);
+        data.put("claimamo", str_format);
+        if (av.getAward().getSarmb() != null) {
+            bd = new BigDecimal(av.getAward().getSarmb());
+            str_format = df.format(bd);
+            av.getAward().setSarmb(str_format);
+        }
+
+        if (av.getAward().getMaketype().equals("4")) {
+            bd = new BigDecimal(av.getAward().getCommission());
+            str_format = df.format(bd);
+            av.getAward().setCommission(str_format);
+        }
+        if (av.getAward().getTotal() != null) {
+            bd = new BigDecimal(av.getAward().getTotal());
+            str_format = df.format(bd);
+            av.getAward().setTotal(str_format);
+        }
+        for (int h = 0; h < nu.getNumbercounts().size(); h++) {
+            bd = new BigDecimal(nu.getNumbercounts().get(h).getClaimamount());
+            str_format = df.format(bd);
+            nu.getNumbercounts().get(h).setClaimamount(str_format);
+        }
+        for (int k = 0; k < av.getAwardDetail().size(); k++) {
+            bd = new BigDecimal(av.getAwardDetail().get(k).getAwardmoney());
+            str_format = df.format(bd);
+            av.getAwardDetail().get(k).setAwardmoney(str_format);
+        }
+        //20200427 add by ztc format data end
         data.put("aw",av.getAward());
         data.put("alist",av.getAwardDetail());
         data.put("num",nu.getNumbercounts());
         data.put("sta",av.getStaffDetail());
         if(aa.length > 0){
+            //20200427 add by ztc format date start
+            str_format = aa[0];
+            tem_date = sdf.parse(str_format);
+            aa[0] = str.format(tem_date);
+            str_format = aa[1];
+            tem_date = sdf.parse(str_format);
+            aa[1] = str.format(tem_date);
             data.put("statime",aa);
         } else {
             data.put("statime","");

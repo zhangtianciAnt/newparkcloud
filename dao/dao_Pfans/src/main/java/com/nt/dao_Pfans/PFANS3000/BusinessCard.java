@@ -46,6 +46,24 @@ public class BusinessCard extends BaseModel {
     private String ecenter;
 
     /**
+     * 部门(中)
+     */
+    @Column(name = "DCENTER")
+    private String dcenter;
+
+    /**
+     * 中心全称（中文）
+     */
+    @Column(name = "BCENTER")
+    private String bcenter;
+
+    /**
+     * 中心全称（英文）
+     */
+    @Column(name = "ACENTER")
+    private String acenter;
+
+    /**
      * 所属グループID
      */
     @Column(name = "CENTER_ID")

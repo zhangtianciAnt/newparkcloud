@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +77,34 @@ public class pfans1031Controller {
             }
         }
         Map<String, Object> data = new HashMap<>();
+        //20200427 add by ztc format data start
+        //請求日
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat str = new SimpleDateFormat("dd/MM/yyyy");
+        Date tem_date = null;
+        String str_format = "";
+        str_format = str.format(na.getDeliverydate());
+        data.put("deliverydate", str_format);
+        str_format = str.format(na.getDeliveryfinshdate());
+        data.put("deliveryfinshdate", str_format);
+        str_format = str.format(na.getCompletiondate());
+        data.put("completiondate", str_format);
+        //請求金額
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        BigDecimal bd = new BigDecimal(na.getClaimamount());
+        str_format = df.format(bd);
+        na.setClaimamount(str_format);
+        //20200427 add by ztc format data end
         data.put("na",na);
         if(nn.length > 0){
+            //20200427 add by ztc format date start
+            str_format = nn[0];
+            tem_date = sdf.parse(str_format);
+            nn[0] = str.format(tem_date);
+            str_format = nn[1];
+            tem_date = sdf.parse(str_format);
+            nn[1] = str.format(tem_date);
+            //20200427 add by ztc format date end
             data.put("statime",nn);
         } else {
             data.put("statime","");
