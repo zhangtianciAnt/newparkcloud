@@ -149,7 +149,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 userAccount.setRoles(rolss);
                 userAccount.preInsert(tokenModel);
                 mongoTemplate.save(userAccount);
-
+                item.setAccountname(userAccount.getAccount());
                 item.setAccount(userAccount.get_id());
                 expatriatesinforMapper.updateByPrimaryKeySelective(item);
             }
