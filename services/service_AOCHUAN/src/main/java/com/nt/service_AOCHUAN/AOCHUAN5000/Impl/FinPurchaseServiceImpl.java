@@ -49,6 +49,7 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
     public void update(FinPurchase finPurchase, TokenModel tokenModel) throws Exception {
 
         finPurchase.preUpdate(tokenModel);
+        System.out.println(finPurchase);
         finPurchaseMapper.updateByPrimaryKeySelective(finPurchase);
     }
 
@@ -74,12 +75,12 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
         return true;
     }
 
-    //更新
+    //更新走货
     @Override
     public void updateTransportGood(FinPurchase finPurchase, TokenModel tokenModel) throws Exception {
 
         finPurchase.preUpdate(tokenModel);
-        finPurchaseMapper.updateTransportGood(finPurchase.getAp_date(),finPurchase.getModifyby(),finPurchase.getTransportgood_id());
+        finPurchaseMapper.updateTransportGood(finPurchase.getAp_date(),finPurchase.getPaymentstatus(), finPurchase.getModifyby(),finPurchase.getTransportgood_id());
     }
 
     //生成代办

@@ -74,6 +74,7 @@ public class AOCHUAN5001Controller {
             //唯一性Check
             if(! finSalesService.uniqueCheck(finSales)) {
                 finSalesService.update(finSales, tokenService.getToken(request));
+                finSalesService.updateTransportGood(finSales,tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
@@ -193,6 +194,7 @@ public class AOCHUAN5001Controller {
             accountingRule.setCredit(item.getCredit());
             accountingRule.setTaxrate(item.getCrerate());
             accountingRule.setAmount(finSales.getSalesamount());
+            System.out.println(finSales.getSalesamount());
             //辅助项目
             accountingRule.setBankaccount_code(item.getBankaccountid());
             accountingRule.setDept_code(item.getDepartid());

@@ -16,5 +16,5 @@ public interface FinPurchaseMapper extends MyMapper<FinPurchase> {
     public List<FinPurchase> uniqueCheck(@Param("id") String id,@Param("contractnumber") String contractnumber);
 
     //更新走货表
-    void updateTransportGood(@Param("ap_date") Date ap_date,@Param("modifyby") String modifyby,@Param("id") String id);
+    void updateTransportGood(@Param("ap_date") Date ap_date,@Param("paymentstatus") String paymentstatus,@Param("modifyby") String modifyby,@Param("id") String id);
 }

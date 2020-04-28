@@ -128,5 +128,7 @@ public class TransportGood extends BaseModel {
 
     private int type;
 
+    private Date ap_date;
+
 
 }

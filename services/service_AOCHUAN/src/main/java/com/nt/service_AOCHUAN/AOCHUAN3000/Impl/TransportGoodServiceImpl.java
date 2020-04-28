@@ -84,6 +84,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void insertHK(FinSales finSales, TokenModel token) {
         finSales.setSales_id(UUID.randomUUID().toString());
         finSales.preInsert();
+        finSales.setArrival_status("0");
+        finSales.setCredential_status("0");
         finSalesMapper.insert(finSales);
     }
 }

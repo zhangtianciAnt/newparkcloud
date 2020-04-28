@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.Impl;
 
+import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.Totalmoney;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
@@ -56,5 +57,13 @@ public class FinSalesServiceImpl implements FinSalesService {
     @Override
     public List<Totalmoney> getHK() throws Exception {
         return finSalesMapper.getHK();
+    }
+
+    //更新走货
+    @Override
+    public void updateTransportGood(FinSales finSales, TokenModel tokenModel) throws Exception {
+
+        finSales.preUpdate(tokenModel);
+        finSalesMapper.updateTransportGood(finSales.getArrivaltime(),finSales.getModifyby(),finSales.getTransportgood_id());
     }
 }
