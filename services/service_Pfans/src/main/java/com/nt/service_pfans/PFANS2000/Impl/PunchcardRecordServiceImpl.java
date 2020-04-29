@@ -327,9 +327,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             Query query_userid = new Query();
             List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
             for (CustomerInfo customerInfo : customerInfoList) {
-//                if(customerInfo.getUserid().equals("5e78b22b4e3b194874180f5b") || customerInfo.getUserid().equals("5e78b2004e3b194874180e21")
-//                || customerInfo.getUserid().equals("5e78b22c4e3b194874180f5f") || customerInfo.getUserid().equals("5e78b2034e3b194874180e37")
-//                || customerInfo.getUserid().equals("5e78b20a4e3b194874180e6b") || customerInfo.getUserid().equals("5e78b2504e3b194874181067")){
+                //if(customerInfo.getUserid().equals("5e78b2004e3b194874180e21")){
 
                     TokenModel tokenModel = new TokenModel();
 
@@ -389,9 +387,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if(attendancelist.size() > 0){
                 for (Attendance ad : attendancelist)
                 {
-//                    if(ad.getUser_id().equals("5e78b22b4e3b194874180f5b") || ad.getUser_id().equals("5e78b2004e3b194874180e21")
-//                                || ad.getUser_id().equals("5e78b22c4e3b194874180f5f") || ad.getUser_id().equals("5e78b2034e3b194874180e37")
-//                                || ad.getUser_id().equals("5e78b20a4e3b194874180e6b") || ad.getUser_id().equals("5e78b2504e3b194874181067")){
+                    //if(ad.getUser_id().equals("5e78b2004e3b194874180e21")){
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
@@ -767,26 +763,21 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                             }
                                             else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
-
-                                                if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
-                                                    if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                        strlengthtime = df.format(Double.valueOf(workinghours));
-                                                    } else {
-                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getNursingleave())));
+                                                if (ab.getStatus().equals("7"))
+                                                {
+                                                    if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
+                                                        if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                            strlengthtime = df.format(Double.valueOf(workinghours));
+                                                        } else {
+                                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getNursingleave())));
+                                                        }
                                                     }
+                                                    ad.setNursingleave(strlengthtime);
                                                 }
-                                                ad.setNursingleave(strlengthtime);
                                             }
-                                            else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013016")
-                                                    || ab.getErrortype().equals("PR013018") || ab.getErrortype().equals("PR013019")
-                                                    || ab.getErrortype().equals("PR013011") || ab.getErrortype().equals("PR013015")
-                                                    || ab.getErrortype().equals("PR013004") || ab.getErrortype().equals("PR013017")
-                                                    || ab.getErrortype().equals("PR013020")) {
-                                                //福利假期
-                                                //家长会假//妊娠檢查休暇
-                                                // 労災休暇//其他休暇
-                                                //婚假 //丧假
-                                                //流产假 //计划生育手术假//工伤
+                                            else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013018")
+                                                    || ab.getErrortype().equals("PR013019") || ab.getErrortype().equals("PR013020")) {
+                                                //家长会假// 労災休暇//其他休暇//工伤
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                     if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -800,13 +791,36 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                 }
                                             }
-                                            else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
-                                                if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
-                                                    ad.setWelfare(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
-                                                }
-                                                else
+                                            else if (ab.getErrortype().equals("PR013011") || ab.getErrortype().equals("PR013015")
+                                                    || ab.getErrortype().equals("PR013016") || ab.getErrortype().equals("PR013017")
+                                                    || ab.getErrortype().equals("PR013021")) {
+                                                //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假
+                                                if (ab.getStatus().equals("7"))
                                                 {
-                                                    ad.setWelfare(df.format(Double.valueOf(strlengthtime)));
+                                                    if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
+                                                        if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                            strlengthtime = df.format(Double.valueOf(workinghours));
+                                                        } else {
+                                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
+                                                        }
+                                                    }
+                                                    if (Double.valueOf(strlengthtime) % (Double.valueOf(lateearlyleave)) == 0) {
+                                                        ad.setWelfare(strlengthtime);
+                                                    } else {
+                                                        ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                    }
+                                                }
+                                            }
+                                            else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
+                                                if (ab.getStatus().equals("7"))
+                                                {
+                                                    if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
+                                                        ad.setWelfare(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
+                                                    }
+                                                    else
+                                                    {
+                                                        ad.setWelfare(df.format(Double.valueOf(strlengthtime)));
+                                                    }
                                                 }
                                             }
                                         }
@@ -1450,25 +1464,22 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                         else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
                                             //産休（女）//産休看護休暇（男）
-                                            if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
-                                                if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                    strlengthtime = df.format(Double.valueOf(workinghours));
-                                                } else {
-                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getNursingleave())));
+                                            if (ab.getStatus().equals("7"))
+                                            {
+                                                if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
+                                                    if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getNursingleave())));
+                                                    }
                                                 }
+                                                ad.setNursingleave(strlengthtime);
                                             }
-                                            ad.setNursingleave(strlengthtime);
                                         }
-                                        else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013016")
-                                                || ab.getErrortype().equals("PR013018") || ab.getErrortype().equals("PR013019")
-                                                || ab.getErrortype().equals("PR013011") || ab.getErrortype().equals("PR013015")
-                                                || ab.getErrortype().equals("PR013004") || ab.getErrortype().equals("PR013017")
-                                                || ab.getErrortype().equals("PR013020")) {
-                                            //福利假期
-                                            //家长会假//妊娠檢查休暇
-                                            //労災休暇//其他休暇
-                                            //婚假 //丧假
-                                            //流产假 //计划生育手术假//工伤
+                                        else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013018")
+                                                || ab.getErrortype().equals("PR013019") || ab.getErrortype().equals("PR013020")) {
+                                            //家长会假// 労災休暇//其他休暇//工伤
+
                                             if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                 if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                     strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1482,13 +1493,36 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                             }
                                         }
-                                        else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
-                                            if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
-                                                ad.setWelfare(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
-                                            }
-                                            else
+                                        else if (ab.getErrortype().equals("PR013011") || ab.getErrortype().equals("PR013015")
+                                                || ab.getErrortype().equals("PR013016") || ab.getErrortype().equals("PR013017")
+                                                || ab.getErrortype().equals("PR013021")) {
+                                            //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假
+                                            if (ab.getStatus().equals("7"))
                                             {
-                                                ad.setWelfare(df.format(Double.valueOf(strlengthtime)));
+                                                if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
+                                                    if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
+                                                    }
+                                                }
+                                                if (Double.valueOf(strlengthtime) % (Double.valueOf(lateearlyleave)) == 0) {
+                                                    ad.setWelfare(strlengthtime);
+                                                } else {
+                                                    ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                }
+                                            }
+                                        }
+                                        else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
+                                            if (ab.getStatus().equals("7"))
+                                            {
+                                                if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
+                                                    ad.setWelfare(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
+                                                }
+                                                else
+                                                {
+                                                    ad.setWelfare(df.format(Double.valueOf(strlengthtime)));
+                                                }
                                             }
                                         }
                                     }
@@ -1595,7 +1629,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                             //---------查询昨天大打卡记录end-------
                         }
-                    //}
+                   // }
                             //---------不定时考勤人员(非不定时考勤人员才计算)end-------
                 }
                         //}

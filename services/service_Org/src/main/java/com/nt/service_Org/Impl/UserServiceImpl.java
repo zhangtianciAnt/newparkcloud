@@ -761,6 +761,8 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
         int error = 0;
         if (resultInsUpd) {
             for (int i = 1; i < list.size(); i++) {
+                List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
+                CustomerInfo.Personal personal = new CustomerInfo.Personal();
                 CustomerInfo customerInfo = new CustomerInfo();
                 UserAccount ust = new UserAccount();
                 CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
@@ -999,43 +1001,23 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                     }
                     //変更前基本工资
                     if (value.get(31) != null) {
-                        List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                        CustomerInfo.Personal personal = new CustomerInfo.Personal();
                         personal.setAfter(value.get(31).toString());
-                        cupList.add(personal);
-                        userinfo.setGridData(cupList);
                     }
                     //変更前职责工资
                     if (value.get(32) != null) {
-                        List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                        CustomerInfo.Personal personal = new CustomerInfo.Personal();
                         personal.setBefore(value.get(32).toString());
-                        cupList.add(personal);
-                        userinfo.setGridData(cupList);
                     }
                     //现基本工资
                     if (value.get(33) != null) {
-                        List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                        CustomerInfo.Personal personal = new CustomerInfo.Personal();
                         personal.setBasic(value.get(33).toString());
-                        cupList.add(personal);
-                        userinfo.setGridData(cupList);
                     }
                     //现职责工资
                     if (value.get(34) != null) {
-                        List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                        CustomerInfo.Personal personal = new CustomerInfo.Personal();
                         personal.setDuty(value.get(34).toString());
-                        cupList.add(personal);
-                        userinfo.setGridData(cupList);
                     }
                     //給料変更日
                     if (value.get(35) != null) {
-                        List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                        CustomerInfo.Personal personal = new CustomerInfo.Personal();
                         personal.setDate(value.get(35).toString());
-                        cupList.add(personal);
-                        userinfo.setGridData(cupList);
                     }
                     //养老保险基数
                     if (value.get(36) != null) {
@@ -1062,6 +1044,14 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         userinfo.setHouseinsurance(value.get(41).toString());
                     }
                 }
+                cupList.add(personal);
+                //如果有工资履历变更，給料変更日不能为空
+                if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
+                        !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
+                        StringUtils.isNullOrEmpty(personal.getDate())) {
+                    throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "的 給料変更日 未填写");
+                }
+                userinfo.setGridData(cupList);
                 customerInfo.setUserinfo(userinfo);
                 customerInfo.setType("1");
                 customerInfo.setStatus("0");
@@ -1105,17 +1095,17 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                                     case 0:
                                         break;
                                     case 1:
-                                        String customername = Convert.toStr(value.get(1));
-                                        if(!(customername.equals(customerInfoList.get(0).getUserinfo().getCustomername())))
-                                        {
-                                            customerInfoList.get(0).getUserinfo().setCustomername(Convert.toStr(value.get(1)));
-                                            query = new Query();
-                                            query.addCriteria(Criteria.where("userinfo.customername").is(customerInfoList.get(0).getUserinfo().getCustomername()));
-                                            List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
-                                            customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
-                                            if(customerInfoLists.size()>0)
-                                            {
-                                                throw new LogicalException("卡号（"+ Convert.toStr(value.get(0)) +"）"  + "对应的 姓名 在人员表中已存在，请确认。");
+                                        if (value.get(1) != null) {
+                                            String customername = Convert.toStr(value.get(1));
+                                            if (!(customername.equals(customerInfoList.get(0).getUserinfo().getCustomername()))) {
+                                                customerInfoList.get(0).getUserinfo().setCustomername(Convert.toStr(value.get(1)));
+                                                query = new Query();
+                                                query.addCriteria(Criteria.where("userinfo.customername").is(customerInfoList.get(0).getUserinfo().getCustomername()));
+                                                List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
+                                                customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
+                                                if (customerInfoLists.size() > 0) {
+                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在，请确认。");
+                                                }
                                             }
                                         }
                                         break;
@@ -1129,222 +1119,293 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
 //                                            customerInfoList.get(0).getUserinfo().setTeamname(Convert.toStr(value.get(5)));
                                         break;
                                     case 5:
-                                        customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(value.get(5)));
+                                        if (value.get(5) != null) {
+                                            customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(value.get(5)));
+                                        }
                                         break;
                                     case 6:
-                                        String post = value.get(6).toString();
-                                        if (post != null) {
-                                            Dictionary dictionary = new Dictionary();
-                                            dictionary.setValue1(post.trim());
-                                            dictionary.setType("CW");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if (dictionaryList.size() > 0) {
-                                                customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
+                                        if (value.get(6) != null) {
+                                            String post = value.get(6).toString();
+                                            if (post != null) {
+                                                Dictionary dictionary = new Dictionary();
+                                                dictionary.setValue1(post.trim());
+                                                dictionary.setType("CW");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if (dictionaryList.size() > 0) {
+                                                    customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
+                                                }
                                             }
                                         }
                                         break;
                                     case 7:
-                                        String rank = value.get(7).toString();
-                                        if (rank != null) {
-                                            Dictionary dictionary = new Dictionary();
-                                            dictionary.setValue1(rank.trim());
-                                            dictionary.setType("RS");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if (dictionaryList.size() > 0) {
-                                                customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
+                                        if (value.get(7) != null) {
+                                            String rank = value.get(7).toString();
+                                            if (rank != null) {
+                                                Dictionary dictionary = new Dictionary();
+                                                dictionary.setValue1(rank.trim());
+                                                dictionary.setType("RS");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if (dictionaryList.size() > 0) {
+                                                    customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
+                                                }
                                             }
                                         }
                                         break;
                                     case 8:
-                                        String sex = value.get(8).toString();
-                                        if (sex != null) {
-                                            Dictionary dictionary = new Dictionary();
-                                            dictionary.setValue1(sex.trim());
-                                            dictionary.setType("GT");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if (dictionaryList.size() > 0) {
-                                                customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
+                                        if (value.get(8) != null) {
+                                            String sex = value.get(8).toString();
+                                            if (sex != null) {
+                                                Dictionary dictionary = new Dictionary();
+                                                dictionary.setValue1(sex.trim());
+                                                dictionary.setType("GT");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if (dictionaryList.size() > 0) {
+                                                    customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
+                                                }
                                             }
                                         }
                                         break;
                                     case 9:
-                                        String budgetunit = value.get(9).toString();
-                                        if (budgetunit != null) {
-                                            Dictionary dictionary = new Dictionary();
-                                            dictionary.setValue1(budgetunit.trim());
-                                            dictionary.setType("JY");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if (dictionaryList.size() > 0) {
-                                                customerInfoList.get(0).getUserinfo().setBudgetunit(dictionaryList.get(0).getCode());
+                                        if (value.get(9) != null) {
+                                            String budgetunit = value.get(9).toString();
+                                            if (budgetunit != null) {
+                                                Dictionary dictionary = new Dictionary();
+                                                dictionary.setValue1(budgetunit.trim());
+                                                dictionary.setType("JY");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if (dictionaryList.size() > 0) {
+                                                    customerInfoList.get(0).getUserinfo().setBudgetunit(dictionaryList.get(0).getCode());
+                                                }
                                             }
                                         }
                                         break;
                                     case 10:
-                                        customerInfoList.get(0).getUserinfo().setBirthday(value.get(10).toString());
+                                        if (value.get(10) != null) {
+                                            customerInfoList.get(0).getUserinfo().setBirthday(value.get(10).toString());
+                                        }
                                         break;
                                     case 11:
-                                        customerInfoList.get(0).getUserinfo().setAdfield(value.get(11).toString());
-                                        query = new Query();
-                                        query.addCriteria(Criteria.where("userinfo.adfield").is( customerInfoList.get(0).getUserinfo().getAdfield()));
-                                        List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
-                                        customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
-                                        if (customerInfoLists.size() > 0) {
-                                            throw new LogicalException("AD域账号（" + value.get(11).toString() + "）" + "在人员表中已存在，请勿重复填写。");
-                                        } else
-                                        {
-                                            userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
-                                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
-                                            userAccount.setUsertype("0");
+                                        if (value.get(11) != null) {
+                                            customerInfoList.get(0).getUserinfo().setAdfield(value.get(11).toString());
                                             query = new Query();
-                                            query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                                            query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-                                            query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                                            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                                            if(userAccountlist.size()>0)
-                                            {
-                                                throw new LogicalException("卡号（"+ Convert.toStr(value.get(0)) +"）"  + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                            query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
+                                            List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
+                                            customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
+                                            if (customerInfoLists.size() > 0) {
+                                                throw new LogicalException("AD域账号（" + value.get(11).toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                                            } else {
+                                                userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
+                                                userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                                                userAccount.setUsertype("0");
+                                                query = new Query();
+                                                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                                                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                                if (userAccountlist.size() > 0) {
+                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                                }
                                             }
                                         }
                                         break;
                                     case 12:
-                                        customerInfoList.get(0).getUserinfo().setNationality(value.get(12).toString());
+                                        if (value.get(12) != null) {
+                                            customerInfoList.get(0).getUserinfo().setNationality(value.get(12).toString());
+                                        }
                                         break;
                                     case 13:
-                                        customerInfoList.get(0).getUserinfo().setNation(value.get(13).toString());
+                                        if (value.get(13) != null) {
+                                            customerInfoList.get(0).getUserinfo().setNation(value.get(13).toString());
+                                        }
                                         break;
                                     case 14:
-                                        customerInfoList.get(0).getUserinfo().setRegister(value.get(14).toString());
+                                        if (value.get(14) != null) {
+                                            customerInfoList.get(0).getUserinfo().setRegister(value.get(14).toString());
+                                        }
                                         break;
                                     case 15:
-                                        customerInfoList.get(0).getUserinfo().setAddress(value.get(15).toString());
+                                        if (value.get(15) != null) {
+                                            customerInfoList.get(0).getUserinfo().setAddress(value.get(15).toString());
+                                        }
                                         break;
                                     case 16:
-                                        customerInfoList.get(0).getUserinfo().setGraduation(value.get(16).toString());
+                                        if (value.get(16) != null) {
+                                            customerInfoList.get(0).getUserinfo().setGraduation(value.get(16).toString());
+                                        }
                                         break;
                                     case 17:
-                                        customerInfoList.get(0).getUserinfo().setSpecialty(value.get(17).toString());
+                                        if (value.get(17) != null) {
+                                            customerInfoList.get(0).getUserinfo().setSpecialty(value.get(17).toString());
+                                        }
                                         break;
                                     case 18:
-                                        String experience = value.get(18).toString();
-                                        if (experience != null) {
-                                            if (experience.equals("是")) {
-                                                customerInfoList.get(0).getUserinfo().setExperience("0");
-                                            } else if (experience.equals("否")) {
-                                                customerInfoList.get(0).getUserinfo().setExperience("1");
+                                        if (value.get(18) != null) {
+                                            String experience = value.get(18).toString();
+                                            if (experience != null) {
+                                                if (experience.equals("是")) {
+                                                    customerInfoList.get(0).getUserinfo().setExperience("0");
+                                                } else if (experience.equals("否")) {
+                                                    customerInfoList.get(0).getUserinfo().setExperience("1");
+                                                }
                                             }
                                         }
                                         break;
                                     case 19:
-                                        customerInfoList.get(0).getUserinfo().setIdnumber(value.get(19).toString());
+                                        if (value.get(19) != null) {
+                                            customerInfoList.get(0).getUserinfo().setIdnumber(value.get(19).toString());
+                                        }
                                         break;
                                     case 20:
-                                        customerInfoList.get(0).getUserinfo().setGraduationday(value.get(20).toString());
+                                        if (value.get(20) != null) {
+                                            customerInfoList.get(0).getUserinfo().setGraduationday(value.get(20).toString());
+                                        }
                                         break;
                                     case 21:
-                                        String degree = value.get(21).toString();
-                                        if (degree != null) {
-                                            Dictionary dictionary = new Dictionary();
-                                            dictionary.setValue1(degree.trim());
-                                            dictionary.setType("GT");
-                                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                            if (dictionaryList.size() > 0) {
-                                                customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
+                                        if (value.get(21) != null) {
+                                            String degree = value.get(21).toString();
+                                            if (degree != null) {
+                                                Dictionary dictionary = new Dictionary();
+                                                dictionary.setValue1(degree.trim());
+                                                dictionary.setType("GT");
+                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                                if (dictionaryList.size() > 0) {
+                                                    customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
+                                                }
                                             }
                                         }
                                         break;
                                     case 22:
-                                        customerInfoList.get(0).getUserinfo().setWorkday(value.get(22).toString());
+                                        if (value.get(22) != null) {
+                                            customerInfoList.get(0).getUserinfo().setWorkday(value.get(22).toString());
+                                        }
                                         break;
                                     case 23:
-                                        customerInfoList.get(0).getUserinfo().setPersonalcode(value.get(23).toString());
+                                        if (value.get(23) != null) {
+                                            customerInfoList.get(0).getUserinfo().setPersonalcode(value.get(23).toString());
+                                        }
                                         break;
                                     case 24:
-                                        String laborcontracttype = value.get(24).toString();
-                                        if (laborcontracttype != null) {
-                                            if (laborcontracttype.equals("固定时限")) {
-                                                customerInfoList.get(0).getUserinfo().setLaborcontracttype("0");
-                                            } else if (laborcontracttype.equals("非固定时限")) {
-                                                customerInfoList.get(0).getUserinfo().setLaborcontracttype("1");
+                                        if (value.get(24) != null) {
+                                            String laborcontracttype = value.get(24).toString();
+                                            if (laborcontracttype != null) {
+                                                if (laborcontracttype.equals("固定时限")) {
+                                                    customerInfoList.get(0).getUserinfo().setLaborcontracttype("0");
+                                                } else if (laborcontracttype.equals("非固定时限")) {
+                                                    customerInfoList.get(0).getUserinfo().setLaborcontracttype("1");
+                                                }
                                             }
                                         }
                                         break;
                                     case 25:
-                                        customerInfoList.get(0).getUserinfo().setAge(value.get(25).toString());
+                                        if (value.get(25) != null) {
+                                            customerInfoList.get(0).getUserinfo().setAge(value.get(25).toString());
+                                        }
                                         break;
                                     case 26:
-                                        String children = value.get(26).toString();
-                                        if (children != null) {
-                                            if (children.equals("否")) {
-                                                customerInfoList.get(0).getUserinfo().setChildren("0");
-                                            } else if (children.equals("是")) {
-                                                customerInfoList.get(0).getUserinfo().setChildren("1");
+                                        if (value.get(26) != null) {
+                                            String children = value.get(26).toString();
+                                            if (children != null) {
+                                                if (children.equals("否")) {
+                                                    customerInfoList.get(0).getUserinfo().setChildren("0");
+                                                } else if (children.equals("是")) {
+                                                    customerInfoList.get(0).getUserinfo().setChildren("1");
+                                                }
                                             }
                                         }
                                         break;
                                     case 27:
-                                        customerInfoList.get(0).getUserinfo().setAnnualyear(value.get(27).toString());
+                                        if (value.get(27) != null) {
+                                            customerInfoList.get(0).getUserinfo().setAnnualyear(value.get(27).toString());
+                                        }
                                         break;
                                     case 28:
-                                        customerInfoList.get(0).getUserinfo().setUpgraded(value.get(28).toString());
+                                        if (value.get(28) != null) {
+                                            customerInfoList.get(0).getUserinfo().setUpgraded(value.get(28).toString());
+                                        }
                                         break;
                                     case 29:
-                                        customerInfoList.get(0).getUserinfo().setSeatnumber(value.get(29).toString());
+                                        if (value.get(29) != null) {
+                                            customerInfoList.get(0).getUserinfo().setSeatnumber(value.get(29).toString());
+                                        }
                                         break;
                                     case 30:
-                                        customerInfoList.get(0).getUserinfo().setFixedate(value.get(30).toString());
+                                        if (value.get(30) != null) {
+                                            customerInfoList.get(0).getUserinfo().setFixedate(value.get(30).toString());
+                                        }
                                         break;
                                     case 31:
-                                        personal = new CustomerInfo.Personal();
-                                        personal.setAfter(value.get(31).toString());
-                                        cupList.add(personal);
-                                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                                        if (value.get(31) != null) {
+                                            personal.setAfter(value.get(31).toString());
+                                        }
                                         break;
                                     case 32:
-                                        personal = new CustomerInfo.Personal();
-                                        personal.setBefore(value.get(32).toString());
-                                        cupList.add(personal);
-                                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                                        if (value.get(32) != null) {
+                                            personal.setBefore(value.get(32).toString());
+                                        }
                                         break;
                                     case 33:
-                                        personal = new CustomerInfo.Personal();
-                                        personal.setBasic(value.get(33).toString());
-                                        cupList.add(personal);
-                                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                                        if (value.get(33) != null) {
+                                            personal.setBasic(value.get(33).toString());
+                                        }
                                         break;
                                     case 34:
-                                        personal = new CustomerInfo.Personal();
-                                        personal.setDuty(value.get(34).toString());
-                                        cupList.add(personal);
-                                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                                        if (value.get(34) != null) {
+                                            personal.setDuty(value.get(34).toString());
+                                        }
                                         break;
                                     case 35:
-                                        personal = new CustomerInfo.Personal();
-                                        personal.setDate(value.get(35).toString());
-                                        cupList.add(personal);
-                                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                                        if (value.get(35) != null) {
+                                            personal.setDate(value.get(35).toString());
+                                        }
                                         break;
                                     case 36:
-                                        customerInfoList.get(0).getUserinfo().setYanglaoinsurance(value.get(36).toString());
+                                        if (value.get(36) != null) {
+                                            customerInfoList.get(0).getUserinfo().setYanglaoinsurance(value.get(36).toString());
+                                        }
                                         break;
                                     case 37:
-                                        customerInfoList.get(0).getUserinfo().setYiliaoinsurance(value.get(37).toString());
+                                        if (value.get(37) != null) {
+                                            customerInfoList.get(0).getUserinfo().setYiliaoinsurance(value.get(37).toString());
+                                        }
                                         break;
                                     case 38:
-                                        customerInfoList.get(0).getUserinfo().setShiyeinsurance(value.get(38).toString());
+                                        if (value.get(38) != null) {
+                                            customerInfoList.get(0).getUserinfo().setShiyeinsurance(value.get(38).toString());
+                                        }
                                         break;
                                     case 39:
-                                        customerInfoList.get(0).getUserinfo().setGongshanginsurance(value.get(39).toString());
+                                        if (value.get(39) != null) {
+                                            customerInfoList.get(0).getUserinfo().setGongshanginsurance(value.get(39).toString());
+                                        }
                                         break;
                                     case 40:
-                                        customerInfoList.get(0).getUserinfo().setShengyuinsurance(value.get(40).toString());
+                                        if (value.get(40) != null) {
+                                            customerInfoList.get(0).getUserinfo().setShengyuinsurance(value.get(40).toString());
+                                        }
                                         break;
                                     case 41:
-                                        customerInfoList.get(0).getUserinfo().setHouseinsurance(value.get(41).toString());
+                                        if (value.get(41) != null) {
+                                            customerInfoList.get(0).getUserinfo().setHouseinsurance(value.get(41).toString());
+                                        }
                                         break;
                                 }
                             }
-                            mongoTemplate.save(customerInfoList.get(0));
                         }
+                        //判断工资是否有变更履历，如果有添加进来
+                        if (customerInfoList.get(0).getUserinfo().getGridData().size() > 0) {
+                            cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
+                        }
+                        cupList.add(personal);
+
+                        //如果有工资履历变更，給料変更日不能为空
+                        if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
+                                !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
+                                StringUtils.isNullOrEmpty(personal.getDate())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "的 給料変更日 未填写");
+                        }
+                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                        mongoTemplate.save(customerInfoList.get(0));
+                        mongoTemplate.save(userAccount);
                         accesscount = accesscount + 1;
                     }
                     else
