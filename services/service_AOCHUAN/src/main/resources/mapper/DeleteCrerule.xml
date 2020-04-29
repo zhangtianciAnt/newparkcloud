@@ -2,16 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN7000.mapper.EntryRulesMapper">
 
-    <!--  update  -->
-<!--    <update id="updKisCrdlNo">-->
-<!--        UPDATE crdlinfo-->
-<!--		SET CRDLKIS_NUM = #{crdlkis_num},-->
-<!--		SET PUSH_STATUS = #{push_status}-->
-<!--		MODIFYBY = #{modifyby},-->
-<!--		MODIFYON = now()-->
-<!--		WHERE DOCURULE_ID = #{docurule_id}-->
-<!--    </update>-->
-
     <update id="delCreruleid">
         UPDATE crerule
 		SET STATUS = '1',
@@ -20,8 +10,8 @@
 		WHERE DOCURULE_FID = #{docurule_fid_id}
     </update>
 
-	<!--  ??Check  -->
-	<select id="existCheckAcc" resultType="int">
+    <!--  Check  -->
+    <select id="existCheckAcc" resultType="int">
         SELECT COUNT(*) FROM crerule WHERE DOCURULE_FID = #{id} AND  STATUS != '1'
     </select>
 
