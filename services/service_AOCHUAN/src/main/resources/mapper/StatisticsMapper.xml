@@ -21,20 +21,49 @@
             typ7.res funeral
 
             from vacation v
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001001' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ1
-            on typ1.APPLICANTER = v.APPLICANTER
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001002' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ2
-            on typ2.APPLICANTER = v.APPLICANTER
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001003' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ3
-            on typ3.APPLICANTER = v.APPLICANTER
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001004' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ4
-            on typ4.APPLICANTER = v.APPLICANTER
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001005' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ5
-            on typ5.APPLICANTER = v.APPLICANTER
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001006' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ6
-            on typ6.APPLICANTER = v.APPLICANTER
-            left join (select APPLICANTER, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001007' and `STATUS` = '4' GROUP BY APPLICANTER, APPLICATIONTYPE) typ7
-            on typ7.APPLICANTER = v.APPLICANTER
-
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001001' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ1
+            on typ1.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001002' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ2
+            on typ2.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001003' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ3
+            on typ3.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001004' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ4
+            on typ4.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001005' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ5
+            on typ5.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001006' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ6
+            on typ6.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001007' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ7
+            on typ7.APPLICANTERID = v.APPLICANTERID
     </select>
+
+    <select id="getVacation"  resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.LeaveDaysVo">
+            select names,thingleave,sickthing,compensatory,marriage,annual,maternity,funeral
+            from (select
+            distinct v.APPLICANTERID names,
+            typ1.res thingleave,
+            typ2.res sickthing,
+            typ3.res compensatory,
+            typ4.res marriage,
+            typ5.res annual,
+            typ6.res maternity,
+            typ7.res funeral
+            from vacation v
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001001' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ1
+            on typ1.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001002' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ2
+            on typ2.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001003' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ3
+            on typ3.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001004' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ4
+            on typ4.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001005' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ5
+            on typ5.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001006' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ6
+            on typ6.APPLICANTERID = v.APPLICANTERID
+            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001007' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ7
+            on typ7.APPLICANTERID = v.APPLICANTERID) as re
+            where re.names =  #{id}
+    </select>
+
 </mapper>

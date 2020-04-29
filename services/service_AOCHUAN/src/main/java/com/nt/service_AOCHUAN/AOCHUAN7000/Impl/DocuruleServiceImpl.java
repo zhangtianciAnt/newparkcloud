@@ -80,9 +80,11 @@ public class DocuruleServiceImpl  implements DocuruleService {
             for (int i =0 ; i< crerules.size() ; i++) {
                 String id = UUID.randomUUID().toString();
                 rowundex = rowundex + 1;
+                crerules.get(i).preUpdate(tokenModel);
                 crerules.get(i).setCrerule_id(id);
                 crerules.get(i).setDocurule_fid(docuid);
                 creruleMapper.insertSelective(crerules.get(i));
+                helprules.get(i).preUpdate(tokenModel);
                 helprules.get(i).setHelprule_id(UUID.randomUUID().toString());
                 helprules.get(i).setCrerule_wid(docuid);
                 helprules.get(i).setCrerule_fid(id);
@@ -107,9 +109,12 @@ public class DocuruleServiceImpl  implements DocuruleService {
             for ( int i = 0;i< crulelist.size();i++) {
                 crulelist.get(i).preInsert(tokenModel);
                 crulelist.get(i).setCrerule_id(UUID.randomUUID().toString());
+                helpruleList.get(i).preInsert(tokenModel);
                 helpruleList.get(i).setCrerule_fid(crulelist.get(i).getCrerule_id());
                 helpruleList.get(i).setHelprule_id(UUID.randomUUID().toString());
+                helpruleList.get(i).setStatus("0");
                 helpruleList.get(i).setCrerule_wid(docuruleid);
+                crulelist.get(i).setStatus("0");
                 crulelist.get(i).setDocurule_fid(docuruleid);
                 helpruleMapper.insertSelective(helpruleList.get(i));
                 creruleMapper.insertSelective(crulelist.get(i));

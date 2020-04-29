@@ -2,11 +2,14 @@ package com.nt.service_AOCHUAN.AOCHUAN6000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vacation;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.LeaveDaysVo;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.StatisticsVo;
+import com.nt.dao_Org.Earlyvacation;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.VacationService;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.VacationMapper;
+import com.nt.service_Org.mapper.EarlyvacationMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,9 @@ public class VacationServiceImpl implements VacationService {
 
     @Autowired
     private VacationMapper vacationMapper;
+    @Autowired
+    private EarlyvacationMapper earlyvacationMapper;
+
 
 
     @Override
@@ -37,7 +43,15 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public Vacation One(String ids) throws Exception {
+
         return vacationMapper.selectByPrimaryKey(ids);
+    }
+
+    @Override
+    public Earlyvacation getannualyear(String ids) throws Exception {
+        Earlyvacation earlyvacation = new Earlyvacation();
+        earlyvacation.setUsernames(ids);
+        return earlyvacationMapper.selectOne(earlyvacation);
     }
 
     @Override
@@ -59,6 +73,25 @@ public class VacationServiceImpl implements VacationService {
     @Override
     public List<StatisticsVo> getVo() throws Exception {
 
+        List<StatisticsVo> statistics = vacationMapper.getVo();
+        for(StatisticsVo statisticsVo : statistics){
+            Earlyvacation earlyvacation = new Earlyvacation();
+            earlyvacation.setUsernames(statisticsVo.getNames());
+
+            Earlyvacation earlyvacation1 = earlyvacationMapper.selectOne(earlyvacation);
+            statisticsVo.setStartannual(earlyvacation1.getAnnualleave());
+            statisticsVo.setStartwedding(earlyvacation1.getMarriageleave());
+            statisticsVo.setStartmaternity(earlyvacation1.getMaternityleave());
+            statisticsVo.setStartfuneral(earlyvacation1.getFuneralleave());
+
+        }
+
+
         return vacationMapper.getVo();
+    }
+
+    @Override
+    public LeaveDaysVo getVacation(String id) throws Exception {
+        return vacationMapper.getVacation(id);
     }
 }

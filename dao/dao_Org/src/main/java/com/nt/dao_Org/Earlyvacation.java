@@ -27,6 +27,10 @@ public class Earlyvacation extends BaseModel {
     @Column(name = "ANNUALLEAVE")
     private String annualleave;
 
+    @Column(name = "REMAINING")
+    private String remaining;
+
+
     @Column(name = "MARRIAGELEAVE")
     private String marriageleave;
 
