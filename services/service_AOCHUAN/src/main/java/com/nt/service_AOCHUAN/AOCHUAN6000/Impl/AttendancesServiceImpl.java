@@ -40,7 +40,7 @@ public class AttendancesServiceImpl implements AttendancesService {
     @Autowired
     private ToDoNoticeService toDoNoticeService;
 
-
+//考勤一览初期值
     @Override
     public List<Attendance> get(Attendance attendance) throws Exception {
 
@@ -49,7 +49,7 @@ public class AttendancesServiceImpl implements AttendancesService {
         for(Attendance att : attendanceList){
             Vacation vacation = new Vacation();
             vacation.setApplicanterid(att.getNames());
-//            vacation.setStatus("4");
+            vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);//休假
             for(Vacation vac : vacationList){
@@ -98,7 +98,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         return attendanceList;
     }
-
+//考勤一览根据天去查询
     @Override
     public List<Attendance> getNow(Attendance attendance) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,6 +106,7 @@ public class AttendancesServiceImpl implements AttendancesService {
         for(Attendance att : attendanceList){
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());
+            vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);
             for(Vacation vac : vacationList){
@@ -154,7 +155,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         return attendanceList;
     }
-
+//考勤一览根据月，年去查询
     @Override
     public List<Attendance> getNowMons(String attendancetim) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -162,6 +163,7 @@ public class AttendancesServiceImpl implements AttendancesService {
         for(Attendance att : attendanceList){
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());
+            vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);
             for(Vacation vac : vacationList){
@@ -209,7 +211,7 @@ public class AttendancesServiceImpl implements AttendancesService {
         }
         return attendanceList;
     }
-
+//打卡记录导入
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
