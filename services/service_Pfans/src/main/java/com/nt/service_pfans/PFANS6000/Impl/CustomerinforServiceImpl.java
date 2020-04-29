@@ -275,16 +275,7 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                     {
                         String person=Convert.toStr(value.get(16));
                         if(StrUtil.isNotBlank(person)){
-                            person = person.trim();
-                            if(person.contains("≥") )
-                            {
-                                person = person.substring(1);
-                            }
-                            else if(person.contains("<"))
-                            {
-                                person = person.substring(1);
-                                person = String.valueOf(Integer.parseInt(person) - 1);
-                            }
+                            person = person.trim().replace("<","").replace(">","").replace("≥","").replace("=","").replace("≤","").replace("-","");
                             if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                                 customerinfor.setPerscale("BP007001");  //改数据
                             }
