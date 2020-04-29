@@ -59,10 +59,17 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public void upDictionary(List<Dictionary> dictionarylist, TokenModel tokenModel) throws Exception {
+        String type = dictionarylist.get(0).getType();
+        String pcode = dictionarylist.get(0).getPcode();
+        Dictionary dic = new Dictionary();
+        dic.setPcode(pcode);
+        dictionaryMapper.delete(dic);
         if(dictionarylist.size() > 0){
             for(Dictionary dictionary : dictionarylist){
-                dictionary.preUpdate(tokenModel);
-                dictionaryMapper.updateByPrimaryKeySelective(dictionary);
+                dictionary.setType(type);
+                dictionary.setPcode(pcode);
+                dictionary.preInsert(tokenModel);
+                dictionaryMapper.insert(dictionary);
             }
         }
     }
