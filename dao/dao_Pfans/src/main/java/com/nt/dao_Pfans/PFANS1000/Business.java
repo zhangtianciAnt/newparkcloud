@@ -72,7 +72,6 @@ public class Business extends BaseModel {
     private String level;
 
 
-
     /**
      * 出張先会社（出差公司）
      */
@@ -343,5 +342,8 @@ public class Business extends BaseModel {
     @Column(name = "OTHEREXPLANATION")
     private String otherexplanation;
 
-
+    //add-ws-4/29-是否夜间到达添加
+    @Column(name = "ARRIVENIGHT")
+    private String arrivenight;
+//add-ws-4/29-是否夜间到达添加
 }

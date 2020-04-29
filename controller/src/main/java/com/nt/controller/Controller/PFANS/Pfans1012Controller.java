@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,6 +217,20 @@ public class Pfans1012Controller {
                 }
             }
             Map<String, Object> data = new HashMap<>();
+        String str_format = "";
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        if (pubvo.getPublicexpense().getRmbexpenditure() != null) {
+            BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getRmbexpenditure());
+            str_format = df.format(bd);
+            pubvo.getPublicexpense().setRmbexpenditure(str_format);
+        }
+        for (int k = 0; k < pubvo.getTrafficdetails().size(); k++) {
+            if (pubvo.getTrafficdetails().get(k).getRmb() != null) {
+                BigDecimal bd = new BigDecimal(pubvo.getTrafficdetails().get(k).getRmb());
+                str_format = df.format(bd);
+                pubvo.getTrafficdetails().get(k).setRmb(str_format);
+            }
+        }
             data.put("wfList1", wfList1);
             data.put("wfList2", wfList2);
             data.put("wfList3", wfList3);

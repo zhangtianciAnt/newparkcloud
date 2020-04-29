@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/goalmanagement")
@@ -65,4 +68,11 @@ public class Pfans2023Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
+    public void downLoad1(@RequestBody GoalManagement goalmanagement, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        GoalManagement gmt = goalmanagementService.One(goalmanagement.getGoalmanagement_id());
+        Map<String, Object> data = new HashMap<>();
+        data.put("gmt", gmt);
+    }
 }
