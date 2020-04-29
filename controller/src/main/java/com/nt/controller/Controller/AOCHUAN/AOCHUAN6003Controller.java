@@ -84,7 +84,14 @@ public class AOCHUAN6003Controller {
 
     }
 
-
+    @RequestMapping(value = "/getVacation",method={RequestMethod.GET})
+    public ApiResult getVacation(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(vacationService.getVacation(id));
+    }
 
 
 }

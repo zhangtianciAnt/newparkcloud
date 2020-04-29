@@ -2,6 +2,7 @@ package com.nt.service_AOCHUAN.AOCHUAN6000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vacation;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.LeaveDaysVo;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.StatisticsVo;
 import com.nt.dao_Org.Earlyvacation;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
@@ -87,5 +88,10 @@ public class VacationServiceImpl implements VacationService {
 
 
         return vacationMapper.getVo();
+    }
+
+    @Override
+    public LeaveDaysVo getVacation(String id) throws Exception {
+        return vacationMapper.getVacation(id);
     }
 }
