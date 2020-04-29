@@ -48,6 +48,15 @@ public class AOCHUAN6003Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(vacationService.One(id));
     }
+//获取年假结余
+    @RequestMapping(value = "/getannualyear",method={RequestMethod.GET})
+    public ApiResult getannualyear(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(vacationService.getannualyear(id));
+    }
 
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody Vacation vacation, HttpServletRequest request) throws Exception {
@@ -75,7 +84,14 @@ public class AOCHUAN6003Controller {
 
     }
 
-
+    @RequestMapping(value = "/getVacation",method={RequestMethod.GET})
+    public ApiResult getVacation(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(vacationService.getVacation(id));
+    }
 
 
 }

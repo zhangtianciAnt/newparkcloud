@@ -5,9 +5,11 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Earlyvacation;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.UserService;
+import com.nt.service_Org.mapper.EarlyvacationMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
@@ -55,6 +57,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EarlyvacationMapper earlyvacationMapper;
 
     /**
      * @方法名：getUserAccount
@@ -371,9 +376,15 @@ public class UserServiceImpl implements UserService {
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("_id").is(userid));
         UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
+//wxl 查询设置休假天数初期值 start
+        Earlyvacation earlyvacation = new Earlyvacation();
+        earlyvacation.setUsernames(userid);
+        Earlyvacation earlyresult = earlyvacationMapper.selectOne(earlyvacation);
+//wxl 查询设置休假天数初期值 end
         UserVo userVo = new UserVo();
         userVo.setCustomerInfo(customerInfo);
         userVo.setUserAccount(userAccount);
+        userVo.setEarlyvacation(earlyresult);
         return userVo;
     }
 

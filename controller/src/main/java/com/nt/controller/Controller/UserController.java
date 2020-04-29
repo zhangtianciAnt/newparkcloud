@@ -5,6 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.service_Org.EarlyvacationService;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
 //import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -53,6 +54,10 @@ public class UserController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private EarlyvacationService earlyvacationService;
+
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
@@ -183,6 +188,10 @@ public class UserController {
             userVo.getUserAccount().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
+//wxl  人员信息休假类型设定初始化
+            userVo.getEarlyvacation().setUsernames(id);
+            earlyvacationService.insert(userVo.getEarlyvacation(),tokenModel);
+
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());

@@ -130,5 +130,10 @@ public class TransportGood extends BaseModel {
 
     private Date ap_date;
 
+    //是否发起请款
+    private String requestpayment;
+
+    //是否发起回款
+    private String returnpayment;
 
 }
