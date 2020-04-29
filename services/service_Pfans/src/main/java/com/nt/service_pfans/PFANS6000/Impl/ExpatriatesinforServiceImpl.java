@@ -160,6 +160,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     explist.get(0).setAccount(userAccount.get_id());
                     expatriatesinforMapper.updateByPrimaryKeySelective(explist.get(0));
                 }
+            }else{
+                Query query = new Query();
+                query.addCriteria(Criteria.where("_id").regex(item.getAccount()));
+                List<UserAccount> list = mongoTemplate.find(query, UserAccount.class);
+                if(list.size() > 0){
+                    Expatriatesinfor explist = expatriatesinforMapper.selectByPrimaryKey(item.getExpatriatesinfor_id());
+                    explist.setAccountname(list.get(0).getAccount());
+                    expatriatesinforMapper.updateByPrimaryKeySelective(explist);
+                }
             }
         }
 
