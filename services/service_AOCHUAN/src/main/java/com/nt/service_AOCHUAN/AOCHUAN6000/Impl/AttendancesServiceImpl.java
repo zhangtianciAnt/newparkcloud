@@ -3,8 +3,10 @@ package com.nt.service_AOCHUAN.AOCHUAN6000.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Vacation;
 import com.nt.service_AOCHUAN.AOCHUAN6000.AttendancesService;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.AttendancesMapper;
+import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.VacationMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.LogicalException;
@@ -30,6 +32,9 @@ public class AttendancesServiceImpl implements AttendancesService {
     private AttendancesMapper attendanceMapper;
 
     @Autowired
+    private VacationMapper vacationMapper;
+
+    @Autowired
     private RoleService roleService;
 
     @Autowired
@@ -38,17 +43,171 @@ public class AttendancesServiceImpl implements AttendancesService {
 
     @Override
     public List<Attendance> get(Attendance attendance) throws Exception {
-        return attendanceMapper.select(attendance);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<Attendance> attendanceList = attendanceMapper.select(attendance);
+        for(Attendance att : attendanceList){
+            Vacation vacation = new Vacation();
+            vacation.setApplicanterid(att.getNames());
+//            vacation.setStatus("4");
+
+            List<Vacation> vacationList = vacationMapper.select(vacation);//休假
+            for(Vacation vac : vacationList){
+                String vacstart = simpleDateFormat.format(vac.getStartdate());
+                Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
+
+                String vacend = simpleDateFormat.format(vac.getEnddate());
+                Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
+
+
+                String attendancetim = att.getAttendancetim();
+                Date attdate = simpleDateFormat.parse(attendancetim);//考勤时间
+
+                int compareToJS = attdate.compareTo(datestart);
+                int compareToKS = attdate.compareTo(datestaend);
+
+                if(compareToJS == 1 && compareToKS == -1){
+                    att.setLeaves("1");
+                    break;
+                }
+                if((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToJS == 1 && compareToKS == 1){
+                    att.setLeaves("0");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")){
+                    att.setLeaves("0.5");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")){
+                    att.setLeaves("0.5");
+                    break;
+                }
+
+
+            }
+
+        }
+
+        return attendanceList;
     }
 
     @Override
     public List<Attendance> getNow(Attendance attendance) throws Exception {
-        return attendanceMapper.select(attendance);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<Attendance> attendanceList = attendanceMapper.select(attendance);
+        for(Attendance att : attendanceList){
+            Vacation vacation = new Vacation();//异常申请表
+            vacation.setApplicanterid(att.getNames());
+
+            List<Vacation> vacationList = vacationMapper.select(vacation);
+            for(Vacation vac : vacationList){
+                String vacstart = simpleDateFormat.format(vac.getStartdate());
+                Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
+
+                String vacend = simpleDateFormat.format(vac.getEnddate());
+                Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
+
+
+                String attendancetim = att.getAttendancetim();
+                Date attdate = simpleDateFormat.parse(attendancetim);//考勤时间
+
+                int compareToJS = attdate.compareTo(datestart);
+                int compareToKS = attdate.compareTo(datestaend);
+
+                if(compareToJS == 1 && compareToKS == -1){
+                    att.setLeaves("1");
+                    break;
+                }
+                if((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToJS == 1 && compareToKS == 1){
+                    att.setLeaves("0");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")){
+                    att.setLeaves("0.5");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")){
+                    att.setLeaves("0.5");
+                    break;
+                }
+
+
+            }
+
+        }
+
+        return attendanceList;
     }
 
     @Override
     public List<Attendance> getNowMons(String attendancetim) throws Exception {
-        return attendanceMapper.getNowMon(attendancetim);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<Attendance> attendanceList = attendanceMapper.getNowMon(attendancetim);
+        for(Attendance att : attendanceList){
+            Vacation vacation = new Vacation();//异常申请表
+            vacation.setApplicanterid(att.getNames());
+
+            List<Vacation> vacationList = vacationMapper.select(vacation);
+            for(Vacation vac : vacationList){
+                String vacstart = simpleDateFormat.format(vac.getStartdate());
+                Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
+
+                String vacend = simpleDateFormat.format(vac.getEnddate());
+                Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
+
+
+                String attendancetims = att.getAttendancetim();
+                Date attdate = simpleDateFormat.parse(attendancetims);//考勤时间
+
+                int compareToJS = attdate.compareTo(datestart);
+                int compareToKS = attdate.compareTo(datestaend);
+
+                if(compareToJS == 1 && compareToKS == -1){
+                    att.setLeaves("1");
+                    break;
+                }
+                if((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToJS == 1 && compareToKS == 1){
+                    att.setLeaves("0");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")){
+                    att.setLeaves("0.5");
+                    break;
+                }
+                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")){
+                    att.setLeaves("0.5");
+                    break;
+                }
+
+
+            }
+
+        }
+        return attendanceList;
     }
 
     @Override
