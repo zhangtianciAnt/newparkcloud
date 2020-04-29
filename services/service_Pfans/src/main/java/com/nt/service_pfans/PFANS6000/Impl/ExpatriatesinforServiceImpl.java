@@ -132,13 +132,14 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 userAccount.setUsertype("1");
 
                 Query query = new Query();
-                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                query.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
+//                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
                 query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
                 List<UserAccount> list = mongoTemplate.find(query, UserAccount.class);
 
                 if(list.size() > 0){
-                    userAccount = list.get(0);
+                    userAccount.setAccount(userAccount.getAccount() + Convert.toStr(list.size()));
+//                    userAccount = list.get(0);
                 }
 
                 query = new Query();
