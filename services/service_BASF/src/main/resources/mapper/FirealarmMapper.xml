@@ -53,6 +53,8 @@ FROM
 		AND completesta = '1'
 		AND MONTH ( policetim )= MONTH (
 		NOW())
+		AND YEAR( policetim )= YEAR (
+		NOW())
 	GROUP BY
 		date_format( policetim, '%e' )
 	ORDER BY
