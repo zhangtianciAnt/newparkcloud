@@ -762,7 +762,7 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
         if (resultInsUpd) {
             for (int i = 1; i < list.size(); i++) {
                 CustomerInfo customerInfo = new CustomerInfo();
-                UserAccount useraccount = new UserAccount();
+                UserAccount ust = new UserAccount();
                 CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
                 List<Object> value = list.get(k);
                 k++;
@@ -789,19 +789,6 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoList.size() > 0) {
                             throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
-                        } else {
-                            UserAccount userAccount = new UserAccount();
-                            userAccount.setAccount(userinfo.getCustomername());
-                            userAccount.setPassword(userinfo.getCustomername());
-                            userAccount.setUsertype("0");
-                            query = new Query();
-                            query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                            query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-                            query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                            if (userAccountlist.size() > 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
-                            }
                         }
                     }
 //                        //center
@@ -885,6 +872,19 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoList.size() > 0) {
                             throw new LogicalException("AD域账号（" + value.get(11).toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                        }else {
+//                            UserAccount userAccount = new UserAccount();
+                            ust.setAccount(userinfo.getAdfield());
+                            ust.setPassword(userinfo.getAdfield());
+                            ust.setUsertype("0");
+                            query = new Query();
+                            query.addCriteria(Criteria.where("account").is(ust.getAccount()));
+                            query.addCriteria(Criteria.where("password").is(ust.getPassword()));
+                            query.addCriteria(Criteria.where("usertype").is(ust.getUsertype()));
+                            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                            if (userAccountlist.size() > 0) {
+                                throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                            }
                         }
                     }
                     //国籍
@@ -1062,22 +1062,27 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         userinfo.setHouseinsurance(value.get(41).toString());
                     }
                 }
-                UserVo uservo = new UserVo();
                 customerInfo.setUserinfo(userinfo);
                 customerInfo.setType("1");
                 customerInfo.setStatus("0");
                 customerInfo.getUserinfo().setType("0");
-                uservo.setCustomerInfo(customerInfo);
-                listVo.add(customerInfo);
-                uservo.setUserAccount(useraccount);
-                useraccount.preInsert(tokenModel);
-                addAccountCustomer(uservo);
+                mongoTemplate.save(ust);
+                Query query = new Query();
+                query.addCriteria(Criteria.where("account").is(ust.getAccount()));
+                query.addCriteria(Criteria.where("password").is(ust.getPassword()));
+                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                if (userAccountlist.size() > 0) {
+                    String _id = userAccountlist.get(0).get_id();
+                    customerInfo.setUserid(_id);
+                    mongoTemplate.save(customerInfo);
+                }
                 accesscount = accesscount + 1;
             }
         }
         else {
             for (int i = 1; i < list.size(); i++)
             {
+                UserAccount userAccount = new UserAccount();
                 List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
                 CustomerInfo.Personal personal = new CustomerInfo.Personal();
                 CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
@@ -1111,22 +1116,6 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                                             if(customerInfoLists.size()>0)
                                             {
                                                 throw new LogicalException("卡号（"+ Convert.toStr(value.get(0)) +"）"  + "对应的 姓名 在人员表中已存在，请确认。");
-                                            }
-                                            else
-                                            {
-                                                UserAccount userAccount = new UserAccount();
-                                                userAccount.setAccount(customerInfoList.get(0).getUserinfo().getCustomername());
-                                                userAccount.setPassword(customerInfoList.get(0).getUserinfo().getCustomername());
-                                                userAccount.setUsertype("0");
-                                                query = new Query();
-                                                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                                                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-                                                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                                                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                                                if(userAccountlist.size()>0)
-                                                {
-                                                    throw new LogicalException("卡号（"+ Convert.toStr(value.get(0)) +"）"  + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
-                                                }
                                             }
                                         }
                                         break;
@@ -1201,6 +1190,20 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                                         customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
                                         if (customerInfoLists.size() > 0) {
                                             throw new LogicalException("AD域账号（" + value.get(11).toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                                        } else
+                                        {
+                                            userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
+                                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                                            userAccount.setUsertype("0");
+                                            query = new Query();
+                                            query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                            query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                                            query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                            if(userAccountlist.size()>0)
+                                            {
+                                                throw new LogicalException("卡号（"+ Convert.toStr(value.get(0)) +"）"  + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                            }
                                         }
                                         break;
                                     case 12:

@@ -13,6 +13,7 @@ import java.util.Map;
 
 public interface CoststatisticsService {
     List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception;
+    List<Coststatistics> getCostListBygroupid(String groupid) throws Exception;
 
     Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception;
 

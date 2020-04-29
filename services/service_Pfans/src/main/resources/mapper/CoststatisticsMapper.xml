@@ -108,4 +108,14 @@
 			#{item.tenantid})
 		</foreach>
 	</insert>
+
+	<select id="selectBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
+		select c.*
+		from coststatistics as c
+		left join expatriatesinfor as e
+		on c.BPNAME = e.EXPATRIATESINFOR_ID
+		<if test="groupid!=null and groupid !=''">
+			where e.GROUP_ID = #{groupid}
+		</if>
+	</select>
 </mapper>
