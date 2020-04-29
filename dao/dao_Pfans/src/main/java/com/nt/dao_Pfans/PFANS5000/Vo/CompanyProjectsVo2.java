@@ -19,6 +19,10 @@ public class CompanyProjectsVo2 {
      * 项目名称
      */
     private String project_namejp;
+    /**
+     * GROUP
+     */
+    private String group_id;
 
     /**
      * 项目编号
