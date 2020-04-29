@@ -29,7 +29,8 @@
         c.WORK as WORK,
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
-        c.OWNER as OWNER
+        c.OWNER as OWNER,
+        c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
@@ -85,7 +86,8 @@
         c.WORK as WORK,
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
-        c.OWNER as OWNER
+        c.OWNER as OWNER,
+        c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
@@ -149,7 +151,8 @@
             .
             FIELD as
             FIELD,
-            c.OWNER as OWNER
+            c.OWNER as OWNER,
+            c.GROUP_ID as group_id
         from `companyprojects`
              c
              left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
@@ -279,7 +282,8 @@
         c.WORK as WORK,
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
-        c.OWNER as OWNER
+        c.OWNER as OWNER,
+        c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
@@ -335,7 +339,8 @@
         c.WORK as WORK,
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
-        c.OWNER as OWNER
+        c.OWNER as OWNER,
+        c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
             (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
