@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,9 +227,56 @@ public class Pfans1013Controller {
             }
         }
         Map<String, Object> data = new HashMap<>();
-        String rmbflg = String.valueOf(rmbacc + rmbtra);
-        String traflg = String.valueOf(tratra + traacc);
-        String sumrmb = String.valueOf(accflg + curflg + rmbacc + rmbtra);
+        String str_format = "";
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        if (evevo.getEvection().getLoanamount() != null) {
+            BigDecimal bd = new BigDecimal(evevo.getEvection().getLoanamount());
+            str_format = df.format(bd);
+            evevo.getEvection().setLoanamount(str_format);
+        }
+        if (evevo.getEvection().getBalance() != null) {
+            BigDecimal bd = new BigDecimal(evevo.getEvection().getBalance());
+            str_format = df.format(bd);
+            evevo.getEvection().setBalance(str_format);
+        }
+
+        for (int h = 0; h < evevo.getCurrencyexchanges().size(); h++) {
+            if (evevo.getCurrencyexchanges().get(h).getAmount() != null) {
+                BigDecimal bd = new BigDecimal(evevo.getCurrencyexchanges().get(h).getAmount());
+                str_format = df.format(bd);
+                evevo.getCurrencyexchanges().get(h).setAmount(str_format);
+            }
+        }
+
+        for (int k = 0; k < evevo.getTrafficdetails().size(); k++) {
+            if (evevo.getTrafficdetails().get(k).getForeigncurrency() != null) {
+                BigDecimal bd = new BigDecimal(evevo.getTrafficdetails().get(k).getForeigncurrency());
+                str_format = df.format(bd);
+                evevo.getTrafficdetails().get(k).setForeigncurrency(str_format);
+            }
+            if (evevo.getTrafficdetails().get(k).getRmb() != null) {
+                BigDecimal bd = new BigDecimal(evevo.getTrafficdetails().get(k).getRmb());
+                str_format = df.format(bd);
+                evevo.getTrafficdetails().get(k).setRmb(str_format);
+            }
+        }
+
+        for (int m = 0; m < evevo.getAccommodationdetails().size(); m++) {
+            if (evevo.getAccommodationdetails().get(m).getTravel() != null) {
+                BigDecimal bd = new BigDecimal(evevo.getAccommodationdetails().get(m).getTravel());
+                str_format = df.format(bd);
+                evevo.getAccommodationdetails().get(m).setTravel(str_format);
+            }
+            if (evevo.getAccommodationdetails().get(m).getRmb() != null) {
+                BigDecimal bd = new BigDecimal(evevo.getAccommodationdetails().get(m).getRmb());
+                str_format = df.format(bd);
+                evevo.getAccommodationdetails().get(m).setRmb(str_format);
+            }
+        }
+
+        String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra)));
+        String traflg = df.format(new BigDecimal(String.valueOf(tratra + traacc)));
+        String sumrmb = df.format(new BigDecimal(String.valueOf(accflg + curflg + rmbacc + rmbtra)));
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
