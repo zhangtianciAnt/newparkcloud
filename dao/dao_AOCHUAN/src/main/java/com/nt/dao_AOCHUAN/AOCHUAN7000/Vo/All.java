@@ -9,7 +9,7 @@ import javax.persistence.Column;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class All  {
+public class All {
 
     @Column(name = "CRERULE_ID")
     private String crerule_id;
@@ -50,7 +50,7 @@ public class All  {
     @Column(name = "MAINCASH")
     private String maincash;
 
-     @Column(name = "FLOWCASH")
+    @Column(name = "FLOWCASH")
     private String flowcash;
 
     @Column(name = "ROWINDEX")
@@ -79,5 +79,14 @@ public class All  {
 
     @Column(name = "CRERULE_WID")
     private String crerule_wid;
+
+    @Column(name = "CREATEON")
+    private String createon;
+
+    @Column(name = "CREATEBY")
+    private String createby;
+
+    @Column(name = "STATUS")
+    private String status;
 
 }

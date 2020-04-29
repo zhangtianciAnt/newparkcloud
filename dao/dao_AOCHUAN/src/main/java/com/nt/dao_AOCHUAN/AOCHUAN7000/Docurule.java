@@ -34,5 +34,4 @@ public class Docurule extends BaseModel {
     @Column(name = "ANNEXNO")
     private String annexno;
 
-
 }

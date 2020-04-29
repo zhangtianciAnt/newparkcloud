@@ -64,5 +64,4 @@ public class Helprule extends BaseModel {
     @Column(name = "FLOWCASHID")
     private String flowcashid;
 
-
 }
