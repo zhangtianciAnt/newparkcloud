@@ -80,7 +80,7 @@ public class BASF21209Controller {
         return ApiResult.success();
     }
 
-    //更新培训列表
+    //发送邮件通知
     @RequestMapping(value = "/resultsEmail", method = {RequestMethod.POST})
     public ApiResult updateResultsEmail(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
         if (startprogram == null) {
@@ -101,9 +101,15 @@ public class BASF21209Controller {
         List<EmailConfig> emailconfig = emailConfigServices.get();
 
         for (int l = 0; l < notifyPerson.length; l++) {
+            String useremail="";
             UserVo uservo = userService.getAccountCustomerById(notifyPerson[l]);
             String depid = uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
-            String useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
+            if(StringUtils.isNotEmpty(uservo.getCustomerInfo().getUserinfo().getEmail())){
+                 useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
+            }
+            else {
+                continue;
+            }
             Trainjoinlist trainjoilist = new Trainjoinlist();
             trainjoilist.setDepartmentid(depid);
             trainjoilist.setStartprogramid(startprogramid);
