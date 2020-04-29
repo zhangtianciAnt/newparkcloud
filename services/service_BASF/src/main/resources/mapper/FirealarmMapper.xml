@@ -74,6 +74,7 @@ ORDER BY
         firealarm.policetim is not null
         and
 		firealarm.`STATUS` = 0
+        AND completesta = '1'
         order by firealarm.alarmtimes desc
     </select>
 
