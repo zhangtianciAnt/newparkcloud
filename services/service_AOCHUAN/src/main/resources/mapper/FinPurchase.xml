@@ -15,9 +15,10 @@
     <!--updateTransportgood-->
     <update id="updateTransportGood">
     UPDATE transportgood
-    SET AP_DATE = #{ap_date}
-    SET MODIFYBY = #{modifyby}
-    SET MODIFYON = now()
+    SET AP_DATE = #{ap_date},
+     PAYMENTSTATUS = #{paymentstatus},
+     MODIFYBY = #{modifyby},
+     MODIFYON = now()
     WHERE
     TRANSPORTGOOD_ID = #{id}
     </update>

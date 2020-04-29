@@ -10,4 +10,12 @@
         where attendancetim LIKE #{attendancetim}"%"
 	</select>
 
+
+    <select id="getByUserId" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
+        select *
+        from attendance
+        where attendancetim LIKE #{nowMons}"%" or attendancetim LIKE #{lastMons}"%"
+		having names = #{id}
+		order by attendancetim desc
+	</select>
 </mapper>

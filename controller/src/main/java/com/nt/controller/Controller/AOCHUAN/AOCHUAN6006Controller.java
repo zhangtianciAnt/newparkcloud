@@ -3,6 +3,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.ReimAndReimDetail;
 import com.nt.service_AOCHUAN.AOCHUAN6000.ReimbursementService;
+import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class AOCHUAN6006Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private ContractNumber contractNumber;
     /**
      * 获取费用表数据
      */
@@ -59,17 +62,13 @@ public class AOCHUAN6006Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
 
-        //随机主键
         String id;
-        String number;
-        Date date = new Date();
-        SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMdd" );
-
+        id= UUID.randomUUID().toString();
         //INSERT:PROJECTS
         Reimbursement reimbursement = reimAndReimDetail.getReimForm();
 
-        id= UUID.randomUUID().toString();
-        number ="BX"+ sdf.format(date) + UUID.randomUUID().toString().substring(0,6);
+        String number = contractNumber.getContractNumber("PT001007","reimbursement");
+        //number ="BX"+ sdf.format(date) + UUID.randomUUID().toString().substring(0,6);
 
         reimbursement.setReimbursement_id(id);
         reimbursement.setReimbursement_no(number);

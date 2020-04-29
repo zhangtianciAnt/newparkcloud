@@ -84,5 +84,8 @@ public class FinSales extends BaseModel {
     //佣金金额
     @Column(name = "COMMISSION_AMOUNT")
     private String commission_amount;
+    //走货主键
+    @Column(name = "TRANSPORTGOOD_ID")
+    private  String transportgood_id;
 }
 

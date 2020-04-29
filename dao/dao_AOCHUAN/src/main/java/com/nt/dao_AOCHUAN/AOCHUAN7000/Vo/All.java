@@ -77,4 +77,7 @@ public class All  {
     @Column(name = "FLOWCASHID")
     private String flowcashid;
 
+    @Column(name = "CRERULE_WID")
+    private String crerule_wid;
+
 }

@@ -22,7 +22,7 @@ public class Helprule extends BaseModel {
     @Column(name = "CRERULE_FID")
     private String crerule_fid;
 
-        @Column(name = "CRERULE_WID")
+    @Column(name = "CRERULE_WID")
     private String crerule_wid;
 
     @Column(name = "BANKACCOUNT")

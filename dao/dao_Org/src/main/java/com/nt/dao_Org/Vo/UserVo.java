@@ -1,6 +1,7 @@
 package com.nt.dao_Org.Vo;
 
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Earlyvacation;
 import com.nt.dao_Org.UserAccount;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
@@ -26,5 +27,7 @@ public class UserVo extends BaseModel {
     private UserAccount userAccount;
 
     private CustomerInfo customerInfo;
+
+    private Earlyvacation earlyvacation;
 }
 
