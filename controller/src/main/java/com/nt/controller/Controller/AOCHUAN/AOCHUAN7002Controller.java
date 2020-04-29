@@ -3,6 +3,7 @@ package com.nt.controller.Controller.AOCHUAN;
 
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Account;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
+import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN7000.AccountService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
@@ -23,7 +24,6 @@ public class AOCHUAN7002Controller {
 
     @Autowired
     private AccountService accountService;
-
 
     @Autowired
     private TokenService tokenService;
@@ -51,8 +51,6 @@ public class AOCHUAN7002Controller {
         return ApiResult.success(docuruleService.selectrule(id));
     }
 
-
-
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody DocuruleVo docuruleVo, HttpServletRequest request) throws Exception {
         if(docuruleVo == null){
@@ -71,12 +69,18 @@ public class AOCHUAN7002Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/delCrerule",method={RequestMethod.GET})
-    public ApiResult delete(@RequestParam String helprule_id, HttpServletRequest request) throws Exception {
-        if(!StringUtils.isNotBlank(helprule_id)){
+    /**
+     * 删除
+     */
+    @RequestMapping(value = "/del", method = {RequestMethod.POST})
+    public ApiResult del(@RequestBody DocuruleVo deldocuruleVo, HttpServletRequest request) throws Exception {
+
+        if(deldocuruleVo == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        docuruleService.delCrerule(helprule_id);
+        if (!docuruleService.delete(deldocuruleVo,tokenService.getToken(request))){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
         return ApiResult.success();
     }
 

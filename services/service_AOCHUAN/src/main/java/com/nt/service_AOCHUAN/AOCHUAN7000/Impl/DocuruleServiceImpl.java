@@ -8,10 +8,6 @@ import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.*;
-import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.AllMapper;
-import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.CreruleMapper;
-import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.DocuruleMapper;
-import com.nt.service_AOCHUAN.AOCHUAN7000.mapper.HelpruleMapper;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +41,10 @@ public class DocuruleServiceImpl  implements DocuruleService {
     @Autowired
     private AuxiliaryAccountingItemsMapper auxiliaryAccountingItemsMapper;
 
-
     @Override
     public List<Docurule> get(Docurule docurule) throws Exception {
         return docuruleMapper.select(docurule);
     }
-
 
     @Override
     public DocuruleVo One(String docurule_id) throws Exception {
@@ -65,52 +59,27 @@ public class DocuruleServiceImpl  implements DocuruleService {
         return docuruleVo;
     }
 
-//    @Override
-//    public void updateDo(Docurule docurule, TokenModel tokenModel) throws Exception {
-//        docurule.preUpdate(tokenModel);
-//        docuruleMapper.updateByPrimaryKey(docurule);
-//    }
-//
-//    @Override
-//    public void updateCr(Crerule crerule, TokenModel tokenModel) throws Exception {
-//   crerule.preUpdate(tokenModel);
-//   creruleMapper.updateByPrimaryKey(crerule);
-//    }
-//
-//    @Override
-//    public void updateHe(Helprule helprule, TokenModel tokenModel) throws Exception {
-//helprule.preUpdate(tokenModel);
-//helpruleMapper.updateByPrimaryKey(helprule);
-//    }
-
-
-
     @Override
     public void update(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
         Docurule docurule=new Docurule();
         BeanUtils.copyProperties(docurule,docuruleVo.getDocurule());
         docurule.preUpdate(tokenModel);
-       docuruleMapper.updateByPrimaryKey(docurule);
-
-       String docuid=docurule.getDocurule_id();
-       Crerule crerul=new Crerule();
-       crerul.setDocurule_fid(docuid);
-
-
-      Helprule help1=new Helprule();
-      help1.setCrerule_wid(docuid);
-
-       creruleMapper.delete(crerul);
-       List<Crerule> crerules=docuruleVo.getCrerules();
-       helpruleMapper.delete(help1);
-      List<Helprule> helprules=docuruleVo.getHelprules();
+        docuruleMapper.updateByPrimaryKey(docurule);
+        String docuid=docurule.getDocurule_id();
+        Crerule crerul=new Crerule();
+        crerul.setDocurule_fid(docuid);
+        Helprule help1=new Helprule();
+        help1.setCrerule_wid(docuid);
+        creruleMapper.delete(crerul);
+        List<Crerule> crerules=docuruleVo.getCrerules();
+        helpruleMapper.delete(help1);
+        List<Helprule> helprules=docuruleVo.getHelprules();
         String[] crerulesid = new String[crerules.size()];
         if (crerules != null) {
             int rowundex = 0;
             for (int i =0 ; i< crerules.size() ; i++) {
                 String id = UUID.randomUUID().toString();
                 rowundex = rowundex + 1;
-                //crerule.preInsert(tokenModel);
                 crerules.get(i).setCrerule_id(id);
                 crerules.get(i).setDocurule_fid(docuid);
                 creruleMapper.insertSelective(crerules.get(i));
@@ -118,10 +87,8 @@ public class DocuruleServiceImpl  implements DocuruleService {
                 helprules.get(i).setCrerule_wid(docuid);
                 helprules.get(i).setCrerule_fid(id);
                 helpruleMapper.insertSelective(helprules.get(i));
-                //crerulesid[i] = id;
             }
         }
-
     }
 
     @Override
@@ -156,13 +123,7 @@ public class DocuruleServiceImpl  implements DocuruleService {
 
     }
 
-//    @Override
-//    public void delCrerule(String helprule_id) throws Exception {
-//
-//        helpruleMapper.delCrerule(helprule_id);
-//    }
-
-    //删除
+    //鍒犻櫎
     @Override
     public Boolean delete(DocuruleVo docuruleVo, TokenModel tokenModel) throws Exception {
 
@@ -172,25 +133,25 @@ public class DocuruleServiceImpl  implements DocuruleService {
 
         List<Helprule> helprules = docuruleVo.getHelprules() ;
 
-        //凭证规则
+        //鍑瘉瑙勫垯
         voucherRuiesMapper.delDocuruleid(docurule.getModifyby(), docurule.getDocurule_id());
 
         if(crerules.isEmpty()){
 
         }else{
 
-        //分录规则
-        for (Crerule item : crerules) {
-            if (existCheckAcc(item.getDocurule_fid())) {
-                item.preUpdate(tokenModel);
-                entryRulesMapper.delCreruleid(item.getModifyby(), item.getDocurule_fid());
+            //鍒嗗綍瑙勫垯
+            for (Crerule item : crerules) {
+                if (existCheckAcc(item.getDocurule_fid())) {
+                    item.preUpdate(tokenModel);
+                    entryRulesMapper.delCreruleid(item.getModifyby(), item.getDocurule_fid());
+                }
             }
-        }
         }
 
         if(helprules.isEmpty()){
         }else{
-            //辅助核算项目
+            //杈呭姪鏍哥畻椤圭洰
             for (Helprule item : helprules) {
                 if (existCheckAch(item.getCrerule_wid())) {
                     item.preUpdate(tokenModel);
