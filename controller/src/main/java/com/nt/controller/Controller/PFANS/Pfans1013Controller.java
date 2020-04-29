@@ -74,6 +74,7 @@ public class Pfans1013Controller {
             }
         }
         //交通费的预算编码
+        double cflg = 0;
         double curflg = 0;
         double rmbtra = 0;
         double tratra = 0;
@@ -112,6 +113,7 @@ public class Pfans1013Controller {
                             //币种
                             tl.setCurrency(iteA.getValue1());
                             if(iteA.getValue2() != null){
+                                cflg = Double.valueOf(iteA.getValue2());
                                 curflg += Double.valueOf(iteA.getValue2()) * tratra;
                             }
                         }
@@ -122,6 +124,7 @@ public class Pfans1013Controller {
         //住宿费用明细
         List<AccommodationDetails> acclist = evevo.getAccommodationdetails();
         String tro = "";
+        double aflg = 0;
         double accflg = 0;
         double rmbacc = 0;
         double traacc = 0;
@@ -159,6 +162,7 @@ public class Pfans1013Controller {
                             //币种
                             ac.setCurrency(iteA.getValue1());
                             if(iteA.getValue2() != null){
+                                aflg = Double.valueOf(iteA.getValue2());
                                 accflg += Double.valueOf(iteA.getValue2()) * traacc;
                             }
                         }
@@ -229,62 +233,117 @@ public class Pfans1013Controller {
         Map<String, Object> data = new HashMap<>();
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
-        if (evevo.getEvection().getLoanamount() != null) {
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getEvection().getLoanamount())){
             BigDecimal bd = new BigDecimal(evevo.getEvection().getLoanamount());
             str_format = df.format(bd);
+            if(str_format.equals(".00"))
+            {
+                str_format = "0";
+            }
             evevo.getEvection().setLoanamount(str_format);
         }
-        if (evevo.getEvection().getBalance() != null) {
+        else{
+            evevo.getEvection().setLoanamount("0");
+        }
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getEvection().getBalance())){
             BigDecimal bd = new BigDecimal(evevo.getEvection().getBalance());
             str_format = df.format(bd);
+            if(str_format.equals(".00"))
+            {
+                str_format = "0";
+            }
             evevo.getEvection().setBalance(str_format);
+        }
+        else{
+            evevo.getEvection().setBalance("0");
         }
 
         for (int h = 0; h < evevo.getCurrencyexchanges().size(); h++) {
-            if (evevo.getCurrencyexchanges().get(h).getAmount() != null) {
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getCurrencyexchanges().get(h).getAmount())){
                 BigDecimal bd = new BigDecimal(evevo.getCurrencyexchanges().get(h).getAmount());
                 str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0";
+                }
                 evevo.getCurrencyexchanges().get(h).setAmount(str_format);
+            }
+            else{
+                evevo.getCurrencyexchanges().get(h).setAmount("0");
             }
         }
 
         for (int k = 0; k < evevo.getTrafficdetails().size(); k++) {
-            if (evevo.getTrafficdetails().get(k).getForeigncurrency() != null) {
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getTrafficdetails().get(k).getForeigncurrency())){
                 BigDecimal bd = new BigDecimal(evevo.getTrafficdetails().get(k).getForeigncurrency());
                 str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0";
+                }
                 evevo.getTrafficdetails().get(k).setForeigncurrency(str_format);
             }
-            if (evevo.getTrafficdetails().get(k).getRmb() != null) {
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getTrafficdetails().get(k).getRmb())){
                 BigDecimal bd = new BigDecimal(evevo.getTrafficdetails().get(k).getRmb());
                 str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0";
+                }
                 evevo.getTrafficdetails().get(k).setRmb(str_format);
+            }
+            else{
+                evevo.getTrafficdetails().get(k).setRmb("0");
             }
         }
 
         for (int m = 0; m < evevo.getAccommodationdetails().size(); m++) {
-            if (evevo.getAccommodationdetails().get(m).getTravel() != null) {
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getAccommodationdetails().get(m).getTravel())){
                 BigDecimal bd = new BigDecimal(evevo.getAccommodationdetails().get(m).getTravel());
                 str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0";
+                }
                 evevo.getAccommodationdetails().get(m).setTravel(str_format);
             }
-            if (evevo.getAccommodationdetails().get(m).getRmb() != null) {
+            else{
+                evevo.getAccommodationdetails().get(m).setTravel("0");
+            }
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getAccommodationdetails().get(m).getRmb())){
                 BigDecimal bd = new BigDecimal(evevo.getAccommodationdetails().get(m).getRmb());
                 str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0";
+                }
                 evevo.getAccommodationdetails().get(m).setRmb(str_format);
+            }
+            else{
+                evevo.getAccommodationdetails().get(m).setRmb("0");
             }
         }
 
         String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra)));
+        if(rmbflg.equals(".00")){
+            rmbflg = "0";
+        }
         String traflg = df.format(new BigDecimal(String.valueOf(tratra + traacc)));
+        if(traflg.equals(".00")){
+            traflg = "0";
+        }
         String sumrmb = df.format(new BigDecimal(String.valueOf(accflg + curflg + rmbacc + rmbtra)));
+        if(sumrmb.equals(".00")){
+            sumrmb = "0";
+        }
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
         data.put("wfList4", wfList4);
         data.put("trr", trr);
         data.put("tro", tro);
-        data.put("cflg", curflg);
-        data.put("aflg", accflg);
+        data.put("cflg", cflg);
+        data.put("aflg", aflg);
         data.put("userim", userim);
         data.put("rmbflg", rmbflg);
         data.put("traflg", traflg);
@@ -298,11 +357,11 @@ public class Pfans1013Controller {
         } else {
             ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "jingwaijingsuanshu.xlsx", data, response);
         }
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
 
 
