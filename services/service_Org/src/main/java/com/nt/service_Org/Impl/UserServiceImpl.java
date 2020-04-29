@@ -1405,6 +1405,7 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                         customerInfoList.get(0).getUserinfo().setGridData(cupList);
                         mongoTemplate.save(customerInfoList.get(0));
+                        mongoTemplate.save(userAccount);
                         accesscount = accesscount + 1;
                     }
                     else
