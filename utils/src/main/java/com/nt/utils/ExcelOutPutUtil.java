@@ -4,7 +4,6 @@ import cn.hutool.core.io.resource.ClassPathResource;
 import com.aspose.cells.SaveFormat;
 import com.aspose.cells.Workbook;
 import com.nt.utils.jxlsUtil.JxlsBuilder;
-import com.spire.xls.Worksheet;
 import org.apache.poi.ss.formula.functions.T;
 
 import javax.servlet.ServletOutputStream;
@@ -73,11 +72,6 @@ public class ExcelOutPutUtil {
                jxlsBuilder.putVar(entry.getKey(),entry.getValue());
            }
            jxlsBuilder.build();
-           com.spire.xls.Workbook wb = new com.spire.xls.Workbook();
-           wb.loadFromFile("E:\\xunbaodan.xls");
-           Worksheet sheet = wb.getWorksheets().get(0);
-           //调用方法保存为PDF格式
-           sheet.saveToPdf("E:\\ToPDF2.pdf");
            byte[] b = new byte[1024];
            int n;
            while ((n = stream.read(b)) != -1){

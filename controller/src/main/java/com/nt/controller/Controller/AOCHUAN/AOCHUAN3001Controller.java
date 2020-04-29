@@ -1,15 +1,25 @@
 package com.nt.controller.Controller.AOCHUAN;
 
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
+import com.spire.doc.Document;
+import com.spire.doc.FileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,18 +90,42 @@ public class AOCHUAN3001Controller {
     }
 
     @RequestMapping(value = "/pdf",method={RequestMethod.POST})
-    public void pdf(@RequestBody List<Enquiry> enquiry, HttpServletRequest request, HttpServletResponse response) throws Exception {
-            Map<String, Object> data = new HashMap<>();
-//            List<Enquiry> en = new ArrayList<>();
-//            Enquiry enquiry1 = new Enquiry();
-//            enquiry1.setSupplier("123");
-//            enquiry1.setQuotedprice("123");
-//            enquiry1.setExchangerate("123");
-//            en.add(enquiry1);
-         data.put("enquiry",enquiry);
-         data.put("productus","ao_chuan");
-         data.put("producten","奥川");
-         ExcelOutPutUtil.OutPut("aochuan.xlsx",data,response);
+    public void pdf(@RequestBody Quotations quotations, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SimpleDateFormat sf =new SimpleDateFormat("yyyy/MM/dd");
+        List<Enquiry> enquiry = quotations.getEnquiry();
+        String inquirydate = sf.format(quotations.getInquirydate());
+        String quotationsno = quotations.getQuotationsno();
+        String account = quotations.getAccount();
+        BigDecimal amounts = new BigDecimal(0);
+        int i = 0;
+        for (Enquiry en:
+        enquiry) {
+            i += 1;
+            en.setIndex(i);
+            en.setProducten(quotations.getProducten());
+             amounts = new BigDecimal(en.getCounts()).multiply(new BigDecimal(en.getQuotedprice())).add(amounts);
+        }
+        String amount = amounts.toString();
+        HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
+        Configure config = Configure.newBuilder()
+                .bind("enquiry", policy).build();
+
+        XWPFTemplate template = XWPFTemplate.compile("C:\\Users\\Administrator\\Desktop\\Quotation.docx", config).render(
+                new HashMap<String, Object>() {{
+                    put("enquiry", enquiry);
+                    put("inquirydate",inquirydate);
+                    put("quotationsno",quotationsno);
+                    put("account",account);
+                    put("amount",amount);
+                }}
+        );
+        ServletOutputStream out = response.getOutputStream();
+        template.writeToFile("C:\\Users\\Administrator\\Desktop\\Quotation1.docx");
+        Document document = new Document();
+        document.loadFromFile("C:\\Users\\Administrator\\Desktop\\Quotation1.docx");
+        document.saveToStream(out, FileFormat.PDF);
+        template.close();
+
 
     }
 }

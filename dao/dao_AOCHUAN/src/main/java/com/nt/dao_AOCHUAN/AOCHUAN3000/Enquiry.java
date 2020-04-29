@@ -59,6 +59,12 @@ public class Enquiry {
      @Transient
      private String[] document;
 
+     @Transient
+     private String producten;
+
+     @Transient
+     private int index;
+
      //产品状态
      private String productstatus;
      //备注
