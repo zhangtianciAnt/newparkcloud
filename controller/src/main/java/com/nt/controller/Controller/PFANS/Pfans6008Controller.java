@@ -37,6 +37,12 @@ public class Pfans6008Controller {
         return ApiResult.success(coststatisticsService.getCostList(coststatistics));
     }
 
+    @RequestMapping(value = "/getCostBygroupid", method = {RequestMethod.GET})
+    public ApiResult getCostBygroupid(String groupid,HttpServletRequest request) throws Exception {
+        //Coststatistics coststatistics = new Coststatistics();
+        return ApiResult.success(coststatisticsService.getCostListBygroupid(groupid));
+    }
+
     @RequestMapping(value = "/insertCoststatistics", method = {RequestMethod.POST})
     public ApiResult insertCoststatistics(HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();

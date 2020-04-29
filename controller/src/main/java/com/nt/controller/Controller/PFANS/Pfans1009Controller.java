@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -112,6 +113,10 @@ public class Pfans1009Controller {
         if (customerInfo != null) {
             fxs.setUser_id(customerInfo.getUserinfo().getCustomername());
         }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat str = new SimpleDateFormat("dd/MM/yyyy");
+        Date tem_date = null;
+        String str_format = "";
         String wfList1 = "";
         String wfList2 = "";
         String wfList3 = "";
@@ -166,6 +171,13 @@ public class Pfans1009Controller {
         data.put("wfList5", wfList5);
         data.put("wfList", wfList);
         if (pp.length > 0) {
+            //20200429 add by ztc format date start
+            str_format = pp[0];
+            tem_date = sdf.parse(str_format);
+            pp[0] = str.format(tem_date);
+            str_format = pp[1];
+            tem_date = sdf.parse(str_format);
+            pp[1] = str.format(tem_date);
             data.put("statime", pp);
         } else {
             data.put("statime", "");

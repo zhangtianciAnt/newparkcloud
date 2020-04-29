@@ -56,6 +56,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     }
 
     @Override
+    public List<Coststatistics> getCostListBygroupid(String groupid) throws Exception {
+        return coststatisticsMapper.selectBygroupid(groupid);
+    }
+
+    @Override
     public Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         coststatisticsMapper.delete(coststatistics);
 

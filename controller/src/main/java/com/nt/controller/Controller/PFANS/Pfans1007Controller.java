@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -97,9 +99,41 @@ public class Pfans1007Controller {
             StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
             startWorkflowVo.setDataId(asvo.getAssetinformation().getAssetinformationid());
             List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
-            List<Salesdetails> saList = asvo.getSalesdetails();
-            List<Scrapdetails> scList = asvo.getScrapdetails();
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+        String str_format = "";
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        //原值总额
+        BigDecimal bd = new BigDecimal(asvo.getAssetinformation().getTotalvalue());
+        str_format = df.format(bd);
+        asvo.getAssetinformation().setTotalvalue(str_format);
+        //净值总额
+        bd = new BigDecimal(asvo.getAssetinformation().getTotalnetworth());
+        str_format = df.format(bd);
+        asvo.getAssetinformation().setTotalnetworth(str_format);
+//            List<Salesdetails> saList = asvo.getSalesdetails();
+//            List<Scrapdetails> scList = asvo.getScrapdetails();
+        for (int h = 0; h < asvo.getScrapdetails().size(); h++) {
+            bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
+            str_format = df.format(bd);
+            asvo.getScrapdetails().get(h).setOriginalvalue(str_format);
+            bd = new BigDecimal(asvo.getScrapdetails().get(h).getNetworth());
+            str_format = df.format(bd);
+            asvo.getScrapdetails().get(h).setNetworth(str_format);
+        }
+        for (int h = 0; h < asvo.getSalesdetails().size(); h++) {
+            bd = new BigDecimal(asvo.getSalesdetails().get(h).getOriginalvalue());
+            str_format = df.format(bd);
+            asvo.getSalesdetails().get(h).setOriginalvalue(str_format);
+            bd = new BigDecimal(asvo.getSalesdetails().get(h).getNetworth());
+            str_format = df.format(bd);
+            asvo.getSalesdetails().get(h).setNetworth(str_format);
+            bd = new BigDecimal(asvo.getSalesdetails().get(h).getSellingprice());
+            str_format = df.format(bd);
+            asvo.getSalesdetails().get(h).setSellingprice(str_format);
+            bd = new BigDecimal(asvo.getSalesdetails().get(h).getLoss());
+            str_format = df.format(bd);
+            asvo.getSalesdetails().get(h).setLoss(str_format);
+        }
             Query query = new Query();
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (wfList.size() > 0) {
