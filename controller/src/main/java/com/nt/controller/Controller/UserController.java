@@ -16,10 +16,7 @@ import com.nt.utils.services.TokenService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -356,5 +353,14 @@ public class UserController {
     @RequestMapping(value = "/getOKRS", method = {RequestMethod.GET})
     public ApiResult getOKRS(String groupid, HttpServletRequest request) throws Exception {
         return ApiResult.success(userService.getOKRS(groupid));
+    }
+
+    /**
+     *按月获取Customer
+     * （ADD） 2020-04-29 -NC
+     */
+    @RequestMapping(value = "/getOKRSByMonth", method = {RequestMethod.GET})
+    public ApiResult getOKRSByMonth(@RequestParam String groupid, HttpServletRequest request) throws Exception {
+        return ApiResult.success(userService.getOKRSByMonth(groupid));
     }
 }

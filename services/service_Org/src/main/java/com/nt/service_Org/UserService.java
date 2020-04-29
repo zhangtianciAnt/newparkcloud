@@ -86,5 +86,13 @@ public interface UserService {
 
     List<CustomerInfo> getOKRS(String orgid) throws Exception;
 
+    /**
+     * 按月获取Customer
+     * （ADD） 2020-04-29 -NC
+     * @return
+     * @throws Exception
+     */
+    List<CustomerInfo> getOKRSByMonth(String orgid) throws Exception;
+
     List<String> importUser(HttpServletRequest request) throws Exception ;
 }
