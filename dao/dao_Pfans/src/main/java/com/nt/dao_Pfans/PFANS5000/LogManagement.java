@@ -26,6 +26,13 @@ public class LogManagement extends BaseModel {
     private String logmanagement_id;
 
     /**
+     * GROUP
+     */
+    @Id
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    /**
      * 日期
      */
     @Column(name = "LOG_DATE")
