@@ -26,6 +26,8 @@ public class EarlyvacationServiceImpl implements EarlyvacationService {
 
     @Override
     public void insert(Earlyvacation earlyvacation, TokenModel tokenModel) throws Exception {
+
+        earlyvacationMapper.delete(earlyvacation);
         earlyvacation.preInsert(tokenModel);
         earlyvacation.setEarlyvacation_id(UUID.randomUUID().toString());
         earlyvacationMapper.insert(earlyvacation);
