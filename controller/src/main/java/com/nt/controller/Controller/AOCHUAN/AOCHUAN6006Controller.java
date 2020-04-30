@@ -128,19 +128,27 @@ public class AOCHUAN6006Controller {
 
                 //UPDATE:FOLLOWUPRECORD
                 List<ReimbursementDetail> reimDetailList = reimAndReimDetail.getReimFormList();
-                for(ReimbursementDetail reimbursementDetail:reimDetailList){
 
+                if(reimDetailList.isEmpty()){
+                    ReimbursementDetail reimbursementDetail = new ReimbursementDetail();
                     reimbursementDetail.setReimbursement_no(reimbursement.getReimbursement_no());
+                    reimbursementService.delete(reimbursementDetail,tokenService.getToken(request));
+                }else{
+                    for(ReimbursementDetail reimbursementDetail:reimDetailList){
 
-                    //存在Check
-                    if (reimbursementService.existCheck(reimbursementDetail)) {
-                        reimbursementService.update(reimbursementDetail, tokenService.getToken(request));
-                    }else{
-                        String id= UUID.randomUUID().toString();
-                        reimbursementDetail.setReimbursement_detail_id(id);
-                        reimbursementService.insert(reimbursementDetail,tokenService.getToken(request));
+                        reimbursementDetail.setReimbursement_no(reimbursement.getReimbursement_no());
+
+                        //存在Check
+                        if (reimbursementService.existCheck(reimbursementDetail)) {
+                            reimbursementService.update(reimbursementDetail, tokenService.getToken(request));
+                        }else{
+                            String id= UUID.randomUUID().toString();
+                            reimbursementDetail.setReimbursement_detail_id(id);
+                            reimbursementService.insert(reimbursementDetail,tokenService.getToken(request));
+                        }
                     }
                 }
+
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }

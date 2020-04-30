@@ -96,7 +96,7 @@ public class ReimbursementServiceImpl implements ReimbursementService {
             ReimbursementDetail reimbursementDetail = new ReimbursementDetail();
             BeanUtils.copyProperties(reimbursementDetail,object);
             reimbursementDetail.preUpdate(tokenModel);
-            reimbursementDetailMapper.deleteFromReimbursementDetailByPrikey(reimbursementDetail.getModifyby(),reimbursementDetail.getReimbursement_no(),reimbursementDetail.getReimbursement_detail_id(),"1");
+            reimbursementDetailMapper.deleteFromReimbursementDetailByPrikey(reimbursementDetail.getModifyby(),reimbursementDetail.getReimbursement_no(),"1");
         }
     }
 

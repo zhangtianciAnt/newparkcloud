@@ -20,7 +20,6 @@
 		SET STATUS = #{status},
 		MODIFYBY = #{modifyby},
 		MODIFYON = now()
-		 WHERE REIMBURSEMENT_DETAIL_ID = #{id}
-		 AND REIMBURSEMENT_NO = #{remd_no}
+		 WHERE REIMBURSEMENT_NO = #{remd_no}
     </update>
 </mapper>
