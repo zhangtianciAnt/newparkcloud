@@ -165,20 +165,28 @@ public class AOCHUAN3009Controller {
 
             //UPDATE:FOLLOWUPRECORD
             List<FollowUpRecord> followUpRecordList = projectsAndFollowUpRecord.getFollowUpRecordList();
-            for(FollowUpRecord followUpRecord:followUpRecordList){
 
-                followUpRecord.setProducts_id(projects.getProducts_id());
-                followUpRecord.setSupplier_id(projects.getSupplier_id());
-
-                //存在Check
-                if (projectsSerivce.existCheck(followUpRecord)) {
-                    projectsSerivce.update(followUpRecord, tokenService.getToken(request));
+                if(followUpRecordList.isEmpty()){
+                    FollowUpRecord followUpRecord = new FollowUpRecord();
+                    followUpRecord.setProducts_id(projects.getProducts_id());
+                    followUpRecord.setSupplier_id(projects.getSupplier_id());
+                    projectsSerivce.delete(followUpRecord,tokenService.getToken(request));
                 }else{
-                    String id= UUID.randomUUID().toString();
-                    followUpRecord.setFollowuprecord_id(id);
-                    projectsSerivce.insert(followUpRecord,tokenService.getToken(request));
+                    for(FollowUpRecord followUpRecord:followUpRecordList){
+
+                        followUpRecord.setProducts_id(projects.getProducts_id());
+                        followUpRecord.setSupplier_id(projects.getSupplier_id());
+
+                        //存在Check
+                        if (projectsSerivce.existCheck(followUpRecord)) {
+                            projectsSerivce.update(followUpRecord, tokenService.getToken(request));
+                        }else{
+                            String id= UUID.randomUUID().toString();
+                            followUpRecord.setFollowuprecord_id(id);
+                            projectsSerivce.insert(followUpRecord,tokenService.getToken(request));
+                        }
+                    }
                 }
-            }
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }

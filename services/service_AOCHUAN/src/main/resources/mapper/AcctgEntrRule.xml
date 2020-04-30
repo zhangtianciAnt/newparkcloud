@@ -5,29 +5,35 @@
     <!--  ????-??????  -->
     <select id="selectrule" resultType="com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All">
  SELECT
-        cr.CRERULE_ID ,
-        cr.DOCURULE_FID,
-        cr.REMARKS,
-        cr.DEBIT,
-        cr.CREDIT,
-        cr.CRERATE,
-		cr.ACCOUNTID,
+    cr.CRERULE_ID ,
+    cr.DOCURULE_FID,
+    cr.REMARKS,
+    cr.DEBIT,
+    cr.CREDIT,
+    cr.CRERATE,
+	cr.ACCOUNTID,
+	cr.CREATEBY,
+	cr.CREATEON,
+	cr.STATUS,
 
-        hr.HELPRULE_ID,
-        hr.CRERULE_FID ,
-        hr.BANKACCOUNT,
-        hr.DEPART,
-        hr.EXPENDITURE,
-        hr.ACCOUNTING,
-        hr.MAINCASH,
-        hr.FLOWCASH,
+    hr.HELPRULE_ID,
+    hr.CRERULE_FID ,
+    hr.BANKACCOUNT,
+    hr.DEPART,
+    hr.EXPENDITURE,
+    hr.ACCOUNTING,
+    hr.MAINCASH,
+    hr.FLOWCASH,
 		hr.BANKACCOUNTID,
 		hr.DEPARTID,
 		hr.EXPENDITUREID,
 		hr.ACCOUNTINGID,
 		hr.MAINCASHID,
 		hr.FLOWCASHID,
-        hr.rowindex
+		hr.CREATEON,
+		hr.CREATEBY,
+    hr.STATUS,
+    hr.rowindex
         FROM crerule cr
         INNER JOIN helprule as hr
         ON  hr.CRERULE_FID = cr.CRERULE_ID

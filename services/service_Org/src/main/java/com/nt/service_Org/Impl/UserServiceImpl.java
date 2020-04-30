@@ -17,6 +17,7 @@ import com.nt.utils.services.JsTokenService;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -616,6 +617,41 @@ public class UserServiceImpl implements UserService {
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfos;
     }
+
+    /**
+     * 按月获取Customer
+     * （ADD） 2020-04-29 -NC
+     * @param orgid
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<CustomerInfo> getOKRSByMonth(String orgid) throws Exception{
+
+        System.out.println("1111111111111111111111111111111111111111111111111111111111111111");
+        Date tempDate = new Date();
+        SimpleDateFormat  sdf = new SimpleDateFormat("yyyy-MM");
+
+        String month =sdf.format(tempDate);
+
+        List<CustomerInfo> customerInfos = new ArrayList<>();
+        if (StrUtil.isNotBlank(month)) {
+            Criteria cri = Criteria.where("_time").regex(month);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("status").is("0"));
+            query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
+            query.addCriteria(Criteria.where("userinfo.OkrsTable").elemMatch(cri));
+            query.with(
+                    Sort.by(
+                            Sort.Order.desc("userinfo.OkrsTable.completed")
+                    )
+            );
+            query.limit(3);
+            customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        }
+        return customerInfos;
+    }
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)

@@ -672,10 +672,26 @@ public class CustomerInfo extends BaseModel {
 
     @Data
     public static class OkrsTable{
+
+        /**
+         * 员工工号
+         * */
+        //(ADD)20200429 - NC -BEGIN
+        private String job_no;
+        //(ADD)20200429 - NC -END
         private String _time;
         private String target;
         private String result;
-        private String completed;
+
+        /**
+         * 完成度
+         * */
+        //(UPD)20200429 - NC -BEGIN
+        //(BEFORE)
+        //private String completed;
+        //(AFFTER)
+        private int completed;
+        //(UPD)20200429 - NC -END
     }
 
     @Data
