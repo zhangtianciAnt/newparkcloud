@@ -611,10 +611,22 @@ public class UserServiceImpl implements UserService {
             for (int i = 1; i < list.size(); i++) {
 
                 List<Object> value = list.get(i);
-                //部门
-                String departmentname = value.get(0).toString();
-                //姓名
-                String name = value.get(1).toString();
+                String  departmentname = "";
+                try{
+                    //部门
+                    departmentname= value.get(0)!= null ? value.get(0).toString() : "";
+                }
+                catch (Exception e){
+                }
+
+                String  name = "";
+                try{
+                    //姓名
+                    name= value.get(1)!= null ? value.get(1).toString() : "";
+                }
+                catch (Exception e){
+                }
+
                 String  positionname = "";
                 try{
                     //职位名称
@@ -622,17 +634,37 @@ public class UserServiceImpl implements UserService {
                 }
                 catch (Exception e){
                 }
+
                 //性别
                 String sex = value.get(3).toString().equals("男")?"0":"1";
-                //USE ID
-                String usercode = value.get(4).toString();
-                //员工号
-                String jobnumber = value.get(5).toString();
-                //部门联系邮箱
-                String departmentemail = value.get(6).toString();
-                //装置经理邮箱
-                String devicemanageremail = value.get(7).toString();
 
+                String usercode = "";
+                try{
+                    //USE ID
+                    usercode = value.get(4).toString()!= null ? value.get(4).toString() : "";
+                }catch (Exception e){
+                }
+
+                String jobnumber = "";
+                try{
+                    //员工号
+                    jobnumber = value.get(5).toString()!= null ? value.get(5).toString() : "";
+                }catch (Exception e){
+                }
+
+                String departmentemail = "";
+                try{
+                    //部门联系邮箱
+                    departmentemail = value.get(6).toString()!= null ? value.get(6).toString() : "";
+                }catch (Exception e){
+                }
+
+                String devicemanageremail = "";
+                try{
+                    //装置经理邮箱
+                    devicemanageremail = value.get(7).toString()!= null ? value.get(7).toString() : "";
+                }catch (Exception e){
+                }
                 String idnumber = "";
                 try{
                     //身份证件号
