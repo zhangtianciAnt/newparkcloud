@@ -1,11 +1,15 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
 import com.nt.service_pfans.PFANS2000.GoalManagementService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,6 +31,9 @@ public class Pfans2023Controller {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
@@ -74,5 +83,13 @@ public class Pfans2023Controller {
         GoalManagement gmt = goalmanagementService.One(goalmanagement.getGoalmanagement_id());
         Map<String, Object> data = new HashMap<>();
         data.put("gmt", gmt);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(gmt.getUser_id()));
+        List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
+        if(CustomerInfolist.size() >0){
+            data.put("user", CustomerInfolist.get(0).getUserinfo());
+        }
+
+        ExcelOutPutUtil.OutPut("目标管理", "mubiaoguanli.xlsx", data, response);
     }
 }

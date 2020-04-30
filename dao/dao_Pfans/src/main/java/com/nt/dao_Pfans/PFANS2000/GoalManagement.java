@@ -82,9 +82,26 @@ public class GoalManagement extends BaseModel {
     /**
      * 申请日期
      */
-    @Column(name = "APPLICATION_DATE")
-    private Date application_date;
+    @Column(name = "APPLICATION_DATE1")
+    private Date application_date1;
 
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATION_DATE2")
+    private Date application_date2;
+
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATION_DATE3")
+    private Date application_date3;
+
+    /**
+     * 申请日期
+     */
+    @Column(name = "APPLICATION_DATE4")
+    private Date application_date4;
     /**
      * ｽｷﾙﾗﾝｸ
      */
