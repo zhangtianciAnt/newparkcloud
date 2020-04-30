@@ -161,5 +161,8 @@ public class AccommodationDetails extends BaseModel {
 
     @Column(name = "ACCOUNTCODE")
     private String  accountcode;
-
+    //add-ws-4/29-补贴费用添加
+    @Column(name = "SUBSIDIES")
+    private String  subsidies;
+//add-ws-4/29-补贴费用添加
 }
