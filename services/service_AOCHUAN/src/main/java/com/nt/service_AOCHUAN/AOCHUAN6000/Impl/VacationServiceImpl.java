@@ -46,12 +46,19 @@ public class VacationServiceImpl implements VacationService {
 
         return vacationMapper.selectByPrimaryKey(ids);
     }
-
+//获取年假结余
     @Override
     public Earlyvacation getannualyear(String ids) throws Exception {
         Earlyvacation earlyvacation = new Earlyvacation();
         earlyvacation.setUsernames(ids);
-        return earlyvacationMapper.selectOne(earlyvacation);
+        Earlyvacation earlyvacation1 = earlyvacationMapper.selectOne(earlyvacation);
+        if(earlyvacation1 == null){
+            return null;
+        }
+        else {
+            return earlyvacation1;
+        }
+
     }
 
     @Override
