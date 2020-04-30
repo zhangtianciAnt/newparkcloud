@@ -251,6 +251,15 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.getSiteList3(companyProjects));
     }
 
+    @RequestMapping(value="/getSiteList5", method={RequestMethod.GET})
+    public ApiResult getSiteList5(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        CompanyProjects companyProjects = new CompanyProjects();
+        companyProjects.setOwners(tokenModel.getOwnerList());
+        companyProjects.setOwner(tokenModel.getUserId());
+        return ApiResult.success(companyProjectsService.getSiteList4(companyProjects));
+    }
+
     @RequestMapping(value="/getSiteList2", method={RequestMethod.GET})
     public ApiResult getSiteList2(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
