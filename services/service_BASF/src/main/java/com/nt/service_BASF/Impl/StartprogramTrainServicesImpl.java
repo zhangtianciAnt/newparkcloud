@@ -67,16 +67,30 @@ public class StartprogramTrainServicesImpl implements StartprogramTrainServices 
 
         List<TrainjoinlistVo> list = trainjoinlistMapper.selectUnDeptThrough(year);
         List<TrainjoinlistVo> allList = trainjoinlistMapper.selectUnAllDeptThrough(year);
+
         OrgTree orgTree = new OrgTree();
-        List<OrgTree> orglist =new ArrayList<>();
+        List<OrgTree> orglist = orgTreeService.getById(orgTree);
         String type = "";
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < allList.size(); i++) {
             StartprogramTrainVo startprogramTrainVo = new StartprogramTrainVo();
             NumberFormat numberFormat = NumberFormat.getInstance();
             numberFormat.setMaximumFractionDigits(0);
-            type = numberFormat.format((float) list.get(i).getCount() / (float) allList.get(i).getCount() * 100);
-            String departmentid = list.get(i).getDepartmentid();
-            orglist = orgTreeService.getById(orgTree);
+
+            for(int j=0;j<list.size();j++)
+            {
+                if(allList.get(i).getDepartmentid().equals(list.get(j).getDepartmentid()))
+                {
+                    type = numberFormat.format((float) list.get(j).getCount() / (float) allList.get(i).getCount() * 100);
+                    break;
+                }
+                else
+                {
+                    type = "0";
+                }
+            }
+
+            String departmentid = allList.get(i).getDepartmentid();
+
             String name =getDepartmentname(orglist,departmentid);
             if(name != null && name.length() !=0)
             {
