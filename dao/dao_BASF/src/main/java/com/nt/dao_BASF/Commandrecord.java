@@ -100,7 +100,7 @@ public class Commandrecord extends BaseModel {
         //毒气泄漏
         private String gasLeak;
         //受伤
-        private String Injured;
+        private String injured;
         //其他
         private String other;
     }
