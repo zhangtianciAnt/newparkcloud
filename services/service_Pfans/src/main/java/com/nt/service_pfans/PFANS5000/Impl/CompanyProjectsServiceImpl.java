@@ -210,7 +210,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //2019
-            String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+            //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+            String thisYear_s = DateUtil.format(new Date(), "YYYY");
             //2020
             int thatYear_i = Integer.parseInt(thisYear_s) + 1;
             String thatYear_s = String.valueOf(thatYear_i);
@@ -278,7 +279,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                     delegainformation.setProjectsystem_id(pro.getProjectsystem_id());
                     delegainformation.setAdmissiontime(pro.getAdmissiontime());
                     delegainformation.setExittime(pro.getExittime());
-                    delegainformation.setSupplierinfor_id(pro.getSuppliernameid());
                     delegainformation.setProjectsystem_id(pro.getProjectsystem_id());
                     String admissiontimeMonth_s = DateUtil.format(delegainformation.getAdmissiontime(), "MM");
                     String exitimeMonth_s = DateUtil.format(delegainformation.getExittime(), "MM");
@@ -961,6 +961,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                             }
                         }
                     }
+                    delegainformation.setYear(thisYear_s);
                     delegainformationMapper.insertSelective(delegainformation);
                 }
             }
@@ -1055,7 +1056,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if (projectsystemList != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //2019
-            String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+            //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+            String thisYear_s = DateUtil.format(new Date(), "YYYY");
             //2020
             int thatYear_i = Integer.parseInt(thisYear_s) + 1;
             String thatYear_s = String.valueOf(thatYear_i);
@@ -1808,6 +1810,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                             }
                         }
                     }
+                    delegainformation.setYear(thisYear_s);
                     delegainformationMapper.insert(delegainformation);
                 }
             }

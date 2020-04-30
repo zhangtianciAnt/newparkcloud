@@ -879,7 +879,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
                     //获取人员信息
                     Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber()));
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber().trim()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         if(Time_start == null){
@@ -1338,7 +1338,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //日志用外出时长
                 double minutelogss= minutelogs.doubleValue();
                 minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
-                List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
+                List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber().trim()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
                     if(Time_start == null){
                         Time_start = Time_end;
@@ -1745,7 +1745,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     minuteam = NumberUtil.round(minutesss/60,2).doubleValue();
                     //获取人员信息
                     Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber()));
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber().trim()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         //打卡记录
@@ -2074,7 +2074,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 minute = NumberUtil.round(minutess/60,2).doubleValue();
                 double minutesss= minuteam.doubleValue();
                 minuteam = NumberUtil.round(minutesss/60,2).doubleValue();
-                List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
+                List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber().trim()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
                     if(Time_start == null){
                         Time_start = Time_end;
@@ -2449,7 +2449,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
                 //获取人员信息
                 Query query = new Query();
-                query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber()));
+                query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber().trim()));
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     if(Time_start == null){
@@ -2859,7 +2859,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //日志用外出时长
                 double minutelogss= minutelogs.doubleValue();
                 minutelogs = NumberUtil.round(minutelogss/60,2).doubleValue();
-                List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber()))).collect(Collectors.toList());
+                List<Expatriatesinfor> exList = expatriatesinforList.stream().filter(coi ->(coi.getNumber().contains(count.getJobnumber().trim()))).collect(Collectors.toList());
                 if (exList.size() > 0) {
                     if(Time_start == null){
                         Time_start = Time_end;
