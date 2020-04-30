@@ -532,7 +532,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //删除昨天的临时数据
             punchcardrecorddetailmapper.deletetepundet(thisDate,staffNo);
             //正式
-        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
+            String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
             String url = "";
             if(staffId == null){
                 url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
@@ -1392,28 +1392,30 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
                 //添加打卡记录end
             }
-            List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
-            for (Expatriatesinfor Expatriatesinfor : inforlist){
-                tokenModel.setUserId(Expatriatesinfor.getAccount());
-                tokenModel.setExpireDate(new Date());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-                calendar.add(Calendar.DAY_OF_YEAR, diffday);
-                //插入没有打卡记录的员工的考勤
-                Attendancebp attendance = new Attendancebp();
-                attendance.setAbsenteeism("8");
-                attendance.setNormal("0");
-                // 日志用外出时长
-                attendance.setOutgoinghours("0");
-                attendance.setAttendancebpid(UUID.randomUUID().toString());
-                attendance.setGroup_id(Expatriatesinfor.getGroup_id());
-                attendance.setUser_id(Expatriatesinfor.getAccount());
-                attendance.setDates(calendar.getTime());
-                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                attendance.preInsert(tokenModel);
-                attendancebpMapper.insert(attendance);
+            if(staffId == null){
+                List<Expatriatesinfor> inforlist = punchcardrecorddetailbpmapper.getexpatriatesinforbp(ids);
+                for (Expatriatesinfor Expatriatesinfor : inforlist){
+                    tokenModel.setUserId(Expatriatesinfor.getAccount());
+                    tokenModel.setExpireDate(new Date());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    calendar.add(Calendar.DAY_OF_YEAR, diffday);
+                    //插入没有打卡记录的员工的考勤
+                    Attendancebp attendance = new Attendancebp();
+                    attendance.setAbsenteeism("8");
+                    attendance.setNormal("0");
+                    // 日志用外出时长
+                    attendance.setOutgoinghours("0");
+                    attendance.setAttendancebpid(UUID.randomUUID().toString());
+                    attendance.setGroup_id(Expatriatesinfor.getGroup_id());
+                    attendance.setUser_id(Expatriatesinfor.getAccount());
+                    attendance.setDates(calendar.getTime());
+                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                    attendance.preInsert(tokenModel);
+                    attendancebpMapper.insert(attendance);
+                }
             }
         }
     }
@@ -1461,7 +1463,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             DecimalFormat df = new DecimalFormat("######0.00");
             String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //正式
-        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
+            String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
             String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
             //請求接口
             ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
