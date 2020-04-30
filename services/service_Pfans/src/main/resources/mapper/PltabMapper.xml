@@ -7,14 +7,14 @@
        sum(CASE a.code WHEN 'HT008008' THEN a.rmb ELSE 0 END) AS 'outst2',
        sum(CASE a.code WHEN 'HT008009' THEN a.rmb ELSE 0 END) AS 'outst3',
        sum(CASE a.code WHEN 'neibu' THEN a.rmb ELSE 0 END) AS 'outcost',
-       sum(CASE a.code WHEN 'PJ11102' THEN a.rmb ELSE 0 END) AS 'rent',
-       sum(CASE a.code WHEN 'PJ11106' THEN a.rmb ELSE 0 END) AS 'researchcost',
-       sum(CASE a.code WHEN 'PJ11107' THEN a.rmb ELSE 0 END) AS 'yuanqincost',
-       sum(CASE a.code WHEN 'PJ11108' THEN a.rmb ELSE 0 END) AS 'travalcost',
-       sum(CASE a.code WHEN 'PJ11109' THEN a.rmb ELSE 0 END) AS 'callcost',
-       sum(CASE a.code WHEN 'PJ11110' THEN a.rmb ELSE 0 END) AS 'concost',
-       sum(CASE a.code WHEN 'PJ11113' THEN a.rmb ELSE 0 END) AS 'brandcost',
-       sum(CASE a.code WHEN 'PJ11114' THEN a.rmb ELSE 0 END) AS 'other',
+       sum(CASE a.code WHEN 'PJ111002' THEN a.rmb ELSE 0 END) AS 'rent',
+       sum(CASE a.code WHEN 'PJ111006' THEN a.rmb ELSE 0 END) AS 'researchcost',
+       sum(CASE a.code WHEN 'PJ111007' THEN a.rmb ELSE 0 END) AS 'yuanqincost',
+       sum(CASE a.code WHEN 'PJ111008' THEN a.rmb ELSE 0 END) AS 'travalcost',
+       sum(CASE a.code WHEN 'PJ111009' THEN a.rmb ELSE 0 END) AS 'callcost',
+       sum(CASE a.code WHEN 'PJ111010' THEN a.rmb ELSE 0 END) AS 'concost',
+       sum(CASE a.code WHEN 'PJ111013' THEN a.rmb ELSE 0 END) AS 'brandcost',
+       sum(CASE a.code WHEN 'PJ111014' THEN a.rmb ELSE 0 END) AS 'other',
        sum(CASE a.code WHEN 'WORKTIME' THEN a.rmb ELSE 0 END) AS 'emhours',
        sum(CASE a.code WHEN 'WORKTIME0' THEN a.rmb ELSE 0 END) AS 'inhours',
        sum(CASE a.code WHEN 'WORKTIMEEX' THEN a.rmb ELSE 0 END) AS 'outhours',
@@ -23,47 +23,47 @@
     from
 (
 select code, sum(rmb) as rmb,pj.PROJECT_NAME  from (
-select d.CODE, (IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(pur.RMB +t.tormb), 0) + IFNULL(SUM(o.RMB +t.tormb), 0)) as rmb,cp.PROJECT_NAME
+select d.CODE, cast((IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(pur.RMB +t.tormb), 0) + IFNULL(SUM(o.RMB +t.tormb), 0))AS decimal(15,2)) as rmb,cp.PROJECT_NAME
 from (
 select `CODE` from dictionary where PCODE = 'PJ111'
 ) as d left join publicexpense p on 1=1
 left JOIN trafficdetails t
                    on p.PUBLICEXPENSE_ID = t.PUBLICEXPENSE_ID
                        and t.PLSUMMARY  = d.CODE
-                      and t.DEPARTMENTNAME = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+                      and t.DEPARTMENTNAME = #{groupid}
 											and t.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
          left JOIN purchasedetails pur
                    on p.PUBLICEXPENSE_ID = pur.PUBLICEXPENSE_ID
                        and pur.PLSUMMARY = d.CODE
-                      and pur.DEPARTMENTNAME = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+                      and pur.DEPARTMENTNAME = #{groupid}
 											and pur.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
          left JOIN otherdetails o
                    on p.PUBLICEXPENSE_ID = o.PUBLICEXPENSE_ID
                        and o.PLSUMMARY = d.CODE
-                     and o.DEPARTMENTNAME = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+                     and o.DEPARTMENTNAME = #{groupid}
 										 and o.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
 				 left join companyprojects cp
                     on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
  where year(p.REIMBURSEMENTDATE) = #{year} and month(p.REIMBURSEMENTDATE) = #{month}
 group by d.CODE,cp.PROJECT_NAME
 union all
-select 'PJ111008' as code, (IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(a.RMB), 0) + IFNULL(SUM(o.RMB +t.tormb), 0)) as rmb,companyprojects.PROJECT_NAME
+select 'PJ111008' as code, cast((IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(a.RMB), 0) + IFNULL(SUM(o.RMB +t.tormb), 0))AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
 from evection e
 		left join trafficdetails t
-                   on e.EVECTION_ID = t.PUBLICEXPENSE_ID
+                   on e.EVECTION_ID = t.EVECTION_ID
                        and t.PLSUMMARY  = 'PJ111008'
 											 and t.SUBJECTNUMBER not in ('1099-A1-0000','0504-00-0000')
-                    and t.DEPARTMENTNAME = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+                    and t.DEPARTMENTNAME = #{groupid}
          left JOIN accommodationdetails a
                    on e.EVECTION_ID = a.EVECTION_ID
                        and a.PLSUMMARY = 'PJ111008'
 											 and a.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-                   and a.DEPARTMENTNAME = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+                   and a.DEPARTMENTNAME = #{groupid}
          left JOIN otherdetails o
-                   on e.EVECTION_ID = o.PUBLICEXPENSE_ID
+                   on e.EVECTION_ID = o.EVECTION_ID
                        and o.PLSUMMARY = 'PJ111008'
 											 and o.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-                      and o.DEPARTMENTNAME = "58D1EE595EB8A700F3E75125576D5B7D0A41"
+                      and o.DEPARTMENTNAME = #{groupid}
 				 left join companyprojects
                     on e.PROJECT_ID = companyprojects.COMPANYPROJECTS_ID
  where year(e.REIMBURSEMENTDATE) = #{year} and month(e.REIMBURSEMENTDATE) = #{month}
@@ -78,7 +78,7 @@ when contracttype in ("HT008007","HT008008") then 'HT008008'
 when contracttype in ("HT008001","HT008002","HT008003","HT008004","HT008005","HT008006") then 'HT008006'
 else NULL
 end as contracttype1,
-SUM(cn.CLAIMAMOUNT) as rmb,companyprojects.PROJECT_NAME
+cast(SUM(cn.CLAIMAMOUNT)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
 from contractapplication ca
 inner join contractnumbercount cn
 on ca.CONTRACTNUMBER = cn.CONTRACTNUMBER
@@ -94,7 +94,7 @@ GROUP BY contracttype1,companyprojects.PROJECT_NAME
 having contracttype1 is not null
 
 union all
-select 'WORKTIME' as `code`,SUM(l.TIME_START) as worktime,c.PROJECT_NAME from logmanagement l
+select 'WORKTIME' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
 inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
 where c.GROUP_ID = #{groupid}
@@ -103,7 +103,7 @@ and month(l.LOG_DATE) = #{month}
  group by `code`,c.PROJECT_NAME
 
 union all
-select 'WORKTIMEEX' as `code`,SUM(l.TIME_START) as worktime,c.PROJECT_NAME from logmanagement l
+select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
 inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
 inner join expatriatesinfor e
@@ -114,7 +114,7 @@ and month(l.LOG_DATE) = #{month}
  group by `code`,c.PROJECT_NAME
 
 union all
-select "neibu" as code,(sum(cost.COST4) + sum(cost.COST5) + sum(cost.COST6) + sum(cost.COST7) + sum(cost.COST8) + sum(cost.COST9) +sum(cost.COST10) + sum(cost.COST11) + sum(cost.COST12) + sum(cost.COST1) + sum(cost.COST2) + sum(cost.COST3)) as rmb,cp.PROJECT_NAME
+select "neibu" as code,cast((sum(cost.COST4) + sum(cost.COST5) + sum(cost.COST6) + sum(cost.COST7) + sum(cost.COST8) + sum(cost.COST9) +sum(cost.COST10) + sum(cost.COST11) + sum(cost.COST12) + sum(cost.COST1) + sum(cost.COST2) + sum(cost.COST3)) AS decimal(15,2)) as rmb,cp.PROJECT_NAME
 from coststatistics cost
 inner join expatriatesinfor exp
   on cost.BPNAME = exp.EXPATRIATESINFOR_ID
@@ -126,7 +126,7 @@ where cp.GROUP_ID = #{groupid}
 group by cost.BPCOMPANY,code,cp.PROJECT_NAME
 
 union all
-select 'neibuhetong' as code,SUM(CLAIMAMOUNT) as rmb, company.PROJECT_NAME
+select 'neibuhetong' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb, company.PROJECT_NAME
 from contractnumbercount contract
 inner join companyprojects company
 on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
