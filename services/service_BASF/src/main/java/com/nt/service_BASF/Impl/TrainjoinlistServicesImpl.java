@@ -64,9 +64,10 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     @Autowired
     private OrgTreeService orgTreeService;
 
+    String updepid = "";
     public String getupDepid (List<OrgTree> orgs, String departmentid) {
 
-        String updepid = "";
+
         for(int j = 0;j<orgs.size();j++)
         {
             if(orgs.get(j).get_id() !=null)
@@ -80,7 +81,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                     else {
                         updepid =  orgs.get(j).getUpcompanyid();
                     }
-                    break;
+                    break ;
                 }
                 else
                 {

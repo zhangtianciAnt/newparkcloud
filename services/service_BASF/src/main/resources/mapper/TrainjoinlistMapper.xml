@@ -160,8 +160,8 @@
         AND trainjoinlist.rootdepid &lt;> ''
         AND trainjoinlist.jointype ='正常'
 
-        GROUP BY trainjoinlist.departmentid
-        ORDER BY trainjoinlist.departmentid
+        GROUP BY trainjoinlist.rootdepid
+        ORDER BY trainjoinlist.rootdepid
     </select>
 
     <!--    获取部门名和通过状态（非强制）-->

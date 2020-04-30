@@ -585,7 +585,7 @@ public class UserServiceImpl implements UserService {
             model.add("*姓名");
             model.add("职位名称");
             model.add("*性别");
-            model.add("*卡号");
+            model.add("卡号");
             model.add("*员工号");
             model.add("*部门联系邮箱");
             model.add("*装置经理邮箱");
