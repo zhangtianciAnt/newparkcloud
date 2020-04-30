@@ -20,7 +20,7 @@
 		on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
 		and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
 		inner join expatriatesinfor exp
-		on ps.SUPPLIERNAMEID = exp.EXPATRIATESINFOR_ID
+		on ps.NAME = exp.ACCOUNT
 		where df.status = '0'
 		and df.year = #{year}
 		group by exp.EXPATRIATESINFOR_ID

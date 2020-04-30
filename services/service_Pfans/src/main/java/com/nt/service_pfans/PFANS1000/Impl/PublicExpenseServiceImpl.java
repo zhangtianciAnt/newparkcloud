@@ -67,6 +67,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     }
 
     @Override
+    public List<PublicExpense> getpublicelist(String publicexpenseid) throws Exception {
+        return publicExpenseMapper.getpublicelist(publicexpenseid);
+    }
+
+    @Override
     public  List<TotalCost> gettotalcost(TotalCostVo totalcostvo) throws Exception {
         List<TotalCost> listvo = new ArrayList<TotalCost>();
         TotalCost totalcost = new TotalCost();

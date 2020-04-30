@@ -43,6 +43,7 @@ public interface CompanyProjectsService {
     List<CompanyProjectsVo2> getSiteList(CompanyProjects companyProjects) throws Exception;
     List<CompanyProjectsVo2> getSiteList2(CompanyProjects companyProjects) throws Exception;
     List<CompanyProjectsVo2> getSiteList3(CompanyProjects companyProjects) throws Exception;
+    List<CompanyProjectsVo2> getSiteList4(CompanyProjects companyProjects) throws Exception;
     //PJ完了审批
     List<CompanyProjectsVo2> getPjList(String flag) throws Exception;
 

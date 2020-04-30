@@ -6,4 +6,10 @@
         where REIMBURSEMENTDATE = #{reimbursementDate}
         group by REIMBURSEMENTDATE
     </select>
+
+    <select id="getpublicelist"  resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
+     select * from publicexpense where JUDGEMENT like CONCAT(#{code},'%')
+    </select>
+
+
 </mapper>

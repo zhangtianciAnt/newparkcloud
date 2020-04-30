@@ -12,6 +12,8 @@ import java.util.List;
 public interface PublicExpenseService {
     List<PublicExpense> get(PublicExpense publicExpense) throws Exception;
 
+    List<PublicExpense> getpublicelist(String publicexpenseid) throws Exception;
+
     void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception;
 
     List<TotalCost> gettotalcost(TotalCostVo totalcostvo) throws Exception;

@@ -261,6 +261,16 @@ public class Pfans1012Controller {
         publicExpense.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(publicExpenseService.get(publicExpense));
     }
+
+    @RequestMapping(value = "/getpublicelist",method = {RequestMethod.GET})
+    public ApiResult getpublicelist(String publicexpenseid, HttpServletRequest request) throws Exception {
+        if (publicexpenseid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenMode1 = tokenService.getToken(request);
+        return ApiResult.success(publicExpenseService.getpublicelist(publicexpenseid));
+    }
+
     @RequestMapping(value = "/selectById",method = {RequestMethod.GET})
     public ApiResult selectById(String publicexpenseid, HttpServletRequest request) throws Exception {
         if (publicexpenseid == null) {
@@ -269,6 +279,7 @@ public class Pfans1012Controller {
         TokenModel tokenMode1 = tokenService.getToken(request);
         return ApiResult.success(publicExpenseService.selectById(publicexpenseid));
     }
+
     @RequestMapping(value = "/insert",method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {
