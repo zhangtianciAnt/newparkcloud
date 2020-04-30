@@ -532,7 +532,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //删除昨天的临时数据
             punchcardrecorddetailmapper.deletetepundet(thisDate,staffNo);
             //正式
-            String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
             String url = "";
             if(staffId == null){
                 url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
@@ -990,7 +990,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
         expatriatesinforList = expatriatesinforList.stream().filter(coi ->(!StringUtils.isNullOrEmpty(coi.getNumber()))).collect(Collectors.toList());
         //正式
-        String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
         String url = "";
         if(staffId == null){
             url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
@@ -1461,7 +1461,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             DecimalFormat df = new DecimalFormat("######0.00");
             String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //正式
-            String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
             String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
             //請求接口
             ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
@@ -1789,7 +1789,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
         expatriatesinforList = expatriatesinforList.stream().filter(coi ->(!StringUtils.isNullOrEmpty(coi.getNumber()))).collect(Collectors.toList());
         //正式
-        String doorIDList = "34,16,17";//34:自动门；16：1F子母门-左；17：1F子母门-右；
+        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
         String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByDate?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList;
         //請求接口
         ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
