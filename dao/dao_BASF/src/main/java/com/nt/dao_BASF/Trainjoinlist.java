@@ -51,6 +51,11 @@ public class Trainjoinlist extends BaseModel {
     private String Departmentid;
 
     /**
+     * 根节点部门id
+     */
+    private String rootdepid;
+
+    /**
      * 姓名
      */
     private String customername;

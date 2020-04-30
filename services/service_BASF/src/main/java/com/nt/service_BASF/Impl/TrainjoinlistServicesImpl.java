@@ -9,11 +9,13 @@ import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainingRecordsExportVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_BASF.mapper.TrainingRecordsExportMapper;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -59,12 +61,49 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    public String getupDepid (List<OrgTree> orgs, String departmentid) {
+
+        String updepid = "";
+        for(int j = 0;j<orgs.size();j++)
+        {
+            if(orgs.get(j).get_id() !=null)
+            {
+                if(orgs.get(j).get_id().equals(departmentid))
+                {
+                    updepid =  orgs.get(j).getUpcompanyid();
+                    break;
+                }
+                else
+                {
+                    if(orgs.get(j).getOrgs()!= null && orgs.get(j).getOrgs().size()>0)
+                    {
+                        updepid = getupDepid(orgs.get(j).getOrgs(),departmentid);
+                    }
+                }
+            }
+            else
+            {
+                if(orgs.get(j).getOrgs()!= null && orgs.get(j).getOrgs().size()>0)
+                {
+                    updepid = getupDepid(orgs.get(j).getOrgs(),departmentid);
+                }
+            }
+
+        }
+        return updepid;
+    }
+
     //添加培训人员名单
     @Override
     public void insert(TrainjoinlistVo trainjoinlistVo, TokenModel tokenModel) throws Exception {
         if (StringUtils.isNotBlank(trainjoinlistVo.getStartprogramid()) && trainjoinlistVo.getTrainjoinlists() != null) {
             //添加之前先删除之前的
             delete(trainjoinlistVo.getStartprogramid(), tokenModel);
+            OrgTree orgTree = new OrgTree();
+            List<OrgTree> orglist = orgTreeService.getById(orgTree);
             //循环添加
             for (Trainjoinlist trainjoinlist : trainjoinlistVo.getTrainjoinlists()) {
                 if (trainjoinlist.getPersonnelid() != null && trainjoinlist.getPersonnelid().trim() != "") {
@@ -72,6 +111,10 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                     trainjoinlist.preInsert(tokenModel);
                     trainjoinlist.setTrainjoinlistid(UUID.randomUUID().toString());
                     trainjoinlist.setNumber(1);
+
+                    String depid = trainjoinlist.getDepartmentid();
+                    String updepid =getupDepid(orglist,depid);
+                    trainjoinlist.setRootdepid(updepid);
                     trainjoinlistMapper.insert(trainjoinlist);
                 }
             }
