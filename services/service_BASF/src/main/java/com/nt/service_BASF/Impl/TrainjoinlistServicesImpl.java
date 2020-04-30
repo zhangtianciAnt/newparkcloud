@@ -73,7 +73,13 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             {
                 if(orgs.get(j).get_id().equals(departmentid))
                 {
-                    updepid =  orgs.get(j).getUpcompanyid();
+                    if(orgs.get(j).getUpcompanyid().equals(""))
+                    {
+                        updepid =  orgs.get(j).get_id();
+                    }
+                    else {
+                        updepid =  orgs.get(j).getUpcompanyid();
+                    }
                     break;
                 }
                 else
