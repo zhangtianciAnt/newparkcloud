@@ -113,26 +113,71 @@ public class Pfans1007Controller {
 //            List<Salesdetails> saList = asvo.getSalesdetails();
 //            List<Scrapdetails> scList = asvo.getScrapdetails();
         for (int h = 0; h < asvo.getScrapdetails().size(); h++) {
-            bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
-            str_format = df.format(bd);
-            asvo.getScrapdetails().get(h).setOriginalvalue(str_format);
-            bd = new BigDecimal(asvo.getScrapdetails().get(h).getNetworth());
-            str_format = df.format(bd);
-            asvo.getScrapdetails().get(h).setNetworth(str_format);
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getScrapdetails().get(h).getOriginalvalue())) {
+                bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0";
+                }
+                asvo.getScrapdetails().get(h).setNetworth(str_format);
+            } else {
+                asvo.getScrapdetails().get(h).setNetworth("0");
+            }
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getScrapdetails().get(h).getOriginalvalue())) {
+                bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0";
+                }
+                asvo.getScrapdetails().get(h).setOriginalvalue(str_format);
+            } else {
+                asvo.getScrapdetails().get(h).setOriginalvalue("0");
+            }
         }
         for (int h = 0; h < asvo.getSalesdetails().size(); h++) {
-            bd = new BigDecimal(asvo.getSalesdetails().get(h).getOriginalvalue());
-            str_format = df.format(bd);
-            asvo.getSalesdetails().get(h).setOriginalvalue(str_format);
-            bd = new BigDecimal(asvo.getSalesdetails().get(h).getNetworth());
-            str_format = df.format(bd);
-            asvo.getSalesdetails().get(h).setNetworth(str_format);
-            bd = new BigDecimal(asvo.getSalesdetails().get(h).getSellingprice());
-            str_format = df.format(bd);
-            asvo.getSalesdetails().get(h).setSellingprice(str_format);
-            bd = new BigDecimal(asvo.getSalesdetails().get(h).getLoss());
-            str_format = df.format(bd);
-            asvo.getSalesdetails().get(h).setLoss(str_format);
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getOriginalvalue())) {
+                bd = new BigDecimal(asvo.getSalesdetails().get(h).getOriginalvalue());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0";
+                }
+                asvo.getScrapdetails().get(h).setOriginalvalue(str_format);
+            } else {
+                asvo.getScrapdetails().get(h).setOriginalvalue("0");
+            }
+
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getNetworth())) {
+                bd = new BigDecimal(asvo.getSalesdetails().get(h).getNetworth());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0";
+                }
+                asvo.getSalesdetails().get(h).setNetworth(str_format);
+            } else {
+                asvo.getSalesdetails().get(h).setNetworth("0");
+            }
+
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getSellingprice())) {
+                bd = new BigDecimal(asvo.getSalesdetails().get(h).getSellingprice());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0";
+                }
+                asvo.getSalesdetails().get(h).setSellingprice(str_format);
+            } else {
+                asvo.getSalesdetails().get(h).setSellingprice("0");
+            }
+
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getLoss())) {
+                bd = new BigDecimal(asvo.getSalesdetails().get(h).getLoss());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0";
+                }
+                asvo.getSalesdetails().get(h).setLoss(str_format);
+            } else {
+                asvo.getSalesdetails().get(h).setLoss("0");
+            }
         }
             Query query = new Query();
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);

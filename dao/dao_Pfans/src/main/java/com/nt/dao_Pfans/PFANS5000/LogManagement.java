@@ -28,7 +28,6 @@ public class LogManagement extends BaseModel {
     /**
      * GROUP
      */
-    @Id
     @Column(name = "GROUP_ID")
     private String group_id;
 
