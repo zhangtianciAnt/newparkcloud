@@ -539,9 +539,9 @@ public class UserServiceImpl implements UserService {
         return mongoTemplate.findAll(CustomerInfo.class);
     }
 
+    String depid = "";
     public String departmentname (List<OrgTree> orgs,String departmentname) {
 
-        String depid = "";
         for(int j = 0;j<orgs.size();j++)
         {
             if(orgs.get(j).getDepartmentname().equals(departmentname))
