@@ -134,7 +134,7 @@ public class Delegainformation extends BaseModel {
     private String year;
 
     /**
-     * ID
+     * 供应商信息
      */
     @Column(name = "SUPPLIERINFOR_ID")
     private String supplierinfor_id;
@@ -144,6 +144,12 @@ public class Delegainformation extends BaseModel {
      */
     @Column(name = "GROUP_ID")
     private String group_id;
+
+    /**
+     * 外协ID
+     */
+    @Column(name = "ACCOUNT")
+    private String account;
 
 
 

@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
 
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
@@ -31,16 +32,22 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 ////    }
 
     @Override
-    public List<DelegainformationVo> getYears(String year,List<String> owners) throws Exception {
-        return delegainformationMapper.getYears(year,owners);
+    public List<DelegainformationVo> getYears(String year,String group_id,List<String> owners) throws Exception {
+        return delegainformationMapper.getYears(year,group_id,owners);
     }
 
     @Override
     public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
         for (Delegainformation delegainformation : delegainformationList) {
-//            delegainformation.preInsert(tokenModel);
-            delegainformation.preUpdate(tokenModel);
-            delegainformationMapper.updateByPrimaryKey(delegainformation);
+            if(!StringUtils.isNullOrEmpty(delegainformation.getDelegainformation_id())){
+                delegainformation.preUpdate(tokenModel);
+                delegainformationMapper.updateByPrimaryKey(delegainformation);
+            }
+            else{
+                delegainformation.preInsert(tokenModel);
+                delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
+                delegainformationMapper.insert(delegainformation);
+            }
         }
     }
 }
