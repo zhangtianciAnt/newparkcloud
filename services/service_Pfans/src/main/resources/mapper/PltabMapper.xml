@@ -109,7 +109,7 @@ from coststatistics cost
 inner join expatriatesinfor exp
   on cost.BPNAME = exp.EXPATRIATESINFOR_ID
 inner join projectsystem ps
-  on ps.`SUPPLIERNAMEID` = cost.bpname
+  on ps.`NAME` = exp.ACCOUNT
 inner join companyprojects cp
   on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
 where cp.GROUP_ID = #{groupid}
