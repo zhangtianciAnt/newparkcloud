@@ -9,7 +9,7 @@
 		from expatriatesinfor exp
 		where exp.`STATUS` = '0'
 		group by exp.`EXPNAME`*/
-		select exp.EXPATRIATESINFOR_ID as BPNAME,sum(df.`JANUARY`) as MANHOUR1, sum(df.FEBRUARY) as MANHOUR2,
+		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,sum(df.`JANUARY`) as MANHOUR1, sum(df.FEBRUARY) as MANHOUR2,
 			sum(df.MARCH) as MANHOUR3, sum(df.APRIL) as MANHOUR4, sum(df.MAY) as MANHOUR5, sum(df.JUNE) as MANHOUR6,
 			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
 			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12
@@ -23,7 +23,7 @@
 		on ps.NAME = exp.ACCOUNT
 		where df.status = '0'
 		and df.year = #{year}
-		group by exp.EXPATRIATESINFOR_ID
+		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME
 	</select>
 
 	<insert id="insertAll" parameterType="java.util.List">
@@ -35,7 +35,7 @@
 		SUPPORT12,TOTALMANHOURS12,TOTALCOST12,EXPENSE12,CONTRACT12,
 		MANHOUR1,COST1,MANHOUR2,COST2,MANHOUR3,COST3,SUPPORT3,TOTALMANHOURS3,TOTALCOST3,EXPENSE3,CONTRACT3,
 		PRICE1,PRICE2,PRICE3,PRICE4,PRICE5,PRICE6,PRICE7,PRICE8,PRICE9,PRICE10,PRICE11,PRICE12,
-		ROWINDEX,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID)
+		ROWINDEX,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID,BPNAME1)
 		values
 		<foreach item="item" collection="list" separator=",">
 			(#{item.coststatistics_id},
@@ -105,7 +105,8 @@
 			#{item.modifyon},
 			#{item.owner},
 			#{item.status},
-			#{item.tenantid})
+			#{item.tenantid},
+			#{item.bpname1})
 		</foreach>
 	</insert>
 
