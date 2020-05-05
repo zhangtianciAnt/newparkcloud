@@ -3,107 +3,144 @@
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper">
     <select id="getYears" parameterType="com.nt.dao_Pfans.PFANS6000.Delegainformation"
             resultType="com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo">
-        select
+         select
             de.delegainformation_id,
-            #{year} as year,
-            pro.group_id,
-            ex.account,
-            log.project_id as companyprojects_id,
-            sys.projectsystem_id,
-            case when log.project_id = 'PP024001' then log.project_name else pro.project_name end as project_name,
-            pro.managerid,
-            ex.suppliername,
-            expname,
-            sys.admissiontime,
-            sys.exittime,
-            op.value1 as operationform,
-            jo.value1 as jobclassification,
-            case when de.april is not null or de.april != '' then de.april else log.april end as april,
-            case when de.may is not null or de.may != '' then de.may else log.may end as may,
-            case when de.june is not null or de.june != '' then de.june else log.june end as june,
-            case when de.july is not null or de.july != '' then de.july else log.july end as july,
-            case when de.august is not null or de.august != '' then de.august else log.august end as august,
-            case when de.september is not null or de.september != '' then de.september else log.september end as september,
-            case when de.october is not null or de.october != '' then de.october else log.october end as october,
-            case when de.november is not null or de.november != '' then de.november else log.november end as november,
-            case when de.december is not null or de.december != '' then de.december else log.december end as december,
-            case when de.january is not null or de.january != '' then de.january else log.january end as january,
-            case when de.february is not null or de.february != '' then de.february else log.february end as february,
-            case when de.march is not null or de.march != '' then de.march else log.march end as march,
-            remarks,
-            al.value1 as alltechnology,
-            si.value1 assitevaluation,
-            exi.value1 as exitreason,
-            bu.value1 as businessimpact,
-            cou.value1 as countermeasure,
-            case when distriobjects = '0' then '是' when distriobjects = '1' then '否' end as distriobjects,
-            case when venuetarget = '0' then '是' when venuetarget = '1' then '否' end as distriobjects
-        from
-            expatriatesinfor ex
-        left join
-            (
-            select project_id,project_name,createby,
-            case when round(april/8/21.75,2) >= 1 then 1 else round(april/8/21.75,2) end april,
-            case when round(may/8/21.75,2) >= 1 then 1 else round(may/8/21.75,2) end  may,
-            case when round(june/8/21.75,2) >= 1 then 1 else round(june/8/21.75,2) end june,
-            case when round(july/8/21.75,2) >= 1 then 1 else round(july/8/21.75,2) end july,
-            case when round(august/8/21.75,2) >= 1 then 1 else round(august/8/21.75,2) end august,
-            case when round(september/8/21.75,2) >= 1 then 1 else round(september/8/21.75,2) end september,
-            case when round(october/8/21.75,2) >= 1 then 1 else round(october/8/21.75,2) end october,
-            case when round(november/8/21.75,2) >= 1 then 1 else round(november/8/21.75,2) end november,
-            case when round(december/8/21.75,2) >= 1 then 1 else round(december/8/21.75,2) end december,
-            case when round(january/8/21.75,2) >= 1 then 1 else round(january/8/21.75,2) end january,
-            case when round(february/8/21.75,2) >= 1 then 1 else round(february/8/21.75,2) end february,
-            case when round(march/8/21.75,2) >= 1 then 1 else round(march/8/21.75,2) end march
+            dep.year,
+            dep.group_id,
+            dep.account,
+            dep.companyprojects_id,
+            dep.projectsystem_id,
+            dep.project_name,
+            dep.managerid,
+            dep.suppliername,
+            dep.expname,
+            dep.admissiontime,
+            dep.exittime,
+            dep.operationform,
+            dep.jobclassification,
+            case when de.april is not null or de.april != '' then de.april else dep.april end as april,
+            case when de.may is not null or de.may != '' then de.may else dep.may end as may,
+            case when de.june is not null or de.june != '' then de.june else dep.june end as june,
+            case when de.july is not null or de.july != '' then de.july else dep.july end as july,
+            case when de.august is not null or de.august != '' then de.august else dep.august end as august,
+            case when de.september is not null or de.september != '' then de.september else dep.september end as september,
+            case when de.october is not null or de.october != '' then de.october else dep.october end as october,
+            case when de.november is not null or de.november != '' then de.november else dep.november end as november,
+            case when de.december is not null or de.december != '' then de.december else dep.december end as december,
+            case when de.january is not null or de.january != '' then de.january else dep.january end as january,
+            case when de.february is not null or de.february != '' then de.february else dep.february end as february,
+            case when de.march is not null or de.march != '' then de.march else dep.march end as march,
+            dep.remarks,
+            dep.alltechnology,
+            dep.assitevaluation,
+            dep.exitreason,
+            dep.businessimpact,
+            dep.countermeasure,
+            dep.distriobjects,
+            dep.venuetarget
+            from (
+            select
+                #{year} as year,
+                pro.group_id,
+                ex.account,
+                log.project_id as companyprojects_id,
+                sys.projectsystem_id,
+                case when log.project_id = 'PP024001' then log.project_name else pro.project_name end as project_name,
+                pro.managerid,
+                ex.suppliername,
+                expname,
+                sys.admissiontime,
+                sys.exittime,
+                op.value1 as operationform,
+                jo.value1 as jobclassification,
+                log.april,
+                log.may,
+                log.june,
+                log.july,
+                log.august,
+                log.september,
+                log.october,
+                log.november,
+                log.december,
+                log.january,
+                log.february,
+                log.march,
+                remarks,
+                al.value1 as alltechnology,
+                si.value1 assitevaluation,
+                exi.value1 as exitreason,
+                bu.value1 as businessimpact,
+                cou.value1 as countermeasure,
+                case when distriobjects = '0' then '是' when distriobjects = '1' then '否' end as distriobjects,
+                case when venuetarget = '0' then '是' when venuetarget = '1' then '否' end as venuetarget
             from
-            (select project_id,logmanagement.project_name,logmanagement.createby,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '04' THEN TIME_START ELSE 0 END) AS april,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '05' THEN TIME_START ELSE 0 END) AS may,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '06' THEN TIME_START ELSE 0 END) AS june,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '07' THEN TIME_START ELSE 0 END) AS july,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '08' THEN TIME_START ELSE 0 END) AS august,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '09' THEN TIME_START ELSE 0 END) AS september,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '10' THEN TIME_START ELSE 0 END) AS october,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '11' THEN TIME_START ELSE 0 END) AS november,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '12' THEN TIME_START ELSE 0 END) AS december,
-            SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '01' THEN TIME_START ELSE 0 END) AS january,
-            SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '02' THEN TIME_START ELSE 0 END) AS february,
-            SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '03' THEN TIME_START ELSE 0 END) AS march
-            from logmanagement
-            left join expatriatesinfor
-            ON logmanagement.createby = expatriatesinfor.account
-            where DATE_FORMAT(LOG_DATE, '%Y') = #{year}
+                expatriatesinfor ex
+            left join
+                (
+                select project_id,project_name,createby,
+                case when round(april/8/21.75,2) >= 1 then 1 else round(april/8/21.75,2) end april,
+                case when round(may/8/21.75,2) >= 1 then 1 else round(may/8/21.75,2) end  may,
+                case when round(june/8/21.75,2) >= 1 then 1 else round(june/8/21.75,2) end june,
+                case when round(july/8/21.75,2) >= 1 then 1 else round(july/8/21.75,2) end july,
+                case when round(august/8/21.75,2) >= 1 then 1 else round(august/8/21.75,2) end august,
+                case when round(september/8/21.75,2) >= 1 then 1 else round(september/8/21.75,2) end september,
+                case when round(october/8/21.75,2) >= 1 then 1 else round(october/8/21.75,2) end october,
+                case when round(november/8/21.75,2) >= 1 then 1 else round(november/8/21.75,2) end november,
+                case when round(december/8/21.75,2) >= 1 then 1 else round(december/8/21.75,2) end december,
+                case when round(january/8/21.75,2) >= 1 then 1 else round(january/8/21.75,2) end january,
+                case when round(february/8/21.75,2) >= 1 then 1 else round(february/8/21.75,2) end february,
+                case when round(march/8/21.75,2) >= 1 then 1 else round(march/8/21.75,2) end march
+                from
+                (select project_id,logmanagement.project_name,logmanagement.createby,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '04' THEN TIME_START ELSE 0 END) AS april,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '05' THEN TIME_START ELSE 0 END) AS may,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '06' THEN TIME_START ELSE 0 END) AS june,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '07' THEN TIME_START ELSE 0 END) AS july,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '08' THEN TIME_START ELSE 0 END) AS august,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '09' THEN TIME_START ELSE 0 END) AS september,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '10' THEN TIME_START ELSE 0 END) AS october,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '11' THEN TIME_START ELSE 0 END) AS november,
+                SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '12' THEN TIME_START ELSE 0 END) AS december,
+                SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '01' THEN TIME_START ELSE 0 END) AS january,
+                SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '02' THEN TIME_START ELSE 0 END) AS february,
+                SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '03' THEN TIME_START ELSE 0 END) AS march
+                from logmanagement
+                left join expatriatesinfor
+                ON logmanagement.createby = expatriatesinfor.account
+                where DATE_FORMAT(LOG_DATE, '%Y') = #{year}
+                <if test="group_id != null and group_id != ''" >
+                    and expatriatesinfor.group_id = #{group_id}
+                </if>
+                group by project_id,logmanagement.project_name,logmanagement.createby) ment
+                ) log
+            on ex.ACCOUNT = log.CREATEBY
+            left join companyprojects pro
+            on log.project_id = pro.companyprojects_id
+            left join projectsystem sys
+            on sys.companyprojects_id = log.project_id
+            and sys.name = log.createby
+            left join dictionary jo
+            on jo.code = ex.jobclassification
+            left join dictionary op
+            on op.code = ex.operationform
+            left join dictionary al
+            on al.code = ex.alltechnology
+            left join dictionary si
+            on si.code = ex.sitevaluation
+            left join dictionary exi
+            on exi.code = ex.exitreason
+            left join dictionary bu
+            on bu.code = ex.businessimpact
+            left join dictionary cou
+            on cou.code = ex.countermeasure
+            where  ex.exits = '1'
             <if test="group_id != null and group_id != ''" >
-                and expatriatesinfor.group_id = #{group_id}
+                and ex.GROUP_ID = #{group_id}
             </if>
-            group by project_id,logmanagement.project_name,logmanagement.createby) ment
-            ) log
-        on ex.ACCOUNT = log.CREATEBY
-        left join companyprojects pro
-        on log.project_id = pro.companyprojects_id
+        ） dep
         left join delegainformation de
-        on ex.account = de.account
-        left join projectsystem sys
-        on sys.companyprojects_id = log.project_id
-        and sys.name = log.createby
-        left join dictionary jo
-        on jo.code = ex.jobclassification
-        left join dictionary op
-        on op.code = ex.operationform
-        left join dictionary al
-        on al.code = ex.alltechnology
-        left join dictionary si
-        on si.code = ex.sitevaluation
-        left join dictionary exi
-        on exi.code = ex.exitreason
-        left join dictionary bu
-        on bu.code = ex.businessimpact
-        left join dictionary cou
-        on cou.code = ex.countermeasure
-        where  ex.exits = '1'
-        <if test="group_id != null and group_id != ''" >
-            and ex.GROUP_ID = #{group_id}
-        </if>
+        on dep.account = de.account
+        and dep.companyprojects_id = de.companyprojects_id
     </select>
 </mapper>
 
