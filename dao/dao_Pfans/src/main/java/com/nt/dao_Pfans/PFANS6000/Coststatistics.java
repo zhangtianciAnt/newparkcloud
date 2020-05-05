@@ -31,6 +31,10 @@ public class Coststatistics extends BaseModel {
     @Column(name = "BPNAME")
     private String bpname;
 
+    //BP名汉字
+    @Column(name = "BPNAME1")
+    private String bpname1;
+
     /**
      * BP会社名
      */
