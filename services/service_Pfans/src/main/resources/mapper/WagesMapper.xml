@@ -300,8 +300,6 @@
         ) AS ACTUALAMOUNT,#基本給实际金额
         @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',round((@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),2),round((@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE),2)) as THISMONTHBASICGEI, #本月基本给
         round( @BASE_SJJE - @THISMONTHBASICGEI, 2 ) AS THISMONTHDUTYGEI,#本月职责给
-        @JBBZ := base.SUBSIDY AS OVERTIMESUBSIDY,# 加班补助
-        @XJ1 := round( ( @BASE_SJJE + @JBBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @YKBZJS := base.DIC_YKBZZS AS YKBZJS, # 一括补助基本給
         @YKBZ := round(
         IF
@@ -314,13 +312,15 @@
         (
         base.LASTMONTHDAYS &lt;=> 0,
         0,
-        base.DIC_YKBZZS * ( base.LASTMONTHDAYS * 8 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / ( base.LASTMONTHDAYS * 8 )
+        base.DIC_YKBZZS * ( 168 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / 168
         ),
         2
         ) AS YKBZ,#一括补助
+        @JBBZ := base.SUBSIDY AS OVERTIMESUBSIDY,# 加班补助
+        @XJ1 := round( ( @BASE_SJJE + @JBBZ + @YKBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
         @AMOUNT := round(base.APPRECIATION_AMOUNT,2) AS APPRECIATION,#月度賞与
-        @XJ2 := ( @OTHER2 + @AMOUNT + @YKBZ ) AS TOTAL2,# 小计2 其他3字段画面手动录入，sql里只计算了交通补助到月度賞与的合计，需要在画面再加上其他3手动录入的数据
+        @XJ2 := ( @OTHER2 + @AMOUNT ) AS TOTAL2,# 小计2 其他3字段画面手动录入，sql里只计算了交通补助到月度賞与的合计，需要在画面再加上其他3手动录入的数据
         @NSGZZE := round( ( @XJ1 + @XJ2 ), 2 ) AS TAXESTOTAL,#纳税工资总额(小计1+2)  小计1(基本給+补助)+小计2,画面手动添加 其他3的数据
         @CNF := ( IF ( @THISMONTH &lt;> 0, round(base.HEATING,2), round(0,2) ) ) AS HEATING,#采暖费
         @DSZNF := ( IF ( @ONLYCHILD &lt;=> '1', round(base.DIC_DSZNF,2), round(0,2) ) ) AS ONLYCHILDMONEY,#独生子女费
@@ -361,15 +361,15 @@
         @LJYNSSDE := (
         IF
         (
-        DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') != 0,
+        DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') = 0,
         round(
-        ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
+        (
+        @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 1- MONTH ( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE
+        ),
         2
         ),
         round(
-        (
-        @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - MONTH ( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE
-        ),
+        ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
         2
         )
         )
@@ -427,23 +427,23 @@
         ) AS THISMONTHADJUSTMENT,#本月应扣缴所得税
         round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
         @YLBXHS := round( @YANGLAOJS * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
-        @YILIAOBXHS := round( @YILIAOJS * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
+        @YILIAOBXHS := round( @YILIAOJS * DIC_YILIAOBXGRFDHS * 0.5, 2 ) AS COMMEDICALINSURANCE,#医疗保险gbb0.5
         @SYBXGRFDHS := round( @SHIYEJS * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
         @GSBXHS := round( @GONGSHANGJS * DIC_GSBXHS, 2 ) AS COMINJURYINSURANCE,#工伤保险
         @SYBXHS := round( @SHENGYUJS * DIC_SYBXHS, 2 ) AS COMBIRTHINSURANCE,#生育保险
         @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @YANGLAOJS != 0 ), round(DIC_DLHXNFF,2), round(0,2) ) ) AS COMHEATING,#暖房费
         @ZFGJJ := round( @ACCUMULATION * DIC_GJJHSFD, 2 ) AS COMACCUMULATIONFUND,#住房公积金
         @SUMHS := round( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS + @NFF + @ZFGJJ ), 2 ) AS TOTAL,#总计
-        @GHJFJS := round(base.THISMONTHBASIC + base.THISMONTHDUTY + @AMOUNT,2) AS LABOURUNIONBASE,#工会经费基数
+        @GHJFJS := round(@XJ1 + @AMOUNT,2) AS LABOURUNIONBASE,#工会经费基数gbb base.THISMONTHBASIC + base.THISMONTHDUTY + @AMOUNT
         @GHJF := round( @GHJFJS * 0.02, 2 ) AS LABOURUNIONFUNDS,#工会经费
         @GZFZFDZJ := ROUND( ( @GZZE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL + @SUMHS + @GHJF ), 2 ) AS COMTOTALWAGES,#工资总额(纳税+免税)+福祉+公司負担+工会経費总计
         @JSJJ := (
 		IF
 			(
 				@BONUS = 1,
-				ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 2 ),
+				ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 0 ),
 			round(IF
-				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ),2)
+				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ),0)
 			) - @AMOUNT
 		) AS BONUSMONEY,#計上奨金
         @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
