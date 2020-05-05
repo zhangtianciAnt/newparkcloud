@@ -13,14 +13,24 @@
 			sum(df.MARCH) as MANHOUR3, sum(df.APRIL) as MANHOUR4, sum(df.MAY) as MANHOUR5, sum(df.JUNE) as MANHOUR6,
 			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
 			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12
-		from delegainformation df
-		inner join companyprojects cp
-		on df.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
-		inner join projectsystem ps
-		on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
-		and df.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+		from
+		(
+				select df1.*
+				from delegainformation df1
+				inner join companyprojects cp
+				on df1.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+				inner join projectsystem ps
+				on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+				and df1.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
+
+				union
+				select df2.*
+				from delegainformation df2
+				where df2.COMPANYPROJECTS_ID ='PP024001'
+		)
+		df
 		inner join expatriatesinfor exp
-		on ps.NAME = exp.ACCOUNT
+		on df.ACCOUNT = exp.ACCOUNT
 		where df.status = '0'
 		and df.year = #{year}
 		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME
