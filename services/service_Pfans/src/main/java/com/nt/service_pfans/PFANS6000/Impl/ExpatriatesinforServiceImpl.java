@@ -77,7 +77,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         query.addCriteria(Criteria.where("_id").is(infor.getAccount()));
         UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
         if (account != null) {
-            infor.setAccount(account.getAccount());
+            infor.setAccountname(account.getAccount());
         }
         return infor;
     }
