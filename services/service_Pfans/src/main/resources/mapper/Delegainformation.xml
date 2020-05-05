@@ -75,7 +75,7 @@
                 case when venuetarget = '0' then '是' when venuetarget = '1' then '否' end as venuetarget
             from
                 expatriatesinfor ex
-            left join
+            inner join
                 (
                 select project_id,project_name,createby,
                 case when round(april/8/21.75,2) >= 1 then 1 else round(april/8/21.75,2) end april,
@@ -137,10 +137,11 @@
             <if test="group_id != null and group_id != ''" >
                 and ex.GROUP_ID = #{group_id}
             </if>
-        ） dep
+        ) dep
         left join delegainformation de
         on dep.account = de.account
         and dep.companyprojects_id = de.companyprojects_id
+        order by dep.expname
     </select>
 </mapper>
 
