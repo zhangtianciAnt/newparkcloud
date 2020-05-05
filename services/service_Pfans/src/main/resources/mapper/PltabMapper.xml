@@ -23,47 +23,37 @@
     from
 (
 select code, sum(rmb) as rmb,pj.PROJECT_NAME  from (
-select d.CODE, cast((IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(pur.RMB +t.tormb), 0) + IFNULL(SUM(o.RMB +t.tormb), 0))AS decimal(15,2)) as rmb,cp.PROJECT_NAME
+select d.CODE, (IFNULL(SUM(tao.RMB), 0) + IFNULL(SUM(tao.tormb), 0)) as rmb,cp.PROJECT_NAME
 from (
 select `CODE` from dictionary where PCODE = 'PJ111'
 ) as d left join publicexpense p on 1=1
-left JOIN trafficdetails t
-                   on p.PUBLICEXPENSE_ID = t.PUBLICEXPENSE_ID
-                       and t.PLSUMMARY  = d.CODE
-                      and t.DEPARTMENTNAME = #{groupid}
-											and t.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-         left JOIN purchasedetails pur
-                   on p.PUBLICEXPENSE_ID = pur.PUBLICEXPENSE_ID
-                       and pur.PLSUMMARY = d.CODE
-                      and pur.DEPARTMENTNAME = #{groupid}
-											and pur.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-         left JOIN otherdetails o
-                   on p.PUBLICEXPENSE_ID = o.PUBLICEXPENSE_ID
-                       and o.PLSUMMARY = d.CODE
-                     and o.DEPARTMENTNAME = #{groupid}
-										 and o.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
+left join (
+		select rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from trafficdetails
+		union all
+		SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from purchasedetails
+		union all
+		SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from otherdetails
+		) tao
+                   on p.PUBLICEXPENSE_ID = tao.PUBLICEXPENSE_ID
+                       and tao.PLSUMMARY = d.CODE
+                     and tao.DEPARTMENTNAME = #{groupid}
+										 and tao.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
 				 left join companyprojects cp
                     on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
  where year(p.REIMBURSEMENTDATE) = #{year} and month(p.REIMBURSEMENTDATE) = #{month}
 group by d.CODE,cp.PROJECT_NAME
 union all
-select 'PJ111008' as code, cast((IFNULL(SUM(t.RMB +t.tormb), 0) + IFNULL(SUM(a.RMB), 0) + IFNULL(SUM(o.RMB +t.tormb), 0))AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
+select 'PJ111008' as code, (IFNULL(SUM(ta.RMB), 0)) as rmb,companyprojects.PROJECT_NAME
 from evection e
-		left join trafficdetails t
-                   on e.EVECTION_ID = t.EVECTION_ID
-                       and t.PLSUMMARY  = 'PJ111008'
-											 and t.SUBJECTNUMBER not in ('1099-A1-0000','0504-00-0000')
-                    and t.DEPARTMENTNAME = #{groupid}
-         left JOIN accommodationdetails a
-                   on e.EVECTION_ID = a.EVECTION_ID
-                       and a.PLSUMMARY = 'PJ111008'
-											 and a.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-                   and a.DEPARTMENTNAME = #{groupid}
-         left JOIN otherdetails o
-                   on e.EVECTION_ID = o.EVECTION_ID
-                       and o.PLSUMMARY = 'PJ111008'
-											 and o.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-                      and o.DEPARTMENTNAME = #{groupid}
+		left join (
+		select rmb,EVECTION_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from trafficdetails
+		union all
+		SELECT rmb,EVECTION_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from accommodationdetails
+		) ta
+		 on e.EVECTION_ID = ta.EVECTION_ID
+                       and ta.PLSUMMARY  = 'PJ111008'
+											 and ta.SUBJECTNUMBER not in ('1099-A1-0000','0504-00-0000')
+                    and ta.DEPARTMENTNAME = #{groupid}
 				 left join companyprojects
                     on e.PROJECT_ID = companyprojects.COMPANYPROJECTS_ID
  where year(e.REIMBURSEMENTDATE) = #{year} and month(e.REIMBURSEMENTDATE) = #{month}
