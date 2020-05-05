@@ -1,5 +1,7 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_Org.DictionaryService;
@@ -33,6 +35,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -205,35 +208,42 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         List<Priceset> allPriceset = pricesetMapper.selectByYear(startTime, endTime);
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = sdf.parse(startTime);
+        //DateFormat df = DateFormat.getDateInstance();
+        //Date startDate = sdf.parse(startTime);
         for ( Priceset priceset : allPriceset ) {
             Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
+
             int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
             String totalUnit = "0";
             if(StringUtils.isNotBlank(priceset.getTotalunit())){
                 totalUnit = priceset.getTotalunit().trim();
             }
-            if ( pointDate.before(startDate) ) {
-                for ( int i=1; i<=12; i++) {
-                    String key = priceset.getUser_id() + "price" + i;
-                    Double value = 0.0;
-                    value = Double.parseDouble(totalUnit);
-                    pricesetMap.put(key, value);
-                }
-            }else {
-                if(startM >= 1 && startM<=3){
-                    for (int k = startM; k<=3; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-                    }
-                }else {
-                    for (int k = startM; k<=12; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-                    }
-                    for (int k = 1; k<=3; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-                    }
-                }
-            }
+            String key = priceset.getUser_id() + "price" + startM;
+            Double value = 0.0;
+            value = Double.parseDouble(totalUnit);
+            pricesetMap.put(key, value);
+//            if ( pointDate.before(startDate) ) {
+//                for ( int i=1; i<=12; i++) {
+//                    String key = priceset.getUser_id() + "price" + i;
+//                    Double value = 0.0;
+//                    value = Double.parseDouble(totalUnit);
+//                    pricesetMap.put(key, value);
+//                }
+//            }else {
+//                if(startM >= 1 && startM<=3){
+//                    for (int k = startM; k<=3; k++) {
+//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
+//                    }
+//                }else {
+//                    for (int k = startM; k<=12; k++) {
+//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
+//                    }
+//                    for (int k = 1; k<=3; k++) {
+//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
+//                    }
+//                }
+//            }
+
         }
         return pricesetMap;
     }
