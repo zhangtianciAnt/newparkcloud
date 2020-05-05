@@ -1,6 +1,9 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS6000.*;
+import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
@@ -50,6 +53,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
 
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
+
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
         return coststatisticsMapper.select(coststatistics);
@@ -81,7 +87,17 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
         Map<String, Double> variousfundsMap = new HashMap<String, Double>();
         for ( Variousfunds v : allVariousfunds ) {
-            String key = v.getBpplayer() + v.getPlmonthplan();
+            String plan = "";
+            if(v.getPlmonthplan()!=null && !v.getPlmonthplan().isEmpty())
+            {
+                Dictionary dictionary =new Dictionary();
+                dictionary = dictionaryMapper.selectByPrimaryKey(v.getPlmonthplan().trim());
+                if(dictionary!=null)
+                {
+                    plan = dictionary.getValue1().trim().replace("月","");
+                }
+            }
+            String key = v.getBpplayer() + plan;
             Double value = 0.0;
             try {
                 value = Double.parseDouble(v.getPayment().trim());
@@ -103,9 +119,15 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             String value = ex.getSupplierinfor_id();
             companyMap.put(key, value);
         }
-        Calendar calendar= Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -3);
-        int year = calendar.get(Calendar.YEAR);
+        Calendar calendar = Calendar.getInstance();
+        //calendar.add(Calendar.MONTH, -3);
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH) + 1;
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
         // 获取活用情报信息
         List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
         for ( Coststatistics c : allCostList ) {
@@ -133,7 +155,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 totalcost += cost;
                 if ( i%3 ==0 ) {
                     // 经费处理
-                    String variousKey = c.getBpname() + i;
+                    String variousKey = c.getBpname1() + i;
                     double various = 0;
                     if ( variousfundsMap.containsKey(variousKey) ) {
                         various = variousfundsMap.get(variousKey);
@@ -172,7 +194,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         int month = now.get(Calendar.MONTH) + 1;
         String startTime = "";
         String endTime = "";
-        if(month >= 1 && month <= 4) {
+        if(month >= 1 && month <= 3) {
             startTime = String.valueOf(now.get(Calendar.YEAR) - 1) + "-" + "04" + "-" + "01";
             endTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "03" + "-" + "31";
         }else {
