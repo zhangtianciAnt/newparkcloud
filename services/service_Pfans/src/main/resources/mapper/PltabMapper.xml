@@ -119,7 +119,7 @@ inner join projectsystem ps
 inner join companyprojects cp
   on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
 where cp.GROUP_ID = #{groupid}
-group by cost.BPCOMPANY,code,cp.PROJECT_NAME
+group by code,cp.PROJECT_NAME
 
 union all
 select 'neibuhetong' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb, company.PROJECT_NAME
