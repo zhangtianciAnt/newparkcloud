@@ -45,9 +45,9 @@ public class PltabServiceImpl implements PltabService {
                 }
             }
         }
-        List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month);
         List<Pltab> pltabs2  = pltabMapper.selectPlmoney(groupid,year,month);
-        pltabs.addAll(pltabs2);
-        return pltabs;
+        List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month);
+        pltabs2.addAll(pltabs);
+        return pltabs2;
     }
 }
