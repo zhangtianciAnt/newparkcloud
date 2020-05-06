@@ -99,6 +99,7 @@ public class Pltab extends BaseModel {
     private String posttaxbenefit;
     private String operatingmargin;
     private String outsourcinghours;
+    private String outsourcing;
     private String outsourcingname;
     private String employeename;
     private String outsourcingpjhours;
