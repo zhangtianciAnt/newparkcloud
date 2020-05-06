@@ -24,7 +24,6 @@ public class ReimbursementServiceImpl implements ReimbursementService {
     @Override
     public List<Reimbursement> getReimbursementList(Reimbursement reimbursement) throws Exception {
         return reimbursementMapper.select(reimbursement);
-        //return reimbursementMapper.selectAll();
     }
 
     @Override
