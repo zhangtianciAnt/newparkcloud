@@ -226,8 +226,8 @@ on l.createby = expatriatesinfor.account
 where year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
-and (expatriatesinfor.account is not null or expatriatesinfor.account != '')
-and (l.PROJECT_ID is null or l.PROJECT_ID == '')
+and  isnull(expatriatesinfor.account)
+and l.PROJECT_NAME = ''
 group by `code`
 
 union all
@@ -238,7 +238,7 @@ where year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024001'
-and (l.PROJECT_ID is null or l.PROJECT_ID == '')
+and l.PROJECT_NAME = ''
  group by `code`
 
 union all
@@ -249,14 +249,14 @@ where year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024002'
-and (l.PROJECT_ID is null or l.PROJECT_ID == '')
+and l.PROJECT_NAME = ''
  group by `code`
 
  union all
 select 'unpublice' as `code`,cast(sum(MONEYS) AS decimal(15,2)) as worktime
 from publicexpense
 where GROUP_ID = #{groupid}
-and (PROJECT_ID is null or PROJECT_ID == '')
+and  (PROJECT_ID = '' or PROJECT_ID = 'null')
 and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
 group by `code`
 
@@ -264,7 +264,7 @@ union all
 select 'unevec' as `code`,cast(sum(TOTALPAY) AS decimal(15,2)) as worktime
 from evection
 where GROUP_ID = #{groupid}
-and (PROJECT_ID is null or PROJECT_ID == '')
+and  (PROJECT_ID = '' or PROJECT_ID = 'null')
 and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
 group by `code`
 
