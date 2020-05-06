@@ -4,6 +4,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vacation;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_AOCHUAN.AOCHUAN6000.AttendancesService;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.AttendancesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.VacationMapper;
@@ -12,6 +13,9 @@ import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,7 +44,10 @@ public class AttendancesServiceImpl implements AttendancesService {
     @Autowired
     private ToDoNoticeService toDoNoticeService;
 
-//考勤一览初期值
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    //考勤一览初期值
     @Override
     public List<Attendance> get(Attendance attendance) throws Exception {
 
@@ -60,7 +67,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                 Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
 
 
-                String attendancetim = att.getAttendancetim();
+                String attendancetim = "20" + att.getAttendancetim();
                 Date attdate = simpleDateFormat.parse(attendancetim);//考勤时间
 
                 int compareToJS = attdate.compareTo(datestart);
@@ -98,7 +105,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         return attendanceList;
     }
-//考勤一览根据天去查询
+    //考勤一览根据天去查询
     @Override
     public List<Attendance> getNow(Attendance attendance) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -117,7 +124,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                 Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
 
 
-                String attendancetim = att.getAttendancetim();
+                String attendancetim = "20" + att.getAttendancetim();
                 Date attdate = simpleDateFormat.parse(attendancetim);//考勤时间
 
                 int compareToJS = attdate.compareTo(datestart);
@@ -155,7 +162,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         return attendanceList;
     }
-//考勤一览根据月，年去查询
+    //考勤一览根据月，年去查询
     @Override
     public List<Attendance> getNowMons(String attendancetim) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -174,7 +181,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                 Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
 
 
-                String attendancetims = att.getAttendancetim();
+                String attendancetims = "20" + att.getAttendancetim();
                 Date attdate = simpleDateFormat.parse(attendancetims);//考勤时间
 
                 int compareToJS = attdate.compareTo(datestart);
@@ -211,7 +218,7 @@ public class AttendancesServiceImpl implements AttendancesService {
         }
         return attendanceList;
     }
-//打卡记录导入
+    //打卡记录导入
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
@@ -221,7 +228,8 @@ public class AttendancesServiceImpl implements AttendancesService {
             File f = null;
             f = File.createTempFile("tmp", null);
             file.transferTo(f);
-            ExcelReader reader = ExcelUtil.getReader(f);
+            //指定sheet页面读取
+            ExcelReader reader = ExcelUtil.getReader(f,1);
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("日期");
@@ -229,80 +237,52 @@ public class AttendancesServiceImpl implements AttendancesService {
             model.add("部门");
             model.add("上班时间");
             model.add("下班时间");
-            List<Object> key = list.get(0);
-            for (int i = 0; i < key.size(); i++) {
-                if (!key.get(i).toString().trim().equals(model.get(i))) {
-                    throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
-                }
-            }
-            int k = 1;
-            int accesscount = 0;
-            int error = 0;
-            for (int i = 1; i < list.size(); i++) {
-                Attendance attendance = new Attendance();
-                List<Object> value = list.get(k);
-                k++;
-                if (value != null && !value.isEmpty()) {
-                    if (value.get(0).toString().equals("")) {
-                        continue;
-                    }
 
+            for(int j = 4 ; j <list.size() ; j ++){
 
-                    if (value.size() > 3) {
-                        String date = value.get(3).toString();
-                        String date1 = value.get(3).toString();
-                        date = date.substring(5, 7);
-                        date1 = date1.substring(8, 10);
-                        if (Integer.parseInt(date1) > 31) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的日子，导入失败");
-                            continue;
-                        }
-                        if (Integer.parseInt(date) > 12) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的月份，导入失败");
-                            continue;
-                        }
-                    }
-                    if (value.size() > 6) {
-                        if (value.get(6).toString().length() > 50) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的工作备注长度超出范围，请输入长度为50位之内的工作备注，导入失败");
-                            continue;
-                        }
-                    }
-
-                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                if (!"总计".equals(list.get(j).get(6).toString())){
+                    Attendance attendance = new Attendance();
                     attendance.preInsert(tokenModel);
-                    attendance.setAttendancetim(value.get(0).toString());
-                    attendance.setNames(value.get(1).toString());
-                    attendance.setDepartment(value.get(2).toString());
-
-                    String workinghours = value.get(3).toString();
-                    String offhours = value.get(4).toString();
-
-                    Date working = sf1.parse(workinghours);
-                    Date off = sf1.parse(offhours);
+                    //工号
+                    attendance.setJobnum(list.get(j).get(3).toString());
+                    //mongodb
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(list.get(j).get(3).toString()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    //姓名
+                    if(customerInfo == null){
+                        //attendance.setNames(customerInfo.getUserinfo().getCustomername());
+                    }else{
+                        attendance.setNames(customerInfo.getUserinfo().getCustomername());
+                    }
+                    //上班1班次打卡时间
+                    String working = list.get(j).get(8).toString();
                     attendance.setWorkinghours(working);
+                    //下班1班次打卡时间
+                    String off = list.get(j).get(10).toString();
                     attendance.setOffhours(off);
-
-//                    Attendance attendance1 = new Attendance();
-//                    attendance1.setNames(value.get(1).toString());
-//                    attendanceMapper.delete(attendance1);
-
+                    //日期
+                    attendance.setAttendancetim(list.get(j).get(6).toString());
+                    attendance.setAttendance_id(UUID.randomUUID().toString());
+                    attendanceMapper.insert(attendance);
                 }
-                attendance.setAttendance_id(UUID.randomUUID().toString());
-
-                attendanceMapper.insert(attendance);
-                accesscount = accesscount + 1;
             }
-            Result.add("失败数：" + error);
-            Result.add("成功数：" + accesscount);
             return Result;
         } catch (Exception e) {
+            System.out.println("报错了");
             throw new LogicalException(e.getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public List<Attendance> getByUserId(String userId) throws Exception {
