@@ -218,7 +218,7 @@ select 'uncoststa' as `code`,
  WHEN #{month} THEN cost.cost8
  WHEN #{month} THEN cost.cost9
  WHEN #{month} THEN cost.cost10
- WHEN #{month} THEN cost.cost11 
+ WHEN #{month} THEN cost.cost11
  WHEN #{month} THEN cost.cost12 ELSE 0 END) AS 'worktime'
 from coststatistics cost
 inner join expatriatesinfor exp
