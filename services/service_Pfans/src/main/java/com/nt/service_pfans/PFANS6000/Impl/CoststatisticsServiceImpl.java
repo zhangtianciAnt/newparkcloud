@@ -71,6 +71,15 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Override
     public Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH) + 1;
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        coststatistics.setYears(String.valueOf(year).trim());
         coststatisticsMapper.delete(coststatistics);
 
         List<Coststatistics> allCostList = getCostList(coststatistics, tokenModel);
