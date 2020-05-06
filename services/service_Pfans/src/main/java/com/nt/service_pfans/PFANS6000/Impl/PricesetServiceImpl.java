@@ -1,5 +1,7 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
@@ -56,22 +58,44 @@ public class PricesetServiceImpl implements PricesetService {
                 rst.add(a);
             }
         }else{
-            PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
+            pricesetGroup.setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,-1),"yyyy-MM"));
+            ms = pricesetGroupMapper.select(pricesetGroup);
+            if(ms.size() > 0){
+                for(PricesetGroup item:ms){
+                    PricesetVo a = new PricesetVo();
+                    Priceset conditon = new Priceset();
+                    conditon.setPricesetgroup_id(item.getPricesetgroup_id());
+                    item.setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(item.getPd_date() + "-01"), DateField.MONTH,1),"yyyy-MM"));
+                    item.setPricesetgroup_id("");
+                    a.setMain(item);
+                    List<Priceset> list = pricesetMapper.select(conditon);
+                    for(Priceset pri :list){
+                        pri.setPriceset_id("");
+                        pri.setPricesetgroup_id("");
+                    }
+                    a.setDetail(list);
 
-            a.getMain().setPd_date(pricesetGroup.getPd_date());
+                    rst.add(a);
+                }
 
-            Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-            expatriatesinfor.setWhetherentry("BP006001");
-            List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
-            for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
-                Priceset priceset = new Priceset();
-                priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
-                priceset.setUsername(expatriatesinforItem.getExpname());
-                priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                priceset.setCompany(expatriatesinforItem.getSuppliername());
-                a.getDetail().add(priceset);
+            }else{
+                PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
+
+                a.getMain().setPd_date(pricesetGroup.getPd_date());
+
+                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                expatriatesinfor.setWhetherentry("BP006001");
+                List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
+                for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
+                    Priceset priceset = new Priceset();
+                    priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
+                    priceset.setUsername(expatriatesinforItem.getExpname());
+                    priceset.setGraduation(expatriatesinforItem.getGraduation_year());
+                    priceset.setCompany(expatriatesinforItem.getSuppliername());
+                    a.getDetail().add(priceset);
+                }
+                rst.add(a);
             }
-            rst.add(a);
         }
 
         return rst;
