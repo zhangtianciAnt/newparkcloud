@@ -7,10 +7,7 @@ import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
-import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -52,6 +49,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Autowired
     private PricesetMapper pricesetMapper;
+
+    @Autowired
+    private PricesetGroupMapper pricesetGroupMapper;
 
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
@@ -203,41 +203,49 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public Map<String, Double> getUserPriceMap() throws Exception {
         // 获取所有人的单价设定
         Calendar now = Calendar.getInstance();
+        int year = 0;
         int month = now.get(Calendar.MONTH) + 1;
-        String startTime = "";
-        String endTime = "";
         if(month >= 1 && month <= 3) {
-            startTime = String.valueOf(now.get(Calendar.YEAR) - 1) + "-" + "04" + "-" + "01";
-            endTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "03" + "-" + "31";
+            year = now.get(Calendar.YEAR) - 1;
         }else {
-            startTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "04" + "-" + "01";
-            endTime = String.valueOf(now.get(Calendar.YEAR) + 1) + "-" + "03" + "-" + "31";
+            year = now.get(Calendar.YEAR);
         }
 
-        List<Priceset> allPriceset = pricesetMapper.selectByYear(startTime, endTime);
+        List<Priceset> allPriceset = pricesetMapper.selectByYear(String.valueOf(year).trim());
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //DateFormat df = DateFormat.getDateInstance();
         //Date startDate = sdf.parse(startTime);
         for ( Priceset priceset : allPriceset ) {
-            Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
+            //Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
 
-            int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
+            //int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
             String totalUnit = "0";
             if(StringUtils.isNotBlank(priceset.getTotalunit())){
                 totalUnit = priceset.getTotalunit().trim();
             }
-            String key = priceset.getUser_id() + "price" + startM;
+//            String key = priceset.getUser_id() + "price" + startM;
+//            Double value = 0.0;
+//            value = Double.parseDouble(totalUnit);
+//            pricesetMap.put(key, value);
+            PricesetGroup pricesetGroup = new PricesetGroup();
+            pricesetGroup.setPricesetgroup_id(priceset.getPricesetgroup_id());
+            pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
+            int i = 0;
+            i = Integer.parseInt(pricesetGroup.getPd_date().substring(5, 7));
+            String key = priceset.getUser_id() + "price" + i;
             Double value = 0.0;
             value = Double.parseDouble(totalUnit);
             pricesetMap.put(key, value);
-//            if ( pointDate.before(startDate) ) {
-//                for ( int i=1; i<=12; i++) {
+
+//            for ( int i=1; i<=12; i++) {
 //                    String key = priceset.getUser_id() + "price" + i;
 //                    Double value = 0.0;
 //                    value = Double.parseDouble(totalUnit);
 //                    pricesetMap.put(key, value);
-//                }
+//            }
+//            if ( pointDate.before(startDate) ) {
+//
 //            }else {
 //                if(startM >= 1 && startM<=3){
 //                    for (int k = startM; k<=3; k++) {

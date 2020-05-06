@@ -2,21 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.PricesetMapper">
     <select id="selectByYear" resultType="com.nt.dao_Pfans.PFANS6000.Priceset">
-		<![CDATA[
-		select USER_ID, ASSESSTIME, TOTALUNIT from priceset
-		where
-			ASSESSTIME >= str_to_date(#{startTime}, '%Y-%m-%d')
-			and ASSESSTIME <= str_to_date(#{endTime}, '%Y-%m-%d')
-		UNION ALL
-		(
-			select b.USER_ID, b.ASSESSTIME, b.TOTALUNIT from (
-			select USER_ID, max(ASSESSTIME) as ASSESSTIME from priceset  where ASSESSTIME < str_to_date(#{startTime}, '%Y-%m-%d') group by USER_ID order by USER_ID, ASSESSTIME
-			) a
-			inner join priceset b
-			on a.USER_ID = b.USER_ID and a.ASSESSTIME = b.ASSESSTIME
-		)
-		order by USER_ID, ASSESSTIME
-        ]]>
+<!--		<![CDATA[-->
+<!--		select USER_ID, ASSESSTIME, TOTALUNIT from priceset-->
+<!--		where-->
+<!--			ASSESSTIME >= str_to_date(#{startTime}, '%Y-%m-%d')-->
+<!--			and ASSESSTIME <= str_to_date(#{endTime}, '%Y-%m-%d')-->
+<!--		UNION ALL-->
+<!--		(-->
+<!--			select b.USER_ID, b.ASSESSTIME, b.TOTALUNIT from (-->
+<!--			select USER_ID, max(ASSESSTIME) as ASSESSTIME from priceset  where ASSESSTIME < str_to_date(#{startTime}, '%Y-%m-%d') group by USER_ID order by USER_ID, ASSESSTIME-->
+<!--			) a-->
+<!--			inner join priceset b-->
+<!--			on a.USER_ID = b.USER_ID and a.ASSESSTIME = b.ASSESSTIME-->
+<!--		)-->
+<!--		order by USER_ID, ASSESSTIME-->
+<!--        ]]>-->
+        SELECT p.*
+        FROM `priceset` p
+        inner join pricesetgroup pg
+        on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
+        where left(pg.PD_DATE,4) = #{year}
 	</select>
     <select id="gettlist" resultType="com.nt.dao_Pfans.PFANS6000.Vo.PricesetVo">
 select
