@@ -73,6 +73,43 @@ public class Pltab extends BaseModel {
     private String marginal;//限界利益
 
     private String Operating;//営業利益
+    private String centerintotal;
+    private String twocost;
+    private String peocostsum;
+    private String depreciationsoft;
+    private String depreciationequipment;
+    private String leasecost;
+    private String temporaryrent;
+    private String costsubtotal;
+    private String surveyfee;
+    private String othersoftwarefree;
+    private String expensessubtotal;
+    private String transferone;
+    private String transfertwo;
+    private String allocationsum;
+    private String threefree;
+    private String commonfee;
+    private String otherexpenses;
+    private String otherincome;
+    private String otherexpentotal;
+    private String interestrate;
+    private String operatingprofit;
+    private String pretaxprofit;
+    private String taxallowance;
+    private String posttaxbenefit;
+    private String operatingmargin;
+    private String outsourcinghours;
+    private String outsourcingname;
+    private String employeename;
+    private String outsourcingpjhours;
+    private String employeepjhours;
+    private String employeeuptime;
+    private String externalpjrate;
+    private String externalinjectionrate;
+    private String memberpjrate;
+    private String membershiprate;
+    private String pjrateemployees;
+    private String staffingrate;
 
 
 }
