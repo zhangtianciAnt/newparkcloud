@@ -8,8 +8,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface PltabService {
-
     List<Pltab> selectPl(String groupid, String year, String month)throws Exception;
-
-
 }
