@@ -9,6 +9,7 @@ import java.util.List;
 public interface PltabService {
 
     List<Pltab> selectPl(String groupid,String year,String month)throws Exception;
-
-
+    //add-ws-5/6-添加按份金额
+    List<Pltab> selectPlmoney(String groupid,String year,String month)throws Exception;
+    //add-ws-5/6-添加按份金额
 }

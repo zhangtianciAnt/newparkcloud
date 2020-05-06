@@ -49,4 +49,11 @@ public class PltabServiceImpl implements PltabService {
         List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month);
         return pltabs;
     }
+//add-ws-5/6-添加按份金额
+    @Override
+    public List<Pltab> selectPlmoney(String groupid, String year, String month) throws Exception {
+        List<Pltab> pltabsselectPlmoney  = pltabMapper.selectPlmoney(groupid,year,month);
+        return pltabsselectPlmoney;
+    }
+//add-ws-5/6-添加按份金额
 }

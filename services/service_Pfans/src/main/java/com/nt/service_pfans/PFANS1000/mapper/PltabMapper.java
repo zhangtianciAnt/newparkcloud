@@ -14,6 +14,8 @@ import java.util.List;
 public interface PltabMapper extends MyMapper<Pltab> {
 
     List<Pltab> getPltab(@Param("groupid") String groupid, @Param("year") String year, @Param("month") String month);
-
+    //add-ws-5/6-添加按份金额
+    List<Pltab> selectPlmoney(@Param("groupid") String groupid, @Param("year") String year, @Param("month") String month);
+    //add-ws-5/6-添加按份金额
     List<LogManagement> getCMPJ(@Param("year") String year, @Param("month") String month);
 }
