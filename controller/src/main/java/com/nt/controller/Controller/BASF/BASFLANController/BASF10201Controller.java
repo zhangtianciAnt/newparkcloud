@@ -1,6 +1,9 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.utils.*;
@@ -8,8 +11,10 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -29,6 +34,10 @@ public class BASF10201Controller {
     private FirealarmServices firealarmServices;
     @Autowired
     private TokenService tokenService;
+
+    // websocket消息推送
+    private WebSocket ws = new WebSocket();
+    private WebSocketVo webSocketVo = new WebSocketVo();
 
     /**
      * @param request
@@ -136,6 +145,14 @@ public class BASF10201Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         firealarmServices.update(firealarm,tokenModel);
+
+        //获取并立即推送非误报且未完成的消防报警单
+        Firealarm firealarmnew =new Firealarm();
+        firealarmnew.setCompletesta("0");
+        firealarmnew.setMisinformation("0");
+        List<Firealarm> firealarms=firealarmServices.list(firealarmnew);
+        webSocketVo.setTopfirealarmList(firealarms);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
