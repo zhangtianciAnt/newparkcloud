@@ -98,7 +98,7 @@ left join expatriatesinfor
 on l.createby = expatriatesinfor.account
 inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
-where c.GROUP_ID = #{groupid}
+where l.GROUP_ID = #{groupid}
 and year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and  isnull(expatriatesinfor.account)
@@ -110,7 +110,7 @@ inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
 inner join expatriatesinfor e
 on e.ACCOUNT = l.owner
-where c.GROUP_ID = #{groupid}
+where l.GROUP_ID = #{groupid}
 and year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and e.OPERATIONFORM = 'BP024001'
@@ -122,7 +122,7 @@ inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
 inner join expatriatesinfor e
 on e.ACCOUNT = l.owner
-where c.GROUP_ID = #{groupid}
+where l.GROUP_ID = #{groupid}
 and year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and e.OPERATIONFORM = 'BP024002'
