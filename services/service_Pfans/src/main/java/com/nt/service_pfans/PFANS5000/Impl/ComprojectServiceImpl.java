@@ -177,7 +177,7 @@ public class ComprojectServiceImpl implements ComprojectService {
             for (Prosystem pro : prosystemList) {
                 //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
                 if (pro.getType().equals("1")) {
-                    if (prosystem.getName_id() != "" && prosystem.getName_id() != null) {
+                    if (pro.getName_id() != "" && pro.getName_id() != null) {
                         rowundex = rowundex + 1;
                         pro.preInsert(tokenModel);
                         pro.setProsystem_id(UUID.randomUUID().toString());
@@ -186,7 +186,7 @@ public class ComprojectServiceImpl implements ComprojectService {
                         prosystemMapper.insertSelective(pro);
                     }
                 } else if (pro.getType().equals("0")) {
-                    if (prosystem.getName() != "" && prosystem.getName() != null) {
+                    if (pro.getName() != "" && pro.getName() != null) {
                         rowundex = rowundex + 1;
                         pro.preInsert(tokenModel);
                         pro.setProsystem_id(UUID.randomUUID().toString());

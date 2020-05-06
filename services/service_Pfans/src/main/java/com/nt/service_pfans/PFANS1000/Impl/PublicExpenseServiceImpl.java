@@ -361,8 +361,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         for (Object detail: list) {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
-            float money = getPropertyFloat(detail, inputType);
-            totalTax = totalTax + money;
+            float money = getPropertyFloat(detail, "rmb");
+            float moneysum = getPropertyFloat(detail, "foreigncurrency");
+            totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
             if ( specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0 ) {

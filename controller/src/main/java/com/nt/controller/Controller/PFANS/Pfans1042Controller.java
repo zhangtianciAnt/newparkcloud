@@ -34,6 +34,4 @@ public class Pfans1042Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(pltabService.selectPl(groupid,year,month));
     }
-
-
 }
