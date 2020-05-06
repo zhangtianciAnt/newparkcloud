@@ -41,7 +41,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
         for (Delegainformation delegainformation : delegainformationList) {
             if(!StringUtils.isNullOrEmpty(delegainformation.getDelegainformation_id())){
                 delegainformation.preUpdate(tokenModel);
-                delegainformationMapper.updateByPrimaryKey(delegainformation);
+                delegainformationMapper.updateByPrimaryKeySelective(delegainformation);
             }
             else{
                 delegainformation.preInsert(tokenModel);
