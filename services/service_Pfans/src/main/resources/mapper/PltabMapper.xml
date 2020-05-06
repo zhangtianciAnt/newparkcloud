@@ -224,6 +224,9 @@ group by pj
 
     <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
 select 'plmoneyflg' AS 'plmoneyflg',
+			sum(CASE c.code WHEN 'worktimei1' THEN c.worktime ELSE 0 END) AS 'outsourcinghours',
+			sum(CASE c.code WHEN 'worktimei2' THEN c.worktime ELSE 0 END) AS 'outsourcingname',
+			sum(CASE c.code WHEN 'worktimei3' THEN c.worktime ELSE 0 END) AS 'employeename',
 			sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END) AS 'unworktime',
        sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END) AS 'unworktimeei',
        sum(CASE c.code WHEN 'unworktimeex' THEN c.worktime ELSE 0 END) AS 'unworktimeex',
@@ -232,6 +235,47 @@ select 'plmoneyflg' AS 'plmoneyflg',
        sum(CASE c.code WHEN 'uncoststa' THEN c.worktime ELSE 0 END) AS 'uncoststa'
 from (
 
+select
+'worktimei1' as `code`,
+count(*) as worktime
+from logmanagement log
+left join expatriatesinfor ex
+on log.createby = ex.account
+where (log.project_id = 'PP024001' or log.project_id ='')
+and DATE_FORMAT(LOG_DATE,'%Y') = #{year}
+and DATE_FORMAT(LOG_DATE,'%m') = #{month}
+and log.group_id = #{groupid}
+and ex.operationform = 'BP024001'
+
+union all
+
+select
+'worktimei2' as `code`,
+count(*) as worktime
+from logmanagement log
+left join expatriatesinfor ex
+on log.createby = ex.account
+where (log.project_id = 'PP024001' or log.project_id ='')
+and DATE_FORMAT(LOG_DATE,'%Y') = #{year}
+and DATE_FORMAT(LOG_DATE,'%m') = #{month}
+and log.group_id = #{groupid}
+and ex.operationform = 'BP024002'
+
+union all
+
+select
+'worktimei3' as `code`,
+count(*) as worktime
+from logmanagement log
+left join expatriatesinfor ex
+on log.createby = ex.account
+where (log.project_id = 'PP024001' or log.project_id ='')
+and DATE_FORMAT(LOG_DATE,'%Y') = #{year}
+and DATE_FORMAT(LOG_DATE,'%m') = #{month}
+and log.group_id = #{groupid}
+and ex.account is null
+
+union all
 select 'unworktime' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
 left join expatriatesinfor
 on l.createby = expatriatesinfor.account
