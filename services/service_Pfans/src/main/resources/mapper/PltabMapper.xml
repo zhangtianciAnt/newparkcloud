@@ -24,6 +24,9 @@
        sum(CASE a.code WHEN 'WORKTIME' THEN a.rmb ELSE 0 END) AS 'emhours',
        sum(CASE a.code WHEN 'WORKTIMEI' THEN a.rmb ELSE 0 END) AS 'inhours',
        sum(CASE a.code WHEN 'WORKTIMEEX' THEN a.rmb ELSE 0 END) AS 'outhours',
+       sum(CASE a.code WHEN 'persbp2' THEN a.rmb ELSE 0 END) AS 'outsourcinghours',
+       sum(CASE a.code WHEN 'persbp1' THEN a.rmb ELSE 0 END) AS 'outsourcingname',
+       sum(CASE a.code WHEN 'persmember' THEN a.rmb ELSE 0 END) AS 'employeename',
        sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inwetuo',
 	   sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inst'
     from
@@ -142,6 +145,58 @@ on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
 where company.GROUP_ID = #{groupid}
 and year(contract.DELIVERYDATE) = #{year} and month(contract.DELIVERYDATE) = #{month}
 GROUP BY code,company.PROJECT_NAME
+
+union all
+select  'persbp2' as `code`,
+ SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024002' THEN 1 ELSE 0 END) AS rmb,
+companyprojects.project_name
+from projectsystem
+left join companyprojects
+on projectsystem.companyprojects_id = companyprojects.companyprojects_id
+left join expatriatesinfor
+on expatriatesinfor.account = projectsystem.name
+where companyprojects.GROUP_ID = #{groupid}
+and (
+(year(projectsystem.ADMISSIONTIME) = #{year} and month(projectsystem.ADMISSIONTIME) = #{month})
+or
+(year(projectsystem.EXITTIME) = #{year} and month(projectsystem.EXITTIME) = #{month})
+)
+group by `code`,companyprojects.project_name
+
+union all
+select  'persbp1' as `code`,
+ SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024001' THEN 1 ELSE 0 END) AS rmb,
+companyprojects.project_name
+from projectsystem
+left join companyprojects
+on projectsystem.companyprojects_id = companyprojects.companyprojects_id
+left join expatriatesinfor
+on expatriatesinfor.account = projectsystem.name
+where companyprojects.GROUP_ID = #{groupid}
+and (
+(year(projectsystem.ADMISSIONTIME) = #{year} and month(projectsystem.ADMISSIONTIME) = #{month})
+or
+(year(projectsystem.EXITTIME) = #{year} and month(projectsystem.EXITTIME) = #{month})
+)
+group by `code`,companyprojects.project_name
+
+union all
+
+select  'persmember' as `code`,
+ SUM(CASE WHEN projectsystem.type = '0' THEN 1 END) AS rmb,
+companyprojects.project_name
+from projectsystem
+left join companyprojects
+on projectsystem.companyprojects_id = companyprojects.companyprojects_id
+left join expatriatesinfor
+on expatriatesinfor.account = projectsystem.name
+where companyprojects.GROUP_ID = #{groupid}
+and (
+(year(projectsystem.ADMISSIONTIME) = #{year} and month(projectsystem.ADMISSIONTIME) = #{month})
+or
+(year(projectsystem.EXITTIME) = #{year} and month(projectsystem.EXITTIME) = #{month})
+)
+group by `code`,companyprojects.project_name
 ) a
 group by pj
     </select>
@@ -152,7 +207,7 @@ group by pj
       and year(CREATEON) = #{year}
     </select>
     <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
-select
+select 'plmoneyflg' AS 'plmoneyflg'
 			sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END) AS 'unworktime',
        sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END) AS 'unworktimeei',
        sum(CASE c.code WHEN 'unworktimeex' THEN c.worktime ELSE 0 END) AS 'unworktimeex',
