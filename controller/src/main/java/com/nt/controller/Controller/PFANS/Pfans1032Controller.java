@@ -107,7 +107,7 @@ public class Pfans1032Controller {
                 }
             }
 
-            ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(国内受託)", "qingqiushu_guonei.xlsx", data, response);
+            ExcelOutPutUtil.OutPutPdf(pd.getClaimnumber().toUpperCase() + "_請求書(国内受託)", "qingqiushu_guonei.xls", data, response);
         } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")) {
             if (pd.getCurrencyposition().equals("PG019003")) {
                 for (Dictionary item : dictionaryList) {
@@ -116,7 +116,7 @@ public class Pfans1032Controller {
                         pd.setCurrencyposition(item.getValue4());
                     }
                 }
-                ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(日本受託-RMB)", "qingqiushu_ribenrmb.xlsx", data, response);
+                ExcelOutPutUtil.OutPutPdf(pd.getClaimnumber().toUpperCase() + "_請求書(日本受託-RMB)", "qingqiushu_ribenrmb.xls", data, response);
             } else if (pd.getCurrencyposition().equals("PG019001")) {
                 for (Dictionary item : dictionaryList) {
                     if (item.getCode().equals(pd.getCurrencyposition())) {
@@ -124,7 +124,7 @@ public class Pfans1032Controller {
                         pd.setCurrencyposition(item.getValue4());
                     }
                 }
-                ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(日本受託-US$)", "qingqiushu_ribenus.xlsx", data, response);
+                ExcelOutPutUtil.OutPutPdf(pd.getClaimnumber().toUpperCase() + "_請求書(日本受託-US$)", "qingqiushu_ribenus.xls", data, response);
             }
         }
     }

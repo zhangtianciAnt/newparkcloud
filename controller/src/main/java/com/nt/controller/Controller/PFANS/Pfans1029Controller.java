@@ -17,10 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/contract")
@@ -93,13 +90,19 @@ public class Pfans1029Controller {
             str_format = df.format(bd);
             cv.getNumberCount().get(i).setClaimamount(str_format);
         }
-        //20200427 add by ztc format data end
+        String numbercount = "";
+        List<String> numberCount = new ArrayList<String>();
+        for (int t = 0; t < cv.getNumberCount().size(); t++) {
+            numbercount = cv.getContract().getContractnumber() + "-" + (t + 1);
+            numberCount.add(numbercount);
+        }
+        data.put("numberCount", numberCount);
         data.put("cv",cv.getContract());
         data.put("ba1",cv.getNumberCount());
         if (cv.getContracttype().equals("HT008003") || cv.getContracttype().equals("HT008004") || cv.getContracttype().equals("HT008007") || cv.getContracttype().equals("HT008008")){
-            ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_役務契約書(受託)-jp(cn)","qiyueshu_yiwushoutuo.xlsx",data,response);
+            ExcelOutPutUtil.OutPutPdf(cv.getContract().getContractnumber().toUpperCase() + "_役務契約書(受託)-jp(cn)", "qiyueshu_yiwushoutuo.xls", data, response);
         } else if (cv.getContracttype().equals("HT008001") || cv.getContracttype().equals("HT008002") || cv.getContracttype().equals("HT008005") || cv.getContracttype().equals("HT008006")){
-            ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase()+"_技術契約書(受託)-jp(cn)","qiyueshu_shoutuo.xlsx",data,response);
+            ExcelOutPutUtil.OutPutPdf(cv.getContract().getContractnumber().toUpperCase() + "_技術契約書(受託)-jp(cn)", "qiyueshu_shoutuo.xls", data, response);
         }
     }
 
