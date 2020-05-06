@@ -228,6 +228,7 @@ and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and  isnull(expatriatesinfor.account)
 and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
+and l.STATUS='4'
 group by `code`
 
 union all
@@ -239,6 +240,7 @@ and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024001'
 and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
+and l.STATUS='4'
  group by `code`
 
 union all
@@ -250,6 +252,7 @@ and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024002'
 and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
+and l.STATUS='4'
  group by `code`
 
  union all
@@ -258,6 +261,7 @@ from publicexpense
 where GROUP_ID = #{groupid}
 and  (PROJECT_ID = '' or PROJECT_ID = 'null')
 and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
+and STATUS='4'
 group by `code`
 
 union all
@@ -266,27 +270,29 @@ from evection
 where GROUP_ID = #{groupid}
 and  (PROJECT_ID = '' or PROJECT_ID = 'null')
 and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
+and STATUS='4'
 group by `code`
 
 union all
 select 'uncoststa' as `code`,
  sum(CASE #{month} WHEN '01' THEN cost.cost1
- WHEN #{month} THEN cost.cost2
- WHEN #{month} THEN cost.cost3
- WHEN #{month} THEN cost.cost4
- WHEN #{month} THEN cost.cost5
- WHEN #{month} THEN cost.cost6
- WHEN #{month} THEN cost.cost7
- WHEN #{month} THEN cost.cost8
- WHEN #{month} THEN cost.cost9
- WHEN #{month} THEN cost.cost10
- WHEN #{month} THEN cost.cost11
- WHEN #{month} THEN cost.cost12 ELSE 0 END) AS 'worktime'
+ WHEN '02' THEN cost.cost2
+ WHEN '03' THEN cost.cost3
+ WHEN '04' THEN cost.cost4
+ WHEN '05' THEN cost.cost5
+ WHEN '06' THEN cost.cost6
+ WHEN '07' THEN cost.cost7
+ WHEN '08' THEN cost.cost8
+ WHEN '09' THEN cost.cost9
+ WHEN '10' THEN cost.cost10
+ WHEN '11' THEN cost.cost11
+ WHEN '12' THEN cost.cost12 ELSE 0 END) AS 'worktime'
 from coststatistics cost
 inner join expatriatesinfor exp
   on cost.BPNAME = exp.EXPATRIATESINFOR_ID
 where exp.GROUP_ID = #{groupid}
-and year(cost.years) = #{year}
+and cost.years = #{year}
+and cost.STATUS='4'
 group by `code`
 ) c
 
