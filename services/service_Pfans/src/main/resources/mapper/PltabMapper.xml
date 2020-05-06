@@ -227,7 +227,7 @@ where year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and  isnull(expatriatesinfor.account)
-and l.PROJECT_NAME = ''
+and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
 group by `code`
 
 union all
@@ -238,7 +238,7 @@ where year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024001'
-and l.PROJECT_NAME = ''
+and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
  group by `code`
 
 union all
@@ -249,7 +249,7 @@ where year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024002'
-and l.PROJECT_NAME = ''
+and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
  group by `code`
 
  union all
