@@ -34,9 +34,9 @@ public class Pltab extends BaseModel {
 
     private String emhours;//社員工数-
 
-    private String inhours;//外注工数(社内)-
+    private String inhours;//外注工数(构内)-
 
-    private String outhours;//外注工数(社外)-
+    private String outhours;//外注工数(构外)-
 
     private String peocost;//人件費(工资没有暂时没绑)
 

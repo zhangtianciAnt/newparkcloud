@@ -22,7 +22,7 @@
        sum(CASE a.code WHEN 'PJ111013' THEN a.rmb ELSE 0 END) AS 'brandcost',
        sum(CASE a.code WHEN 'PJ111014' THEN a.rmb ELSE 0 END) AS 'otherexpenses',
        sum(CASE a.code WHEN 'WORKTIME' THEN a.rmb ELSE 0 END) AS 'emhours',
-       sum(CASE a.code WHEN 'WORKTIME0' THEN a.rmb ELSE 0 END) AS 'inhours',
+       sum(CASE a.code WHEN 'WORKTIMEI' THEN a.rmb ELSE 0 END) AS 'inhours',
        sum(CASE a.code WHEN 'WORKTIMEEX' THEN a.rmb ELSE 0 END) AS 'outhours',
        sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inwetuo',
 	   sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inst'
@@ -99,6 +99,18 @@ and month(l.LOG_DATE) = #{month}
  group by `code`,c.PROJECT_NAME
 
 union all
+select 'WORKTIMEI' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
+inner join companyprojects c
+on l.PROJECT_ID = c.COMPANYPROJECTS_ID
+inner join expatriatesinfor e
+on e.ACCOUNT = l.owner
+where c.GROUP_ID = #{groupid}
+and year(l.LOG_DATE) = #{year}
+and month(l.LOG_DATE) = #{month}
+and e.OPERATIONFORM = 'BP024001'
+ group by `code`,c.PROJECT_NAME
+
+union all
 select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
 inner join companyprojects c
 on l.PROJECT_ID = c.COMPANYPROJECTS_ID
@@ -107,6 +119,7 @@ on e.ACCOUNT = l.owner
 where c.GROUP_ID = #{groupid}
 and year(l.LOG_DATE) = #{year}
 and month(l.LOG_DATE) = #{month}
+and e.OPERATIONFORM = 'BP024002'
  group by `code`,c.PROJECT_NAME
 
 union all
