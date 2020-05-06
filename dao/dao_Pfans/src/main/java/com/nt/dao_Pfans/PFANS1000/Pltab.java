@@ -110,6 +110,18 @@ public class Pltab extends BaseModel {
     private String membershiprate;
     private String pjrateemployees;
     private String staffingrate;
+    //    添加按分字段
+    private String unworktime;
+    private String unworktimeei;
+    private String unworktimeex;
+    private String unpublice;
+    private String unevec;
+    private String uncoststa;
+    //    添加按分字段
+    //判断时候是要进行按分的数据
+    private String plmoneyflg;
+
+
 
 
 }

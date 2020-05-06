@@ -327,7 +327,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             Query query_userid = new Query();
             List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
             for (CustomerInfo customerInfo : customerInfoList) {
-                //if(customerInfo.getUserid().equals("5e78b2004e3b194874180e21")){
+                //if(customerInfo.getUserid().equals("5e78b2084e3b194874180e5f")){
 
                     TokenModel tokenModel = new TokenModel();
 
@@ -387,7 +387,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if(attendancelist.size() > 0){
                 for (Attendance ad : attendancelist)
                 {
-                    //if(ad.getUser_id().equals("5e78b2004e3b194874180e21")){
+                    //if(ad.getUser_id().equals("5e78b2084e3b194874180e5f")){
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
@@ -854,6 +854,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         if (Double.valueOf(sdf.parse(time_start).getTime()) <= Double.valueOf(sdf.parse(workshift_start).getTime())) {
                                             time_start_temp = workshift_start;
                                         }
+
                                         String shijiworkHoursAM ="0";//上午上班时间
                                         String shijiworkHoursPM ="0";//下午上班时间
 
@@ -886,6 +887,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             long result2 = sdf.parse(time_end_temp).getTime() - sdf.parse(lunchbreak_end).getTime();
                                             shijiworkHoursPM = String.valueOf(Double.valueOf(result2)/ 60 / 60 / 1000 - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam()));
                                         }
+
+                                        if(Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime()))
+                                        {
+                                            shijiworkHoursAM = "0";
+                                            shijiworkHoursPM = "0";
+                                        }
+
                                         if(sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime())
                                         {
                                             shijiworkHoursAM = "0";
@@ -1014,6 +1022,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             }
                                             String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR);
                                             shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
+
+                                            if (Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime())) {
+                                                shijiworkHours = "0";
+                                            }
+
                                             if (sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime()) {
                                                 shijiworkHours = "0";
                                             }
@@ -1075,6 +1088,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             }
 
                                             Double resultwork = Double.valueOf(timeLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end));
+
+                                            if (Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime())) {
+                                                resultwork = 0.0;
+                                            }
+
                                             if (sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime()) {
                                                 resultwork = 0.0;
                                             }
@@ -1086,7 +1104,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 if (Double.valueOf(workinghours) == 8) {
                                                     ad.setAbsenteeism("0");
                                                 }
-                                            } else //异常打卡的情况
+                                            }
+                                            else //异常打卡的情况
                                             {
                                                 if (workinghours.equals("8")) {
 
@@ -1629,7 +1648,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                             //---------查询昨天大打卡记录end-------
                         }
-                   // }
+                    //}
                             //---------不定时考勤人员(非不定时考勤人员才计算)end-------
                 }
                         //}
