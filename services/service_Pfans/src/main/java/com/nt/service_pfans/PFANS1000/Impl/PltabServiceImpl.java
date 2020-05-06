@@ -16,8 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 
@@ -31,29 +30,24 @@ public class PltabServiceImpl implements PltabService {
 
     @Override
     public List<Pltab> selectPl(String groupid, String year, String month) throws Exception {
-       List<CustomerInfo> customerInfos =  mongoTemplate.find(new Query(), CustomerInfo.class);
-       List<LogManagement> logManagements = pltabMapper.getCMPJ(year,month);
-       int cm_pjHours = 0;
-        for (LogManagement log:
-                logManagements) {
-            for (CustomerInfo customerInfo:
-            customerInfos) {
-                if(customerInfo.getUserinfo() != null && log.getJobnumber() != null && log.getJobnumber().equals(customerInfo.getUserinfo().getJobnumber())){
-                    //todo GM等没有group成本如何计算？
-                    if (customerInfo.getUserinfo().getGroupid() != null) {
-                        cm_pjHours += customerInfo.getUserinfo().getGroupid().equals(groupid) ? 1 : 0;
-                    }
-                }
-            }
-        }
+//       List<CustomerInfo> customerInfos =  mongoTemplate.find(new Query(), CustomerInfo.class);
+//       List<LogManagement> logManagements = pltabMapper.getCMPJ(year,month);
+//       int cm_pjHours = 0;
+//        for (LogManagement log:
+//                logManagements) {
+//            for (CustomerInfo customerInfo:
+//            customerInfos) {
+//                if(customerInfo.getUserinfo() != null && log.getJobnumber() != null && log.getJobnumber().equals(customerInfo.getUserinfo().getJobnumber())){
+//                    //todo GM等没有group成本如何计算？
+//                    if (customerInfo.getUserinfo().getGroupid() != null) {
+//                        cm_pjHours += customerInfo.getUserinfo().getGroupid().equals(groupid) ? 1 : 0;
+//                    }
+//                }
+//            }
+//        }
         List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month);
+        List<Pltab> pltabs2  = pltabMapper.selectPlmoney(groupid,year,month);
+        pltabs.addAll(pltabs2);
         return pltabs;
     }
-//add-ws-5/6-添加按份金额
-    @Override
-    public List<Pltab> selectPlmoney(String groupid, String year, String month) throws Exception {
-        List<Pltab> pltabsselectPlmoney  = pltabMapper.selectPlmoney(groupid,year,month);
-        return pltabsselectPlmoney;
-    }
-//add-ws-5/6-添加按份金额
 }

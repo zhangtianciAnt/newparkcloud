@@ -207,7 +207,7 @@ group by pj
       and year(CREATEON) = #{year}
     </select>
     <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
-select 'plmoneyflg' AS 'plmoneyflg'
+select 'plmoneyflg' AS 'plmoneyflg',
 			sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END) AS 'unworktime',
        sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END) AS 'unworktimeei',
        sum(CASE c.code WHEN 'unworktimeex' THEN c.worktime ELSE 0 END) AS 'unworktimeex',
