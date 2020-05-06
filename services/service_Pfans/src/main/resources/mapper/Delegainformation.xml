@@ -5,6 +5,7 @@
             resultType="com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo">
         select
             de.delegainformation_id,
+            #{year} as year,
             ex.group_id,
             ex.account,
             ex.suppliername,
@@ -71,6 +72,8 @@
         on ex.account = log.createby
         left join delegainformation de
         on ex.account = de.account
+        and ex.group_id = de.group_id
+        and de.year = #{year}
         left join dictionary jo
         on jo.code = ex.jobclassification
         left join dictionary op
