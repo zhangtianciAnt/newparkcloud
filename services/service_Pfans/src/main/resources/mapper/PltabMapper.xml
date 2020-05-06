@@ -151,6 +151,85 @@ group by pj
       and month(CREATEON) = #{month}
       and year(CREATEON) = #{year}
     </select>
+    <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
+select
+			sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END) AS 'unworktime',
+       sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END) AS 'unworktimeei',
+       sum(CASE c.code WHEN 'unworktimeex' THEN c.worktime ELSE 0 END) AS 'unworktimeex',
+       sum(CASE c.code WHEN 'unpublice' THEN c.worktime ELSE 0 END) AS 'unpublice',
+       sum(CASE c.code WHEN 'unevec' THEN c.worktime ELSE 0 END) AS 'unevec',
+       sum(CASE c.code WHEN 'uncoststa' THEN c.worktime ELSE 0 END) AS 'uncoststa'
+from (
+
+select 'unworktime' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
+where year(l.LOG_DATE) = #{year}
+and month(l.LOG_DATE) = #{month}
+and l.GROUP_ID = #{groupid}
+and l.PROJECT_NAME = ''
+group by `code`
+
+union all
+select 'unworktimeei' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
+inner join expatriatesinfor e
+on e.ACCOUNT = l.owner
+where year(l.LOG_DATE) = #{year}
+and month(l.LOG_DATE) = #{month}
+and l.GROUP_ID = #{groupid}
+and e.operationform = 'BP024001'
+and l.PROJECT_NAME = ''
+ group by `code`
+
+union all
+select 'unworktimeex' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
+inner join expatriatesinfor e
+on e.ACCOUNT = l.owner
+where year(l.LOG_DATE) = #{year}
+and month(l.LOG_DATE) = #{month}
+and l.GROUP_ID = #{groupid}
+and e.operationform = 'BP024002'
+and l.PROJECT_NAME = ''
+ group by `code`
+
+ union all
+select 'unpublice' as `code`,cast(sum(MONEYS) AS decimal(15,2)) as worktime
+from publicexpense
+where GROUP_ID = #{groupid}
+and  (PROJECT_ID = '' or PROJECT_ID = 'null')
+and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
+group by `code`
+
+union all
+select 'unevec' as `code`,cast(sum(TOTALPAY) AS decimal(15,2)) as worktime
+from evection
+where GROUP_ID = #{groupid}
+and  (PROJECT_ID = '' or PROJECT_ID = 'null')
+and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
+group by `code`
+
+union all
+select 'uncoststa' as `code`,
+ sum(CASE #{month} WHEN '01' THEN cost.cost1
+ WHEN #{month} THEN cost.cost2
+ WHEN #{month} THEN cost.cost3
+ WHEN #{month} THEN cost.cost4
+ WHEN #{month} THEN cost.cost5
+ WHEN #{month} THEN cost.cost6
+ WHEN #{month} THEN cost.cost7
+ WHEN #{month} THEN cost.cost8
+ WHEN #{month} THEN cost.cost9
+ WHEN #{month} THEN cost.cost10
+ WHEN #{month} THEN cost.cost11 
+ WHEN #{month} THEN cost.cost12 ELSE 0 END) AS 'worktime'
+from coststatistics cost
+inner join expatriatesinfor exp
+  on cost.BPNAME = exp.EXPATRIATESINFOR_ID
+where exp.GROUP_ID = #{groupid}
+and year(cost.years) = #{year}
+group by `code`
+) c
+
+
+    </select>
 
 </mapper>
 
