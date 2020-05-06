@@ -79,6 +79,10 @@ public class PricesetServiceImpl implements PricesetService {
 
                         List<Priceset> pl = list.stream().filter(pli -> expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())).collect(Collectors.toList());
 
+                        priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
+                        priceset.setUsername(expatriatesinforItem.getExpname());
+                        priceset.setGraduation(expatriatesinforItem.getGraduation_year());
+                        priceset.setCompany(expatriatesinforItem.getSuppliername());
                         if(pl.size() > 0){
                             BeanUtil.copyProperties(pl.get(0),priceset);
                         }
