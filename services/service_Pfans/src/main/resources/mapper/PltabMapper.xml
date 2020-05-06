@@ -240,7 +240,6 @@ and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and  isnull(expatriatesinfor.account)
 and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
-and l.STATUS='4'
 group by `code`
 
 union all
@@ -252,7 +251,6 @@ and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024001'
 and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
-and l.STATUS='4'
  group by `code`
 
 union all
@@ -264,14 +262,13 @@ and month(l.LOG_DATE) = #{month}
 and l.GROUP_ID = #{groupid}
 and e.operationform = 'BP024002'
 and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
-and l.STATUS='4'
  group by `code`
 
  union all
 select 'unpublice' as `code`,cast(sum(MONEYS) AS decimal(15,2)) as worktime
 from publicexpense
 where GROUP_ID = #{groupid}
-and  (PROJECT_ID = '' or PROJECT_ID = 'null')
+and  (PROJECT_ID = '' or PROJECT_ID is null )
 and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
 and STATUS='4'
 group by `code`
@@ -280,7 +277,7 @@ union all
 select 'unevec' as `code`,cast(sum(TOTALPAY) AS decimal(15,2)) as worktime
 from evection
 where GROUP_ID = #{groupid}
-and  (PROJECT_ID = '' or PROJECT_ID = 'null')
+and  (PROJECT_ID = '' or PROJECT_ID is null )
 and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
 and STATUS='4'
 group by `code`
@@ -304,7 +301,6 @@ inner join expatriatesinfor exp
   on cost.BPNAME = exp.EXPATRIATESINFOR_ID
 where exp.GROUP_ID = #{groupid}
 and cost.years = #{year}
-and cost.STATUS='4'
 group by `code`
 ) c
 
