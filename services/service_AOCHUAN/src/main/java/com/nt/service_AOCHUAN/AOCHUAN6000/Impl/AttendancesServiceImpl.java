@@ -81,7 +81,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToJS == 1 && compareToKS == 1){
+                if((compareToJS == 1 && compareToKS == 1) || (compareToJS == -1 && compareToKS == -1)){
                     att.setLeaves("0");
                     break;
                 }
@@ -253,7 +253,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                     if(customerInfo == null){
                         //attendance.setNames(customerInfo.getUserinfo().getCustomername());
                     }else{
-                        attendance.setNames(customerInfo.getUserinfo().getCustomername());
+                        attendance.setNames(customerInfo.getUserid());
                     }
                     //上班1班次打卡时间
                     String working = list.get(j).get(8).toString();
@@ -269,20 +269,9 @@ public class AttendancesServiceImpl implements AttendancesService {
             }
             return Result;
         } catch (Exception e) {
-            System.out.println("报错了");
             throw new LogicalException(e.getMessage());
         }
     }
-
-
-
-
-
-
-
-
-
-
 
     @Override
     public List<Attendance> getByUserId(String userId) throws Exception {
