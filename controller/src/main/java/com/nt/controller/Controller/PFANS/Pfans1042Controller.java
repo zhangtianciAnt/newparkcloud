@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Contracttheme;
+import com.nt.dao_Pfans.PFANS1000.CostCarryForward;
 import com.nt.service_pfans.PFANS1000.ContractthemeService;
 import com.nt.service_pfans.PFANS1000.PltabService;
 import com.nt.utils.ApiResult;
@@ -34,4 +35,16 @@ public class Pfans1042Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(pltabService.selectPl(groupid,year,month));
     }
+
+
+    @RequestMapping(value="/insert",method = {RequestMethod.POST})
+    public ApiResult insert(@RequestBody List<CostCarryForward> costcarryforward ,HttpServletRequest request) throws Exception{
+        if(costcarryforward==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        pltabService.inset(costcarryforward,tokenModel);
+        return ApiResult.success();
+    }
+
 }

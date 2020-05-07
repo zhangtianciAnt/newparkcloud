@@ -88,7 +88,7 @@
         on bu.code = ex.businessimpact
         left join dictionary cou
         on cou.code = ex.countermeasure
-        where ex.exits = '1'
+        where ex.result = 'BP003001'
         <if test="group_id != null and group_id != ''" >
             and ex.group_id = #{group_id}
         </if>
