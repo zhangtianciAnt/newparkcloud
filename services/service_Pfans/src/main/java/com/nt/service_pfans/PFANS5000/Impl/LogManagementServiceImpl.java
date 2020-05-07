@@ -81,6 +81,20 @@ public class LogManagementServiceImpl implements LogManagementService {
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         if(customerInfo != null && customerInfo.getUserinfo() != null){
             logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            if(logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty())
+            {
+                logmanagement.setGroup_id(customerInfo.getUserinfo().getGroupid());
+            }
+        }
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setAccount(logmanagement.getCreateby());
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        if(expatriatesinforList.size()>0)
+        {
+            if(logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty())
+            {
+                logmanagement.setGroup_id(expatriatesinforList.get(0).getGroup_id());
+            }
         }
         logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
