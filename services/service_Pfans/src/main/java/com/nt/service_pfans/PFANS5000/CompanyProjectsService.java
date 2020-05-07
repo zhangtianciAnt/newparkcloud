@@ -1,9 +1,6 @@
 package com.nt.service_pfans.PFANS5000;
 
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS5000.ProjectContract;
-import com.nt.dao_Pfans.PFANS5000.Projectsystem;
-import com.nt.dao_Pfans.PFANS5000.StageInformation;
+import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
@@ -25,6 +22,8 @@ public interface CompanyProjectsService {
 
     public List<CompanyProjects> getPjnameList6007(String account) throws Exception;
     public List<CompanyProjects> listPsdcd(String numbers) throws Exception;
+
+    public List<Comproject> getPjnameList6007_1(String account) throws Exception;
 
     public LogmanageMentVo logmanageMentVo(CompanyProjects companyprojects) throws Exception;
 
