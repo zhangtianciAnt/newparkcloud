@@ -134,7 +134,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         Calendar calendar = Calendar.getInstance();
         //calendar.add(Calendar.MONTH, -3);
         int year = 0;
-        int month = calendar.get(Calendar.MONTH) + 1;
+        int month = calendar.get(Calendar.MONTH);
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {
@@ -204,7 +204,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         // 获取所有人的单价设定
         Calendar now = Calendar.getInstance();
         int year = 0;
-        int month = now.get(Calendar.MONTH) + 1;
+        int month = now.get(Calendar.MONTH);
         if(month >= 1 && month <= 3) {
             year = now.get(Calendar.YEAR) - 1;
         }else {
