@@ -99,6 +99,7 @@ public class Pltab extends BaseModel {
     private String posttaxbenefit;
     private String operatingmargin;
     private String outsourcinghours;
+    private String outsourcing;
     private String outsourcingname;
     private String employeename;
     private String outsourcingpjhours;
@@ -120,6 +121,10 @@ public class Pltab extends BaseModel {
     //    添加按分字段
     //判断时候是要进行按分的数据
     private String plmoneyflg;
+    //国内役務（6%税込み）
+    private String taxyw;
+    //国内販売（13%税込み）
+    private String taxsa;
 
 
 

@@ -14,21 +14,7 @@
 			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
 			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12,df.year as years
 		from
-		(
-				select df1.*
-				from delegainformation df1
-				inner join companyprojects cp
-				on df1.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
-				inner join projectsystem ps
-				on cp.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
-				and df1.`PROJECTSYSTEM_ID` = ps.`PROJECTSYSTEM_ID`
-
-				union
-				select df2.*
-				from delegainformation df2
-				where df2.COMPANYPROJECTS_ID ='PP024001'
-		)
-		df
+		delegainformation df
 		inner join expatriatesinfor exp
 		on df.ACCOUNT = exp.ACCOUNT
 		where df.status = '0'
