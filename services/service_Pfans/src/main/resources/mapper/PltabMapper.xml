@@ -80,7 +80,7 @@ when contracttype in ("HT008007","HT008008") then 'HT008008'
 when contracttype in ("HT008001","HT008002","HT008003","HT008004","HT008005","HT008006") then 'HT008006'
 else NULL
 end as contracttype1,
-cast(SUM(cn.CLAIMAMOUNT)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
+cast(SUM(projectcontract.contractamount)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
 from contractapplication ca
 inner join contractnumbercount cn
 on ca.CONTRACTNUMBER = cn.CONTRACTNUMBER
