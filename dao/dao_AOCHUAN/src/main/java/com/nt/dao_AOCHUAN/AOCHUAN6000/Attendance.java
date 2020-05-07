@@ -64,4 +64,7 @@ public class Attendance extends BaseModel {
     @Column(name = "ABSENTEEISM")
     private String absenteeism;
 
+    @Column(name = "TIMTYPE")
+    private String timtype;
+
 }

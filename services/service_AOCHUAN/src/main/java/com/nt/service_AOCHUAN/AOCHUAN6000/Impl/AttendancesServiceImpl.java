@@ -70,31 +70,51 @@ public class AttendancesServiceImpl implements AttendancesService {
                 String attendancetim = "20" + att.getAttendancetim();
                 Date attdate = simpleDateFormat.parse(attendancetim);//考勤时间
 
-                int compareToJS = attdate.compareTo(datestart);
-                int compareToKS = attdate.compareTo(datestaend);
+                int compareToKS = attdate.compareTo(datestart);
+                int compareToJS = attdate.compareTo(datestaend);
 
-                if(compareToJS == 1 && compareToKS == -1){
+                if(compareToKS == 1 && compareToJS == -1){
                     att.setLeaves("1");
                     break;
                 }
-                if((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)){
+                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
                     att.setLeaves("1");
                     break;
                 }
-                if((compareToJS == 1 && compareToKS == 1) || (compareToJS == -1 && compareToKS == -1)){
+                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                    att.setLeaves("0.5");
+                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                    att.setLeaves("0.5");
+                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 1){
                     att.setLeaves("0");
-                    break;
+
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")){
+                if(compareToKS == -1 && compareToJS == -1){
+                    att.setLeaves("0");
+
+                }
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")){
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
                     att.setLeaves("0.5");
+//                    att.setTimtype("2");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")){
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
                     att.setLeaves("0.5");
+//                    att.setTimtype("3");
                     break;
                 }
 
@@ -105,7 +125,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         return attendanceList;
     }
-    //考勤一览根据天去查询
+    //考勤一览根据天去查询(废弃)
     @Override
     public List<Attendance> getNow(Attendance attendance) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -184,31 +204,51 @@ public class AttendancesServiceImpl implements AttendancesService {
                 String attendancetims = "20" + att.getAttendancetim();
                 Date attdate = simpleDateFormat.parse(attendancetims);//考勤时间
 
-                int compareToJS = attdate.compareTo(datestart);
-                int compareToKS = attdate.compareTo(datestaend);
+                int compareToKS = attdate.compareTo(datestart);
+                int compareToJS = attdate.compareTo(datestaend);
 
-                if(compareToJS == 1 && compareToKS == -1){
+                if(compareToKS == 1 && compareToJS == -1){
                     att.setLeaves("1");
                     break;
                 }
-                if((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)){
+                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToJS == 1 && compareToKS == 1){
+                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                    att.setLeaves("0.5");
+                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                    att.setLeaves("0.5");
+                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 1){
                     att.setLeaves("0");
-                    break;
+
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")){
+                if(compareToKS == -1 && compareToJS == -1){
+                    att.setLeaves("0");
+
+                }
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")){
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
                     att.setLeaves("0.5");
+//                    att.setTimtype("2");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")){
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
                     att.setLeaves("0.5");
+//                    att.setTimtype("3");
                     break;
                 }
 
