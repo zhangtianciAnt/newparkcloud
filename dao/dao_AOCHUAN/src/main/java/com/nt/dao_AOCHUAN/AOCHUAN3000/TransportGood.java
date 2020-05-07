@@ -24,6 +24,8 @@ public class TransportGood extends BaseModel {
 
     private String specifications;
 
+    private String paybackstatus;
+
     private String customer;
 
     private String account;
