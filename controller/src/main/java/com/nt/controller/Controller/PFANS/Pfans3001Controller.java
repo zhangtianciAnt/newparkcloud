@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS3000.Tickets;
+import com.nt.dao_Pfans.PFANS3000.Vo.TicketsVo;
 import com.nt.service_pfans.PFANS3000.TicketsService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -36,6 +37,17 @@ public class Pfans3001Controller {
         return ApiResult.success();
     }
 
+    //11
+    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
+    public ApiResult insert(@RequestBody TicketsVo ticketsVo, HttpServletRequest request) throws Exception {
+        if (ticketsVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        ticketsService.insert1(ticketsVo, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -54,12 +66,32 @@ public class Pfans3001Controller {
         return ApiResult.success();
     }
 
+    //11
+    @RequestMapping(value = "update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody TicketsVo ticketsVo, HttpServletRequest request) throws Exception {
+        if (ticketsVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        ticketsService.update1(ticketsVo, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "oneInfo", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody Tickets tickets, HttpServletRequest request) throws Exception {
         if (tickets == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(ticketsService.One(tickets.getTickets_id()));
+    }
+
+    //11
+    @RequestMapping(value = "selectById", method = {RequestMethod.GET})
+    public ApiResult selectById(String tickets_id, HttpServletRequest request) throws Exception {
+        if (tickets_id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(ticketsService.selectById(tickets_id));
     }
 
 }
