@@ -80,10 +80,8 @@ when contracttype in ("HT008007","HT008008") then 'HT008008'
 when contracttype in ("HT008001","HT008002","HT008003","HT008004","HT008005","HT008006") then 'HT008006'
 else NULL
 end as contracttype1,
-cast(SUM(cn.CLAIMAMOUNT)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
+cast(SUM(projectcontract.contractamount)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
 from contractapplication ca
-inner join contractnumbercount cn
-on ca.CONTRACTNUMBER = cn.CONTRACTNUMBER
 inner join projectcontract
 on projectcontract.CONTRACT = ca.CONTRACTNUMBER
 inner join companyprojects
@@ -92,7 +90,6 @@ and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || company
 where ca.state= '有效'
 and ca.type = "1"
 and companyprojects.GROUP_ID = #{groupid}
-and year(cn.DELIVERYDATE) = #{year} and month(cn.DELIVERYDATE) = #{month}
 GROUP BY contracttype1,companyprojects.PROJECT_NAME
 having contracttype1 is not null
 
@@ -155,7 +152,6 @@ inner join companyprojects company
 on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
     and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
 where company.GROUP_ID = #{groupid}
-and year(contract.DELIVERYDATE) = #{year} and month(contract.DELIVERYDATE) = #{month}
 GROUP BY code,company.PROJECT_NAME
 
 union all
