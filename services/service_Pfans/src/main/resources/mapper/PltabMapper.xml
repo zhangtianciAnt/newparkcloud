@@ -82,8 +82,6 @@ else NULL
 end as contracttype1,
 cast(SUM(projectcontract.contractamount)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
 from contractapplication ca
-inner join contractnumbercount cn
-on ca.CONTRACTNUMBER = cn.CONTRACTNUMBER
 inner join projectcontract
 on projectcontract.CONTRACT = ca.CONTRACTNUMBER
 inner join companyprojects
@@ -92,7 +90,6 @@ and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || company
 where ca.state= '有效'
 and ca.type = "1"
 and companyprojects.GROUP_ID = #{groupid}
-and year(cn.DELIVERYDATE) = #{year} and month(cn.DELIVERYDATE) = #{month}
 GROUP BY contracttype1,companyprojects.PROJECT_NAME
 having contracttype1 is not null
 
