@@ -118,6 +118,7 @@ public class Pltab extends BaseModel {
     private String unpublice;
     private String unevec;
     private String uncoststa;
+    private String unplpublice;
     //    添加按分字段
     //判断时候是要进行按分的数据
     private String plmoneyflg;
@@ -125,6 +126,8 @@ public class Pltab extends BaseModel {
     private String taxyw;
     //国内販売（13%税込み）
     private String taxsa;
+    //為替
+    private String exchanges;
 
 
 

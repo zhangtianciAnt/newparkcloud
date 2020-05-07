@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS3000;
 
 import com.nt.dao_Pfans.PFANS3000.Tickets;
+import com.nt.dao_Pfans.PFANS3000.Vo.TicketsVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -14,4 +15,10 @@ public interface TicketsService {
     void update(Tickets tickets, TokenModel tokenModel) throws Exception;
 
     Tickets One(String tickets_id) throws Exception;
+
+    public void insert1(TicketsVo ticketsVo, TokenModel tokenModel) throws Exception;
+
+    public void update1(TicketsVo ticketsVo, TokenModel tokenModel) throws Exception;
+
+    public TicketsVo selectById(String ticket_id) throws Exception;
 }
