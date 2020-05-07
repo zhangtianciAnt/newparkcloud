@@ -126,6 +126,8 @@ public class Pltab extends BaseModel {
     private String taxyw;
     //国内販売（13%税込み）
     private String taxsa;
+    //為替
+    private String exchanges;
 
 
 
