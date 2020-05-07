@@ -224,8 +224,8 @@ group by pj
 
     <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
 select 'plmoneyflg' AS 'plmoneyflg',
-			sum(CASE c.code WHEN 'worktimei1' THEN c.worktime ELSE 0 END) AS 'outsourcinghours',
-			sum(CASE c.code WHEN 'worktimei2' THEN c.worktime ELSE 0 END) AS 'outsourcingname',
+			sum(CASE c.code WHEN 'worktimei2' THEN c.worktime ELSE 0 END) AS 'outsourcinghours',
+			sum(CASE c.code WHEN 'worktimei1' THEN c.worktime ELSE 0 END) AS 'outsourcingname',
 			sum(CASE c.code WHEN 'worktimei3' THEN c.worktime ELSE 0 END) AS 'employeename',
 			sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END) AS 'emhours',
        sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END) AS 'inhours',
