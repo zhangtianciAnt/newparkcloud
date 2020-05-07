@@ -434,6 +434,8 @@
                AS 'unevec',
                sum(CASE c.code WHEN 'uncoststa' THEN c.worktime ELSE 0 END)
                AS 'uncoststa'
+               sum(CASE c.code WHEN 'unplpublice' THEN c.worktime ELSE 0 END)
+               AS 'unplpublice'
         from (
                  select 'worktimei1' as `code`,count(1) as worktime
                  from (
@@ -801,9 +803,27 @@
                  where exp.GROUP_ID = #{groupid}
                      and cost.years = #{year}
                  group by `code`
+                  union all
+                   select 'unplpublice' as`code`,
+                        sum(other.rmb)+sum(other.tormb) as worktime
+                 from publicexpense public
+								 inner join
+								 otherdetails other
+								 on
+								 public.PUBLICEXPENSE_ID = other.PUBLICEXPENSE_ID
+                 where other.departmentname =  #{groupid}
+                     and
+										 (public.PROJECT_ID = '' or public.PROJECT_ID is null)
+                 and
+                 year(public.REIMBURSEMENTDATE)= #{year}
+								  and
+                 other.PLSUMMARY='PJ111001'
+                 and
+                 month(public.REIMBURSEMENTDATE)= #{month}
+                 and
+                 public.STATUS='4'
+                 group by `code`
              ) c
-
-
     </select>
 
 </mapper>
