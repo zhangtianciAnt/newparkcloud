@@ -14,15 +14,24 @@ public class WorkPlanSerrviceImpl implements WorkPlanService {
     @Autowired
     private WorkPlanMapper workPlanMapper;
 
-    /**查询
-     *
+    /**
+     *查询
      * @return
      * @throws Exception
      */
     @Override
     public List<WorkPlan> getWorkPlanList() throws Exception {
-        WorkPlan workPlan = new WorkPlan();
-        return workPlanMapper.select(workPlan);
+        return workPlanMapper.selectByMonth();
+    }
+
+    /**
+     * 按当前日期查询
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<WorkPlan> selectByToday() throws Exception {
+        return workPlanMapper.selectByToday();
     }
 
     /**
@@ -32,7 +41,7 @@ public class WorkPlanSerrviceImpl implements WorkPlanService {
      */
     @Override
     public Boolean insert(WorkPlan workPlan) throws Exception {
-        if(workPlanMapper.existCheck(workPlan.getWorkplan_id())>0){
+        if(workPlanMapper.existCheck(workPlan.getWorkplan_id()) == 0){
             workPlanMapper.insert(workPlan);
         }else{
             return false;
@@ -65,6 +74,21 @@ public class WorkPlanSerrviceImpl implements WorkPlanService {
         if(workPlanMapper.existCheck(workPlan.getWorkplan_id())>0){
             workPlanMapper.del(workPlan.getWorkplan_id(),workPlan.getModifyby());
         }else{
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 存在Check
+     * @param workPlan
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Boolean existCheck(WorkPlan workPlan) throws Exception {
+
+        if(workPlanMapper.existCheck(workPlan.getWorkplan_id()) == 0){
             return false;
         }
         return true;

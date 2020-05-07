@@ -42,11 +42,11 @@ public class Attendance extends BaseModel {
 
 
     @Column(name = "WORKINGHOURS")
-    private Date workinghours;
+    private String workinghours;
 
 
     @Column(name = "OFFHOURS")
-    private Date offhours;
+    private String offhours;
 
 
     @Column(name = "LEAVES")
