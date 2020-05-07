@@ -139,6 +139,57 @@ public class AOCHUAN5001Controller {
     }
 
     /**
+     * 生成销售凭证
+     */
+    @RequestMapping(value = "/createSalesCrdl", method = {RequestMethod.POST})
+    public ApiResult createSalesCrdl(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
+
+        if (finSales == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        Docurule docurule = new Docurule();
+        List<All> accAndauxList  = new ArrayList<>();
+
+        CrdlInfo crdlInfo = new CrdlInfo();
+
+        //获取凭证规则
+        docurule = docuruleService.selectByDocutype("PZ001001");
+        if(docurule == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        //获取分录规则 + 辅助核算项目
+        accAndauxList = docuruleService.selectrule(docurule.getDocurule_id());
+        if(accAndauxList== null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        //根据规则替换
+        crdlInfo=replaceRule(tokenService.getToken(request).getUserId(),finSales, docurule,accAndauxList);
+
+        //生成凭证
+        finCrdlInfoService.insert(crdlInfo,tokenService.getToken(request));
+
+        //UPDATE:FIN_SALES
+        //存在Check
+        if (finSalesService.existCheck(finSales)) {
+            //唯一性Check
+            if(! finSalesService.uniqueCheck(finSales)) {
+                finSalesService.update(finSales, tokenService.getToken(request));
+            }else{
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+        }else{
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        //正常结束
+        FinSales finSales1 = new FinSales();
+        return ApiResult.success(finSalesService.getFinSalesList(finSales));
+    }
+
+    /**
      * 替换
      * @param userName
      * @param finSales
@@ -167,15 +218,14 @@ public class AOCHUAN5001Controller {
 
         //凭证基本信息
         CredentialInformation crdl = new CredentialInformation();
-        crdl.setCrdl_num(userName.substring(0,20) + sdf.format(crdlNoDate) + UUID.randomUUID().toString().substring(0,7));
-        crdl.setCrdltype(docurule.getDocutype());
-        crdl.setCrdlword(docurule.getDocument());
-        crdl.setBus_date(busDate);
-        crdl.setAcct_date(accDate);
-        crdl.setAttachments(docurule.getAnnexno());
-        crdl.setPush_status("PZ005001");
-        crdl.setPush_status_nm("未推送");
-        crdl.setCurrency(finSales.getCurrency());
+        crdl.setCrdl_num(userName.substring(0,12) + sdf.format(crdlNoDate) + UUID.randomUUID().toString().substring(0,7));//凭证编号
+        crdl.setCrdltype(docurule.getDocutype());//凭证类型
+        crdl.setCrdlword(docurule.getDocument());//凭证字
+        crdl.setBus_date(busDate);//业务日期
+        crdl.setAcct_date(accDate);//记账日期
+        crdl.setAttachments(docurule.getAnnexno());//附件数
+        crdl.setPush_status("PZ005001");//推送状态id
+        crdl.setPush_status_nm("未推送");//推送状态
 
         List<AccountingRule> actgrulist = new ArrayList<>();
 
@@ -184,31 +234,40 @@ public class AOCHUAN5001Controller {
 
             String remarks = "";
             if(StringUtils.isNotBlank(item.getRemarks())){
-                remarks = item.getRemarks().replace("{0}", finSales.getCustomer()).replace("{1}", finSales.getContractnumber());
+                remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus()).replace("{2}",finSales.getAmount());
             }
 
+            //汇率金额
+            Double exAmount = 0.00;
+            exAmount = Double.parseDouble(finSales.getSalesamount()) * Double.parseDouble(finSales.getEx_rate());
+
             //分录
-            accountingRule.setRemarks(remarks);
-            accountingRule.setAcct_code(item.getAccountid());
-            accountingRule.setDebit(item.getDebit());
-            accountingRule.setCredit(item.getCredit());
-            accountingRule.setTaxrate(item.getCrerate());
-            accountingRule.setAmount(finSales.getSalesamount());
-            System.out.println(finSales.getSalesamount());
+            accountingRule.setRemarks(remarks);//摘要
+            accountingRule.setAcct_code(item.getAccountid());//科目编码
+            accountingRule.setDebit(item.getDebit());//借方科目
+            accountingRule.setCredit(item.getCredit());//贷方科目
+            accountingRule.setCurrency(finSales.getCurrency());//币种
+            accountingRule.setEx_rate(finSales.getEx_rate());//汇率
+            accountingRule.setTaxrate(item.getCrerate());//税率
+            accountingRule.setOricurrency_amount(Double.parseDouble(finSales.getSalesamount()));//原币金额
+            accountingRule.setUnit(item.getUnit());//单位
+            accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
+            accountingRule.setQuantity(Integer.parseInt( finSales.getAmount()));//数量
+            accountingRule.setAmount(exAmount);//计算金额
             //辅助项目
-            accountingRule.setBankaccount_code(item.getBankaccountid());
-            accountingRule.setDept_code(item.getDepartid());
-            accountingRule.setIae_contg_code(item.getExpenditureid());
-            accountingRule.setAuxacctg_code(item.getAccountingid());
-            accountingRule.setMaincash_code(item.getMaincashid());
-            accountingRule.setAttachcash_code(item.getFlowcashid());
-            accountingRule.setBankaccount(item.getBankaccount());
-            accountingRule.setDept(item.getDepart());
-            accountingRule.setIae_contg(item.getExpenditure());
-            accountingRule.setAuxacctg(item.getAccounting());
-            accountingRule.setMaincashflow(item.getMaincash());
-            accountingRule.setAttachcashflow(item.getFlowcash());
-            accountingRule.setAuxacctg_amount(finSales.getSalesamount());
+            accountingRule.setBankaccount_code(item.getBankaccountid());//银行账号id
+            accountingRule.setDept_code(item.getDepartid());//部门id
+            accountingRule.setIae_contg_code(item.getExpenditureid());//收支内容id
+            accountingRule.setAuxacctg_code(item.getAccountingid());//核算项目id
+            accountingRule.setMaincash_code(item.getMaincashid());//主金流id
+            accountingRule.setAttachcash_code(item.getFlowcashid());//附现金流id
+            accountingRule.setBankaccount(item.getBankaccount());//银行账号
+            accountingRule.setDept(item.getDepart());//部门
+            accountingRule.setIae_contg(item.getExpenditure());//收支内容
+            accountingRule.setAuxacctg(item.getAccounting());//核算项目
+            accountingRule.setMaincashflow(item.getMaincash());//主金流
+            accountingRule.setAttachcashflow(item.getFlowcash());//附现金流
+            accountingRule.setAuxacctg_amount(finSales.getSalesamount());//辅助账金额
 
             actgrulist.add(accountingRule);
         }

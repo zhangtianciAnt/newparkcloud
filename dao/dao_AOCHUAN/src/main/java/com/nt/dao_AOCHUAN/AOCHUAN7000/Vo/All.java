@@ -89,4 +89,7 @@ public class All {
     @Column(name = "STATUS")
     private String status;
 
+    @Column(name = "UNIT")
+    private String  unit;
+
 }

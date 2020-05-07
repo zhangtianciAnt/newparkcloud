@@ -191,7 +191,7 @@ public class AOCHUAN5002Controller {
             accountingRule.setDebit(item.getDebit());
             accountingRule.setCredit(item.getCredit());
             accountingRule.setTaxrate(item.getCrerate());
-            accountingRule.setAmount(finPurchase.getPurchaseamount());
+//            accountingRule.setAmount(finPurchase.getPurchaseamount());
             //辅助项目
             accountingRule.setBankaccount_code(item.getBankaccountid());
             accountingRule.setDept_code(item.getDepartid());
