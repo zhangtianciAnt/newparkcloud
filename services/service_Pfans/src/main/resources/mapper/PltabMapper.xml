@@ -3,346 +3,805 @@
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.PltabMapper">
     <select id="getPltab" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
         select a.PROJECT_NAME as pj,
-       sum(CASE a.code WHEN 'HT008006' THEN a.rmb ELSE 0 END) AS 'outst1',
-       sum(CASE a.code WHEN 'HT008008' THEN a.rmb ELSE 0 END) AS 'outst2',
-       sum(CASE a.code WHEN 'HT008009' THEN a.rmb ELSE 0 END) AS 'outst3',
-       sum(CASE a.code WHEN 'neibu' THEN a.rmb ELSE 0 END) AS 'outcost',
-       sum(CASE a.code WHEN 'PJ111001' THEN a.rmb ELSE 0 END) AS 'twocost',
-       sum(CASE a.code WHEN 'PJ111002' THEN a.rmb ELSE 0 END) AS 'rent',
-       sum(CASE a.code WHEN 'PJ111003' THEN a.rmb ELSE 0 END) AS 'leasecost',
-       sum(CASE a.code WHEN 'PJ111004' THEN a.rmb ELSE 0 END) AS 'temporaryrent',
-       sum(CASE a.code WHEN 'PJ111005' THEN a.rmb ELSE 0 END) AS 'other',
-       sum(CASE a.code WHEN 'PJ111006' THEN a.rmb ELSE 0 END) AS 'researchcost',
-       sum(CASE a.code WHEN 'PJ111007' THEN a.rmb ELSE 0 END) AS 'yuanqincost',
-       sum(CASE a.code WHEN 'PJ111008' THEN a.rmb ELSE 0 END) AS 'travalcost',
-       sum(CASE a.code WHEN 'PJ111009' THEN a.rmb ELSE 0 END) AS 'callcost',
-       sum(CASE a.code WHEN 'PJ111010' THEN a.rmb ELSE 0 END) AS 'concost',
-	   sum(CASE a.code WHEN 'PJ111011' THEN a.rmb ELSE 0 END) AS 'threefree',
-	   sum(CASE a.code WHEN 'PJ111012' THEN a.rmb ELSE 0 END) AS 'commonfee',
-       sum(CASE a.code WHEN 'PJ111013' THEN a.rmb ELSE 0 END) AS 'brandcost',
-       sum(CASE a.code WHEN 'PJ111014' THEN a.rmb ELSE 0 END) AS 'otherexpenses',
-       sum(CASE a.code WHEN 'WORKTIME' THEN a.rmb ELSE 0 END) AS 'emhours',
-       sum(CASE a.code WHEN 'WORKTIMEI' THEN a.rmb ELSE 0 END) AS 'inhours',
-       sum(CASE a.code WHEN 'WORKTIMEEX' THEN a.rmb ELSE 0 END) AS 'outhours',
-       sum(CASE a.code WHEN 'persbp2' THEN a.rmb ELSE 0 END) AS 'outsourcinghours',
-       sum(CASE a.code WHEN 'persbp1' THEN a.rmb ELSE 0 END) AS 'outsourcingname',
-       sum(CASE a.code WHEN 'persmember' THEN a.rmb ELSE 0 END) AS 'employeename',
-       sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inwetuo',
-	   sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END) AS 'inst'
-    from
-(
-select code, sum(rmb) as rmb,pj.PROJECT_NAME  from (
-select d.CODE, (IFNULL(SUM(tao.RMB), 0) + IFNULL(SUM(tao.tormb), 0)) as rmb,cp.PROJECT_NAME
-from (
-select `CODE` from dictionary where PCODE = 'PJ111'
-) as d left join publicexpense p on 1=1
-left join (
-		select rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from trafficdetails
-		union all
-		SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from purchasedetails
-		union all
-		SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from otherdetails
-		) tao
-                   on p.PUBLICEXPENSE_ID = tao.PUBLICEXPENSE_ID
-                       and tao.PLSUMMARY = d.CODE
-                     and tao.DEPARTMENTNAME = #{groupid}
-										 and tao.SUBJECTNUMBER  not in ('1099-A1-0000','0504-00-0000')
-				 inner join companyprojects cp
-                    on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
-                        and cp.GROUP_ID = #{groupid}
-                        and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
- where year(p.REIMBURSEMENTDATE) = #{year} and month(p.REIMBURSEMENTDATE) = #{month}
-group by d.CODE,cp.PROJECT_NAME
-union all
-select 'PJ111008' as code, (IFNULL(SUM(ta.RMB), 0)) as rmb,companyprojects.PROJECT_NAME
-from evection e
-		left join (
-		select rmb,EVECTION_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from trafficdetails
-		union all
-		SELECT rmb,EVECTION_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME from accommodationdetails
-		) ta
-		 on e.EVECTION_ID = ta.EVECTION_ID
-                       and ta.PLSUMMARY  = 'PJ111008'
-											 and ta.SUBJECTNUMBER not in ('1099-A1-0000','0504-00-0000')
-				 inner join companyprojects
-                    on e.PROJECT_ID = companyprojects.COMPANYPROJECTS_ID
-            and companyprojects.GROUP_ID = #{groupid}
-            and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6')
- where year(e.REIMBURSEMENTDATE) = #{year} and month(e.REIMBURSEMENTDATE) = #{month}
- group by code,companyprojects.PROJECT_NAME
-) pj group by code,PROJECT_NAME
+               sum(CASE a.code WHEN 'HT008006' THEN a.rmb ELSE 0 END)
+               AS 'outst1',
+               sum(CASE a.code WHEN 'HT008008' THEN a.rmb ELSE 0 END)
+               AS 'outst2',
+               sum(CASE a.code WHEN 'HT008009' THEN a.rmb ELSE 0 END)
+               AS 'outst3',
+               sum(CASE a.code WHEN 'neibu' THEN a.rmb ELSE 0 END)
+               AS 'outcost',
+               sum(CASE a.code WHEN 'PJ111001' THEN a.rmb ELSE 0 END)
+               AS 'twocost',
+               sum(CASE a.code WHEN 'PJ111002' THEN a.rmb ELSE 0 END)
+               AS 'rent',
+               sum(CASE a.code WHEN 'PJ111003' THEN a.rmb ELSE 0 END)
+               AS 'leasecost',
+               sum(CASE a.code WHEN 'PJ111004' THEN a.rmb ELSE 0 END)
+               AS 'temporaryrent',
+               sum(CASE a.code WHEN 'PJ111005' THEN a.rmb ELSE 0 END)
+               AS 'other',
+               sum(CASE a.code WHEN 'PJ111006' THEN a.rmb ELSE 0 END)
+               AS 'researchcost',
+               sum(CASE a.code WHEN 'PJ111007' THEN a.rmb ELSE 0 END)
+               AS 'yuanqincost',
+               sum(CASE a.code WHEN 'PJ111008' THEN a.rmb ELSE 0 END)
+               AS 'travalcost',
+               sum(CASE a.code WHEN 'PJ111009' THEN a.rmb ELSE 0 END)
+               AS 'callcost',
+               sum(CASE a.code WHEN 'PJ111010' THEN a.rmb ELSE 0 END)
+               AS 'concost',
+               sum(CASE a.code WHEN 'PJ111011' THEN a.rmb ELSE 0 END)
+               AS 'threefree',
+               sum(CASE a.code WHEN 'PJ111012' THEN a.rmb ELSE 0 END)
+               AS 'commonfee',
+               sum(CASE a.code WHEN 'PJ111013' THEN a.rmb ELSE 0 END)
+               AS 'brandcost',
+               sum(CASE a.code WHEN 'PJ111014' THEN a.rmb ELSE 0 END)
+               AS 'otherexpenses',
+               sum(CASE a.code WHEN 'WORKTIME' THEN a.rmb ELSE 0 END)
+               AS 'emhours',
+               sum(CASE a.code WHEN 'WORKTIMEI' THEN a.rmb ELSE 0 END)
+               AS 'inhours',
+               sum(CASE a.code WHEN 'WORKTIMEEX' THEN a.rmb ELSE 0 END)
+               AS 'outhours',
+               sum(CASE a.code WHEN 'persbp2' THEN a.rmb ELSE 0 END)
+               AS 'outsourcinghours',
+               sum(CASE a.code WHEN 'persbp1' THEN a.rmb ELSE 0 END)
+               AS 'outsourcingname',
+               sum(CASE a.code WHEN 'persmember' THEN a.rmb ELSE 0 END)
+               AS 'employeename',
+               sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END)
+               AS 'inwetuo',
+               sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END)
+               AS 'inst'
+        from
+            (
+                select code, sum(rmb) as rmb,pj.PROJECT_NAME
+                from (
+                         select d.CODE, (IFNULL(SUM(tao.RMB), 0) + IFNULL(SUM(tao.tormb), 0)) as rmb,cp.PROJECT_NAME
+                         from (
+                                  select `CODE`
+                                  from dictionary
+                                  where PCODE = 'PJ111'
+                              ) as d
+                                  left join publicexpense p on 1 = 1
+                                  left join (
+                                 select rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 from trafficdetails
+                                 union all
+                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 from purchasedetails
+                                 union all
+                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 from otherdetails
+                             ) tao
+                                            on p.PUBLICEXPENSE_ID = tao.PUBLICEXPENSE_ID
+                                                and tao.PLSUMMARY = d.CODE
+                                                and tao.DEPARTMENTNAME = #{groupid}
+                                                and tao.SUBJECTNUMBER not in ('1099-A1-0000', '0504-00-0000')
+                                  inner join companyprojects cp
+                                             on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
+                                                 and cp.GROUP_ID = #{groupid}
+                                                 and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
+                         where year (p.REIMBURSEMENTDATE
+                         )
+                         =
+                         #{year}
+                         and
+                         month
+                         (
+                         p
+                         .
+                         REIMBURSEMENTDATE
+                         )
+                         =
+                         #{month}
+                         group by d.CODE,cp.PROJECT_NAME
+                         union all
+                         select 'PJ111008' as
+                                code, (
+                                IFNULL(
+                                SUM(
+                                ta
+                                .
+                                RMB),
+                                0)) as
+                                rmb,
+                                companyprojects
+                                .
+                                PROJECT_NAME
+                         from evection
+                              e
+                              left
+                              join (
+                              select
+                              rmb,
+                              EVECTION_ID,
+                              PLSUMMARY,
+                              SUBJECTNUMBER,
+                              DEPARTMENTNAME
+                              from
+                              trafficdetails
+                              union
+                              all
+                              SELECT
+                              rmb,
+                              EVECTION_ID,
+                              PLSUMMARY,
+                              SUBJECTNUMBER,
+                              DEPARTMENTNAME
+                              from
+                              accommodationdetails
+                             )
+                              ta
+                         on e
+                            .
+                            EVECTION_ID =
+                            ta
+                            .
+                            EVECTION_ID
+                            and
+                            ta
+                            .
+                            PLSUMMARY =
+                            'PJ111008'
+                            and
+                            ta
+                            .
+                            SUBJECTNUMBER
+                            not
+                            in (
+                            '1099-A1-0000',
+                            '0504-00-0000')
+                            inner
+                            join
+                            companyprojects
+                            on
+                            e
+                            .
+                            PROJECT_ID =
+                            companyprojects
+                            .
+                            COMPANYPROJECTS_ID
+                            and
+                            companyprojects
+                            .
+                            GROUP_ID =
+                            #{groupid}
+                            and (
+                            companyprojects
+                            .
+                            `STATUS` =
+                            '4'
+                            ||
+                            companyprojects
+                            .
+                            `STATUS` =
+                            '5'
+                            ||
+                            companyprojects
+                            .
+                            `STATUS` =
+                            '6')
+                         where year (e.REIMBURSEMENTDATE
+                         )
+                         =
+                         #{year}
+                         and
+                         month
+                         (
+                         e
+                         .
+                         REIMBURSEMENTDATE
+                         )
+                         =
+                         #{month}
+                         group by code,companyprojects.PROJECT_NAME
+                     ) pj
+                group by code,PROJECT_NAME
 
-union all
-select
-case
-when contracttype = 'HT008009' then 'HT008009'
-when contracttype in ("HT008007","HT008008") then 'HT008008'
-when contracttype in ("HT008001","HT008002","HT008003","HT008004","HT008005","HT008006") then 'HT008006'
-else NULL
-end as contracttype1,
-cast(SUM(projectcontract.contractamount)AS decimal(15,2)) as rmb,companyprojects.PROJECT_NAME
-from contractapplication ca
-inner join projectcontract
-on projectcontract.CONTRACT = ca.CONTRACTNUMBER
-inner join companyprojects
-on companyprojects.COMPANYPROJECTS_ID = projectcontract.COMPANYPROJECTS_ID
-and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6')
-where ca.state= '有效'
-and ca.type = "1"
-and companyprojects.GROUP_ID = #{groupid}
-GROUP BY contracttype1,companyprojects.PROJECT_NAME
-having contracttype1 is not null
+                union all
+                select
+                    case
+                        when contracttype = 'HT008009' then 'HT008009'
+                        when contracttype in ("HT008007", "HT008008") then 'HT008008'
+                        when contracttype in ("HT008001", "HT008002", "HT008003", "HT008004", "HT008005", "HT008006")
+                            then 'HT008006'
+                        else NULL
+                        end                                                    as contracttype1,
+                    cast(SUM(projectcontract.contractamount) AS decimal(15,2)) as rmb,
+                    companyprojects.PROJECT_NAME
+                from contractapplication ca
+                         inner join projectcontract
+                                    on projectcontract.CONTRACT = ca.CONTRACTNUMBER
+                         inner join companyprojects
+                                    on companyprojects.COMPANYPROJECTS_ID = projectcontract.COMPANYPROJECTS_ID
+                                        and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
+                                             '5' || companyprojects.`STATUS` = '6')
+                where ca.state = '有效'
+                  and ca.type = "1"
+                  and companyprojects.GROUP_ID = #{groupid}
+                GROUP BY contracttype1,companyprojects.PROJECT_NAME
+                having contracttype1 is not null
 
-union all
-select 'WORKTIME' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
-left join expatriatesinfor
-on l.createby = expatriatesinfor.account
-inner join companyprojects c
-on l.PROJECT_ID = c.COMPANYPROJECTS_ID
-    and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
-where l.GROUP_ID = #{groupid}
-and year(l.LOG_DATE) = #{year}
-and month(l.LOG_DATE) = #{month}
-and  isnull(expatriatesinfor.account)
- group by `code`,c.PROJECT_NAME
+                union all
+                select 'WORKTIME' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME
+                from logmanagement l
+                         left join expatriatesinfor
+                                   on l.createby = expatriatesinfor.account
+                         inner join companyprojects c
+                                    on l.PROJECT_ID = c.COMPANYPROJECTS_ID
+                                        and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
+                where l.GROUP_ID = #{groupid}
+                    and year (l.LOG_DATE)
+            =
+            #{year}
+            and
+            month(
+            l
+            .
+            LOG_DATE) =
+            #{month}
+            and
+            isnull(
+            expatriatesinfor
+            .
+            account)
+        group by `code`, c.PROJECT_NAME
 
-union all
-select 'WORKTIMEI' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
-inner join companyprojects c
-on l.PROJECT_ID = c.COMPANYPROJECTS_ID
-    and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
-inner join expatriatesinfor e
-on e.ACCOUNT = l.owner
-where l.GROUP_ID = #{groupid}
-and year(l.LOG_DATE) = #{year}
-and month(l.LOG_DATE) = #{month}
-and e.OPERATIONFORM = 'BP024001'
- group by `code`,c.PROJECT_NAME
+        union all
+        select 'WORKTIMEI' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME
+        from logmanagement l
+                 inner join companyprojects c
+                            on l.PROJECT_ID = c.COMPANYPROJECTS_ID
+                                and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
+                 inner join expatriatesinfor e
+                            on e.ACCOUNT = l.owner
+        where l.GROUP_ID = #{groupid}
+            and year (l.LOG_DATE
+        )
+        =
+        #{year}
+        and
+        month
+        (
+        l
+        .
+        LOG_DATE
+        )
+        =
+        #{month}
+        and
+        e
+        .
+        OPERATIONFORM
+        =
+        'BP024001'
+        group by `code`, c.PROJECT_NAME
 
-union all
-select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME from logmanagement l
-inner join companyprojects c
-on l.PROJECT_ID = c.COMPANYPROJECTS_ID
-    and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
-inner join expatriatesinfor e
-on e.ACCOUNT = l.owner
-where l.GROUP_ID = #{groupid}
-and year(l.LOG_DATE) = #{year}
-and month(l.LOG_DATE) = #{month}
-and e.OPERATIONFORM = 'BP024002'
- group by `code`,c.PROJECT_NAME
+        union all
+        select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME
+        from logmanagement l
+                 inner join companyprojects c
+                            on l.PROJECT_ID = c.COMPANYPROJECTS_ID
+                                and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
+                 inner join expatriatesinfor e
+                            on e.ACCOUNT = l.owner
+        where l.GROUP_ID = #{groupid}
+            and year (l.LOG_DATE
+        )
+        =
+        #{year}
+        and
+        month
+        (
+        l
+        .
+        LOG_DATE
+        )
+        =
+        #{month}
+        and
+        e
+        .
+        OPERATIONFORM
+        =
+        'BP024002'
+        group by `code`, c.PROJECT_NAME
 
-union all
-select "neibu" as code,cast((sum(cost.COST4) + sum(cost.COST5) + sum(cost.COST6) + sum(cost.COST7) + sum(cost.COST8) + sum(cost.COST9) +sum(cost.COST10) + sum(cost.COST11) + sum(cost.COST12) + sum(cost.COST1) + sum(cost.COST2) + sum(cost.COST3)) AS decimal(15,2)) as rmb,cp.PROJECT_NAME
-from coststatistics cost
-inner join expatriatesinfor exp
-  on cost.BPNAME = exp.EXPATRIATESINFOR_ID
-inner join projectsystem ps
-  on ps.`NAME` = exp.ACCOUNT
-inner join companyprojects cp
-  on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
-      and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
-where cp.GROUP_ID = #{groupid}
-group by code,cp.PROJECT_NAME
+        union all
+        select "neibu"                                                    as code,
+               cast((sum(cost.COST4) + sum(cost.COST5) + sum(cost.COST6) + sum(cost.COST7) + sum(cost.COST8) +
+                     sum(cost.COST9) + sum(cost.COST10) + sum(cost.COST11) + sum(cost.COST12) + sum(cost.COST1) +
+                     sum(cost.COST2) + sum(cost.COST3)) AS decimal(15,2)) as rmb,
+               cp.PROJECT_NAME
+        from coststatistics cost
+                 inner join expatriatesinfor exp
+                            on cost.BPNAME = exp.EXPATRIATESINFOR_ID
+                 inner join projectsystem ps
+                            on ps.`NAME` = exp.ACCOUNT
+                 inner join companyprojects cp
+                            on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+                                and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
+        where cp.GROUP_ID = #{groupid}
+        group by code,cp.PROJECT_NAME
 
-union all
-select 'neibuhetong' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb, company.PROJECT_NAME
-from contractnumbercount contract
-inner join companyprojects company
-on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
-    and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
-where company.GROUP_ID = #{groupid}
-GROUP BY code,company.PROJECT_NAME
+        union all
+        select 'neibuhetong' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb, company.PROJECT_NAME
+        from contractnumbercount contract
+                 inner join companyprojects company
+                            on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
+                                and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
+        where company.GROUP_ID = #{groupid}
+        GROUP BY code,company.PROJECT_NAME
 
-union all
-select  'persbp2' as `code`,
- SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024002' THEN 1 ELSE 0 END) AS rmb,
-companyprojects.project_name
-from projectsystem
-left join companyprojects
-on projectsystem.companyprojects_id = companyprojects.companyprojects_id
-    and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6')
-left join expatriatesinfor
-on expatriatesinfor.account = projectsystem.name
-where companyprojects.GROUP_ID = #{groupid}
-and (
-(year(projectsystem.ADMISSIONTIME) = #{year} and month(projectsystem.ADMISSIONTIME) = #{month})
-or
-(year(projectsystem.EXITTIME) = #{year} and month(projectsystem.EXITTIME) = #{month})
-)
-group by `code`,companyprojects.project_name
+        union all
+        select 'persbp2'                                                                                as `code`,
+               SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024002' THEN 1 ELSE 0 END) AS rmb,
+               companyprojects.project_name
+        from projectsystem
+                 left join companyprojects
+                           on projectsystem.companyprojects_id = companyprojects.companyprojects_id
+                               and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
+                                    '5' || companyprojects.`STATUS` = '6')
+                 left join expatriatesinfor
+                           on expatriatesinfor.account = projectsystem.name
+        where companyprojects.GROUP_ID = #{groupid}
+          and (
+                (year (projectsystem.ADMISSIONTIME) = #{year} and month (projectsystem.ADMISSIONTIME) = #{month})
+                or
+                (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
+            )
+        group by `code`,companyprojects.project_name
 
-union all
-select  'persbp1' as `code`,
- SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024001' THEN 1 ELSE 0 END) AS rmb,
-companyprojects.project_name
-from projectsystem
-left join companyprojects
-on projectsystem.companyprojects_id = companyprojects.companyprojects_id
-    and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6')
-left join expatriatesinfor
-on expatriatesinfor.account = projectsystem.name
-where companyprojects.GROUP_ID = #{groupid}
-and (
-(year(projectsystem.ADMISSIONTIME) = #{year} and month(projectsystem.ADMISSIONTIME) = #{month})
-or
-(year(projectsystem.EXITTIME) = #{year} and month(projectsystem.EXITTIME) = #{month})
-)
-group by `code`,companyprojects.project_name
+        union all
+        select 'persbp1'                                                                                as `code`,
+               SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024001' THEN 1 ELSE 0 END) AS rmb,
+               companyprojects.project_name
+        from projectsystem
+                 left join companyprojects
+                           on projectsystem.companyprojects_id = companyprojects.companyprojects_id
+                               and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
+                                    '5' || companyprojects.`STATUS` = '6')
+                 left join expatriatesinfor
+                           on expatriatesinfor.account = projectsystem.name
+        where companyprojects.GROUP_ID = #{groupid}
+          and (
+                (year (projectsystem.ADMISSIONTIME) = #{year} and month (projectsystem.ADMISSIONTIME) = #{month})
+                or
+                (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
+            )
+        group by `code`,companyprojects.project_name
 
-union all
+        union all
 
-select  'persmember' as `code`,
- SUM(CASE WHEN projectsystem.type = '0' THEN 1 END) AS rmb,
-companyprojects.project_name
-from projectsystem
-left join companyprojects
-on projectsystem.companyprojects_id = companyprojects.companyprojects_id
-    and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6')
-left join expatriatesinfor
-on expatriatesinfor.account = projectsystem.name
-where companyprojects.GROUP_ID = #{groupid}
-and (
-(year(projectsystem.ADMISSIONTIME) = #{year} and month(projectsystem.ADMISSIONTIME) = #{month})
-or
-(year(projectsystem.EXITTIME) = #{year} and month(projectsystem.EXITTIME) = #{month})
-)
-group by `code`,companyprojects.project_name
-) a
-group by pj
+        select 'persmember'                                       as `code`,
+               SUM(CASE WHEN projectsystem.type = '0' THEN 1 END) AS rmb,
+               companyprojects.project_name
+        from projectsystem
+                 left join companyprojects
+                           on projectsystem.companyprojects_id = companyprojects.companyprojects_id
+                               and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
+                                    '5' || companyprojects.`STATUS` = '6')
+                 left join expatriatesinfor
+                           on expatriatesinfor.account = projectsystem.name
+        where companyprojects.GROUP_ID = #{groupid}
+          and (
+                (year (projectsystem.ADMISSIONTIME) = #{year} and month (projectsystem.ADMISSIONTIME) = #{month})
+                or
+                (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
+            )
+        group by `code`,companyprojects.project_name
+                 ) a
+        group by pj
     </select>
     <select id="getCMPJ" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-       select * from logmanagement
-       where PROJECT_ID = 'PP024001'
-      and month(CREATEON) = #{month}
-      and year(CREATEON) = #{year}
+        select *
+        from logmanagement
+        where PROJECT_ID = 'PP024001'
+            and month (CREATEON
+        )
+        =
+        #{month}
+        and
+        year
+        (
+        CREATEON
+        )
+        =
+        #{year}
     </select>
 
     <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
-select 'plmoneyflg' AS 'plmoneyflg',
-			sum(CASE c.code WHEN 'worktimei2' THEN c.worktime ELSE 0 END) AS 'outsourcinghours',
-			sum(CASE c.code WHEN 'worktimei1' THEN c.worktime ELSE 0 END) AS 'outsourcingname',
-			sum(CASE c.code WHEN 'worktimei3' THEN c.worktime ELSE 0 END) AS 'employeename',
-			sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END) AS 'emhours',
-       sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END) AS 'inhours',
-       sum(CASE c.code WHEN 'unworktimeex' THEN c.worktime ELSE 0 END) AS 'outhours',
-       sum(CASE c.code WHEN 'unpublice' THEN c.worktime ELSE 0 END) AS 'unpublice',
-       sum(CASE c.code WHEN 'unevec' THEN c.worktime ELSE 0 END) AS 'unevec',
-       sum(CASE c.code WHEN 'uncoststa' THEN c.worktime ELSE 0 END) AS 'uncoststa'
-from (
+        select 'plmoneyflg'
+               AS 'plmoneyflg',
+               sum(CASE c.code WHEN 'worktimei2' THEN c.worktime ELSE 0 END)
+               AS 'outsourcinghours',
+               sum(CASE c.code WHEN 'worktimei1' THEN c.worktime ELSE 0 END)
+               AS 'outsourcingname',
+               sum(CASE c.code WHEN 'worktimei3' THEN c.worktime ELSE 0 END)
+               AS 'employeename',
+               sum(CASE c.code WHEN 'unworktime' THEN c.worktime ELSE 0 END)
+               AS 'emhours',
+               sum(CASE c.code WHEN 'unworktimeei' THEN c.worktime ELSE 0 END)
+               AS 'inhours',
+               sum(CASE c.code WHEN 'unworktimeex' THEN c.worktime ELSE 0 END)
+               AS 'outhours',
+               sum(CASE c.code WHEN 'unpublice' THEN c.worktime ELSE 0 END)
+               AS 'unpublice',
+               sum(CASE c.code WHEN 'unevec' THEN c.worktime ELSE 0 END)
+               AS 'unevec',
+               sum(CASE c.code WHEN 'uncoststa' THEN c.worktime ELSE 0 END)
+               AS 'uncoststa'
+        from (
+                 select 'worktimei1' as `code`,count(1) as worktime
+                 from (
+                          select
+                              'worktimei1' as `code`
+                          from logmanagement log
+                                   left join expatriatesinfor ex
+                                             on log.createby = ex.account
+                          where (log.project_id = 'PP024001' or log.project_id = '')
+                            and DATE_FORMAT(LOG_DATE, '%Y') = #{year}
+                            and DATE_FORMAT(LOG_DATE, '%m') = #{month}
+                            and log.group_id = #{groupid}
+                            and ex.operationform = 'BP024001'
+                          group by log.createby
+                      ) tmp
+                 union all
 
-select
-'worktimei1' as `code`,
-count(*) as worktime
-from logmanagement log
-left join expatriatesinfor ex
-on log.createby = ex.account
-where (log.project_id = 'PP024001' or log.project_id ='')
-and DATE_FORMAT(LOG_DATE,'%Y') = #{year}
-and DATE_FORMAT(LOG_DATE,'%m') = #{month}
-and log.group_id = #{groupid}
-and ex.operationform = 'BP024001'
+                 select 'worktimei2' as `code`,count(1) as worktime
+                 from (
+                          select
+                              'worktimei2' as `code`
+                          from logmanagement log
+                                   left join expatriatesinfor ex
+                                             on log.createby = ex.account
+                          where (log.project_id = 'PP024001' or log.project_id = '')
+                            and DATE_FORMAT(LOG_DATE, '%Y') = #{year}
+                            and DATE_FORMAT(LOG_DATE, '%m') = #{month}
+                            and log.group_id = #{groupid}
+                            and ex.operationform = 'BP024002'
+                          group by log.createby) temp
+                 union all
+                 select 'worktimei3' as `code`,count(1) as worktime
+                 from (
+                          select
+                              'worktimei3' as `code`
+                          from logmanagement log
+                                   left join expatriatesinfor ex
+                                             on log.createby = ex.account
+                          where (log.project_id = 'PP024001' or log.project_id = '')
+                            and DATE_FORMAT(LOG_DATE, '%Y') = #{year}
+                            and DATE_FORMAT(LOG_DATE, '%m') = #{month}
+                            and log.group_id = #{groupid}
+                            and ex.account is null
+                          group by log.createby
+                      ) temp
+                 union all
+                 select 'unworktime' as `code`,cast(SUM(l.TIME_START) AS decimal(15,2)) as worktime
+                 from logmanagement l
+                          left join expatriatesinfor
+                                    on l.createby = expatriatesinfor.account
+                 where year (l.LOG_DATE
+                 )
+                 =
+                 #{year}
+                 and
+                 month
+                 (
+                 l
+                 .
+                 LOG_DATE
+                 )
+                 =
+                 #{month}
+                 and
+                 l
+                 .
+                 GROUP_ID
+                 =
+                 #{groupid}
+                 and
+                 isnull
+                 (
+                 expatriatesinfor
+                 .
+                 account
+                 )
+                 and
+                 (
+                 l
+                 .
+                 PROJECT_ID
+                 =
+                 ''
+                 or
+                 l
+                 .
+                 PROJECT_ID
+                 =
+                 'PP024001'
+                 )
+                 group by `code`
 
-union all
+                 union all
+                 select 'unworktimeei' as `code`,cast(SUM(l.TIME_START) AS decimal(15,2)) as worktime
+                 from logmanagement
+                      l
+                      inner
+                      join
+                      expatriatesinfor
+                      e
+                 on e
+                    .
+                    ACCOUNT =
+                    l
+                    .
+                    owner
+                 where year (l.LOG_DATE
+                 )
+                 =
+                 #{year}
+                 and
+                 month
+                 (
+                 l
+                 .
+                 LOG_DATE
+                 )
+                 =
+                 #{month}
+                 and
+                 l
+                 .
+                 GROUP_ID
+                 =
+                 #{groupid}
+                 and
+                 e
+                 .
+                 operationform
+                 =
+                 'BP024001'
+                 and
+                 (
+                 l
+                 .
+                 PROJECT_ID
+                 =
+                 ''
+                 or
+                 l
+                 .
+                 PROJECT_ID
+                 =
+                 'PP024001'
+                 )
+                 group by `code`
 
-select
-'worktimei2' as `code`,
-count(*) as worktime
-from logmanagement log
-left join expatriatesinfor ex
-on log.createby = ex.account
-where (log.project_id = 'PP024001' or log.project_id ='')
-and DATE_FORMAT(LOG_DATE,'%Y') = #{year}
-and DATE_FORMAT(LOG_DATE,'%m') = #{month}
-and log.group_id = #{groupid}
-and ex.operationform = 'BP024002'
+                 union all
+                 select 'unworktimeex' as `code`,cast(SUM(l.TIME_START) AS decimal(15,2)) as worktime
+                 from logmanagement
+                      l
+                      inner
+                      join
+                      expatriatesinfor
+                      e
+                 on e
+                    .
+                    ACCOUNT =
+                    l
+                    .
+                    owner
+                 where year (l.LOG_DATE
+                 )
+                 =
+                 #{year}
+                 and
+                 month
+                 (
+                 l
+                 .
+                 LOG_DATE
+                 )
+                 =
+                 #{month}
+                 and
+                 l
+                 .
+                 GROUP_ID
+                 =
+                 #{groupid}
+                 and
+                 e
+                 .
+                 operationform
+                 =
+                 'BP024002'
+                 and
+                 (
+                 l
+                 .
+                 PROJECT_ID
+                 =
+                 ''
+                 or
+                 l
+                 .
+                 PROJECT_ID
+                 =
+                 'PP024001'
+                 )
+                 group by `code`
 
-union all
+                 union all
+                 select 'unpublice' as
+                        `code`,
+                        cast(
+                        sum(
+                        MONEYS) AS
+                        decimal(
+                        15,
+                        2)) as
+                        worktime
+                 from publicexpense
+                 where GROUP_ID = #{groupid}
+                     and (PROJECT_ID = '' or PROJECT_ID is null
+                 )
+                 and
+                 year
+                 (
+                 REIMBURSEMENTDATE
+                 )
+                 =
+                 #{year}
+                 and
+                 month
+                 (
+                 REIMBURSEMENTDATE
+                 )
+                 =
+                 #{month}
+                 and
+                 STATUS
+                 =
+                 '4'
+                 group by `code`
 
-select
-'worktimei3' as `code`,
-count(*) as worktime
-from logmanagement log
-left join expatriatesinfor ex
-on log.createby = ex.account
-where (log.project_id = 'PP024001' or log.project_id ='')
-and DATE_FORMAT(LOG_DATE,'%Y') = #{year}
-and DATE_FORMAT(LOG_DATE,'%m') = #{month}
-and log.group_id = #{groupid}
-and ex.account is null
+                 union all
+                 select 'unevec' as
+                        `code`,
+                        cast(
+                        sum(
+                        TOTALPAY) AS
+                        decimal(
+                        15,
+                        2)) as
+                        worktime
+                 from evection
+                 where GROUP_ID = #{groupid}
+                     and (PROJECT_ID = '' or PROJECT_ID is null
+                 )
+                 and
+                 year
+                 (
+                 REIMBURSEMENTDATE
+                 )
+                 =
+                 #{year}
+                 and
+                 month
+                 (
+                 REIMBURSEMENTDATE
+                 )
+                 =
+                 #{month}
+                 and
+                 STATUS
+                 =
+                 '4'
+                 group by `code`
 
-union all
-select 'unworktime' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
-left join expatriatesinfor
-on l.createby = expatriatesinfor.account
-where year(l.LOG_DATE) = #{year}
-and month(l.LOG_DATE) = #{month}
-and l.GROUP_ID = #{groupid}
-and  isnull(expatriatesinfor.account)
-and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
-group by `code`
-
-union all
-select 'unworktimeei' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
-inner join expatriatesinfor e
-on e.ACCOUNT = l.owner
-where year(l.LOG_DATE) = #{year}
-and month(l.LOG_DATE) = #{month}
-and l.GROUP_ID = #{groupid}
-and e.operationform = 'BP024001'
-and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
- group by `code`
-
-union all
-select 'unworktimeex' as `code`,SUM(l.TIME_START) as worktime from logmanagement l
-inner join expatriatesinfor e
-on e.ACCOUNT = l.owner
-where year(l.LOG_DATE) = #{year}
-and month(l.LOG_DATE) = #{month}
-and l.GROUP_ID = #{groupid}
-and e.operationform = 'BP024002'
-and (l.PROJECT_NAME = '' or l.PROJECT_ID = 'PP024001')
- group by `code`
-
- union all
-select 'unpublice' as `code`,cast(sum(MONEYS) AS decimal(15,2)) as worktime
-from publicexpense
-where GROUP_ID = #{groupid}
-and  (PROJECT_ID = '' or PROJECT_ID is null )
-and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
-and STATUS='4'
-group by `code`
-
-union all
-select 'unevec' as `code`,cast(sum(TOTALPAY) AS decimal(15,2)) as worktime
-from evection
-where GROUP_ID = #{groupid}
-and  (PROJECT_ID = '' or PROJECT_ID is null )
-and year(REIMBURSEMENTDATE) = #{year} and month(REIMBURSEMENTDATE) = #{month}
-and STATUS='4'
-group by `code`
-
-union all
-select 'uncoststa' as `code`,
- sum(CASE #{month} WHEN '01' THEN cost.cost1
- WHEN '02' THEN cost.cost2
- WHEN '03' THEN cost.cost3
- WHEN '04' THEN cost.cost4
- WHEN '05' THEN cost.cost5
- WHEN '06' THEN cost.cost6
- WHEN '07' THEN cost.cost7
- WHEN '08' THEN cost.cost8
- WHEN '09' THEN cost.cost9
- WHEN '10' THEN cost.cost10
- WHEN '11' THEN cost.cost11
- WHEN '12' THEN cost.cost12 ELSE 0 END) AS 'worktime'
-from coststatistics cost
-inner join expatriatesinfor exp
-  on cost.BPNAME = exp.EXPATRIATESINFOR_ID
-where exp.GROUP_ID = #{groupid}
-and cost.years = #{year}
-group by `code`
-) c
+                 union all
+                 select 'uncoststa' as
+                        `code`,
+                        sum(
+                        CASE
+                        #{month}
+                        WHEN
+                        '01'
+                        THEN
+                        cost
+                        .
+                        cost1
+                        WHEN
+                        '02'
+                        THEN
+                        cost
+                        .
+                        cost2
+                        WHEN
+                        '03'
+                        THEN
+                        cost
+                        .
+                        cost3
+                        WHEN
+                        '04'
+                        THEN
+                        cost
+                        .
+                        cost4
+                        WHEN
+                        '05'
+                        THEN
+                        cost
+                        .
+                        cost5
+                        WHEN
+                        '06'
+                        THEN
+                        cost
+                        .
+                        cost6
+                        WHEN
+                        '07'
+                        THEN
+                        cost
+                        .
+                        cost7
+                        WHEN
+                        '08'
+                        THEN
+                        cost
+                        .
+                        cost8
+                        WHEN
+                        '09'
+                        THEN
+                        cost
+                        .
+                        cost9
+                        WHEN
+                        '10'
+                        THEN
+                        cost
+                        .
+                        cost10
+                        WHEN
+                        '11'
+                        THEN
+                        cost
+                        .
+                        cost11
+                        WHEN
+                        '12'
+                        THEN
+                        cost
+                        .
+                        cost12
+                        ELSE
+                        0
+                        END) AS
+                        'worktime'
+                 from coststatistics
+                      cost
+                      inner
+                      join
+                      expatriatesinfor
+                      exp
+                 on cost
+                    .
+                    BPNAME =
+                    exp
+                    .
+                    EXPATRIATESINFOR_ID
+                 where exp.GROUP_ID = #{groupid}
+                     and cost.years = #{year}
+                 group by `code`
+             ) c
 
 
     </select>
