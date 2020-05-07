@@ -49,6 +49,15 @@ public class PltabServiceImpl implements PltabService {
         }
     }
     @Override
+    public List<CostCarryForward> getCostList(String groupid, String year, String month) throws Exception {
+        CostCarryForward costcarry = new CostCarryForward();
+        costcarry.setYear(year);
+        costcarry.setRegion(month);
+        costcarry.setGroup_id(groupid);
+        List<CostCarryForward> costcarryforwardlist = costcarryforwardmapper.select(costcarry);
+        return costcarryforwardlist;
+    }
+    @Override
     public List<Pltab> selectPl(String groupid, String year, String month) throws Exception {
        List<CustomerInfo> customerInfos =  mongoTemplate.find(new Query(), CustomerInfo.class);
        List<LogManagement> logManagements = pltabMapper.getCMPJ(year,month);
