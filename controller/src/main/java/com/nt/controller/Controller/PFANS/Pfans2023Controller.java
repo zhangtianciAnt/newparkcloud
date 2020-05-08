@@ -111,24 +111,31 @@ public class Pfans2023Controller {
         startWorkflowVo.setDataId(goalmanagement.getGoalmanagement_id());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
 
-        String me = sign.startGraphics2D(CustomerInfolist.get(0).getUserinfo().getCustomername());
-        data.put("me", me);
-
+        String me ="";
         String wfList2="";
-        if (wfList.size() > 0) {
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList2 = customerInfo.getUserinfo().getCustomername();
-                wfList2 = sign.startGraphics2D(wfList2);
+
+        if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
+            if (wfList.size() > 0) {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
             }
+            me = sign.startGraphics2D(CustomerInfolist.get(0).getUserinfo().getCustomername());
+            data.put("me", me);
+            data.put("up", wfList2);
         }
-        data.put("up", wfList2);
+
         data.put("now", DateUtil.year(new Date()));
         ExcelOutPutUtil.OutPut("目标管理", "mubiaoguanli.xlsx", data, response);
 
-        FileUtil.del(AuthConstants.FILE_DIRECTORY + me);
-        FileUtil.del(AuthConstants.FILE_DIRECTORY + wfList2);
+        if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
+            FileUtil.del(AuthConstants.FILE_DIRECTORY + me);
+            FileUtil.del(AuthConstants.FILE_DIRECTORY + wfList2);
+        }
+
     }
 }
