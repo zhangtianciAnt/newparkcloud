@@ -92,4 +92,7 @@ public class All {
     @Column(name = "UNIT")
     private String  unit;
 
+    @Column(name = "AMOUNTTYPE")
+    private String  amounttype;
+
 }

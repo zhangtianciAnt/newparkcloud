@@ -63,5 +63,5 @@ public class AcctgRul extends BaseModel {
     private Double amount;
     //行号
     @Column(name = "ROWINDEX")
-    private Double rowindex;
+    private Integer rowindex;
 }

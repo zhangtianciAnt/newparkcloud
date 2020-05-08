@@ -141,6 +141,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 acctgRul.setUnit_price(item.getUnit_price());//单价
                 acctgRul.setQuantity(item.getQuantity());//数量
                 acctgRul.setAmount(item.getAmount());
+                acctgRul.setRowindex(item.getRowindex());
                 acctgRul.preInsert(tokenModel);
                 finAcctgRulMapper.insertSelective(acctgRul);
 

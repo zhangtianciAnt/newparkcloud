@@ -56,7 +56,7 @@ public class AccountingRule extends BaseModel {
     private Double amount;
     //行号
     @Column(name = "ROWINDEX")
-    private Double rowindex;
+    private Integer rowindex;
     //辅助核算项目id
     @Column(name = "AUXACCTG_ID")
     private String auxacctg_id;

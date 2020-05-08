@@ -83,7 +83,7 @@ public class FinSales extends BaseModel {
     private String credential_status;
     //佣金金额
     @Column(name = "COMMISSION_AMOUNT")
-    private String commission_amount;
+    private Double commission_amount;
     //走货主键
     @Column(name = "TRANSPORTGOOD_ID")
     private  String transportgood_id;
@@ -96,5 +96,11 @@ public class FinSales extends BaseModel {
     //汇率
     @Column(name = "EX_RATE")
     private  String ex_rate;
+    //运费
+    @Column(name = "FREIGHT")
+    private  String freight;
+    //保费
+    @Column(name = "PREMIUM")
+    private  String premium;
 }
 
