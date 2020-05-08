@@ -131,7 +131,7 @@ public class QuotationsServiceImpl implements QuotationsService {
             }
         }else if(quotations.getType() == 1){
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【采购询价】：您有一条询价需要处理。");
+            toDoNotice.setTitle("【销售报价】：您有一条询价需要处理。");
             toDoNotice.setInitiator(tokenModel.getUserId());
             toDoNotice.setContent("询报价编号【" +quotations.getQuotationsno()+"】");
             toDoNotice.setDataid(quotations.getQuotations_id());
