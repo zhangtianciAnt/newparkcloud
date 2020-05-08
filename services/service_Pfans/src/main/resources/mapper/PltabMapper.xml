@@ -411,7 +411,7 @@
         group by `code`,companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         union all
         SELECT
-        'shiguaping' AS CODE,
+        'shiguaping' AS `code`,
         cast( sum( cc.CLAIMAMOUNT ) AS DECIMAL ( 15, 2 ) ) AS rmb,
         companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
         FROM
