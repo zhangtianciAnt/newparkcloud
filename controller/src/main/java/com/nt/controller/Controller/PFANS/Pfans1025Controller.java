@@ -115,6 +115,11 @@ public class Pfans1025Controller {
                     av.getAward().setExtrinsic("有");
                 } else {
                     av.getAward().setExtrinsic("-");
+                    av.getAward().setPlacechinese("-");
+                    av.getAward().setEquipment("-");
+                    av.getAward().setEquipment("-");
+                    av.getAward().setCommdepartment("-");
+                    av.getAward().setCommission("-");
                 }
                 //add-ws-判断非空
             }
@@ -251,16 +256,6 @@ public class Pfans1025Controller {
             }
             av.getAwardDetail().get(k).setAwardmoney(str_format);
         }
-//        Query query = new Query();
-//        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//        for(int n = 0; n < av.getAwardDetail().size(); n ++){
-//            query = new Query();
-//            query.addCriteria(Criteria.where("orgs._id").is(av.getAwardDetail().get(0).getDepart()));
-//            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//            if (customerInfo != null) {
-//                av.getAwardDetail().get(n).setDepart(customerInfo.get);
-//            }
-//        }
         //20200427 add by ztc format data end
         data.put("aw", av.getAward());
         data.put("alist", av.getAwardDetail());
