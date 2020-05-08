@@ -6,6 +6,6 @@
         FROM `variousfunds` as v
         inner join expatriatesinfor as e
         on v.BPPLAYER = e.EXPNAME
-        where e.GROUP_ID = #{groupid}
+        where e.GROUP_ID = #{groupid} and v.YEAR = date_format( concat( #{years}, '-01-01' ) ,'%Y-%m-%d')
 	</select>
 </mapper>

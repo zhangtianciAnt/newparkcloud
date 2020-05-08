@@ -266,18 +266,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     }
 
     @Override
-    public Map<String, Double> getUserPriceMapBygroupid(String groupid) throws Exception {
+    public Map<String, Double> getUserPriceMapBygroupid(String groupid,String years) throws Exception {
         // 获取所有人的单价设定
-        Calendar now = Calendar.getInstance();
-        int year = 0;
-        int month = now.get(Calendar.MONTH);
-        if(month >= 1 && month <= 3) {
-            year = now.get(Calendar.YEAR) - 1;
-        }else {
-            year = now.get(Calendar.YEAR);
-        }
+//        Calendar now = Calendar.getInstance();
+//        int year = 0;
+//        int month = now.get(Calendar.MONTH);
+//        if(month >= 1 && month <= 3) {
+//            year = now.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = now.get(Calendar.YEAR);
+//        }
 
-        List<Priceset> allPriceset = pricesetMapper.selectBygroupid(year,groupid);
+        List<Priceset> allPriceset = pricesetMapper.selectBygroupid(Integer.valueOf(years),groupid);
 
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

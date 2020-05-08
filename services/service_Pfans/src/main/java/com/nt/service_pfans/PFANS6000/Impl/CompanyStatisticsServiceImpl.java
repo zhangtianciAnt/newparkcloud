@@ -57,11 +57,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
 
     @Override
-    public Map<String, Object> getCosts(Coststatistics coststatistics,String groupid) throws Exception{
+    public Map<String, Object> getCosts(Coststatistics coststatistics,String groupid,String years) throws Exception{
         Map<String, Object> result = new HashMap<>();
         //Variousfunds variousfunds = new Variousfunds();
         //variousfunds.setOwner(tokenModel.getUserId());
-        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid);
+        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid,years);
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
         Map<String, String> plmonthPlanMap = new HashMap<>();
         Pattern pattern = Pattern.compile("(\\d+)");
@@ -117,7 +117,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         result.put("asset", finalAssetsMap);
 
         //获取该group下外驻人员的单价
-        Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid);
+        Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid,years);
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         expatriatesinfor.setGroup_id(groupid);
@@ -128,15 +128,15 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             String value = ex.getSupplierinfor_id();
             user2CompanyMap.put(key, value);
         }
-        Calendar calendar = Calendar.getInstance();
-        int year = 0;
-        int month = calendar.get(Calendar.MONTH);
-        if(month >= 1 && month <= 3) {
-            year = calendar.get(Calendar.YEAR) - 1;
-        }else {
-            year = calendar.get(Calendar.YEAR);
-        }
-        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(year,groupid);
+//        Calendar calendar = Calendar.getInstance();
+//        int year = 0;
+//        int month = calendar.get(Calendar.MONTH);
+//        if(month >= 1 && month <= 3) {
+//            year = calendar.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
+        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(years),groupid);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
         for ( Coststatistics c : allCostList ) {
@@ -255,13 +255,13 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     }
 
     @Override
-    public XSSFWorkbook downloadExcel(String groupid,HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
+    public XSSFWorkbook downloadExcel(String groupid,String years,HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
         InputStream in = null;
         try {
             //表格操作
             in = getClass().getClassLoader().getResourceAsStream("jxls_templates/BPshetongji.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(in);
-            this.getReportWork1(workbook.getSheetAt(0),groupid);
+            this.getReportWork1(workbook.getSheetAt(0),groupid,years);
             this.getReportWork2(workbook.getSheetAt(1));
             this.getReportWork3(workbook.getSheetAt(2));
 
@@ -274,11 +274,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     }
 
 
-    private void getReportWork1(XSSFSheet sheet1,String groupid) throws LogicalException {
+    private void getReportWork1(XSSFSheet sheet1,String groupid,String years) throws LogicalException {
         try {
             Coststatistics coststatistics = new Coststatistics();
 
-            Map<String, Object> result = getCosts(coststatistics,groupid);
+            Map<String, Object> result = getCosts(coststatistics,groupid,years);
             List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>)result.get("company");
             Map<String, Double> trip = (Map<String, Double>) result.get("trip");
             Map<String, Double> asset = (Map<String, Double>) result.get("asset");

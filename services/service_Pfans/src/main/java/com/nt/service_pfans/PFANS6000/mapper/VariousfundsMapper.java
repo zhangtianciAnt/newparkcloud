@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface VariousfundsMapper extends MyMapper<Variousfunds> {
-    List<Variousfunds> selectBygroupid(@Param("groupid") String groupid);
+    List<Variousfunds> selectBygroupid(@Param("groupid") String groupid,@Param("years") String years);
 }
