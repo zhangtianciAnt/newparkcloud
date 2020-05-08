@@ -75,7 +75,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Override
     public void insertCW(FinPurchase finPurchase, TokenModel token) {
         finPurchase.setPurchase_id(UUID.randomUUID().toString());
-        finPurchase.setCredential_status("0");
+        finPurchase.setCredential_status("PW001001");
         finPurchase.preInsert();
         finPurchaseMapper.insert(finPurchase);
     }

@@ -87,5 +87,14 @@ public class FinSales extends BaseModel {
     //走货主键
     @Column(name = "TRANSPORTGOOD_ID")
     private  String transportgood_id;
+    //销售凭证号
+    @Column(name = "CREDENTIAL_SALES")
+    private String credential_sales;
+    //回款凭证号
+    @Column(name = "CREDENTIAL_ARRIVAL")
+    private  String credential_arrival;
+    //汇率
+    @Column(name = "EX_RATE")
+    private  String ex_rate;
 }
 

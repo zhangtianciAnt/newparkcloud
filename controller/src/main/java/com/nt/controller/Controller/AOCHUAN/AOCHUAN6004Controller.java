@@ -31,17 +31,17 @@ public class AOCHUAN6004Controller {
 
     }
 
-    @RequestMapping(value = "/getNowday",method={RequestMethod.GET})
-    public ApiResult one(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {
-        if (attendancetim == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        Attendance attendance = new Attendance();
-        attendance.setAttendancetim(attendancetim);
-
-        return ApiResult.success(attendanceService.getNow(attendance));
-    }
+//    @RequestMapping(value = "/getNowday",method={RequestMethod.GET})
+//    public ApiResult one(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {
+//        if (attendancetim == null) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        Attendance attendance = new Attendance();
+//        attendance.setAttendancetim(attendancetim);
+//
+//        return ApiResult.success(attendanceService.getNow(attendance));
+//    }
 
     @RequestMapping(value = "/getNowMon",method={RequestMethod.GET})
     public ApiResult getNowMon(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {

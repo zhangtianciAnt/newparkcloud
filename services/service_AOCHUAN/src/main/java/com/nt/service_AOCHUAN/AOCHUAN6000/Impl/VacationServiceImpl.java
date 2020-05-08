@@ -69,10 +69,10 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public void delete(String id) throws Exception {
-        Vacation vacation = new Vacation();
-        vacation.setVacation_id(id);
-        vacation.setStatus("1");
-        vacationMapper.updateByPrimaryKey(vacation);
+//        Vacation vacation = new Vacation();
+//        vacation.setVacation_id(id);
+//        vacation.setStatus("1");
+        vacationMapper.deleteByPrimaryKey(id);
 
 
     }

@@ -54,4 +54,7 @@ public class CredentialInformation extends BaseModel {
     //币种
     @Column(name = "CURRENCY")
     private String currency;
+    //订单号
+    @Column(name = "ORDER_NO")
+    private String order_no;
 }

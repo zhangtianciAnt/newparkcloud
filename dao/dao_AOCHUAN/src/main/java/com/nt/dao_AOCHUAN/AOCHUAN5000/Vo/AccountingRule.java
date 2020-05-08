@@ -30,12 +30,33 @@ public class AccountingRule extends BaseModel {
     //贷方科目
     @Column(name = "CREDIT")
     private String credit;
+    //币种
+    @Column(name = "CURRENCY")
+    private String currency;
+    //汇率
+    @Column(name = "EX_RATE")
+    private  String ex_rate;
     //税率
     @Column(name = "TAXRATE")
     private String taxrate;
+    //原币金额
+    @Column(name = "ORICURRENCY_AMOUNT")
+    private Double oricurrency_amount;
+    //单位
+    @Column(name = "UNIT")
+    private String unit;
+    //单价
+    @Column(name = "UNIT_PRICE")
+    private Double unit_price;
+    //数量
+    @Column(name = "QUANTITY")
+    private Integer quantity;
     //金额
     @Column(name = "AMOUNT")
-    private String amount;
+    private Double amount;
+    //行号
+    @Column(name = "ROWINDEX")
+    private Double rowindex;
     //辅助核算项目id
     @Column(name = "AUXACCTG_ID")
     private String auxacctg_id;

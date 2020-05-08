@@ -77,5 +77,5 @@ public class Supplierbaseinfor extends BaseModel {
     private String cooperation;
     private String jkmarket;
     private String paymentterms;
-
+    
 }

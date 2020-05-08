@@ -11,8 +11,8 @@
         <module>dao_Auth</module>
         <module>dao_VerificationCode</module>
         <module>dao_Workflow</module>
-        <module>dao_Pfans</module>
-        <module>dao_Assets</module>
+<!--        <module>dao_Pfans</module>-->
+<!--        <module>dao_Assets</module>-->
         <module>dao_AOCHUAN</module>
     </modules>
     <packaging>pom</packaging>
