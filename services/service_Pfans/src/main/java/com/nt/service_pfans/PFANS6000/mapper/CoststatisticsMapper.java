@@ -10,7 +10,7 @@ public interface CoststatisticsMapper extends MyMapper<Coststatistics> {
 
     List<Coststatistics> getExpatriatesinfor(@Param("year") int year);
     List<Coststatistics> selectBygroupid(@Param("groupid") String groupid);
-
+    List<Coststatistics> getCoststatisticsBygroupid(@Param("year") int year,@Param("groupid") String groupid);
     int insertAll(List<Coststatistics> allCostList);
 }
 

@@ -17,12 +17,16 @@
 <!--		)-->
 <!--		order by USER_ID, ASSESSTIME-->
 <!--        ]]>-->
+
         SELECT p.*
         FROM `priceset` p
         inner join pricesetgroup pg
         on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
-        where left(pg.PD_DATE,4) = #{year}
-	</select>
+        where
+        pg.PD_DATE  BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
+        AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
+
+    </select>
     <select id="gettlist" resultType="com.nt.dao_Pfans.PFANS6000.Vo.PricesetVo">
 select
 expatriatesinfor.expname,
@@ -65,4 +69,16 @@ priceset.yearunit
  from priceset INNER JOIN expatriatesinfor on priceset.USER_ID=expatriatesinfor.EXPATRIATESINFOR_ID
 
 	</select>
+    <select id="selectBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Priceset">
+        SELECT p.*
+        FROM `priceset` p
+        inner join pricesetgroup pg
+        on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
+            inner join expatriatesinfor as e
+            on p.USER_ID = e.EXPATRIATESINFOR_ID
+        where (pg.PD_DATE  BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
+        AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
+            and e.GROUP_ID = #{groupid}
+
+    </select>
 </mapper>

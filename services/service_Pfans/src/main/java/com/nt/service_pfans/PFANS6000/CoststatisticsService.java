@@ -18,6 +18,7 @@ public interface CoststatisticsService {
     Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception;
 
     Map<String, Double> getUserPriceMap() throws Exception;
+    Map<String, Double> getUserPriceMapBygroupid(String groupid) throws Exception;
 
     public XSSFWorkbook downloadExcel(CoststatisticsVo coststatisticsVo, HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
 }

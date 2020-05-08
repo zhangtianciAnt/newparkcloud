@@ -57,12 +57,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
 
     @Override
-    public Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception{
+    public Map<String, Object> getCosts(Coststatistics coststatistics,String groupid) throws Exception{
         Map<String, Object> result = new HashMap<>();
-
-        Variousfunds variousfunds = new Variousfunds();
-//        variousfunds.setOwner(tokenModel.getUserId());
-        List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
+        //Variousfunds variousfunds = new Variousfunds();
+        //variousfunds.setOwner(tokenModel.getUserId());
+        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid);
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
         Map<String, String> plmonthPlanMap = new HashMap<>();
         Pattern pattern = Pattern.compile("(\\d+)");
@@ -96,8 +95,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             } catch (Exception e) {}
             targetMap.put(month, value + addValue);
         }
-        // rebuild Map
-        // format : key: cost{1..12}, value: totalcost
+
         Map<String, Double> finalTripMap = new HashMap<>();
         Map<String, Double> finalAssetsMap = new HashMap<>();
         double totalTrip = 0;
@@ -118,10 +116,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         result.put("trip", finalTripMap);
         result.put("asset", finalAssetsMap);
 
-
-        Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMap();
+        //获取该group下外驻人员的单价
+        Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid);
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setGroup_id(groupid);
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> user2CompanyMap = new HashMap<String, String>();
         for ( Expatriatesinfor ex : companyList) {
@@ -130,9 +129,14 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             user2CompanyMap.put(key, value);
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH,-3);
-        int year = calendar.get(Calendar.YEAR);
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(year,groupid);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
         for ( Coststatistics c : allCostList ) {
@@ -251,13 +255,13 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     }
 
     @Override
-    public XSSFWorkbook downloadExcel(HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
+    public XSSFWorkbook downloadExcel(String groupid,HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
         InputStream in = null;
         try {
             //表格操作
             in = getClass().getClassLoader().getResourceAsStream("jxls_templates/BPshetongji.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(in);
-            this.getReportWork1(workbook.getSheetAt(0));
+            this.getReportWork1(workbook.getSheetAt(0),groupid);
             this.getReportWork2(workbook.getSheetAt(1));
             this.getReportWork3(workbook.getSheetAt(2));
 
@@ -270,10 +274,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     }
 
 
-    private void getReportWork1(XSSFSheet sheet1) throws LogicalException {
+    private void getReportWork1(XSSFSheet sheet1,String groupid) throws LogicalException {
         try {
             Coststatistics coststatistics = new Coststatistics();
-            Map<String, Object> result = getCosts(coststatistics);
+
+            Map<String, Object> result = getCosts(coststatistics,groupid);
             List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>)result.get("company");
             Map<String, Double> trip = (Map<String, Double>) result.get("trip");
             Map<String, Double> asset = (Map<String, Double>) result.get("asset");

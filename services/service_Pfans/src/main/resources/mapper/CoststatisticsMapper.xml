@@ -116,4 +116,22 @@
 			where e.GROUP_ID = #{groupid}
 		</if>
 	</select>
+
+	<select id="getCoststatisticsBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
+
+		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,
+			sum(df.`JANUARY`) as MANHOUR1, sum(df.FEBRUARY) as MANHOUR2,
+			sum(df.MARCH) as MANHOUR3, sum(df.APRIL) as MANHOUR4, sum(df.MAY) as MANHOUR5, sum(df.JUNE) as MANHOUR6,
+			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
+			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12
+			,df.year as years
+		from
+		delegainformation df
+		inner join expatriatesinfor exp
+		on df.ACCOUNT = exp.ACCOUNT
+		where df.status = '0'
+		and df.year = #{year}
+		and df.GROUP_ID = #{groupid}
+		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.year
+	</select>
 </mapper>

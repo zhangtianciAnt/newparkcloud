@@ -73,7 +73,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         Calendar calendar = Calendar.getInstance();
         int year = 0;
-        int month = calendar.get(Calendar.MONTH) + 1;
+        int month = calendar.get(Calendar.MONTH);
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {
@@ -260,6 +260,41 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 //                    }
 //                }
 //            }
+
+        }
+        return pricesetMap;
+    }
+
+    @Override
+    public Map<String, Double> getUserPriceMapBygroupid(String groupid) throws Exception {
+        // 获取所有人的单价设定
+        Calendar now = Calendar.getInstance();
+        int year = 0;
+        int month = now.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = now.get(Calendar.YEAR) - 1;
+        }else {
+            year = now.get(Calendar.YEAR);
+        }
+
+        List<Priceset> allPriceset = pricesetMapper.selectBygroupid(year,groupid);
+
+        Map<String, Double> pricesetMap = new HashMap<String, Double>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for ( Priceset priceset : allPriceset ) {
+            String totalUnit = "0";
+            if(StringUtils.isNotBlank(priceset.getTotalunit())){
+                totalUnit = priceset.getTotalunit().trim();
+            }
+            PricesetGroup pricesetGroup = new PricesetGroup();
+            pricesetGroup.setPricesetgroup_id(priceset.getPricesetgroup_id());
+            pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
+            int i = 0;
+            i = Integer.parseInt(pricesetGroup.getPd_date().substring(5, 7));
+            String key = priceset.getUser_id() + "price" + i;
+            Double value = 0.0;
+            value = Double.parseDouble(totalUnit);
+            pricesetMap.put(key, value);
 
         }
         return pricesetMap;
