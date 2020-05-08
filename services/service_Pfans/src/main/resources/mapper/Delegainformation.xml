@@ -34,18 +34,18 @@
             expatriatesinfor ex
         left join
             (select createby,
-            case when round(april/8/21.75,2) >= 1 then 1 else round(april/8/21.75,2) end april,
-            case when round(may/8/21.75,2) >= 1 then 1 else round(may/8/21.75,2) end  may,
-            case when round(june/8/21.75,2) >= 1 then 1 else round(june/8/21.75,2) end june,
-            case when round(july/8/21.75,2) >= 1 then 1 else round(july/8/21.75,2) end july,
-            case when round(august/8/21.75,2) >= 1 then 1 else round(august/8/21.75,2) end august,
-            case when round(september/8/21.75,2) >= 1 then 1 else round(september/8/21.75,2) end september,
-            case when round(october/8/21.75,2) >= 1 then 1 else round(october/8/21.75,2) end october,
-            case when round(november/8/21.75,2) >= 1 then 1 else round(november/8/21.75,2) end november,
-            case when round(december/8/21.75,2) >= 1 then 1 else round(december/8/21.75,2) end december,
-            case when round(january/8/21.75,2) >= 1 then 1 else round(january/8/21.75,2) end january,
-            case when round(february/8/21.75,2) >= 1 then 1 else round(february/8/21.75,2) end february,
-            case when round(march/8/21.75,2) >= 1 then 1 else round(march/8/21.75,2) end march
+            case when round(april/8/ #{april} ,2) >= 1 then 1 else round(april/8/ #{april} ,2) end april,
+            case when round(may/8/ #{may} ,2) >= 1 then 1 else round(may/8/ #{may} ,2) end  may,
+            case when round(june/8/ #{june} ,2) >= 1 then 1 else round(june/8/ #{june} ,2) end june,
+            case when round(july/8/ #{july} ,2) >= 1 then 1 else round(july/8/ #{july} ,2) end july,
+            case when round(august/8/ #{august} ,2) >= 1 then 1 else round(august/8/ #{august} ,2) end august,
+            case when round(september/8/ #{september} ,2) >= 1 then 1 else round(september/8/ #{september} ,2) end september,
+            case when round(october/8/ #{october} ,2) >= 1 then 1 else round(october/8/ #{october} ,2) end october,
+            case when round(november/8/ #{november} ,2) >= 1 then 1 else round(november/8/ #{november} ,2) end november,
+            case when round(december/8/ #{december} ,2) >= 1 then 1 else round(december/8/ #{december} ,2) end december,
+            case when round(january/8/ #{january} ,2) >= 1 then 1 else round(january/8/ #{january} ,2) end january,
+            case when round(february/8/ #{february} ,2) >= 1 then 1 else round(february/8/ #{february} ,2) end february,
+            case when round(march/8/ #{march} ,2) >= 1 then 1 else round(march/8/ #{march} ,2) end march
             from
             (select logmanagement.createby,
             SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '04' THEN TIME_START ELSE 0 END) AS april,
