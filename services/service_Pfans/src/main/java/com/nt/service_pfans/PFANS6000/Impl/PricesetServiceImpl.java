@@ -50,11 +50,32 @@ public class PricesetServiceImpl implements PricesetService {
 
         if(ms.size() > 0){
             for(PricesetGroup item:ms){
-                PricesetVo a = new PricesetVo();
+                PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
                 Priceset conditon = new Priceset();
                 conditon.setPricesetgroup_id(item.getPricesetgroup_id());
                 a.setMain(item);
-                a.setDetail(pricesetMapper.select(conditon));
+
+                List<Priceset> list = pricesetMapper.select(conditon);
+
+                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                expatriatesinfor.setWhetherentry("BP006001");
+                List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
+                for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
+                    Priceset priceset = new Priceset();
+
+                    List<Priceset> pl = list.stream().filter(pli -> expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())).collect(Collectors.toList());
+
+
+                    if(pl.size() > 0){
+                        BeanUtil.copyProperties(pl.get(0),priceset);
+                    } else{
+                        priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
+                        priceset.setUsername(expatriatesinforItem.getExpname());
+                        priceset.setGraduation(expatriatesinforItem.getGraduation_year());
+                        priceset.setCompany(expatriatesinforItem.getSuppliername());
+                    }
+                    a.getDetail().add(priceset);
+                }
 
                 rst.add(a);
             }

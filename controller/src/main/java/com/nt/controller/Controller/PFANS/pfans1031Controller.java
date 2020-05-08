@@ -119,24 +119,24 @@ public class pfans1031Controller {
 //
 //            ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(国内受託)","napinshu_guonei.xlsx",data,response);
 //        } else if (na.getContracttype().equals("HT008001") || na.getContracttype().equals("HT008002") || na.getContracttype().equals("HT008003") || na.getContracttype().equals("HT008004")){
-            if (na.getCurrencyformat().equals("PG019003")){
-                for(Dictionary item:dictionaryList){
-                    if(item.getCode().equals(na.getCurrencyformat())) {
+        if (na.getCurrencyformat().equals("PG019003")) {
+            for (Dictionary item : dictionaryList) {
+                if (item.getCode().equals(na.getCurrencyformat())) {
 
-                        na.setCurrencyformat(item.getValue4());
-                    }
+                    na.setCurrencyformat(item.getValue4());
                 }
-                ExcelOutPutUtil.OutPutPdf(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-RMB)", "napinshu_rmb.xls", data, response);
-            } else if (na.getCurrencyformat().equals("PG019001")){
-                for(Dictionary item:dictionaryList){
-                    if(item.getCode().equals(na.getCurrencyformat())) {
-
-                        na.setCurrencyformat(item.getValue4());
-
-                    }
-                }
-                ExcelOutPutUtil.OutPutPdf(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-US$)", "napinshu_us.xls", data, response);
             }
+            ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-RMB)", "napinshu_rmb.xlsx", data, response);
+        } else if (na.getCurrencyformat().equals("PG019001")) {
+            for (Dictionary item : dictionaryList) {
+                if (item.getCode().equals(na.getCurrencyformat())) {
+
+                    na.setCurrencyformat(item.getValue4());
+
+                }
+            }
+            ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-US$)", "napinshu_us.xlsx", data, response);
+        }
 //        }
     }
 }

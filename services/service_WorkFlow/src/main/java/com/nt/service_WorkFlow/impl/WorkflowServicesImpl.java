@@ -461,6 +461,21 @@ private String upFlg = "0";
                 item.setStatus(AuthConstants.TODO_STATUS_DELETE);
                 toDoNoticeService.updateNoticesStatus(item);
             }
+
+            //发起人创建代办
+            // 创建代办
+            toDoNotice = new ToDoNotice();
+            List<String> params = new ArrayList<String>();
+            toDoNotice.setTitle("您有一个审批被驳回！");
+            toDoNotice.setInitiator(workflowinstance.getOwner());
+            toDoNotice.setContent("您有一个审批被驳回！");
+            toDoNotice.setDataid(operationWorkflowVo.getDataId());
+            toDoNotice.setUrl(operationWorkflowVo.getDataUrl());
+            toDoNotice.setWorkflowurl(operationWorkflowVo.getMenuUrl());
+            toDoNotice.preInsert(tokenModel);
+            toDoNotice.setOwner(nodeinstance.getCreateby());
+            toDoNoticeService.save(toDoNotice);
+
             outOperationWorkflowVo.setState("1");
             outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
             return outOperationWorkflowVo;
@@ -998,6 +1013,17 @@ private String upFlg = "0";
             workflownodeinstance.setWorkflownodeinstanceid(UUID.randomUUID().toString());
             workflownodeinstance.preInsert(tokenModel);
             workflownodeinstanceMapper.insert(workflownodeinstance);
+        }
+
+        ToDoNotice toDoNotice1 = new ToDoNotice();
+        toDoNotice1.setDataid(startWorkflowVo.getDataId());
+        toDoNotice1.setUrl(startWorkflowVo.getDataUrl());
+        toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+        for (ToDoNotice item :
+                rst1) {
+            item.setStatus(AuthConstants.TODO_STATUS_DONE);
+            toDoNoticeService.updateNoticesStatus(item);
         }
 
         // 生成节点操作
