@@ -133,9 +133,11 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 delegainformationMapper.updateByPrimaryKeySelective(delegainformation);
             }
             else{
-                delegainformation.preInsert(tokenModel);
-                delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
-                delegainformationMapper.insert(delegainformation);
+                if(!StringUtils.isNullOrEmpty(delegainformation.getAccount())){
+                    delegainformation.preInsert(tokenModel);
+                    delegainformation.setDelegainformation_id(UUID.randomUUID().toString());
+                    delegainformationMapper.insert(delegainformation);
+                }
             }
         }
     }
