@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
@@ -23,10 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/goalmanagement")
@@ -127,6 +125,7 @@ public class Pfans2023Controller {
             }
         }
         data.put("up", wfList2);
+        data.put("now", DateUtil.year(new Date()));
         ExcelOutPutUtil.OutPut("目标管理", "mubiaoguanli.xlsx", data, response);
 
         FileUtil.del(AuthConstants.FILE_DIRECTORY + me);
