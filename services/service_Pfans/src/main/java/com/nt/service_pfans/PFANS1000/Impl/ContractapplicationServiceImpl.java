@@ -5,6 +5,8 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
@@ -15,6 +17,8 @@ import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.utils.AuthConstants;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +53,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private PetitionMapper PetitionMapper;
     @Autowired
     private TokenService tokenService;
-
+    @Autowired
+    private WorkflowinstanceMapper workflowinstanceMapper;
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
@@ -279,6 +284,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //決裁書作成(受託)
                 else if (rowindex.equals("4")) {
+
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+//                    award2.setOwner(tokenModel.getUserId());
+                    List<Award> orgin = AwardMapper.select(award2);
+
+                    for(Award io:orgin){
+                        Workflowinstance con = new Workflowinstance();
+                        con.setDataid(io.getAward_id());
+                        con.setFormid("/PFANS1030View");
+                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                        if(workflowinstanceMapper.select(con).size() > 0){
+                            throw new LogicalException("决裁书正在审批中，不可更新！");
+                        }
+                    }
+
                     Award award = new Award();
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
@@ -303,7 +324,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setMaketype(rowindex);
                     award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
-                    Award award2 = new Award();
+                    award2 = new Award();
                     award2.setContractnumber(contractnumber);
 //                    award2.setOwner(tokenModel.getUserId());
                     AwardMapper.delete(award2);
@@ -408,6 +429,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //決裁書作成(委託)
                 else if (rowindex.equals("7")) {
+
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+//                    award2.setOwner(tokenModel.getUserId());
+                    List<Award> orgin = AwardMapper.select(award2);
+
+                    for(Award io:orgin){
+                        Workflowinstance con = new Workflowinstance();
+                        con.setDataid(io.getAward_id());
+                        con.setFormid("/PFANS1025View");
+                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                        if(workflowinstanceMapper.select(con).size() > 0){
+                            throw new LogicalException("决裁书正在审批中，不可更新！");
+                        }
+                    }
+
                     Award award = new Award();
                     award.preInsert(tokenModel);
                     award.setAward_id(UUID.randomUUID().toString());
@@ -430,7 +467,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award.setMaketype(rowindex);
                     award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
-                    Award award2 = new Award();
+                    award2 = new Award();
                     award2.setContractnumber(contractnumber);
 //                    award2.setOwner(tokenModel.getUserId());
                     AwardMapper.delete(award2);
