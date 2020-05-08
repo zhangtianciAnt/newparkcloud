@@ -127,27 +127,41 @@ public class Pfans1025Controller {
         if (av.getAward().getSarmb() != null) {
             bd = new BigDecimal(av.getAward().getSarmb());
             str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             av.getAward().setSarmb(str_format);
         }
-
         if (av.getAward().getMaketype().equals("4")) {
             bd = new BigDecimal(av.getAward().getCommission());
             str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             av.getAward().setCommission(str_format);
         }
         if (av.getAward().getTotal() != null) {
             bd = new BigDecimal(av.getAward().getTotal());
             str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             av.getAward().setTotal(str_format);
         }
         for (int h = 0; h < nu.getNumbercounts().size(); h++) {
             bd = new BigDecimal(nu.getNumbercounts().get(h).getClaimamount());
             str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             nu.getNumbercounts().get(h).setClaimamount(str_format);
         }
         for (int k = 0; k < av.getAwardDetail().size(); k++) {
             bd = new BigDecimal(av.getAwardDetail().get(k).getAwardmoney());
             str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             av.getAwardDetail().get(k).setAwardmoney(str_format);
         }
         //20200427 add by ztc format data end
@@ -158,9 +172,15 @@ public class Pfans1025Controller {
         if (aa.length > 0) {
             //20200427 add by ztc format date start
             str_format = aa[0];
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             tem_date = sdf.parse(str_format);
             aa[0] = str.format(tem_date);
             str_format = aa[1];
+            if (str_format.equals(".00")) {
+                str_format = "0";
+            }
             tem_date = sdf.parse(str_format);
             aa[1] = str.format(tem_date);
             data.put("statime", aa);
