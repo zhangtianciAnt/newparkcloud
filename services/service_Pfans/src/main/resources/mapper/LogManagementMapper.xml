@@ -21,8 +21,8 @@
         left join (
         select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
         (select project_id,
-        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
-        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        case when confirmstatus = '1' then cast(SUM(TIME_START) AS decimal(15,2)) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then cast(SUM(TIME_START) AS decimal(15,2)) end as unconfirm
         from logmanagement
         where status = '0'
         <if test="owners != null and owners.size() > 0">
@@ -53,8 +53,8 @@ union
         left join (
         select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
         (select project_id,
-        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
-        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        case when confirmstatus = '1' then cast(SUM(TIME_START) AS decimal(15,2)) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then cast(SUM(TIME_START) AS decimal(15,2)) end as unconfirm
         from logmanagement
         where status = '0'
         <if test="owners != null and owners.size() > 0">
@@ -80,8 +80,8 @@ union
         left join (
         select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
         (select project_id,
-        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
-        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        case when confirmstatus = '1' then cast(SUM(TIME_START) AS decimal(15,2)) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then cast(SUM(TIME_START) AS decimal(15,2)) end as unconfirm
         from logmanagement
         where status = '0'
         <if test="owners != null and owners.size() > 0">
@@ -112,8 +112,8 @@ union
         left join (
         select project_id,sum(confirm) as confirm,sum(unconfirm) as unconfirm from
         (select project_id,
-        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
-        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        case when confirmstatus = '1' then cast(SUM(TIME_START) AS decimal(15,2)) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then cast(SUM(TIME_START) AS decimal(15,2)) end as unconfirm
         from logmanagement
         where status = '0'
         <if test="owners != null and owners.size() > 0">
@@ -138,8 +138,8 @@ union
     <select id="getunProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
         select createby as projectid,sum(confirm) as confirm,sum(unconfirm) as unconfirm from (
         select createby,
-        case when confirmstatus = '1' then sum(TIME_START) end as confirm,
-        case when (confirmstatus = '0' or confirmstatus = '2') then sum(TIME_START) end as unconfirm
+        case when confirmstatus = '1' then cast(SUM(TIME_START) AS decimal(15,2)) end as confirm,
+        case when (confirmstatus = '0' or confirmstatus = '2') then cast(SUM(TIME_START) AS decimal(15,2)) end as unconfirm
         from logmanagement
         where status = '0'
         and (project_id = '' or project_id = 'PP024001')
