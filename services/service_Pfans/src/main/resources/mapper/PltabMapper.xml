@@ -59,7 +59,7 @@
             (
                 select code, sum(rmb) as rmb,pj.PROJECT_NAME,pj.COMPANYPROJECTS_ID
                 from (
-                         select d.CODE, (IFNULL(SUM(tao.RMB), 0) + IFNULL(SUM(tao.tormb), 0)) as rmb,cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
+                         select d.CODE, (SUM(IFNULL(tao.RMB, 0)) + SUM(IFNULL(tao.tormb, 0))) as rmb,cp.PROJECT_NAME
                          from (
                                   select `CODE`
                                   from dictionary

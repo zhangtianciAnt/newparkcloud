@@ -9,6 +9,15 @@
         WHERE #{THIS_YEAR} >= YEARS AND
         YEARS >=#{LAST_YEAR}
     </select>
+    <select id="getworkingyear" resultType="com.nt.dao_Pfans.PFANS8000.WorkingDay">
+        SELECT YEARS, (COUNT1 - COUNT4) AS TENANTID FROM (
+        SELECT DATE_FORMAT(WORKINGDATE,'%m') as YEARS,
+        SUM(CASE WHEN TYPE = '4' THEN 1 ELSE 0 END) as COUNT4,
+        SUM(CASE WHEN TYPE != '4' THEN 1 ELSE 0 END) as COUNT1
+        FROM workingday
+        WHERE DATE_FORMAT(WORKINGDATE,'%Y%m') BETWEEN #{start} and #{end}
+        GROUP BY DATE_FORMAT(WORKINGDATE,'%m')) CC
+    </select>
     <select id="getHoliday" resultType="java.lang.String">
         select IFNULL((sum(IFNULL(case when TYPE in (1,2,3,5,6) and DAYOFWEEK(WORKINGDATE) in (1,7) then 0
         when TYPE in (1,2,3,5,6) and DAYOFWEEK(WORKINGDATE) in (2,3,4,5,6) then 1 end,0)) +

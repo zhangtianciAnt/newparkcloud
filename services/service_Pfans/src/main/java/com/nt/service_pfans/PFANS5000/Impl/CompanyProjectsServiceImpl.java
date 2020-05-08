@@ -40,10 +40,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Autowired
     private CompanyProjectsMapper companyprojectsMapper;
+
+    @Autowired
+    private ComProjectMapper comProjectMapper;
     @Autowired
     private StageInformationMapper stageinformationMapper;
     @Autowired
     private ProjectsystemMapper projectsystemMapper;
+    @Autowired
+    private ProsystemMapper prosystemMapper;
     @Autowired
     private ProjectContractMapper projectcontractMapper;
     @Autowired
@@ -98,13 +103,61 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 companyProjectList.add(companyprojectsMapper.selectByPrimaryKey(companyProjects));
             }
         }
+        List<Comproject> comprojectList = new ArrayList<Comproject>();
+        comprojectList = getPjnameList6007_1(account);
+        if(comprojectList.size()>0)
+        {
+            for(Comproject comproject :comprojectList)
+            {
+                CompanyProjects companyP = new CompanyProjects();
+                companyP.setNumbers(comproject.getNumbers());
+                companyP.setProject_name(comproject.getProject_name());
+                companyProjectList.add(companyP);
+            }
+        }
+
         return companyProjectList;
     }
+
+    @Override
+    public List<Comproject> getPjnameList6007_1(String account) throws Exception {
+        List<Comproject> comprojectList = new ArrayList<Comproject>();
+        if(account!= null && !account.isEmpty())
+        {
+            List<Prosystem> prosystemList = new ArrayList<Prosystem>();
+            Prosystem prosystem = new Prosystem();
+            prosystem.setName(account);
+            prosystemList = prosystemMapper.select(prosystem);
+            for (int i = 0; i < prosystemList.size(); i++)
+            {
+                Comproject comproject = new Comproject();
+                comproject.setComproject_id(prosystemList.get(i).getComproject_id());
+                comprojectList.add(comProjectMapper.selectByPrimaryKey(comproject));
+            }
+        }
+        return comprojectList;
+    }
+
     @Override
     public List<CompanyProjects> listPsdcd(String numbers) throws Exception {
+        List<CompanyProjects> companyProjectList = new ArrayList<CompanyProjects>();
         CompanyProjects companyProjects = new CompanyProjects();
         companyProjects.setNumbers(numbers);
-        return companyprojectsMapper.select(companyProjects);
+        companyProjectList = companyprojectsMapper.select(companyProjects);
+        if(companyProjectList.size()==0)
+        {
+            List<Comproject> compjectList = new ArrayList<Comproject>();
+            Comproject comproject = new Comproject();
+            comproject.setNumbers(numbers);
+            compjectList = comProjectMapper.select(comproject);
+            if(compjectList.size()>0)
+            {
+                CompanyProjects com = new CompanyProjects();
+                com.setLeaderid(compjectList.get(0).getLeaderid());
+                companyProjectList.add(com);
+            }
+        }
+        return companyProjectList;
     }
 
 
