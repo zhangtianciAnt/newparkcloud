@@ -13,11 +13,11 @@ import java.util.Map;
 
 public interface CompanyStatisticsService {
 
-    Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception;
+    Map<String, Object> getCosts(Coststatistics coststatistics,String groupid) throws Exception;
 
     Map<String, Object> getWorkTimes(Coststatistics coststatistics);
 
     Map<String, Object> getWorkerCounts(Coststatistics coststatistics);
 
-    XSSFWorkbook downloadExcel(HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
+    XSSFWorkbook downloadExcel(String groupid,HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
 }
