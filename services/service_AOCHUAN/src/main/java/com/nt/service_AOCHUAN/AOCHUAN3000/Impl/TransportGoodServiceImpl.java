@@ -85,7 +85,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         finSales.setSales_id(UUID.randomUUID().toString());
         finSales.preInsert();
         finSales.setArrival_status("0");
-        finSales.setCredential_status("0");
+        finSales.setCredential_status("PW001001");
         finSalesMapper.insert(finSales);
     }
 }
