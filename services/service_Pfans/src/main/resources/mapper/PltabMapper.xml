@@ -412,14 +412,18 @@
         union all
         SELECT
         'shiguaping' AS `code`,
-        cast( sum( cc.CLAIMAMOUNT ) AS DECIMAL ( 15, 2 ) ) AS rmb,
+        cast( sum( CASE WHEN ca.contracttype IN ( "HT008002", "HT008004", "HT008006", "HT008008" ) THEN cp.CONTRACTREQUESTAMOUNT
+        ELSE cc.CLAIMAMOUNT END ) AS DECIMAL ( 15, 2 ) ) AS rmb,
         companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
         FROM
         contractapplication ca
-        INNER JOIN contractnumbercount cc ON ca.CONTRACTNUMBER = cc.CONTRACTNUMBER
+        LEFT JOIN contractnumbercount cc ON ca.CONTRACTNUMBER = cc.CONTRACTNUMBER
         INNER JOIN projectcontract ON projectcontract.CONTRACT = ca.CONTRACTNUMBER
         INNER JOIN companyprojects ON companyprojects.COMPANYPROJECTS_ID = projectcontract.COMPANYPROJECTS_ID
         AND ( companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6' )
+        LEFT JOIN contractcompound cp ON ca.CONTRACTNUMBER = cp.CONTRACTNUMBER
+        AND cp.CLAIMTYPE = cc.CLAIMTYPE
+        AND cp.group_id = companyprojects.GROUP_ID
         WHERE
         ca.state = '有效'
         AND CONCAT(#{year},#{month}) >=  DATE_FORMAT( cc.deliverydate, '%Y%m' )
