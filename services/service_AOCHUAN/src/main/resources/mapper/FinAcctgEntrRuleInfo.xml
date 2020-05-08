@@ -4,7 +4,7 @@
 
     <!--  ACCTGRUL AND AUXACCTG  -->
     <select id="getAcctgEntrInfoByCrdl_id" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule">
-        SELECT
+         SELECT
         acc.ACCTGRUL_ID ACCTGRUL_ID ,
         acc.CRDLINFO_FID CRDLINFO_FID ,
         acc.REMARKS REMARKS ,
@@ -13,6 +13,11 @@
         acc.CREDIT CREDIT ,
         acc.TAXRATE TAXRATE ,
         acc.AMOUNT AMOUNT,
+        acc.CURRENCY CURRENCY,
+        acc.EX_RATE EX_RATE,
+        acc.ORICURRENCY_AMOUNT ORICURRENCY_AMOUNT,
+        acc.UNIT UNIT,
+        acc.UNIT_PRICE UNIT_PRICE,
         aux.AUXACCTG_ID AUXACCTG_ID,
         aux.ACCTGRUL_FID ACCTGRUL_FID,
         aux.BANKACCOUNT_CODE BANKACCOUNT_CODE,
@@ -34,6 +39,8 @@
         WHERE acc.CRDLINFO_FID = #{crdlinfo_id}
         AND acc.STATUS != '1'
         AND aux.STATUS != '1'
+		ORDER BY acc.ROWINDEX
+
     </select>
 
     <!--  delete  -->

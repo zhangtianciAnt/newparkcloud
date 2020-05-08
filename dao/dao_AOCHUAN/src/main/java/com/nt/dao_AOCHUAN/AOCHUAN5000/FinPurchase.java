@@ -87,4 +87,13 @@ public class FinPurchase extends BaseModel {
     //走货主键
     @Column(name = "TRANSPORTGOOD_ID")
     private  String transportgood_id;
+    //付款凭证号
+    @Column(name = "CREDENTIAL_PAY")
+    private  String credential_pay;
+    //发票凭证号
+    @Column(name = "CREDENTIAL_INVOICE")
+    private  String credential_invoice;
+    //汇率
+    @Column(name = "EX_RATE")
+    private  String ex_rate;
 }

@@ -121,7 +121,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
         finCrdlInfoMapper.insertSelective(credentialInformation);
 
         List<AccountingRule> accountingRuleList = crdlInfo.getAccountingRuleList();
-        if(accountingRuleList!= null){
+        if(!accountingRuleList.isEmpty()){
 
             for (AccountingRule item: accountingRuleList) {
 
@@ -133,7 +133,13 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 acctgRul.setAcct_code(item.getAcct_code());
                 acctgRul.setDebit(item.getDebit());
                 acctgRul.setCredit(item.getCredit());
-                acctgRul.setTaxrate(item.getTaxrate());
+                acctgRul.setCurrency(item.getCurrency());//币种
+                acctgRul.setEx_rate(item.getEx_rate());//汇率
+                acctgRul.setTaxrate(item.getTaxrate());//税率
+                acctgRul.setOricurrency_amount(item.getOricurrency_amount());//原币金额
+                acctgRul.setUnit(item.getUnit());//单位
+                acctgRul.setUnit_price(item.getUnit_price());//单价
+                acctgRul.setQuantity(item.getQuantity());//数量
                 acctgRul.setAmount(item.getAmount());
                 acctgRul.preInsert(tokenModel);
                 finAcctgRulMapper.insertSelective(acctgRul);
