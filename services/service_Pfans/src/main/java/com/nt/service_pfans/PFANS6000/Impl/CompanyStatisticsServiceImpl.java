@@ -391,9 +391,19 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
                     rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
                     //経費除きの平均単価(人月)
-                    Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
-                    rowT1.createCell(colIndex).setCellValue(avg);
-                    totalCostMapflg = totalCostMap.get(propertyC);
+                    if(totalCostMap.get(property)==0)
+                    {
+                        Double avg = 0.00;
+                        rowT1.createCell(colIndex).setCellValue(avg);
+                        totalCostMapflg = totalCostMap.get(propertyC);
+                    }
+                    else
+                    {
+                        Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
+                        rowT1.createCell(colIndex).setCellValue(avg);
+                        totalCostMapflg = totalCostMap.get(propertyC);
+                    }
+
                 } else {
                     rowT.createCell(colIndex).setCellValue(0.0);
                     rowT.createCell(colIndex + 1).setCellValue(0.0);
