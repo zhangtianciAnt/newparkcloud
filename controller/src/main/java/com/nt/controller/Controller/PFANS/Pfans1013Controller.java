@@ -238,24 +238,24 @@ public class Pfans1013Controller {
             str_format = df.format(bd);
             if(str_format.equals(".00"))
             {
-                str_format = "0";
+                str_format = "0.00";
             }
             evevo.getEvection().setLoanamount(str_format);
         }
         else{
-            evevo.getEvection().setLoanamount("0");
+            evevo.getEvection().setLoanamount("0.00");
         }
         if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getEvection().getBalance())){
             BigDecimal bd = new BigDecimal(evevo.getEvection().getBalance());
             str_format = df.format(bd);
             if(str_format.equals(".00"))
             {
-                str_format = "0";
+                str_format = "0.00";
             }
             evevo.getEvection().setBalance(str_format);
         }
         else{
-            evevo.getEvection().setBalance("0");
+            evevo.getEvection().setBalance("0.00");
         }
 
         for (int h = 0; h < evevo.getCurrencyexchanges().size(); h++) {
@@ -264,12 +264,12 @@ public class Pfans1013Controller {
                 str_format = df.format(bd);
                 if(str_format.equals(".00"))
                 {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 evevo.getCurrencyexchanges().get(h).setAmount(str_format);
             }
             else{
-                evevo.getCurrencyexchanges().get(h).setAmount("0");
+                evevo.getCurrencyexchanges().get(h).setAmount("0.00");
             }
         }
 
@@ -279,7 +279,7 @@ public class Pfans1013Controller {
                 str_format = df.format(bd);
                 if(str_format.equals(".00"))
                 {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 evevo.getTrafficdetails().get(k).setForeigncurrency(str_format);
             }
@@ -288,12 +288,12 @@ public class Pfans1013Controller {
                 str_format = df.format(bd);
                 if(str_format.equals(".00"))
                 {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 evevo.getTrafficdetails().get(k).setRmb(str_format);
             }
             else{
-                evevo.getTrafficdetails().get(k).setRmb("0");
+                evevo.getTrafficdetails().get(k).setRmb("0.00");
             }
         }
 
@@ -303,38 +303,38 @@ public class Pfans1013Controller {
                 str_format = df.format(bd);
                 if(str_format.equals(".00"))
                 {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 evevo.getAccommodationdetails().get(m).setTravel(str_format);
             }
             else{
-                evevo.getAccommodationdetails().get(m).setTravel("0");
+                evevo.getAccommodationdetails().get(m).setTravel("0.00");
             }
             if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getAccommodationdetails().get(m).getRmb())){
                 BigDecimal bd = new BigDecimal(evevo.getAccommodationdetails().get(m).getRmb());
                 str_format = df.format(bd);
                 if(str_format.equals(".00"))
                 {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 evevo.getAccommodationdetails().get(m).setRmb(str_format);
             }
             else{
-                evevo.getAccommodationdetails().get(m).setRmb("0");
+                evevo.getAccommodationdetails().get(m).setRmb("0.00");
             }
         }
 
         String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra)));
         if(rmbflg.equals(".00")){
-            rmbflg = "0";
+            rmbflg = "0.00";
         }
         String traflg = df.format(new BigDecimal(String.valueOf(tratra + traacc)));
         if(traflg.equals(".00")){
-            traflg = "0";
+            traflg = "0.00";
         }
         String sumrmb = df.format(new BigDecimal(String.valueOf(accflg + curflg + rmbacc + rmbtra)));
         if(sumrmb.equals(".00")){
-            sumrmb = "0";
+            sumrmb = "0.00";
         }
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
