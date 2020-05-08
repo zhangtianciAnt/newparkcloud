@@ -51,6 +51,8 @@
                AS 'outsourcingname',
                sum(CASE a.code WHEN 'persmember' THEN a.rmb ELSE 0 END)
                AS 'employeename',
+               sum(CASE a.code WHEN 'shiguaping' THEN a.rmb ELSE 0 END)
+               AS 'process',
                sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END)
                AS 'inwetuo',
                sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END)
@@ -88,6 +90,7 @@
                          )
                          =
                          #{year}
+                        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(cp.STARTDATE,'%Y%m') AND DATE_FORMAT(cp.ENDDATE,'%Y%m')
                          and
                          month
                          (
@@ -191,6 +194,7 @@
                          )
                          =
                          #{year}
+                        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
                          and
                          month
                          (
@@ -225,6 +229,7 @@
                 where ca.state = '有效'
                   and ca.type = "1"
                   and companyprojects.GROUP_ID = #{groupid}
+                AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
                 GROUP BY contracttype1,companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
                 having contracttype1 is not null
 
@@ -237,6 +242,7 @@
                                     on l.PROJECT_ID = c.COMPANYPROJECTS_ID
                                         and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
                 where l.GROUP_ID = #{groupid}
+                    AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(c.STARTDATE,'%Y%m') AND DATE_FORMAT(c.ENDDATE,'%Y%m')
                     and year (l.LOG_DATE)
             =
             #{year}
@@ -262,6 +268,7 @@
                  inner join expatriatesinfor e
                             on e.ACCOUNT = l.owner
         where l.GROUP_ID = #{groupid}
+            AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(c.STARTDATE,'%Y%m') AND DATE_FORMAT(c.ENDDATE,'%Y%m')
             and year (l.LOG_DATE
         )
         =
@@ -292,6 +299,7 @@
                  inner join expatriatesinfor e
                             on e.ACCOUNT = l.owner
         where l.GROUP_ID = #{groupid}
+            AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(c.STARTDATE,'%Y%m') AND DATE_FORMAT(c.ENDDATE,'%Y%m')
             and year (l.LOG_DATE
         )
         =
@@ -328,6 +336,7 @@
                             on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
                                 and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
         where cp.GROUP_ID = #{groupid}
+        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(cp.STARTDATE,'%Y%m') AND DATE_FORMAT(cp.ENDDATE,'%Y%m')
         group by code,cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
 
         union all
@@ -337,6 +346,7 @@
                             on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
                                 and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
         where company.GROUP_ID = #{groupid}
+        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(company.STARTDATE,'%Y%m') AND DATE_FORMAT(company.ENDDATE,'%Y%m')
         GROUP BY code,company.PROJECT_NAME,company.COMPANYPROJECTS_ID
 
         union all
@@ -351,6 +361,7 @@
                  left join expatriatesinfor
                            on expatriatesinfor.account = projectsystem.name
         where companyprojects.GROUP_ID = #{groupid}
+        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
           and (
                 (year (projectsystem.ADMISSIONTIME) = #{year} and month (projectsystem.ADMISSIONTIME) = #{month})
                 or
@@ -370,6 +381,7 @@
                  left join expatriatesinfor
                            on expatriatesinfor.account = projectsystem.name
         where companyprojects.GROUP_ID = #{groupid}
+        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
           and (
                 (year (projectsystem.ADMISSIONTIME) = #{year} and month (projectsystem.ADMISSIONTIME) = #{month})
                 or
@@ -390,12 +402,33 @@
                  left join expatriatesinfor
                            on expatriatesinfor.account = projectsystem.name
         where companyprojects.GROUP_ID = #{groupid}
+        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
           and (
                 (year (projectsystem.ADMISSIONTIME) = #{year} and month (projectsystem.ADMISSIONTIME) = #{month})
                 or
                 (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
             )
         group by `code`,companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
+        union all
+        SELECT
+        'shiguaping' AS CODE,
+        cast( sum( cc.CLAIMAMOUNT ) AS DECIMAL ( 15, 2 ) ) AS rmb,
+        companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
+        FROM
+        contractapplication ca
+        INNER JOIN contractnumbercount cc ON ca.CONTRACTNUMBER = cc.CONTRACTNUMBER
+        INNER JOIN projectcontract ON projectcontract.CONTRACT = ca.CONTRACTNUMBER
+        INNER JOIN companyprojects ON companyprojects.COMPANYPROJECTS_ID = projectcontract.COMPANYPROJECTS_ID
+        AND ( companyprojects.`STATUS` = '4' || companyprojects.`STATUS` = '5' || companyprojects.`STATUS` = '6' )
+        WHERE
+        ca.state = '有效'
+        AND CONCAT(#{year},#{month}) >=  DATE_FORMAT( cc.deliverydate, '%Y%m' )
+        AND ca.type = "1"
+        AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
+        AND companyprojects.GROUP_ID = #{groupid}
+        GROUP BY
+        CODE,
+        companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
                  ) a
         group by pj,pj1
     </select>
