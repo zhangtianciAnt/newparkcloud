@@ -113,4 +113,7 @@ public class WebSocketVo {
     //道路占用/临时封闭区域列表
     private List<Application> roadClosed=new ArrayList<>();
 
+    //
+    private List<Switchnotifications> switchList = new ArrayList<>();
+
 }

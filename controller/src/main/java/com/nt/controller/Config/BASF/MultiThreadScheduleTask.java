@@ -3,6 +3,7 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
+import com.nt.dao_BASF.Switchnotifications;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
@@ -91,6 +92,9 @@ public class MultiThreadScheduleTask {
 
     @Autowired
     private PersonnelPermissionsServices personnelPermissionsServices;
+
+    @Autowired
+    private SwitchnotificationsServices switchnotificationsServices;
 
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;
@@ -575,6 +579,15 @@ public class MultiThreadScheduleTask {
     public void BASF90620_GetRoadClosed() throws Exception{
         //道路占用/临时封闭区域列表
         webSocketVo.setRoadClosed(applicationServices.roadClosed());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void SENDEMAIL_Listswitch() throws Exception{
+        //主备服务通知表
+        Switchnotifications switchnotifications = new Switchnotifications();
+        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 }
