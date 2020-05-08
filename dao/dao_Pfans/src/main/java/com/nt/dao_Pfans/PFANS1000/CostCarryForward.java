@@ -32,6 +32,11 @@ public class CostCarryForward extends BaseModel {
 //    詳細
     @Column(name = "PJ")
     private String pj;
+
+    //    项目ID
+   @Column(name = "PJ1")
+    private String pj1;
+
 //    技術開発・海外役務
     @Column(name = "OUTST1")
     private String outst1;

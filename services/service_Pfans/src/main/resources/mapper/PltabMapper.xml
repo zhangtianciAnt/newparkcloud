@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.PltabMapper">
     <select id="getPltab" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
-        select a.PROJECT_NAME as pj,
+        select a.PROJECT_NAME as pj,a.COMPANYPROJECTS_ID as pj1,
                sum(CASE a.code WHEN 'HT008006' THEN a.rmb ELSE 0 END)
                AS 'outst1',
                sum(CASE a.code WHEN 'HT008008' THEN a.rmb ELSE 0 END)
@@ -57,9 +57,9 @@
                AS 'inst'
         from
             (
-                select code, sum(rmb) as rmb,pj.PROJECT_NAME
+                select code, sum(rmb) as rmb,pj.PROJECT_NAME,pj.COMPANYPROJECTS_ID
                 from (
-                         select d.CODE, (SUM(IFNULL(tao.RMB, 0)) + SUM(IFNULL(tao.tormb, 0))) as rmb,cp.PROJECT_NAME
+                         select d.CODE, (SUM(IFNULL(tao.RMB, 0)) + SUM(IFNULL(tao.tormb, 0))) as rmb,cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
                          from (
                                   select `CODE`
                                   from dictionary
@@ -97,7 +97,7 @@
                          )
                          =
                          #{month}
-                         group by d.CODE,cp.PROJECT_NAME
+                         group by d.CODE,cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
                          union all
                          select 'PJ111008' as
                                 code, (
@@ -110,7 +110,10 @@
                                 rmb,
                                 companyprojects
                                 .
-                                PROJECT_NAME
+                                PROJECT_NAME,
+                                companyprojects
+                                .
+                                COMPANYPROJECTS_ID
                          from evection
                               e
                               left
@@ -197,9 +200,9 @@
                          )
                          =
                          #{month}
-                         group by code,companyprojects.PROJECT_NAME
+                         group by code,companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
                      ) pj
-                group by code,PROJECT_NAME
+                group by code,PROJECT_NAME,COMPANYPROJECTS_ID
 
                 union all
                 select
@@ -211,7 +214,7 @@
                         else NULL
                         end                                                    as contracttype1,
                     cast(SUM(projectcontract.contractamount) AS decimal(15,2)) as rmb,
-                    companyprojects.PROJECT_NAME
+                    companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
                 from contractapplication ca
                          inner join projectcontract
                                     on projectcontract.CONTRACT = ca.CONTRACTNUMBER
@@ -222,11 +225,11 @@
                 where ca.state = '有效'
                   and ca.type = "1"
                   and companyprojects.GROUP_ID = #{groupid}
-                GROUP BY contracttype1,companyprojects.PROJECT_NAME
+                GROUP BY contracttype1,companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
                 having contracttype1 is not null
 
                 union all
-                select 'WORKTIME' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME
+                select 'WORKTIME' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME,c.COMPANYPROJECTS_ID
                 from logmanagement l
                          left join expatriatesinfor
                                    on l.createby = expatriatesinfor.account
@@ -248,10 +251,10 @@
             expatriatesinfor
             .
             account)
-        group by `code`, c.PROJECT_NAME
+        group by `code`, c.PROJECT_NAME, c.COMPANYPROJECTS_ID
 
         union all
-        select 'WORKTIMEI' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME
+        select 'WORKTIMEI' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME,c.COMPANYPROJECTS_ID
         from logmanagement l
                  inner join companyprojects c
                             on l.PROJECT_ID = c.COMPANYPROJECTS_ID
@@ -278,10 +281,10 @@
         OPERATIONFORM
         =
         'BP024001'
-        group by `code`, c.PROJECT_NAME
+        group by `code`, c.PROJECT_NAME, c.COMPANYPROJECTS_ID
 
         union all
-        select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME
+        select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME,c.COMPANYPROJECTS_ID
         from logmanagement l
                  inner join companyprojects c
                             on l.PROJECT_ID = c.COMPANYPROJECTS_ID
@@ -308,14 +311,14 @@
         OPERATIONFORM
         =
         'BP024002'
-        group by `code`, c.PROJECT_NAME
+        group by `code`, c.PROJECT_NAME, c.COMPANYPROJECTS_ID
 
         union all
         select "neibu"                                                    as code,
                cast((sum(cost.COST4) + sum(cost.COST5) + sum(cost.COST6) + sum(cost.COST7) + sum(cost.COST8) +
                      sum(cost.COST9) + sum(cost.COST10) + sum(cost.COST11) + sum(cost.COST12) + sum(cost.COST1) +
                      sum(cost.COST2) + sum(cost.COST3)) AS decimal(15,2)) as rmb,
-               cp.PROJECT_NAME
+               cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
         from coststatistics cost
                  inner join expatriatesinfor exp
                             on cost.BPNAME = exp.EXPATRIATESINFOR_ID
@@ -325,21 +328,21 @@
                             on ps.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
                                 and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
         where cp.GROUP_ID = #{groupid}
-        group by code,cp.PROJECT_NAME
+        group by code,cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
 
         union all
-        select 'neibuhetong' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb, company.PROJECT_NAME
+        select 'neibuhetong' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb, company.PROJECT_NAME, company.COMPANYPROJECTS_ID
         from contractnumbercount contract
                  inner join companyprojects company
                             on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
                                 and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
         where company.GROUP_ID = #{groupid}
-        GROUP BY code,company.PROJECT_NAME
+        GROUP BY code,company.PROJECT_NAME,company.COMPANYPROJECTS_ID
 
         union all
         select 'persbp2'                                                                                as `code`,
                SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024002' THEN 1 ELSE 0 END) AS rmb,
-               companyprojects.project_name
+               companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         from projectsystem
                  left join companyprojects
                            on projectsystem.companyprojects_id = companyprojects.companyprojects_id
@@ -353,12 +356,12 @@
                 or
                 (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
             )
-        group by `code`,companyprojects.project_name
+        group by `code`,companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
 
         union all
         select 'persbp1'                                                                                as `code`,
                SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024001' THEN 1 ELSE 0 END) AS rmb,
-               companyprojects.project_name
+               companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         from projectsystem
                  left join companyprojects
                            on projectsystem.companyprojects_id = companyprojects.companyprojects_id
@@ -372,13 +375,13 @@
                 or
                 (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
             )
-        group by `code`,companyprojects.project_name
+        group by `code`,companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
 
         union all
 
         select 'persmember'                                       as `code`,
                SUM(CASE WHEN projectsystem.type = '0' THEN 1 END) AS rmb,
-               companyprojects.project_name
+               companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         from projectsystem
                  left join companyprojects
                            on projectsystem.companyprojects_id = companyprojects.companyprojects_id
@@ -392,9 +395,9 @@
                 or
                 (year (projectsystem.EXITTIME) = #{year} and month (projectsystem.EXITTIME) = #{month})
             )
-        group by `code`,companyprojects.project_name
+        group by `code`,companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
                  ) a
-        group by pj
+        group by pj,pj1
     </select>
     <select id="getCMPJ" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
         select *
@@ -414,8 +417,8 @@
     </select>
 
     <select id="selectPlmoney" resultType="com.nt.dao_Pfans.PFANS1000.Pltab">
-        select 'plmoneyflg'
-               AS 'plmoneyflg',
+        select 'PP024001'
+               AS pj1,
                sum(CASE c.code WHEN 'worktimei2' THEN c.worktime ELSE 0 END)
                AS 'outsourcinghours',
                sum(CASE c.code WHEN 'worktimei1' THEN c.worktime ELSE 0 END)
@@ -824,6 +827,7 @@
                  public.STATUS='4'
                  group by `code`
              ) c
+             group by pj1
     </select>
 
 </mapper>
