@@ -51,6 +51,17 @@ public class AOCHUAN3005Controller {
         return ApiResult.success(returngoodsService.One(id));
     }
 
+
+    @RequestMapping(value = "/getcheck",method={RequestMethod.GET})
+    public ApiResult getcheck(@RequestParam String contractno, HttpServletRequest request) throws Exception {
+        if (contractno == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(returngoodsService.getcheck(contractno));
+    }
+
+
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody Returngoods returngoods, HttpServletRequest request) throws Exception {
         if(returngoods == null){

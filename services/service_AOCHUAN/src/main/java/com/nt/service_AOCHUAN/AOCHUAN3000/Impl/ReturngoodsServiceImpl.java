@@ -83,6 +83,14 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
 
     }
 
+    @Override
+    public List<Returngoods> getcheck(String contractno) throws Exception {
+
+        Returngoods returngoods = new Returngoods();
+        returngoods.setContractno(contractno);
+        return returngoodsMapper.select(returngoods);
+    }
+
     //生成代办
     @Async
     public void ToDoNotice(TokenModel tokenModel, Returngoods returngoods) throws Exception{
