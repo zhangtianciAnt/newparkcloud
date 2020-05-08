@@ -59,7 +59,7 @@
             (
                 select code, sum(rmb) as rmb,pj.PROJECT_NAME,pj.COMPANYPROJECTS_ID
                 from (
-                         select d.CODE, (SUM(IFNULL(tao.RMB, 0)) + SUM(IFNULL(tao.tormb, 0))) as rmb,cp.PROJECT_NAME
+                         select d.CODE, (SUM(IFNULL(tao.RMB, 0)) + SUM(IFNULL(tao.tormb, 0))) as rmb,cp.PROJECT_NAME,cp.COMPANYPROJECTS_ID
                          from (
                                   select `CODE`
                                   from dictionary
@@ -827,6 +827,7 @@
                  public.STATUS='4'
                  group by `code`
              ) c
+             group by pj1
     </select>
 
 </mapper>
