@@ -61,4 +61,7 @@ public class AcctgRul extends BaseModel {
     //金额
     @Column(name = "AMOUNT")
     private Double amount;
+    //行号
+    @Column(name = "ROWINDEX")
+    private Double rowindex;
 }
