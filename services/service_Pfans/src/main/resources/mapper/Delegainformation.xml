@@ -89,6 +89,7 @@
         left join dictionary cou
         on cou.code = ex.countermeasure
         where ex.result = 'BP003001'
+        and ex.account != ''
         <if test="group_id != null and group_id != ''" >
             and ex.group_id = #{group_id}
         </if>
