@@ -19,6 +19,8 @@ public interface ReturngoodsService {
 
     void delete(String id) throws Exception;
 
+    List<Returngoods> getcheck(String contractno) throws Exception;
+
 
 
 
