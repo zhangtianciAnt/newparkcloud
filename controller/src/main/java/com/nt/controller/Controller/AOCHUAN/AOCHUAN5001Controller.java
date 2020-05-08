@@ -88,7 +88,7 @@ public class AOCHUAN5001Controller {
     }
 
     /**
-     * 生成凭证
+     * 生成回款凭证
      */
     @RequestMapping(value = "/createCrdl", method = {RequestMethod.POST})
     public ApiResult createCrdl(@RequestBody FinSales finSales, HttpServletRequest request) throws Exception {
@@ -103,7 +103,7 @@ public class AOCHUAN5001Controller {
         CrdlInfo crdlInfo = new CrdlInfo();
 
         //获取凭证规则
-        docurule = docuruleService.selectByDocutype("PZ001001");
+        docurule = docuruleService.selectByDocutype("PZ001004");// PZ001004 - 收到国外货款
         if(docurule == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -117,6 +117,10 @@ public class AOCHUAN5001Controller {
         //根据规则替换
         crdlInfo=replaceRule(tokenService.getToken(request).getUserId(),finSales, docurule,accAndauxList);
 
+        if(crdlInfo == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
         //生成凭证
         finCrdlInfoService.insert(crdlInfo,tokenService.getToken(request));
 
@@ -125,6 +129,7 @@ public class AOCHUAN5001Controller {
         if (finSalesService.existCheck(finSales)) {
             //唯一性Check
             if(! finSalesService.uniqueCheck(finSales)) {
+                finSales.setCredential_arrival(crdlInfo.getCredentialInformation().getCrdl_num());
                 finSalesService.update(finSales, tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -135,7 +140,7 @@ public class AOCHUAN5001Controller {
 
         //正常结束
         FinSales finSales1 = new FinSales();
-        return ApiResult.success(finSalesService.getFinSalesList(finSales));
+        return ApiResult.success(finSalesService.getFinSalesList(finSales1));
     }
 
     /**
@@ -154,7 +159,7 @@ public class AOCHUAN5001Controller {
         CrdlInfo crdlInfo = new CrdlInfo();
 
         //获取凭证规则
-        docurule = docuruleService.selectByDocutype("PZ001001");
+        docurule = docuruleService.selectByDocutype("PZ001003"); //PZ001003 - 销售货物
         if(docurule == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -167,6 +172,9 @@ public class AOCHUAN5001Controller {
 
         //根据规则替换
         crdlInfo=replaceRule(tokenService.getToken(request).getUserId(),finSales, docurule,accAndauxList);
+        if(crdlInfo == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
 
         //生成凭证
         finCrdlInfoService.insert(crdlInfo,tokenService.getToken(request));
@@ -176,6 +184,7 @@ public class AOCHUAN5001Controller {
         if (finSalesService.existCheck(finSales)) {
             //唯一性Check
             if(! finSalesService.uniqueCheck(finSales)) {
+                finSales.setCredential_sales(crdlInfo.getCredentialInformation().getCrdl_num());
                 finSalesService.update(finSales, tokenService.getToken(request));
             }else{
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -186,7 +195,7 @@ public class AOCHUAN5001Controller {
 
         //正常结束
         FinSales finSales1 = new FinSales();
-        return ApiResult.success(finSalesService.getFinSalesList(finSales));
+        return ApiResult.success(finSalesService.getFinSalesList(finSales1));
     }
 
     /**
@@ -226,6 +235,7 @@ public class AOCHUAN5001Controller {
         crdl.setAttachments(docurule.getAnnexno());//附件数
         crdl.setPush_status("PZ005001");//推送状态id
         crdl.setPush_status_nm("未推送");//推送状态
+        crdl.setOrder_no(finSales.getContractnumber());//订单号
 
         List<AccountingRule> actgrulist = new ArrayList<>();
 
@@ -233,13 +243,18 @@ public class AOCHUAN5001Controller {
             AccountingRule accountingRule = new AccountingRule();
 
             String remarks = "";
-            if(StringUtils.isNotBlank(item.getRemarks())){
+            if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0){
                 remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus()).replace("{2}",finSales.getAmount());
+            }
+            else{
+               return null;
             }
 
             //汇率金额
-            Double exAmount = 0.00;
-            exAmount = Double.parseDouble(finSales.getSalesamount()) * Double.parseDouble(finSales.getEx_rate());
+            Double exAmount = Double.parseDouble(finSales.getSalesamount());
+            if("PY008002".equals(finSales.getCurrency())){
+                exAmount = Double.parseDouble(finSales.getSalesamount()) * Double.parseDouble(finSales.getEx_rate());
+            }
 
             //分录
             accountingRule.setRemarks(remarks);//摘要

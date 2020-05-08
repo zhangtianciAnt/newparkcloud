@@ -24,20 +24,21 @@
     hr.ACCOUNTING,
     hr.MAINCASH,
     hr.FLOWCASH,
-		hr.BANKACCOUNTID,
-		hr.DEPARTID,
-		hr.EXPENDITUREID,
-		hr.ACCOUNTINGID,
-		hr.MAINCASHID,
-		hr.FLOWCASHID,
-		hr.CREATEON,
-		hr.CREATEBY,
+	hr.BANKACCOUNTID,
+	hr.DEPARTID,
+	hr.EXPENDITUREID,
+	hr.ACCOUNTINGID,
+	hr.MAINCASHID,
+	hr.FLOWCASHID,
+	hr.CREATEON,
+	hr.CREATEBY,
     hr.STATUS,
     hr.rowindex
-        FROM crerule cr
-        INNER JOIN helprule as hr
-        ON  hr.CRERULE_FID = cr.CRERULE_ID
-        WHERE cr.DOCURULE_FID = #{docurule_id}
+    FROM crerule cr
+    INNER JOIN helprule as hr
+    ON  hr.CRERULE_FID = cr.CRERULE_ID
+    WHERE cr.DOCURULE_FID = #{docurule_id}
+    ORDER BY ROWINDEX
     </select>
 
 
