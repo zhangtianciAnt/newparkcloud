@@ -36,6 +36,8 @@ public class TransportGood extends BaseModel {
 
     private String amount;
 
+    private String purchase_amount;
+
     private String salesamount;
 
     private String payment;
