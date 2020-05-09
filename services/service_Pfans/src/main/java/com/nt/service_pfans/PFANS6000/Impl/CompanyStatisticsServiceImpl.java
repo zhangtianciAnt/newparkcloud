@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo;
@@ -142,9 +143,13 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(years), groupid);
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
+        DecimalFormat dlf = new DecimalFormat("#0.00");
         for (Coststatistics c : allCostList) {
             String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
             CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
+            if(!StringUtils.isNullOrEmpty(company.getManhour5())){
+                company.setManhour5(dlf.format(Double.valueOf(company.getManhour5())));
+            }
             company.setBpcompany(bpcompany);
 
             String userPriceKey = c.getBpname() + "price";
