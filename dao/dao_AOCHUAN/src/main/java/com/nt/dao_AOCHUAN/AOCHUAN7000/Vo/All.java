@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -81,7 +83,7 @@ public class All {
     private String crerule_wid;
 
     @Column(name = "CREATEON")
-    private String createon;
+    private Date createon;
 
     @Column(name = "CREATEBY")
     private String createby;
@@ -89,10 +91,8 @@ public class All {
     @Column(name = "STATUS")
     private String status;
 
-    @Column(name = "UNIT")
-    private String  unit;
-
     @Column(name = "AMOUNTTYPE")
-    private String  amounttype;
+    private String amounttype;
+
 
 }

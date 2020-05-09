@@ -39,4 +39,7 @@ public class Crerule  extends BaseModel {
     @Column(name = "ACCOUNTID")
     private String accountid;
 
+    @Column(name = "AMOUNTTYPE")
+    private String amounttype;
+
 }
