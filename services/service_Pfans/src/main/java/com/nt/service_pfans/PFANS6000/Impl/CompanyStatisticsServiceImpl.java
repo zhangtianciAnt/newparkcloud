@@ -286,7 +286,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             XSSFWorkbook workbook = new XSSFWorkbook(in);
             this.getReportWork1(workbook.getSheetAt(0), groupid, years);
             this.getReportWork2(workbook.getSheetAt(1), groupid, years);
-//            this.getReportWork3(workbook.getSheetAt(2), groupid, years);
+            this.getReportWork3(workbook.getSheetAt(2), groupid, years);
 
             return workbook;
         } catch (Exception e) {
@@ -594,22 +594,22 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         }
     }
 
-//    private void getReportWork3(XSSFSheet sheet, String groupid, String years) throws LogicalException {
-//        try {
-//            Calendar now = Calendar.getInstance();
-//            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
-//            now.setTime(sdf.parse("04月"));
-//            //日期赋值
-//            for (int j = 1; j <= 12; j++) {
-//                sheet.getRow(2).getCell(j + 2).setCellValue(sdf.format(now.getTime()));
-//                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
-//            }
-//            List<bpSum3Vo> list = this.getWorkerCounts(groupid, years);
-//            Double lineTotal = 0.0;
-//            //将数据放入Excel
-//            int i = 4;
-//            Map<String, Double> totalCostMap = new HashMap<>();
-//            SimpleDateFormat sf1ym = new SimpleDateFormat("yyyy-MM");
+    private void getReportWork3(XSSFSheet sheet, String groupid, String years) throws LogicalException {
+        try {
+            Calendar now = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
+            now.setTime(sdf.parse("04月"));
+            //日期赋值
+            for (int j = 1; j <= 12; j++) {
+                sheet.getRow(2).getCell(j + 2).setCellValue(sdf.format(now.getTime()));
+                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
+            }
+            List<bpSum3Vo> list = this.getWorkerCounts(groupid, years);
+            int Total = 0;
+            //将数据放入Excel
+            int i = 4;
+            Map<String, Double> totalCostMap = new HashMap<>();
+            SimpleDateFormat sf1ym = new SimpleDateFormat("yyyy-MM");
 //            for (bpSum3Vo c : list) {
 //                //创建工作表的行
 //                XSSFRow row = sheet.createRow(i);
@@ -633,32 +633,102 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 //                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
 //                i++;
 //            }
-//
-//            int rowIndex = list.size() + 3;
-//            //合计行
-//            XSSFRow rowT = sheet.createRow(1 + rowIndex);
-//            rowT.createCell(1).setCellValue("合计");
-//            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
-//            sheet.addMergedRegion(region);
-////            // 设置值
-//            for (int k = 1; k <= 13; k++) {
-//                String property = "manhour" + k;
-//                if (k > 12) {
-//                    property = "totalmanhours";
-//                }
-//                int colIndex = k > 12 ? k + 2 : (getColIndex4Month(k) - 3) / 2 + 3;
-//                //合计行
-//                if (totalCostMap.size() > 0) {
-//                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
-//                } else {
-//                    rowT.createCell(colIndex).setCellValue(0.0);
-//                }
-//            }
-//            rowT.createCell(15).setCellValue(lineTotal);
-//        } catch (Exception e) {
-//            throw new LogicalException(e.getMessage());
-//        }
-//    }
+
+            for (bpSum3Vo c : list) {
+                //创建工作表的行
+                XSSFRow row = sheet.createRow(i);
+
+                //行合计
+                int lineTotal = 0;
+
+                //4月
+                int colIndex1 = (getColIndex4Month(4) - 3) / 2 + 3;
+                row.createCell(colIndex1).setCellValue(Integer.valueOf(c.getAPRIL()));
+                lineTotal += Integer.valueOf(c.getAPRIL());
+                totalCostMap.put("N4", totalCostMap.getOrDefault("N4", 0.0) + Integer.valueOf(c.getAPRIL()));
+                //5月
+                int colIndex2 = (getColIndex4Month(5) - 3) / 2 + 3;
+                row.createCell(colIndex2).setCellValue(Integer.valueOf(c.getMAY()));
+                lineTotal += Integer.valueOf(c.getMAY());
+                totalCostMap.put("N5", totalCostMap.getOrDefault("N5", 0.0) + Integer.valueOf(c.getMAY()));
+                //6月
+                int colIndex3 = (getColIndex4Month(6) - 3) / 2 + 3;
+                row.createCell(colIndex3).setCellValue(Integer.valueOf(c.getJUNE()));
+                lineTotal += Integer.valueOf(c.getJUNE());
+                totalCostMap.put("N6", totalCostMap.getOrDefault("N6", 0.0) + Integer.valueOf(c.getJUNE()));
+                //7月
+                int colIndex4 = (getColIndex4Month(7) - 3) / 2 + 3;
+                row.createCell(colIndex4).setCellValue(Integer.valueOf(c.getJULY()));
+                lineTotal += Integer.valueOf(c.getJULY());
+                totalCostMap.put("N7", totalCostMap.getOrDefault("N7", 0.0) + Integer.valueOf(c.getJULY()));
+                //8月
+                int colIndex5 = (getColIndex4Month(8) - 3) / 2 + 3;
+                row.createCell(colIndex5).setCellValue(Integer.valueOf(c.getAUGUST()));
+                lineTotal += Integer.valueOf(c.getAUGUST());
+                totalCostMap.put("N8", totalCostMap.getOrDefault("N8", 0.0) + Integer.valueOf(c.getAUGUST()));
+                //9月
+                int colIndex6 = (getColIndex4Month(9) - 3) / 2 + 3;
+                row.createCell(colIndex6).setCellValue(Integer.valueOf(c.getSEPTEMBER()));
+                lineTotal += Integer.valueOf(c.getSEPTEMBER());
+                totalCostMap.put("N9", totalCostMap.getOrDefault("N9", 0.0) + Integer.valueOf(c.getSEPTEMBER()));
+                //10月
+                int colIndex7 = (getColIndex4Month(10) - 3) / 2 + 3;
+                row.createCell(colIndex7).setCellValue(Integer.valueOf(c.getOCTOBER()));
+                lineTotal += Integer.valueOf(c.getOCTOBER());
+                totalCostMap.put("N10", totalCostMap.getOrDefault("N10", 0.0) + Integer.valueOf(c.getOCTOBER()));
+                //11月
+                int colIndex8 = (getColIndex4Month(11) - 3) / 2 + 3;
+                row.createCell(colIndex8).setCellValue(Integer.valueOf(c.getNOVEMBER()));
+                lineTotal += Integer.valueOf(c.getNOVEMBER());
+                totalCostMap.put("N11", totalCostMap.getOrDefault("N11", 0.0) + Integer.valueOf(c.getNOVEMBER()));
+                //12月
+                int colIndex9 = (getColIndex4Month(12) - 3) / 2 + 3;
+                row.createCell(colIndex9).setCellValue(Integer.valueOf(c.getDECEMBER()));
+                lineTotal += Integer.valueOf(c.getDECEMBER());
+                totalCostMap.put("N12", totalCostMap.getOrDefault("N12", 0.0) + Integer.valueOf(c.getDECEMBER()));
+                //1月
+                int colIndex10 = (getColIndex4Month(1) - 3) / 2 + 3;
+                row.createCell(colIndex10).setCellValue(Integer.valueOf(c.getJANUARY()));
+                lineTotal += Integer.valueOf(c.getJANUARY());
+                totalCostMap.put("N1", totalCostMap.getOrDefault("N1", 0.0) + Integer.valueOf(c.getJANUARY()));
+                //2月
+                int colIndex11 = (getColIndex4Month(2) - 3) / 2 + 3;
+                row.createCell(colIndex11).setCellValue(Integer.valueOf(c.getFEBRUARY()));
+                lineTotal += Integer.valueOf(c.getFEBRUARY());
+                totalCostMap.put("N2", totalCostMap.getOrDefault("N2", 0.0) + Integer.valueOf(c.getFEBRUARY()));
+                //3月
+                int colIndex12 = (getColIndex4Month(3) - 3) / 2 + 3;
+                row.createCell(colIndex12).setCellValue(Integer.valueOf(c.getMARCH()));
+                lineTotal += Integer.valueOf(c.getMARCH());
+                totalCostMap.put("N3", totalCostMap.getOrDefault("N3", 0.0) + Integer.valueOf(c.getMARCH()));
+
+                Total += lineTotal;
+
+                row.createCell(1).setCellValue(i - 3);
+                row.createCell(2).setCellValue(c.getSUPPLIERNAME());
+                row.createCell(15).setCellValue(lineTotal);
+                i++;
+            }
+
+            int rowIndex = list.size() + 3;
+            //合计行
+            XSSFRow rowT = sheet.createRow(1 + rowIndex);
+            rowT.createCell(1).setCellValue("合计");
+            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
+            sheet.addMergedRegion(region);
+//            // 设置值
+            for (int k = 1; k <= 12; k++) {
+                int colIndex = (getColIndex4Month(k) - 3) / 2 + 3;
+                String propertyN = "N" + k;
+                String propertyW = "W" + k;
+                rowT.createCell(colIndex).setCellValue(totalCostMap.get(propertyN));
+            }
+            int colIndexTol = getColIndex4Month(10);
+            rowT.createCell(colIndexTol).setCellValue(Total);
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
 
     private Double getDoubleValue(Object o, String property) {
         try {
