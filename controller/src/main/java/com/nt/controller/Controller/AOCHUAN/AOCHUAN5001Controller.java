@@ -262,8 +262,9 @@ public class AOCHUAN5001Controller {
 
             //金额计算
             Double calAmount = 0.00;
-            calAmount = amountCalculation(item.getAmounttype(),finSales);
-
+            if(StringUtils.isNotBlank(item.getAmounttype())) {
+                calAmount = amountCalculation(item.getAmounttype(), finSales);
+            }
             //分录
             accountingRule.setRemarks(remarks);//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码

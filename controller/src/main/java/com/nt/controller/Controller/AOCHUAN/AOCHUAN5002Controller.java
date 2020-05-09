@@ -63,8 +63,8 @@ public class AOCHUAN5002Controller {
     /**
      * 更新
      */
-    @RequestMapping(value = "/updateStatus", method = {RequestMethod.POST})
-    public ApiResult updateStatus(@RequestBody FinPurchase finPurchase, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody FinPurchase finPurchase, HttpServletRequest request) throws Exception {
 
         if (finPurchase == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -251,8 +251,9 @@ public class AOCHUAN5002Controller {
 
             //金额计算
             Double calAmount = 0.00;
-            calAmount = amountCalculation(item.getAmounttype(),item.getCrerate(),finPurchase);
-
+            if(StringUtils.isNotBlank(item.getAmounttype())) {
+                calAmount = amountCalculation(item.getAmounttype(), item.getCrerate(), finPurchase);
+            }
             //分录
             accountingRule.setRemarks(remarks);//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码
