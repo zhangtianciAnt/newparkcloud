@@ -214,11 +214,11 @@ public class AOCHUAN5002Controller {
         Date accDate  = new Date();
         Date crdlNoDate = new Date();
         //业务日期
-        if(("1").equals(docurule.getBusinessday())){
+        if(("2").equals(docurule.getBusinessday())){
             busDate = finPurchase.getAp_date();
         }
         //记账日期
-        if(("1").equals(docurule.getNowday())){
+        if(("2").equals(docurule.getNowday())){
             accDate = finPurchase.getAp_date();
         }
 

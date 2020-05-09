@@ -226,12 +226,20 @@ public class AOCHUAN5001Controller {
         Date crdlNoDate = new Date();
 
         //业务日期
-        if (("1").equals(docurule.getBusinessday())) {
-            busDate = finSales.getArrivaltime();
+        if (("2").equals(docurule.getBusinessday())) {
+            if("PW001002".equals(finSales.getCredential_status())){
+                busDate = finSales.getCreateon();
+            }else{
+                busDate = finSales.getArrivaltime();
+            }
         }
         //记账日期
-        if (("1").equals(docurule.getNowday())) {
-            accDate = finSales.getArrivaltime();
+        if (("2").equals(docurule.getNowday())) {
+            if("PW001002".equals(finSales.getCredential_status())){
+                busDate = finSales.getCreateon();
+            }else {
+                accDate = finSales.getArrivaltime();
+            }
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
