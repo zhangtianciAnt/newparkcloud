@@ -16,6 +16,9 @@
 	cr.CREATEON,
 	cr.STATUS,
 	cr.AMOUNTTYPE,
+    cr.UNITID,
+    cr.UNITNUMBER,
+    cr.UNITNAME,
 
     hr.HELPRULE_ID,
     hr.CRERULE_FID ,

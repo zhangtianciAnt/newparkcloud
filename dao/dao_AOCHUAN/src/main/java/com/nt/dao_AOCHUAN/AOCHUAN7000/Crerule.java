@@ -42,4 +42,13 @@ public class Crerule  extends BaseModel {
     @Column(name = "AMOUNTTYPE")
     private String amounttype;
 
+    @Column(name = "UNITID")
+    private String unitid;
+
+    @Column(name = "UNITNUMBER")
+    private String unitnumber;
+
+    @Column(name = "UNITNAME")
+    private String unitname;
+
 }
