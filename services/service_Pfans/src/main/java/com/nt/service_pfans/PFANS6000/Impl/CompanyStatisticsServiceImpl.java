@@ -2,6 +2,8 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS6000.*;
+import com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo;
+import com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
@@ -57,7 +59,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
 
     @Override
-    public Map<String, Object> getCosts(Coststatistics coststatistics,String groupid,String years) throws Exception{
+    public Map<String, Object> getCosts(String groupid,String years) throws Exception{
         Map<String, Object> result = new HashMap<>();
         //Variousfunds variousfunds = new Variousfunds();
         //variousfunds.setOwner(tokenModel.getUserId());
@@ -206,33 +208,49 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         return result;
     }
 
-    @Override
-    public Map<String, Object> getWorkTimes(Coststatistics coststatistics) {
-        Map<String, Object> result = new HashMap<>();
+//    @Override
+//    public Map<String, Object> getWorkTimes(Coststatistics coststatistics,String groupid,String years) {
+//        Map<String, Object> result = new HashMap<>();
+//
+//        Map<String, Object> sqlParams = new HashMap<>();
+//        sqlParams.putAll(BeanMap.create(coststatistics));
+//        sqlParams.put("yesValue", "是");
+//        sqlParams.put("noValue", "否");
+//        List<CompanyStatistics> list = companyStatisticsMapper.getWorkTimes(sqlParams);
+//        result.put("worktimes", list);
+//        // year
+//        result.put("year", getBusinessYear());
+//        return result;
+//    }
+//
+//    @Override
+//    public Map<String, Object> getWorkerCounts(Coststatistics coststatistics,String groupid,String years) {
+//        Map<String, Object> result = new HashMap<>();
+//        Map<String, Object> sqlParams = new HashMap<>();
+//        sqlParams.putAll(BeanMap.create(coststatistics));
+//        sqlParams.put("yesValue", "是");
+//        List<CompanyStatistics> list = companyStatisticsMapper.getWorkers(sqlParams);
+//        result.put("workers", list);
+//        // year
+//        result.put("year", getBusinessYear());
+//        return result;
+//    }
 
-        Map<String, Object> sqlParams = new HashMap<>();
-        sqlParams.putAll(BeanMap.create(coststatistics));
-        sqlParams.put("yesValue", "是");
-        sqlParams.put("noValue", "否");
-        List<CompanyStatistics> list = companyStatisticsMapper.getWorkTimes(sqlParams);
-        result.put("worktimes", list);
-        // year
-        result.put("year", getBusinessYear());
-        return result;
+
+    @Override
+    public List<bpSum2Vo> getWorkTimes(String groupid,String years) throws LogicalException {
+        List<bpSum2Vo> list2 = companyStatisticsMapper.getbpsum2(groupid);
+        return list2;
     }
 
+
     @Override
-    public Map<String, Object> getWorkerCounts(Coststatistics coststatistics) {
-        Map<String, Object> result = new HashMap<>();
-        Map<String, Object> sqlParams = new HashMap<>();
-        sqlParams.putAll(BeanMap.create(coststatistics));
-        sqlParams.put("yesValue", "是");
-        List<CompanyStatistics> list = companyStatisticsMapper.getWorkers(sqlParams);
-        result.put("workers", list);
-        // year
-        result.put("year", getBusinessYear());
-        return result;
+    public List<bpSum3Vo> getWorkerCounts(String groupid,String years) throws LogicalException {
+        List<bpSum3Vo> list = companyStatisticsMapper.getbpsum(groupid);
+        return list;
     }
+
+
 
     private String[] getBusinessYear() {
         String[] arr = {"", ""};
@@ -262,8 +280,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             in = getClass().getClassLoader().getResourceAsStream("jxls_templates/BPshetongji.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(in);
             this.getReportWork1(workbook.getSheetAt(0),groupid,years);
-            this.getReportWork2(workbook.getSheetAt(1));
-            this.getReportWork3(workbook.getSheetAt(2));
+            this.getReportWork2(workbook.getSheetAt(1),groupid,years);
+            this.getReportWork3(workbook.getSheetAt(2),groupid,years);
 
             return workbook;
         } catch (Exception e) {
@@ -278,7 +296,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         try {
             Coststatistics coststatistics = new Coststatistics();
 
-            Map<String, Object> result = getCosts(coststatistics,groupid,years);
+            Map<String, Object> result = getCosts(groupid,years);
             List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>)result.get("company");
             Map<String, Double> trip = (Map<String, Double>) result.get("trip");
             Map<String, Double> asset = (Map<String, Double>) result.get("asset");
@@ -420,7 +438,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     }
 
 
-    private void getReportWork2(XSSFSheet sheet1) throws LogicalException {
+    private void getReportWork2(XSSFSheet sheet1,String groupid,String years) throws LogicalException {
         try {
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
@@ -431,11 +449,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
             }
 
-            List<CompanyStatistics> list = (List<CompanyStatistics>) this.getWorkTimes(new Coststatistics()).get("worktimes");
+            List<bpSum2Vo> list =  this.getWorkTimes(groupid, years);
             //将数据放入Excel
             int i = 3;
             Map<String, Double> totalCostMap = new HashMap<>();
-            for (CompanyStatistics c : list) {
+            for (bpSum2Vo c : list) {
                 //创建工作表的行
                 XSSFRow row = sheet1.createRow(i);
 
@@ -470,10 +488,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
 
                 row.createCell(1).setCellValue(i - 2);
-                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
-                if (ls != null) {
-                    row.createCell(2).setCellValue(ls.getSupchinese());
-                }
+//                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
+//                if (ls != null) {
+//                    row.createCell(2).setCellValue(ls.getSupchinese());
+//                }
 
                 totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
                 totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
@@ -511,7 +529,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         }
     }
 
-    private void getReportWork3(XSSFSheet sheet) throws LogicalException {
+    private void getReportWork3(XSSFSheet sheet,String groupid,String years) throws LogicalException {
         try {
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
@@ -522,11 +540,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
             }
 
-            List<CompanyStatistics> list = (List<CompanyStatistics>) this.getWorkerCounts(new Coststatistics()).get("workers");
+            List<bpSum3Vo> list = this.getWorkerCounts(groupid,years);
             //将数据放入Excel
             int i = 4;
             Map<String, Double> totalCostMap = new HashMap<>();
-            for (CompanyStatistics c : list) {
+            for (bpSum3Vo c : list) {
                 //创建工作表的行
                 XSSFRow row = sheet.createRow(i);
 
@@ -553,10 +571,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 }
 
                 row.createCell(1).setCellValue(i - 3);
-                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
-                if (ls != null) {
-                    row.createCell(2).setCellValue(ls.getSupchinese());
-                }
+//                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
+//                if (ls != null) {
+//                    row.createCell(2).setCellValue(ls.getSupchinese());
+//                }
 
                 totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
                 i++;

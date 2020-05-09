@@ -35,22 +35,22 @@ public class Pfans6009Controller {
     public ApiResult getCompanyReport1(String groupid,String years, HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getCosts(coststatistics,groupid,years));
+        return ApiResult.success(companyStatisticsService.getCosts(groupid,years));
     }
 
 
     @RequestMapping(value = "/getCompanyReport2", method = {RequestMethod.GET})
-    public ApiResult getCompanyReport2(HttpServletRequest request) throws Exception {
+    public ApiResult getCompanyReport2(String groupid,String years,HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getWorkTimes(coststatistics));
+        return ApiResult.success(companyStatisticsService.getWorkTimes(groupid,years));
     }
 
     @RequestMapping(value = "/getCompanyReport3", method = {RequestMethod.GET})
-    public ApiResult getCompanyReport3(HttpServletRequest request) throws Exception {
+    public ApiResult getCompanyReport3(String groupid,String years,HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getWorkerCounts(coststatistics));
+        return ApiResult.success(companyStatisticsService.getWorkerCounts(groupid,years));
     }
 
     /**
