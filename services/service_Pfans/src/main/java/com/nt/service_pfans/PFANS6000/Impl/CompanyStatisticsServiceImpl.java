@@ -316,6 +316,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             }
             //
             Map<String, Double> totalCostMap = new HashMap<>();
+            //Map<String, Double> totalCostMap1 = new HashMap<>();
             //将数据放入Excel
             int i = 3;
             for (CompanyStatistics c : companyStatisticsList) {
@@ -332,6 +333,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                         propertyC = "totalcost";
                     }
                     try {
+
                         manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
                         cost = Double.parseDouble(BeanUtils.getProperty(c, propertyC));
 
@@ -354,8 +356,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 //                row.createCell(27).setCellValue(c.getTotalmanhours());
 //                row.createCell(28).setCellValue(c.getTotalcost());
 
-                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
-                totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
+                //totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
+                //totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
                 i++;
             }
             int rowIndex = companyStatisticsList.size() + 2;
