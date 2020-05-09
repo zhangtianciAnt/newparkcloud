@@ -154,5 +154,9 @@ public class PublicExpense extends BaseModel {
     //add_fjl --希望付款日
     @Column(name = "EXPECTEDPAYDATE")
     private Date expectedpaydate;
+
+    @Column(name = "EXPORTCSV")
+    private String exportcsv;
+
     //add_fjl --希望付款日
 }
