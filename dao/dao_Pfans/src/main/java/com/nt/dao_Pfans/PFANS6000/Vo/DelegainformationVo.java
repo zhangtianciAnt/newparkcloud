@@ -127,6 +127,12 @@ public class DelegainformationVo {
     private String monthlength;
 
     /**
+     * 备注
+     */
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    /**
      * 年度
      */
     @Column(name = "YEAR")

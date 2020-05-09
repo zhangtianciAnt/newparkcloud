@@ -24,7 +24,7 @@
             if((de.january is null or de.january = '' or de.january = '0'),if((log.january is null),'0.00',log.january),de.january) as january,
             if((de.february is null or de.february = '' or de.february = '0'),if((log.february is null),'0.00',log.february),de.february) as february,
             if((de.march is null or de.march = '' or de.march = '0'),if((log.march is null),'0.00',log.march),de.march) as march,
-            remarks,
+            de.remarks,
             al.value1 as alltechnology,
             si.value1 assitevaluation,
             exi.value1 as exitreason,
