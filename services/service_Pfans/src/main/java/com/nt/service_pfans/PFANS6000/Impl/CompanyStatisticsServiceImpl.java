@@ -286,7 +286,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             XSSFWorkbook workbook = new XSSFWorkbook(in);
             this.getReportWork1(workbook.getSheetAt(0), groupid, years);
             this.getReportWork2(workbook.getSheetAt(1), groupid, years);
-            this.getReportWork3(workbook.getSheetAt(2), groupid, years);
+//            this.getReportWork3(workbook.getSheetAt(2), groupid, years);
 
             return workbook;
         } catch (Exception e) {
@@ -594,71 +594,71 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         }
     }
 
-    private void getReportWork3(XSSFSheet sheet, String groupid, String years) throws LogicalException {
-        try {
-            Calendar now = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
-            now.setTime(sdf.parse("04月"));
-            //日期赋值
-            for (int j = 1; j <= 12; j++) {
-                sheet.getRow(2).getCell(j + 2).setCellValue(sdf.format(now.getTime()));
-                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
-            }
-            List<bpSum3Vo> list = this.getWorkerCounts(groupid, years);
-            Double lineTotal = 0.0;
-            //将数据放入Excel
-            int i = 4;
-            Map<String, Double> totalCostMap = new HashMap<>();
-            SimpleDateFormat sf1ym = new SimpleDateFormat("yyyy-MM");
-            for (bpSum3Vo c : list) {
-                //创建工作表的行
-                XSSFRow row = sheet.createRow(i);
-                Double lineTotalManhour = 0.0;
-                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5, 7));
-                for (int k = 1; k <= 12; k++) {
-                    double manhour = 0;
-                    String property = "manhour" + k;
-                    int colIndex = k > 12 ? k + 2 : (getColIndex4Month(k) - 3) / 2 + 3;
-                    if (month == k) {
-                        manhour = Double.valueOf(c.getCounts());
-                    }
-                    lineTotalManhour += manhour;
-                    lineTotal += manhour;
-                    row.createCell(colIndex).setCellValue(manhour);
-                    totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
-                }
-                row.createCell(1).setCellValue(i - 3);
-                row.createCell(2).setCellValue(c.getSUPPLIERNAME());
-                row.createCell(15).setCellValue(lineTotalManhour);
-                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
-                i++;
-            }
-
-            int rowIndex = list.size() + 3;
-            //合计行
-            XSSFRow rowT = sheet.createRow(1 + rowIndex);
-            rowT.createCell(1).setCellValue("合计");
-            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
-            sheet.addMergedRegion(region);
-//            // 设置值
-            for (int k = 1; k <= 13; k++) {
-                String property = "manhour" + k;
-                if (k > 12) {
-                    property = "totalmanhours";
-                }
-                int colIndex = k > 12 ? k + 2 : (getColIndex4Month(k) - 3) / 2 + 3;
-                //合计行
-                if (totalCostMap.size() > 0) {
-                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
-                } else {
-                    rowT.createCell(colIndex).setCellValue(0.0);
-                }
-            }
-            rowT.createCell(15).setCellValue(lineTotal);
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
-    }
+//    private void getReportWork3(XSSFSheet sheet, String groupid, String years) throws LogicalException {
+//        try {
+//            Calendar now = Calendar.getInstance();
+//            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
+//            now.setTime(sdf.parse("04月"));
+//            //日期赋值
+//            for (int j = 1; j <= 12; j++) {
+//                sheet.getRow(2).getCell(j + 2).setCellValue(sdf.format(now.getTime()));
+//                now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
+//            }
+//            List<bpSum3Vo> list = this.getWorkerCounts(groupid, years);
+//            Double lineTotal = 0.0;
+//            //将数据放入Excel
+//            int i = 4;
+//            Map<String, Double> totalCostMap = new HashMap<>();
+//            SimpleDateFormat sf1ym = new SimpleDateFormat("yyyy-MM");
+//            for (bpSum3Vo c : list) {
+//                //创建工作表的行
+//                XSSFRow row = sheet.createRow(i);
+//                Double lineTotalManhour = 0.0;
+//                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5, 7));
+//                for (int k = 1; k <= 12; k++) {
+//                    double manhour = 0;
+//                    String property = "manhour" + k;
+//                    int colIndex = k > 12 ? k + 2 : (getColIndex4Month(k) - 3) / 2 + 3;
+//                    if (month == k) {
+//                        manhour = Double.valueOf(c.getCounts());
+//                    }
+//                    lineTotalManhour += manhour;
+//                    lineTotal += manhour;
+//                    row.createCell(colIndex).setCellValue(manhour);
+//                    totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
+//                }
+//                row.createCell(1).setCellValue(i - 3);
+//                row.createCell(2).setCellValue(c.getSUPPLIERNAME());
+//                row.createCell(15).setCellValue(lineTotalManhour);
+//                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
+//                i++;
+//            }
+//
+//            int rowIndex = list.size() + 3;
+//            //合计行
+//            XSSFRow rowT = sheet.createRow(1 + rowIndex);
+//            rowT.createCell(1).setCellValue("合计");
+//            CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
+//            sheet.addMergedRegion(region);
+////            // 设置值
+//            for (int k = 1; k <= 13; k++) {
+//                String property = "manhour" + k;
+//                if (k > 12) {
+//                    property = "totalmanhours";
+//                }
+//                int colIndex = k > 12 ? k + 2 : (getColIndex4Month(k) - 3) / 2 + 3;
+//                //合计行
+//                if (totalCostMap.size() > 0) {
+//                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
+//                } else {
+//                    rowT.createCell(colIndex).setCellValue(0.0);
+//                }
+//            }
+//            rowT.createCell(15).setCellValue(lineTotal);
+//        } catch (Exception e) {
+//            throw new LogicalException(e.getMessage());
+//        }
+//    }
 
     private Double getDoubleValue(Object o, String property) {
         try {
