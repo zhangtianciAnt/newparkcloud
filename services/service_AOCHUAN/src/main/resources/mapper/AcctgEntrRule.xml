@@ -37,6 +37,7 @@
 	hr.CREATEON,
 	hr.CREATEBY,
     hr.STATUS,
+    hr.CRERULE_WID,
     hr.rowindex
     FROM crerule cr
     INNER JOIN helprule as hr
@@ -44,7 +45,5 @@
     WHERE cr.DOCURULE_FID = #{docurule_id}
     ORDER BY ROWINDEX
     </select>
-
-
 
 </mapper>
