@@ -163,4 +163,10 @@ public class TalentPlan extends BaseModel {
     @Column(name = "YEARSCHEDULE")
     private Date yearschedule;
 
+    /**
+     * 昇格･昇号時期
+     */
+    @Column(name = "PROMOTION")
+    private String promotion;
+
 }
