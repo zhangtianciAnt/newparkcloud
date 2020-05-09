@@ -1,7 +1,8 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Contracttheme;
-import com.nt.service_pfans.PFANS1000.ContractthemeService;
+import com.nt.dao_Pfans.PFANS1000.ThemePlan;
+import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
+import com.nt.service_pfans.PFANS1000.ThemePlanService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -15,35 +16,49 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @RestController
-@RequestMapping("/contracttheme")
+@RequestMapping("/themeplan")
 public class Pfans1040Controller {
 
-    //销售テーマ
+    //收支データ
     @Autowired
-    private ContractthemeService contractthemeService;
+    private ThemePlanService themePlanService;
 
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/get",method={RequestMethod.POST})
-    public ApiResult one(@RequestBody Contracttheme contracttheme, HttpServletRequest request) throws Exception {
-        if (contracttheme == null) {
+    @RequestMapping(value = "/getList", method = {RequestMethod.POST})
+    public ApiResult list(@RequestBody ThemePlan themePlan, HttpServletRequest request) throws Exception {
+        if (themePlan == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(contractthemeService.get(contracttheme));
+        themePlan.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(themePlanService.getList(themePlan));
     }
 
-    @RequestMapping(value = "/insert",method={RequestMethod.POST})
-    public ApiResult insert(@RequestBody List<Contracttheme> contracttheme, HttpServletRequest request) throws Exception {
-        if (contracttheme == null) {
+    @RequestMapping(value = "/get", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody ThemePlan themePlan, HttpServletRequest request) throws Exception {
+        if (themePlan == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        contractthemeService.insert(contracttheme,tokenModel);
+        themePlan.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(themePlanService.get(themePlan));
+    }
+
+    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
+    public ApiResult insert(@RequestBody ThemePlanVo themePlan, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        themePlanService.insert(themePlan, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult update(@RequestBody ThemePlanVo themePlan, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        themePlanService.update(themePlan, tokenModel);
         return ApiResult.success();
     }
 
