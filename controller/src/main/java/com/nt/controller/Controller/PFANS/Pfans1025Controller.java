@@ -62,8 +62,18 @@ public class Pfans1025Controller {
 //        }
         List<Dictionary> curList = dictionaryService.getForSelect("PG019");
         for (Dictionary item : curList) {
-            if (item.getValue1().equals(av.getAward().getCurrencyposition())) {
+            if (item.getCode().equals(av.getAward().getCurrencyposition())) {
                 av.getAward().setCurrencyposition(item.getValue4());
+            }
+        }
+        if (adlist.size() > 0) {
+            for (AwardDetail al : adlist) {
+                List<Dictionary> aList = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : aList) {
+                    if (ite.getCode().equals(al.getBudgetcode())) {
+                        al.setBudgetcode(ite.getValue3());
+                    }
+                }
             }
         }
 //        List<Dictionary> planList = dictionaryService.getForSelect("HT018");
@@ -124,6 +134,9 @@ public class Pfans1025Controller {
         BigDecimal bd = new BigDecimal(av.getAward().getClaimamount());
         str_format = df.format(bd);
         data.put("claimamo", str_format);
+        bd = new BigDecimal(av.getAward().getNumbermoth());
+        str_format = df.format(bd);
+        data.put("numbermoth", str_format);
         if (av.getAward().getSarmb() != null) {
             bd = new BigDecimal(av.getAward().getSarmb());
             str_format = df.format(bd);
