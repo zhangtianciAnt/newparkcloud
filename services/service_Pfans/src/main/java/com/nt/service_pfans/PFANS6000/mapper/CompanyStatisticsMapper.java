@@ -16,9 +16,9 @@ public interface CompanyStatisticsMapper extends MyMapper<CompanyStatistics> {
 
     List<CompanyStatistics> getWorkers(Map<String, Object> coststatistics);
 
-    List<bpSum3Vo> getbpsum(@Param("groupid") String groupid);
+    List<bpSum3Vo> getbpsum(@Param("groupid") String groupid,@Param("years") String years);
 
-    List<bpSum2Vo> getbpsum2(@Param("groupid") String groupid);
+    List<bpSum2Vo> getbpsum2(@Param("groupid") String groupid,@Param("years") String years);
 
 }
 
