@@ -80,7 +80,7 @@ public class pfans1031Controller {
         //20200427 add by ztc format data start
         //請求日
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat str = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat str = new SimpleDateFormat("yyyy年MM月dd日");
         Date tem_date = null;
         String str_format = "";
         str_format = str.format(na.getDeliverydate());
