@@ -640,10 +640,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ab.setRelengthtime(ab.getRelengthtime() == null || ab.getRelengthtime() == "" ? "0" : ab.getRelengthtime());
                                                 strlengthtime = ab.getRelengthtime();
                                                 if (Double.valueOf(strlengthtime) <= 8 && !ab.getErrortype().equals("PR013022")) {
-                                                    if(ab.getReoccurrencedate() == null )
-                                                    {
-                                                        ab.setReoccurrencedate(ab.getOccurrencedate());
-                                                    }
+//                                                    if(ab.getReoccurrencedate() == null )
+//                                                    {
+//                                                        ab.setReoccurrencedate(ab.getOccurrencedate());
+//                                                    }
                                                     ab.setRefinisheddate(ab.getReoccurrencedate());
                                                 }
                                                 //在申请的日期范围内
@@ -1371,10 +1371,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ab.setRelengthtime(ab.getRelengthtime() == null || ab.getRelengthtime() == "" ? "0" : ab.getRelengthtime());
                                             strlengthtime = ab.getRelengthtime();
                                             if (Double.valueOf(strlengthtime) <= 8 && !ab.getErrortype().equals("PR013022")) {
-                                                if(ab.getReoccurrencedate() == null )
-                                                {
-                                                    ab.setReoccurrencedate(ab.getOccurrencedate());
-                                                }
+//                                                if(ab.getReoccurrencedate() == null )
+//                                                {
+//                                                    ab.setReoccurrencedate(ab.getOccurrencedate());
+//                                                }
                                                 ab.setRefinisheddate(ab.getReoccurrencedate());
                                             }
                                             if (ab.getReoccurrencedate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) <= 0 && ab.getRefinisheddate().compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) >= 0) {
