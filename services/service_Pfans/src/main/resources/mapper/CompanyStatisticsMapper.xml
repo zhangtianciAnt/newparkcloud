@@ -482,6 +482,9 @@
 		counts
 		from bpsum3
 		where GROUP_ID= #{groupid}
+		and
+		 (date  BETWEEN date_format( concat(#{years}, '-04-01' ) ,'%Y-%m')
+        AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
 		order by
 		date
 	</select>
@@ -495,6 +498,9 @@
 		worktime
 		from bpsum2
 		where GROUP_ID= #{groupid}
+		and
+		 (date  BETWEEN date_format( concat(#{years}, '-04-01' ) ,'%Y-%m')
+        AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
 		order by
 		date
 	</select>
