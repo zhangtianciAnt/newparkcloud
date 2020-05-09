@@ -307,8 +307,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             Map<String, Double> asset = (Map<String, Double>) result.get("asset");
 
             Calendar now = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            now.setTime(sdf.parse(getBusinessYear()[0] + "年04月"));
+            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
+            now.setTime(sdf.parse("04月"));
             //日期赋值
             for (int j = 1; j <= 12; j++) {
                 sheet1.getRow(1).getCell(2 * j + 1).setCellValue(sdf.format(now.getTime()));
@@ -444,8 +444,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     private void getReportWork2(XSSFSheet sheet1, String groupid, String years) throws LogicalException {
         try {
             Calendar now = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            now.setTime(sdf.parse(getBusinessYear()[0] + "年04月"));
+            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
+            now.setTime(sdf.parse("04月"));
             //日期赋值
             for (int j = 1; j <= 12; j++) {
                 sheet1.getRow(1).getCell(2 * j + 1).setCellValue(sdf.format(now.getTime()));
@@ -519,8 +519,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     private void getReportWork3(XSSFSheet sheet, String groupid, String years) throws LogicalException {
         try {
             Calendar now = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            now.setTime(sdf.parse(getBusinessYear()[0] + "年04月"));
+            SimpleDateFormat sdf = new SimpleDateFormat("MM月");
+            now.setTime(sdf.parse("04月"));
             //日期赋值
             for (int j = 1; j <= 12; j++) {
                 sheet.getRow(2).getCell(j + 2).setCellValue(sdf.format(now.getTime()));
