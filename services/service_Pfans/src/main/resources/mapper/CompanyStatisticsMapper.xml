@@ -476,17 +476,13 @@
 
 	<select id="getbpsum" resultType="com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo">
 	    select
-		GROUP_ID group_id,
-		SUPPLIERNAME suppliername,
-		date date,
-		counts
+		*
 		from bpsum3
-		where GROUP_ID= #{groupid}
+	    where GROUP_ID= #{groupid}
 		and
-		 (date  BETWEEN date_format( concat(#{years}, '-04-01' ) ,'%Y-%m')
-        AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
+		year = #{years}
 		order by
-		date
+		year
 	</select>
 
 	<select id="getbpsum2" resultType="com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo">
