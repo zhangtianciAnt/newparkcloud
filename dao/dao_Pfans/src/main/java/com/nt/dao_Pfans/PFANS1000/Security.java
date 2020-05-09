@@ -53,4 +53,10 @@ public class Security extends BaseModel {
     @Column(name = "REASON")
     private String reason;
 
+    /**
+     * 对应状态
+     */
+    @Column(name = "CORRESPONDING")
+    private String corresponding;
+
 }
