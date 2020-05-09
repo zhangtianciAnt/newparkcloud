@@ -9,10 +9,12 @@
 		from expatriatesinfor exp
 		where exp.`STATUS` = '0'
 		group by exp.`EXPNAME`*/
-		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,sum(df.`JANUARY`) as MANHOUR1, sum(df.FEBRUARY) as MANHOUR2,
-			sum(df.MARCH) as MANHOUR3, sum(df.APRIL) as MANHOUR4, sum(df.MAY) as MANHOUR5, sum(df.JUNE) as MANHOUR6,
-			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
-			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12,df.year as years
+		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,
+			sum(CONVERT(df.`JANUARY`,DECIMAL(10,2))) as MANHOUR1, sum(CONVERT(df.FEBRUARY,DECIMAL(10,2))) as MANHOUR2,
+			sum(CONVERT(df.MARCH,DECIMAL(10,2))) as MANHOUR3, sum(CONVERT(df.APRIL,DECIMAL(10,2))) as MANHOUR4, sum(CONVERT(df.MAY,DECIMAL(10,2))) as MANHOUR5, sum(CONVERT(df.JUNE,DECIMAL(10,2))) as MANHOUR6,
+			sum(CONVERT(df.`JULY`,DECIMAL(10,2))) as MANHOUR7, sum(CONVERT(df.AUGUST,DECIMAL(10,2))) as MANHOUR8, sum(CONVERT(df.SEPTEMBER,DECIMAL(10,2))) as MANHOUR9, sum(CONVERT(df.OCTOBER,DECIMAL(10,2))) as MANHOUR10,
+			sum(CONVERT(df.NOVEMBER,DECIMAL(10,2))) as MANHOUR11, sum(CONVERT(df.DECEMBER,DECIMAL(10,2))) as MANHOUR12
+			,df.year as years
 		from
 		delegainformation df
 		inner join expatriatesinfor exp
@@ -120,10 +122,10 @@
 	<select id="getCoststatisticsBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
 
 		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,
-			sum(df.`JANUARY`) as MANHOUR1, sum(df.FEBRUARY) as MANHOUR2,
-			sum(df.MARCH) as MANHOUR3, sum(df.APRIL) as MANHOUR4, sum(df.MAY) as MANHOUR5, sum(df.JUNE) as MANHOUR6,
-			sum(df.`JULY`) as MANHOUR7, sum(df.AUGUST) as MANHOUR8, sum(df.SEPTEMBER) as MANHOUR9, sum(df.OCTOBER) as MANHOUR10,
-			sum(df.NOVEMBER) as MANHOUR11, sum(df.DECEMBER) as MANHOUR12
+			sum(CONVERT(df.`JANUARY`,DECIMAL(10,2))) as MANHOUR1, sum(CONVERT(df.FEBRUARY,DECIMAL(10,2))) as MANHOUR2,
+			sum(CONVERT(df.MARCH,DECIMAL(10,2))) as MANHOUR3, sum(CONVERT(df.APRIL,DECIMAL(10,2))) as MANHOUR4, sum(CONVERT(df.MAY,DECIMAL(10,2))) as MANHOUR5, sum(CONVERT(df.JUNE,DECIMAL(10,2))) as MANHOUR6,
+			sum(CONVERT(df.`JULY`,DECIMAL(10,2))) as MANHOUR7, sum(CONVERT(df.AUGUST,DECIMAL(10,2))) as MANHOUR8, sum(CONVERT(df.SEPTEMBER,DECIMAL(10,2))) as MANHOUR9, sum(CONVERT(df.OCTOBER,DECIMAL(10,2))) as MANHOUR10,
+			sum(CONVERT(df.NOVEMBER,DECIMAL(10,2))) as MANHOUR11, sum(CONVERT(df.DECEMBER,DECIMAL(10,2))) as MANHOUR12
 			,df.year as years
 		from
 		delegainformation df
