@@ -97,7 +97,6 @@ public class BASF10105Controller {
                 }
 
                 //创建消防报警单
-                DeviceinformationVo linkagelistVo = new DeviceinformationVo();
                 if (linkagelist.size() == 1) {
                     Firealarm firealarm = new Firealarm();
                     String yyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString();
@@ -109,26 +108,36 @@ public class BASF10105Controller {
                     firealarm.setCompletesta("0");
                     firealarm.setMisinformation("0");
                     String firealarmuuid = firealarmServices.insert(firealarm, tokenModel);
-                    linkagelistVo.setDeviceinformation(linkagelist.get(0));
-                    linkagelistVo.setFirealarmuuid(firealarmuuid);
-                    list.add(linkagelistVo);
                 }
 
             }
-            //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
-            mapBox_mapLevelServices.remarkSet(alarmMapidList,true,tokenModel);
 
-            // 接收机柜传过来的报警信息
+            //获取并立即推送非误报且未完成的消防报警单
+            Firealarm firealarm = new Firealarm();
+            firealarm.setCompletesta("0");
+            firealarm.setMisinformation("0");
+            List<Firealarm> firealarms = firealarmServices.list(firealarm);
+            for (Firealarm f : firealarms) {
+                if (StringUtils.isNotEmpty(f.getDeviceinformationid()) && StringUtils.isNotEmpty(f.getFirealarmid())) {
+                    DeviceinformationVo linkagelistVo = new DeviceinformationVo();
+                    linkagelistVo.setFirealarmuuid(f.getFirealarmid());
+                    if (deviceinFormationServices.one(f.getDeviceinformationid()) != null) {
+                        linkagelistVo.setDeviceinformation(deviceinFormationServices.one(f.getDeviceinformationid()));
+                    } else
+                        continue;
+                    list.add(linkagelistVo);
+                }
+            }
+            webSocketVo.setTopfirealarmList(firealarms);
+            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+
+            //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
+            mapBox_mapLevelServices.remarkSet(alarmMapidList, true, tokenModel);
+
+            // 推送报警设备信息
             webSocketVo.setDeviceinformationList(list);
             ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 
-            //获取并立即推送非误报且未完成的消防报警单
-            Firealarm firealarm=new Firealarm();
-            firealarm.setCompletesta("0");
-            firealarm.setMisinformation("0");
-            List<Firealarm> firealarms=firealarmServices.list(firealarm);
-            webSocketVo.setTopfirealarmList(firealarms);
-            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 
         }
         return ApiResult.success();

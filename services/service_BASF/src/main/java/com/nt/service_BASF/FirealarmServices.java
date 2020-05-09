@@ -36,8 +36,6 @@ public interface FirealarmServices {
     //更新报警单
     void update(Firealarm firealarm, TokenModel tokenModel)throws Exception;
 
-    //更新报警单状态
-    void upcompletesta(Firealarm firealarm, TokenModel tokenModel) throws Exception;
 
     //获取当月接警数据
     List<FireAlarmStatisticsVo> getFireAlarmStatistics() throws Exception;

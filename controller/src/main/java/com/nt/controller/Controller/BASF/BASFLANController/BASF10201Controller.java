@@ -4,13 +4,19 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
+import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
+import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +40,12 @@ public class BASF10201Controller {
     private FirealarmServices firealarmServices;
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private DeviceInformationServices deviceinFormationServices;
+
+    @Autowired
+    private MapBox_MapLevelServices mapBox_mapLevelServices;
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
@@ -144,35 +156,23 @@ public class BASF10201Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        firealarmServices.update(firealarm,tokenModel);
+        firealarmServices.update(firealarm, tokenModel);
 
         //获取并立即推送非误报且未完成的消防报警单
-        Firealarm firealarmnew =new Firealarm();
+        Firealarm firealarmnew = new Firealarm();
         firealarmnew.setCompletesta("0");
         firealarmnew.setMisinformation("0");
-        List<Firealarm> firealarms=firealarmServices.list(firealarmnew);
+        List<Firealarm> firealarms = firealarmServices.list(firealarmnew);
         webSocketVo.setTopfirealarmList(firealarms);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-        return ApiResult.success();
-    }
-
-    /**
-     * @param firealarm
-     * @param request
-     * @Method upcompletesta
-     * @Author 王哲
-     * @Version 1.0
-     * @Description 更新报警单完成状态
-     * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/22 16：45
-     */
-    @RequestMapping(value = "/upcompletesta", method = {RequestMethod.POST})
-    public ApiResult upcompletesta(@RequestBody Firealarm firealarm, HttpServletRequest request) throws Exception {
-        if (firealarm == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        for (Firealarm fi : firealarms) {
+            if (StringUtils.isNotEmpty(fi.getDeviceinformationid())) {
+                Deviceinformation deviceinformation = deviceinFormationServices.one(fi.getDeviceinformationid());
+                if (deviceinformation != null && StringUtils.isNotEmpty(deviceinformation.getMapid())) {
+                    mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(), true, tokenModel);
+                }
+            }
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        firealarmServices.upcompletesta(firealarm, tokenModel);
         return ApiResult.success();
     }
 }

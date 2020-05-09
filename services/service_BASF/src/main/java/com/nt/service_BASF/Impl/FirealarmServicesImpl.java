@@ -2,10 +2,8 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
-import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.dao_BASF.VO.FireAlarmStatisticsVo;
 import com.nt.dao_BASF.VO.FireAlarmVo;
-import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
@@ -158,28 +156,6 @@ public class FirealarmServicesImpl implements FirealarmServices {
             }
         }
         firealarmMapper.updateByPrimaryKey(firealarm);
-    }
-
-    /**
-     * @param firealarm
-     * @Method upcompletesta
-     * @Author 王哲
-     * @Version 1.0
-     * @Description 更新报警单状态
-     * @Return void
-     * @Date 2019/11/22 16：45
-     */
-    @Override
-    public void upcompletesta(Firealarm firealarm, TokenModel tokenModel) throws Exception {
-        //状态更新（completesta -> "1"）
-        //当处于报警单处于完成或者误报状态时，解除地图报警
-        if("1".equals(firealarm.getCompletesta())||"1".equals(firealarm.getMisinformation())){
-            Deviceinformation deviceinformation=deviceinformationMapper.selectByPrimaryKey(firealarm.getDeviceinformationid());
-            if(deviceinformation!=null){
-                mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(),false,tokenModel);
-            }
-        }
-        firealarmMapper.updateByPrimaryKeySelective(firealarm);
     }
 
     /**

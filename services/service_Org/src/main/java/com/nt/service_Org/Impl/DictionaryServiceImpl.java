@@ -4,13 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
-import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,9 +65,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public void deleteCodes(List<Dictionary> dictionaries, TokenModel tokenModel) throws Exception {
         for (Dictionary d : dictionaries) {
-            d.preUpdate(tokenModel);
-            d.setStatus("1");
-            dictionaryMapper.updateByPrimaryKeySelective(d);
+            dictionaryMapper.deleteByPrimaryKey(d);
         }
     }
 
