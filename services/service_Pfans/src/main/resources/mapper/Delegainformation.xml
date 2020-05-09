@@ -48,22 +48,22 @@
             case when round(march/8/ #{march} ,2) >= 1 then 1 else round(march/8/ #{march} ,2) end march
             from
             (select logmanagement.createby,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '04' THEN TIME_START ELSE 0 END) AS april,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '05' THEN TIME_START ELSE 0 END) AS may,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '06' THEN TIME_START ELSE 0 END) AS june,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '07' THEN TIME_START ELSE 0 END) AS july,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '08' THEN TIME_START ELSE 0 END) AS august,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '09' THEN TIME_START ELSE 0 END) AS september,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '10' THEN TIME_START ELSE 0 END) AS october,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '11' THEN TIME_START ELSE 0 END) AS november,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%m') WHEN '12' THEN TIME_START ELSE 0 END) AS december,
-            SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '01' THEN TIME_START ELSE 0 END) AS january,
-            SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '02' THEN TIME_START ELSE 0 END) AS february,
-            SUM(CASE DATE_FORMAT(DATE_ADD(LOG_DATE, INTERVAL 1 YEAR), '%m') WHEN '03' THEN TIME_START ELSE 0 END) AS march
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'04') THEN TIME_START ELSE 0 END) AS april,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'05') THEN TIME_START ELSE 0 END) AS may,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'06') THEN TIME_START ELSE 0 END) AS june,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'07') THEN TIME_START ELSE 0 END) AS july,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'08') THEN TIME_START ELSE 0 END) AS august,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'09') THEN TIME_START ELSE 0 END) AS september,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'10') THEN TIME_START ELSE 0 END) AS october,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'11') THEN TIME_START ELSE 0 END) AS november,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'12') THEN TIME_START ELSE 0 END) AS december,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'01') THEN TIME_START ELSE 0 END) AS january,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'02') THEN TIME_START ELSE 0 END) AS february,
+            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'03') THEN TIME_START ELSE 0 END) AS march
             from logmanagement
             left join expatriatesinfor
             ON logmanagement.createby = expatriatesinfor.account
-            where DATE_FORMAT(LOG_DATE, '%Y') = #{year}
+            where (DATE_FORMAT(LOG_DATE, '%Y') = #{year} OR DATE_FORMAT(LOG_DATE, '%Y') = #{year} + 1)
             <if test="group_id != null and group_id != ''" >
                 and expatriatesinfor.group_id = #{group_id}
             </if>

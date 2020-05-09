@@ -461,6 +461,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
             //最后大合计
             Double TotalN = 0.0, TotalW = 0.0;
+
             //将数据放入Excel
             int i = 3;
             Map<String, Double> totalCostMap = new HashMap<>();
@@ -472,41 +473,118 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 //行合计
                 Double lineTotalN = 0.0, lineTotalW = 0.0;
 
-                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5, 7));
-                for (int k = 1; k <= 12; k++) {
-                    int colIndex = getColIndex4Month(k);
-                    double manhourN = 0;
-                    double manhourW = 0;
-                    String propertyN = "manhourN" + k;
-                    String propertyW = "manhourM" + k;
-                    //如果是本月
-                    if (month == k) {
-                        if (c.getOPERATIONFORM().equals("BP024001")) {
-                            manhourN = Double.valueOf(c.getWorktime());
-                            manhourW = 0;
-                        } else {
-                            manhourN = 0;
-                            manhourW = Double.valueOf(c.getWorktime());
-                        }
-                    }
+                //4月
+                int colIndex1 = getColIndex4Month(4);
+                row.createCell(colIndex1).setCellValue(Double.valueOf(c.getAPRILGN()));
+                row.createCell(colIndex1 + 1).setCellValue(Double.valueOf(c.getAPRILGW()));
+                lineTotalN += Double.valueOf(c.getAPRILGN());
+                lineTotalW += Double.valueOf(c.getAPRILGW());
+                totalCostMap.put("N4", totalCostMap.getOrDefault("N4", 0.0) + Double.valueOf(c.getAPRILGN()));
+                totalCostMap.put("W4", totalCostMap.getOrDefault("W4", 0.0) + Double.valueOf(c.getAPRILGW()));
+                //5月
+                int colIndex2 = getColIndex4Month(5);
+                row.createCell(colIndex2).setCellValue(Double.valueOf(c.getMAYGN()));
+                row.createCell(colIndex2 + 1).setCellValue(Double.valueOf(c.getMAYGW()));
+                lineTotalN += Double.valueOf(c.getMAYGN());
+                lineTotalW += Double.valueOf(c.getMAYGW());
+                totalCostMap.put("N5", totalCostMap.getOrDefault("N5", 0.0) + Double.valueOf(c.getMAYGN()));
+                totalCostMap.put("W5", totalCostMap.getOrDefault("W5", 0.0) + Double.valueOf(c.getMAYGW()));
+                //6月
+                int colIndex3 = getColIndex4Month(6);
+                row.createCell(colIndex3).setCellValue(Double.valueOf(c.getJUNEGN()));
+                row.createCell(colIndex3 + 1).setCellValue(Double.valueOf(c.getJUNEGW()));
+                lineTotalN += Double.valueOf(c.getJUNEGN());
+                lineTotalW += Double.valueOf(c.getJUNEGW());
+                totalCostMap.put("N6", totalCostMap.getOrDefault("N6", 0.0) + Double.valueOf(c.getJUNEGN()));
+                totalCostMap.put("W6", totalCostMap.getOrDefault("W6", 0.0) + Double.valueOf(c.getJUNEGW()));
+                //7月
+                int colIndex4 = getColIndex4Month(7);
+                row.createCell(colIndex4).setCellValue(Double.valueOf(c.getJULYGN()));
+                row.createCell(colIndex4 + 1).setCellValue(Double.valueOf(c.getJULYGW()));
+                lineTotalN += Double.valueOf(c.getJULYGN());
+                lineTotalW += Double.valueOf(c.getJULYGW());
+                totalCostMap.put("N7", totalCostMap.getOrDefault("N7", 0.0) + Double.valueOf(c.getJULYGN()));
+                totalCostMap.put("W7", totalCostMap.getOrDefault("W7", 0.0) + Double.valueOf(c.getJULYGW()));
+                //8月
+                int colIndex5 = getColIndex4Month(8);
+                row.createCell(colIndex5).setCellValue(Double.valueOf(c.getAUGUSTGN()));
+                row.createCell(colIndex5 + 1).setCellValue(Double.valueOf(c.getAUGUSTGW()));
+                lineTotalN += Double.valueOf(c.getAUGUSTGN());
+                lineTotalW += Double.valueOf(c.getAUGUSTGW());
+                totalCostMap.put("N8", totalCostMap.getOrDefault("N8", 0.0) + Double.valueOf(c.getAUGUSTGN()));
+                totalCostMap.put("W8", totalCostMap.getOrDefault("W8", 0.0) + Double.valueOf(c.getAUGUSTGW()));
+                //9月
+                int colIndex6 = getColIndex4Month(9);
+                row.createCell(colIndex6).setCellValue(Double.valueOf(c.getSEPTEMBERGN()));
+                row.createCell(colIndex6 + 1).setCellValue(Double.valueOf(c.getSEPTEMBERGW()));
+                lineTotalN += Double.valueOf(c.getSEPTEMBERGN());
+                lineTotalW += Double.valueOf(c.getSEPTEMBERGW());
+                totalCostMap.put("N9", totalCostMap.getOrDefault("N9", 0.0) + Double.valueOf(c.getSEPTEMBERGN()));
+                totalCostMap.put("W9", totalCostMap.getOrDefault("W9", 0.0) + Double.valueOf(c.getSEPTEMBERGW()));
+                //10月
+                int colIndex7 = getColIndex4Month(10);
+                row.createCell(colIndex7).setCellValue(Double.valueOf(c.getOCTOBERGN()));
+                row.createCell(colIndex7 + 1).setCellValue(Double.valueOf(c.getOCTOBERGW()));
+                lineTotalN += Double.valueOf(c.getOCTOBERGN());
+                lineTotalW += Double.valueOf(c.getOCTOBERGW());
+                totalCostMap.put("N10", totalCostMap.getOrDefault("N10", 0.0) + Double.valueOf(c.getOCTOBERGN()));
+                totalCostMap.put("W10", totalCostMap.getOrDefault("W10", 0.0) + Double.valueOf(c.getOCTOBERGW()));
+                //11月
+                int colIndex8 = getColIndex4Month(11);
+                row.createCell(colIndex8).setCellValue(Double.valueOf(c.getNOVEMBERGN()));
+                row.createCell(colIndex8 + 1).setCellValue(Double.valueOf(c.getNOVEMBERGW()));
+                lineTotalN += Double.valueOf(c.getNOVEMBERGN());
+                lineTotalW += Double.valueOf(c.getNOVEMBERGW());
+                totalCostMap.put("N11", totalCostMap.getOrDefault("N11", 0.0) + Double.valueOf(c.getNOVEMBERGN()));
+                totalCostMap.put("W11", totalCostMap.getOrDefault("W11", 0.0) + Double.valueOf(c.getNOVEMBERGW()));
+                //12月
+                int colIndex9 = getColIndex4Month(12);
+                row.createCell(colIndex9).setCellValue(Double.valueOf(c.getDECEMBERGN()));
+                row.createCell(colIndex9 + 1).setCellValue(Double.valueOf(c.getDECEMBERGW()));
+                lineTotalN += Double.valueOf(c.getDECEMBERGN());
+                lineTotalW += Double.valueOf(c.getDECEMBERGW());
+                totalCostMap.put("N12", totalCostMap.getOrDefault("N12", 0.0) + Double.valueOf(c.getDECEMBERGN()));
+                totalCostMap.put("W12", totalCostMap.getOrDefault("W12", 0.0) + Double.valueOf(c.getDECEMBERGW()));
+                //1月
+                int colIndex10 = getColIndex4Month(1);
+                row.createCell(colIndex10).setCellValue(Double.valueOf(c.getJANUARYGN()));
+                row.createCell(colIndex10 + 1).setCellValue(Double.valueOf(c.getJANUARYGW()));
+                lineTotalN += Double.valueOf(c.getJANUARYGN());
+                lineTotalW += Double.valueOf(c.getJANUARYGW());
+                totalCostMap.put("N1", totalCostMap.getOrDefault("N1", 0.0) + Double.valueOf(c.getJANUARYGN()));
+                totalCostMap.put("W1", totalCostMap.getOrDefault("W1", 0.0) + Double.valueOf(c.getJANUARYGW()));
+                //2月
+                int colIndex11 = getColIndex4Month(2);
+                row.createCell(colIndex11).setCellValue(Double.valueOf(c.getFEBRUARYGN()));
+                row.createCell(colIndex11 + 1).setCellValue(Double.valueOf(c.getFEBRUARYGW()));
+                lineTotalN += Double.valueOf(c.getFEBRUARYGN());
+                lineTotalW += Double.valueOf(c.getFEBRUARYGW());
+                totalCostMap.put("N2", totalCostMap.getOrDefault("N2", 0.0) + Double.valueOf(c.getFEBRUARYGN()));
+                totalCostMap.put("W2", totalCostMap.getOrDefault("W2", 0.0) + Double.valueOf(c.getFEBRUARYGW()));
+                //3月
+                int colIndex12 = getColIndex4Month(3);
+                row.createCell(colIndex12).setCellValue(Double.valueOf(c.getMARCHGN()));
+                row.createCell(colIndex12 + 1).setCellValue(Double.valueOf(c.getMARCHGW()));
+                lineTotalN += Double.valueOf(c.getMARCHGN());
+                lineTotalW += Double.valueOf(c.getMARCHGW());
+                totalCostMap.put("N3", totalCostMap.getOrDefault("N3", 0.0) + Double.valueOf(c.getMARCHGN()));
+                totalCostMap.put("W3", totalCostMap.getOrDefault("W3", 0.0) + Double.valueOf(c.getMARCHGW()));
 
-                    lineTotalN += manhourN;
-                    lineTotalW += manhourW;
-                    TotalN += manhourN;
-                    TotalW += manhourW;
-                    row.createCell(colIndex).setCellValue(manhourN);
-                    row.createCell(colIndex + 1).setCellValue(manhourW);
-                    totalCostMap.put(propertyN, totalCostMap.getOrDefault(propertyN, 0.0) + manhourN);
-                    totalCostMap.put(propertyW, totalCostMap.getOrDefault(propertyW, 0.0) + manhourW);
+                TotalN +=lineTotalN;
+                TotalW +=lineTotalW;
 
-                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(propertyN));
-                    rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyW));
-                }
                 row.createCell(1).setCellValue(i - 2);
                 row.createCell(2).setCellValue(c.getSUPPLIERNAME());
                 row.createCell(27).setCellValue(lineTotalN);
                 row.createCell(28).setCellValue(lineTotalW);
                 i++;
+            }
+            for (int k = 1; k <= 12; k++) {
+                int colIndex = getColIndex4Month(k);
+                String propertyN = "N" + k;
+                String propertyW = "W" + k;
+                rowT.createCell(colIndex).setCellValue(totalCostMap.get(propertyN));
+                rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyW));
             }
             int colIndexTol = getColIndex4Month(13);
             rowT.createCell(colIndexTol).setCellValue(TotalN);
