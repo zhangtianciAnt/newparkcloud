@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.ThemePlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
+import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanDetailVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
 import com.nt.service_pfans.PFANS1000.ThemePlanService;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanDetailMapper;
@@ -45,6 +46,24 @@ public class ThemePlanServiceImpl implements ThemePlanService {
         colist = themePlanDetailMapper.getDetailList(themePlan.getThemeplan_id());
         if (colist.size() > 0) {
             colist = colist.stream().sorted(Comparator.comparing(ThemePlanDetail::getRowindex)).collect(Collectors.toList());
+        }
+        return colist;
+    }
+
+    @Override
+    public List<ThemePlanDetailVo> detilList(ThemePlanDetail themePlanDetail) throws Exception {
+        List<ThemePlanDetailVo> colist = new ArrayList<ThemePlanDetailVo>();
+        List<ThemePlanDetail> Detaillist = new ArrayList<ThemePlanDetail>();
+        Detaillist = themePlanDetailMapper.select(themePlanDetail);
+        for(ThemePlanDetail tpd : Detaillist){
+            ThemePlanDetailVo Vo = new ThemePlanDetailVo();
+            ThemePlanDetail de = new ThemePlanDetail();
+            de.setPthemeplandetail_id(tpd.getThemeplandetail_id());
+            List<ThemePlanDetail> detailp = new ArrayList<ThemePlanDetail>();
+            detailp = themePlanDetailMapper.select(de);
+            Vo.setThemeplandetail(tpd);
+            Vo.setChildren(detailp);
+            colist.add(Vo);
         }
         return colist;
     }

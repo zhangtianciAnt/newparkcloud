@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.ThemePlan;
+import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
 import com.nt.service_pfans.PFANS1000.ThemePlanService;
 import com.nt.utils.ApiResult;
@@ -46,6 +47,16 @@ public class Pfans1040Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         themePlan.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(themePlanService.get(themePlan));
+    }
+
+    @RequestMapping(value = "/getdetilList", method = {RequestMethod.POST})
+    public ApiResult detilList(@RequestBody ThemePlanDetail themePlanDetail, HttpServletRequest request) throws Exception {
+        if (themePlanDetail == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        themePlanDetail.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(themePlanService.detilList(themePlanDetail));
     }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})

@@ -23,6 +23,9 @@ public class ThemePlanDetail extends BaseModel {
     @Column(name = "THEMEPLAN_ID")
     private String themeplan_id;
 
+    @Column(name = "PTHEMEPLANDETAIL_ID")
+    private String pthemeplandetail_id;
+
     @Column(name = "CENTER_ID")
     private String center_id;
 
