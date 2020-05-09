@@ -423,6 +423,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                         totalCostMapflg = totalCostMap.get(propertyC);
                     } else {
                         Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
+                        DecimalFormat dlf = new DecimalFormat("#0.00");
+                        avg = Double.valueOf(dlf.format(avg));
                         rowT1.createCell(colIndex).setCellValue(avg);
                         totalCostMapflg = totalCostMap.get(propertyC);
                     }
