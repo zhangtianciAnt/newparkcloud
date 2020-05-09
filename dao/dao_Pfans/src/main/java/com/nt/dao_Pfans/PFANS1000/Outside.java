@@ -41,4 +41,11 @@ public class Outside extends BaseModel {
     @Column(name = "DAILYPAYMENT")
     private Date dailypayment;
 
+    /**
+     * 对应状态
+     */
+    @Column(name = "CORRESPONDING")
+    private String corresponding;
+
+
 }

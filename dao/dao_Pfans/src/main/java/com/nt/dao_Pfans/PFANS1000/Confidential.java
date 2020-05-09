@@ -76,4 +76,10 @@ public class Confidential extends BaseModel {
 
     @Column(name = "CONFIDENT")
     private String confident;
+
+    /**
+     * 对应状态
+     */
+    @Column(name = "CORRESPONDING")
+    private String corresponding;
 }
