@@ -2,12 +2,14 @@ package com.nt.service_AOCHUAN.AOCHUAN4000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierproductrelationMapper;
+import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SampleMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
@@ -38,6 +40,9 @@ public class ProductsServiceImpl implements ProductsService {
     private SampleMapper sampleMapper;
     @Autowired
     private QuotationsMapper quotationsMapper;
+
+    @Autowired
+    private CustomerbaseinforMapper customerbaseinforMapper;
 
 
     @Override
@@ -72,7 +77,7 @@ public class ProductsServiceImpl implements ProductsService {
         productsMapper.updateByPrimaryKey(products);
         productsMapper.deleteByPrimaryKey(id);
     }
-
+//获取供应商
     @Override
     public List<Supplierbaseinfor> getGYS(String ids) throws Exception {
         Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
@@ -86,6 +91,20 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
         return supplierbaseinforList;
+    }
+//获取客户信息
+    @Override
+    public List<Customerbaseinfor> getKH(String ids) throws Exception {
+        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+        Supplierproductrelation supplierproductrelation = new Supplierproductrelation();
+        supplierproductrelation.setProducts_id(ids);
+        List<Supplierproductrelation> list = supplierproductrelationMapper.select(supplierproductrelation);
+        List<Customerbaseinfor> list1 = new ArrayList();
+        for(Supplierproductrelation supp : list){
+            customerbaseinfor = customerbaseinforMapper.selectByPrimaryKey(supp.getSupplierbaseinfor_id());
+            list1.add(customerbaseinfor);
+        }
+        return list1;
     }
 
     @Override

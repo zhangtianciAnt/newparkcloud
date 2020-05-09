@@ -2,6 +2,7 @@ package com.nt.service_AOCHUAN.AOCHUAN4000;
 
 
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
@@ -23,6 +24,8 @@ public interface ProductsService {
     void delete(String id) throws Exception;
 
     List<Supplierbaseinfor> getGYS(String ids) throws Exception;
+
+    List<Customerbaseinfor> getKH(String ids) throws Exception;
 
     List<TransportGood> getZH(String ids) throws Exception;
 

@@ -76,6 +76,15 @@ public class AOCHUAN4001Controller {
         return ApiResult.success(productsService.getGYS(id));
     }
 
+    @RequestMapping(value = "/getKH",method={RequestMethod.GET})
+    public ApiResult getKH(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(productsService.getKH(id));
+    }
+
     @RequestMapping(value = "/getZH",method={RequestMethod.GET})
     public ApiResult getZH(@RequestParam String id, HttpServletRequest request) throws Exception {
         if (id == null) {
