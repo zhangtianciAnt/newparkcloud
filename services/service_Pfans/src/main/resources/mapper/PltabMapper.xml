@@ -54,8 +54,6 @@
                sum(CASE a.code WHEN 'shiguaping' THEN a.rmb ELSE 0 END)
                AS 'process',
                sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END)
-               AS 'inwetuo',
-               sum(CASE a.code WHEN 'neibuhetong' THEN a.rmb ELSE 0 END)
                AS 'inst'
         from
             (
@@ -475,7 +473,9 @@
                sum(CASE c.code WHEN 'uncoststa' THEN c.worktime ELSE 0 END)
                AS 'uncoststa',
                sum(CASE c.code WHEN 'unplpublice' THEN c.worktime ELSE 0 END)
-               AS 'unplpublice'
+               AS 'unplpublice',
+               sum(CASE c.code WHEN 'neibuweituo' THEN c.worktime ELSE 0 END)
+               AS 'inwetuo'
         from (
                  select 'worktimei1' as `code`,count(1) as worktime
                  from (
@@ -863,6 +863,17 @@
                  and
                  public.STATUS='4'
                  group by `code`
+
+                 union all
+                 select 'neibuweituo' as code,cast(sum(CLAIMAMOUNT) AS decimal(15,2)) as rmb
+                 from contractnumbercount contract
+                          inner join companyprojects company
+                                     on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
+                                         and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
+                 where company.toolsorgs = #{groupid}
+                 and  company.toolstype = '1'
+                 AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(company.STARTDATE,'%Y%m') AND DATE_FORMAT(company.ENDDATE,'%Y%m')
+                 GROUP BY code
              ) c
              group by pj1
     </select>
