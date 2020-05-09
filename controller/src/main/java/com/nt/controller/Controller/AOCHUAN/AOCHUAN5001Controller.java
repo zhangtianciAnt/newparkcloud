@@ -226,12 +226,20 @@ public class AOCHUAN5001Controller {
         Date crdlNoDate = new Date();
 
         //业务日期
-        if (("1").equals(docurule.getBusinessday())) {
-            busDate = finSales.getArrivaltime();
+        if (("2").equals(docurule.getBusinessday())) {
+            if("PW001002".equals(finSales.getCredential_status())){
+                busDate = finSales.getCreateon();
+            }else{
+                busDate = finSales.getArrivaltime();
+            }
         }
         //记账日期
-        if (("1").equals(docurule.getNowday())) {
-            accDate = finSales.getArrivaltime();
+        if (("2").equals(docurule.getNowday())) {
+            if("PW001002".equals(finSales.getCredential_status())){
+                busDate = finSales.getCreateon();
+            }else {
+                accDate = finSales.getArrivaltime();
+            }
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -262,8 +270,9 @@ public class AOCHUAN5001Controller {
 
             //金额计算
             Double calAmount = 0.00;
-            calAmount = amountCalculation(item.getAmounttype(),finSales);
-
+            if(StringUtils.isNotBlank(item.getAmounttype())) {
+                calAmount = amountCalculation(item.getAmounttype(), finSales);
+            }
             //分录
             accountingRule.setRemarks(remarks);//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码
@@ -273,7 +282,7 @@ public class AOCHUAN5001Controller {
             accountingRule.setEx_rate(finSales.getEx_rate());//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
             accountingRule.setOricurrency_amount(Double.parseDouble(finSales.getSalesamount()));//原币金额
-            accountingRule.setUnit(item.getUnit());//单位
+            accountingRule.setUnit(item.getUnitname());//单位
             accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
             accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
             accountingRule.setAmount(calAmount);//金额
