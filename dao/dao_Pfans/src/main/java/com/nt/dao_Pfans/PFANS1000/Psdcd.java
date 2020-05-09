@@ -92,5 +92,9 @@ public class Psdcd extends BaseModel {
     @Column(name = "REMARK")
     private String remark;
 
-
+    /**
+     * 对应状态
+     */
+    @Column(name = "CORRESPONDING")
+    private String corresponding;
 }

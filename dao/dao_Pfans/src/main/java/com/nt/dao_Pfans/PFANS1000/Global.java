@@ -32,6 +32,12 @@ public class Global extends BaseModel {
     private String type;
 
     /**
+     * 对应状态
+     */
+    @Column(name = "CORRESPONDING")
+    private String corresponding;
+
+    /**
      * サブ種類
      */
     @Column(name = "SUBTYPE")

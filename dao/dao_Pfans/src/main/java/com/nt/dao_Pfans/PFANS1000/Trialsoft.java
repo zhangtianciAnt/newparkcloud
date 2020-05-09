@@ -38,6 +38,12 @@ public class Trialsoft extends BaseModel {
     private String center_id;
 
     /**
+     * 对应状态
+     */
+    @Column(name = "CORRESPONDING")
+    private String corresponding;
+
+    /**
      * 所属グループ
      */
     @Column(name = "GROUP_ID")
