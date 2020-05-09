@@ -448,56 +448,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 sheet1.getRow(1).getCell(2*j+1).setCellValue(sdf.format(now.getTime()));
                 now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
             }
-
             List<bpSum2Vo> list =  this.getWorkTimes(groupid, years);
-            //将数据放入Excel
-            int i = 3;
-            Map<String, Double> totalCostMap = new HashMap<>();
-            for (bpSum2Vo c : list) {
-                //创建工作表的行
-                XSSFRow row = sheet1.createRow(i);
-
-                Double lineTotalManhour = 0.0, lineTotalCost = 0.0;
-                for (int k = 1; k <=13; k++) {
-                    double manhour = 0;
-                    double cost = 0;
-                    String property = "manhour" + k;
-                    String propertyC = "cost" + k;
-                    if ( k > 12 ) {
-                        property  = "totalmanhours";
-                        propertyC  = "totalcost";
-                    }
-                    try {
-                        int colIndex = getColIndex4Month(k);
-                        if ( k > 12 ) {
-                            manhour = lineTotalManhour;
-                            cost = lineTotalCost;
-                        } else {
-                            manhour = getDoubleValue(c, property);
-                            cost = getDoubleValue(c, propertyC);
-                            lineTotalManhour += manhour;
-                            lineTotalManhour += cost;
-                        }
-                        row.createCell(colIndex).setCellValue(manhour);
-                        row.createCell(colIndex+1).setCellValue(cost);
-
-                        totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
-                        totalCostMap.put(propertyC, totalCostMap.getOrDefault(propertyC, 0.0) + cost);
-                    } catch (Exception e) {}
-
-                }
-
-                row.createCell(1).setCellValue(i - 2);
-//                Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
-//                if (ls != null) {
-//                    row.createCell(2).setCellValue(ls.getSupchinese());
-//                }
-
-                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
-                totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
-                i++;
-            }
-
             int rowIndex = list.size()+2;
             //合计行
             XSSFRow rowT = sheet1.createRow(1 + rowIndex);
@@ -505,25 +456,63 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
             sheet1.addMergedRegion(region);
 
-            // 设置值
-            for (int k = 1; k <=13; k++) {
-                String property = "manhour" + k;
-                String propertyC = "cost" + k;
-                if ( k > 12 ) {
-                    property  = "totalmanhours";
-                    propertyC  = "totalcost";
-                }
-                int colIndex = getColIndex4Month(k);
-                //合计行
-                if(totalCostMap.size() > 0 ){
-                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
-                    rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
-                } else {
-                    rowT.createCell(colIndex).setCellValue(0.0);
-                    rowT.createCell(colIndex + 1).setCellValue(0.0);
-                }
+            //最后大合计
+            Double TotalN = 0.0, TotalW = 0.0;
+            //将数据放入Excel
+            int i = 3;
+            Map<String, Double> totalCostMap = new HashMap<>();
+            SimpleDateFormat sf1ym = new SimpleDateFormat("yyyy-MM");
+            for (bpSum2Vo c : list) {
+                //创建工作表的行
+                XSSFRow row = sheet1.createRow(i);
 
+                //行合计
+                Double lineTotalN = 0.0, lineTotalW = 0.0;
+
+                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5,7));
+                for (int k = 1; k <=12; k++)
+                {
+                    int colIndex = getColIndex4Month(k);
+                    double manhourN = 0;
+                    double manhourW = 0;
+                    String propertyN = "manhourN" + k;
+                    String propertyW = "manhourM" + k;
+                    //如果是本月
+                    if(month == k)
+                    {
+                        if(c.getOPERATIONFORM().equals("BP024001"))
+                        {
+                            manhourN = Double .valueOf(c.getWorktime());
+                            manhourW = 0;
+                        }
+                        else
+                        {
+                            manhourN = 0;
+                            manhourW = Double .valueOf(c.getWorktime());
+                        }
+                    }
+
+                    lineTotalN += manhourN;
+                    lineTotalW += manhourW;
+                    TotalN += manhourN;
+                    TotalW += manhourW;
+                    row.createCell(colIndex).setCellValue(manhourN);
+                    row.createCell(colIndex+1).setCellValue(manhourW);
+                    totalCostMap.put(propertyN, totalCostMap.getOrDefault(propertyN, 0.0) + manhourN);
+                    totalCostMap.put(propertyW, totalCostMap.getOrDefault(propertyW, 0.0) + manhourW);
+
+                    rowT.createCell(colIndex).setCellValue(totalCostMap.get(propertyN));
+                    rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyW));
+                }
+                row.createCell(1).setCellValue(i - 2);
+                row.createCell(2).setCellValue(c.getSUPPLIERNAME());
+                row.createCell(27).setCellValue(lineTotalN);
+                row.createCell(28).setCellValue(lineTotalW);
+                i++;
             }
+            int colIndexTol = getColIndex4Month(13);
+            rowT.createCell(colIndexTol).setCellValue(TotalN);
+            rowT.createCell(colIndexTol + 1).setCellValue(TotalW);
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
