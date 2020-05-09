@@ -472,7 +472,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 //行合计
                 Double lineTotalN = 0.0, lineTotalW = 0.0;
 
-                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5, 7));
+//                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5, 7));
                 for (int k = 1; k <= 12; k++) {
                     int colIndex = getColIndex4Month(k);
                     double manhourN = 0;
@@ -480,15 +480,15 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     String propertyN = "manhourN" + k;
                     String propertyW = "manhourM" + k;
                     //如果是本月
-                    if (month == k) {
-                        if (c.getOPERATIONFORM().equals("BP024001")) {
-                            manhourN = Double.valueOf(c.getWorktime());
-                            manhourW = 0;
-                        } else {
-                            manhourN = 0;
-                            manhourW = Double.valueOf(c.getWorktime());
-                        }
-                    }
+//                    if (month == k) {
+//                        if (c.getOPERATIONFORM().equals("BP024001")) {
+//                            manhourN = Double.valueOf(c.getWorktime());
+//                            manhourW = 0;
+//                        } else {
+//                            manhourN = 0;
+//                            manhourW = Double.valueOf(c.getWorktime());
+//                        }
+//                    }
 
                     lineTotalN += manhourN;
                     lineTotalW += manhourW;
