@@ -307,7 +307,16 @@
         @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',round((@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),2),round((@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE),2)) as THISMONTHBASICGEI, #本月基本给
         round( @BASE_SJJE - @THISMONTHBASICGEI, 2 ) AS THISMONTHDUTYGEI,#本月职责给
         @YKBZJS := base.DIC_YKBZZS AS YKBZJS, # 一括补助基本給
-        @YKBZ := round(
+        @YKBZ :=
+        CASE
+        WHEN ( @TYPE &lt;=> '2' ) THEN
+        round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS ), 2 )
+        WHEN ( @TYPE &lt;=> '1' ) THEN
+        base.INDUCTION_LUNCH
+        WHEN ( @TYPE &lt;=> '4' ) THEN
+        round(base.RETIRE_LUNCH - @YKBZJS / 21.75 / 8 * (@SHORTDEFICIENCY + @CHRONICDEFICIENCY + @DILIGENCE),2)
+        ELSE
+        round(
         IF
         (
         base.LASTMONTHSUITDAYS &lt;=> 0,
@@ -321,7 +330,7 @@
         base.DIC_YKBZZS * ( 168 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / 168
         ),
         2
-        ) AS YKBZ,#一括补助
+        ) END AS YKBZ,#一括补助
         @JBBZ := (IF(@TYPE = '4',base.SUBSIDY,base.LASTTOTALY)) AS OVERTIMESUBSIDY,# 加班补助 gbb base.SUBSIDY
         @XJ1 := round( ( @BASE_SJJE + @JBBZ + @YKBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
