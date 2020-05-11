@@ -100,80 +100,100 @@ public class Pfans1007Controller {
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
         //原值总额
-        BigDecimal bd = new BigDecimal(asvo.getAssetinformation().getTotalvalue());
-        str_format = df.format(bd);
-        asvo.getAssetinformation().setTotalvalue(str_format);
+//        BigDecimal bd = new BigDecimal(asvo.getAssetinformation().getTotalvalue());
+//        str_format = df.format(bd);
+//        asvo.getAssetinformation().setTotalvalue(str_format);
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getAssetinformation().getTotalvalue())) {
+            BigDecimal bd = new BigDecimal(asvo.getAssetinformation().getTotalvalue());
+            str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0.00";
+            }
+            asvo.getAssetinformation().setTotalvalue(str_format);
+        } else {
+            asvo.getAssetinformation().setTotalvalue("0.00");
+        }
         //净值总额
-        bd = new BigDecimal(asvo.getAssetinformation().getTotalnetworth());
-        str_format = df.format(bd);
-        asvo.getAssetinformation().setTotalnetworth(str_format);
+//        bd = new BigDecimal(asvo.getAssetinformation().getTotalnetworth());
+//        str_format = df.format(bd);
+//        asvo.getAssetinformation().setTotalnetworth(str_format);
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getAssetinformation().getTotalnetworth())) {
+            BigDecimal bd = new BigDecimal(asvo.getAssetinformation().getTotalnetworth());
+            str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0.00";
+            }
+            asvo.getAssetinformation().setTotalnetworth(str_format);
+        } else {
+            asvo.getAssetinformation().setTotalnetworth("0.00");
+        }
 //            List<Salesdetails> saList = asvo.getSalesdetails();
 //            List<Scrapdetails> scList = asvo.getScrapdetails();
         for (int h = 0; h < asvo.getScrapdetails().size(); h++) {
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getScrapdetails().get(h).getOriginalvalue())) {
-                bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
+                BigDecimal bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
                 str_format = df.format(bd);
                 if (str_format.equals(".00")) {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 asvo.getScrapdetails().get(h).setNetworth(str_format);
             } else {
-                asvo.getScrapdetails().get(h).setNetworth("0");
+                asvo.getScrapdetails().get(h).setNetworth("0.00");
             }
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getScrapdetails().get(h).getOriginalvalue())) {
-                bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
+                BigDecimal bd = new BigDecimal(asvo.getScrapdetails().get(h).getOriginalvalue());
                 str_format = df.format(bd);
                 if (str_format.equals(".00")) {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 asvo.getScrapdetails().get(h).setOriginalvalue(str_format);
             } else {
-                asvo.getScrapdetails().get(h).setOriginalvalue("0");
+                asvo.getScrapdetails().get(h).setOriginalvalue("0.00");
             }
         }
         for (int h = 0; h < asvo.getSalesdetails().size(); h++) {
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getOriginalvalue())) {
-                bd = new BigDecimal(asvo.getSalesdetails().get(h).getOriginalvalue());
+                BigDecimal bd = new BigDecimal(asvo.getSalesdetails().get(h).getOriginalvalue());
                 str_format = df.format(bd);
                 if (str_format.equals(".00")) {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 asvo.getScrapdetails().get(h).setOriginalvalue(str_format);
             } else {
-                asvo.getScrapdetails().get(h).setOriginalvalue("0");
+                asvo.getScrapdetails().get(h).setOriginalvalue("0.00");
             }
 
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getNetworth())) {
-                bd = new BigDecimal(asvo.getSalesdetails().get(h).getNetworth());
+                BigDecimal bd = new BigDecimal(asvo.getSalesdetails().get(h).getNetworth());
                 str_format = df.format(bd);
                 if (str_format.equals(".00")) {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 asvo.getSalesdetails().get(h).setNetworth(str_format);
             } else {
-                asvo.getSalesdetails().get(h).setNetworth("0");
+                asvo.getSalesdetails().get(h).setNetworth("0.00");
             }
 
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getSellingprice())) {
-                bd = new BigDecimal(asvo.getSalesdetails().get(h).getSellingprice());
+                BigDecimal bd = new BigDecimal(asvo.getSalesdetails().get(h).getSellingprice());
                 str_format = df.format(bd);
                 if (str_format.equals(".00")) {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 asvo.getSalesdetails().get(h).setSellingprice(str_format);
             } else {
-                asvo.getSalesdetails().get(h).setSellingprice("0");
+                asvo.getSalesdetails().get(h).setSellingprice("0.00");
             }
 
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(asvo.getSalesdetails().get(h).getLoss())) {
-                bd = new BigDecimal(asvo.getSalesdetails().get(h).getLoss());
+                BigDecimal bd = new BigDecimal(asvo.getSalesdetails().get(h).getLoss());
                 str_format = df.format(bd);
                 if (str_format.equals(".00")) {
-                    str_format = "0";
+                    str_format = "0.00";
                 }
                 asvo.getSalesdetails().get(h).setLoss(str_format);
             } else {
-                asvo.getSalesdetails().get(h).setLoss("0");
+                asvo.getSalesdetails().get(h).setLoss("0.00");
             }
         }
         Query query = new Query();
