@@ -327,8 +327,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             Query query_userid = new Query();
             List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
             for (CustomerInfo customerInfo : customerInfoList) {
-                //if(customerInfo.getUserid().equals("5e78b2084e3b194874180e5f")){
-
+                try{
                     TokenModel tokenModel = new TokenModel();
 
                     //查询更新一天的考勤数据
@@ -379,7 +378,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         saveAttendance(attendance, "1", tokenModel);
                         attendancelist.add(attendance);
                     }
-                //}
+                }
+                catch (Exception e) {
+                    System.out.println("考勤数据取得异常:" + customerInfo.getUserinfo().getCustomername());
+                    continue;
+                }
             }
 
             TokenModel token = new TokenModel();
@@ -387,7 +390,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if(attendancelist.size() > 0){
                 for (Attendance ad : attendancelist)
                 {
-                    //if(ad.getUser_id().equals("5e78b2084e3b194874180e5f")){
+                    try{
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
@@ -1656,7 +1659,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                             //---------查询昨天大打卡记录end-------
                         }
-                    //}
+                    }
+                    catch (Exception e) {
+                        System.out.println("考勤数据生成异常:" + ad.getUser_id());
+                        continue;
+                    }
                             //---------不定时考勤人员(非不定时考勤人员才计算)end-------
                 }
                         //}
