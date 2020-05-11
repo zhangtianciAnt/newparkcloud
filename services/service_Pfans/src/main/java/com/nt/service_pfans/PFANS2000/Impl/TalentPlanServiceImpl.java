@@ -1,4 +1,5 @@
 package com.nt.service_pfans.PFANS2000.Impl;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.TalentPlan;
@@ -64,8 +65,8 @@ public class TalentPlanServiceImpl implements TalentPlanService {
                 add.setTeam_id(user.getUserinfo().getTeamid());
                 add.setSkilllevel(user.getUserinfo().getRank());
                 add.setSchoolspecies(user.getUserinfo().getEducational());
-                add.setEntryyear(DateUtil.parse(user.getUserinfo().getEnterday()));
-                add.setGraduationyear(DateUtil.parse(user.getUserinfo().getGraduationday()));
+                add.setEntryyear(Convert.toDate(user.getUserinfo().getEnterday()));
+                add.setGraduationyear(Convert.toDate(user.getUserinfo().getGraduationday()));
                 add.setTalentplan_id(UUID.randomUUID().toString());
                 add.preInsert(tokenModel);
                 adds.add(add);
