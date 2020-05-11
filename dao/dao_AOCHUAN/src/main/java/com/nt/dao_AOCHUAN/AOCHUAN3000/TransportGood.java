@@ -130,6 +130,8 @@ public class TransportGood extends BaseModel {
 
     private String paybackstatus;
 
+    private String receptgoods;
+
     private int type;
 
     private Date ap_date;
