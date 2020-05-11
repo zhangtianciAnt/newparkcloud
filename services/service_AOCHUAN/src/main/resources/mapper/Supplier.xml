@@ -10,6 +10,7 @@
         AND
         SUPPLIERBASEINFOR_ID NOT IN (
         SELECT SUPPLIER_ID FROM projects
+        WHERE STATUS !='1'
         )
     </select>
 </mapper>

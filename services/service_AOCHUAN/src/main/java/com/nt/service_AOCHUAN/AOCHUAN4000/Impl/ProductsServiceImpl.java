@@ -15,6 +15,7 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SampleMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,19 @@ public class ProductsServiceImpl implements ProductsService {
     @Override
     public void insert(Products products, TokenModel tokenModel) throws Exception {
         products.preInsert(tokenModel);
-        products.setProducts_id(UUID.randomUUID().toString());
-        productsMapper.insert(products);
+        Products pro = new Products();
+        pro.setChinaname(products.getChinaname());
+
+        List<Products> list =productsMapper.select(pro);
+        if(list.size()>0){
+            throw new LogicalException("产品中文名已经注册");
+        }
+        else {
+            products.setProducts_id(UUID.randomUUID().toString());
+            productsMapper.insert(products);
+        }
+
+
     }
 
     @Override
