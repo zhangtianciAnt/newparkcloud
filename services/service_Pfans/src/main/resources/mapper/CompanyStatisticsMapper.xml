@@ -476,22 +476,55 @@
 
 	<select id="getbpsum" resultType="com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo">
 	    select
+		<if test="groupid!=null and groupid !=''">
 		*
+		</if>
+		<if test="groupid ==null || groupid ==''">
+			SUPPLIERNAME,
+			sum(CONVERT(JANUARY,DECIMAL(10,0))) as JANUARY, sum(CONVERT(FEBRUARY,DECIMAL(10,0))) as FEBRUARY,
+			sum(CONVERT(MARCH,DECIMAL(10,0))) as MARCH, sum(CONVERT(APRIL,DECIMAL(10,0))) as APRIL, sum(CONVERT(MAY,DECIMAL(10,0))) as MAY, sum(CONVERT(JUNE,DECIMAL(10,0))) as JUNE,
+			sum(CONVERT(JULY,DECIMAL(10,0))) as JULY, sum(CONVERT(AUGUST,DECIMAL(10,0))) as AUGUST, sum(CONVERT(SEPTEMBER,DECIMAL(10,0))) as SEPTEMBER, sum(CONVERT(OCTOBER,DECIMAL(10,0))) as OCTOBER,
+			sum(CONVERT(NOVEMBER,DECIMAL(10,0))) as NOVEMBER, sum(CONVERT(DECEMBER,DECIMAL(10,0))) as DECEMBER
+		</if>
 		from bpsum3
-	    where GROUP_ID= #{groupid}
-		and
+	    where
 		year = #{years}
+		<if test="groupid!=null and groupid !=''">
+			and GROUP_ID= #{groupid}
+		</if>
+		<if test="groupid == null || groupid ==''">
+			group by SUPPLIERNAME
+		</if>
 		order by
 		year
 	</select>
 
 	<select id="getbpsum2" resultType="com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo">
-	    select
-	*
+		select
+		<if test="groupid!=null and groupid !=''">
+			*
+		</if>
+		<if test="groupid ==null || groupid ==''">
+			SUPPLIERNAME,
+			sum(CONVERT(JANUARYGN,DECIMAL(10,2))) as JANUARYGN, sum(CONVERT(FEBRUARYGN,DECIMAL(10,2))) as FEBRUARYGN,
+			sum(CONVERT(MARCHGN,DECIMAL(10,2))) as MARCHGN, sum(CONVERT(APRILGN,DECIMAL(10,2))) as APRILGN, sum(CONVERT(MAYGN,DECIMAL(10,2))) as MAYGN, sum(CONVERT(JUNEGN,DECIMAL(10,2))) as JUNEGN,
+			sum(CONVERT(JULYGN,DECIMAL(10,2))) as JULYGN, sum(CONVERT(AUGUSTGN,DECIMAL(10,2))) as AUGUSTGN, sum(CONVERT(SEPTEMBERGN,DECIMAL(10,2))) as SEPTEMBERGN, sum(CONVERT(OCTOBERGN,DECIMAL(10,2))) as OCTOBERGN,
+			sum(CONVERT(NOVEMBERGN,DECIMAL(10,2))) as NOVEMBERGN, sum(CONVERT(DECEMBERGN,DECIMAL(10,2))) as DECEMBERGN
+			,
+			sum(CONVERT(JANUARYGW,DECIMAL(10,2))) as JANUARYGW, sum(CONVERT(FEBRUARYGW,DECIMAL(10,2))) as FEBRUARYGW,
+			sum(CONVERT(MARCHGW,DECIMAL(10,2))) as MARCHGW, sum(CONVERT(APRILGW,DECIMAL(10,2))) as APRILGW, sum(CONVERT(MAYGW,DECIMAL(10,2))) as MAYGW, sum(CONVERT(JUNEGW,DECIMAL(10,2))) as JUNEGW,
+			sum(CONVERT(JULYGW,DECIMAL(10,2))) as JULYGW, sum(CONVERT(AUGUSTGW,DECIMAL(10,2))) as AUGUSTGW, sum(CONVERT(SEPTEMBERGW,DECIMAL(10,2))) as SEPTEMBERGW, sum(CONVERT(OCTOBERGW,DECIMAL(10,2))) as OCTOBERGW,
+			sum(CONVERT(NOVEMBERGW,DECIMAL(10,2))) as NOVEMBERGW, sum(CONVERT(DECEMBERGW,DECIMAL(10,2))) as DECEMBERGW
+		</if>
 		from bpsum2
-		where GROUP_ID= #{groupid}
-		and
+		where
 		year = #{years}
+		<if test="groupid!=null and groupid !=''">
+			and GROUP_ID= #{groupid}
+		</if>
+		<if test="groupid == null || groupid ==''">
+			group by SUPPLIERNAME
+		</if>
 		order by
 		year
 	</select>
