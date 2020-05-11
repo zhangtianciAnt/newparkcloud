@@ -169,4 +169,10 @@ public class TalentPlan extends BaseModel {
     @Column(name = "PROMOTION")
     private String promotion;
 
+    /**
+     * 年度
+     */
+    @Column(name = "YEAR")
+    private String year;
+
 }
