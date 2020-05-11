@@ -1,6 +1,9 @@
 package com.nt.controller.Controller;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.EmailConfig;
 import com.nt.dao_BASF.SendEmail;
 import com.nt.dao_BASF.Switchnotifications;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -37,6 +41,11 @@ public class SendEmailController {
 
     @Autowired
     private TokenService tokenService;
+
+    // websocket消息推送
+    private WebSocket ws = new WebSocket();
+    // WebSocketVow
+    private WebSocketVo webSocketVo = new WebSocketVo();
 
 
     @RequestMapping(value = "/sendemail",method={RequestMethod.POST})
@@ -60,6 +69,9 @@ public class SendEmailController {
     @RequestMapping(value = "/deleteswitch", method = {RequestMethod.POST})
     public ApiResult delete(@RequestBody Switchnotifications switchnotifications, HttpServletRequest request) throws Exception {
         switchnotificationsServices.delete(switchnotifications);
+        Switchnotifications switchnotifications1 = new Switchnotifications();
+        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications1));
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
