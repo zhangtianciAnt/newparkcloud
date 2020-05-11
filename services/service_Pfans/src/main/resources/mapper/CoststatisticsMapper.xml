@@ -10,18 +10,21 @@
 		where exp.`STATUS` = '0'
 		group by exp.`EXPNAME`*/
 		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,
-			sum(CONVERT(df.`JANUARY`,DECIMAL(10,2))) as MANHOUR1, sum(CONVERT(df.FEBRUARY,DECIMAL(10,2))) as MANHOUR2,
-			sum(CONVERT(df.MARCH,DECIMAL(10,2))) as MANHOUR3, sum(CONVERT(df.APRIL,DECIMAL(10,2))) as MANHOUR4, sum(CONVERT(df.MAY,DECIMAL(10,2))) as MANHOUR5, sum(CONVERT(df.JUNE,DECIMAL(10,2))) as MANHOUR6,
-			sum(CONVERT(df.`JULY`,DECIMAL(10,2))) as MANHOUR7, sum(CONVERT(df.AUGUST,DECIMAL(10,2))) as MANHOUR8, sum(CONVERT(df.SEPTEMBER,DECIMAL(10,2))) as MANHOUR9, sum(CONVERT(df.OCTOBER,DECIMAL(10,2))) as MANHOUR10,
-			sum(CONVERT(df.NOVEMBER,DECIMAL(10,2))) as MANHOUR11, sum(CONVERT(df.DECEMBER,DECIMAL(10,2))) as MANHOUR12
-			,df.year as years
+		sum(CONVERT(df.`MANHOUR1`,DECIMAL(10,2))) as MANHOUR1, sum(CONVERT(df.MANHOUR2,DECIMAL(10,2))) as MANHOUR2,
+		sum(CONVERT(df.MANHOUR3,DECIMAL(10,2))) as MANHOUR3, sum(CONVERT(df.MANHOUR4,DECIMAL(10,2))) as MANHOUR4, sum(CONVERT(df.MANHOUR5,DECIMAL(10,2))) as MANHOUR5, sum(CONVERT(df.MANHOUR6,DECIMAL(10,2))) as MANHOUR6,
+		sum(CONVERT(df.`MANHOUR7`,DECIMAL(10,2))) as MANHOUR7, sum(CONVERT(df.MANHOUR8,DECIMAL(10,2))) as MANHOUR8, sum(CONVERT(df.MANHOUR9,DECIMAL(10,2))) as MANHOUR9, sum(CONVERT(df.MANHOUR10,DECIMAL(10,2))) as MANHOUR10,
+		sum(CONVERT(df.MANHOUR11,DECIMAL(10,2))) as MANHOUR11, sum(CONVERT(df.MANHOUR12,DECIMAL(10,2))) as MANHOUR12
+		,df.years as years
 		from
-		delegainformation df
+		coststatistics df
 		inner join expatriatesinfor exp
 		on df.ACCOUNT = exp.ACCOUNT
 		where df.status = '0'
-		and df.year = #{year}
-		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.year
+		and df.years = #{year}
+		<if test="groupid!=null and groupid !=''">
+			and df.GROUP_ID = #{groupid}
+		</if>
+		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.years
 	</select>
 
 	<insert id="insertAll" parameterType="java.util.List">
@@ -133,7 +136,9 @@
 		on df.ACCOUNT = exp.ACCOUNT
 		where df.status = '0'
 		and df.year = #{year}
-		and df.GROUP_ID = #{groupid}
+		<if test="groupid!=null and groupid !=''">
+			and df.GROUP_ID = #{groupid}
+		</if>
 		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.year
 	</select>
 </mapper>
