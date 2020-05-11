@@ -140,24 +140,24 @@ public class Pfans1012Controller {
                     }
                 }
             }
-            String str = "";
-            if(pubvo.getTrafficdetails().size() > 0){
-                str = "交通费";
-            }
-            if(pubvo.getPurchasedetails().size() > 0){
-                if(str == ""){
-                    str = "采购费";
-                } else {
-                    str += ","+"采购费";
-                }
-            }
-            if(pubvo.getOtherdetails().size() > 0){
-                if(str == ""){
-                    str = "其他费用";
-                } else {
-                    str += ","+"其他费用";
-                }
-            }
+//            String str = "";
+//            if(pubvo.getTrafficdetails().size() > 0){
+//                str = "交通费";
+//            }
+//            if(pubvo.getPurchasedetails().size() > 0){
+//                if(str == ""){
+//                    str = "采购费";
+//                } else {
+//                    str += ","+"采购费";
+//                }
+//            }
+//            if(pubvo.getOtherdetails().size() > 0){
+//                if(str == ""){
+//                    str = "其他费用";
+//                } else {
+//                    str += ","+"其他费用";
+//                }
+//            }
             //模块
             List<Dictionary> curList1 = dictionaryService.getForSelect("PJ002");
             for (Dictionary item : curList1) {
@@ -242,7 +242,6 @@ public class Pfans1012Controller {
             data.put("tra", pubvo.getTrafficdetails());
             data.put("pur", pubvo.getPurchasedetails());
             data.put("otd", pubvo.getOtherdetails());
-            data.put("str", str);
             if(pubvo.getTrafficdetails().size() > 0){
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
             } else {
