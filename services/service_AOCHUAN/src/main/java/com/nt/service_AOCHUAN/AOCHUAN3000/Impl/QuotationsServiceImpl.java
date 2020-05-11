@@ -143,10 +143,10 @@ public class QuotationsServiceImpl implements QuotationsService {
     }
 
     private void insertEnquiry(List<Enquiry> enquiryList,String quotationsId){
-         if(enquiryList != null){
-             Enquiry enquiry = new Enquiry();
-             enquiry.setQuotations_id(quotationsId);
-             enquiryMapper.delete(enquiry);
+        Enquiry enquiry = new Enquiry();
+        enquiry.setQuotations_id(quotationsId);
+        enquiryMapper.delete(enquiry);
+         if(enquiryList!= null && enquiryList.size() > 0){
              for (Enquiry _enquiry:
              enquiryList) {
                  _enquiry.setEnquiry_id(UUID.randomUUID().toString());
