@@ -147,9 +147,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         for (Coststatistics c : allCostList) {
             String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
             CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
-            if(!StringUtils.isNullOrEmpty(company.getManhour5())){
-                company.setManhour5(dlf.format(Double.valueOf(company.getManhour5())));
-            }
+//            if(!StringUtils.isNullOrEmpty(company.getManhour5())){
+//                company.setManhour5(dlf.format(Double.valueOf(company.getManhour5())));
+//            }
             company.setBpcompany(bpcompany);
 
             String userPriceKey = c.getBpname() + "price";
@@ -184,8 +184,12 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 double price = userPriceMap.getOrDefault(userPriceKey + i, 0d);
                 double cost = price * manhour;
 
-                double newCost = cost + oldCost;
-                double newManhour = manhour + oldManhour;
+                BigDecimal cost1 = new BigDecimal(Double.toString(cost));
+                BigDecimal cost2 = new BigDecimal(Double.toString(oldCost));
+                BigDecimal cost3 = new BigDecimal(Double.toString(manhour));
+                BigDecimal cost4 = new BigDecimal(Double.toString(oldManhour));
+                double newCost = cost1.add(cost2).doubleValue();
+                double newManhour =cost3.add(cost4).doubleValue();
 
 //                company.setCost1("");
 //                company.setManhour1("");
