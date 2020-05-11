@@ -151,6 +151,14 @@ public class PublicExpense extends BaseModel {
     private String bsexternal;
 //add-ws-4/27-BS科目添加
 
+
+//add-ws-5/11-备注添加
+    @Column(name = "PREPAREFOR")
+    private String preparefor;
+//add-ws-5/11-备注添加
+
+
+
     //add_fjl --希望付款日
     @Column(name = "EXPECTEDPAYDATE")
     private Date expectedpaydate;

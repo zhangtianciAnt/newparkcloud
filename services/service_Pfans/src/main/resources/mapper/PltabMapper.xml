@@ -84,7 +84,7 @@
                                              on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
                                                  and cp.GROUP_ID = #{groupid}
                                                  and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
-                         where year (p.REIMBURSEMENTDATE
+                         where year (p.MODIFYON
                          )
                          =
                          #{year}
@@ -94,7 +94,7 @@
                          (
                          p
                          .
-                         REIMBURSEMENTDATE
+                         MODIFYON
                          )
                          =
                          #{month}
@@ -188,7 +188,7 @@
                             .
                             `STATUS` =
                             '6')
-                         where year (e.REIMBURSEMENTDATE
+                         where year (e.MODIFYON
                          )
                          =
                          #{year}
@@ -198,7 +198,7 @@
                          (
                          e
                          .
-                         REIMBURSEMENTDATE
+                         MODIFYON
                          )
                          =
                          #{month}
@@ -719,14 +719,14 @@
                  and
                  year
                  (
-                 REIMBURSEMENTDATE
+                 MODIFYON
                  )
                  =
                  #{year}
                  and
                  month
                  (
-                 REIMBURSEMENTDATE
+                 MODIFYON
                  )
                  =
                  #{month}
@@ -753,14 +753,14 @@
                  and
                  year
                  (
-                 REIMBURSEMENTDATE
+                 MODIFYON
                  )
                  =
                  #{year}
                  and
                  month
                  (
-                 REIMBURSEMENTDATE
+                 MODIFYON
                  )
                  =
                  #{month}
@@ -879,11 +879,11 @@
                      and
 										 (public.PROJECT_ID = '' or public.PROJECT_ID is null)
                  and
-                 year(public.REIMBURSEMENTDATE)= #{year}
+                 year(public.MODIFYON)= #{year}
 								  and
                  other.PLSUMMARY='PJ111001'
                  and
-                 month(public.REIMBURSEMENTDATE)= #{month}
+                 month(public.MODIFYON)= #{month}
                  and
                  public.STATUS='4'
                  group by `code`
