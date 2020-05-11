@@ -236,7 +236,11 @@
                 from logmanagement l
                          left join expatriatesinfor
                                    on l.createby = expatriatesinfor.account
-                         inner join companyprojects c
+									inner join (
+									select c.COMPANYPROJECTS_ID,c.PROJECT_NAME,c.`STATUS`,c.STARTDATE,c.ENDDATE from companyprojects c
+									union all
+									select comj.COMPROJECT_ID,comj.PROJECT_NAME,comj.`STATUS`,comj.STARTDATE,comj.ENDDATE from comproject comj
+									) c
                                     on l.PROJECT_ID = c.COMPANYPROJECTS_ID
                                         and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
                 where l.GROUP_ID = #{groupid}
@@ -260,7 +264,11 @@
         union all
         select 'WORKTIMEI' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME,c.COMPANYPROJECTS_ID
         from logmanagement l
-                 inner join companyprojects c
+                 inner join (
+							select c.COMPANYPROJECTS_ID,c.PROJECT_NAME,c.`STATUS`,c.STARTDATE,c.ENDDATE from companyprojects c
+							union all
+							select comj.COMPROJECT_ID,comj.PROJECT_NAME,comj.`STATUS`,comj.STARTDATE,comj.ENDDATE from comproject comj
+							) c
                             on l.PROJECT_ID = c.COMPANYPROJECTS_ID
                                 and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
                  inner join expatriatesinfor e
@@ -291,7 +299,11 @@
         union all
         select 'WORKTIMEEX' as `code`,cast(sum(l.TIME_START) AS decimal(15,2)) as worktime,c.PROJECT_NAME,c.COMPANYPROJECTS_ID
         from logmanagement l
-                 inner join companyprojects c
+                inner join (
+							select c.COMPANYPROJECTS_ID,c.PROJECT_NAME,c.`STATUS`,c.STARTDATE,c.ENDDATE from companyprojects c
+							union all
+							select comj.COMPROJECT_ID,comj.PROJECT_NAME,comj.`STATUS`,comj.STARTDATE,comj.ENDDATE from comproject comj
+							) c
                             on l.PROJECT_ID = c.COMPANYPROJECTS_ID
                                 and (c.`STATUS` = '4' || c.`STATUS` = '5' || c.`STATUS` = '6')
                  inner join expatriatesinfor e
@@ -352,7 +364,11 @@
                SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024002' THEN 1 ELSE 0 END) AS rmb,
                companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         from projectsystem
-                 left join companyprojects
+                left join (
+							select c.COMPANYPROJECTS_ID,c.PROJECT_NAME,c.GROUP_ID,c.`STATUS`,c.STARTDATE,c.ENDDATE from companyprojects c
+							union all
+							select comj.COMPROJECT_ID,comj.PROJECT_NAME,comj.GROUP_ID,comj.`STATUS`,comj.STARTDATE,comj.ENDDATE from comproject comj
+							) companyprojects
                            on projectsystem.companyprojects_id = companyprojects.companyprojects_id
                                and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
                                     '5' || companyprojects.`STATUS` = '6')
@@ -372,7 +388,11 @@
                SUM(CASE WHEN projectsystem.type = '1' and OPERATIONFORM = 'BP024001' THEN 1 ELSE 0 END) AS rmb,
                companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         from projectsystem
-                 left join companyprojects
+                 left join (
+							select c.COMPANYPROJECTS_ID,c.PROJECT_NAME,c.GROUP_ID,c.`STATUS`,c.STARTDATE,c.ENDDATE from companyprojects c
+							union all
+							select comj.COMPROJECT_ID,comj.PROJECT_NAME,comj.GROUP_ID,comj.`STATUS`,comj.STARTDATE,comj.ENDDATE from comproject comj
+							) companyprojects
                            on projectsystem.companyprojects_id = companyprojects.companyprojects_id
                                and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
                                     '5' || companyprojects.`STATUS` = '6')
@@ -393,7 +413,11 @@
                SUM(CASE WHEN projectsystem.type = '0' THEN 1 END) AS rmb,
                companyprojects.project_name,companyprojects.COMPANYPROJECTS_ID
         from projectsystem
-                 left join companyprojects
+                 left join (
+							select c.COMPANYPROJECTS_ID,c.PROJECT_NAME,c.GROUP_ID,c.`STATUS`,c.STARTDATE,c.ENDDATE from companyprojects c
+							union all
+							select comj.COMPROJECT_ID,comj.PROJECT_NAME,comj.GROUP_ID,comj.`STATUS`,comj.STARTDATE,comj.ENDDATE from comproject comj
+							) companyprojects
                            on projectsystem.companyprojects_id = companyprojects.companyprojects_id
                                and (companyprojects.`STATUS` = '4' || companyprojects.`STATUS` =
                                     '5' || companyprojects.`STATUS` = '6')
