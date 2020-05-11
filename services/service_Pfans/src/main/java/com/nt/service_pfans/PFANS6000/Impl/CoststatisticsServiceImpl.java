@@ -70,7 +70,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     }
 
     @Override
-    public Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+    public Integer insertCoststatistics(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         Calendar calendar = Calendar.getInstance();
         int year = 0;
         int month = calendar.get(Calendar.MONTH);
@@ -79,24 +79,37 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }else {
             year = calendar.get(Calendar.YEAR);
         }
-        coststatistics.setYears(String.valueOf(year).trim());
-        coststatisticsMapper.delete(coststatistics);
 
-        List<Coststatistics> allCostList = getCostList(coststatistics, tokenModel);
+
+        List<Coststatistics> allCostList = getCostList(groupid,coststatistics, tokenModel);
+
+        for (Coststatistics c : allCostList) {
+
+            coststatistics.setBpname(c.getBpname());
+            coststatistics.setYears(String.valueOf(year).trim());
+            coststatisticsMapper.delete(coststatistics);
+        }
 
         int insertCount = 0;
         if ( allCostList.size() > 0 ) {
-            insertCount = coststatisticsMapper.insertAll(allCostList);
-        }
-
+                insertCount = coststatisticsMapper.insertAll(allCostList);
+            }
         return insertCount;
     }
 
-    private List<Coststatistics> getCostList(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+    private List<Coststatistics> getCostList(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         //获取经费
         Variousfunds variousfunds = new Variousfunds();
 //        variousfunds.setOwner(tokenModel.getUserId());
-        List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
+        Calendar calendar = Calendar.getInstance();
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, String.valueOf(year));
         Map<String, Double> variousfundsMap = new HashMap<String, Double>();
         for ( Variousfunds v : allVariousfunds ) {
             String plan = "";
@@ -120,10 +133,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             variousfundsMap.put(key, value);
         }
 
-        Map<String, Double> pricesetMap = getUserPriceMap();
+        Map<String, Double> pricesetMap = getUserPriceMapBygroupid(groupid, String.valueOf(year));
 
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setGroup_id(groupid);
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> companyMap = new HashMap<String, String>();
         for ( Expatriatesinfor ex : companyList) {
@@ -131,17 +145,17 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             String value = ex.getSupplierinfor_id();
             companyMap.put(key, value);
         }
-        Calendar calendar = Calendar.getInstance();
-        //calendar.add(Calendar.MONTH, -3);
-        int year = 0;
-        int month = calendar.get(Calendar.MONTH);
-        if(month >= 1 && month <= 3) {
-            year = calendar.get(Calendar.YEAR) - 1;
-        }else {
-            year = calendar.get(Calendar.YEAR);
-        }
+//        Calendar calendar = Calendar.getInstance();
+//        //calendar.add(Calendar.MONTH, -3);
+//        int year = 0;
+//        int month = calendar.get(Calendar.MONTH);
+//        if(month >= 1 && month <= 3) {
+//            year = calendar.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
         // 获取活用情报信息
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
+        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(year, groupid);
         for ( Coststatistics c : allCostList ) {
             // 合计费用
             double totalmanhours = 0;
