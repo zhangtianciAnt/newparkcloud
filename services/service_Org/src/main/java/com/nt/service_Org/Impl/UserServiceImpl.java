@@ -850,16 +850,19 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                     }
                     //预算编码
                     if (value.get(9) != null) {
-                        String budgetunit = value.get(9).toString();
-                        if (budgetunit != null) {
-                            Dictionary dictionary = new Dictionary();
-                            dictionary.setValue1(budgetunit.trim());
-                            dictionary.setType("JY");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if (dictionaryList.size() > 0) {
-                                userinfo.setBudgetunit(dictionaryList.get(0).getCode());
-                            }
-                        }
+                        //upd_fjl  --修改预算编码值
+                        userinfo.setBudgetunit(value.get(9).toString());
+//                        String budgetunit = value.get(9).toString();
+//                        if (budgetunit != null) {
+//                            Dictionary dictionary = new Dictionary();
+//                            dictionary.setValue1(budgetunit.trim());
+//                            dictionary.setType("JY");
+//                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+//                            if (dictionaryList.size() > 0) {
+//                                userinfo.setBudgetunit(dictionaryList.get(0).getCode());
+//                            }
+//                        }
+                        //upd_fjl  --修改预算编码值
                     }
                     //生年月日
                     if (value.get(10) != null) {
@@ -1167,16 +1170,19 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                                         break;
                                     case 9:
                                         if (value.get(9) != null) {
-                                            String budgetunit = value.get(9).toString();
-                                            if (budgetunit != null) {
-                                                Dictionary dictionary = new Dictionary();
-                                                dictionary.setValue1(budgetunit.trim());
-                                                dictionary.setType("JY");
-                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                if (dictionaryList.size() > 0) {
-                                                    customerInfoList.get(0).getUserinfo().setBudgetunit(dictionaryList.get(0).getCode());
-                                                }
-                                            }
+                                            //upd_fjl  --修改预算编码值
+                                            customerInfoList.get(0).getUserinfo().setBudgetunit(value.get(9).toString());
+//                                            String budgetunit = value.get(9).toString();
+//                                            if (budgetunit != null) {
+//                                                Dictionary dictionary = new Dictionary();
+//                                                dictionary.setValue1(budgetunit.trim());
+//                                                dictionary.setType("JY");
+//                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+//                                                if (dictionaryList.size() > 0) {
+//                                                    customerInfoList.get(0).getUserinfo().setBudgetunit(dictionaryList.get(0).getCode());
+//                                                }
+//                                            }
+                                            //upd_fjl  --修改预算编码值
                                         }
                                         break;
                                     case 10:
