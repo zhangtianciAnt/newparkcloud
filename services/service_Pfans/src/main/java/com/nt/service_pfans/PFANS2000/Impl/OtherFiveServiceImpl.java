@@ -85,7 +85,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     if (value.get(0).toString().equals("")) {
                         continue;
                     }
-                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    String click="^([0-9][0-9]*)+(.[0-9]{1,2})?$";
                     if(value.size() > 4) {
                         if (value.get(4).toString().length()>20) {
                             error = error + 1;
