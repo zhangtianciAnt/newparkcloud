@@ -518,19 +518,19 @@ public class MultiThreadScheduleTask {
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF10201_GetFirealarmList() throws Exception {
-
-        //获取非误报且未完成的消防报警单
-        Firealarm firealarm=new Firealarm();
-        firealarm.setCompletesta("0");
-        firealarm.setMisinformation("0");
-        List<Firealarm> firealarms=firealarmServices.list(firealarm);
-
-        webSocketVo.setTopfirealarmList(firealarms);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF10201_GetFirealarmList() throws Exception {
+//
+//        //获取非误报且未完成的消防报警单
+//        Firealarm firealarm=new Firealarm();
+//        firealarm.setCompletesta("0");
+//        firealarm.setMisinformation("0");
+//        List<Firealarm> firealarms=firealarmServices.list(firealarm);
+//
+//        webSocketVo.setTopfirealarmList(firealarms);
+//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
     @Async
     @Scheduled(fixedDelay = 30000)
