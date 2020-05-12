@@ -1290,9 +1290,12 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                     //判断工资是否有变更履历，如果有添加进来
-                    if (customerInfoList.get(0).getUserinfo().getGridData().size() > 0) {
-                        cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
+                    if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
+                        if (customerInfoList.get(0).getUserinfo().getGridData().size() > 0) {
+                            cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
+                        }
                     }
+
                     cupList.add(personal);
 
                     //如果有工资履历变更，給料変更日不能为空
