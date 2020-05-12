@@ -819,8 +819,8 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                     //RANK
-                    if (item.get("RANK") != null) {
-                        String rank = item.get("RANK").toString();
+                    if (item.get("Rank") != null) {
+                        String rank = item.get("Rank").toString();
                         if (rank != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(rank.trim());
@@ -872,7 +872,7 @@ public class UserServiceImpl implements UserService {
                         List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                         customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoList.size() > 0) {
-                            throw new LogicalException("AD域账号（" + item.get("卡号").toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                            throw new LogicalException("卡号（" + item.get("卡号").toString() + "）" + "对应的 AD域账号 在人员表中已存在，请勿重复填写。");
                         } else {
 //                            UserAccount userAccount = new UserAccount();
                             ust.setAccount(userinfo.getAdfield());
