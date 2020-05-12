@@ -46,4 +46,9 @@ public class SupplierproductrelationServiceImpl implements Supplierproductrelati
     public void delete(String id) throws Exception {
 
     }
+
+    @Override
+    public void deleteByBaseinforId(String baseinforId) throws Exception {
+        supplierproductrelationMapper.deleteByBaseinforId(baseinforId);
+    }
 }

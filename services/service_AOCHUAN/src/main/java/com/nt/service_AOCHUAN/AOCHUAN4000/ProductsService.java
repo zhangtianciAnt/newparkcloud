@@ -34,13 +34,12 @@ public interface ProductsService {
     List<Quotations> getBJ(String ids) throws Exception;
 
     /**
-     * @param product
      * @param tokenModel
      * @return id
      * @throws Exception
      * @author zhaoyoubing
      */
-    public Products insertForSupplier(Products product, TokenModel tokenModel)throws  Exception;
+    void insertForSupplier(String baseinfoId,Products[] products, TokenModel tokenModel)throws  Exception;
 
     /**
      * 获取不在项目表中的数据

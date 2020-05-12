@@ -141,13 +141,30 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
+    public void insertForSupplier(String baseinfoId, Products[] products, TokenModel tokenModel) throws Exception {
+        for(int i = 0 ;i < products.length;i++){
+            String id = UUID.randomUUID().toString();
+            products[i].preInsert(tokenModel);
+            products[i].setProducts_id(id);
+            productsMapper.insert(products[i]);
+
+            Supplierproductrelation supplierproductrelation = new Supplierproductrelation();
+            String supplierproductrelation_id = UUID.randomUUID().toString();
+            supplierproductrelation.setProducts_id(id);
+            supplierproductrelation.setSupplierproductrelation_id(supplierproductrelation_id);
+            supplierproductrelation.setSupplierbaseinfor_id(baseinfoId);
+            supplierproductrelationMapper.insert(supplierproductrelation);
+        }
+    }
+
+    /*@Override
     public Products insertForSupplier(Products product, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
         product.preInsert(tokenModel);
         product.setProducts_id(id);
         productsMapper.insert(product);
         return product;
-    }
+    }*/
 
     /**
      * 获取不在项目表中的数据

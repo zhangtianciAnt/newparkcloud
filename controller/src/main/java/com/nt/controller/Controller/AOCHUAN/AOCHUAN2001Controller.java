@@ -95,7 +95,7 @@ public class AOCHUAN2001Controller {
             linkmans.get(i).setBaseinfor_id(baseinfoId);
             linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
         }
-        baseinfoId = null;
+
         return ApiResult.success();
     }
 
