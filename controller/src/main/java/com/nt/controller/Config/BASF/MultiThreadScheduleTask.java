@@ -496,39 +496,39 @@ public class MultiThreadScheduleTask {
     }
 
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF10105_GetDeviceinformationVoList() throws Exception {
-        List<DeviceinformationVo> deviceinformationVos=new ArrayList<>();
-        //获取非误报且未完成的消防报警单
-        Firealarm firealarm=new Firealarm();
-        firealarm.setCompletesta("0");
-        firealarm.setMisinformation("0");
-        List<Firealarm> firealarms=firealarmServices.list(firealarm);
-        //获取消防报警单对应的设备信息
-        for (Firealarm firealarm1 : firealarms) {
-            DeviceinformationVo deviceinformationVo = new DeviceinformationVo();
-            deviceinformationVo.setFirealarmuuid(firealarm1.getFirealarmid());
-            deviceinformationVo.setDeviceinformation(deviceInformationServices.one(firealarm1.getDeviceinformationid()));
-            deviceinformationVos.add(deviceinformationVo);
-        }
-        webSocketVo.setDeviceinformationList(deviceinformationVos);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF10105_GetDeviceinformationVoList() throws Exception {
+//        List<DeviceinformationVo> deviceinformationVos=new ArrayList<>();
+//        //获取非误报且未完成的消防报警单
+//        Firealarm firealarm=new Firealarm();
+//        firealarm.setCompletesta("0");
+//        firealarm.setMisinformation("0");
+//        List<Firealarm> firealarms=firealarmServices.list(firealarm);
+//        //获取消防报警单对应的设备信息
+//        for (Firealarm firealarm1 : firealarms) {
+//            DeviceinformationVo deviceinformationVo = new DeviceinformationVo();
+//            deviceinformationVo.setFirealarmuuid(firealarm1.getFirealarmid());
+//            deviceinformationVo.setDeviceinformation(deviceInformationServices.one(firealarm1.getDeviceinformationid()));
+//            deviceinformationVos.add(deviceinformationVo);
+//        }
+//        webSocketVo.setDeviceinformationList(deviceinformationVos);
+//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF10201_GetFirealarmList() throws Exception {
-
-        //获取非误报且未完成的消防报警单
-        Firealarm firealarm = new Firealarm();
-        firealarm.setCompletesta("0");
-        firealarm.setMisinformation("0");
-        List<Firealarm> firealarms = firealarmServices.list(firealarm);
-
-        webSocketVo.setTopfirealarmList(firealarms);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF10201_GetFirealarmList() throws Exception {
+//
+//        //获取非误报且未完成的消防报警单
+//        Firealarm firealarm = new Firealarm();
+//        firealarm.setCompletesta("0");
+//        firealarm.setMisinformation("0");
+//        List<Firealarm> firealarms = firealarmServices.list(firealarm);
+//
+//        webSocketVo.setTopfirealarmList(firealarms);
+//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
     @Async
     @Scheduled(fixedDelay = 30000)

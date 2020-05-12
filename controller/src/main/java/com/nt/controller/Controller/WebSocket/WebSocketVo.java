@@ -72,13 +72,13 @@ public class WebSocketVo {
     private List<PassingRateVo> passingIsRateList = new ArrayList<>();
 
     //接收机柜传过来的报警信息
-    private List<DeviceinformationVo> deviceinformationList = new ArrayList<>();
+//    private List<DeviceinformationVo> deviceinformationList = new ArrayList<>();
 
     //紧急集合点
     private List<DeviceAndSqlUserinfoVo> deviceAndSqlUserinfoVoList = new ArrayList<>();
 
     //大屏报警数据
-    private List<Firealarm> topfirealarmList = new ArrayList<>();
+//    private List<Firealarm> topfirealarmList = new ArrayList<>();
 
     //应急预案列表
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();

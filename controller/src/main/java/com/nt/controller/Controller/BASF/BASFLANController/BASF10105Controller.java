@@ -3,6 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
@@ -54,7 +55,7 @@ public class BASF10105Controller {
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
-    private WebSocketVo webSocketVo = new WebSocketVo();
+    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
     /**
      * @param request
@@ -109,7 +110,6 @@ public class BASF10105Controller {
                     firealarm.setMisinformation("0");
                     String firealarmuuid = firealarmServices.insert(firealarm, tokenModel);
                 }
-
             }
 
             //获取并立即推送非误报且未完成的消防报警单
@@ -128,17 +128,15 @@ public class BASF10105Controller {
                     list.add(linkagelistVo);
                 }
             }
-            webSocketVo.setTopfirealarmList(firealarms);
-            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+            webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
+            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
 
             //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
             mapBox_mapLevelServices.remarkSet(alarmMapidList, true, tokenModel);
 
             // 推送报警设备信息
-            webSocketVo.setDeviceinformationList(list);
-            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-
-
+            webSocketDeviceinfoVo.setDeviceinformationList(list);
+            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
         }
         return ApiResult.success();
     }

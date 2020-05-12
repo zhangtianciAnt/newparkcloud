@@ -3,9 +3,11 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
+import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,7 +52,8 @@ public class BASF10201Controller {
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
-    private WebSocketVo webSocketVo = new WebSocketVo();
+//    private WebSocketVo webSocketVo = new WebSocketVo();
+    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
     /**
      * @param request
@@ -158,21 +162,32 @@ public class BASF10201Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         firealarmServices.update(firealarm, tokenModel);
 
+        //存储发送到websocket中的信息
+        List<DeviceinformationVo> list = new ArrayList<>();
+
         //获取并立即推送非误报且未完成的消防报警单
         Firealarm firealarmnew = new Firealarm();
         firealarmnew.setCompletesta("0");
         firealarmnew.setMisinformation("0");
         List<Firealarm> firealarms = firealarmServices.list(firealarmnew);
-        webSocketVo.setTopfirealarmList(firealarms);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+
         for (Firealarm fi : firealarms) {
             if (StringUtils.isNotEmpty(fi.getDeviceinformationid())) {
                 Deviceinformation deviceinformation = deviceinFormationServices.one(fi.getDeviceinformationid());
+                DeviceinformationVo linkagelistVo = new DeviceinformationVo();
+                linkagelistVo.setFirealarmuuid(fi.getFirealarmid());
+                linkagelistVo.setDeviceinformation(deviceinformation);
+                list.add(linkagelistVo);
                 if (deviceinformation != null && StringUtils.isNotEmpty(deviceinformation.getMapid())) {
                     mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(), true, tokenModel);
                 }
             }
         }
+        // 推送报警设备信息
+        webSocketDeviceinfoVo.setDeviceinformationList(list);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
         return ApiResult.success();
     }
 }
