@@ -33,10 +33,11 @@
         c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
             on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
             and s.status = '0'
-            <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
@@ -90,10 +91,12 @@
         c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
-        <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
+
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
@@ -156,7 +159,9 @@
         from `companyprojects`
              c
              left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+            where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
         on c
            .
            `COMPANYPROJECTS_ID` =
@@ -168,18 +173,7 @@
            .
            status =
            '0'
-        <![CDATA[ AND
-           s
-           .
-           ESTIMATEDSTARTTIME
-           <=
-           curdate()
-           and
-           s
-           .
-           ESTIMATEDENDTIME
-           >=
-           curdate() ]]>
+
         left
            join (
            select
@@ -286,10 +280,11 @@
         c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
-        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
-        <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
@@ -343,10 +338,12 @@
         c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation group by COMPANYPROJECTS_ID )) s
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
-        <![CDATA[ AND s.ESTIMATEDSTARTTIME <= curdate() and s.ESTIMATEDENDTIME >= curdate() ]]>
+
         left join (
         select p.COMPANYPROJECTS_ID,
         max(substring(a.CLAIMDATETIME,14,10)) as etime
