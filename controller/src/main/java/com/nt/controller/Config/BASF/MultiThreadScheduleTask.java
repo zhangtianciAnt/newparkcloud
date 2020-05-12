@@ -3,20 +3,19 @@ package com.nt.controller.Config.BASF;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
-import com.nt.dao_BASF.Switchnotifications;
-import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.PersonnelPermissions;
+import com.nt.dao_BASF.Switchnotifications;
 import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_SQL.SqlUserInfoServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import com.nt.service_SQL.sqlMapper.SqlUserInfoMapper;
-import org.apache.commons.collections.ArrayStack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -25,7 +24,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -508,8 +506,8 @@ public class MultiThreadScheduleTask {
         firealarm.setMisinformation("0");
         List<Firealarm> firealarms=firealarmServices.list(firealarm);
         //获取消防报警单对应的设备信息
-        for(Firealarm firealarm1:firealarms){
-            DeviceinformationVo deviceinformationVo=new DeviceinformationVo();
+        for (Firealarm firealarm1 : firealarms) {
+            DeviceinformationVo deviceinformationVo = new DeviceinformationVo();
             deviceinformationVo.setFirealarmuuid(firealarm1.getFirealarmid());
             deviceinformationVo.setDeviceinformation(deviceInformationServices.one(firealarm1.getDeviceinformationid()));
             deviceinformationVos.add(deviceinformationVo);
@@ -518,19 +516,19 @@ public class MultiThreadScheduleTask {
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-//    @Async
-//    @Scheduled(fixedDelay = 30000)
-//    public void BASF10201_GetFirealarmList() throws Exception {
-//
-//        //获取非误报且未完成的消防报警单
-//        Firealarm firealarm=new Firealarm();
-//        firealarm.setCompletesta("0");
-//        firealarm.setMisinformation("0");
-//        List<Firealarm> firealarms=firealarmServices.list(firealarm);
-//
-//        webSocketVo.setTopfirealarmList(firealarms);
-//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-//    }
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF10201_GetFirealarmList() throws Exception {
+
+        //获取非误报且未完成的消防报警单
+        Firealarm firealarm = new Firealarm();
+        firealarm.setCompletesta("0");
+        firealarm.setMisinformation("0");
+        List<Firealarm> firealarms = firealarmServices.list(firealarm);
+
+        webSocketVo.setTopfirealarmList(firealarms);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
 
     @Async
     @Scheduled(fixedDelay = 30000)
