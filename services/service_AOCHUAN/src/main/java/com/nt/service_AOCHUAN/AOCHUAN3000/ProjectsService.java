@@ -12,7 +12,7 @@ public interface ProjectsService {
     //获取项目表
     List<Projects> getProjectList() throws Exception;
     //获取记录表数据
-    List<FollowUpRecord> getFollowUpRecordList(FollowUpRecord followUpRecord) throws Exception;
+    List<FollowUpRecord> getFollowUpRecordList(Projects projects) throws Exception;
 
     //获取项目表
     Projects getForm(String id) throws Exception;

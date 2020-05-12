@@ -31,11 +31,11 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     //获取记录表数据
     @Override
-    public List<FollowUpRecord> getFollowUpRecordList(FollowUpRecord followUpRecord) throws Exception {
+    public List<FollowUpRecord> getFollowUpRecordList(Projects projects) throws Exception {
 
-        String products_id = followUpRecord.getProducts_id();
-        String supplier_id = followUpRecord.getSupplier_id();
-        return followUpRecordMapper.getFollowUpRecordList(products_id,supplier_id,"0");
+        String products_id = projects.getProducts_id();
+        String supplier_id = projects.getSupplier_id();
+        return followUpRecordMapper.getFollowUpRecordList(products_id,supplier_id);
     }
 
     @Override
