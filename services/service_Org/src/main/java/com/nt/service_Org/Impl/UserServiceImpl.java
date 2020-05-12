@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
 
-            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "",roleIds);
+            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "", roleIds);
         }
 
     }
@@ -214,25 +214,23 @@ public class UserServiceImpl implements UserService {
             int flg4 = 0;
 //邮箱重复check
             Query queryEmail = new Query();
-            if(!StringUtils.isNullOrEmpty(userInfo.getEmail())){
+            if (!StringUtils.isNullOrEmpty(userInfo.getEmail())) {
                 queryEmail.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
                 List<CustomerInfo> qcEmail = mongoTemplate.find(queryEmail, CustomerInfo.class);
-                if(qcEmail.size() == 0 || qcEmail.get(0).getUserid().equals(customerInfo.getUserid())){
+                if (qcEmail.size() == 0 || qcEmail.get(0).getUserid().equals(customerInfo.getUserid())) {
                     flg1 = 1;
-                }
-                else {
+                } else {
                     throw new LogicalException("邮箱已存在！");
                 }
             }
 //add-ws-4/28-人员重复check
             Query queryname = new Query();
-            if(!StringUtils.isNullOrEmpty(userInfo.getCustomername())){
+            if (!StringUtils.isNullOrEmpty(userInfo.getCustomername())) {
                 queryname.addCriteria(Criteria.where("userinfo.customername").is(userInfo.getCustomername()));
                 List<CustomerInfo> qcname = mongoTemplate.find(queryname, CustomerInfo.class);
-                if(qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())){
+                if (qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())) {
                     flg4 = 1;
-                }
-                else {
+                } else {
                     throw new LogicalException("人名已存在！");
                 }
             }
@@ -240,30 +238,28 @@ public class UserServiceImpl implements UserService {
 //add-ws-4/28-人员重复check
 //个人编码重复check
             Query queryCode = new Query();
-            if(!StringUtils.isNullOrEmpty(userInfo.getAdfield())){
+            if (!StringUtils.isNullOrEmpty(userInfo.getAdfield())) {
                 queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
                 List<CustomerInfo> qcAD = mongoTemplate.find(queryCode, CustomerInfo.class);
-                if(qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())){
+                if (qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())) {
                     flg2 = 1;
-                }
-                else {
+                } else {
                     throw new LogicalException("AD域账号重复");
                 }
             }
 
 //AD域重复check
             Query queryAD = new Query();
-            if(!StringUtils.isNullOrEmpty(userInfo.getPersonalcode())){
+            if (!StringUtils.isNullOrEmpty(userInfo.getPersonalcode())) {
                 queryAD.addCriteria(Criteria.where("userinfo.personalcode").is(userInfo.getPersonalcode()));
                 List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
-                if(qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())){
+                if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
                     flg3 = 1;
-                }
-                else {
+                } else {
                     throw new LogicalException("个人编码重复");
                 }
             }
-            if(flg1 == 1 && flg2 == 1 && flg3 == 1&& flg4 == 1){
+            if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
                 customerInfo.setUserid(_id);
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);
@@ -283,7 +279,7 @@ public class UserServiceImpl implements UserService {
      * @返回值：List<CustomerInfo>
      */
     @Override
-    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
+    public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
         Query query = new Query();
 //        if (StrUtil.isNotBlank(orgid)) {
 //            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
@@ -292,30 +288,30 @@ public class UserServiceImpl implements UserService {
         //根据登陆用户id查看人员信息
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
         if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
-                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())){
+                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())) {
             query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
             query = new Query();
-            if(CustomerInfolist.size() > 0){
-                if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
+            if (CustomerInfolist.size() > 0) {
+                if (StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())) {
                     query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
-                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
+                } else if (StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())) {
                     query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
-                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
+                } else if (StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())) {
                     query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
                 }
 
                 customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
 
-                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
-                    for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
+                if (CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0) {
+                    for (CustomerInfo.OtherOrgs itemO : CustomerInfolist.get(0).getUserinfo().getOtherorgs()) {
                         query = new Query();
 
-                        if(StrUtil.isNotBlank(itemO.getTeamid())){
+                        if (StrUtil.isNotBlank(itemO.getTeamid())) {
                             query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
-                        }else  if(StrUtil.isNotBlank(itemO.getGroupid())){
+                        } else if (StrUtil.isNotBlank(itemO.getGroupid())) {
                             query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
-                        }else  if(StrUtil.isNotBlank(itemO.getCenterid())){
+                        } else if (StrUtil.isNotBlank(itemO.getCenterid())) {
                             query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
                         }
 
@@ -323,7 +319,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
-        }else{
+        } else {
             query = new Query();
             customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
         }
@@ -333,14 +329,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
             query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
                     Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
-        for(CustomerInfo item:customerInfos){
+        for (CustomerInfo item : customerInfos) {
             item.getUserinfo().setIdnumber("");
             item.getUserinfo().setPassport("");
             item.getUserinfo().setSecurity("");
@@ -626,7 +622,7 @@ public class UserServiceImpl implements UserService {
         return mongoTemplate.findAll(CustomerInfo.class);
     }
 
-//    @Override
+    //    @Override
 //    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
 //    public List<String> importUser(HttpServletRequest request) throws Exception {
 //        try {
@@ -683,114 +679,114 @@ public class UserServiceImpl implements UserService {
 //            throw new LogicalException(e.getMessage());
 //        }
 //    }
-@Override
-@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
-    try {
-        List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
-        List<String> Result = new ArrayList<String>();
-        MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
-        File f = null;
-        f = File.createTempFile("tmp", null);
-        file.transferTo(f);
-        ExcelReader reader = ExcelUtil.getReader(f);
-        List<List<Object>> list = reader.read();
-        List<Object> model = new ArrayList<Object>();
-        model.add("卡号");
-        model.add("姓名");
-        model.add("center");
-        model.add("group");
-        model.add("team");
-        model.add("入社时间");
-        model.add("职务");
-        model.add("Rank");
-        model.add("性别");
-        model.add("预算编码");
-        model.add("生年月日");
-        model.add("AD域账号");
-        model.add("国籍");
-        model.add("民族");
-        model.add("户籍");
-        model.add("住所");
-        model.add("最终毕业学校");
-        model.add("专业");
-        model.add("是否有工作经验");
-        model.add("身份证号码");
-        model.add("毕业年月日");
-        model.add("最终学位");
-        model.add("仕事开始年月日");
-        model.add("员工ID");
-        model.add("劳动合同类型");
-        model.add("年龄");
-        model.add("是否独生子女");
-//            model.add("今年年休数(残)");
-        model.add("今年年休数");
-        model.add("升格升号年月日");
-        model.add("银行账号");
-        model.add("固定期限締切日");
-        model.add("変更前基本工资");
-        model.add("変更前职责工资");
-        model.add("现基本工资");
-        model.add("现职责工资");
-        model.add("給料変更日");
-        model.add("养老保险基数");
-        model.add("医疗保险基数");
-        model.add("失业保险基数");
-        model.add("工伤保险基数");
-        model.add("生育保险基数");
-        model.add("住房公积金缴纳基数");
-        List<Object> key = list.get(0);
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+//        UPD_FJL_2020/05/12 --修改人员导入
+        try {
+//            List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
+            List<String> Result = new ArrayList<String>();
+            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+            File f = null;
+            f = File.createTempFile("tmp", null);
+            file.transferTo(f);
+            ExcelReader reader = ExcelUtil.getReader(f);
+//        List<List<Object>> list = reader.read();
+            List<Map<String, Object>> readAll = reader.readAll();
+//            List<Object> model = new ArrayList<Object>();
+//        model.add("卡号");
+//        model.add("姓名");
+//        model.add("center");
+//        model.add("group");
+//        model.add("team");
+//        model.add("入社时间");
+//        model.add("职务");
+//        model.add("Rank");
+//        model.add("性别");
+//        model.add("预算编码");
+//        model.add("生年月日");
+//        model.add("AD域账号");
+//        model.add("国籍");
+//        model.add("民族");
+//        model.add("户籍");
+//        model.add("住所");
+//        model.add("最终毕业学校");
+//        model.add("专业");
+//        model.add("是否有工作经验");
+//        model.add("身份证号码");
+//        model.add("毕业年月日");
+//        model.add("最终学位");
+//        model.add("仕事开始年月日");
+//        model.add("员工ID");
+//        model.add("劳动合同类型");
+//        model.add("年龄");
+//        model.add("是否独生子女");
+////            model.add("今年年休数(残)");
+//        model.add("今年年休数");
+//        model.add("升格升号年月日");
+//        model.add("银行账号");
+//        model.add("固定期限締切日");
+//        model.add("変更前基本工资");
+//        model.add("変更前职责工资");
+//        model.add("现基本工资");
+//        model.add("现职责工资");
+//        model.add("給料変更日");
+//        model.add("养老保险基数");
+//        model.add("医疗保险基数");
+//        model.add("失业保险基数");
+//        model.add("工伤保险基数");
+//        model.add("生育保险基数");
+//        model.add("住房公积金缴纳基数");
+//        List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
-        for (int i = 0; i < key.size(); i++) {
-            if (!key.get(i).toString().replace("●","").trim().equals(model.get(i))) {
-                throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
-            }
-        }
+//        for (int i = 0; i < key.size(); i++) {
+//            if (!key.get(i).toString().replace("●","").trim().equals(model.get(i))) {
+//                throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
+//            }
+//        }
 
-        List<Integer> updint = new ArrayList<Integer>();
-        //resultInsUpd true:插入 false:更新
-        boolean resultInsUpd = true;
-        for (int j = 0; j < key.size(); j++) {
-            if (key.get(j).toString().trim().contains("●")) {
+//            List<Integer> updint = new ArrayList<Integer>();
+            //resultInsUpd true:插入 false:更新
+            boolean resultInsUpd = true;
+            Map<String, Object> key = readAll.get(0);
+
+            if (key.keySet().toString().trim().contains("●")) {
+                //只要有一个●就走更新
                 resultInsUpd = false;
-                updint.add(j);
             }
-        }
-        int k = 1;
-        int accesscount = 0;
-        int error = 0;
-        if (resultInsUpd) {
-            for (int i = 1; i < list.size(); i++) {
-                List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                CustomerInfo.Personal personal = new CustomerInfo.Personal();
-                CustomerInfo customerInfo = new CustomerInfo();
-                UserAccount ust = new UserAccount();
-                CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
-                List<Object> value = list.get(k);
-                k++;
-                if (value != null && !value.isEmpty()) {
-                    //工号
-                    if (value.get(0) != null) {
-                        userinfo.setJobnumber(Convert.toStr(value.get(0)));
+            int k = 0;
+            int accesscount = 0;
+            int error = 0;
+            if (resultInsUpd) {
+                for (Map<String, Object> item : readAll) {
+                    List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
+                    CustomerInfo.Personal personal = new CustomerInfo.Personal();
+                    CustomerInfo customerInfo = new CustomerInfo();
+                    UserAccount ust = new UserAccount();
+                    CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
+                    k++;
+                    //卡号
+                    if (item.get("卡号") != null) {
+                        userinfo.setJobnumber(Convert.toStr(item.get("卡号")));
                         Query query = new Query();
                         query.addCriteria(Criteria.where("userinfo.jobnumber").is(userinfo.getJobnumber()));
                         List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                         customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoList.size() > 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "在人员表中已存在，请勿重复填写。");
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "在人员表中已存在，请勿重复填写。");
                         }
                     } else {
-                        throw new LogicalException("第" + i + "行 卡号 不能为空，请确认。");
+                        throw new LogicalException("第" + k + "行 卡号 不能为空，请确认。");
                     }
                     //姓名
-                    if (value.get(1) != null) {
-                        userinfo.setCustomername(Convert.toStr(value.get(1)));
+                    if (item.get("姓名") != null) {
+                        userinfo.setCustomername(Convert.toStr(item.get("姓名")));
                         Query query = new Query();
                         query.addCriteria(Criteria.where("userinfo.customername").is(userinfo.getCustomername()));
                         List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                         customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoList.size() > 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
                         }
                     }
 //                        //center
@@ -806,12 +802,12 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
 ////                            userinfo.setTeamname(value.get(4).toString());
 //                        }
                     //入社时间
-                    if (value.get(5) != null) {
-                        userinfo.setEnterday(value.get(5).toString());
+                    if (item.get("入社时间") != null) {
+                        userinfo.setEnterday(item.get("入社时间").toString());
                     }
                     //职务
-                    if (value.get(6) != null) {
-                        String post = value.get(6).toString();
+                    if (item.get("职务") != null) {
+                        String post = item.get("职务").toString();
                         if (post != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(post.trim());
@@ -823,8 +819,8 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                     }
                     //RANK
-                    if (value.get(7) != null) {
-                        String rank = value.get(7).toString();
+                    if (item.get("Rank") != null) {
+                        String rank = item.get("Rank").toString();
                         if (rank != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(rank.trim());
@@ -836,8 +832,8 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                     }
                     //性别
-                    if (value.get(8) != null) {
-                        String sex = value.get(8).toString();
+                    if (item.get("性别") != null) {
+                        String sex = item.get("性别").toString();
                         if (sex != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(sex.trim());
@@ -849,9 +845,9 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                     }
                     //预算编码
-                    if (value.get(9) != null) {
+                    if (item.get("预算编码") != null) {
                         //upd_fjl  --修改预算编码值
-                        userinfo.setBudgetunit(value.get(9).toString());
+                        userinfo.setBudgetunit(item.get("预算编码").toString());
 //                        String budgetunit = value.get(9).toString();
 //                        if (budgetunit != null) {
 //                            Dictionary dictionary = new Dictionary();
@@ -865,19 +861,19 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         //upd_fjl  --修改预算编码值
                     }
                     //生年月日
-                    if (value.get(10) != null) {
-                        userinfo.setBirthday(value.get(10).toString());
+                    if (item.get("生年月日") != null) {
+                        userinfo.setBirthday(item.get("生年月日").toString());
                     }
                     //AD域账号
-                    if (value.get(11) != null) {
-                        userinfo.setAdfield(value.get(11).toString());
+                    if (item.get("AD域账号") != null) {
+                        userinfo.setAdfield(item.get("AD域账号").toString());
                         Query query = new Query();
                         query.addCriteria(Criteria.where("userinfo.adfield").is(userinfo.getAdfield()));
                         List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                         customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoList.size() > 0) {
-                            throw new LogicalException("AD域账号（" + value.get(11).toString() + "）" + "在人员表中已存在，请勿重复填写。");
-                        }else {
+                            throw new LogicalException("卡号（" + item.get("卡号").toString() + "）" + "对应的 AD域账号 在人员表中已存在，请勿重复填写。");
+                        } else {
 //                            UserAccount userAccount = new UserAccount();
                             ust.setAccount(userinfo.getAdfield());
                             ust.setPassword(userinfo.getAdfield());
@@ -888,37 +884,37 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                             query.addCriteria(Criteria.where("usertype").is(ust.getUsertype()));
                             List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
                             if (userAccountlist.size() > 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
                             }
                         }
                     }
                     //国籍
-                    if (value.get(12) != null) {
-                        userinfo.setNationality(value.get(12).toString());
+                    if (item.get("国籍") != null) {
+                        userinfo.setNationality(item.get("国籍").toString());
                     }
                     //民族
-                    if (value.get(13) != null) {
-                        userinfo.setNation(value.get(13).toString());
+                    if (item.get("民族") != null) {
+                        userinfo.setNation(item.get("民族").toString());
                     }
                     //户籍
-                    if (value.get(14) != null) {
-                        userinfo.setRegister(value.get(14).toString());
+                    if (item.get("户籍") != null) {
+                        userinfo.setRegister(item.get("户籍").toString());
                     }
                     //住所
-                    if (value.get(15) != null) {
-                        userinfo.setAddress(value.get(15).toString());
+                    if (item.get("住所") != null) {
+                        userinfo.setAddress(item.get("住所").toString());
                     }
                     //最终毕业学校
-                    if (value.get(16) != null) {
-                        userinfo.setGraduation(value.get(16).toString());
+                    if (item.get("最终毕业学校") != null) {
+                        userinfo.setGraduation(item.get("最终毕业学校").toString());
                     }
                     //专业
-                    if (value.get(17) != null) {
-                        userinfo.setSpecialty(value.get(17).toString());
+                    if (item.get("专业") != null) {
+                        userinfo.setSpecialty(item.get("专业").toString());
                     }
                     //是否有工作经验
-                    if (value.get(18) != null) {
-                        String experience = value.get(18).toString();
+                    if (item.get("是否有工作经验") != null) {
+                        String experience = item.get("是否有工作经验").toString();
                         if (experience != null) {
                             if (experience.equals("是")) {
                                 userinfo.setExperience("0");
@@ -928,16 +924,16 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                     }
                     //身份证号码
-                    if (value.get(19) != null) {
-                        userinfo.setIdnumber(value.get(19).toString());
+                    if (item.get("身份证号码") != null) {
+                        userinfo.setIdnumber(item.get("身份证号码").toString());
                     }
                     //毕业年月日
-                    if (value.get(20) != null) {
-                        userinfo.setGraduationday(value.get(20).toString());
+                    if (item.get("毕业年月日") != null) {
+                        userinfo.setGraduationday(item.get("毕业年月日").toString());
                     }
                     //最终学位
-                    if (value.get(21) != null) {
-                        String degree = value.get(21).toString();
+                    if (item.get("最终学位") != null) {
+                        String degree = item.get("最终学位").toString();
                         if (degree != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(degree.trim());
@@ -949,16 +945,16 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                     }
                     //仕事开始年月日
-                    if (value.get(22) != null) {
-                        userinfo.setWorkday(value.get(22).toString());
+                    if (item.get("仕事开始年月日") != null) {
+                        userinfo.setWorkday(item.get("仕事开始年月日").toString());
                     }
                     //员工ID
-                    if (value.get(23) != null) {
-                        userinfo.setPersonalcode(value.get(23).toString());
+                    if (item.get("员工ID") != null) {
+                        userinfo.setPersonalcode(item.get("员工ID").toString());
                     }
                     //劳动合同类型
-                    if (value.get(24) != null) {
-                        String laborcontracttype = value.get(24).toString();
+                    if (item.get("劳动合同类型") != null) {
+                        String laborcontracttype = item.get("劳动合同类型").toString();
                         if (laborcontracttype != null) {
                             if (laborcontracttype.equals("固定时限")) {
                                 userinfo.setLaborcontracttype("0");
@@ -968,12 +964,12 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
                         }
                     }
                     //年龄
-                    if (value.get(25) != null) {
-                        userinfo.setAge(value.get(25).toString());
+                    if (item.get("年龄") != null) {
+                        userinfo.setAge(item.get("年龄").toString());
                     }
                     //是否独生子女
-                    if (value.get(26) != null) {
-                        String children = value.get(26).toString();
+                    if (item.get("是否独生子女") != null) {
+                        String children = item.get("是否独生子女").toString();
                         if (children != null) {
                             if (children.equals("否")) {
                                 userinfo.setChildren("0");
@@ -987,446 +983,337 @@ public List<String> importUser(HttpServletRequest request, TokenModel tokenModel
 //                            userinfo.annualyearto(value.get(27).toString());
 //                        }
                     //今年年休数
-                    if (value.get(27) != null) {
-                        userinfo.setAnnualyear(value.get(27).toString());
+                    if (item.get("今年年休数") != null) {
+                        userinfo.setAnnualyear(item.get("今年年休数").toString());
                     }
                     //升格升号年月日
-                    if (value.get(28) != null) {
-                        userinfo.setUpgraded(value.get(28).toString());
+                    if (item.get("升格升号年月日") != null) {
+                        userinfo.setUpgraded(item.get("升格升号年月日").toString());
                     }
                     //银行账号
-                    if (value.get(29) != null) {
-                        userinfo.setSeatnumber(value.get(29).toString());
+                    if (item.get("银行账号") != null) {
+                        userinfo.setSeatnumber(item.get("银行账号").toString());
                     }
                     //固定期限締切日
-                    if (value.get(30) != null) {
-                        userinfo.setFixedate(value.get(30).toString());
+                    if (item.get("固定期限締切日") != null) {
+                        userinfo.setFixedate(item.get("固定期限締切日").toString());
                     }
                     //変更前基本工资
-                    if (value.get(31) != null) {
-                        personal.setAfter(value.get(31).toString());
+                    if (item.get("変更前基本工资") != null) {
+                        personal.setAfter(item.get("変更前基本工资").toString());
                     }
                     //変更前职责工资
-                    if (value.get(32) != null) {
-                        personal.setBefore(value.get(32).toString());
+                    if (item.get("変更前职责工资") != null) {
+                        personal.setBefore(item.get("変更前职责工资").toString());
                     }
                     //现基本工资
-                    if (value.get(33) != null) {
-                        personal.setBasic(value.get(33).toString());
+                    if (item.get("现基本工资") != null) {
+                        personal.setBasic(item.get("现基本工资").toString());
+                        userinfo.setBasic(item.get("现基本工资").toString());
                     }
                     //现职责工资
-                    if (value.get(34) != null) {
-                        personal.setDuty(value.get(34).toString());
+                    if (item.get("现职责工资") != null) {
+                        personal.setDuty(item.get("现职责工资").toString());
+                        userinfo.setDuty(item.get("现职责工资").toString());
                     }
                     //給料変更日
-                    if (value.get(35) != null) {
-                        personal.setDate(value.get(35).toString());
+                    if (item.get("給料変更日") != null) {
+                        personal.setDate(item.get("給料変更日").toString());
                     }
                     //养老保险基数
-                    if (value.get(36) != null) {
-                        userinfo.setYanglaoinsurance(value.get(36).toString());
+                    if (item.get("养老保险基数") != null) {
+                        userinfo.setYanglaoinsurance(item.get("养老保险基数").toString());
                     }
                     //医疗保险基数
-                    if (value.get(37) != null) {
-                        userinfo.setYiliaoinsurance(value.get(37).toString());
+                    if (item.get("医疗保险基数") != null) {
+                        userinfo.setYiliaoinsurance(item.get("医疗保险基数").toString());
                     }
                     //失业保险基数
-                    if (value.get(38) != null) {
-                        userinfo.setShiyeinsurance(value.get(38).toString());
+                    if (item.get("失业保险基数") != null) {
+                        userinfo.setShiyeinsurance(item.get("失业保险基数").toString());
                     }
                     //工伤保险基数
-                    if (value.get(39) != null) {
-                        userinfo.setGongshanginsurance(value.get(39).toString());
+                    if (item.get("工伤保险基数") != null) {
+                        userinfo.setGongshanginsurance(item.get("工伤保险基数").toString());
                     }
                     //生育保险基数
-                    if (value.get(40) != null) {
-                        userinfo.setShengyuinsurance(value.get(40).toString());
+                    if (item.get("生育保险基数") != null) {
+                        userinfo.setShengyuinsurance(item.get("生育保险基数").toString());
                     }
                     //住房公积金缴纳基数
-                    if (value.get(41) != null) {
-                        userinfo.setHouseinsurance(value.get(41).toString());
+                    if (item.get("住房公积金缴纳基数") != null) {
+                        userinfo.setHouseinsurance(item.get("住房公积金缴纳基数").toString());
                     }
-                }
-                cupList.add(personal);
-                //如果有工资履历变更，給料変更日不能为空
-                if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
-                        !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
-                        StringUtils.isNullOrEmpty(personal.getDate())) {
-                    throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "的 給料変更日 未填写");
-                }
-                userinfo.setGridData(cupList);
-                customerInfo.setUserinfo(userinfo);
-                customerInfo.setType("1");
-                customerInfo.setStatus("0");
-                customerInfo.getUserinfo().setType("0");
-                mongoTemplate.save(ust);
-                Query query = new Query();
-                query.addCriteria(Criteria.where("account").is(ust.getAccount()));
-                query.addCriteria(Criteria.where("password").is(ust.getPassword()));
-                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                if (userAccountlist.size() > 0) {
-                    String _id = userAccountlist.get(0).get_id();
-                    customerInfo.setUserid(_id);
-                    mongoTemplate.save(customerInfo);
-                }
-                accesscount = accesscount + 1;
-            }
-        }
-        else {
-            for (int i = 1; i < list.size(); i++)
-            {
-                UserAccount userAccount = new UserAccount();
-                List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
-                CustomerInfo.Personal personal = new CustomerInfo.Personal();
-                CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
-                List<Object> value = list.get(i);
-                if (value != null && !value.isEmpty() && value.size()>0)
-                {
-                    userinfo.setJobnumber(Convert.toStr(value.get(0)));
+//                }
+                    cupList.add(personal);
+                    //如果有工资履历变更，給料変更日不能为空
+                    if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
+                            !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
+                            StringUtils.isNullOrEmpty(personal.getDate())) {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get(0)) + "）" + "的 給料変更日 未填写");
+                    }
+                    userinfo.setGridData(cupList);
+                    customerInfo.setUserinfo(userinfo);
+                    customerInfo.setType("1");
+                    customerInfo.setStatus("0");
+                    customerInfo.getUserinfo().setType("0");
+                    mongoTemplate.save(ust);
                     Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(userinfo.getJobnumber()));
-                    List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
-                    customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-                    if(customerInfoList.size()>0)
-                    {
-                        for(int j = 0;j < updint.size();j++)
-                        {
-                            if(value.size() > updint.get(j))
-                            {
-                                switch (updint.get(j))
-                                {
-                                    case 0:
-                                        break;
-                                    case 1:
-                                        if (value.get(1) != null) {
-                                            String customername = Convert.toStr(value.get(1));
-                                            if (!(customername.equals(customerInfoList.get(0).getUserinfo().getCustomername()))) {
-                                                customerInfoList.get(0).getUserinfo().setCustomername(Convert.toStr(value.get(1)));
-                                                query = new Query();
-                                                query.addCriteria(Criteria.where("userinfo.customername").is(customerInfoList.get(0).getUserinfo().getCustomername()));
-                                                List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
-                                                customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
-                                                if (customerInfoLists.size() > 0) {
-                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在，请确认。");
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 2:
-//                                            customerInfoList.get(0).getUserinfo().setCentername(Convert.toStr(value.get(3)));
-                                        break;
-                                    case 3:
-//                                            customerInfoList.get(0).getUserinfo().setGroupname(Convert.toStr(value.get(4)));
-                                        break;
-                                    case 4:
-//                                            customerInfoList.get(0).getUserinfo().setTeamname(Convert.toStr(value.get(5)));
-                                        break;
-                                    case 5:
-                                        if (value.get(5) != null) {
-                                            customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(value.get(5)));
-                                        }
-                                        break;
-                                    case 6:
-                                        if (value.get(6) != null) {
-                                            String post = value.get(6).toString();
-                                            if (post != null) {
-                                                Dictionary dictionary = new Dictionary();
-                                                dictionary.setValue1(post.trim());
-                                                dictionary.setType("CW");
-                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                if (dictionaryList.size() > 0) {
-                                                    customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 7:
-                                        if (value.get(7) != null) {
-                                            String rank = value.get(7).toString();
-                                            if (rank != null) {
-                                                Dictionary dictionary = new Dictionary();
-                                                dictionary.setValue1(rank.trim());
-                                                dictionary.setType("RS");
-                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                if (dictionaryList.size() > 0) {
-                                                    customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 8:
-                                        if (value.get(8) != null) {
-                                            String sex = value.get(8).toString();
-                                            if (sex != null) {
-                                                Dictionary dictionary = new Dictionary();
-                                                dictionary.setValue1(sex.trim());
-                                                dictionary.setType("GT");
-                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                if (dictionaryList.size() > 0) {
-                                                    customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 9:
-                                        if (value.get(9) != null) {
-                                            //upd_fjl  --修改预算编码值
-                                            customerInfoList.get(0).getUserinfo().setBudgetunit(value.get(9).toString());
-//                                            String budgetunit = value.get(9).toString();
-//                                            if (budgetunit != null) {
-//                                                Dictionary dictionary = new Dictionary();
-//                                                dictionary.setValue1(budgetunit.trim());
-//                                                dictionary.setType("JY");
-//                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-//                                                if (dictionaryList.size() > 0) {
-//                                                    customerInfoList.get(0).getUserinfo().setBudgetunit(dictionaryList.get(0).getCode());
-//                                                }
-//                                            }
-                                            //upd_fjl  --修改预算编码值
-                                        }
-                                        break;
-                                    case 10:
-                                        if (value.get(10) != null) {
-                                            customerInfoList.get(0).getUserinfo().setBirthday(value.get(10).toString());
-                                        }
-                                        break;
-                                    case 11:
-                                        if (value.get(11) != null) {
-                                            customerInfoList.get(0).getUserinfo().setAdfield(value.get(11).toString());
-                                            query = new Query();
-                                            query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
-                                            List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
-                                            customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
-                                            if (customerInfoLists.size() > 0) {
-                                                throw new LogicalException("AD域账号（" + value.get(11).toString() + "）" + "在人员表中已存在，请勿重复填写。");
-                                            } else {
-                                                userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
-                                                userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
-                                                userAccount.setUsertype("0");
-                                                query = new Query();
-                                                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                                                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-                                                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                                                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                                                if (userAccountlist.size() > 0) {
-                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 12:
-                                        if (value.get(12) != null) {
-                                            customerInfoList.get(0).getUserinfo().setNationality(value.get(12).toString());
-                                        }
-                                        break;
-                                    case 13:
-                                        if (value.get(13) != null) {
-                                            customerInfoList.get(0).getUserinfo().setNation(value.get(13).toString());
-                                        }
-                                        break;
-                                    case 14:
-                                        if (value.get(14) != null) {
-                                            customerInfoList.get(0).getUserinfo().setRegister(value.get(14).toString());
-                                        }
-                                        break;
-                                    case 15:
-                                        if (value.get(15) != null) {
-                                            customerInfoList.get(0).getUserinfo().setAddress(value.get(15).toString());
-                                        }
-                                        break;
-                                    case 16:
-                                        if (value.get(16) != null) {
-                                            customerInfoList.get(0).getUserinfo().setGraduation(value.get(16).toString());
-                                        }
-                                        break;
-                                    case 17:
-                                        if (value.get(17) != null) {
-                                            customerInfoList.get(0).getUserinfo().setSpecialty(value.get(17).toString());
-                                        }
-                                        break;
-                                    case 18:
-                                        if (value.get(18) != null) {
-                                            String experience = value.get(18).toString();
-                                            if (experience != null) {
-                                                if (experience.equals("是")) {
-                                                    customerInfoList.get(0).getUserinfo().setExperience("0");
-                                                } else if (experience.equals("否")) {
-                                                    customerInfoList.get(0).getUserinfo().setExperience("1");
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 19:
-                                        if (value.get(19) != null) {
-                                            customerInfoList.get(0).getUserinfo().setIdnumber(value.get(19).toString());
-                                        }
-                                        break;
-                                    case 20:
-                                        if (value.get(20) != null) {
-                                            customerInfoList.get(0).getUserinfo().setGraduationday(value.get(20).toString());
-                                        }
-                                        break;
-                                    case 21:
-                                        if (value.get(21) != null) {
-                                            String degree = value.get(21).toString();
-                                            if (degree != null) {
-                                                Dictionary dictionary = new Dictionary();
-                                                dictionary.setValue1(degree.trim());
-                                                dictionary.setType("GT");
-                                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                                if (dictionaryList.size() > 0) {
-                                                    customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 22:
-                                        if (value.get(22) != null) {
-                                            customerInfoList.get(0).getUserinfo().setWorkday(value.get(22).toString());
-                                        }
-                                        break;
-                                    case 23:
-                                        if (value.get(23) != null) {
-                                            customerInfoList.get(0).getUserinfo().setPersonalcode(value.get(23).toString());
-                                        }
-                                        break;
-                                    case 24:
-                                        if (value.get(24) != null) {
-                                            String laborcontracttype = value.get(24).toString();
-                                            if (laborcontracttype != null) {
-                                                if (laborcontracttype.equals("固定时限")) {
-                                                    customerInfoList.get(0).getUserinfo().setLaborcontracttype("0");
-                                                } else if (laborcontracttype.equals("非固定时限")) {
-                                                    customerInfoList.get(0).getUserinfo().setLaborcontracttype("1");
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 25:
-                                        if (value.get(25) != null) {
-                                            customerInfoList.get(0).getUserinfo().setAge(value.get(25).toString());
-                                        }
-                                        break;
-                                    case 26:
-                                        if (value.get(26) != null) {
-                                            String children = value.get(26).toString();
-                                            if (children != null) {
-                                                if (children.equals("否")) {
-                                                    customerInfoList.get(0).getUserinfo().setChildren("0");
-                                                } else if (children.equals("是")) {
-                                                    customerInfoList.get(0).getUserinfo().setChildren("1");
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case 27:
-                                        if (value.get(27) != null) {
-                                            customerInfoList.get(0).getUserinfo().setAnnualyear(value.get(27).toString());
-                                        }
-                                        break;
-                                    case 28:
-                                        if (value.get(28) != null) {
-                                            customerInfoList.get(0).getUserinfo().setUpgraded(value.get(28).toString());
-                                        }
-                                        break;
-                                    case 29:
-                                        if (value.get(29) != null) {
-                                            customerInfoList.get(0).getUserinfo().setSeatnumber(value.get(29).toString());
-                                        }
-                                        break;
-                                    case 30:
-                                        if (value.get(30) != null) {
-                                            customerInfoList.get(0).getUserinfo().setFixedate(value.get(30).toString());
-                                        }
-                                        break;
-                                    case 31:
-                                        if (value.get(31) != null) {
-                                            personal.setAfter(value.get(31).toString());
-                                        }
-                                        break;
-                                    case 32:
-                                        if (value.get(32) != null) {
-                                            personal.setBefore(value.get(32).toString());
-                                        }
-                                        break;
-                                    case 33:
-                                        if (value.get(33) != null) {
-                                            personal.setBasic(value.get(33).toString());
-                                        }
-                                        break;
-                                    case 34:
-                                        if (value.get(34) != null) {
-                                            personal.setDuty(value.get(34).toString());
-                                        }
-                                        break;
-                                    case 35:
-                                        if (value.get(35) != null) {
-                                            personal.setDate(value.get(35).toString());
-                                        }
-                                        break;
-                                    case 36:
-                                        if (value.get(36) != null) {
-                                            customerInfoList.get(0).getUserinfo().setYanglaoinsurance(value.get(36).toString());
-                                        }
-                                        break;
-                                    case 37:
-                                        if (value.get(37) != null) {
-                                            customerInfoList.get(0).getUserinfo().setYiliaoinsurance(value.get(37).toString());
-                                        }
-                                        break;
-                                    case 38:
-                                        if (value.get(38) != null) {
-                                            customerInfoList.get(0).getUserinfo().setShiyeinsurance(value.get(38).toString());
-                                        }
-                                        break;
-                                    case 39:
-                                        if (value.get(39) != null) {
-                                            customerInfoList.get(0).getUserinfo().setGongshanginsurance(value.get(39).toString());
-                                        }
-                                        break;
-                                    case 40:
-                                        if (value.get(40) != null) {
-                                            customerInfoList.get(0).getUserinfo().setShengyuinsurance(value.get(40).toString());
-                                        }
-                                        break;
-                                    case 41:
-                                        if (value.get(41) != null) {
-                                            customerInfoList.get(0).getUserinfo().setHouseinsurance(value.get(41).toString());
-                                        }
-                                        break;
+                    query.addCriteria(Criteria.where("account").is(ust.getAccount()));
+                    query.addCriteria(Criteria.where("password").is(ust.getPassword()));
+                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                    if (userAccountlist.size() > 0) {
+                        String _id = userAccountlist.get(0).get_id();
+                        customerInfo.setUserid(_id);
+                        mongoTemplate.save(customerInfo);
+                    }
+                    accesscount = accesscount + 1;
+                }
+            } else {
+                for (Map<String, Object> item : readAll) {
+                    UserAccount userAccount = new UserAccount();
+                    List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
+                    CustomerInfo.Personal personal = new CustomerInfo.Personal();
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(item.get("卡号")));
+                    List<CustomerInfo> customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+
+                    if (customerInfoList.size() > 0) {
+                        if (item.get("姓名●") != null) {
+                            String customername = Convert.toStr(item.get("姓名●"));
+                            if (!(customername.equals(customerInfoList.get(0).getUserinfo().getCustomername()))) {
+                                customerInfoList.get(0).getUserinfo().setCustomername(Convert.toStr(item.get("姓名●")));
+                                query = new Query();
+                                query.addCriteria(Criteria.where("userinfo.customername").is(customerInfoList.get(0).getUserinfo().getCustomername()));
+                                List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
+                                customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
+                                if (customerInfoLists.size() > 0) {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在，请确认。");
                                 }
                             }
                         }
-                        //判断工资是否有变更履历，如果有添加进来
-                        if (customerInfoList.get(0).getUserinfo().getGridData().size() > 0) {
-                            cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
-                        }
-                        cupList.add(personal);
+                        //center
+//                                  customerInfoList.get(0).getUserinfo().setCentername(Convert.toStr(value.get(3)));
+                        //group
+//                                  customerInfoList.get(0).getUserinfo().setGroupname(Convert.toStr(value.get(4)));
+                        //team
+//                                  customerInfoList.get(0).getUserinfo().setTeamname(Convert.toStr(value.get(5)));
 
-                        //如果有工资履历变更，給料変更日不能为空
-                        if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
-                                !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
-                                StringUtils.isNullOrEmpty(personal.getDate())) {
-                            throw new LogicalException("卡号（" + Convert.toStr(value.get(0)) + "）" + "的 給料変更日 未填写");
+                        if (item.get("入社时间●") != null) {
+                            customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(item.get("入社时间●")));
                         }
-                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
-                        mongoTemplate.save(customerInfoList.get(0));
-                        mongoTemplate.save(userAccount);
-                        accesscount = accesscount + 1;
+                        if (item.get("职务●") != null) {
+                            String post = item.get("职务●").toString();
+                            if (post != null) {
+                                Dictionary dictionary = new Dictionary();
+                                dictionary.setValue1(post.trim());
+                                dictionary.setType("CW");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if (dictionaryList.size() > 0) {
+                                    customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if (item.get("Rank●") != null) {
+                            String rank = item.get("Rank●").toString();
+                            if (rank != null) {
+                                Dictionary dictionary = new Dictionary();
+                                dictionary.setValue1(rank.trim());
+                                dictionary.setType("RS");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if (dictionaryList.size() > 0) {
+                                    customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if (item.get("性别●") != null) {
+                            String sex = item.get("性别●").toString();
+                            if (sex != null) {
+                                Dictionary dictionary = new Dictionary();
+                                dictionary.setValue1(sex.trim());
+                                dictionary.setType("GT");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if (dictionaryList.size() > 0) {
+                                    customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if (item.get("预算编码●") != null) {
+                            customerInfoList.get(0).getUserinfo().setBudgetunit(item.get("预算编码●").toString());
+                        }
+                        if (item.get("生年月日●") != null) {
+                            customerInfoList.get(0).getUserinfo().setBirthday(item.get("生年月日●").toString());
+                        }
+                        if (item.get("AD域账号●") != null) {
+                            customerInfoList.get(0).getUserinfo().setAdfield(item.get("AD域账号●").toString());
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
+                            List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
+                            customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
+                            if (customerInfoLists.size() > 0) {
+                                throw new LogicalException("AD域账号（" + item.get("AD域账号●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                            } else {
+                                userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
+                                userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                                userAccount.setUsertype("0");
+                                query = new Query();
+                                query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                if (userAccountlist.size() > 0) {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                }
+                            }
+                        }
+                        if (item.get("国籍●") != null) {
+                            customerInfoList.get(0).getUserinfo().setNationality(item.get("国籍●").toString());
+                        }
+                        if (item.get("民族●") != null) {
+                            customerInfoList.get(0).getUserinfo().setNation(item.get("民族●").toString());
+                        }
+                        if (item.get("户籍●") != null) {
+                            customerInfoList.get(0).getUserinfo().setRegister(item.get("户籍●").toString());
+                        }
+                        if (item.get("住所●") != null) {
+                            customerInfoList.get(0).getUserinfo().setAddress(item.get("住所●").toString());
+                        }
+                        if (item.get("最终毕业学校●") != null) {
+                            customerInfoList.get(0).getUserinfo().setGraduation(item.get("最终毕业学校●").toString());
+                        }
+                        if (item.get("专业●") != null) {
+                            customerInfoList.get(0).getUserinfo().setSpecialty(item.get("专业●").toString());
+                        }
+                        if (item.get("是否有工作经验●") != null) {
+                            String experience = item.get("是否有工作经验●").toString();
+                            if (experience != null) {
+                                if (experience.equals("是")) {
+                                    customerInfoList.get(0).getUserinfo().setExperience("0");
+                                } else if (experience.equals("否")) {
+                                    customerInfoList.get(0).getUserinfo().setExperience("1");
+                                }
+                            }
+                        }
+                        if (item.get("身份证号码●") != null) {
+                            customerInfoList.get(0).getUserinfo().setIdnumber(item.get("身份证号码●").toString());
+                        }
+                        if (item.get("毕业年月日●") != null) {
+                            customerInfoList.get(0).getUserinfo().setGraduationday(item.get("毕业年月日●").toString());
+                        }
+                        if (item.get("最终学位●") != null) {
+                            String degree = item.get("最终学位●").toString();
+                            if (degree != null) {
+                                Dictionary dictionary = new Dictionary();
+                                dictionary.setValue1(degree.trim());
+                                dictionary.setType("GT");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if (dictionaryList.size() > 0) {
+                                    customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
+                                }
+                            }
+                        }
+                        if (item.get("仕事开始年月日●") != null) {
+                            customerInfoList.get(0).getUserinfo().setWorkday(item.get("仕事开始年月日●").toString());
+                        }
+                        if (item.get("员工ID●") != null) {
+                            customerInfoList.get(0).getUserinfo().setPersonalcode(item.get("员工ID●").toString());
+                        }
+                        if (item.get("劳动合同类型●") != null) {
+                            String laborcontracttype = item.get("劳动合同类型●").toString();
+                            if (laborcontracttype != null) {
+                                if (laborcontracttype.equals("固定时限●")) {
+                                    customerInfoList.get(0).getUserinfo().setLaborcontracttype("0");
+                                } else if (laborcontracttype.equals("非固定时限●")) {
+                                    customerInfoList.get(0).getUserinfo().setLaborcontracttype("1");
+                                }
+                            }
+                        }
+                        if (item.get("年龄●") != null) {
+                            customerInfoList.get(0).getUserinfo().setAge(item.get("年龄●").toString());
+                        }
+                        if (item.get("是否独生子女●") != null) {
+                            String children = item.get("是否独生子女●").toString();
+                            if (children != null) {
+                                if (children.equals("否")) {
+                                    customerInfoList.get(0).getUserinfo().setChildren("0");
+                                } else if (children.equals("是")) {
+                                    customerInfoList.get(0).getUserinfo().setChildren("1");
+                                }
+                            }
+                        }
+                        if (item.get("今年年休数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setAnnualyear(item.get("今年年休数●").toString());
+                        }
+                        if (item.get("升格升号年月日●") != null) {
+                            customerInfoList.get(0).getUserinfo().setUpgraded(item.get("升格升号年月日●").toString());
+                        }
+                        if (item.get("银行账号●") != null) {
+                            customerInfoList.get(0).getUserinfo().setSeatnumber(item.get("银行账号●").toString());
+                        }
+                        if (item.get("固定期限締切日●") != null) {
+                            customerInfoList.get(0).getUserinfo().setFixedate(item.get("固定期限締切日●").toString());
+                        }
+                        if (item.get("変更前基本工资●") != null) {
+                            personal.setAfter(item.get("変更前基本工资●").toString());
+                        }
+                        if (item.get("変更前职责工资●") != null) {
+                            personal.setBefore(item.get("変更前职责工资●").toString());
+                        }
+                        if (item.get("现基本工资●") != null) {
+                            personal.setBasic(item.get("现基本工资●").toString());
+                            customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                        }
+                        if (item.get("现职责工资●") != null) {
+                            personal.setDuty(item.get("现职责工资●").toString());
+                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                        }
+                        if (item.get("給料変更日●") != null) {
+                            personal.setDate(item.get("給料変更日●").toString());
+                        }
+                        if (item.get("养老保险基数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
+                        }
+                        if (item.get("医疗保险基数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setYiliaoinsurance(item.get("医疗保险基数●").toString());
+                        }
+                        if (item.get("失业保险基数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setShiyeinsurance(item.get("失业保险基数●").toString());
+                        }
+                        if (item.get("工伤保险基数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setGongshanginsurance(item.get("工伤保险基数●").toString());
+                        }
+                        if (item.get("生育保险基数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setShengyuinsurance(item.get("生育保险基数●").toString());
+                        }
+                        if (item.get("住房公积金缴纳基数●") != null) {
+                            customerInfoList.get(0).getUserinfo().setHouseinsurance(item.get("住房公积金缴纳基数●").toString());
+                        }
                     }
-                    else
-                    {
-                        throw new LogicalException("卡号（"+ Convert.toStr(value.get(0)) +"）"  + "在人员表中不存在，无法更新，请确认。");
+                    //判断工资是否有变更履历，如果有添加进来
+                    if (customerInfoList.get(0).getUserinfo().getGridData().size() > 0) {
+                        cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                     }
+                    cupList.add(personal);
+
+                    //如果有工资履历变更，給料変更日不能为空
+                    if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
+                            !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
+                            StringUtils.isNullOrEmpty(personal.getDate())) {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
+                    }
+                    customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                    mongoTemplate.save(customerInfoList.get(0));
+                    mongoTemplate.save(userAccount);
+                    accesscount = accesscount + 1;
                 }
-            }
-        }
 
-        Result.add("失败数：" + error);
-        Result.add("成功数：" + accesscount);
-        return Result;
-    } catch (Exception e) {
-        throw new LogicalException(e.getMessage());
+            }
+//        UPD_FJL_2020/05/12 --修改人员导入
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
     }
-}
 }
