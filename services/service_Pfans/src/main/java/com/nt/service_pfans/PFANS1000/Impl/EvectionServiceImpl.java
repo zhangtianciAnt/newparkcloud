@@ -180,14 +180,12 @@ public class EvectionServiceImpl implements EvectionService {
         Map<String, Object> mergeResult = null;
         Map<String, Float> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
-            if (SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
-                // 专票，获取税率
-                float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
-                if (rate <= 0) {
-                    throw new LogicalException("专票税率不能为0");
-                }
-                specialMap.put(invoice.getInvoicenumber(), rate);
+            // 专票，获取税率
+            float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
+            if (rate <= 0) {
+                throw new LogicalException("专票税率不能为0");
             }
+            specialMap.put(invoice.getInvoicenumber(), rate);
         }
         // 总金额改为人民币支出
         specialMap.put(TOTAL_TAX, Float.parseFloat(evectionVo.getEvection().getTotalpay()));
@@ -234,9 +232,9 @@ public class EvectionServiceImpl implements EvectionService {
 
         int rowindex = 0;
         for (TravelCost insertInfo : csvList) {
-            if(insertInfo.getLineamount().equals("0")) {
+            if (insertInfo.getLineamount().equals("0")) {
                 continue;
-            }else {
+            } else {
                 rowindex = rowindex + 1;
                 insertInfo.preInsert(tokenModel);
                 insertInfo.setTravelcost_id(UUID.randomUUID().toString());
@@ -304,6 +302,7 @@ public class EvectionServiceImpl implements EvectionService {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, "rmb");
+            float taxes = getPropertyFloat(detail, "taxes");
             float moneysum = getPropertyFloat(detail, "subsidies");
             totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
@@ -313,17 +312,16 @@ public class EvectionServiceImpl implements EvectionService {
                 resultMap.put(TAX_KEY, taxList);
                 float rate = specialMap.get(keyNo);
                 TravelCost taxCost = new TravelCost();
-
                 // 税拔
-                String lineCost = FNUM.format(money / (1 + rate));
+                String lineCost = FNUM.format(money - taxes);
                 // 税金
-                String lineRate = FNUM.format((money / (1 + rate)) * rate);
+                String lineRate = FNUM.format(taxes);
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
-                    if(!lineRate.equals("0")){
+                    if (!lineRate.equals("0")) {
                         taxCost.setSubjectnumber("2302-00-01A0");
-                    }else{
+                    } else {
                         taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     }
                     //add-ws-4/22-税金不为0存2302-00-01A0
