@@ -49,4 +49,24 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendance.preUpdate(tokenModel);
         attendanceMapper.updateByPrimaryKeySelective(attendance);
     }
+
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+    @Override
+    public void updStatus(Attendance attendance, TokenModel tokenModel) throws Exception {
+        Attendance att = new Attendance();
+        if (attendance.getStatus().equals("4")) {
+            att.setUser_id(attendance.getUser_id());
+            att.setYears(attendance.getYears());
+            att.setMonths(attendance.getMonths());
+            List<Attendance> attList = attendanceMapper.select(att);
+            if (attList.size() > 0) {
+                for (Attendance at : attList) {
+                    at.setRecognitionstate("1");
+                    at.preUpdate(tokenModel);
+                    attendanceMapper.updateByPrimaryKeySelective(at);
+                }
+            }
+        }
+    }
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
 }
