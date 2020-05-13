@@ -151,18 +151,22 @@ public class AccommodationDetails extends BaseModel {
     private String costitem;
 
     @Column(name = "TAXES")
-    private String  taxes;
+    private String taxes;
 
     /**
-     *PL摘要内容
+     * PL摘要内容
      */
     @Column(name = "PLSUMMARY")
-    private String  plsummary;
+    private String plsummary;
 
     @Column(name = "ACCOUNTCODE")
-    private String  accountcode;
+    private String accountcode;
     //add-ws-4/29-补贴费用添加
     @Column(name = "SUBSIDIES")
-    private String  subsidies;
-//add-ws-4/29-补贴费用添加
+    private String subsidies;
+    //add-ws-4/29-补贴费用添加
+//add-ws-5/13-获取当前人是否直属部门后台导出csv使用
+    @Column(name = "REDIRICT")
+    private String redirict;
+    //add-ws-5/13-获取当前人是否直属部门后台导出csv使用
 }

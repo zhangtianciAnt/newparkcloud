@@ -52,4 +52,16 @@
         order by
         RESTDAYS
     </select>
+
+    <select id="getrest2" resultType="com.nt.dao_Pfans.PFANS2000.Vo.restViewVo">
+        select
+        USER_ID userid,
+        RESTDAYS restdays
+        from restView2
+        <if test="userid!=null and userid !=''">
+            where USER_ID = #{userid}
+        </if>
+        order by
+        RESTDAYS
+    </select>
 </mapper>
