@@ -183,12 +183,14 @@ public class EvectionServiceImpl implements EvectionService {
         //add-ws-5/12-汇税收益与汇税损失问题对应
         Map<String, Float> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
-            // 专票，获取税率
-            float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
-            if (rate <= 0) {
-                throw new LogicalException("专票税率不能为0");
+            if(Integer.valueOf(invoice.getInvoiceamount())>0){
+                // 专票，获取税率
+                float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
+                if (rate <= 0) {
+                    throw new LogicalException("专票税率不能为0");
+                }
+                specialMap.put(invoice.getInvoicenumber(), rate);
             }
-            specialMap.put(invoice.getInvoicenumber(), rate);
         }
         // 总金额改为人民币支出
         specialMap.put(TOTAL_TAX, Float.parseFloat(evectionVo.getEvection().getTotalpay()));
