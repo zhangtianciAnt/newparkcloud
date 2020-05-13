@@ -34,6 +34,13 @@ public class Pfans3005Controller {
         return ApiResult.success(purchaseService.getPurchase(purchase));
     }
 
+    @RequestMapping(value="/getlist",method = {RequestMethod.GET})
+    public ApiResult getPurchaselist(HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        Purchase purchase = new Purchase();
+        return ApiResult.success(purchaseService.getPurchaselist(purchase));
+    }
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Purchase purchase, HttpServletRequest request) throws Exception {
         if (purchase == null) {
