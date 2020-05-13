@@ -9,6 +9,8 @@ public interface PurchaseService {
 
     List<Purchase> getPurchase(Purchase purchase)throws Exception;
 
+    List<Purchase> getPurchaselist(Purchase purchase)throws Exception;
+
     public Purchase One(String purchase_id)throws  Exception;
 
     public void insert(Purchase purchase, TokenModel tokenModel)throws  Exception;

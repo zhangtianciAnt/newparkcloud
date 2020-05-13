@@ -27,6 +27,11 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    public List<Purchase> getPurchaselist(Purchase purchase) {
+        return purchaseMapper.select(purchase);
+    }
+
+    @Override
     public Purchase One(String purchase_id) throws Exception {
         return purchaseMapper.selectByPrimaryKey(purchase_id);
     }
