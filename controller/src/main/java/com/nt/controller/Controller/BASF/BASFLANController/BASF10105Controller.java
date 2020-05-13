@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
-import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.ServerInfo;
@@ -129,7 +128,6 @@ public class BASF10105Controller {
                 }
             }
             webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
-            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
 
             //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
             mapBox_mapLevelServices.remarkSet(alarmMapidList, true, tokenModel);

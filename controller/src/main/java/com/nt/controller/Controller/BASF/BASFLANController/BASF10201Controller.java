@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
-import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
@@ -41,6 +40,7 @@ public class BASF10201Controller {
 
     @Autowired
     private FirealarmServices firealarmServices;
+
     @Autowired
     private TokenService tokenService;
 
@@ -52,8 +52,8 @@ public class BASF10201Controller {
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
-//    private WebSocketVo webSocketVo = new WebSocketVo();
     private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
+
 
     /**
      * @param request
@@ -64,8 +64,8 @@ public class BASF10201Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13：10
      */
-    @RequestMapping(value = "/list",method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request)throws Exception{
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request) throws Exception {
         return ApiResult.success(firealarmServices.list());
     }
 
@@ -78,8 +78,8 @@ public class BASF10201Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13：10
      */
-    @RequestMapping(value = "/listdialog",method = {RequestMethod.POST})
-    public ApiResult listdialog(HttpServletRequest request)throws Exception{
+    @RequestMapping(value = "/listdialog", method = {RequestMethod.POST})
+    public ApiResult listdialog(HttpServletRequest request) throws Exception {
         Firealarm firealarm = new Firealarm();
         firealarm.setCompletesta("0");
         firealarm.setMisinformation("0");
@@ -96,14 +96,15 @@ public class BASF10201Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13:20
      */
-    @RequestMapping(value = "/create",method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Firealarm firealarm, HttpServletRequest request)throws Exception{
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Firealarm firealarm, HttpServletRequest request) throws Exception {
         if (firealarm == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-
-        return ApiResult.success(firealarmServices.insert(firealarm,tokenModel));
+        String uuid = firealarmServices.insert(firealarm, tokenModel);
+        pushMessage(null);
+        return ApiResult.success(uuid);
     }
 
     /**
@@ -116,10 +117,10 @@ public class BASF10201Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/12 13：31
      */
-    @RequestMapping(value = "/delete",method = {RequestMethod.POST})
-    public ApiResult delete(@RequestBody Firealarm firealarm,HttpServletRequest request)throws Exception{
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
+    public ApiResult delete(@RequestBody Firealarm firealarm, HttpServletRequest request) throws Exception {
         if (firealarm == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         firealarm.setStatus(AuthConstants.DEL_FLAG_DELETE);
         firealarmServices.delete(firealarm);
@@ -155,39 +156,43 @@ public class BASF10201Controller {
      * @Date 2019/11/12 13:38
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody  Firealarm firealarm , HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody Firealarm firealarm, HttpServletRequest request) throws Exception {
         if (firealarm == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         firealarmServices.update(firealarm, tokenModel);
+        pushMessage(tokenModel);
+        return ApiResult.success();
+    }
 
-        //存储发送到websocket中的信息
-        List<DeviceinformationVo> list = new ArrayList<>();
-
+    public void pushMessage(TokenModel tokenModel) throws Exception {
         //获取并立即推送非误报且未完成的消防报警单
         Firealarm firealarmnew = new Firealarm();
         firealarmnew.setCompletesta("0");
         firealarmnew.setMisinformation("0");
         List<Firealarm> firealarms = firealarmServices.list(firealarmnew);
         webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
 
+        //设置剩余的报警层级状态
+        List<DeviceinformationVo> list = new ArrayList<>();
         for (Firealarm fi : firealarms) {
             if (StringUtils.isNotEmpty(fi.getDeviceinformationid())) {
                 Deviceinformation deviceinformation = deviceinFormationServices.one(fi.getDeviceinformationid());
-                DeviceinformationVo linkagelistVo = new DeviceinformationVo();
-                linkagelistVo.setFirealarmuuid(fi.getFirealarmid());
-                linkagelistVo.setDeviceinformation(deviceinformation);
-                list.add(linkagelistVo);
                 if (deviceinformation != null && StringUtils.isNotEmpty(deviceinformation.getMapid())) {
-                    mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(), true, tokenModel);
+                    if (tokenModel != null) {
+                        mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(), true, tokenModel);
+                    }
+                    //添加报警设备信息和报警单id
+                    DeviceinformationVo linkagelistVo = new DeviceinformationVo();
+                    linkagelistVo.setFirealarmuuid(fi.getFirealarmid());
+                    linkagelistVo.setDeviceinformation(deviceinformation);
+                    list.add(linkagelistVo);
                 }
             }
         }
         // 推送报警设备信息
         webSocketDeviceinfoVo.setDeviceinformationList(list);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
-        return ApiResult.success();
     }
 }
