@@ -263,13 +263,18 @@ public class AttendancesServiceImpl implements AttendancesService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
+            //画面导入按钮
             List<String> Result = new ArrayList<String>();
-            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
-            File f = null;
-            f = File.createTempFile("tmp", null);
-            file.transferTo(f);
-            //指定sheet页面读取
-            ExcelReader reader = ExcelUtil.getReader(f,1);
+//            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+//            File f = null;
+//            f = File.createTempFile("tmp", null);
+//            file.transferTo(f);
+//            //指定sheet页面读取
+//            ExcelReader reader = ExcelUtil.getReader(f,1);
+
+            //直接读取路径导入
+            ExcelReader reader = ExcelUtil.getReader("E:\\Excel\\奥川生物666_考勤报表_20200401-20200430.xlsx" , 1);
+
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("日期");
