@@ -628,7 +628,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getOKRSByMonth(String orgid) throws Exception{
 
-        System.out.println("1111111111111111111111111111111111111111111111111111111111111111");
         Date tempDate = new Date();
         SimpleDateFormat  sdf = new SimpleDateFormat("yyyy-MM");
 
@@ -641,7 +640,6 @@ public class UserServiceImpl implements UserService {
             query.addCriteria(Criteria.where("status").is("0"));
             query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
             query.addCriteria(Criteria.where("userinfo.OkrsTable").elemMatch(cri));
-            Sort sort = new Sort(Sort.Direction.DESC,"userinfo.OkrsTable.completed");
             customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         }
         return customerInfos;

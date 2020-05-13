@@ -46,7 +46,6 @@ public class AOCHUAN0000Controller {
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody List<WorkPlan> workPlanList, HttpServletRequest request) throws Exception {
 
-        System.out.println(workPlanList);
         //全删除
         if(workPlanList.isEmpty()){
 

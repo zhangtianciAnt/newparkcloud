@@ -96,4 +96,7 @@ public class FinPurchase extends BaseModel {
     //汇率
     @Column(name = "EX_RATE")
     private  String ex_rate;
+    //数量
+    @Column(name = "PURCHASE_AMOUNT")
+    private  String purchase_amount;
 }

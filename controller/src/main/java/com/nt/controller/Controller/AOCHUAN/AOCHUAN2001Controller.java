@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Linkman;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Vo.SupplierproductrelationVo;
 import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
@@ -29,7 +30,7 @@ public class AOCHUAN2001Controller {
     @Autowired
     private TokenService tokenService;
 
-    private String linkmanBaseinfoId;
+    private String baseinfoId;
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request)throws Exception{
         return ApiResult.success(customerbaseinforService.get());
@@ -81,7 +82,7 @@ public class AOCHUAN2001Controller {
         if(customerbaseinfor == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        linkmanBaseinfoId = customerbaseinforService.insert(customerbaseinfor,tokenService.getToken(request));
+        baseinfoId = customerbaseinforService.insert(customerbaseinfor,tokenService.getToken(request));
         return ApiResult.success();
     }
 
@@ -91,10 +92,10 @@ public class AOCHUAN2001Controller {
             if(linkmans.get(i) == null){
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
-            linkmans.get(i).setBaseinfor_id(linkmanBaseinfoId);
+            linkmans.get(i).setBaseinfor_id(baseinfoId);
             linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
         }
-        linkmanBaseinfoId = null;
+
         return ApiResult.success();
     }
 
@@ -116,25 +117,42 @@ public class AOCHUAN2001Controller {
         return ApiResult.success();
     }
     @RequestMapping(value = "/insertProduct",method={RequestMethod.POST})
-    public ApiResult insertProduct(@RequestBody Products product, HttpServletRequest request) throws Exception {
-        if(product == null){
+    public ApiResult insertProduct(@RequestBody Products[] products, HttpServletRequest request) throws Exception {
+        if(products == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         //linkmanBaseinfoId = customerbaseinforService.insert(customerbaseinfor,tokenService.getToken(request));
-        product  = productsService.insertForSupplier(product,tokenService.getToken(request));
-        return ApiResult.success(product);
+        productsService.insertForSupplier(baseinfoId,products,tokenService.getToken(request));
+        baseinfoId = null;
+        return ApiResult.success();
     }
 
     @RequestMapping(value = "/insertSupplierproductrelation",method={RequestMethod.POST})
-    public ApiResult insertSupplierproductrelation(@RequestBody Supplierproductrelation[] supplierproductrelation, HttpServletRequest request) throws Exception {
-        if(supplierproductrelation == null){
+    public ApiResult insertSupplierproductrelation(@RequestBody Supplierproductrelation[] supplierproductrelations, HttpServletRequest request) throws Exception {
+        if(supplierproductrelations == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        for(int i = 0;i < supplierproductrelation.length;i++ ){
-            supplierproductrelationService.insert(supplierproductrelation[i],tokenService.getToken(request));
+        supplierproductrelationService.deleteByBaseinforId(baseinfoId);
+        for(int i = 0;i < supplierproductrelations.length;i++ ){
+            supplierproductrelations[i].setSupplierbaseinfor_id(baseinfoId);
+            supplierproductrelationService.insert(supplierproductrelations[i],tokenService.getToken(request));
         }
         return ApiResult.success();
     }
+
+    @RequestMapping(value = "/updateSupplierproductrelation",method={RequestMethod.POST})
+    public ApiResult updateSupplierproductrelation(@RequestBody SupplierproductrelationVo supplierproductrelationVo, HttpServletRequest request) throws Exception {
+        if(supplierproductrelationVo == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        supplierproductrelationService.deleteByBaseinforId(supplierproductrelationVo.getBaseinfor_id());
+        for(int i = 0;i < supplierproductrelationVo.getSupplierproductrelationList().size();i++ ){
+            //supplierproductrelations[i].setSupplierbaseinfor_id(baseinfoId);
+            supplierproductrelationService.insert(supplierproductrelationVo.getSupplierproductrelationList().get(i),tokenService.getToken(request));
+        }
+        return ApiResult.success();
+    }
+
 
     @RequestMapping(value = "/getProductByRelation",method={RequestMethod.GET})
     public ApiResult getProductByRelation(@RequestParam String baseinfo_id,HttpServletRequest request)throws Exception{

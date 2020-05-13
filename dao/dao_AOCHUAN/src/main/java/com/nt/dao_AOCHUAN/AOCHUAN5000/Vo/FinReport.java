@@ -55,8 +55,8 @@ public class FinReport{
     @Column(name = "COLLECTIONACCOUNT")
     private String collectionaccount;
     //销售担当
-    @Column(name = "SALESMAN")
-    private String salesman;
+    @Column(name = "saleresponsibility")
+    private String saleresponsibility;
     //销售部门
     @Column(name = "SALESDEPARTMENT")
     private String salesdepartment;

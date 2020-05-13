@@ -18,4 +18,6 @@ public interface SupplierproductrelationService {
     void insert(Supplierproductrelation supplierproductrelation, TokenModel tokenModel)throws Exception;
 
     void delete(String id) throws Exception;
+
+    void deleteByBaseinforId(String baseinforId) throws Exception;
 }

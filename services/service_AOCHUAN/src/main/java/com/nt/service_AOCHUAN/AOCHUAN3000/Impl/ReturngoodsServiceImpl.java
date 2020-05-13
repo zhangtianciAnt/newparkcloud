@@ -64,6 +64,11 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
     }
 
     @Override
+    public TransportGood findPeo(String ids) throws Exception {
+        return transportGoodMapper.selectPeo(ids);
+    }
+
+    @Override
     public void update(Returngoods returngoods, TokenModel tokenModel) throws Exception {
         returngoods.preUpdate(tokenModel);
         if(returngoods.isNotice()){
@@ -122,7 +127,7 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
             transportGood.setContractnumber(returngoods.getContractno());
             List<TransportGood> list = transportGoodMapper.select(transportGood);
             for(TransportGood tr : list){
-                toDoNotice.setOwner(tr.getSaleresponsibility());//发送给采购
+                toDoNotice.setOwner(tr.getProductresponsibility());//发送给采购
             }
 
 //            toDoNotice.setOwner("5e956171e52fa71970c1a097");//发送给采购

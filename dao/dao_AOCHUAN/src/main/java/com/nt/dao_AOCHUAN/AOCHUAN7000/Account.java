@@ -32,6 +32,11 @@ public class Account {
     @Column(name = "FParentID")
     private String fparentid;
 
+    @Column(name = "FUNITNUMBER")
+    private String funitnumber;
+
+    @Column(name = "FUNITNAME")
+    private String funitname;
 
 
 

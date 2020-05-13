@@ -80,7 +80,7 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
     public void updateTransportGood(FinPurchase finPurchase, TokenModel tokenModel) throws Exception {
 
         finPurchase.preUpdate(tokenModel);
-        finPurchaseMapper.updateTransportGood(finPurchase.getAp_date(),finPurchase.getPaymentstatus(), finPurchase.getModifyby(),finPurchase.getTransportgood_id());
+        finPurchaseMapper.updateTransportGood(finPurchase.getInvoicenumber(), finPurchase.getAp_date(),finPurchase.getPaymentstatus(), finPurchase.getModifyby(),finPurchase.getTransportgood_id());
     }
 
     //生成代办

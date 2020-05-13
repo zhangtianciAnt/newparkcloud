@@ -2,17 +2,20 @@ package com.nt.service_AOCHUAN.AOCHUAN4000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierproductrelationMapper;
+import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SampleMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,9 @@ public class ProductsServiceImpl implements ProductsService {
     @Autowired
     private QuotationsMapper quotationsMapper;
 
+    @Autowired
+    private CustomerbaseinforMapper customerbaseinforMapper;
+
 
     @Override
     public List<Products> get(Products products) throws Exception {
@@ -48,8 +54,19 @@ public class ProductsServiceImpl implements ProductsService {
     @Override
     public void insert(Products products, TokenModel tokenModel) throws Exception {
         products.preInsert(tokenModel);
-        products.setProducts_id(UUID.randomUUID().toString());
-        productsMapper.insert(products);
+        Products pro = new Products();
+        pro.setChinaname(products.getChinaname());
+
+        List<Products> list =productsMapper.select(pro);
+        if(list.size()>0){
+            throw new LogicalException("产品中文名已经注册");
+        }
+        else {
+            products.setProducts_id(UUID.randomUUID().toString());
+            productsMapper.insert(products);
+        }
+
+
     }
 
     @Override
@@ -72,7 +89,7 @@ public class ProductsServiceImpl implements ProductsService {
         productsMapper.updateByPrimaryKey(products);
         productsMapper.deleteByPrimaryKey(id);
     }
-
+//获取供应商
     @Override
     public List<Supplierbaseinfor> getGYS(String ids) throws Exception {
         Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
@@ -86,6 +103,20 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
         return supplierbaseinforList;
+    }
+//获取客户信息
+    @Override
+    public List<Customerbaseinfor> getKH(String ids) throws Exception {
+        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+        Supplierproductrelation supplierproductrelation = new Supplierproductrelation();
+        supplierproductrelation.setProducts_id(ids);
+        List<Supplierproductrelation> list = supplierproductrelationMapper.select(supplierproductrelation);
+        List<Customerbaseinfor> list1 = new ArrayList();
+        for(Supplierproductrelation supp : list){
+            customerbaseinfor = customerbaseinforMapper.selectByPrimaryKey(supp.getSupplierbaseinfor_id());
+            list1.add(customerbaseinfor);
+        }
+        return list1;
     }
 
     @Override
@@ -110,13 +141,30 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
+    public void insertForSupplier(String baseinfoId, Products[] products, TokenModel tokenModel) throws Exception {
+        for(int i = 0 ;i < products.length;i++){
+            String id = UUID.randomUUID().toString();
+            products[i].preInsert(tokenModel);
+            products[i].setProducts_id(id);
+            productsMapper.insert(products[i]);
+
+            Supplierproductrelation supplierproductrelation = new Supplierproductrelation();
+            String supplierproductrelation_id = UUID.randomUUID().toString();
+            supplierproductrelation.setProducts_id(id);
+            supplierproductrelation.setSupplierproductrelation_id(supplierproductrelation_id);
+            supplierproductrelation.setSupplierbaseinfor_id(baseinfoId);
+            supplierproductrelationMapper.insert(supplierproductrelation);
+        }
+    }
+
+    /*@Override
     public Products insertForSupplier(Products product, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
         product.preInsert(tokenModel);
         product.setProducts_id(id);
         productsMapper.insert(product);
         return product;
-    }
+    }*/
 
     /**
      * 获取不在项目表中的数据

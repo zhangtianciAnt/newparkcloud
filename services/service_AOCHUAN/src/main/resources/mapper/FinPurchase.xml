@@ -16,6 +16,7 @@
     <update id="updateTransportGood">
     UPDATE transportgood
     SET AP_DATE = #{ap_date},
+     INVOICENUMBER = #{invoiceNo},
      PAYMENTSTATUS = #{paymentstatus},
      MODIFYBY = #{modifyby},
      MODIFYON = now()

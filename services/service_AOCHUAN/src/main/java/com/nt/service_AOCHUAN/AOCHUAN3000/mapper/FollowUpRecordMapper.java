@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface FollowUpRecordMapper extends MyMapper<FollowUpRecord> {
     //获取-记录列表
-    public List<FollowUpRecord> getFollowUpRecordList(@Param("products_id") String products_id, @Param("supplier_id") String supplier_id,@Param("status") String status);
+    public List<FollowUpRecord> getFollowUpRecordList(@Param("products_id") String products_id, @Param("supplier_id") String supplier_id);
     //删除-记录表
     void deleteFromFollowUpRecordByDoubleKey(@Param("modifyby") String modifyby,@Param("products_id") String products_id, @Param("supplier_id") String supplier_id,@Param("status") String status);
     //存在Check

@@ -15,4 +15,6 @@ public interface SupplierbaseinforService {
     void delete(String id) throws Exception;
 
     List<Supplierbaseinfor> getSuppliersExceptUnique() throws Exception;
+
+    List<String> importInfo() throws Exception;
 }
