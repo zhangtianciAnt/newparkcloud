@@ -104,7 +104,21 @@ public class BASF10105Controller {
                     firealarm.setAlarmpeo("系统管理员");
                     firealarm.setAlarmtimes(yyMMddHHmmss);
                     firealarm.setIndevice(linkagelist.get(0).getDevice());
-                    firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
+                    String accunit ="";
+                    String speloc ="";
+                    String[] lastlist =linkagelist.get(0).getDetailedlocation().split("/");
+                    if(lastlist.length>0)
+                    {
+                        accunit =lastlist[0] + "/" + lastlist[1];
+                        speloc = lastlist[2] + "/" + lastlist[3];
+                        firealarm.setAccunit(accunit);
+                        firealarm.setSpeloc(speloc);
+                    }
+                    else
+                    {
+                        firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
+                    }
+                    //firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
                     firealarm.setCompletesta("0");
                     firealarm.setMisinformation("0");
                     String firealarmuuid = firealarmServices.insert(firealarm, tokenModel);

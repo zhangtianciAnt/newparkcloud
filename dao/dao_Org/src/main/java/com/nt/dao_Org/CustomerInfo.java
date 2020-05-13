@@ -170,7 +170,20 @@ public class CustomerInfo extends BaseModel {
         private String applydataurl;
         //学历证明url
         private String traindataurl;
+        /**
+         * 员工/承包商
+         */
+        private String employeescontractors;
 
+        /**
+         * 护照
+         */
+        private String passport;
+
+        /**
+         * 入职日期
+         */
+        private String entrydate;
     }
     // endregion
 
