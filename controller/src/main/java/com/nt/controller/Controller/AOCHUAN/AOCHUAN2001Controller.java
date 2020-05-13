@@ -86,7 +86,7 @@ public class AOCHUAN2001Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/insertLinkman",method={RequestMethod.POST})
+  /*  @RequestMapping(value = "/insertLinkman",method={RequestMethod.POST})
     public ApiResult insertLinkman(@RequestBody List<Linkman> linkmans, HttpServletRequest request) throws Exception {
         for(int i = 0;i < linkmans.size();i++){
             if(linkmans.get(i) == null){
@@ -96,6 +96,27 @@ public class AOCHUAN2001Controller {
             linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
         }
 
+        return ApiResult.success();
+    }*/
+
+    @RequestMapping(value = "/insertLinkman",method={RequestMethod.POST})
+    public ApiResult insertLinkman(@RequestBody List<Linkman> linkmans, HttpServletRequest request) throws Exception {
+        String linkmanId = null;
+        for(int i = 0;i < linkmans.size();i++){
+            if(linkmans.get(i) == null){
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+            }
+            linkmans.get(i).setBaseinfor_id(baseinfoId);
+            if(i == 0){
+                linkmanId = linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
+            }else{
+                linkmanService.insert(linkmans.get(i),tokenService.getToken(request));
+            }
+        }
+        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+        customerbaseinfor = customerbaseinforService.getOne(baseinfoId);
+        customerbaseinfor.setLinkman(linkmanId);
+        customerbaseinforService.update(customerbaseinfor,tokenService.getToken(request));
         return ApiResult.success();
     }
 
