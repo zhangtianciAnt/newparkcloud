@@ -205,9 +205,7 @@ public class EvectionServiceImpl implements EvectionService {
         }
         mergeResult = mergeDetailList(needMergeList, specialMap, currencyexchangeList);
         //add-ws-5/12-汇税收益与汇税损失问题对应
-
-            newmergeResult = newmergeDetailList(needMergeList, specialMap, currencyexchangeList);
-
+        newmergeResult = newmergeDetailList(needMergeList, specialMap, currencyexchangeList);
         //add-ws-5/12-汇税收益与汇税损失问题对应
         List<TravelCost> csvList = new ArrayList<>();
         List<TravelCost> taxList = (List<TravelCost>) mergeResult.getOrDefault(TAX_KEY, new ArrayList<>());
@@ -338,9 +336,9 @@ public class EvectionServiceImpl implements EvectionService {
                     newresultMap.put(TAX_KEY, newtaxList);
                     DecimalFormat df = new DecimalFormat("######0.00");
                     if (travel > 0.0) {
-                        newtaxCost.setLineamount(df.format(Math.abs(checktravel)));
+                        newtaxCost.setLineamount(df.format(checktravel));
                     } else if (foreigncurrency > 0.0) {
-                        newtaxCost.setLineamount(df.format(Math.abs(checkforeigncurrency)));
+                        newtaxCost.setLineamount(df.format(checkforeigncurrency));
                     }
 
                     newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
@@ -473,7 +471,7 @@ public class EvectionServiceImpl implements EvectionService {
                 newtaxCost.setRemarks(getProperty(detail, "accountcode"));
                 newtaxCost.setCurrency("CNY");
                 oldtaxList.add(newtaxCost);
-            }else if(redirictchheck.equals("1")){
+            } else if (redirictchheck.equals("1")) {
                 List<TravelCost> oldtaxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, oldtaxList);
                 TravelCost newtaxCost = new TravelCost();
@@ -487,9 +485,9 @@ public class EvectionServiceImpl implements EvectionService {
             }
             //add-ws-5/13-获取当前人是否直属部门后台导出csv使用
         }
-        if (Float.valueOf(df1.format(totalTax)) != specialMap.get(TOTAL_TAX)) {
-            throw new LogicalException("发票合计金额与明细不匹配。");
-        }
+//        if (Float.valueOf(df1.format(totalTax)) != specialMap.get(TOTAL_TAX)) {
+//            throw new LogicalException("发票合计金额与明细不匹配。");
+//        }
         resultMap.put(INPUT_TYPE_KEY, "rmb");
         return resultMap;
     }
