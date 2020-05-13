@@ -973,7 +973,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             rst.put("dat","");
             rst.put("can","no");
         } else if("PR013007".equals(abNormal.getErrortype())){
-            List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());
+            List<restViewVo> list = annualLeaveMapper.getrest2(abNormal.getUser_id());
             String dat="";
             for(restViewVo item:list){
                 if(Double.parseDouble(item.getRestdays()) != 0){
@@ -981,17 +981,17 @@ public class AbNormalServiceImpl implements AbNormalService {
                         lengths = lengths - Double.parseDouble(item.getRestdays());
                         dat += dat + "," + item.getApplicationdate();
                         if(lengths <= 0){
-                            String check = String.valueOf(list.get(0).getRestdays());
-                            dat = dat.substring(1,dat.length());
-                            rst.put("checkdat",check);
+//                            String check = String.valueOf(list.get(0).getRestdays());
+//                            dat = dat.substring(1,dat.length());
+                            rst.put("checkdat","");
                             rst.put("error",abNormal.getErrortype());
-                            rst.put("dat",dat);
+                            rst.put("dat","");
                             rst.put("can","yes");
                             return rst;
                         }
                     }else{
-                        String check = String.valueOf(list.get(0).getRestdays());
-                        rst.put("checkdat",check);
+//                        String check = String.valueOf(list.get(0).getRestdays());
+                        rst.put("checkdat","");
                         rst.put("error",abNormal.getErrortype());
                         rst.put("dat","");
                         rst.put("can","yes");
