@@ -11,19 +11,17 @@
 <!--考勤异常数据-->
     <select id="getYICHANG" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         SELECT *,left(ATTENDANCETIM,8) FROM `attendance`
-        where
-        (
+        where (
         STR_TO_DATE(WORKINGHOURS,'%H:%i') &gt; STR_TO_DATE('08:30','%H:%i')
         or
-        STR_TO_DATE(OFFHOURS,'%H:%i') &lt; STR_TO_DATE('17:30','%H:%i')
+        STR_TO_DATE(OFFHOURS,'%H:%i')  &lt; STR_TO_DATE('17:30','%H:%i')
         )
         and
         (
-        ATTENDANCETIM like concat('%',#{Mon}) or ATTENDANCETIM like concat('%',#{Tus}) or
-        ATTENDANCETIM like concat('%',#{Wed}) or ATTENDANCETIM like concat('%',#{Thu}) or ATTENDANCETIM like concat('%',#{Fri})
-        or
+        right(ATTENDANCETIM,3) = #{Mon} or right(ATTENDANCETIM,3) = #{Tus} or right(ATTENDANCETIM,3) = #{Wed} or right(ATTENDANCETIM,3) = #{Thu}
+        or right(ATTENDANCETIM,3) = #{Fri} or
         left(ATTENDANCETIM,8) in (SELECT right(WORKINGDATE,8) from workingday where type=4)
-        )
+        );
 	</select>
 
 
