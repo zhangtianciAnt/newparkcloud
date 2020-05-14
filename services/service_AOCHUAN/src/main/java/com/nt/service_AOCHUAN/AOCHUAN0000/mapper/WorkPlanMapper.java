@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface WorkPlanMapper extends MyMapper<WorkPlan> {
 
-    List<WorkPlan> selectByMonth() throws Exception;
+    List<WorkPlan> selectByMonth(@Param("id") String id) throws Exception;
 
     List<WorkPlan> selectByToday() throws Exception;
 

@@ -32,8 +32,8 @@ public class AOCHUAN0000Controller {
      * @throws Exception
      */
     @RequestMapping(value = "/getWorkPlanList",method={RequestMethod.POST})
-    public ApiResult getWorkPlanList(HttpServletRequest request) throws Exception {
-        return ApiResult.success(workPlanService.getWorkPlanList());
+    public ApiResult getWorkPlanList(@RequestBody String id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(workPlanService.getWorkPlanList(id));
     }
 
     /**
@@ -110,8 +110,7 @@ public class AOCHUAN0000Controller {
                 }
             }
         }
-
-        return ApiResult.success(workPlanService.getWorkPlanList());
+        return ApiResult.success(workPlanService.getWorkPlanList(workPlanList.get(0).getEmp_id()));
     }
 
     /**

@@ -95,4 +95,6 @@ public class Customerbaseinfor extends BaseModel {
     private String productadvantagescore;
 
     private String kisid;
+
+    private String customermanager;
 }

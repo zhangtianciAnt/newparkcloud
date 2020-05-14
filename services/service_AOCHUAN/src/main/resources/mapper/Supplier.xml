@@ -2,15 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper">
 
-    <select id="getSuppliersExceptUnique" resultType="com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor">
-        SELECT *
-        FROM supplierbaseinfor
-        WHERE
-        STATUS != '1'
-        AND
-        SUPPLIERBASEINFOR_ID NOT IN (
-        SELECT SUPPLIER_ID FROM projects
-        WHERE STATUS !='1'
-        )
-    </select>
 </mapper>
