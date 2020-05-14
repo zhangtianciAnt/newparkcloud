@@ -1584,37 +1584,79 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         + Double.valueOf(ad.getLongsickleave()) + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getAnnualrest())
                                         + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
 
+                                //当前日期
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTime(new Date());
+
                                 if (workinghours.equals("4"))
                                 {
-                                    if(Double.valueOf(leave) + Double.valueOf(nomal) >= 4)
+                                    if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0)
                                     {
-                                        ad.setNormal(df.format(Double.valueOf(workinghours)));
-                                        ad.setAbsenteeism(null);
+                                        if(Double.valueOf(leave) + Double.valueOf(nomal) >= 4)
+                                        {
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
+                                            ad.setAbsenteeism(null);
+                                        }
+                                        else
+                                        {
+                                            ad.setNormal(df.format(Double.valueOf(leave) + Double.valueOf(nomal)));
+                                            ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leave) - Double.valueOf(ad.getNormal())));
+                                        }
                                     }
                                     else
                                     {
-                                        ad.setNormal(df.format(Double.valueOf(leave) + Double.valueOf(nomal)));
-                                        ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leave) - Double.valueOf(ad.getNormal())));
+                                        if(Double.valueOf(leave) + Double.valueOf(nomal) >= 4)
+                                        {
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
+                                            ad.setAbsenteeism(null);
+                                        }
+                                        else
+                                        {
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
+                                            //ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                            ad.setAbsenteeism(null);
+                                        }
                                     }
+
                                 }
                                 else if(workinghours.equals("8"))
                                 {
-                                    if (Double.valueOf(ad.getAbsenteeism()) >= Double.valueOf(workinghours)) {
-                                        ad.setNormal("0");
-                                        ad.setAbsenteeism(workinghours);
-                                    } else if (Double.valueOf(ad.getAbsenteeism()) <= 0) {
-                                        if (Double.valueOf(leave) >= 8) {
+                                    if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0)
+                                    {
+                                        if (Double.valueOf(ad.getAbsenteeism()) >= Double.valueOf(workinghours)) {
                                             ad.setNormal("0");
+                                            ad.setAbsenteeism(workinghours);
+                                        } else if (Double.valueOf(ad.getAbsenteeism()) <= 0) {
+                                            if (Double.valueOf(leave) >= 8) {
+                                                ad.setNormal("0");
+                                            } else {
+                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
+                                            }
                                         } else {
+                                            if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
+                                                ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                            }
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave) - Double.valueOf(ad.getAbsenteeism())));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Double.valueOf(ad.getAbsenteeism()) >= Double.valueOf(workinghours)) {
+                                            ad.setNormal(workinghours);
+                                            ad.setAbsenteeism("0");
+                                        } else if (Double.valueOf(ad.getAbsenteeism()) <= 0) {
+                                            if (Double.valueOf(leave) >= 8) {
+                                                ad.setNormal("0");
+                                            } else {
+                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
+                                            }
+                                        } else {
+                                            ad.setAbsenteeism("0");
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
                                         }
-                                    } else {
-                                        if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
-                                            ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
-                                        }
-                                        ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave) - Double.valueOf(ad.getAbsenteeism())));
                                     }
+
                                 }
                                 ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null : df.format(Double.valueOf(ad.getAnnualrest())));
