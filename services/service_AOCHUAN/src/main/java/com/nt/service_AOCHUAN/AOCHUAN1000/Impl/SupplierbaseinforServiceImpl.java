@@ -57,7 +57,8 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
 
     @Override
     public List<Supplierbaseinfor> getSuppliersExceptUnique() throws Exception {
-        return supplierbaseinforMapper.getSuppliersExceptUnique();
+        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
+        return supplierbaseinforMapper.select(supplierbaseinfor);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
