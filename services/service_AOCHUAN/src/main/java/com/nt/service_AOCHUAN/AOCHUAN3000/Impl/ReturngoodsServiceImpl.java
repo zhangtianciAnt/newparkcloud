@@ -101,7 +101,7 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
     public void ToDoNotice(TokenModel tokenModel, Returngoods returngoods) throws Exception{
         // 创建代办
         if(returngoods.getType() == 0){
-            List<MembersVo> membersVos =  roleService.getMembers("5e96adfa96c5744860b31a00");
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6d23e52fa718db632694");
             for (MembersVo membersVo:
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
@@ -110,6 +110,7 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
                 toDoNotice.setContent("合同号【" +returngoods.getContractno()+"】");
                 toDoNotice.setDataid(returngoods.getReturngoods_id());
                 toDoNotice.setUrl("/AOCHUAN3005FormView");
+                toDoNotice.setStatus("2");
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
@@ -121,6 +122,7 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
             toDoNotice.setContent("合同号【" +returngoods.getContractno()+"】");
             toDoNotice.setDataid(returngoods.getReturngoods_id());
             toDoNotice.setUrl("/AOCHUAN3005FormView");
+            toDoNotice.setStatus("2");
             toDoNotice.preInsert(tokenModel);
 
             TransportGood transportGood = new TransportGood();
