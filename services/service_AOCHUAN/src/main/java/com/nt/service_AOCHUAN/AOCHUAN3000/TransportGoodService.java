@@ -25,5 +25,5 @@ public interface TransportGoodService {
 
     void insertCW(FinPurchase finPurchase, TokenModel token);
 
-    void insertHK(FinSales finSales, TokenModel token);
+    void insertHK(FinSales finSales, TokenModel token) throws Exception;
 }

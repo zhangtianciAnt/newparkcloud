@@ -9,6 +9,7 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
+import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.dao.TokenModel;
@@ -25,6 +26,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private ContractNumber contractNumber;
 
     @Autowired
     private FinPurchaseMapper finPurchaseMapper;
@@ -81,11 +85,13 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
     @Override
-    public void insertHK(FinSales finSales, TokenModel token) {
+    public void insertHK(FinSales finSales, TokenModel token) throws Exception {
         finSales.setSales_id(UUID.randomUUID().toString());
         finSales.preInsert();
         finSales.setArrival_status("0");
         finSales.setCredential_status("PW001001");
+        String number = contractNumber.getContractNumber("PT001011","finSales");
+        finSales.setCredential_sales(number);
         finSalesMapper.insert(finSales);
     }
 }

@@ -690,8 +690,12 @@ public class CustomerInfo extends BaseModel {
         //(BEFORE)
         //private String completed;
         //(AFFTER)
-        private int completed;
+        private String completed;
         //(UPD)20200429 - NC -END
+        //目标内容
+        private String targetcontent;
+        //完成内容
+        private String completedcontent;
     }
 
     @Data
