@@ -16,11 +16,13 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.service_pfans.PFANS6000.mapper.PricesetGroupMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
@@ -57,6 +59,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private PricesetMapper pricesetMapper;
+
+    @Autowired
+    private PricesetGroupMapper pricesetGroupMapper;
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -201,16 +206,30 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         expatriatesinfor.preUpdate(tokenModel);
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
-            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
             Priceset priceset = new Priceset();
-            priceset.preInsert(tokenModel);
-            priceset.setPriceset_id(UUID.randomUUID().toString());
             priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-            priceset.setGraduation(expatriatesinfor.getGraduation_year());
-            priceset.setCompany(expatriatesinfor.getSuppliername());
-            priceset.setAssesstime(thisDate);
-            priceset.setStatus("0");
-            pricesetMapper.insert(priceset);
+            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+            String sDate = DateUtil.format(new Date(), "yyyy-MM");
+
+            List<Priceset> list1 = pricesetMapper.select(priceset);
+            if(list1.size() == 0)
+            {
+                PricesetGroup pricesetGroup = new PricesetGroup();
+                pricesetGroup.setPd_date(sDate);
+                List<PricesetGroup> pricesetGroupList = pricesetGroupMapper.select(pricesetGroup);
+                if(pricesetGroupList.size()>0)
+                {
+                    priceset.preInsert(tokenModel);
+                    priceset.setPriceset_id(UUID.randomUUID().toString());
+                    priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                    priceset.setGraduation(expatriatesinfor.getGraduation_year());
+                    priceset.setCompany(expatriatesinfor.getSuppliername());
+                    priceset.setAssesstime(thisDate);
+                    priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
+                    priceset.setStatus("0");
+                    pricesetMapper.insert(priceset);
+                }
+            }
         }
     }
 
