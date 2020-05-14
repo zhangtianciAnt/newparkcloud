@@ -125,6 +125,7 @@ public class QuotationsServiceImpl implements QuotationsService {
                 toDoNotice.setContent("询报价编号【" +quotations.getQuotationsno()+"】");
                 toDoNotice.setDataid(quotations.getQuotations_id());
                 toDoNotice.setUrl("/AOCHUAN3001FormView");
+                toDoNotice.setStatus("2");
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
@@ -136,6 +137,7 @@ public class QuotationsServiceImpl implements QuotationsService {
             toDoNotice.setContent("询报价编号【" +quotations.getQuotationsno()+"】");
             toDoNotice.setDataid(quotations.getQuotations_id());
             toDoNotice.setUrl("/AOCHUAN3001FormView");
+            toDoNotice.setStatus("2");
             toDoNotice.preInsert(tokenModel);
             toDoNotice.setOwner(quotations.getSaleresponsibility());
             toDoNoticeService.save(toDoNotice);
