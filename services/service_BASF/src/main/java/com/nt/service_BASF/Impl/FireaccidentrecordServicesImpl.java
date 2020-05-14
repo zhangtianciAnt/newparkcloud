@@ -63,6 +63,11 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
     }
 
     @Override
+    public List<Fireaccidentrecord> getlist() throws Exception {
+        return fireaccidentrecordMapper.selectList();
+    }
+
+    @Override
     public Fireaccidentrecord selectById(String fireaccidentrecordid) throws Exception {
         return fireaccidentrecordMapper.selectByPrimaryKey(fireaccidentrecordid);
     }

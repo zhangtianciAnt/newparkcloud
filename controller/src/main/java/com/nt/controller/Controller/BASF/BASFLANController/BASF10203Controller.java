@@ -50,7 +50,7 @@ public class BASF10203Controller {
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody Fireaccidentrecord fireaccidentrecord ,HttpServletRequest request) throws Exception {
-        return ApiResult.success(fireaccidentrecordServices.list(fireaccidentrecord));
+        return ApiResult.success(fireaccidentrecordServices.getlist());
     }
 
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})

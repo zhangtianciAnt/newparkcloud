@@ -33,4 +33,7 @@ public interface FireaccidentrecordServices {
 
     //excel导出消防事故记录
     void excelexport(Fireaccidentrecord fireaccidentrecord, Firealarm firealarm, Commandrecord commandrecord, HttpServletResponse response) throws Exception;
+
+    //获取消防事故记录列表(字段追加:装置名称，事发单位，创建时间)
+    List<Fireaccidentrecord> getlist() throws Exception;
 }
