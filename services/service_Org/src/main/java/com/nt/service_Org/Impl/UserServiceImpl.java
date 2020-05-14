@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -586,7 +587,7 @@ public class UserServiceImpl implements UserService {
             model.add("职位名称");
             model.add("*性别");
             model.add("卡号");
-            model.add("*员工号");
+            model.add("员工号");
             model.add("*部门联系邮箱");
             model.add("*装置经理邮箱");
             model.add("身份证件号");
@@ -594,6 +595,10 @@ public class UserServiceImpl implements UserService {
             model.add("成本中心");
             model.add("本人邮箱");
             model.add("本人手机号");
+            model.add("标识符");
+            model.add("员工/承包商");
+            model.add("护照");
+            model.add("入职日期");
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -700,6 +705,35 @@ public class UserServiceImpl implements UserService {
                 }
                 catch (Exception e){
                 }
+                String _id = "";
+                try{
+                    //标识符
+                    _id =  value.get(13)!= null ? value.get(13).toString() : "";
+                }
+                catch (Exception e){
+                }
+                String employeescontractors = "";
+                try{
+                    //员工or承包商
+                    employeescontractors =  value.get(14).toString().equals("员工")?"0":"1";
+                }
+                catch (Exception e){
+                }
+                String passport = "";
+                try{
+                    //护照
+                    passport =  value.get(15)!= null ? value.get(15).toString() : "";
+                }
+                catch (Exception e){
+                }
+                Date entrydate = null;
+                try{
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    //入职日期
+                    entrydate =  value.get(16)!= null ? formatter.parse(value.get(16).toString()) : null;
+                }
+                catch (Exception e){
+                }
                 UserAccount useraccount = new UserAccount();
                 CustomerInfo customerinfo = new CustomerInfo();
                 CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
@@ -735,12 +769,17 @@ public class UserServiceImpl implements UserService {
                 userInfo.setCostcenter(costcenter);
 //                userInfo.setApplydataurl();
 //                userInfo.setTraindataurl();
+//                userInfo.set_id(_id);
                 userInfo.setSex(sex);
+                userInfo.setEmployeescontractors(employeescontractors);
+                userInfo.setPassport(passport);
+                userInfo.setEntrydate(entrydate);
+
                 customerinfo.setUserinfo(userInfo);
 
                 Query query = new Query();
-                query.addCriteria(Criteria.where("jobnumber").is(jobnumber));
-                List<UserAccount> useraccountselect = mongoTemplate.find(query, UserAccount.class);
+                query.addCriteria(Criteria.where("_id").is(_id));
+                List<CustomerInfo> useraccountselect = mongoTemplate.find(query, CustomerInfo.class);
 
                 if (useraccountselect.size() > 0) {
                     useraccount.preUpdate(tokenModel);
@@ -766,7 +805,7 @@ public class UserServiceImpl implements UserService {
                     query1.addCriteria(Criteria.where("password").is(userAccount1.getPassword()));
                     List<UserAccount> userAccountlist = mongoTemplate.find(query1, UserAccount.class);
                     if (userAccountlist.size() > 0) {
-                        String _id = userAccountlist.get(0).get_id();
+                        _id = userAccountlist.get(0).get_id();
                         CustomerInfo customerInfo = new CustomerInfo();
                         BeanUtils.copyProperties(uservo.getCustomerInfo(), customerInfo);
                         CustomerInfo.UserInfo userInfo1 = new CustomerInfo.UserInfo();
