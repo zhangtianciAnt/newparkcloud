@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface WorkPlanService {
 
-    List<WorkPlan> getWorkPlanList() throws Exception;
+    List<WorkPlan> getWorkPlanList(String id) throws Exception;
 
     List<WorkPlan> selectByToday() throws  Exception;
 

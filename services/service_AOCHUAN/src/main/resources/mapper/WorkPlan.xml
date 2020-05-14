@@ -9,6 +9,8 @@
         YEAR(WORK_FTIME) = YEAR(NOW())
         AND
         MONTH(WORK_FTIME) = MONTH(NOW())
+        AND
+        EMP_ID = #{id}
         AND  STATUS != '1'
     </select>
 

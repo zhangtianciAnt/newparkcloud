@@ -20,8 +20,8 @@ public class WorkPlanSerrviceImpl implements WorkPlanService {
      * @throws Exception
      */
     @Override
-    public List<WorkPlan> getWorkPlanList() throws Exception {
-        return workPlanMapper.selectByMonth();
+    public List<WorkPlan> getWorkPlanList(String id) throws Exception {
+        return workPlanMapper.selectByMonth(id);
     }
 
     /**
