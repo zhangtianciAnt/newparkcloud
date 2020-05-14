@@ -100,7 +100,6 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
                 toDoNotice.setCreateby(finPurchase.getCreateby());
                 Date d = new Date();
                 toDoNotice.setCreateon(d);
-                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }

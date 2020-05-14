@@ -126,7 +126,6 @@ public class QuotationsServiceImpl implements QuotationsService {
                 toDoNotice.setDataid(quotations.getQuotations_id());
                 toDoNotice.setUrl("/AOCHUAN3001FormView");
                 toDoNotice.preInsert(tokenModel);
-                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
@@ -138,7 +137,6 @@ public class QuotationsServiceImpl implements QuotationsService {
             toDoNotice.setDataid(quotations.getQuotations_id());
             toDoNotice.setUrl("/AOCHUAN3001FormView");
             toDoNotice.preInsert(tokenModel);
-            toDoNotice.setStatus("2");
             toDoNotice.setOwner(quotations.getSaleresponsibility());
             toDoNoticeService.save(toDoNotice);
         }
