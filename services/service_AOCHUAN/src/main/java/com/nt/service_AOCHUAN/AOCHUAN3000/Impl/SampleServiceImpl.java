@@ -84,7 +84,7 @@ public class SampleServiceImpl implements SampleService {
     public void ToDoNotice(TokenModel tokenModel,Sample sample) throws Exception{
         // 创建代办
         if(sample.getType() == 1){
-            List<MembersVo> membersVos =  roleService.getMembers("5eba6d23e52fa718db632694");
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6f09e52fa718db632696");
             for (MembersVo membersVo:
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
@@ -93,8 +93,8 @@ public class SampleServiceImpl implements SampleService {
                 toDoNotice.setContent("样品单号【" +sample.getSampleorder()+"】");
                 toDoNotice.setDataid(sample.getSample_id());
                 toDoNotice.setUrl("/AOCHUAN3007FormView");
-                toDoNotice.setStatus("2");
                 toDoNotice.preInsert(tokenModel);
+                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
@@ -105,8 +105,8 @@ public class SampleServiceImpl implements SampleService {
             toDoNotice.setContent("样品单号【" +sample.getSampleorder()+"】");
             toDoNotice.setDataid(sample.getSample_id());
             toDoNotice.setUrl("/AOCHUAN3007FormView");
-            toDoNotice.setStatus("2");
             toDoNotice.preInsert(tokenModel);
+            toDoNotice.setStatus("2");
             toDoNotice.setOwner(sample.getSaleresponsibility());
             toDoNoticeService.save(toDoNotice);
         }
