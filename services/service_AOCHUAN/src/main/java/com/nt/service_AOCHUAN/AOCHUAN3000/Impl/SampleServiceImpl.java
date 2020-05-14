@@ -67,8 +67,8 @@ public class SampleServiceImpl implements SampleService {
         sample.setSampleorder(number);
         sample.preInsert(tokenModel);
         if(sample.isNotice()){
-            ToDoNotice(tokenModel,sample);
             sample.setType(1);
+            ToDoNotice(tokenModel,sample);
         }
         sampleMapper.insert(sample);
     }
@@ -84,7 +84,7 @@ public class SampleServiceImpl implements SampleService {
     public void ToDoNotice(TokenModel tokenModel,Sample sample) throws Exception{
         // 创建代办
         if(sample.getType() == 1){
-            List<MembersVo> membersVos =  roleService.getMembers("5e96adfa96c5744860b31a00");
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6f09e52fa718db632696");
             for (MembersVo membersVo:
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
