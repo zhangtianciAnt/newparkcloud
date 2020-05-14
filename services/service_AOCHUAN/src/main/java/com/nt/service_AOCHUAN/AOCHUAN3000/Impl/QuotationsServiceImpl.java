@@ -116,7 +116,7 @@ public class QuotationsServiceImpl implements QuotationsService {
     public void ToDoNotice(TokenModel tokenModel,Quotations quotations) throws Exception{
         // 创建代办
         if(quotations.getType() == 0){
-            List<MembersVo> membersVos =  roleService.getMembers("5eba6d23e52fa718db632694");
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6f09e52fa718db632696");
             for (MembersVo membersVo:
             membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
@@ -126,6 +126,7 @@ public class QuotationsServiceImpl implements QuotationsService {
                 toDoNotice.setDataid(quotations.getQuotations_id());
                 toDoNotice.setUrl("/AOCHUAN3001FormView");
                 toDoNotice.preInsert(tokenModel);
+                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
@@ -137,6 +138,7 @@ public class QuotationsServiceImpl implements QuotationsService {
             toDoNotice.setDataid(quotations.getQuotations_id());
             toDoNotice.setUrl("/AOCHUAN3001FormView");
             toDoNotice.preInsert(tokenModel);
+            toDoNotice.setStatus("2");
             toDoNotice.setOwner(quotations.getSaleresponsibility());
             toDoNoticeService.save(toDoNotice);
         }
