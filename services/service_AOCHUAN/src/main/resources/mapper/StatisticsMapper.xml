@@ -66,4 +66,16 @@
             where re.names =  #{id}
     </select>
 
+    <select id="getTim" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
+            SELECT * FROM `attendance`
+            where
+            (
+            right(ATTENDANCETIM,3) = #{Sta} or right(ATTENDANCETIM,3) = #{Sun} or
+            left(ATTENDANCETIM,8) in (SELECT right(WORKINGDATE,8) from workingday where type = 1)
+            )
+            and
+            left(ATTENDANCETIM,8) not in (SELECT right(WORKINGDATE,8) from workingday where type = 4)
+            and `NAMES`= #{id}
+    </select>
+
 </mapper>
