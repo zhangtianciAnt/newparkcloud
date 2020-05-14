@@ -88,7 +88,7 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
     public void ToDoNotice(FinPurchase finPurchase) throws Exception{
         // 创建代办
         if("PY011001".equals(finPurchase.getPaymentstatus())){
-            List<MembersVo> membersVos =  roleService.getMembers("5ea66e8934d5231cc4d45f7f");
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6f09e52fa718db632696");
             for (MembersVo membersVo:
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
@@ -100,7 +100,7 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
                 toDoNotice.setCreateby(finPurchase.getCreateby());
                 Date d = new Date();
                 toDoNotice.setCreateon(d);
-                toDoNotice.setStatus("0");
+                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
@@ -113,7 +113,7 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
     public void createNotice() throws Exception {
         FinPurchase finPurchase = new FinPurchase();
         finPurchase.setPaymentstatus("PY011001");//未付款
-        finPurchase.setStatus("0");//状态可用
+        finPurchase.setStatus("2");//状态可用
         List<FinPurchase> finPurchaseList = finPurchaseMapper.select(finPurchase);
         for (FinPurchase finPurchase1 : finPurchaseList) {
             ToDoNotice(finPurchase1);

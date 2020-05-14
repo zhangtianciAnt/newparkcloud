@@ -13,6 +13,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.*;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
+@EnableScheduling
 public class SecrecyServiceImpl implements SecrecyService {
 
     @Autowired
@@ -93,7 +95,7 @@ public class SecrecyServiceImpl implements SecrecyService {
                 toDoNotice.setContent("归档文件编号【" + secrecy1.getNo() + "】");
                 toDoNotice.setDataid(secrecy1.getSecrecy_id());
                 toDoNotice.setUrl("/AOCHUAN6007FormView");
-                toDoNotice.setStatus("0");
+                toDoNotice.setStatus("2");
                //toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(secrecy1.getResponsible());
                 toDoNoticeService.save(toDoNotice);
