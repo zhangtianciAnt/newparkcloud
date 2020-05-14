@@ -183,7 +183,7 @@ public class CustomerInfo extends BaseModel {
         /**
          * 入职日期
          */
-        private String entrydate;
+        private Date entrydate;
     }
     // endregion
 
