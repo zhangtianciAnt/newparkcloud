@@ -2,12 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN6000.mapper.AttendancesMapper">
 
-
-
     <select id="getNowMon" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         select *
         from attendance
         where attendancetim LIKE #{attendancetim}"%"
+	</select>
+
+<!--考勤异常数据-->
+    <select id="getYICHANG" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
+        SELECT *,left(ATTENDANCETIM,8) FROM `attendance`
+        where
+        (
+        STR_TO_DATE(WORKINGHOURS,'%H:%i') &gt; STR_TO_DATE('08:30','%H:%i')
+        or
+        STR_TO_DATE(OFFHOURS,'%H:%i') &lt; STR_TO_DATE('17:30','%H:%i')
+        )
+        and
+        (
+        ATTENDANCETIM like concat('%',#{Mon}) or ATTENDANCETIM like concat('%',#{Tus}) or
+        ATTENDANCETIM like concat('%',#{Wed}) or ATTENDANCETIM like concat('%',#{Thu}) or ATTENDANCETIM like concat('%',#{Fri})
+        or
+        left(ATTENDANCETIM,8) in (SELECT right(WORKINGDATE,8) from workingday where type=4)
+        )
 	</select>
 
 

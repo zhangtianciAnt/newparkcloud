@@ -31,6 +31,15 @@ public class AOCHUAN6004Controller {
 
     }
 
+    @RequestMapping(value="/getYICHANG",method = {RequestMethod.GET})
+    public ApiResult getYICHANG(HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        Attendance attendance = new Attendance();
+//        fixedassets.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(attendanceService.getYICHANG(attendance));
+
+    }
+
 //    @RequestMapping(value = "/getNowday",method={RequestMethod.GET})
 //    public ApiResult one(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {
 //        if (attendancetim == null) {
