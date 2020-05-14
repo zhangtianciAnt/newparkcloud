@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -183,7 +184,7 @@ public class EvectionServiceImpl implements EvectionService {
         //add-ws-5/12-汇税收益与汇税损失问题对应
         Map<String, Float> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
-            if(Integer.valueOf(invoice.getInvoiceamount())>0){
+            if(Double.valueOf(invoice.getInvoiceamount())>0.0){
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if (rate <= 0) {
@@ -336,11 +337,17 @@ public class EvectionServiceImpl implements EvectionService {
                     }
                     List<TravelCost> newtaxList = (List<TravelCost>) newresultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                     newresultMap.put(TAX_KEY, newtaxList);
-                    DecimalFormat df = new DecimalFormat("######0.00");
+                    DecimalFormat df = new DecimalFormat("#0.00");
+                    int scale = 2;//设置位数
+                    int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                    BigDecimal bd = new BigDecimal(checktravel);
+                    BigDecimal bd1 = new BigDecimal(checkforeigncurrency);
+                    bd = bd.setScale(scale,roundingMode);
+                    bd1 = bd1.setScale(scale,roundingMode);
                     if (travel > 0.0) {
-                        newtaxCost.setLineamount(df.format(checktravel));
+                        newtaxCost.setLineamount(String.valueOf(bd.floatValue()));
                     } else if (foreigncurrency > 0.0) {
-                        newtaxCost.setLineamount(df.format(checkforeigncurrency));
+                        newtaxCost.setLineamount(String.valueOf(bd1.floatValue()));
                     }
 
                     newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));

@@ -171,6 +171,57 @@ public class Pfans1013Controller {
 
             }
         }
+
+        //add-ws-5/14-其他费用明细
+        List<OtherDetails> otherlist = evevo.getOtherdetails();
+        String trd = "";
+        double oflg = 0;
+        double occflg = 0;
+        double ombacc = 0;
+        double oraacc = 0;
+        if(otherlist.size() > 0){
+            trd = "其他费";
+            for(OtherDetails other : otherlist){
+                if(other.getRmb() != null){
+                    ombacc += Double.valueOf(other.getRmb());
+                }
+                if(other.getForeigncurrency() != null){
+                    oraacc += Double.valueOf(other.getForeigncurrency());
+                }
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(other.getBudgetcoding())) {
+                        other.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
+                    }
+                }
+                if(other.getAccountcode().length() > 5){
+                    String accAccountcode = other.getAccountcode().substring(0,5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(accAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(other.getAccountcode())) {
+                            //科目名
+                            other.setAccountcode(iteA.getValue1());
+                            //科目代码
+//                            tl.setSubjectnumber(iteA.getValue2());
+                        }
+                    }
+                }
+//                if(!ac.getCurrency().equals("")){
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(other.getCurrency())) {
+                        //币种
+                        other.setCurrency(iteA.getValue1());
+                        if(iteA.getValue2() != null){
+                            oflg = Double.valueOf(iteA.getValue2());
+                            occflg += Double.valueOf(iteA.getValue2()) * oraacc;
+                        }
+                    }
+                }
+            }
+        }
+        //add-ws-5/14-其他费用明细
+
         //出差地点
 //        if(!evevo.getEvection().getPlace().equals("") && !evevo.getEvection().getPlace().equals(null)){
             List<Dictionary> curList1 = dictionaryService.getForSelect("PJ036");
@@ -324,15 +375,42 @@ public class Pfans1013Controller {
             }
         }
 
-        String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra)));
+        for (int n = 0; n < evevo.getOtherdetails().size(); n++) {
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getOtherdetails().get(n).getForeigncurrency())){
+                BigDecimal bd = new BigDecimal(evevo.getOtherdetails().get(n).getForeigncurrency());
+                str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0.00";
+                }
+                evevo.getOtherdetails().get(n).setForeigncurrency(str_format);
+            }
+            else{
+                evevo.getOtherdetails().get(n).setForeigncurrency("0.00");
+            }
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getOtherdetails().get(n).getRmb())){
+                BigDecimal bd = new BigDecimal(evevo.getOtherdetails().get(n).getRmb());
+                str_format = df.format(bd);
+                if(str_format.equals(".00"))
+                {
+                    str_format = "0.00";
+                }
+                evevo.getOtherdetails().get(n).setRmb(str_format);
+            }
+            else{
+                evevo.getOtherdetails().get(n).setRmb("0.00");
+            }
+        }
+
+        String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra + ombacc)));
         if(rmbflg.equals(".00")){
             rmbflg = "0.00";
         }
-        String traflg = df.format(new BigDecimal(String.valueOf(tratra + traacc)));
+        String traflg = df.format(new BigDecimal(String.valueOf(tratra + traacc + oraacc)));
         if(traflg.equals(".00")){
             traflg = "0.00";
         }
-        String sumrmb = df.format(new BigDecimal(String.valueOf(accflg + curflg + rmbacc + rmbtra)));
+        String sumrmb = df.format(new BigDecimal(String.valueOf(occflg + accflg + curflg + rmbacc + rmbtra + ombacc )));
         if(sumrmb.equals(".00")){
             sumrmb = "0.00";
         }
@@ -340,8 +418,10 @@ public class Pfans1013Controller {
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
         data.put("wfList4", wfList4);
+        data.put("trd", trd);
         data.put("trr", trr);
         data.put("tro", tro);
+        data.put("oflg", oflg);
         data.put("cflg", cflg);
         data.put("aflg", aflg);
         data.put("userim", userim);
@@ -352,6 +432,7 @@ public class Pfans1013Controller {
         data.put("cur", evevo.getCurrencyexchanges());
         data.put("tra", evevo.getTrafficdetails());
         data.put("acc", evevo.getAccommodationdetails());
+        data.put("other", evevo.getOtherdetails());
         if(evevo.getEvection().getType().equals("0")){
             ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xlsx", data, response);
         } else {

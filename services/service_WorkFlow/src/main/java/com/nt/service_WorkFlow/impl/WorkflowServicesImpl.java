@@ -520,16 +520,24 @@ private String upFlg = "0";
 
     }
 
-    private String getUpUser(String curentUser) throws Exception {
+    private String getUpUser(String curentUser,String nodeName) throws Exception {
         String userId = "";
         UserVo user = userService.getAccountCustomerById(curentUser);
         String orgId = "";
-        if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getTeamid())) {
+        if(nodeName.toUpperCase().contains("TL")) {
             orgId = user.getCustomerInfo().getUserinfo().getTeamid();
-        } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getGroupid())) {
+        } else if (nodeName.toUpperCase().contains("GM")) {
             orgId = user.getCustomerInfo().getUserinfo().getGroupid();
-        } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getCenterid())) {
+        } else if (nodeName.toUpperCase().contains("CENTER")) {
             orgId = user.getCustomerInfo().getUserinfo().getCenterid();
+        }else if (nodeName.toUpperCase().contains("一次上司")) {
+            if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getTeamid())) {
+                orgId = user.getCustomerInfo().getUserinfo().getTeamid();
+            } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getGroupid())) {
+                orgId = user.getCustomerInfo().getUserinfo().getGroupid();
+            } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getCenterid())) {
+                orgId = user.getCustomerInfo().getUserinfo().getCenterid();
+            }
         }
 
         OrgTree orgs = orgTreeService.get(new OrgTree());
@@ -645,7 +653,7 @@ private String upFlg = "0";
                         //上级审批
                     } else if ("2".equals(item.getNodeusertype())) {
 
-                        UserVo userInfo = userService.getAccountCustomerById(tokenModel.getUserId());
+                        UserVo userInfo = userService.getAccountCustomerById(workflowinstance.getOwner());
                         //TL
                         if(item.getNodename().toUpperCase().contains("TL")){
                             if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
@@ -857,32 +865,32 @@ private String upFlg = "0";
                             }
                         }
                         String user = "";
-                        if(item.getNodename().toUpperCase().contains("CENTER")){
+//                        if(item.getNodename().toUpperCase().contains("CENTER")){
+//
+//                            List<Workflownodeinstance> noderst =  workflownodeinstancelist.stream().filter(node -> (node.getNodename().toUpperCase().contains("GM"))).collect(Collectors.toList());
+//                            if(noderst.size() > 0){
+//
+//                                Workflowstep conditionWorkflowstepi = new Workflowstep();
+//                                conditionWorkflowstepi.setWorkflownodeinstanceid(noderst.get(0).getWorkflownodeinstanceid());
+//                                List<Workflowstep> workflowsteplisti = workflowstepMapper.select(conditionWorkflowstepi);
+//                                if(workflowsteplisti.size() > 0){
+//
+//                                    user = getUpUser(workflowsteplisti.get(0).getItemid());
+//
+//                                }else{
+//
+//                                    user = getUpUser(tokenModel.getUserId());
+//                                }
+//                            }else{
+//
+//                                user = getUpUser(tokenModel.getUserId());
+//                            }
+//                            user = getUpUser(tokenModel.getUserId());
+//
+//                        }else{
 
-                            List<Workflownodeinstance> noderst =  workflownodeinstancelist.stream().filter(node -> (node.getNodename().toUpperCase().contains("GM"))).collect(Collectors.toList());
-                            if(noderst.size() > 0){
-
-                                Workflowstep conditionWorkflowstepi = new Workflowstep();
-                                conditionWorkflowstepi.setWorkflownodeinstanceid(noderst.get(0).getWorkflownodeinstanceid());
-                                List<Workflowstep> workflowsteplisti = workflowstepMapper.select(conditionWorkflowstepi);
-                                if(workflowsteplisti.size() > 0){
-
-                                    user = getUpUser(workflowsteplisti.get(0).getItemid());
-
-                                }else{
-
-                                    user = getUpUser(tokenModel.getUserId());
-                                }
-                            }else{
-
-                                user = getUpUser(tokenModel.getUserId());
-                            }
-                            user = getUpUser(tokenModel.getUserId());
-
-                        }else{
-
-                            user = getUpUser(tokenModel.getUserId());
-                        }
+                            user = getUpUser(workflowinstance.getOwner(),item.getNodename().toUpperCase());
+//                        }
                         if(StrUtil.isEmpty(user)){
                             continue;
                         }

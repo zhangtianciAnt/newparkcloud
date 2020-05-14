@@ -36,6 +36,20 @@ public class PersonalCenterVoController {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(personalCenterService.get(tokenModel.getUserId()));
     }
+
+    /**
+     * @方法名：get
+     * @描述：根据id获取基本信息
+     * @创建日期：2018/11/05
+     * @作者：FEIJIALIANG
+     * @参数：[request]
+     * @返回值：ApiResult.success
+     */
+    //获取基本信息
+    @RequestMapping(value = "/getuserinfo", method = {RequestMethod.GET})
+    public ApiResult getuserinfo(String userid) throws Exception {
+        return ApiResult.success(personalCenterService.get(userid));
+    }
     /**
      * @方法名：save
      * @描述：更新基本信息
