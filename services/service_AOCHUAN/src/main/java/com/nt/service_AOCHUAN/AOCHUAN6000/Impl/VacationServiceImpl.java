@@ -10,11 +10,15 @@ import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.VacationService;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.VacationMapper;
 import com.nt.service_Org.mapper.EarlyvacationMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,9 +40,55 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public void insert(Vacation vacation, TokenModel tokenModel) throws Exception {
-        vacation.preInsert(tokenModel);
-        vacation.setVacation_id(UUID.randomUUID().toString());
-        vacationMapper.insert(vacation);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        Vacation selectVac = new Vacation();
+        selectVac.setApplicanterid(vacation.getApplicanterid());
+        List<Vacation> lists = vacationMapper.select(selectVac);
+        if(lists.size() > 0){
+            for(Vacation v:lists){
+
+                String vacstart = simpleDateFormat.format(v.getStartdate());
+                Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
+
+                String vacend = simpleDateFormat.format(v.getEnddate());
+                Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
+
+                int compareToKS = vacation.getStartdate().compareTo(datestart); //开始 和 数据库开始 对比
+                int compareToKS1 = vacation.getEnddate().compareTo(datestart); //结束 和 开始 对比
+
+                int compareToJS = vacation.getEnddate().compareTo(datestaend); //结束 和 结束 对比
+                int compareToJS1 = vacation.getStartdate().compareTo(datestaend); //开始 和 结束 对比
+
+
+
+                if((compareToKS == -1 || compareToKS == 0) && (compareToKS1 == 1 || compareToKS1 == 0) ){
+                    throw new LogicalException("期间内日期已经申请过，请重新选择日期！");
+                }
+                else if((compareToKS == 1 || compareToKS == 0)  && (compareToJS == -1 || compareToJS == 0)){
+                    throw new LogicalException("期间内日期已经申请过，请重新选择日期！");
+                }
+                else if((compareToJS1 == -1 || compareToJS1 == 0) && (compareToJS == 1 || compareToJS == 0)){
+                    throw new LogicalException("期间内日期已经申请过，请重新选择日期！");
+                }
+                else if((compareToKS == -1 || compareToKS == 0) && (compareToJS == 1 || compareToJS == 0)){
+                    throw new LogicalException("期间内日期已经申请过，请重新选择日期！");
+                }
+                else {
+                    vacation.preInsert(tokenModel);
+                    vacation.setVacation_id(UUID.randomUUID().toString());
+                    vacationMapper.insert(vacation);
+                    break;
+                }
+            }
+        }
+        else{
+            vacation.preInsert(tokenModel);
+            vacation.setVacation_id(UUID.randomUUID().toString());
+            vacationMapper.insert(vacation);
+        }
+
+
+
     }
 
     @Override
