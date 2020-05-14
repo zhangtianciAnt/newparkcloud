@@ -116,7 +116,7 @@ public class QuotationsServiceImpl implements QuotationsService {
     public void ToDoNotice(TokenModel tokenModel,Quotations quotations) throws Exception{
         // 创建代办
         if(quotations.getType() == 0){
-            List<MembersVo> membersVos =  roleService.getMembers("5e96adfa96c5744860b31a00");
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6d23e52fa718db632694");
             for (MembersVo membersVo:
             membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
