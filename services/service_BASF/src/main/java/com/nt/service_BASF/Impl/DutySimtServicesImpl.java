@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -77,11 +78,17 @@ public class DutySimtServicesImpl implements DutySimtServices {
         DutySimtVo dutySimtVo = new DutySimtVo();
         DutySimt dutySimt = new DutySimt();
         List<DutySimt> list = dutySimtMapper.select(dutySimt);
-        String a = null;
         //设置日期格式
-        SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
-        // new Date()为获取当前系统时间为星期几
-        String currSun = dateFm.format(new Date());
+//        SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+//        // new Date()为获取当前系统时间为星期几
+//        String currSun = dateFm.format(new Date());
+        String[] weekDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        Calendar cal = Calendar.getInstance();
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0)
+            w = 0;
+        String currSun = weekDays[w];
+
         if(list.size() == 1 && list.get(0) != null){
         if(currSun.equals("星期一")){
             dutySimtVo.setDuty(list.get(0).getMon());
