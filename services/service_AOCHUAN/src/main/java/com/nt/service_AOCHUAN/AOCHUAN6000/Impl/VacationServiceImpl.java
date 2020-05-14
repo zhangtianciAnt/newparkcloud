@@ -1,6 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN6000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vacation;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.LeaveDaysVo;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.StatisticsVo;
@@ -108,6 +109,57 @@ public class VacationServiceImpl implements VacationService {
         else {
             return earlyvacation1;
         }
+
+    }
+
+    @Override
+    public void saveHXlong(String ids) throws Exception {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        double diffhour=0.0;
+        List<Attendance> attendancelist = vacationMapper.getTim(ids,"星期六","星期日");
+        for(Attendance att : attendancelist){
+            String starts = att.getWorkinghours();
+//            String sthour = starts.substring(0,2);
+//            String stmin = starts.substring(3,5);
+            int sthour = Integer.parseInt(starts.substring(0,2));//开始时间小时
+            int stmin = Integer.parseInt(starts.substring(3,5));//开始时间分钟
+
+            String ends = att.getOffhours();
+//            String endhour = ends.substring(0,2);
+//            String endmin = ends.substring(3,5);
+            int endhour = Integer.parseInt(ends.substring(0,2));//结束时间小时
+            int endmin = Integer.parseInt(ends.substring(3,5));//结束时间分钟
+            if(sthour < 8 ){
+                sthour = 8;
+                stmin = 0;
+            }
+            if(endhour > 17){
+                endhour = 17;
+                endmin = 0;
+            }
+
+            if(sthour < 12 && endhour > 13){
+
+                diffhour = diffhour + ((endhour * 60 - sthour * 60) + (endmin -  stmin)) / 60 - 1;
+            }
+
+            diffhour = diffhour + ((endhour * 60 - sthour * 60) + (endmin -  stmin)) / 60;
+        }
+        if(diffhour >=4){
+            diffhour = diffhour;
+        }
+        else {
+            diffhour = 0;
+        }
+        Earlyvacation earlyvacation = new Earlyvacation();
+        earlyvacation.setUsernames(ids);
+        List<Earlyvacation> list =earlyvacationMapper.select(earlyvacation);
+        for(Earlyvacation ear : list){
+            ear.setNowcompensatoryleave(diffhour);
+            earlyvacationMapper.updateByPrimaryKeySelective(ear);
+            break;
+        }
+
 
     }
 

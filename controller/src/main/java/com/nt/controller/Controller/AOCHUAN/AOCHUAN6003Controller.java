@@ -58,6 +58,17 @@ public class AOCHUAN6003Controller {
         return ApiResult.success(vacationService.getannualyear(id));
     }
 
+    //保存换休时长
+    @RequestMapping(value = "/saveHXlong",method={RequestMethod.POST})
+    public ApiResult saveHXlong(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        vacationService.saveHXlong("5e956171e52fa71970c1a097");
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/update",method={RequestMethod.POST})
     public ApiResult update(@RequestBody Vacation vacation, HttpServletRequest request) throws Exception {
         if(vacation == null){
