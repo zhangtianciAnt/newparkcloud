@@ -36,6 +36,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Autowired
     private FinSalesMapper finSalesMapper;
 
+    @Autowired
+    private ContractNumber contractNumber;
+
 
     @Override
     public List<TransportGood> get() throws Exception {
@@ -65,9 +68,11 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
+        String number = contractNumber.getContractNumber("PT001010","transportgood");
         String id = UUID.randomUUID().toString();
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
+        transportGood.setContractnumber(number);
         transportGoodMapper.insert(transportGood);
     }
 
