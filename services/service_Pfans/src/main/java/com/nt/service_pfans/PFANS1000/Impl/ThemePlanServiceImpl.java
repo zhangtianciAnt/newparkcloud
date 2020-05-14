@@ -251,11 +251,12 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
             ct.setYear(themePlanDetailVo.get(0).getYear());
             ct.setType(themePlanDetailVo.get(0).getPlantype());
-            ct.setThemeplan_id("");
-            //该group该年度theme是否已创建
-            List<ThemePlan> colist = themePlanMapper.select(ct);
-            if (colist.size() > 0) {
-                throw new LogicalException("本部门该年度theme已经创建，请到列表页中查找编辑。");
+            if(StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())){
+                //该group该年度theme是否已创建
+                List<ThemePlan> colist = themePlanMapper.select(ct);
+                if (colist.size() > 0) {
+                    throw new LogicalException("本部门该年度theme已经创建，请到列表页中查找编辑。");
+                }
             }
             int rowindex = 0;
             for (ThemePlanDetailVo vo : themePlanDetailVo) {
