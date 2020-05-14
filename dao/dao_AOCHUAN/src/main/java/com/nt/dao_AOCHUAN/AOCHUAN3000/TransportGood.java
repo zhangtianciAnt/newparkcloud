@@ -142,4 +142,8 @@ public class TransportGood extends BaseModel {
     //是否发起回款
     private String returnpayment;
 
+    private String unit;
+
+    private String unit1;
+
 }

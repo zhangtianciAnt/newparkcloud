@@ -9,6 +9,7 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
+import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.dao.TokenModel;
@@ -31,6 +32,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
     private FinSalesMapper finSalesMapper;
+
+    @Autowired
+    private ContractNumber contractNumber;
 
 
     @Override
@@ -61,9 +65,11 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
+        String number = contractNumber.getContractNumber("PT001010","transportgood");
         String id = UUID.randomUUID().toString();
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
+        transportGood.setContractnumber(number);
         transportGoodMapper.insert(transportGood);
     }
 
