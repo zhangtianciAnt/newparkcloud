@@ -157,4 +157,7 @@ public class ThemePlanDetail extends BaseModel {
 
     @Column(name = "ROWINDEX")
     private String rowindex;
+
+    @Column(name = "ROWID")
+    private String rowid;
 }

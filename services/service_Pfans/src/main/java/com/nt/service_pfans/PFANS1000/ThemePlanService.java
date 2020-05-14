@@ -25,4 +25,7 @@ public interface ThemePlanService {
     //更新
     public void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
 
+    //更新
+    public void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException;
+
 }

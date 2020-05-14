@@ -38,6 +38,9 @@ public class ThemePlan extends BaseModel {
     @Column(name = "ROWINDEX")
     private String rowindex;
 
+    @Column(name = "PLANCOUNT")
+    private String plancount;
+
     @Column(name = "FINANCIALPROCESSINGFLG")
     private String financialprocessingflg;
 

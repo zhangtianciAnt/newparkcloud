@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.ThemePlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
+import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanDetailVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
 import com.nt.service_pfans.PFANS1000.ThemePlanService;
 import com.nt.utils.ApiResult;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/themeplan")
@@ -70,6 +72,13 @@ public class Pfans1040Controller {
     public ApiResult update(@RequestBody ThemePlanVo themePlan, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         themePlanService.update(themePlan, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/inserttheme", method = {RequestMethod.POST})
+    public ApiResult inserttheme(@RequestBody List<ThemePlanDetailVo> themePlanDetailVo, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        themePlanService.inserttheme(themePlanDetailVo, tokenModel);
         return ApiResult.success();
     }
 
