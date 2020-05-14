@@ -8,6 +8,8 @@ import java.util.List;
 public interface AttendancesService {
 
     List<Attendance> get(Attendance attendance) throws Exception;
+//    异常数据
+    List<Attendance> getYICHANG(Attendance attendance) throws Exception;
 
     List<Attendance> getNow(Attendance attendance) throws Exception;
 
