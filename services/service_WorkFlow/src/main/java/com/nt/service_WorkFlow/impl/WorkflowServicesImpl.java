@@ -389,7 +389,7 @@ private String upFlg = "0";
     public List<Workflowinstance> allWorkFlowIns(String menuUrl) throws Exception {
         Workflowinstance con = new Workflowinstance();
         if(StrUtil.isNotBlank(menuUrl)){
-            con.setUrl(menuUrl);
+            con.setFormid(menuUrl);
         }
         List<Workflowinstance> rst = workflowinstanceMapper.select(con);
         for(Workflowinstance item:rst){
