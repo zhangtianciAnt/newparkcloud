@@ -36,8 +36,6 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Autowired
     private FinSalesMapper finSalesMapper;
 
-    @Autowired
-    private ContractNumber contractNumber;
 
 
     @Override
