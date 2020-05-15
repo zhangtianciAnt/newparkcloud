@@ -344,7 +344,7 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setAddress("");
             item.getUserinfo().setMobilenumber("");
             item.getUserinfo().setPhone("");
-            item.getUserinfo().setExtension("");
+//            item.getUserinfo().setExtension("");
             item.getUserinfo().setWorkday("");
             item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setJobnumber("");
@@ -375,7 +375,7 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setWorkAfterTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setTrainTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setRewardTable(new ArrayList<CustomerInfo.TableInfo>());
-            item.getUserinfo().setResignation_date("");
+//            item.getUserinfo().setResignation_date("");
             item.getUserinfo().setReason2("");
         }
         return customerInfos;
