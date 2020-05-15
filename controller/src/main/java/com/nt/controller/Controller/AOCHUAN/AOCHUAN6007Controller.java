@@ -29,6 +29,7 @@ public class AOCHUAN6007Controller {
     public ApiResult getList(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Secrecy secrecy=new Secrecy();
+        secrecy.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(secrecyService.get(secrecy));
 
     }

@@ -26,6 +26,7 @@ public class AOCHUAN6004Controller {
     public ApiResult getList(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Attendance attendance = new Attendance();
+        attendance.setOwners(tokenModel.getOwnerList());
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.get(attendance));
 
@@ -35,6 +36,7 @@ public class AOCHUAN6004Controller {
     public ApiResult getYICHANG(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Attendance attendance = new Attendance();
+        attendance.setOwners(tokenModel.getOwnerList());
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.getYICHANG(attendance));
 

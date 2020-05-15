@@ -14,7 +14,16 @@
 
     <!--  获取项目表数据  -->
     <select id = "getProjectList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Projects">
-        SELECT * FROM projects WHERE STATUS != '1'
+        SELECT * FROM projects WHERE STATUS != '1' and
+        1=1
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            USER_ID in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </select>
 
     <!--  项目表删除  -->

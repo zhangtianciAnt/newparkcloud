@@ -5,6 +5,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.ReimAndReimDetail;
 import com.nt.service_AOCHUAN.AOCHUAN6000.ReimbursementService;
 import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.utils.*;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,9 @@ public class AOCHUAN6006Controller {
      */
     @RequestMapping(value = "/getReimbursementList", method = {RequestMethod.POST})
     public ApiResult getReimbursementList(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
         Reimbursement reimbursement = new Reimbursement();
+        reimbursement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(reimbursementService.getReimbursementList(reimbursement));
     }
 
