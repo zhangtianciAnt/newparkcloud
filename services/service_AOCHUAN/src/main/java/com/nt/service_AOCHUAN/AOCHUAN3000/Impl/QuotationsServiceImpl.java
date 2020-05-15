@@ -49,8 +49,8 @@ public class QuotationsServiceImpl implements QuotationsService {
 
 
     @Override
-    public List<Quotations> get() throws Exception {
-        return quotationsMapper.selectAll();
+    public List<Quotations> get(Quotations quotations) throws Exception {
+        return quotationsMapper.select(quotations);
     }
 
     @Override

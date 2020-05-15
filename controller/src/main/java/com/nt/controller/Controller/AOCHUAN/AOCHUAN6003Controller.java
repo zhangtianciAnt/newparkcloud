@@ -25,6 +25,7 @@ public class AOCHUAN6003Controller {
     public ApiResult getList(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Vacation vacation = new Vacation();
+        vacation.setOwners(tokenModel.getOwnerList());
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(vacationService.get(vacation));
 

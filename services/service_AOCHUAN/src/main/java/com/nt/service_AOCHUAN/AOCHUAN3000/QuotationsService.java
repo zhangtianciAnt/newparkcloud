@@ -7,7 +7,7 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface QuotationsService {
-    List<Quotations> get() throws Exception;
+    List<Quotations> get(Quotations quotations) throws Exception;
 
     Quotations getOne(String id) throws Exception;
 

@@ -9,7 +9,7 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface TransportGoodService {
-    List<TransportGood> get() throws Exception;
+    List<TransportGood> get(TransportGood transportGood) throws Exception;
 
     TransportGood getOne(String id) throws Exception;
 
