@@ -385,6 +385,20 @@ private String upFlg = "0";
         return rst;
     }
 
+    @Override
+    public List<Workflowinstance> allWorkFlowIns(String menuUrl) throws Exception {
+        Workflowinstance con = new Workflowinstance();
+        if(StrUtil.isNotBlank(menuUrl)){
+            con.setFormid(menuUrl);
+        }
+        List<Workflowinstance> rst = workflowinstanceMapper.select(con);
+        for(Workflowinstance item:rst){
+            item.setStatus(workResultConvert(item.getStatus(),""));
+        }
+
+        return rst;
+    }
+
     private String stepResultConvert(String code, String locale) {
         switch (code) {
             case "1":

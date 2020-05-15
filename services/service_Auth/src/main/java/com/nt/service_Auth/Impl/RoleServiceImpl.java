@@ -119,6 +119,9 @@ public class RoleServiceImpl implements RoleService {
                         membersVo.setCustomername(userInfo.getCustomername());
                         membersVo.setMobilenumber(userInfo.getMobilenumber());
                         membersVo.setDepartments(userInfo.getDepartmentid());
+                        //add_fjl
+                        membersVo.setUserid(customerInfo.getUserid());
+                        //add_fjl
                         result.add(membersVo);
                     }
                 }

@@ -183,4 +183,10 @@ public class WorkflowController {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(workflowServices.OperationWorkflow(operationWorkflowVo,tokenModel));
     }
+
+    @RequestMapping(value = "/allWorkFlowIns",method={RequestMethod.GET})
+    public ApiResult allWorkFlowIns(String menuUrl,HttpServletRequest request) throws Exception {
+
+        return ApiResult.success(workflowServices.allWorkFlowIns(menuUrl));
+    }
 }
