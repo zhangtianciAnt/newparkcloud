@@ -80,4 +80,7 @@ public interface TrainjoinlistServices {
 
     //培训档案导出
     List<TrainingRecordsExportVo> exportRecordData() throws Exception;
+
+    //即将到期培训导出
+    List<OverduePersonnelListVo> exportData() throws Exception;
 }

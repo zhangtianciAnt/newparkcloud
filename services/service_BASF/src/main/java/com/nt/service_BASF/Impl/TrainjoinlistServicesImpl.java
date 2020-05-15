@@ -549,4 +549,10 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
     public List<TrainingRecordsExportVo> exportRecordData() throws Exception{
         return trainingRecordsExportMapper.exportRecordData();
     }
+
+    //即将到期培训导出
+    @Override
+    public List<OverduePersonnelListVo> exportData() throws Exception{
+        return trainjoinlistMapper.OverduePersonnelList();
+    }
 }
