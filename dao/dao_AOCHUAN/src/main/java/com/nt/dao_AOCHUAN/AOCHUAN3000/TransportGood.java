@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -23,6 +24,8 @@ public class TransportGood extends BaseModel {
     private String productus;
 
     private String specifications;
+
+    private String paybackstatus;
 
     private String customer;
 
@@ -128,7 +131,6 @@ public class TransportGood extends BaseModel {
 
     private String firstorderduration;
 
-    private String paybackstatus;
 
     private String receptgoods;
 
@@ -136,14 +138,13 @@ public class TransportGood extends BaseModel {
 
     private Date ap_date;
 
-    //是否发起请款
+    //ﾊﾇｷ｢ﾆ・・
     private String requestpayment;
 
-    //是否发起回款
+    //ﾊﾇｷ｢ﾆﾘｿ・
     private String returnpayment;
 
-    private String unit;
-
-    private String unit1;
+    @Transient
+    private boolean notice;
 
 }

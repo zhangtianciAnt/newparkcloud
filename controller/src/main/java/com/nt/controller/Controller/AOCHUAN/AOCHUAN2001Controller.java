@@ -9,6 +9,7 @@ import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierproductrelationService;
 import com.nt.service_AOCHUAN.AOCHUAN2000.CustomerbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,10 @@ public class AOCHUAN2001Controller {
     private String baseinfoId;
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request)throws Exception{
-        return ApiResult.success(customerbaseinforService.get());
+        TokenModel tokenModel = new TokenModel();
+        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+        customerbaseinfor.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(customerbaseinforService.get(customerbaseinfor));
     }
 
     @RequestMapping(value = "/getLinkman",method={RequestMethod.GET})
