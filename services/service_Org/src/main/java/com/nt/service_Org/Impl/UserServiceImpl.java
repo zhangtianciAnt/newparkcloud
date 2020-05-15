@@ -786,6 +786,7 @@ public class UserServiceImpl implements UserService {
                     customerinfo.preUpdate(tokenModel);
                     useraccount.set_id(useraccountselect.get(0).get_id());
                     customerinfo.set_id(useraccountselect.get(0).get_id());
+                    customerinfo.setUserid(useraccountselect.get(0).getUserid());
 
                     mongoTemplate.save(useraccount);
                     mongoTemplate.save(customerinfo);
