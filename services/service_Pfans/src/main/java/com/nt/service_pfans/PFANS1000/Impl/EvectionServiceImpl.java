@@ -94,6 +94,7 @@ public class EvectionServiceImpl implements EvectionService {
             String accountcode = getProperty(o, "accountcode");
             String budgetcoding = getProperty(o, "budgetcoding");
             String currency = getProperty(o, "currency");
+            String subjectnumber = getProperty(o, "subjectnumber");
             float rmb = getPropertyFloat(o, "rmb");
             float foreigncurrency = getPropertyFloat(o, "foreigncurrency");
             float travel = getPropertyFloat(o, "travel");
@@ -121,7 +122,7 @@ public class EvectionServiceImpl implements EvectionService {
                         accommodationdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
                     }
                 }
-                accommodationdetails.setSubjectnumber(accommodationdetails.getSubjectnumber());
+                accommodationdetails.setSubjectnumber(subjectnumber);
                 if (accountcode.length() > 5) {
                     String traAccountcode = accountcode.substring(0, 5);
                     List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
@@ -144,7 +145,7 @@ public class EvectionServiceImpl implements EvectionService {
                         trafficdetails.setCurrency(iteA.getValue1());
                     }
                 }
-                trafficdetails.setSubjectnumber(trafficdetails.getSubjectnumber());
+                trafficdetails.setSubjectnumber(subjectnumber);
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
@@ -172,7 +173,7 @@ public class EvectionServiceImpl implements EvectionService {
                         otherdetails.setCurrency(iteA.getValue1());
                     }
                 }
-                otherdetails.setSubjectnumber(otherdetails.getSubjectnumber());
+                otherdetails.setSubjectnumber(subjectnumber);
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
