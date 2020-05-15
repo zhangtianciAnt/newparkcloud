@@ -160,6 +160,7 @@ public class AOCHUAN1001Controller {
         if(supplierproductrelationVo == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        baseinfoId = supplierproductrelationVo.getBaseinfor_id();
         supplierproductrelationService.deleteByBaseinforId(supplierproductrelationVo.getBaseinfor_id());
         for(int i = 0;i < supplierproductrelationVo.getSupplierproductrelationList().size();i++ ){
             //supplierproductrelations[i].setSupplierbaseinfor_id(baseinfoId);
