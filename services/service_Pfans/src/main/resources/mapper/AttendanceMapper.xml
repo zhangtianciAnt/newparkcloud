@@ -92,4 +92,10 @@ GROUP BY
         and attendance.dates &lt;= #{dates}
         and attendance.user_id = #{user_id}
     </select>
+    <update id="updStatus" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance">
+        update attendance set RECOGNITIONSTATE = '1'
+        where USER_ID = #{user_id}
+        and MONTHS = #{months}
+        and YEARS = #{years}
+    </update>
 </mapper>

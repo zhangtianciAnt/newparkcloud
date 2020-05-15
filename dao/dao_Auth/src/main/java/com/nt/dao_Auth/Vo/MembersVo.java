@@ -38,4 +38,10 @@ public class MembersVo {
      * 部门
      */
     private List<String> departments;
+    //add_fjl
+    /**
+     * 人员ID
+     */
+    private String userid;
+    //add_fjl
 }
