@@ -8,6 +8,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.utils.*;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,10 @@ public class AOCHUAN3002Controller {
 
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
-        return ApiResult.success(transportGoodService.get());
+        TokenModel tokenModel = tokenService.getToken(request);
+        TransportGood transportGood = new TransportGood();
+        transportGood.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(transportGoodService.get(transportGood));
     }
 
     @RequestMapping(value = "/getone",method={RequestMethod.GET})

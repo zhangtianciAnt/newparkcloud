@@ -44,8 +44,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
 
     @Override
-    public List<TransportGood> get() throws Exception {
-        return transportGoodMapper.selectAll();
+    public List<TransportGood> get(TransportGood transportGood) throws Exception {
+        return transportGoodMapper.select(transportGood);
     }
 
     @Override
@@ -74,7 +74,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
+        String number = contractNumber.getContractNumber("PT001010","transportgood");
         String id = UUID.randomUUID().toString();
+        transportGood.setContractnumber(number);
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
         transportGoodMapper.insert(transportGood);
@@ -99,7 +101,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         finSales.preInsert();
         finSales.setArrival_status("0");
         finSales.setCredential_status("PW001001");
-        String number = contractNumber.getContractNumber("PT001011","finSales");
+        String number = contractNumber.getContractNumber("PT001011","fin_sales");
         finSales.setCredential_sales(number);
         finSalesMapper.insert(finSales);
     }

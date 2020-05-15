@@ -3,6 +3,7 @@ package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
 import com.nt.service_AOCHUAN.AOCHUAN3000.SampleService;
 import com.nt.utils.*;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,10 @@ public class AOCHUAN3007Controller {
 
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
-        return ApiResult.success(sampleService.get());
+        TokenModel tokenModel = tokenService.getToken(request);
+        Sample sample  = new Sample();
+        sample.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(sampleService.get(sample));
     }
 
     @RequestMapping(value = "/getone",method={RequestMethod.GET})

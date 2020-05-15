@@ -6,7 +6,7 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface SampleService {
-    List<Sample> get() throws Exception;
+    List<Sample> get(Sample sample) throws Exception;
 
     Sample getOne(String id) throws Exception;
 

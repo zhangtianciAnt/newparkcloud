@@ -25,6 +25,7 @@ public class AOCHUAN6003Controller {
     public ApiResult getList(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Vacation vacation = new Vacation();
+        vacation.setOwners(tokenModel.getOwnerList());
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(vacationService.get(vacation));
 
@@ -65,7 +66,7 @@ public class AOCHUAN6003Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        vacationService.saveHXlong("5e956171e52fa71970c1a097");
+        vacationService.saveHXlong(id);
         return ApiResult.success();
     }
 

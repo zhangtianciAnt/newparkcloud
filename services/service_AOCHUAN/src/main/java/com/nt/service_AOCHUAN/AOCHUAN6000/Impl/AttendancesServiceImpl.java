@@ -336,6 +336,86 @@ public class AttendancesServiceImpl implements AttendancesService {
         }
         return attendanceList;
     }
+
+
+    //考勤异常根据天，月，年去查询
+    @Override
+    public List<Attendance> getNowMonYC(String attendancetim) throws Exception {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<Attendance> attendanceList = attendanceMapper.getNowMonYC("星期一","星期二","星期三","星期四","星期五",attendancetim);
+        for(Attendance att : attendanceList){
+            Vacation vacation = new Vacation();//异常申请表
+            vacation.setApplicanterid(att.getNames());
+            vacation.setStatus("4");
+
+            List<Vacation> vacationList = vacationMapper.select(vacation);
+            for(Vacation vac : vacationList){
+                String vacstart = simpleDateFormat.format(vac.getStartdate());
+                Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
+
+                String vacend = simpleDateFormat.format(vac.getEnddate());
+                Date datestaend = simpleDateFormat.parse(vacend); //请假结束时间
+
+
+                String attendancetims = "20" + att.getAttendancetim();
+                Date attdate = simpleDateFormat.parse(attendancetims);//考勤时间
+
+                int compareToKS = attdate.compareTo(datestart);
+                int compareToJS = attdate.compareTo(datestaend);
+
+                if(compareToKS == 1 && compareToJS == -1){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                    att.setLeaves("0.5");
+                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                    att.setLeaves("0.5");
+                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 1 && compareToJS == 1){
+                    att.setLeaves("0");
+
+                }
+                if(compareToKS == -1 && compareToJS == -1){
+                    att.setLeaves("0");
+
+                }
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
+                    att.setLeaves("1");
+                    break;
+                }
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
+                    att.setLeaves("0.5");
+//                    att.setTimtype("2");
+                    break;
+                }
+                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
+                    att.setLeaves("0.5");
+//                    att.setTimtype("3");
+                    break;
+                }
+
+
+            }
+
+        }
+        return attendanceList;
+    }
+
+
     //打卡记录导入
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)

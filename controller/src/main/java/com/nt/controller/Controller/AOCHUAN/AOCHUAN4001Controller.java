@@ -25,6 +25,7 @@ public class AOCHUAN4001Controller {
     public ApiResult getList(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Products products = new Products();
+        //products.setOwners(tokenModel.getOwnerList());
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(productsService.get(products));
 

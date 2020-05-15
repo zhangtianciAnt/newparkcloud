@@ -31,8 +31,8 @@ public class SampleServiceImpl implements SampleService {
     private RoleService roleService;
 
     @Override
-    public List<Sample> get() throws Exception {
-        return sampleMapper.selectAll();
+    public List<Sample> get(Sample sample) throws Exception {
+        return sampleMapper.select(sample);
     }
 
     @Override

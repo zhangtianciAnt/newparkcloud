@@ -7,6 +7,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.utils.*;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
@@ -36,7 +37,10 @@ public class AOCHUAN3001Controller {
 
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
-        return ApiResult.success(quotationsService.get());
+        TokenModel tokenModel = tokenService.getToken(request);
+        Quotations quotations = new Quotations();
+        quotations.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(quotationsService.get(quotations));
     }
 
     @RequestMapping(value = "/getone",method={RequestMethod.GET})

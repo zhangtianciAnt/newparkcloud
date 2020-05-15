@@ -99,4 +99,7 @@ public class FinPurchase extends BaseModel {
     //数量
     @Column(name = "PURCHASE_AMOUNT")
     private  String purchase_amount;
+    //单位
+    @Column(name="UNIT1")
+    private String unit1;
 }
