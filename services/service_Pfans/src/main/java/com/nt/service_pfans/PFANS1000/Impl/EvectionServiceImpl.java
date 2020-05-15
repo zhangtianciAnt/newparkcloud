@@ -121,6 +121,7 @@ public class EvectionServiceImpl implements EvectionService {
                         accommodationdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
                     }
                 }
+                accommodationdetails.setSubjectnumber(accommodationdetails.getSubjectnumber());
                 if (accountcode.length() > 5) {
                     String traAccountcode = accountcode.substring(0, 5);
                     List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
@@ -130,6 +131,7 @@ public class EvectionServiceImpl implements EvectionService {
                         }
                     }
                 }
+
                 accommodationdetails.setTravel(String.valueOf(bd2));
                 accommodationdetails.setRmb(String.valueOf(bd));
                 accommodation.add(accommodationdetails);
@@ -142,6 +144,7 @@ public class EvectionServiceImpl implements EvectionService {
                         trafficdetails.setCurrency(iteA.getValue1());
                     }
                 }
+                trafficdetails.setSubjectnumber(trafficdetails.getSubjectnumber());
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
@@ -169,6 +172,7 @@ public class EvectionServiceImpl implements EvectionService {
                         otherdetails.setCurrency(iteA.getValue1());
                     }
                 }
+                otherdetails.setSubjectnumber(otherdetails.getSubjectnumber());
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
