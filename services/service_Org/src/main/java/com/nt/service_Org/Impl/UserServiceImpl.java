@@ -344,7 +344,7 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setAddress("");
             item.getUserinfo().setMobilenumber("");
             item.getUserinfo().setPhone("");
-            item.getUserinfo().setExtension("");
+//            item.getUserinfo().setExtension("");
             item.getUserinfo().setWorkday("");
             item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setJobnumber("");
