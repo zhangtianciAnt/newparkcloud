@@ -137,13 +137,20 @@ public class VacationServiceImpl implements VacationService {
                 endhour = 17;
                 endmin = 0;
             }
+            if(sthour == 12 && stmin > 0){
+                sthour = 13;
+                stmin = 0;
+            }
 
             if(sthour < 12 && endhour > 13){
-
                 diffhour = diffhour + ((endhour * 60 - sthour * 60) + (endmin -  stmin)) / 60 - 1;
             }
 
-            diffhour = diffhour + ((endhour * 60 - sthour * 60) + (endmin -  stmin)) / 60;
+            else{
+                diffhour = diffhour + ((endhour * 60 - sthour * 60) + (endmin -  stmin)) / 60;
+            }
+
+
         }
         if(diffhour >=4){
             diffhour = diffhour;
