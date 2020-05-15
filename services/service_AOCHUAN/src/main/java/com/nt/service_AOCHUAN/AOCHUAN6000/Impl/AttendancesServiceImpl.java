@@ -122,7 +122,6 @@ public class AttendancesServiceImpl implements AttendancesService {
             }
 
         }
-
         return attendanceList;
     }
 

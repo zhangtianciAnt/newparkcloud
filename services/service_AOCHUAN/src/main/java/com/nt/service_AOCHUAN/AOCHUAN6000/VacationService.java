@@ -21,6 +21,9 @@ public interface VacationService {
 //    获取年假结余
     public Earlyvacation getannualyear(String ids)throws  Exception;
 
+    //    保存换休时长
+    public void saveHXlong(String ids)throws  Exception;
+
     public void update(Vacation vacation, TokenModel tokenModel)throws  Exception;
 
     void delete(String id) throws Exception;

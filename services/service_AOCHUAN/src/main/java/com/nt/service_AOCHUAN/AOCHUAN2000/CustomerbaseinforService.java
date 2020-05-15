@@ -4,7 +4,7 @@ import com.nt.utils.dao.TokenModel;
 import java.util.List;
 
 public interface CustomerbaseinforService {
-    List<Customerbaseinfor> get() throws Exception;
+    List<Customerbaseinfor> get(Customerbaseinfor customerbaseinfor) throws Exception;
 
     Customerbaseinfor getOne(String id) throws Exception;
 

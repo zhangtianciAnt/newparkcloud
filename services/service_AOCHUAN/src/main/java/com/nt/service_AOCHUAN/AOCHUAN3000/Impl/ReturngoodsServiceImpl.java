@@ -111,7 +111,6 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
                 toDoNotice.setDataid(returngoods.getReturngoods_id());
                 toDoNotice.setUrl("/AOCHUAN3005FormView");
                 toDoNotice.preInsert(tokenModel);
-                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
@@ -123,7 +122,6 @@ public class ReturngoodsServiceImpl implements ReturngoodsService {
             toDoNotice.setDataid(returngoods.getReturngoods_id());
             toDoNotice.setUrl("/AOCHUAN3005FormView");
             toDoNotice.preInsert(tokenModel);
-            toDoNotice.setStatus("2");
             TransportGood transportGood = new TransportGood();
             transportGood.setContractnumber(returngoods.getContractno());
             List<TransportGood> list = transportGoodMapper.select(transportGood);

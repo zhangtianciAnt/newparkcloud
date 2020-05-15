@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
+@EnableScheduling
 public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
 
     @Autowired
@@ -100,7 +102,6 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
                 toDoNotice.setCreateby(finPurchase.getCreateby());
                 Date d = new Date();
                 toDoNotice.setCreateon(d);
-                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }

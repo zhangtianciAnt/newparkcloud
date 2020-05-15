@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -137,10 +138,13 @@ public class TransportGood extends BaseModel {
 
     private Date ap_date;
 
-    //是否发起请款
+    //ﾊﾇｷ｢ﾆ・・
     private String requestpayment;
 
-    //是否发起回款
+    //ﾊﾇｷ｢ﾆﾘｿ・
     private String returnpayment;
+
+    @Transient
+    private boolean notice;
 
 }

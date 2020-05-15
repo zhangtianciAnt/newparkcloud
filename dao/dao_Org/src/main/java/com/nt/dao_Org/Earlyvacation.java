@@ -43,6 +43,9 @@ public class Earlyvacation extends BaseModel {
     @Column(name = "COMPENSATORYLEAVE")
     private String compensatoryleave;
 
+    @Column(name = "NOWCOMPENSATORYLEAVE")
+    private Double nowcompensatoryleave;
+
 
 
 }

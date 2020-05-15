@@ -94,7 +94,6 @@ public class SampleServiceImpl implements SampleService {
                 toDoNotice.setDataid(sample.getSample_id());
                 toDoNotice.setUrl("/AOCHUAN3007FormView");
                 toDoNotice.preInsert(tokenModel);
-                toDoNotice.setStatus("2");
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
@@ -106,7 +105,6 @@ public class SampleServiceImpl implements SampleService {
             toDoNotice.setDataid(sample.getSample_id());
             toDoNotice.setUrl("/AOCHUAN3007FormView");
             toDoNotice.preInsert(tokenModel);
-            toDoNotice.setStatus("2");
             toDoNotice.setOwner(sample.getSaleresponsibility());
             toDoNoticeService.save(toDoNotice);
         }
