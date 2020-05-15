@@ -2,6 +2,7 @@ package com.nt.service_WorkFlow;
 
 import com.nt.dao_Workflow.Vo.*;
 import com.nt.dao_Workflow.Workflow;
+import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
@@ -55,4 +56,6 @@ public interface WorkflowServices {
 
 	// 查看流程日志2
 	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo,String locale) throws Exception;
+
+	public List<Workflowinstance> allWorkFlowIns(String menuUrl) throws Exception;
 }
