@@ -51,6 +51,9 @@ public class FinSales extends BaseModel {
     //数量
     @Column(name = "AMOUNT")
     private String amount;
+    //单位
+    @Column(name="UNIT")
+    private String unit;
     //销售金额
     @Column(name = "SALESAMOUNT")
     private String salesamount;

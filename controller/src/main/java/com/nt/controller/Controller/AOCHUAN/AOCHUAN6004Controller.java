@@ -62,6 +62,17 @@ public class AOCHUAN6004Controller {
         return ApiResult.success(attendanceService.getNowMons(attendancetim));
     }
 
+    @RequestMapping(value = "/getNowMonYC",method={RequestMethod.GET})
+    public ApiResult getNowMonYC(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {
+        if (attendancetim == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+
+        return ApiResult.success(attendanceService.getNowMonYC(attendancetim));
+    }
+
+
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request,String flag){
         try{
