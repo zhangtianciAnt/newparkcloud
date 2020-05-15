@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -68,6 +69,7 @@ public class EvectionServiceImpl implements EvectionService {
     private DictionaryService dictionaryService;
     @Autowired
     private MongoTemplate mongoTemplate;
+
     @Override
     public Map<String, Object> exportjs(String evectionid, HttpServletRequest request) throws Exception {
         EvectionVo evevo = evectionService.selectById(evectionid);
@@ -90,7 +92,7 @@ public class EvectionServiceImpl implements EvectionService {
         List<TrafficDetails> traffic = (List<TrafficDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
         List<AccommodationDetails> accommodation = (List<AccommodationDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
         List<OtherDetails> other = (List<OtherDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
-        for(Object o:oldmergeResult.values()){
+        for (Object o : oldmergeResult.values()) {
             String accountcode = getProperty(o, "accountcode");
             String budgetcoding = getProperty(o, "budgetcoding");
             String currency = getProperty(o, "currency");
@@ -217,11 +219,9 @@ public class EvectionServiceImpl implements EvectionService {
 ////            } else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
 ////                mergeKey = "其他费用";
 ////            }
-            if (specialMap.containsKey(keyNo)) {
-                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
-            } else {
-                mergeKey = budgetcoding + " ... " + subjectnumber;
-            }
+
+            mergeKey = budgetcoding + " ... " + subjectnumber;
+
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
@@ -242,6 +242,7 @@ public class EvectionServiceImpl implements EvectionService {
         }
         return resultMap;
     }
+
     @Override
     public List<Evection> get(Evection evection) throws Exception {
         return evectionMapper.select(evection);
@@ -457,11 +458,9 @@ public class EvectionServiceImpl implements EvectionService {
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
-            if (specialMap.containsKey(keyNo) ) {
-                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
-            } else {
-                mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
-            }
+
+            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
+
             // 行合并
             float money = getPropertyFloat(detail, "foreigncurrency");
             float moneysum = getPropertyFloat(detail, "travel");
@@ -487,7 +486,7 @@ public class EvectionServiceImpl implements EvectionService {
         float sum = 0f;
         float sum1 = 0f;
         float sum2 = 0f;
-        if(currencyexchangeList.size()>0){
+        if (currencyexchangeList.size() > 0) {
             for (Currencyexchange listchange : currencyexchangeList) {
                 for (Object detail : list) {
                     String currency = getProperty(detail, "currency");
@@ -565,11 +564,7 @@ public class EvectionServiceImpl implements EvectionService {
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
-            if (specialMap.containsKey(keyNo)) {
-                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
-            } else {
-                mergeKey = budgetcoding + " ... " + subjectnumber;
-            }
+            mergeKey = budgetcoding + " ... " + subjectnumber;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "subsidies");
