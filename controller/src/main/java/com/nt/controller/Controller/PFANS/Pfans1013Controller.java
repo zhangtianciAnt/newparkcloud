@@ -346,6 +346,7 @@ public class Pfans1013Controller {
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
         data.put("wfList4", wfList4);
+        data.put("rmbadd", rmbadd);
         data.put("trd", trd);
         data.put("trr", trr);
         data.put("tro", tro);
@@ -364,15 +365,15 @@ public class Pfans1013Controller {
         data.put("acc", accommodationlist);
         data.put("other", otherDetailslist);
         if (evevo.getEvection().getType().equals("0")) {
-            ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xlsx", data, response);
+            ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xls", data, response);
         } else {
-            ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "jingwaijingsuanshu.xlsx", data, response);
+            ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "jingwaijingsuanshu.xls", data, response);
         }
-//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-//        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
 
 
