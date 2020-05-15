@@ -60,6 +60,7 @@ public class Pfans1013Controller {
         Map<String, Object> list = evectionService.exportjs(evectionid, request);
         List<TrafficDetails> trafficlist = (List<TrafficDetails>) list.getOrDefault("交通费", new ArrayList<>());
         List<AccommodationDetails> accommodationlist = (List<AccommodationDetails>) list.getOrDefault("住宿费", new ArrayList<>());
+//        List<AccommodationDetails> AccommodationList = (List<AccommodationDetails>) list.getOrDefault("补贴费用", new ArrayList<>());
         List<OtherDetails> otherDetailslist = (List<OtherDetails>) list.getOrDefault("其他费用", new ArrayList<>());
         String trr = "";
         //外币兑换
@@ -81,24 +82,31 @@ public class Pfans1013Controller {
         double rmbtra = 0;
         double tratra = 0;
         List<TrafficDetails> tralist = evevo.getTrafficdetails();
-            trr = "交通费";
-            for (TrafficDetails tl : tralist) {
-                if (tl.getRmb() != null) {
-                    rmbtra += Double.valueOf(tl.getRmb());
-                }
-                if (tl.getForeigncurrency() != null) {
-                    tratra += Double.valueOf(tl.getForeigncurrency());
-                }
-                List<Dictionary> curListA = dictionaryService.getForSelect("PG019");
-                for (Dictionary iteA : curListA) {
-                    if (iteA.getCode().equals(tl.getCurrency())) {
-                        if (iteA.getValue2() != null) {
-                            cflg = Double.valueOf(iteA.getValue2());
-                            curflg += Double.valueOf(iteA.getValue2()) * tratra;
-                        }
+        trr = "交通费";
+        for (TrafficDetails tl : tralist) {
+            if (tl.getRmb() != null) {
+                rmbtra += Double.valueOf(tl.getRmb());
+            }
+            if (tl.getForeigncurrency() != null) {
+                tratra += Double.valueOf(tl.getForeigncurrency());
+            }
+            List<Dictionary> curListA = dictionaryService.getForSelect("PG019");
+            for (Dictionary iteA : curListA) {
+                if (iteA.getCode().equals(tl.getCurrency())) {
+                    if (iteA.getValue2() != null) {
+                        cflg = Double.valueOf(iteA.getValue2());
+                        curflg += Double.valueOf(iteA.getValue2()) * tratra;
                     }
                 }
             }
+        }
+        double rmbadd = 0;
+        for (AccommodationDetails as : accommodationlist) {
+            if (as.getSubsidies() != null) {
+                rmbadd += Double.valueOf(as.getSubsidies());
+            }
+            break;
+        }
 
         //住宿费用明细
         List<AccommodationDetails> acclist = evevo.getAccommodationdetails();
@@ -108,7 +116,7 @@ public class Pfans1013Controller {
         double rmbacc = 0;
         double traacc = 0;
         if (acclist.size() > 0) {
-            tro = "住宿费";
+            tro = "住宿津贴";
             for (AccommodationDetails ac : acclist) {
                 if (ac.getRmb() != null) {
                     rmbacc += Double.valueOf(ac.getRmb());
@@ -129,6 +137,7 @@ public class Pfans1013Controller {
             }
         }
 
+        String tdd = "出差津贴";
         //add-ws-5/14-其他费用明细
         List<OtherDetails> otherlist = evevo.getOtherdetails();
         String trd = "";
@@ -321,7 +330,7 @@ public class Pfans1013Controller {
             }
         }
 
-        String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra + ombacc)));
+        String rmbflg = df.format(new BigDecimal(String.valueOf(rmbacc + rmbtra + ombacc + rmbadd)));
         if (rmbflg.equals(".00")) {
             rmbflg = "0.00";
         }
@@ -329,7 +338,7 @@ public class Pfans1013Controller {
         if (traflg.equals(".00")) {
             traflg = "0.00";
         }
-        String sumrmb = df.format(new BigDecimal(String.valueOf(occflg + accflg + curflg + rmbacc + rmbtra + ombacc)));
+        String sumrmb = df.format(new BigDecimal(String.valueOf(occflg + accflg + curflg + rmbacc + rmbtra + ombacc + rmbadd)));
         if (sumrmb.equals(".00")) {
             sumrmb = "0.00";
         }
@@ -340,6 +349,7 @@ public class Pfans1013Controller {
         data.put("trd", trd);
         data.put("trr", trr);
         data.put("tro", tro);
+        data.put("tdd", tdd);
         data.put("oflg", oflg);
         data.put("cflg", cflg);
         data.put("aflg", aflg);
@@ -350,9 +360,9 @@ public class Pfans1013Controller {
         data.put("eve", evevo.getEvection());
         data.put("cur", evevo.getCurrencyexchanges());
         data.put("tra", trafficlist);
+//        data.put("add", AccommodationList);
         data.put("acc", accommodationlist);
         data.put("other", otherDetailslist);
-
         if (evevo.getEvection().getType().equals("0")) {
             ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xlsx", data, response);
         } else {

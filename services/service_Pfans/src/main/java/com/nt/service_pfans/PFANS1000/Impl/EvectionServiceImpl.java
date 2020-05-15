@@ -98,6 +98,7 @@ public class EvectionServiceImpl implements EvectionService {
             String currency = getProperty(o, "currency");
             String subjectnumber = getProperty(o, "subjectnumber");
             float rmb = getPropertyFloat(o, "rmb");
+            float subsidies = getPropertyFloat(o, "subsidies");
             float foreigncurrency = getPropertyFloat(o, "foreigncurrency");
             float travel = getPropertyFloat(o, "travel");
             DecimalFormat df = new DecimalFormat("#0.00");
@@ -109,6 +110,8 @@ public class EvectionServiceImpl implements EvectionService {
             bd1 = bd1.setScale(scale, roundingMode);
             BigDecimal bd2 = new BigDecimal(travel);
             bd2 = bd2.setScale(scale, roundingMode);
+            BigDecimal bd3 = new BigDecimal(subsidies);
+            bd3 = bd3.setScale(scale, roundingMode);
             if (accountcode.equals("PJ132001") || accountcode.equals("PJ119001")) {
                 AccommodationDetails accommodationdetails = new AccommodationDetails();
                 resultMap.put("住宿费", accommodation);
@@ -134,9 +137,9 @@ public class EvectionServiceImpl implements EvectionService {
                         }
                     }
                 }
-
                 accommodationdetails.setTravel(String.valueOf(bd2));
                 accommodationdetails.setRmb(String.valueOf(bd));
+                accommodationdetails.setSubsidies(String.valueOf(bd3));
                 accommodation.add(accommodationdetails);
             } else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
                 TrafficDetails trafficdetails = new TrafficDetails();
@@ -211,34 +214,26 @@ public class EvectionServiceImpl implements EvectionService {
             String subjectnumber = getProperty(detail, "subjectnumber");
             String accountcode = getProperty(detail, "accountcode");
             String mergeKey = "";
-
-//            if (accountcode.equals("PJ132001") || accountcode.equals("PJ119001")) {
-////                mergeKey = "住宿费";
-////            } else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
-////                mergeKey = "交通费";
-////            } else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
-////                mergeKey = "其他费用";
-////            }
-
             mergeKey = budgetcoding + " ... " + subjectnumber;
-
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
             float taxes = getPropertyFloat(detail, "travel");
+            float subsidies = getPropertyFloat(detail, "subsidies");
             Object mergeObject = resultMap.get(mergeKey);
             if (mergeObject != null) {
                 // 发现可以合并数据
                 float newMoney = getPropertyFloat(mergeObject, "rmb") + money;
                 float newMoneysum = getPropertyFloat(mergeObject, "foreigncurrency") + moneysum;
                 float oldMoneysum = getPropertyFloat(mergeObject, "travel") + taxes;
+                float oldsubsidies = getPropertyFloat(mergeObject, "subsidies") + subsidies;
                 setProperty(mergeObject, "rmb", newMoney + "");
                 setProperty(mergeObject, "foreigncurrency", newMoneysum + "");
                 setProperty(mergeObject, "travel", oldMoneysum + "");
+                setProperty(mergeObject, "subsidies", oldsubsidies + "");
             } else {
                 resultMap.put(mergeKey, detail);
             }
-
         }
         return resultMap;
     }
