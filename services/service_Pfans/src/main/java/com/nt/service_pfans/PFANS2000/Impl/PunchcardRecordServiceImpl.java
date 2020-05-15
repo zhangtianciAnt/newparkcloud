@@ -329,57 +329,189 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             for (CustomerInfo customerInfo : customerInfoList) {
                 try{
                     TokenModel tokenModel = new TokenModel();
-//                    if(customerInfo.getUserid().equals("5e78b2124e3b194874180ea1"))
+//                    if(customerInfo.getUserid().equals("5e78b2184e3b194874180ecd") || customerInfo.getUserid().equals("5e78b2144e3b194874180eb1"))
 //                    {
-
-
-                    //查询更新一天的考勤数据
-                    Attendance attendance = new Attendance();
-                    attendance.setUser_id(customerInfo.getUserid());
-                    attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
-                    List<Attendance> attendanceList = attendanceMapper.select(attendance);
-                    if(attendanceList.size()>0)
+                    if (customerInfo.getUserinfo().getResignation_date() == null || customerInfo.getUserinfo().getResignation_date().isEmpty())
                     {
-                        attendanceList.get(0).setNormal("0");
-                        attendanceList.get(0).setActual(null);
-                        attendanceList.get(0).setOrdinaryindustry(null);
-                        attendanceList.get(0).setWeekendindustry(null);
-                        attendanceList.get(0).setStatutoryresidue(null);
-                        attendanceList.get(0).setAnnualrestday(null);
-                        attendanceList.get(0).setSpecialday(null);
-                        attendanceList.get(0).setYouthday(null);
-                        attendanceList.get(0).setWomensday(null);
-                        attendanceList.get(0).setShortsickleave(null);
-                        attendanceList.get(0).setLongsickleave(null);
-                        attendanceList.get(0).setCompassionateleave(null);
-                        attendanceList.get(0).setAnnualrest(null);
-                        attendanceList.get(0).setDaixiu(null);
-                        attendanceList.get(0).setNursingleave(null);
-                        attendanceList.get(0).setWelfare(null);
-                        attendanceList.get(0).setAbsenteeism(null);
-                        attendanceList.get(0).setTshortsickleave(null);
-                        attendanceList.get(0).setTlongsickleave(null);
-                        attendanceList.get(0).setTabsenteeism(null);
-                        tokenModel.setUserId(attendanceList.get(0).getUser_id());
-                        tokenModel.setExpireDate(new Date());
-                        saveAttendance(attendanceList.get(0), "0", tokenModel);
-                        attendancelist.add(attendanceList.get(0));
+                        // 俩月内在职人员
+                        //查询更新一天的考勤数据
+                        Attendance attendance = new Attendance();
+                        attendance.setUser_id(customerInfo.getUserid());
+                        attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                        List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                        if(attendanceList.size()>0)
+                        {
+                            if(attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
+                            {
+                                attendanceList.get(0).setNormal("0");
+                                attendanceList.get(0).setActual(null);
+                                attendanceList.get(0).setOrdinaryindustry(null);
+                                attendanceList.get(0).setWeekendindustry(null);
+                                attendanceList.get(0).setStatutoryresidue(null);
+                                attendanceList.get(0).setAnnualrestday(null);
+                                attendanceList.get(0).setSpecialday(null);
+                                attendanceList.get(0).setYouthday(null);
+                                attendanceList.get(0).setWomensday(null);
+                                attendanceList.get(0).setShortsickleave(null);
+                                attendanceList.get(0).setLongsickleave(null);
+                                attendanceList.get(0).setCompassionateleave(null);
+                                attendanceList.get(0).setAnnualrest(null);
+                                attendanceList.get(0).setDaixiu(null);
+                                attendanceList.get(0).setNursingleave(null);
+                                attendanceList.get(0).setWelfare(null);
+                                attendanceList.get(0).setAbsenteeism(null);
+                                attendanceList.get(0).setTshortsickleave(null);
+                                attendanceList.get(0).setTlongsickleave(null);
+                                attendanceList.get(0).setTabsenteeism(null);
+                                tokenModel.setUserId(attendanceList.get(0).getUser_id());
+                                tokenModel.setExpireDate(new Date());
+                                saveAttendance(attendanceList.get(0), "0", tokenModel);
+                                attendancelist.add(attendanceList.get(0));
+                            }
+                        }
+                        else
+                        {
+                            attendance.setNormal("0");
+                            attendance.setAbsenteeism("0");
+                            attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                            attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                            attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                            attendance.setAttendanceid(UUID.randomUUID().toString());
+                            attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                            attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                            attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                            tokenModel.setUserId(attendance.getUser_id());
+                            tokenModel.setExpireDate(new Date());
+                            saveAttendance(attendance, "1", tokenModel);
+                            attendancelist.add(attendance);
+                        }
                     }
                     else
                     {
-                        attendance.setNormal("0");
-                        attendance.setAbsenteeism("0");
-                        attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                        attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                        attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                        attendance.setAttendanceid(UUID.randomUUID().toString());
-                        attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                        attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                        attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                        tokenModel.setUserId(attendance.getUser_id());
-                        tokenModel.setExpireDate(new Date());
-                        saveAttendance(attendance, "1", tokenModel);
-                        attendancelist.add(attendance);
+                        //俩月内离职人员
+                        Calendar rightNow = Calendar.getInstance();
+                        String resignationdate = customerInfo.getUserinfo().getResignation_date().substring(0, 10);
+
+                        //上月1号
+                        Calendar calStart = Calendar.getInstance();
+                        calStart.setTime(new Date());
+                        calStart.add(Calendar.MONTH, -1);
+                        calStart.set(Calendar.DAY_OF_MONTH, 1);
+
+                        //本月末日
+                        Calendar calend = Calendar.getInstance();
+                        calend.setTime(new Date());
+                        int maxCurrentMonthDay=calend.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        calend.set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
+
+                        if(customerInfo.getUserinfo().getResignation_date().length() >= 24)
+                        {
+                            rightNow.setTime(Convert.toDate(resignationdate));
+                            rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                            resignationdate = sf1ymd.format(rightNow.getTime());
+                        }
+                        if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime() >= sf1ymd.parse(sf1ymd.format(cal.getTime())).getTime())
+                        {
+                            //查询更新一天的考勤数据
+                            Attendance attendance = new Attendance();
+                            attendance.setUser_id(customerInfo.getUserid());
+                            attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                            List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                            if(attendanceList.size()>0)
+                            {
+                                if(attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
+                                {
+                                    attendanceList.get(0).setNormal("0");
+                                    attendanceList.get(0).setActual(null);
+                                    attendanceList.get(0).setOrdinaryindustry(null);
+                                    attendanceList.get(0).setWeekendindustry(null);
+                                    attendanceList.get(0).setStatutoryresidue(null);
+                                    attendanceList.get(0).setAnnualrestday(null);
+                                    attendanceList.get(0).setSpecialday(null);
+                                    attendanceList.get(0).setYouthday(null);
+                                    attendanceList.get(0).setWomensday(null);
+                                    attendanceList.get(0).setShortsickleave(null);
+                                    attendanceList.get(0).setLongsickleave(null);
+                                    attendanceList.get(0).setCompassionateleave(null);
+                                    attendanceList.get(0).setAnnualrest(null);
+                                    attendanceList.get(0).setDaixiu(null);
+                                    attendanceList.get(0).setNursingleave(null);
+                                    attendanceList.get(0).setWelfare(null);
+                                    attendanceList.get(0).setAbsenteeism(null);
+                                    attendanceList.get(0).setTshortsickleave(null);
+                                    attendanceList.get(0).setTlongsickleave(null);
+                                    attendanceList.get(0).setTabsenteeism(null);
+                                    tokenModel.setUserId(attendanceList.get(0).getUser_id());
+                                    tokenModel.setExpireDate(new Date());
+                                    saveAttendance(attendanceList.get(0), "0", tokenModel);
+                                    attendancelist.add(attendanceList.get(0));
+                                }
+                            }
+                            else
+                            {
+                                attendance.setNormal("0");
+                                attendance.setAbsenteeism("0");
+                                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                attendance.setAttendanceid(UUID.randomUUID().toString());
+                                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                                tokenModel.setUserId(attendance.getUser_id());
+                                tokenModel.setExpireDate(new Date());
+                                saveAttendance(attendance, "1", tokenModel);
+                                attendancelist.add(attendance);
+                            }
+                        }
+                        else if (sf1ymd.parse(sf1ymd.format(calStart.getTime())).getTime() <= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime()) && sf1ymd.parse(sf1ymd.format(calend.getTime())).getTime() >= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime()))
+                        {
+                            //查询更新一天的考勤数据
+                            Attendance attendance = new Attendance();
+                            attendance.setUser_id(customerInfo.getUserid());
+                            attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                            List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                            if(attendanceList.size()>0)
+                            {
+                                attendanceList.get(0).setNormal(null);
+                                attendanceList.get(0).setActual(null);
+                                attendanceList.get(0).setOrdinaryindustry(null);
+                                attendanceList.get(0).setWeekendindustry(null);
+                                attendanceList.get(0).setStatutoryresidue(null);
+                                attendanceList.get(0).setAnnualrestday(null);
+                                attendanceList.get(0).setSpecialday(null);
+                                attendanceList.get(0).setYouthday(null);
+                                attendanceList.get(0).setWomensday(null);
+                                attendanceList.get(0).setShortsickleave(null);
+                                attendanceList.get(0).setLongsickleave(null);
+                                attendanceList.get(0).setCompassionateleave(null);
+                                attendanceList.get(0).setAnnualrest(null);
+                                attendanceList.get(0).setDaixiu(null);
+                                attendanceList.get(0).setNursingleave(null);
+                                attendanceList.get(0).setWelfare(null);
+                                attendanceList.get(0).setAbsenteeism(null);
+                                attendanceList.get(0).setTshortsickleave(null);
+                                attendanceList.get(0).setTlongsickleave(null);
+                                attendanceList.get(0).setTabsenteeism(null);
+                                attendanceList.get(0).setRecognitionstate("");
+                                tokenModel.setUserId(attendanceList.get(0).getUser_id());
+                                tokenModel.setExpireDate(new Date());
+                                saveAttendance(attendanceList.get(0), "0", tokenModel);
+                            }
+                            else
+                            {
+                                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                attendance.setAttendanceid(UUID.randomUUID().toString());
+                                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                                attendance.setRecognitionstate("");
+                                tokenModel.setUserId(attendance.getUser_id());
+                                tokenModel.setExpireDate(new Date());
+                                saveAttendance(attendance, "1", tokenModel);
+                            }
+                        }
                     }
 //                    }
                 }
@@ -395,7 +527,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 for (Attendance ad : attendancelist)
                 {
                     try{
-//                        if(ad.getUser_id().equals("5e78b2124e3b194874180ea1"))
+//                        if(ad.getUser_id().equals("5e78b2184e3b194874180ecd") || ad.getUser_id().equals("5e78b2144e3b194874180eb1"))
 //                        {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
@@ -1707,7 +1839,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                             //---------查询昨天大打卡记录end-------
                         }
-                        //}
+//                        }
                     }
                     catch (Exception e) {
                         System.out.println("考勤数据生成异常:" + ad.getUser_id());
