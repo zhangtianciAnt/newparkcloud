@@ -4,6 +4,8 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
+import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
@@ -14,6 +16,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,14 +31,16 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     private ToDoNoticeService toDoNoticeService;
 
     @Autowired
-    private ContractNumber contractNumber;
-
-    @Autowired
     private FinPurchaseMapper finPurchaseMapper;
 
     @Autowired
     private FinSalesMapper finSalesMapper;
 
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private ContractNumber contractNumber;
 
 
     @Override
@@ -62,15 +67,16 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void update(TransportGood transportGood, TokenModel tokenModel) throws Exception {
         transportGood.preUpdate(tokenModel);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
+        if(transportGood.isNotice()){
+            ToDoNotice(tokenModel,transportGood);
+        }
     }
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
-        String number = contractNumber.getContractNumber("PT001010","transportgood");
         String id = UUID.randomUUID().toString();
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
-        transportGood.setContractnumber(number);
         transportGoodMapper.insert(transportGood);
     }
 
@@ -96,5 +102,40 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         String number = contractNumber.getContractNumber("PT001011","finSales");
         finSales.setCredential_sales(number);
         finSalesMapper.insert(finSales);
+    }
+
+    //生成代办
+    @Async
+    public void ToDoNotice(TokenModel tokenModel,TransportGood transportGood) throws Exception{
+        // 创建代办
+        if(transportGood.getType() == 1){
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6f09e52fa718db632696");
+            for (MembersVo membersVo:
+                    membersVos) {
+                ToDoNotice toDoNotice = new ToDoNotice();
+                toDoNotice.setTitle("【采购进货】：您有一条走货单需要处理。");
+                toDoNotice.setInitiator(tokenModel.getUserId());
+                toDoNotice.setContent("订单号【" +transportGood.getContractnumber()+"】");
+                toDoNotice.setDataid(transportGood.getTransportgood_id());
+                toDoNotice.setUrl("/AOCHUAN3002FormView");
+                toDoNotice.preInsert(tokenModel);
+                toDoNotice.setOwner(membersVo.getUserid());
+                toDoNoticeService.save(toDoNotice);
+            }
+        }else if(transportGood.getType() == 2){
+            List<MembersVo> membersVos =  roleService.getMembers("5eba6f88e52fa718db632697");
+            for (MembersVo membersVo:
+                    membersVos) {
+                ToDoNotice toDoNotice = new ToDoNotice();
+                toDoNotice.setTitle("【单据填写】：您有一条走货单需要处理。");
+                toDoNotice.setInitiator(tokenModel.getUserId());
+                toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
+                toDoNotice.setDataid(transportGood.getTransportgood_id());
+                toDoNotice.setUrl("/AOCHUAN3002FormView");
+                toDoNotice.preInsert(tokenModel);
+                toDoNotice.setOwner(membersVo.getUserid());
+                toDoNoticeService.save(toDoNotice);
+            }
+        }
     }
 }
