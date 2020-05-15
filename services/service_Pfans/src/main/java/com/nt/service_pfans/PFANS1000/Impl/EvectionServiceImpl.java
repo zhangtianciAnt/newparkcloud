@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -49,6 +49,8 @@ public class EvectionServiceImpl implements EvectionService {
     private static final String FIELD_FOREIGNCURRENCY = "foreigncurrency";
     private static final String FIELD_INVOICENUMBER = "invoicenumber";
     @Autowired
+    private EvectionService evectionService;
+    @Autowired
     private EvectionMapper evectionMapper;
     @Autowired
     private TrafficDetailsMapper trafficdetailsMapper;
@@ -66,7 +68,175 @@ public class EvectionServiceImpl implements EvectionService {
     private DictionaryService dictionaryService;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Override
+    public Map<String, Object> exportjs(String evectionid, HttpServletRequest request) throws Exception {
+        EvectionVo evevo = evectionService.selectById(evectionid);
+        Map<String, Object> resultMap = new HashMap<>();
+        List<AccommodationDetails> acclist = evevo.getAccommodationdetails();
+        List<TrafficDetails> tralist = evevo.getTrafficdetails();
+        List<OtherDetails> otherlist = evevo.getOtherdetails();
+        List<Object> needMergeList = new ArrayList<>();
+        if (acclist.size() > 0 || tralist.size() > 0
+                || otherlist.size() > 0) {
+            needMergeList.addAll(acclist);
+            needMergeList.addAll(tralist);
+            needMergeList.addAll(otherlist);
+        }
+//        List<TrafficDetails> traffic = new ArrayList<>();
+//        List<AccommodationDetails> accommodation = new ArrayList<>();
+//        List<OtherDetails> other = new ArrayList<>();
+        Map<String, Object> oldmergeResult = null;
+        oldmergeResult = oldmergeDetailList(needMergeList);
+        List<TrafficDetails> traffic = (List<TrafficDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        List<AccommodationDetails> accommodation = (List<AccommodationDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        List<OtherDetails> other = (List<OtherDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        for(Object o:oldmergeResult.values()){
+            String accountcode = getProperty(o, "accountcode");
+            String budgetcoding = getProperty(o, "budgetcoding");
+            String currency = getProperty(o, "currency");
+            float rmb = getPropertyFloat(o, "rmb");
+            float foreigncurrency = getPropertyFloat(o, "foreigncurrency");
+            float travel = getPropertyFloat(o, "travel");
+            DecimalFormat df = new DecimalFormat("#0.00");
+            int scale = 2;//设置位数
+            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+            BigDecimal bd = new BigDecimal(rmb);
+            bd = bd.setScale(scale, roundingMode);
+            BigDecimal bd1 = new BigDecimal(foreigncurrency);
+            bd1 = bd1.setScale(scale, roundingMode);
+            BigDecimal bd2 = new BigDecimal(travel);
+            bd2 = bd2.setScale(scale, roundingMode);
+            if (accountcode.equals("PJ132001") || accountcode.equals("PJ119001")) {
+                AccommodationDetails accommodationdetails = new AccommodationDetails();
+                resultMap.put("住宿费", accommodation);
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(currency)) {
+                        accommodationdetails.setCurrency(iteA.getValue1());
+                    }
+                }
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(budgetcoding)) {
+                        accommodationdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
+                    }
+                }
+                if (accountcode.length() > 5) {
+                    String traAccountcode = accountcode.substring(0, 5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(accountcode)) {
+                            accommodationdetails.setAccountcode(iteA.getValue1());
+                        }
+                    }
+                }
+                accommodationdetails.setTravel(String.valueOf(bd2));
+                accommodationdetails.setRmb(String.valueOf(bd));
+                accommodation.add(accommodationdetails);
+            } else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
+                TrafficDetails trafficdetails = new TrafficDetails();
+                resultMap.put("交通费", traffic);
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(currency)) {
+                        trafficdetails.setCurrency(iteA.getValue1());
+                    }
+                }
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(budgetcoding)) {
+                        trafficdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
+                    }
+                }
+                if (accountcode.length() > 5) {
+                    String traAccountcode = accountcode.substring(0, 5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(accountcode)) {
+                            trafficdetails.setAccountcode(iteA.getValue1());
+                        }
+                    }
+                }
+                trafficdetails.setForeigncurrency(String.valueOf(bd1));
+                trafficdetails.setRmb(String.valueOf(bd));
+                traffic.add(trafficdetails);
+            } else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
+                OtherDetails otherdetails = new OtherDetails();
+                resultMap.put("其他费用", other);
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(currency)) {
+                        otherdetails.setCurrency(iteA.getValue1());
+                    }
+                }
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(budgetcoding)) {
+                        otherdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
+                    }
+                }
+                if (accountcode.length() > 5) {
+                    String traAccountcode = accountcode.substring(0, 5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(accountcode)) {
+                            otherdetails.setAccountcode(iteA.getValue1());
+                        }
+                    }
+                }
+                otherdetails.setForeigncurrency(String.valueOf(bd1));
+                otherdetails.setRmb(String.valueOf(bd));
+                other.add(otherdetails);
+            }
+        }
+        return resultMap;
+    }
 
+    private Map<String, Object> oldmergeDetailList(List<Object> detailList) throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Float> specialMap = new HashMap<>();
+        String inputType = getInputType(detailList.get(0));
+        for (Object detail : detailList) {
+            String isRmb = getProperty(detail, "rmb");
+            // 发票No
+            String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
+            String budgetcoding = getProperty(detail, "budgetcoding");
+            String subjectnumber = getProperty(detail, "subjectnumber");
+            String accountcode = getProperty(detail, "accountcode");
+            String mergeKey = "";
+
+//            if (accountcode.equals("PJ132001") || accountcode.equals("PJ119001")) {
+////                mergeKey = "住宿费";
+////            } else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
+////                mergeKey = "交通费";
+////            } else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
+////                mergeKey = "其他费用";
+////            }
+            if (specialMap.containsKey(keyNo)) {
+                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
+            } else {
+                mergeKey = budgetcoding + " ... " + subjectnumber;
+            }
+            // 行合并
+            float money = getPropertyFloat(detail, "rmb");
+            float moneysum = getPropertyFloat(detail, "foreigncurrency");
+            float taxes = getPropertyFloat(detail, "travel");
+            Object mergeObject = resultMap.get(mergeKey);
+            if (mergeObject != null) {
+                // 发现可以合并数据
+                float newMoney = getPropertyFloat(mergeObject, "rmb") + money;
+                float newMoneysum = getPropertyFloat(mergeObject, "foreigncurrency") + moneysum;
+                float oldMoneysum = getPropertyFloat(mergeObject, "travel") + taxes;
+                setProperty(mergeObject, "rmb", newMoney + "");
+                setProperty(mergeObject, "foreigncurrency", newMoneysum + "");
+                setProperty(mergeObject, "travel", oldMoneysum + "");
+            } else {
+                resultMap.put(mergeKey, detail);
+            }
+
+        }
+        return resultMap;
+    }
     @Override
     public List<Evection> get(Evection evection) throws Exception {
         return evectionMapper.select(evection);
