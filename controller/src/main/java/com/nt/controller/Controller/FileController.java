@@ -30,7 +30,7 @@ public class FileController {
     @Value("${file.url}")String Url;
 
     @RequestMapping(value = "/getToken",method={RequestMethod.GET})
-    private ApiResult getToken() throws Exception {
+    public ApiResult getToken() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
