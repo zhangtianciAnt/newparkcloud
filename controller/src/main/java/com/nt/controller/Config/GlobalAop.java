@@ -50,7 +50,13 @@ public class GlobalAop {
             Object data = apiResult.getData();
             if ( data != null ) {
                 // encoder 返回值加密处理
-                apiResult.setData(Base64.encode(JSONUtil.parse(data).toStringPretty()));
+                String jsonStr = null;
+                if ( data instanceof Boolean ) {
+                    jsonStr = data.toString();
+                } else {
+                    jsonStr = JSONUtil.parse(data).toStringPretty();
+                }
+                apiResult.setData(Base64.encode(jsonStr));
             }
             // 处理完请求，返回内容
             log.info("返回值 : " + apiResult.getData());
