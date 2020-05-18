@@ -14,5 +14,7 @@ public interface PltabService {
 
     List<CostCarryForward> getCostList(String groupid, String year, String month)throws Exception;
 
+    List<CostCarryForward> getCostLast(String groupid, String year, String month) throws Exception;
+
     List<Pltab> selectPl(String groupid, String year, String month)throws Exception;
 }

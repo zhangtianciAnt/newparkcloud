@@ -36,13 +36,22 @@ public class Pfans1042Controller {
         return ApiResult.success(pltabService.selectPl(groupid,year,month));
     }
 
-    @RequestMapping(value = "/getCostList",method={RequestMethod.GET})
-    public ApiResult getCostList( @RequestParam String groupid, @RequestParam String year, @RequestParam String month,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getCostLast", method = {RequestMethod.GET})
+    public ApiResult getCostLast(@RequestParam String groupid, @RequestParam String year, @RequestParam String month, HttpServletRequest request) throws Exception {
         if (groupid == null || year == null || month == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(pltabService.getCostList(groupid,year,month));
+        return ApiResult.success(pltabService.getCostLast(groupid, year, month));
+    }
+
+    @RequestMapping(value = "/getCostList", method = {RequestMethod.GET})
+    public ApiResult getCostList(@RequestParam String groupid, @RequestParam String year, @RequestParam String month, HttpServletRequest request) throws Exception {
+        if (groupid == null || year == null || month == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(pltabService.getCostList(groupid, year, month));
     }
 
     @RequestMapping(value="/insert",method = {RequestMethod.POST})

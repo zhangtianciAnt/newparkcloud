@@ -217,4 +217,7 @@ public class CostCarryForward extends BaseModel {
     //    全員稼働率
     @Column(name = "STAFFINGRATE")
     private String staffingrate;
+    //    累计仕掛品
+    @Column(name = "TOTALPRO")
+    private String totalpro;
 }
