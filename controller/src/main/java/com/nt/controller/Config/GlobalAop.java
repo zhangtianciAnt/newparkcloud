@@ -45,15 +45,24 @@ public class GlobalAop {
     //接口返回值
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
-
-//        encoder
-//                ((ApiResult)ret).setData(Base64.encode(JSONUtil.parse(((ApiResult) ret).getData()).toStringPretty()));
-        // 处理完请求，返回内容
-//        if( ret !=null && ((ApiResult)ret).getData() != null){
-//            log.info("返回值 : " + JSONUtil.parse(((ApiResult) ret).getData()).toStringPretty());
-//        }else{
-//            log.info("返回值 : 无");
-//        }
+        if ( ret != null && ret instanceof ApiResult ) {
+            ApiResult apiResult = (ApiResult) ret;
+            Object data = apiResult.getData();
+            if ( data != null ) {
+                // encoder 返回值加密处理
+                String jsonStr = null;
+                if ( data instanceof Boolean ) {
+                    jsonStr = data.toString();
+                } else {
+                    jsonStr = JSONUtil.parse(data).toStringPretty();
+                }
+                apiResult.setData(Base64.encode(jsonStr));
+            }
+            // 处理完请求，返回内容
+            log.info("返回值 : " + apiResult.getData());
+        } else {
+            log.info("返回值 : 无");
+        }
     }
 
     //接口结束
