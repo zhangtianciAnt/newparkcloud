@@ -364,7 +364,7 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                 return result;
             }
             //判断是否是正确格式的成绩文件（方案二：检查表头是否正确）
-            if (list.get(0).size() < 9) {
+            if (list.get(0).size() < 12) {
                 errorCount += 1;
                 result.add("失败数：" + errorCount);
                 result.add("成绩文件表头格式不正确！");
@@ -399,34 +399,52 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                         } else {
                             Trainjoinlist trainjoinlist = trainjoinlistMapper.selectByPrimaryKey(olist.get(0).toString());
                             trainjoinlist.setTrainjoinlistid(olist.get(0).toString());
-                            //成绩
+                            //理论成绩
                             try {
                                 trainjoinlist.setPerformance(olist.get(5).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setPerformance("");
                             }
+                            //实操成绩
+                            try {
+                                trainjoinlist.setActualperformance(olist.get(6).toString());
+                            } catch (Exception e) {
+                                trainjoinlist.setActualperformance("");
+                            }
                             //参加状态
-                            trainjoinlist.setJointype(olist.get(6).toString());
+                            trainjoinlist.setJointype(olist.get(7).toString());
                             //通过状态
                             try {
-                                if (olist.get(6).toString().trim().equals("正常")) {
-                                    if (StringUtils.isEmpty(olist.get(7).toString())) {
+                                if (olist.get(7).toString().trim().equals("正常")) {
+                                    if (StringUtils.isEmpty(olist.get(8).toString())) {
 
                                     } else {
-                                        if (!olist.get(7).toString().trim().equals("通过") && !olist.get(7).toString().trim().equals("未通过")) {
+                                        if (!olist.get(8).toString().trim().equals("通过") && !olist.get(8).toString().trim().equals("未通过")) {
                                             result.add("成绩表" + k + "行数据异常，通过状态错误，导入系统失败！");
                                             errorCount += 1;
                                             continue;
                                         } else
-                                            trainjoinlist.setThroughtype(olist.get(7).toString());
+                                            trainjoinlist.setThroughtype(olist.get(8).toString());
                                     }
                                 }
                             } catch (Exception e) {
 
                             }
+                            //证书编号
+                            try {
+                                trainjoinlist.setCertificateno(olist.get(9).toString());
+                            } catch (Exception e) {
+                                trainjoinlist.setCertificateno("");
+                            }
+                            //发证日期
+                            try {
+                                trainjoinlist.setIssuedate(olist.get(10).toString());
+                            } catch (Exception e) {
+                                trainjoinlist.setIssuedate("");
+                            }
                             //备注
                             try {
-                                trainjoinlist.setRemark(olist.get(8).toString());
+                                trainjoinlist.setRemark(olist.get(11).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setRemark("");
                             }

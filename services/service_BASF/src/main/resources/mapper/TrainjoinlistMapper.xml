@@ -11,8 +11,11 @@
         <result column="idnumber" property="idnumber" jdbcType="VARCHAR"/>
         <result column="jointype" property="jointype" jdbcType="VARCHAR"/>
         <result column="performance" property="performance" jdbcType="VARCHAR"/>
+        <result column="actualperformance" property="actualperformance" jdbcType="VARCHAR"/>
         <result column="throughtype" property="throughtype" jdbcType="VARCHAR"/>
         <result column="finallyexamdate" property="finallyexamdate" jdbcType="VARCHAR"/>
+        <result column="certificateno" property="certificateno" jdbcType="VARCHAR"/>
+        <result column="issuedate" property="issuedate" jdbcType="VARCHAR"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
