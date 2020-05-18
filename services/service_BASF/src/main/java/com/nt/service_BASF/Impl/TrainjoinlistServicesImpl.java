@@ -411,8 +411,14 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             } catch (Exception e) {
                                 trainjoinlist.setActualperformance("");
                             }
-                            //参加状态
-                            trainjoinlist.setJointype(olist.get(7).toString());
+                            if (!StringUtils.isNotBlank(olist.get(7).toString())) {
+                                result.add("成绩表" + k + "行数据异常，导入系统失败！");
+                                errorCount += 1;
+                                continue;
+                            }else {
+                                //参加状态
+                                trainjoinlist.setJointype(olist.get(7).toString());
+                            }
                             //通过状态
                             try {
                                 if (olist.get(7).toString().trim().equals("正常")) {
