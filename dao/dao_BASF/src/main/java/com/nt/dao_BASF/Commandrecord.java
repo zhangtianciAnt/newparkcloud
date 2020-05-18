@@ -74,6 +74,12 @@ public class Commandrecord extends BaseModel {
     private ReleaseAccident releaseAccident;
     //gis截图(base64)
     private String gisimage;
+    //风向
+    private String windirection;
+    //风力
+    private String windPower;
+    //风速(m/s)
+    private String windSpeed;
 
     //    SCIP
     @Data
