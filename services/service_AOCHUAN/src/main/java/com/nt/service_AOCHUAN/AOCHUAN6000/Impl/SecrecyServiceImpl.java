@@ -69,7 +69,7 @@ public class SecrecyServiceImpl implements SecrecyService {
 
 
     //系统服务（4月1日）
-    @Scheduled(cron="59 * * * * ?")
+    @Scheduled(cron="* * 1 * * ?")
     public void changestatus() throws Exception {
        // List<Secrecy> secrelist = secrecyMapper.selectsecrecy();
         ToDoNotice();
@@ -95,7 +95,7 @@ public class SecrecyServiceImpl implements SecrecyService {
                 toDoNotice.setContent("归档文件编号【" + secrecy1.getNo() + "】");
                 toDoNotice.setDataid(secrecy1.getSecrecy_id());
                 toDoNotice.setUrl("/AOCHUAN6007FormView");
-               //toDoNotice.preInsert(tokenModel);
+                //toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(secrecy1.getResponsible());
                 toDoNoticeService.save(toDoNotice);
             }
