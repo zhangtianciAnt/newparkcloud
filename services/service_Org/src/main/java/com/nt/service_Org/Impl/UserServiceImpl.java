@@ -754,7 +754,7 @@ public class UserServiceImpl implements UserService {
                 //只要有一个●就走更新
                 resultInsUpd = false;
             }
-            int k = 0;
+            int k = 1;
             int accesscount = 0;
             int error = 0;
             if (resultInsUpd) {
@@ -1077,7 +1077,7 @@ public class UserServiceImpl implements UserService {
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(item.get("卡号")));
                     List<CustomerInfo> customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-
+                    k++;
                     if (customerInfoList.size() > 0) {
                         if (item.get("姓名●") != null) {
                             String customername = Convert.toStr(item.get("姓名●"));
@@ -1288,6 +1288,8 @@ public class UserServiceImpl implements UserService {
                         if (item.get("住房公积金缴纳基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setHouseinsurance(item.get("住房公积金缴纳基数●").toString());
                         }
+                    } else {
+                        throw new LogicalException("第" + k + "行卡号（" + Convert.toStr(item.get("卡号")) + "）" + "不存在,或输入格式不正确！");
                     }
                     //判断工资是否有变更履历，如果有添加进来
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
