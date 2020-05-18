@@ -134,7 +134,7 @@ public class TransportGood extends BaseModel {
 
     private String receptgoods;
 
-    private int type;
+    private Integer type;
 
     private Date ap_date;
 

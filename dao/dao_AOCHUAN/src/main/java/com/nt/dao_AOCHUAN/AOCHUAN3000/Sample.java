@@ -48,7 +48,7 @@ public class Sample extends BaseModel {
     private String products_id;
 
     //type = 0 销售样品录入 type = 1 采购待确认 type = 2 销售待确认
-    private int type;
+    private Integer type;
 
     private String sampletype;
 
