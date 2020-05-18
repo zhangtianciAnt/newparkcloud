@@ -40,7 +40,7 @@
             and s.status = '0'
         left join (
         select p.COMPANYPROJECTS_ID,
-        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
         from projectcontract p
         inner join contractapplication a
         on a.contractnumber = p.CONTRACT
@@ -99,7 +99,7 @@
 
         left join (
         select p.COMPANYPROJECTS_ID,
-        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
         from projectcontract p
         inner join contractapplication a
         on a.contractnumber = p.CONTRACT
@@ -180,14 +180,7 @@
            p
            .
            COMPANYPROJECTS_ID,
-           max(
-           substring(
-           a
-           .
-           CLAIMDATETIME,
-           14,
-           10)) as
-           etime
+           max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
            from
            projectcontract
            p
@@ -287,7 +280,7 @@
         and s.status = '0'
         left join (
         select p.COMPANYPROJECTS_ID,
-        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
         from projectcontract p
         inner join contractapplication a
         on a.contractnumber = p.CONTRACT
@@ -346,7 +339,7 @@
 
         left join (
         select p.COMPANYPROJECTS_ID,
-        max(substring(a.CLAIMDATETIME,14,10)) as etime
+        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
         from projectcontract p
         inner join contractapplication a
         on a.contractnumber = p.CONTRACT
