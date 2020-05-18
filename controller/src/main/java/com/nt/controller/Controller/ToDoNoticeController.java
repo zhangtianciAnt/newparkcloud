@@ -55,8 +55,7 @@ public class ToDoNoticeController {
      * @返回值：toDoNotice
      */
     @RequestMapping(value = "/getmessage", method = {RequestMethod.POST})
-    public ApiResult get(HttpServletRequest request) throws Exception {
-        ToDoNotice message = new ToDoNotice();
+    public ApiResult get(HttpServletRequest request,@RequestBody ToDoNotice message) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         message.setTenantid(tokenModel.getTenantId());
         message.setOwners(tokenModel.getOwnerList());
