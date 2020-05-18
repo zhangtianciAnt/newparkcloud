@@ -54,4 +54,9 @@ public class VehicleManagement extends BaseModel {
      *八号车状态
      */
     private String carstatus8;
+
+    /**
+     *九号车状态
+     */
+    private String carstatus9;
 }
