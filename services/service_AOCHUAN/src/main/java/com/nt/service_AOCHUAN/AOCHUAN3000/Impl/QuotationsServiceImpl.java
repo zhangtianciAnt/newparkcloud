@@ -13,13 +13,16 @@ import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_AOCHUAN.AOCHUAN8000.mapper.NumberMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.MyMapper;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
+import com.nt.utils.*;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +49,14 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Autowired
     private ContractNumber contractNumber;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+    /**session操作类*/
+    @Autowired
+    SocketSessionRegistry webAgentSessionRegistry;
+    @Autowired
+    TodoNoticeMapper todoNoticeMapper;
 
 
     @Override
@@ -128,6 +139,18 @@ public class QuotationsServiceImpl implements QuotationsService {
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
+                if(webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()) != null &&
+                        webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().isPresent()){
+                    String sessionId=webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().get();
+
+                    ToDoNotice condition = new ToDoNotice();
+                    condition.setOwner(toDoNotice.getOwner());
+                    condition.setStatus(AuthConstants.TODO_STATUS_TODO);
+                    //condition.setType(toDoNotice.getType());
+                    List<ToDoNotice> list = todoNoticeMapper.select(condition);
+
+                    messagingTemplate.convertAndSendToUser(sessionId,"/topicMessage/subscribe",list,createHeaders(sessionId));
+                }
             }
         }else if(quotations.getType() == 1){
             ToDoNotice toDoNotice = new ToDoNotice();
@@ -156,5 +179,12 @@ public class QuotationsServiceImpl implements QuotationsService {
              }
              enquiryMapper.insertEnquiryList(enquiryList);
          }
+    }
+
+    private MessageHeaders createHeaders(String sessionId) {
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+        headerAccessor.setSessionId(sessionId);
+        headerAccessor.setLeaveMutable(true);
+        return headerAccessor.getMessageHeaders();
     }
 }

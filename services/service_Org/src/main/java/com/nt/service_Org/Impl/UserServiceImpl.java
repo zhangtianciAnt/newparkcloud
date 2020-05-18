@@ -113,10 +113,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public JsTokenModel login(UserAccount userAccount, String locale) throws Exception {
 
+
+        final Base64.Decoder decoder = Base64.getDecoder();
+
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-        query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+        query.addCriteria(Criteria.where("password").is(new String(decoder.decode(userAccount.getPassword()), "UTF-8")));
         query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
@@ -135,7 +138,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
 
-            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "",roleIds);
+            return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "", roleIds);
         }
 
     }
@@ -251,6 +254,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private static final String[] ALL_CUSTOMERS = new String[]{"系统管理员", "总经理", "人事职员", "人事行政部长"};
+    private static final String LEADER_CUSTOM = "部长基础角色";
+    // 超级管理员ID
+    private static final String SUPER_MANAGER_ID = "5ebcaa80e52fa744f61062c6";
     /**
      * @方法名：getAccountCustomer
      * @描述：根据orgid获取用户及用户信息列表
@@ -261,50 +268,80 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception {
+        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
+
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
             query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
                     Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
         }
-//        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
-//        if(!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId())
-//                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())){
-//            query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
-//            List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
-//            query = new Query();
-//            if(CustomerInfolist.size() > 0){
-//                if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
-//                    query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
-//                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
-//                    query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
-//                }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
-//                    query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
-//                }
-//
-//                customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
-//
-//                if(CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
-//                    for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
-//                        query = new Query();
-//
-//                        if(StrUtil.isNotBlank(itemO.getTeamid())){
-//                            query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
-//                        }else  if(StrUtil.isNotBlank(itemO.getGroupid())){
-//                            query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
-//                        }else  if(StrUtil.isNotBlank(itemO.getCenterid())){
-//                            query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
-//                        }
-//
-//                        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
-//                    }
-//                }
-//            }
-//        }else{
-//            query = new Query();
-//            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
-//        }
+        if ( SUPER_MANAGER_ID.equals(tokenModel.getUserId()) ) {
+            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+            return customerInfos;
+        }
 
-        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        Query queryAccount = new Query();
+        queryAccount.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+        UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
+        List<Role> roles = userAccount.getRoles();
+
+
+        if ( roles!=null && roles.size() > 0 ) {
+            Set<String> allCustomSet = new HashSet<>(Arrays.asList(ALL_CUSTOMERS));
+            boolean findall = roles.stream().filter(role -> allCustomSet.contains(role.getRolename())).count() > 0;
+            boolean findsub = roles.stream().filter(role -> LEADER_CUSTOM.equals(role.getRolename())).count() > 0;
+
+            if ( findall ) {
+//                query = new Query();
+                customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+            } else if ( findsub ) {
+                query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
+                query = new Query();
+                if(CustomerInfolist.size() > 0){
+                    if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())){
+                        query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
+                    }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())){
+                        query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
+                    }else  if(StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())){
+                        query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
+                    }
+
+                    if (StrUtil.isNotBlank(orgid)) {
+                        query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                                Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+                    }
+
+                    customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+
+                    if(CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0){
+                        for(CustomerInfo.OtherOrgs itemO:CustomerInfolist.get(0).getUserinfo().getOtherorgs()){
+                            query = new Query();
+
+                            if(StrUtil.isNotBlank(itemO.getTeamid())){
+                                query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
+                            }else  if(StrUtil.isNotBlank(itemO.getGroupid())){
+                                query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
+                            }else  if(StrUtil.isNotBlank(itemO.getCenterid())){
+                                query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
+                            }
+
+                            if (StrUtil.isNotBlank(orgid)) {
+                                query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                                        Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+                            }
+
+                            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+                        }
+                    }
+                }
+            } else {
+                query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+            }
+        }
+
+//        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfos;
     }
 
