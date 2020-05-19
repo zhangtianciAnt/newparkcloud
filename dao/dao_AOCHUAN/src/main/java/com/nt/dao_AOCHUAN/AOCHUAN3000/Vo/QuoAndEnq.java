@@ -25,5 +25,5 @@ public class QuoAndEnq {
     private String  salesquotation;
     private String quote;
     //type = 0 销售询单录入 type = 1 采购待确认 type = 2 销售报价确认
-    private int type;
+    private Integer type;
 }
