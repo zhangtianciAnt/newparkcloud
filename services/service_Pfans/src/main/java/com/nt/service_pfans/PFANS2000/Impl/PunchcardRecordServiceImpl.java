@@ -329,7 +329,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             for (CustomerInfo customerInfo : customerInfoList) {
                 try{
                     TokenModel tokenModel = new TokenModel();
-//                    if(customerInfo.getUserid().equals("5e78b2184e3b194874180ecd") || customerInfo.getUserid().equals("5e78b2144e3b194874180eb1"))
+//                    if(customerInfo.getUserid().equals("5e78b2294e3b194874180f49"))
 //                    {
                     if (customerInfo.getUserinfo().getResignation_date() == null || customerInfo.getUserinfo().getResignation_date().isEmpty())
                     {
@@ -527,7 +527,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 for (Attendance ad : attendancelist)
                 {
                     try{
-//                        if(ad.getUser_id().equals("5e78b2184e3b194874180ecd") || ad.getUser_id().equals("5e78b2144e3b194874180eb1"))
+//                        if(ad.getUser_id().equals("5e78b2294e3b194874180f49"))
 //                        {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
@@ -1362,6 +1362,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                     //员工填写日志对应的实际工作时间
                                     ad.setOutgoinghours(getOutgoinghours(lunchbreak_start,lunchbreak_end,PR,nomal));
+                                    PR.setEffectiveduration(ad.getOutgoinghours());
+                                    PR.setModifyby(ad.getUser_id());
+                                    PR.setModifyon(new Date());
+                                    punchcardrecordMapper.updateByPrimaryKey(PR);
                                     saveAttendance(ad, "0", token);
                                 }
                             }
