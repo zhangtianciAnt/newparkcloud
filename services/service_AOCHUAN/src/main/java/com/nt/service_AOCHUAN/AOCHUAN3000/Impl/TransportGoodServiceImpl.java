@@ -176,4 +176,22 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             }
         }
     }
+
+    //系统服务
+    public void othersToDoNotice() throws Exception {
+        List<TransportGood> transportGoods = transportGoodMapper.deliveryTime();
+        for (TransportGood transportGood:
+                transportGoods) {
+            ToDoNotice toDoNotice = new ToDoNotice();
+            toDoNotice.setTitle("【计划发货提醒】：您有一条走货单已到达发货时间。");
+            toDoNotice.setInitiator("5eba6585e52fa718db63268d");
+            toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
+            toDoNotice.setDataid(transportGood.getTransportgood_id());
+            toDoNotice.setUrl("/AOCHUAN3002FormView");
+            //toDoNotice.preInsert(tokenModel);
+            toDoNotice.setOwner(transportGood.getSaleresponsibility());
+            toDoNoticeService.save(toDoNotice);
+        }
+    }
+
 }
