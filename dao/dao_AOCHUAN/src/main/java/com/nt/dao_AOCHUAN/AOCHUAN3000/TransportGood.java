@@ -147,4 +147,7 @@ public class TransportGood extends BaseModel {
     @Transient
     private boolean notice;
 
+    @Transient
+    private Integer finance;
+
 }

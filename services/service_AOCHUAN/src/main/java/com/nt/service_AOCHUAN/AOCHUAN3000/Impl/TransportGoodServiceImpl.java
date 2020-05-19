@@ -70,6 +70,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         if(transportGood.isNotice()){
             ToDoNotice(tokenModel,transportGood);
         }
+        ToDoNoticeFinance(tokenModel,transportGood);
     }
 
     @Override
@@ -130,6 +131,41 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
                 toDoNotice.setTitle("【单据填写】：您有一条走货单需要处理。");
+                toDoNotice.setInitiator(tokenModel.getUserId());
+                toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
+                toDoNotice.setDataid(transportGood.getTransportgood_id());
+                toDoNotice.setUrl("/AOCHUAN3002FormView");
+                toDoNotice.preInsert(tokenModel);
+                toDoNotice.setOwner(membersVo.getUserid());
+                toDoNoticeService.save(toDoNotice);
+            }
+        }
+    }
+
+    //生成代办
+    @Async
+    public void ToDoNoticeFinance(TokenModel tokenModel,TransportGood transportGood) throws Exception{
+        // 创建代办
+        if(transportGood.getFinance() == 2){
+            List<MembersVo> membersVos =  roleService.getMembers("5eba7094e52fa718db63269c");
+            for (MembersVo membersVo:
+                    membersVos) {
+                ToDoNotice toDoNotice = new ToDoNotice();
+                toDoNotice.setTitle("【发起请款】：您有一条请款单需要处理。");
+                toDoNotice.setInitiator(tokenModel.getUserId());
+                toDoNotice.setContent("订单号【" +transportGood.getContractnumber()+"】");
+                toDoNotice.setDataid(transportGood.getTransportgood_id());
+                toDoNotice.setUrl("/AOCHUAN3002FormView");
+                toDoNotice.preInsert(tokenModel);
+                toDoNotice.setOwner(membersVo.getUserid());
+                toDoNoticeService.save(toDoNotice);
+            }
+        }else if(transportGood.getFinance() == 1){
+            List<MembersVo> membersVos =  roleService.getMembers("5eba7094e52fa718db63269c");
+            for (MembersVo membersVo:
+                    membersVos) {
+                ToDoNotice toDoNotice = new ToDoNotice();
+                toDoNotice.setTitle("【发起回款确认】：您有一条汇款单需要确认。");
                 toDoNotice.setInitiator(tokenModel.getUserId());
                 toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
                 toDoNotice.setDataid(transportGood.getTransportgood_id());
