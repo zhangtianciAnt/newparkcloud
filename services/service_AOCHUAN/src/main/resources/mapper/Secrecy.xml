@@ -7,7 +7,7 @@
     SELECT *
 FROM secrecy
  WHERE secrecy.type='1'
- AND DateDiff(secrecy.DUEDATE,NOW())>=5
+ AND DateDiff(secrecy.DUEDATE,NOW())= 0
     </select>
 
 

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+
 import java.util.*;
 
 @Service
@@ -89,9 +90,13 @@ public class SecrecyServiceImpl implements SecrecyService {
             List<Secrecy> secrelist = secrecyMapper.selectsecrecy();
             for( Secrecy secrecy1: secrelist){
                 ToDoNotice toDoNotice = new ToDoNotice();
+                toDoNotice.setNoticeid(UUID.randomUUID().toString());
+
                 toDoNotice.setTitle("你有已归档文件");
-                //toDoNotice.setInitiator(secrecy.getResponsible()); /*发起人*/
-                //toDoNotice.setInitiator(tokenModel.getUserId());
+               toDoNotice.setInitiator(secrecy1.getResponsible());  /*发起人*/
+               toDoNotice.setCreateby(secrecy1.getResponsible());
+                toDoNotice.setCreateon(new Date());   /*创建时间*/
+                toDoNotice.setStatus("0");
                 toDoNotice.setContent("归档文件编号【" + secrecy1.getNo() + "】");
                 toDoNotice.setDataid(secrecy1.getSecrecy_id());
                 toDoNotice.setUrl("/AOCHUAN6007FormView");
