@@ -229,14 +229,11 @@ public class AssetsServiceImpl implements AssetsService {
 
             int successCount = 0;
             int error = 0;
+
             for (int lineNo = 1; lineNo < list.size(); lineNo++) {
                 Assets assets = new Assets();
+
                 List<Object> value = list.get(lineNo);
-                if ( typeLength != value.size() ) {
-                    error++;
-                    Result.add("模板第" + lineNo + "行的列数不正确，导入失败");
-                    continue;
-                }
 
                 if (!StringUtils.isEmpty(trim(value.get(3)))) {
                     Assets condition = new Assets();
