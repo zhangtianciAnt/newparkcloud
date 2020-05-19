@@ -55,6 +55,7 @@ public class QuotationsServiceImpl implements QuotationsService {
     /**session操作类*/
     @Autowired
     SocketSessionRegistry webAgentSessionRegistry;
+
     @Autowired
     TodoNoticeMapper todoNoticeMapper;
 
@@ -139,18 +140,6 @@ public class QuotationsServiceImpl implements QuotationsService {
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
-                if(webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()) != null &&
-                        webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().isPresent()){
-                    String sessionId=webAgentSessionRegistry.getSessionIds(toDoNotice.getOwner()).stream().findFirst().get();
-
-                    ToDoNotice condition = new ToDoNotice();
-                    condition.setOwner(toDoNotice.getOwner());
-                    condition.setStatus(AuthConstants.TODO_STATUS_TODO);
-                    //condition.setType(toDoNotice.getType());
-                    List<ToDoNotice> list = todoNoticeMapper.select(condition);
-
-                    messagingTemplate.convertAndSendToUser(sessionId,"/topicMessage/subscribe",list,createHeaders(sessionId));
-                }
             }
         }else if(quotations.getType() == 1){
             ToDoNotice toDoNotice = new ToDoNotice();
