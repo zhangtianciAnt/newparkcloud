@@ -45,13 +45,21 @@ public class Pfans2023Controller {
     @Autowired
     private WorkflowServices workflowServices;
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    @RequestMapping(value = "/yearsCheck", method = {RequestMethod.POST})
+    public ApiResult yearsCheck(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
+        if (goalmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(goalmanagementService.yearsCheck(goalmanagement));
+    }
+
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
         if (goalmanagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        GoalManagement log=goalmanagementService.One(goalmanagement.getGoalmanagement_id());
+        GoalManagement log = goalmanagementService.One(goalmanagement.getGoalmanagement_id());
         return ApiResult.success(log);
     }
 
@@ -130,7 +138,7 @@ public class Pfans2023Controller {
         }
 
         data.put("now", DateUtil.year(new Date()));
-        ExcelOutPutUtil.OutPut("目标管理", "mubiaoguanli.xlsx", data, response);
+        ExcelOutPutUtil.OutPutPdf("目标管理", "mubiaoguanli.xlsx", data, response);
 
         if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
             FileUtil.del(AuthConstants.FILE_DIRECTORY + me);
