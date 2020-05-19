@@ -155,7 +155,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
                 mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(),false,tokenModel);
             }
         }
-        firealarmMapper.updateByPrimaryKey(firealarm);
+        firealarmMapper.updateByPrimaryKeySelective(firealarm);
     }
 
     /**

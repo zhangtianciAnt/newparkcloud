@@ -40,7 +40,7 @@ public class Commandrecord extends BaseModel {
     private String currentDate;
     //值班人员
     private String watchkeeper;
-    //值班SIMT
+    //SIMT
     private String watchkeeperSimt;
     //所有车辆信息
     private Carinfo carinfo;
@@ -256,6 +256,7 @@ public class Commandrecord extends BaseModel {
         private Car car6;
         private Car car7;
         private Car car8;
+        private Car car9;
     }
 
     //返回值

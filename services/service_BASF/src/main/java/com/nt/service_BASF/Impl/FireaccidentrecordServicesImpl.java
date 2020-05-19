@@ -93,7 +93,7 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
     public void excelexport(Fireaccidentrecord fireaccidentrecord, Firealarm firealarm, Commandrecord commandrecord, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
         //报警等级字典转换
-        if (firealarm.getAlarmlev() != null) {
+        if (StringUtils.isNotEmpty(firealarm.getAlarmlev())) {
             for (Dictionary dictionary : dictionaryService.getForSelect("BC015")) {
                 if (dictionary.getCode().equals(firealarm.getAlarmlev())) {
                     firealarm.setAlarmlev(dictionary.getValue1());
@@ -101,7 +101,7 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
             }
         }
         //事故类型字典转换
-        if (firealarm.getTypacc() != null) {
+        if (StringUtils.isNotEmpty(firealarm.getTypacc())) {
             for (Dictionary dictionary : dictionaryService.getForSelect("BC013")) {
                 if (dictionary.getCode().equals(firealarm.getTypacc())) {
                     firealarm.setTypacc(dictionary.getValue1());
@@ -109,10 +109,18 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
             }
         }
         //应急预案字典转换
-        if (firealarm.getEmplan() != null) {
+        if (StringUtils.isNotEmpty(firealarm.getEmplan())) {
             for (Dictionary dictionary : dictionaryService.getForSelect("BC014")) {
                 if (dictionary.getCode().equals(firealarm.getEmplan())) {
                     firealarm.setEmplan(dictionary.getValue1());
+                }
+            }
+        }
+        //风向字典转换
+        if (StringUtils.isNotEmpty(commandrecord.getWindirection())) {
+            for (Dictionary dictionary : dictionaryService.getForSelect("BC048")) {
+                if (dictionary.getCode().equals(commandrecord.getWindirection())) {
+                    commandrecord.setWindirection(dictionary.getValue1());
                 }
             }
         }
