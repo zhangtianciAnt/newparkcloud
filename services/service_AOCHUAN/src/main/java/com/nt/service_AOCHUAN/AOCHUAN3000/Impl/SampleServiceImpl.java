@@ -67,8 +67,8 @@ public class SampleServiceImpl implements SampleService {
         sample.setSampleorder(number);
         sample.preInsert(tokenModel);
         if(sample.isNotice()){
-            sample.setType(1);
             ToDoNotice(tokenModel,sample);
+            sample.setType(1);
         }
         sampleMapper.insert(sample);
     }
