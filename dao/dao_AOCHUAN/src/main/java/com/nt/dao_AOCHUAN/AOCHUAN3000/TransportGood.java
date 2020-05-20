@@ -148,6 +148,6 @@ public class TransportGood extends BaseModel {
     private boolean notice;
 
     @Transient
-    private Integer finance;
+    private Integer finance = 0;
 
 }
