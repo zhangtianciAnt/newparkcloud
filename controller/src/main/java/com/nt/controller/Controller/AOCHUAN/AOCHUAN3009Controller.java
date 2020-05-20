@@ -191,7 +191,7 @@ public class AOCHUAN3009Controller {
                             //删除
                             if (projectsSerivce.existCheck(followUpRecord)) {
                                 followUpRecord.preUpdate(tokenService.getToken(request));
-                                projectsSerivce.delete(followUpRecord, tokenService.getToken(request));
+                                projectsSerivce.deleteFlw(followUpRecord, tokenService.getToken(request));
                             }
                             //新建
                             else {
@@ -288,36 +288,47 @@ public class AOCHUAN3009Controller {
             maxList = list2;
         }
 
-        Map<FollowUpRecord, Integer> map = new HashMap<FollowUpRecord, Integer>(maxList.size());
+        Map<FollowUpRecord, Integer> map = new HashMap<FollowUpRecord, Integer>();
 
-        //大lst的追加
-//        for (FollowUpRecord item : maxList) {
-//            map.put(item, 1);
-//        }
-        //小lst的追加
-        for (FollowUpRecord followUpRecord : minList) {
-            String id = "";
-            boolean diffFlg = true;
-            id = followUpRecord.getFollowuprecord_id();
-            for (FollowUpRecord item : maxList) {
-                if (id.equals(item.getFollowuprecord_id())) {
-                    map.put(followUpRecord, 2);
-                    diffFlg = false;
-                    break;
-                }
-            }
-            if (diffFlg) {
-                diffList.add(followUpRecord);
-            }
+        //参照
+        for (FollowUpRecord item : maxList) {
+            map.put(item, 1);
         }
 
-        //筛选出差异部分
-        for (Map.Entry<FollowUpRecord, Integer> entry : map.entrySet()) {
-            if (entry.getValue() == 1) {
-                diffList.add(entry.getKey());
-            } else if (entry.getValue() == 2) {
-                sameList.add(entry.getKey());
+        if(!minList.isEmpty()) {
+            //比较
+            for (FollowUpRecord item : minList) {
+                if (map.get(item) != null) {
+                    map.put(item, 3);
+                    continue;
+                } else {
+                    boolean isSame = false;
+                    for (Map.Entry<FollowUpRecord, Integer> entry : map.entrySet()) {
+                        if (entry.getKey().getFollowuprecord_id() == item.getFollowuprecord_id()) {
+                            isSame = true;
+                            break;
+                        }
+                    }
+                    if (isSame) {
+                        map.put(item, 2);
+                        continue;
+                    }
+                    map.put(item, 1);
+                }
             }
+
+            //筛选出差异部分
+            for (Map.Entry<FollowUpRecord, Integer> entry : map.entrySet()) {
+                if (entry.getValue() == 1) {
+                    diffList.add(entry.getKey());
+                } else if (entry.getValue() == 2) {
+                    sameList.add(entry.getKey());
+                }
+            }
+        }else{
+
+            //db中取到空
+            diffList = maxList;
         }
 
 

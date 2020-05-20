@@ -31,4 +31,6 @@ public interface ProjectsService {
     Boolean existCheck(Object object) throws Exception;
     //唯一性Check
     Boolean uniqueCheck(Projects projects) throws Exception;
+    //跟踪记录单独用删除
+    void deleteFlw(FollowUpRecord followUpRecord , TokenModel tokenModel) throws Exception;
 }
