@@ -74,7 +74,10 @@ public class WagesServiceImpl implements WagesService {
 
                                 for (CustomerInfo.Personal personal : personals) {
                                     if (sf.parse(personal.getDate()).getTime() <= sf.parse((last.get(Calendar.YEAR) + "-" + getMouth(sf.format(last.getTime())) + "-01")).getTime()) {
-                                        thisMouth = personal.getAfter();
+                                        // UPD_GBB_2020/05/20
+                                        //thisMouth = personal.getAfter();
+                                        thisMouth = personal.getBasic();
+                                        // UPD_GBB_2020/05/20
                                         return;
                                     }
                                 }

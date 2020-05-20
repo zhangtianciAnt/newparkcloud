@@ -263,7 +263,12 @@
         @SOCIOLOGY := base.SOCIOLOGY AS SOCIOLOGY,#base表 是否1999年前社会人 1是 2不是
         @REGISTERED := base.REGISTERED AS REGISTERED,#base表 是否大連戸籍    1是 2不是
         @PENSION := round(base.PENSION,2) AS PENSION,#base表 養老・失業・工傷基数
+        @YANGLAOJS := round(base.YANGLAOJS,2) AS YANGLAOJS,#base表 養老基数
+        @SHIYEJS := round(base.SHIYEJS,2) AS SHIYEJS,#base表 失業基数
+        @GONGSHANGJS := round(base.GONGSHANGJS,2) AS GONGSHANGJS,#base表 工傷基数
 	    @MEDICAL := round(base.MEDICAL,2) AS MEDICAL,#base表 医療・生育基数
+	    @YILIAOJS := round(base.YILIAOJS,2) AS YILIAOJS,#base表 医療基数
+	    @SHENGYUJS := round(base.SHENGYUJS,2) AS SHENGYUJS,#base表 生育基数
 	    @ACCUMULATION := round(base.ACCUMULATION,2) AS ACCUMULATION,#base表 公积金基数
         round( base.LASTMONTHBASIC, 2 ) AS LASTMONTHBASIC,# base表 上个月基本工资
 	    round( base.LASTMONTHDUTY, 2 ) AS LASTMONTHDUTY,# base表 上月职责工资
@@ -321,9 +326,9 @@
         @DSZNF := ( IF ( @ONLYCHILD &lt;=> '1', round(base.DIC_DSZNF,2), round(0,2) ) ) AS ONLYCHILDMONEY,#独生子女费
         @XJ3 := round( ( @CNF + @DSZNF ), 2 ) AS TOTAL3,#小计3
         @GZZE := round( ( @NSGZZE + @XJ3 ), 2 ) AS TOTALWAGES,#工资总额(纳税+免税)
-        @YLBXGR := round( ( @PENSION * base.DIC_YLBXGRFDGR ), 2 ) AS ENDOWMENTINSURANCE,#养老保险
-        @YILIAOBXGR := round( ( @MEDICAL * base.DIC_YILIAOBXGRFDGR ), 2 ) AS MEDICALINSURANCE,#医疗保险
-        @SYBXGR := round( ( @PENSION * base.DIC_SYBXGRFDGR ), 2 ) AS UNEMPLOYMENTINSURANCE,#失业保险
+        @YLBXGR := round( ( @YANGLAOJS * base.DIC_YLBXGRFDGR ), 2 ) AS ENDOWMENTINSURANCE,#养老保险
+        @YILIAOBXGR := round( ( @YILIAOJS * base.DIC_YILIAOBXGRFDGR ), 2 ) AS MEDICALINSURANCE,#医疗保险
+        @SYBXGR := round( ( @SHIYEJS * base.DIC_SYBXGRFDGR ), 2 ) AS UNEMPLOYMENTINSURANCE,#失业保险
         @GRSHBX := round( ( @YLBXGR + @YILIAOBXGR + @SYBXGR ), 2 ) AS SOCIALINSURANCE,#个人社会保险(専項控除)
         @GJJ := round( ( ACCUMULATION * base.DIC_GJJGRFD ), 2 ) AS ACCUMULATIONFUND,#个人住房公积金(専項控除)
         @GRHJ := round( ( @GRSHBX + @GJJ ), 2 ) AS DISCIPLINARYCONTROL,#个人社会保险费+公积金(専項控除)合计
@@ -421,12 +426,12 @@
         END
         ) AS THISMONTHADJUSTMENT,#本月应扣缴所得税
         round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
-        @YLBXHS := round( @PENSION * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
-        @YILIAOBXHS := round( @MEDICAL * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
-        @SYBXGRFDHS := round( @PENSION * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
-        @GSBXHS := round( @PENSION * DIC_GSBXHS, 2 ) AS COMINJURYINSURANCE,#工伤保险
-        @SYBXHS := round( @MEDICAL * DIC_SYBXHS, 2 ) AS COMBIRTHINSURANCE,#生育保险
-        @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @PENSION != 0 ), round(DIC_DLHXNFF,2), round(0,2) ) ) AS COMHEATING,#暖房费
+        @YLBXHS := round( @YANGLAOJS * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
+        @YILIAOBXHS := round( @YILIAOJS * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
+        @SYBXGRFDHS := round( @SHIYEJS * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
+        @GSBXHS := round( @GONGSHANGJS * DIC_GSBXHS, 2 ) AS COMINJURYINSURANCE,#工伤保险
+        @SYBXHS := round( @SHENGYUJS * DIC_SYBXHS, 2 ) AS COMBIRTHINSURANCE,#生育保险
+        @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @YANGLAOJS != 0 ), round(DIC_DLHXNFF,2), round(0,2) ) ) AS COMHEATING,#暖房费
         @ZFGJJ := round( @ACCUMULATION * DIC_GJJHSFD, 2 ) AS COMACCUMULATIONFUND,#住房公积金
         @SUMHS := round( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS + @NFF + @ZFGJJ ), 2 ) AS TOTAL,#总计
         @GHJFJS := round(base.THISMONTHBASIC + base.THISMONTHDUTY + @AMOUNT,2) AS LABOURUNIONBASE,#工会经费基数
