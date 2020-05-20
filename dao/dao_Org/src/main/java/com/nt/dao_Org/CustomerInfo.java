@@ -376,7 +376,7 @@ public class CustomerInfo extends BaseModel {
         private List<Personal> houseData;
         private List<Personal> oldageData;
 
-        private List<OkrsTable> OkrsTable;
+        private List<OkrsTable> okrsTable;
 
         // ADD-LXX
         /**
