@@ -479,8 +479,13 @@ public class GivingServiceImpl implements GivingService {
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
                 base.setLastmonth(getSalary(customer, 0)); //上月工资
                 base.setThismonth(getSalary(customer, 1)); //本月工资
-                base.setPension(notNull(customer.getUserinfo().getOldageinsurance())); //養老・失業・工傷基数
-                base.setMedical(notNull(customer.getUserinfo().getMedicalinsurance())); //医療・生育基数
+                //base.setPension(notNull(customer.getUserinfo().getOldageinsurance())); //養老・失業・工傷基数
+                base.setYanglaojs(notNull(customer.getUserinfo().getYanglaoinsurance())); //養老基数
+                base.setShiyejs(notNull(customer.getUserinfo().getShiyeinsurance())); //失業基数
+                base.setGongshangjs(notNull(customer.getUserinfo().getGongshanginsurance())); //工傷基数
+                //base.setMedical(notNull(customer.getUserinfo().getYiliaoinsurance())); //医療・生育基数
+                base.setYiliaojs(notNull(customer.getUserinfo().getYiliaoinsurance())); //医療基数
+                base.setShengyujs(notNull(customer.getUserinfo().getShengyuinsurance())); //生育基数
                 base.setAccumulation(notNull(customer.getUserinfo().getHouseinsurance()));  //公积金基数
                 //采暖费
                 if (customer.getUserinfo().getRank() != null && customer.getUserinfo().getRank().length() > 0) {
@@ -1109,18 +1114,29 @@ public class GivingServiceImpl implements GivingService {
     }
 
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
+        // UPD_GBB_2020/05/20 ALL
         String thisMouth = "0";
-        Calendar time = Calendar.getInstance();
-        time.add(Calendar.MONTH, addMouth);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        if (customerInfo.getUserinfo().getGridData() != null) {
-            List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                    .collect(Collectors.toList());
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+            thisMouth = customerInfo.getUserinfo().getBasic();
+        }
+        if(addMouth == 0){
+            Calendar time = Calendar.getInstance();
+            time.add(Calendar.MONTH, addMouth);
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            if (customerInfo.getUserinfo().getGridData() != null) {
+                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                        .collect(Collectors.toList());
 
-            for (CustomerInfo.Personal personal : personals) {
-                if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
-                    thisMouth = personal.getAfter();
-                    break;
+                for (CustomerInfo.Personal personal : personals) {
+                    if(!personal.getDate().equals("Invalid date")){
+                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+                            // UPD_GBB_2020/05/20
+                            //thisMouth = personal.getAfter();
+                            thisMouth = personal.getBasic();
+                            // UPD_GBB_2020/05/20
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -1128,22 +1144,37 @@ public class GivingServiceImpl implements GivingService {
     }
 
     public Map<String, String> getSalaryBasicAndDuty(CustomerInfo customerInfo, int addMouth) throws ParseException {
+        // UPD_GBB_2020/05/20 ALL
         String thisMonth = "0";
         String thisMonthBasic = "0";
         String thisMonthDuty = "0";
-        Calendar time = Calendar.getInstance();
-        time.add(Calendar.MONTH, addMouth);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        if (customerInfo.getUserinfo().getGridData() != null) {
-            List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                    .collect(Collectors.toList());
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+            thisMonth = customerInfo.getUserinfo().getBasic();
+            thisMonthBasic = customerInfo.getUserinfo().getBasic();
+        }
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+            thisMonthDuty = customerInfo.getUserinfo().getDuty();
+        }
+        if(addMouth == 0){
+            Calendar time = Calendar.getInstance();
+            time.add(Calendar.MONTH, addMouth);
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            if (customerInfo.getUserinfo().getGridData() != null) {
+                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                        .collect(Collectors.toList());
 
-            for (CustomerInfo.Personal personal : personals) {
-                if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
-                    thisMonth = personal.getAfter();
-                    thisMonthBasic = personal.getBasic();
-                    thisMonthDuty = personal.getDuty();
-                    break;
+                for (CustomerInfo.Personal personal : personals) {
+                    if(!personal.getDate().equals("Invalid date")){
+                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+                            // UPD_GBB_2020/05/20
+                            //thisMonth = personal.getAfter();
+                            thisMonth = personal.getBasic();
+                            // UPD_GBB_2020/05/20
+                            thisMonthBasic = personal.getBasic();
+                            thisMonthDuty = personal.getDuty();
+                            break;
+                        }
+                    }
                 }
             }
         }
