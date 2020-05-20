@@ -201,7 +201,7 @@ public class AOCHUAN3009Controller {
                                 followUpRecord.setSupplier_id(projects.getSupplier_id());
 
                                 followUpRecord.preInsert(tokenService.getToken(request));
-                                projectsSerivce.insert(followUpRecord,tokenService.getToken(request));
+                                projectsSerivce.insert(followUpRecord, tokenService.getToken(request));
                             }
                         }
                     }
@@ -213,7 +213,7 @@ public class AOCHUAN3009Controller {
                             followUpRecord.setProducts_id(projects.getProducts_id());
                             followUpRecord.setSupplier_id(projects.getSupplier_id());
                             followUpRecord.preUpdate(tokenService.getToken(request));
-                            projectsSerivce.update(followUpRecord,tokenService.getToken(request));
+                            projectsSerivce.update(followUpRecord, tokenService.getToken(request));
                         }
                     }
                 }
@@ -291,16 +291,24 @@ public class AOCHUAN3009Controller {
         Map<FollowUpRecord, Integer> map = new HashMap<FollowUpRecord, Integer>(maxList.size());
 
         //大lst的追加
-        for (FollowUpRecord item : maxList) {
-            map.put(item, 1);
-        }
+//        for (FollowUpRecord item : maxList) {
+//            map.put(item, 1);
+//        }
         //小lst的追加
         for (FollowUpRecord followUpRecord : minList) {
-            if (map.get(followUpRecord) != null) {
-                map.put(followUpRecord, 2);
-                continue;
+            String id = "";
+            boolean diffFlg = true;
+            id = followUpRecord.getFollowuprecord_id();
+            for (FollowUpRecord item : maxList) {
+                if (id.equals(item.getFollowuprecord_id())) {
+                    map.put(followUpRecord, 2);
+                    diffFlg = false;
+                    break;
+                }
             }
-            diffList.add(followUpRecord);
+            if (diffFlg) {
+                diffList.add(followUpRecord);
+            }
         }
 
         //筛选出差异部分
