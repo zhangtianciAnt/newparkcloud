@@ -133,10 +133,40 @@ public class Base extends BaseModel {
     private String pension;
 
     /**
+     * 養老基数
+     */
+    @Column(name = "YANGLAOJS")
+    private String yanglaojs;
+
+    /**
+     * 失業基数
+     */
+    @Column(name = "SHIYEJS")
+    private String shiyejs;
+
+    /**
+     * 工傷基数
+     */
+    @Column(name = "GONGSHANGJS")
+    private String gongshangjs;
+
+    /**
      * 医療・生育基数
      */
     @Column(name = "MEDICAL")
     private String medical;
+
+    /**
+     * 医療基数
+     */
+    @Column(name = "YILIAOJS")
+    private String yiliaojs;
+
+    /**
+     * 生育基数
+     */
+    @Column(name = "SHENGYUJS")
+    private String shengyujs;
 
     /**
      * 公积金基数
