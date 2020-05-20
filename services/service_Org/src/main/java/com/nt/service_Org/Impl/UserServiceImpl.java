@@ -676,7 +676,7 @@ public class UserServiceImpl implements UserService {
             Query query = new Query();
             query.addCriteria(Criteria.where("status").is("0"));
             query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
-            query.addCriteria(Criteria.where("userinfo.OkrsTable").elemMatch(cri));
+            query.addCriteria(Criteria.where("userinfo.okrsTable").elemMatch(cri));
             customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         }
         return customerInfos;

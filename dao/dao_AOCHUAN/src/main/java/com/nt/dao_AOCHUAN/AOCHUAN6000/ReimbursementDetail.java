@@ -49,9 +49,17 @@ public class ReimbursementDetail extends BaseModel {
     @Column(name = "ABSTRACT_CONTENT")
     private String abstract_content;
 
+    //标准
+    @Column(name = "STANDARD")
+    private double standard;
+
     //人数
     @Column(name = "PERSONS")
     private String persons;
+
+    //标准合计
+    @Column(name = "STANDARD_SUM")
+    private double standard_sum;
 
     //预算金额
     @Column(name = "BUDGET_AMOUNT")
