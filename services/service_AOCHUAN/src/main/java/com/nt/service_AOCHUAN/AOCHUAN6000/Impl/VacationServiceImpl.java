@@ -195,11 +195,12 @@ public class VacationServiceImpl implements VacationService {
             earlyvacation.setUsernames(statisticsVo.getNames());
 
             Earlyvacation earlyvacation1 = earlyvacationMapper.selectOne(earlyvacation);
-            statisticsVo.setStartannual(earlyvacation1.getAnnualleave());
-            statisticsVo.setStartwedding(earlyvacation1.getMarriageleave());
-            statisticsVo.setStartmaternity(earlyvacation1.getMaternityleave());
-            statisticsVo.setStartfuneral(earlyvacation1.getFuneralleave());
-
+            if(earlyvacation1 !=null){
+                statisticsVo.setStartannual(earlyvacation1.getAnnualleave());
+                statisticsVo.setStartwedding(earlyvacation1.getMarriageleave());
+                statisticsVo.setStartmaternity(earlyvacation1.getMaternityleave());
+                statisticsVo.setStartfuneral(earlyvacation1.getFuneralleave());
+            }
         }
 
 
