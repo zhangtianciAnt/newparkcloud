@@ -9,7 +9,7 @@
         STATUS != '1'
         AND
         PRODUCTS_ID NOT IN (
-        SELECT PRODUCTS_ID FROM PROJECTS
+        SELECT PRODUCTS_ID FROM projects
         WHERE STATUS !='1'
         )
     </select>
