@@ -999,13 +999,13 @@ public class UserServiceImpl implements UserService {
                         userinfo.setFixedate(item.get("固定期限締切日").toString());
                     }
                     //変更前基本工资
-                    if (item.get("変更前基本工资") != null) {
-                        personal.setAfter(item.get("変更前基本工资").toString());
-                    }
-                    //変更前职责工资
-                    if (item.get("変更前职责工资") != null) {
-                        personal.setBefore(item.get("変更前职责工资").toString());
-                    }
+//                    if (item.get("変更前基本工资") != null) {
+//                        personal.setAfter(item.get("変更前基本工资").toString());
+//                    }
+//                    //変更前职责工资
+//                    if (item.get("変更前职责工资") != null) {
+//                        personal.setBefore(item.get("変更前职责工资").toString());
+//                    }
                     //现基本工资
                     if (item.get("现基本工资") != null) {
                         personal.setBasic(item.get("现基本工资").toString());
@@ -1047,8 +1047,7 @@ public class UserServiceImpl implements UserService {
 //                }
                     cupList.add(personal);
                     //如果有工资履历变更，給料変更日不能为空
-                    if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
-                            !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
+                    if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                             StringUtils.isNullOrEmpty(personal.getDate())) {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get(0)) + "）" + "的 給料変更日 未填写");
                     }
@@ -1253,12 +1252,12 @@ public class UserServiceImpl implements UserService {
                         if (item.get("固定期限締切日●") != null) {
                             customerInfoList.get(0).getUserinfo().setFixedate(item.get("固定期限締切日●").toString());
                         }
-                        if (item.get("変更前基本工资●") != null) {
-                            personal.setAfter(item.get("変更前基本工资●").toString());
-                        }
-                        if (item.get("変更前职责工资●") != null) {
-                            personal.setBefore(item.get("変更前职责工资●").toString());
-                        }
+//                        if (item.get("変更前基本工资●") != null) {
+//                            personal.setAfter(item.get("変更前基本工资●").toString());
+//                        }
+//                        if (item.get("変更前职责工资●") != null) {
+//                            personal.setBefore(item.get("変更前职责工资●").toString());
+//                        }
                         if (item.get("现基本工资●") != null) {
                             personal.setBasic(item.get("现基本工资●").toString());
                             customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
@@ -1292,8 +1291,19 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("第" + k + "行卡号（" + Convert.toStr(item.get("卡号")) + "）" + "不存在,或输入格式不正确！");
                     }
                     //判断工资是否有变更履历，如果有添加进来
+//                    Query query11 = new Query();
+//                    query11.addCriteria(Criteria.where("userinfo.jobnumber").is(item.get("卡号")));
+//                    CustomerInfo customerInfoList11 = mongoTemplate.findOne(query11, CustomerInfo.class);
+                    float addflg = 0;
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
-                        if (customerInfoList.get(0).getUserinfo().getGridData().size() > 0) {
+                        for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getGridData()) {
+                            if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
+                                addflg = 1;
+                                pp.setBefore(personal.getBefore());
+                                pp.setDuty(personal.getDuty());
+                            }
+                        }
+                        if (addflg == 0) {
                             cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                         }
                     }
@@ -1301,14 +1311,23 @@ public class UserServiceImpl implements UserService {
                     cupList.add(personal);
 
                     //如果有工资履历变更，給料変更日不能为空
-                    if ((!StringUtils.isNullOrEmpty(personal.getAfter()) || !StringUtils.isNullOrEmpty(personal.getBasic()) ||
-                            !StringUtils.isNullOrEmpty(personal.getDuty()) || !StringUtils.isNullOrEmpty(personal.getBefore())) &&
+                    if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                             StringUtils.isNullOrEmpty(personal.getDate())) {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
                     }
                     customerInfoList.get(0).getUserinfo().setGridData(cupList);
                     mongoTemplate.save(customerInfoList.get(0));
-                    mongoTemplate.save(userAccount);
+                    //如果更新AD域账号,登录名和密码默认设置成AD域账号
+                    if (userAccount.getPassword() != null && userAccount.getAccount() != null) {
+                        Query qq = new Query();
+                        qq.addCriteria(Criteria.where("_id").is(customerInfoList.get(0).getUserid()));
+                        UserAccount ul = mongoTemplate.findOne(qq, UserAccount.class);
+                        if (ul != null) {
+                            ul.setPassword(userAccount.getPassword());
+                            ul.setAccount(userAccount.getAccount());
+                            mongoTemplate.save(ul);
+                        }
+                    }
                     accesscount = accesscount + 1;
                 }
 
