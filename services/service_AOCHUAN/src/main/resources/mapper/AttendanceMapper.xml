@@ -6,6 +6,7 @@
         select *
         from attendance
         where attendancetim LIKE #{attendancetim}"%"
+        and names = #{id}
 	</select>
 
 <!--考勤异常数据-->
@@ -40,6 +41,7 @@
         )
         ) as aaa
         where aaa.attendancetim LIKE #{attendancetim}"%"
+        and names = #{id}
 	</select>
 
 

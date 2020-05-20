@@ -8,9 +8,10 @@ import java.util.List;
 
 
 public interface AttendancesMapper extends MyMapper<Attendance> {
-    public List<Attendance> getNowMon(@Param("attendancetim") String attendancetim);
 
-    public List<Attendance> getNowMonYC(@Param("Mon") String Mon,@Param("Tus") String Tus,@Param("Wed") String Wed,@Param("Thu") String Thu,@Param("Fri") String Fri,@Param("attendancetim") String attendancetim);
+    public List<Attendance> getNowMon(@Param("id") String id,@Param("attendancetim") String attendancetim);
+
+    public List<Attendance> getNowMonYC(@Param("id") String id,@Param("Mon") String Mon,@Param("Tus") String Tus,@Param("Wed") String Wed,@Param("Thu") String Thu,@Param("Fri") String Fri,@Param("attendancetim") String attendancetim);
 
     public List<Attendance> getYICHANG(@Param("Mon") String Mon,@Param("Tus") String Tus,@Param("Wed") String Wed,@Param("Thu") String Thu,@Param("Fri") String Fri);
 

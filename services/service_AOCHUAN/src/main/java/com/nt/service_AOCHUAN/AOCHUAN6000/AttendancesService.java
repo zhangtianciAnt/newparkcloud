@@ -13,9 +13,9 @@ public interface AttendancesService {
 
     List<Attendance> getNow(Attendance attendance) throws Exception;
 
-    List<Attendance> getNowMons(String attendancetim) throws Exception;
+    List<Attendance> getNowMons(String id, String attendancetim) throws Exception;
 
-    List<Attendance> getNowMonYC(String attendancetim) throws Exception;
+    List<Attendance> getNowMonYC(String id,String attendancetim) throws Exception;
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 

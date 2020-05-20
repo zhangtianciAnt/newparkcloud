@@ -27,6 +27,7 @@ public class AOCHUAN6004Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Attendance attendance = new Attendance();
         attendance.setOwners(tokenModel.getOwnerList());
+//        attendance.setNames(id);
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.get(attendance));
 
@@ -37,6 +38,7 @@ public class AOCHUAN6004Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Attendance attendance = new Attendance();
         attendance.setOwners(tokenModel.getOwnerList());
+//        attendance.setNames(id);
 //        fixedassets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.getYICHANG(attendance));
 
@@ -55,23 +57,23 @@ public class AOCHUAN6004Controller {
 //    }
 
     @RequestMapping(value = "/getNowMon",method={RequestMethod.GET})
-    public ApiResult getNowMon(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {
-        if (attendancetim == null) {
+    public ApiResult getNowMon(@RequestParam String nowmons,@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (nowmons == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
 
-        return ApiResult.success(attendanceService.getNowMons(attendancetim));
+        return ApiResult.success(attendanceService.getNowMons(id,nowmons));
     }
 
     @RequestMapping(value = "/getNowMonYC",method={RequestMethod.GET})
-    public ApiResult getNowMonYC(@RequestParam String attendancetim, HttpServletRequest request) throws Exception {
-        if (attendancetim == null) {
+    public ApiResult getNowMonYC(@RequestParam String nowmons,@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (nowmons == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
 
-        return ApiResult.success(attendanceService.getNowMonYC(attendancetim));
+        return ApiResult.success(attendanceService.getNowMonYC(id,nowmons));
     }
 
 
