@@ -1051,6 +1051,10 @@ public class UserServiceImpl implements UserService {
                             StringUtils.isNullOrEmpty(personal.getDate())) {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get(0)) + "）" + "的 給料変更日 未填写");
                     }
+                    //如果有給料変更日，工资履历不能为空
+                    if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                    }
                     userinfo.setGridData(cupList);
                     customerInfo.setUserinfo(userinfo);
                     customerInfo.setType("1");
@@ -1291,9 +1295,6 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("第" + k + "行卡号（" + Convert.toStr(item.get("卡号")) + "）" + "不存在,或输入格式不正确！");
                     }
                     //判断工资是否有变更履历，如果有添加进来
-//                    Query query11 = new Query();
-//                    query11.addCriteria(Criteria.where("userinfo.jobnumber").is(item.get("卡号")));
-//                    CustomerInfo customerInfoList11 = mongoTemplate.findOne(query11, CustomerInfo.class);
                     float addflg = 0;
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
                         for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getGridData()) {
@@ -1303,17 +1304,20 @@ public class UserServiceImpl implements UserService {
                                 pp.setDuty(personal.getDuty());
                             }
                         }
-                        if (addflg == 0) {
-                            cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
-                        }
+                        cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                     }
-
-                    cupList.add(personal);
+                    if (addflg == 0) {
+                        cupList.add(personal);
+                    }
 
                     //如果有工资履历变更，給料変更日不能为空
                     if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                             StringUtils.isNullOrEmpty(personal.getDate())) {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
+                    }
+                    //如果有給料変更日，工资履历不能为空
+                    if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
                     }
                     customerInfoList.get(0).getUserinfo().setGridData(cupList);
                     mongoTemplate.save(customerInfoList.get(0));
