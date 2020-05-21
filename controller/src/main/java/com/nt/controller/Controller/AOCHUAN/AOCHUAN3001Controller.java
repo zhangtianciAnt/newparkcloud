@@ -1,28 +1,31 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import com.deepoove.poi.XWPFTemplate;
-import com.deepoove.poi.config.Configure;
-import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
+//import com.deepoove.poi.XWPFTemplate;
+//import com.deepoove.poi.config.Configure;
+//import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import com.spire.doc.Document;
-import com.spire.doc.FileFormat;
+//import com.spire.doc.Document;
+//import com.spire.doc.FileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ResourceUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/quotations")
@@ -108,25 +111,25 @@ public class AOCHUAN3001Controller {
              amounts = new BigDecimal(en.getCounts()).multiply(new BigDecimal(en.getQuotedprice())).add(amounts);
         }
         String amount = amounts.toString();
-        HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
-        Configure config = Configure.newBuilder()
-                .bind("enquiry", policy).build();
-       File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "Quotation.docx");
-        XWPFTemplate template = XWPFTemplate.compile(file, config).render(
-                new HashMap<String, Object>() {{
-                    put("enquiry", enquiry);
-                    put("inquirydate",inquirydate);
-                    put("quotationsno",quotationsno);
-                    put("account",account);
-                    put("amount",amount);
-                }}
-        );
-        ServletOutputStream out = response.getOutputStream();
-        template.writeToFile("\\home\\Quotation1.docx");
-        Document document = new Document();
-        document.loadFromFile("\\home\\Quotation1.docx");
-        document.saveToStream(out, FileFormat.PDF);
-        template.close();
+//        HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
+//        Configure config = Configure.newBuilder()
+//                .bind("enquiry", policy).build();
+
+//        XWPFTemplate template = XWPFTemplate.compile("C:\\Users\\Administrator\\Desktop\\Quotation.docx", config).render(
+//                new HashMap<String, Object>() {{
+//                    put("enquiry", enquiry);
+//                    put("inquirydate",inquirydate);
+//                    put("quotationsno",quotationsno);
+//                    put("account",account);
+//                    put("amount",amount);
+//                }}
+//        );
+//        ServletOutputStream out = response.getOutputStream();
+//        template.writeToFile("C:\\Users\\Administrator\\Desktop\\Quotation1.docx");
+//        Document document = new Document();
+//        document.loadFromFile("C:\\Users\\Administrator\\Desktop\\Quotation1.docx");
+//        document.saveToStream(out, FileFormat.PDF);
+//        template.close();
 
 
     }
