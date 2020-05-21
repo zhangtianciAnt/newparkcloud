@@ -511,6 +511,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     }
 
+    //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
+    @Scheduled(cron="0 45 16 * * ?")
+    public void selectattendanceTask()throws Exception {
+        selectattendance();
+    }
+
+    //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
+    @Scheduled(cron="0 50 16 * * ?")
+    public void selectattendancebpTask()throws Exception {
+        selectattendancebp();
+    }
+
     //系统服务--取打卡记录
     @Override
     public void insertattendance(int diffday,String staffId,String staffNo) throws Exception {
@@ -1422,7 +1434,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
-    @Scheduled(cron="0 45 16 * * ?")
+    //@Scheduled(cron="0 45 16 * * ?")
     public void selectattendance() throws Exception {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
@@ -1748,7 +1760,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
-    @Scheduled(cron="0 50 16 * * ?")
+    //@Scheduled(cron="0 50 16 * * ?")
     public void selectattendancebp() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
