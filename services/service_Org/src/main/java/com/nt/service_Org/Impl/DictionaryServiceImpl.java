@@ -27,7 +27,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         if(StrUtil.isNotBlank(code)){
             dictionary.setPcode(code);
         }
-        return dictionaryMapper.select(dictionary);
+        return dictionaryMapper.selectOrder(dictionary);
     }
 
     @Override

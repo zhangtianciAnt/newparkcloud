@@ -26,4 +26,8 @@
             AND pcode = #{pcode,jdbcType=VARCHAR}
         </if>
     </select>
+    <select id="selectOrder" parameterType="com.nt.dao_Org.Dictionary" resultType="com.nt.dao_Org.Dictionary">
+        select * from dictionary
+        ORDER BY orderdic asc
+    </select>
 </mapper>

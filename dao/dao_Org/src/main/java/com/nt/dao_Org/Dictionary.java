@@ -56,6 +56,6 @@ public class Dictionary extends BaseModel {
     private String pcode;
 
     @Column(name = "ORDERDIC")
-    private String orderdic;
+    private Integer orderdic;
 
 }
