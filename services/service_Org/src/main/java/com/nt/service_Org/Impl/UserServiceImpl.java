@@ -263,6 +263,11 @@ public class UserServiceImpl implements UserService {
             }
             if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
                 customerInfo.setUserid(_id);
+//                ADD_FJL_05/21   --添加降序
+                List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
+                cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                userInfo.setGridData(cupList);
+                //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);
             }
