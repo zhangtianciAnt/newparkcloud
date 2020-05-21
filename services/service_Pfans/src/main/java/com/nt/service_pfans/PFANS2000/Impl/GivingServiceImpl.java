@@ -1124,7 +1124,9 @@ public class GivingServiceImpl implements GivingService {
             time.add(Calendar.MONTH, addMouth);
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
             if (customerInfo.getUserinfo().getGridData() != null) {
-                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
+                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
+                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
                         .collect(Collectors.toList());
 
                 for (CustomerInfo.Personal personal : personals) {
@@ -1160,7 +1162,9 @@ public class GivingServiceImpl implements GivingService {
             time.add(Calendar.MONTH, addMouth);
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
             if (customerInfo.getUserinfo().getGridData() != null) {
-                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData().stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
+                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
+                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
                         .collect(Collectors.toList());
 
                 for (CustomerInfo.Personal personal : personals) {
@@ -1252,13 +1256,17 @@ public class GivingServiceImpl implements GivingService {
 
             // 获取评价奖金百分比
             Dictionary commentaryDic = new Dictionary();
-            commentaryDic.setCode(appreciation.getCommentary());
+            commentaryDic.setValue1(appreciation.getCommentary());
+            commentaryDic.setPcode("PR056");
             commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
-            // 奖金计算
-            // 月赏与
-            double monthAppreciation = rnbasesalary * 1.8d / 12d;
-            appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                    * Double.parseDouble(commentaryDic.getValue2())).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+            if(commentaryDic != null){
+                commentaryDic.setValue2(commentaryDic.getValue2().replace("%", ""));
+                // 奖金计算
+                // 月赏与
+                double monthAppreciation = rnbasesalary * 1.8d / 12d;
+                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                        * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+            }
         }
         return appreciationlist;
     }

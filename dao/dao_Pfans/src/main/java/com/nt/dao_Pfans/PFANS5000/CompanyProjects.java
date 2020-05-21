@@ -315,7 +315,18 @@ public class CompanyProjects extends BaseModel {
      */
     @Column(name = "OUENTRUST")
     private String ouentrust;
-
+//    add-ws-No.50-内采时，增加委托元项目
+    /**
+     * 是否允许内采
+     */
+    @Column(name = "NEICE")
+    private String neice;
+    /**
+     * 内采项目
+     */
+    @Column(name = "PROJECTIDS")
+    private String projectids;
+//    add-ws-No.50-内采时，增加委托元项目
     /**
      * 实际完成时间
      */
