@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -1335,11 +1336,11 @@ public class UserServiceImpl implements UserService {
 //                        }
                         if (item.get("现基本工资●") != null) {
                             personal.setBasic(item.get("现基本工资●").toString());
-                            customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+//                            customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
                         }
                         if (item.get("现职责工资●") != null) {
                             personal.setDuty(item.get("现职责工资●").toString());
-                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+//                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
                         }
                         if (item.get("給料変更日●") != null && item.get("給料変更日●").toString().length() >= 10) {
 //                            personal.setDate(item.get("給料変更日●").toString());
@@ -1383,7 +1384,15 @@ public class UserServiceImpl implements UserService {
                     float addflg = 0;
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
                         if (personal.getBasic() != null || personal.getDuty() != null) {
-                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getGridData()) {
+                            List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
+                            perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
+                            for (CustomerInfo.Personal pp : perList) {
+                                int aa = Integer.valueOf(personal.getDate().replace("-", ""));
+                                int bb = Integer.valueOf(pp.getDate().replace("-", ""));
+                                if (aa >= bb) {
+                                    customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                                    customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                }
                                 if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
                                     addflg = 1;
                                     pp.setBasic(personal.getBasic());
@@ -1391,8 +1400,8 @@ public class UserServiceImpl implements UserService {
                                 }
                             }
                             if (addflg == 0) {
-                                cupList.add(personal);
                                 cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
+                                cupList.add(personal);
                             } else {
                                 cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                             }
