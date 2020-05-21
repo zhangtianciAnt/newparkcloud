@@ -9,5 +9,5 @@ import java.util.List;
 public interface DictionaryMapper extends MyMapper<Dictionary> {
     List<Dictionary> getDictionary(Dictionary attendance);
 
-    List<Dictionary> selectOrder(Dictionary attendance);
+    List<Dictionary> selectOrder(@Param("code") String code);
 }
