@@ -27,6 +27,10 @@ public interface AnnualLeaveService {
 
     void insertpunchcard(int diffday) throws Exception;
 
+    void selectattendance() throws Exception;
+
+    void selectattendancebp() throws Exception;
+
     void insert() throws Exception;
 
     //获取打卡记录（参数）
