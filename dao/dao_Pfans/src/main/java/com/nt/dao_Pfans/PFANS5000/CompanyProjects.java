@@ -321,6 +321,11 @@ public class CompanyProjects extends BaseModel {
      */
     @Column(name = "NEICE")
     private String neice;
+    /**
+     * 内采项目
+     */
+    @Column(name = "PROJECTIDS")
+    private String projectids;
 //    add-ws-No.50-内采时，增加委托元项目
     /**
      * 实际完成时间
