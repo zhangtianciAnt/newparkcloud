@@ -12,20 +12,17 @@ import com.nt.utils.services.TokenService;
 import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/quotations")
@@ -114,8 +111,8 @@ public class AOCHUAN3001Controller {
         HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
         Configure config = Configure.newBuilder()
                 .bind("enquiry", policy).build();
-
-        XWPFTemplate template = XWPFTemplate.compile("C:\\Users\\Administrator\\Desktop\\Quotation.docx", config).render(
+       File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "Quotation.docx");
+        XWPFTemplate template = XWPFTemplate.compile(file, config).render(
                 new HashMap<String, Object>() {{
                     put("enquiry", enquiry);
                     put("inquirydate",inquirydate);
@@ -125,9 +122,9 @@ public class AOCHUAN3001Controller {
                 }}
         );
         ServletOutputStream out = response.getOutputStream();
-        template.writeToFile("C:\\Users\\Administrator\\Desktop\\Quotation1.docx");
+        template.writeToFile("\\home\\Quotation1.docx");
         Document document = new Document();
-        document.loadFromFile("C:\\Users\\Administrator\\Desktop\\Quotation1.docx");
+        document.loadFromFile("\\home\\Quotation1.docx");
         document.saveToStream(out, FileFormat.PDF);
         template.close();
 
