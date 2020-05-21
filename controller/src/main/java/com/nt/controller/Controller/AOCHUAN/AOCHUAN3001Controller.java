@@ -19,6 +19,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -111,8 +112,9 @@ public class AOCHUAN3001Controller {
         HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
         Configure config = Configure.newBuilder()
                 .bind("enquiry", policy).build();
-       File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "Quotation.docx");
-        XWPFTemplate template = XWPFTemplate.compile(file, config).render(
+       //File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "Quotation.docx");
+        InputStream inputStream = this.getClass().getResourceAsStream("Quotation.docx");
+        XWPFTemplate template = XWPFTemplate.compile(inputStream, config).render(
                 new HashMap<String, Object>() {{
                     put("enquiry", enquiry);
                     put("inquirydate",inquirydate);
