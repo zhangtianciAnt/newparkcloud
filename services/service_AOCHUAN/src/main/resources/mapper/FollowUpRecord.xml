@@ -39,6 +39,15 @@
         AND SUPPLIER_ID = #{supplier_id}
     </update>
 
+    <!--  记录表删除  -->
+    <update id="deleteFlw">
+        UPDATE followuprecord
+		SET STATUS = '1',
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		WHERE FOLLOWUPRECORD_ID = #{id}
+    </update>
+
     <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProAndFoll">
        select
         pro.PROJECTS_ID,
