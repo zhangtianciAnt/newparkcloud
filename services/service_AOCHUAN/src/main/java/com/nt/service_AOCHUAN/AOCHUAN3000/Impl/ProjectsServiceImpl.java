@@ -151,4 +151,11 @@ public class ProjectsServiceImpl implements ProjectsService {
         return true;
     }
 
+    //跟踪记录单独用删除
+    @Override
+    public void deleteFlw(FollowUpRecord followUpRecord, TokenModel tokenModel) throws Exception {
+
+            followUpRecord.preUpdate(tokenModel);
+            followUpRecordMapper.deleteFlw(followUpRecord.getModifyby(),followUpRecord.getFollowuprecord_id());
+        }
 }

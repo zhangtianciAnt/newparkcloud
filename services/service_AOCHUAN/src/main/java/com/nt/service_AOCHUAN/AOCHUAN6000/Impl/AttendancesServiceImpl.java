@@ -262,9 +262,9 @@ public class AttendancesServiceImpl implements AttendancesService {
     }
     //考勤一览根据月，年去查询
     @Override
-    public List<Attendance> getNowMons(String attendancetim) throws Exception {
+    public List<Attendance> getNowMons(String id,String attendancetim) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Attendance> attendanceList = attendanceMapper.getNowMon(attendancetim);
+        List<Attendance> attendanceList = attendanceMapper.getNowMon(id,attendancetim);
         for(Attendance att : attendanceList){
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());
@@ -340,9 +340,9 @@ public class AttendancesServiceImpl implements AttendancesService {
 
     //考勤异常根据天，月，年去查询
     @Override
-    public List<Attendance> getNowMonYC(String attendancetim) throws Exception {
+    public List<Attendance> getNowMonYC(String id,String attendancetim) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Attendance> attendanceList = attendanceMapper.getNowMonYC("星期一","星期二","星期三","星期四","星期五",attendancetim);
+        List<Attendance> attendanceList = attendanceMapper.getNowMonYC(id,"星期一","星期二","星期三","星期四","星期五",attendancetim);
         for(Attendance att : attendanceList){
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());

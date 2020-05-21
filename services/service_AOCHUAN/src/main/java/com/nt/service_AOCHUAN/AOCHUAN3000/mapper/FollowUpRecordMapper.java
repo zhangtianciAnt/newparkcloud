@@ -18,4 +18,6 @@ public interface FollowUpRecordMapper extends MyMapper<FollowUpRecord> {
     public List<ProAndFoll> getForSupplier(@Param("id") String id);
 
     public List<ProAndFoll> getForCustomer(@Param("id") String id);
+
+    void deleteFlw(@Param("modifyby") String modifyby,@Param("id") String id);
 }
