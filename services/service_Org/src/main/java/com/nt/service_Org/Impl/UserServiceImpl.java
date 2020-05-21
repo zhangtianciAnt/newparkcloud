@@ -1038,8 +1038,10 @@ public class UserServiceImpl implements UserService {
                         userinfo.setDuty(item.get("现职责工资").toString());
                     }
                     //給料変更日
-                    if (item.get("給料変更日") != null) {
-                        personal.setDate(item.get("給料変更日").toString());
+                    if (item.get("給料変更日") != null && item.get("給料変更日").toString().length() >= 10) {
+//                        personal.setDate(item.get("給料変更日").toString());
+                        String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
+                        personal.setDate(dateSubs);
                     }
                     //养老保险基数
                     if (item.get("养老保险基数") != null) {
@@ -1339,8 +1341,10 @@ public class UserServiceImpl implements UserService {
                             personal.setDuty(item.get("现职责工资●").toString());
                             customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
                         }
-                        if (item.get("給料変更日●") != null) {
-                            personal.setDate(item.get("給料変更日●").toString());
+                        if (item.get("給料変更日●") != null && item.get("給料変更日●").toString().length() >= 10) {
+//                            personal.setDate(item.get("給料変更日●").toString());
+                            String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
+                            personal.setDate(dateSubs);
                         }
                         if (item.get("养老保险基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
