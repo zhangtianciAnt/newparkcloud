@@ -1,6 +1,7 @@
 package com.nt.service_Org.Impl;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -760,7 +761,23 @@ public class UserServiceImpl implements UserService {
             if (resultInsUpd) {
                 for (Map<String, Object> item : readAll) {
                     List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList1 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList2 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList3 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList4 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList5 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList6 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList7 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList8 = new ArrayList<CustomerInfo.Personal>();
                     CustomerInfo.Personal personal = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal1 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal2 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal3 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal4 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal5 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal6 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal7 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal8 = new CustomerInfo.Personal();
                     CustomerInfo customerInfo = new CustomerInfo();
                     UserAccount ust = new UserAccount();
                     CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
@@ -815,6 +832,8 @@ public class UserServiceImpl implements UserService {
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setPost(dictionaryList.get(0).getCode());
+                                personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                personal1.setBasic(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -828,6 +847,8 @@ public class UserServiceImpl implements UserService {
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setRank(dictionaryList.get(0).getCode());
+                                personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                personal2.setBasic(dictionaryList.get(0).getCode());
                             }
                         }
                     }
@@ -1023,29 +1044,49 @@ public class UserServiceImpl implements UserService {
                     //养老保险基数
                     if (item.get("养老保险基数") != null) {
                         userinfo.setYanglaoinsurance(item.get("养老保险基数").toString());
+                        personal3.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal3.setBasic(item.get("养老保险基数").toString());
                     }
                     //医疗保险基数
                     if (item.get("医疗保险基数") != null) {
                         userinfo.setYiliaoinsurance(item.get("医疗保险基数").toString());
+                        personal4.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal4.setBasic(item.get("医疗保险基数").toString());
                     }
                     //失业保险基数
                     if (item.get("失业保险基数") != null) {
                         userinfo.setShiyeinsurance(item.get("失业保险基数").toString());
+                        personal5.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal5.setBasic(item.get("失业保险基数").toString());
                     }
                     //工伤保险基数
                     if (item.get("工伤保险基数") != null) {
                         userinfo.setGongshanginsurance(item.get("工伤保险基数").toString());
+                        personal6.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal6.setBasic(item.get("工伤保险基数").toString());
                     }
                     //生育保险基数
                     if (item.get("生育保险基数") != null) {
                         userinfo.setShengyuinsurance(item.get("生育保险基数").toString());
+                        personal7.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal7.setBasic(item.get("生育保险基数").toString());
                     }
                     //住房公积金缴纳基数
                     if (item.get("住房公积金缴纳基数") != null) {
                         userinfo.setHouseinsurance(item.get("住房公积金缴纳基数").toString());
+                        personal8.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal8.setBasic(item.get("住房公积金缴纳基数").toString());
                     }
 //                }
                     cupList.add(personal);
+                    cupList1.add(personal1);
+                    cupList2.add(personal2);
+                    cupList3.add(personal3);
+                    cupList4.add(personal4);
+                    cupList5.add(personal5);
+                    cupList6.add(personal6);
+                    cupList7.add(personal7);
+                    cupList8.add(personal8);
                     //如果有工资履历变更，給料変更日不能为空
                     if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                             StringUtils.isNullOrEmpty(personal.getDate())) {
@@ -1056,6 +1097,14 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
                     }
                     userinfo.setGridData(cupList);
+                    userinfo.setPostData(cupList1);
+                    userinfo.setRankData(cupList2);
+                    userinfo.setOldageData(cupList3);
+                    userinfo.setMedicalData(cupList4);
+                    userinfo.setSyeData(cupList5);
+                    userinfo.setGsData(cupList6);
+                    userinfo.setSyuData(cupList7);
+                    userinfo.setHouseData(cupList8);
                     customerInfo.setUserinfo(userinfo);
                     customerInfo.setType("1");
                     customerInfo.setStatus("0");
@@ -1076,7 +1125,23 @@ public class UserServiceImpl implements UserService {
                 for (Map<String, Object> item : readAll) {
                     UserAccount userAccount = new UserAccount();
                     List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList1 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList2 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList3 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList4 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList5 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList6 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList7 = new ArrayList<CustomerInfo.Personal>();
+                    List<CustomerInfo.Personal> cupList8 = new ArrayList<CustomerInfo.Personal>();
                     CustomerInfo.Personal personal = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal1 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal2 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal3 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal4 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal5 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal6 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal7 = new CustomerInfo.Personal();
+                    CustomerInfo.Personal personal8 = new CustomerInfo.Personal();
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(item.get("卡号")));
                     List<CustomerInfo> customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
@@ -1114,6 +1179,8 @@ public class UserServiceImpl implements UserService {
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
+                                    personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                    personal1.setBasic(dictionaryList.get(0).getCode());
                                 }
                             }
                         }
@@ -1126,6 +1193,8 @@ public class UserServiceImpl implements UserService {
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
+                                    personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                    personal2.setBasic(dictionaryList.get(0).getCode());
                                 }
                             }
                         }
@@ -1275,40 +1344,221 @@ public class UserServiceImpl implements UserService {
                         }
                         if (item.get("养老保险基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
+                            personal3.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal3.setBasic(item.get("养老保险基数●").toString());
                         }
                         if (item.get("医疗保险基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setYiliaoinsurance(item.get("医疗保险基数●").toString());
+                            personal4.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal4.setBasic(item.get("医疗保险基数●").toString());
                         }
                         if (item.get("失业保险基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setShiyeinsurance(item.get("失业保险基数●").toString());
+                            personal5.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal5.setBasic(item.get("失业保险基数●").toString());
                         }
                         if (item.get("工伤保险基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setGongshanginsurance(item.get("工伤保险基数●").toString());
+                            personal6.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal6.setBasic(item.get("工伤保险基数●").toString());
                         }
                         if (item.get("生育保险基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setShengyuinsurance(item.get("生育保险基数●").toString());
+                            personal7.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal7.setBasic(item.get("生育保险基数●").toString());
                         }
                         if (item.get("住房公积金缴纳基数●") != null) {
                             customerInfoList.get(0).getUserinfo().setHouseinsurance(item.get("住房公积金缴纳基数●").toString());
+                            personal8.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal8.setBasic(item.get("住房公积金缴纳基数●").toString());
                         }
                     } else {
                         throw new LogicalException("第" + k + "行卡号（" + Convert.toStr(item.get("卡号")) + "）" + "不存在,或输入格式不正确！");
                     }
-                    //判断工资是否有变更履历，如果有添加进来
+                    //判断 工资 是否有履历，如果有变更，没有添加履历
                     float addflg = 0;
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
-                        for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getGridData()) {
-                            if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
-                                addflg = 1;
-                                pp.setBefore(personal.getBefore());
-                                pp.setDuty(personal.getDuty());
+                        if (personal.getBasic() != null || personal.getDuty() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getGridData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
+                                    addflg = 1;
+                                    pp.setBasic(personal.getBasic());
+                                    pp.setDuty(personal.getDuty());
+                                }
+                            }
+                            if (addflg == 0) {
+                                cupList.add(personal);
+                                cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
+                            } else {
+                                cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                             }
                         }
-                        cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
-                    }
-                    if (addflg == 0) {
+                    } else {
                         cupList.add(personal);
                     }
+                    //判断 职务 是否有履历，如果有变更，没有添加履历
+                    float addflg1 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getPostData() != null) {
+                        if (personal1.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getPostData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal1.getDate())) {
+                                    addflg1 = 1;
+                                    pp.setBasic(personal1.getBasic());
+                                }
+                            }
+                            if (addflg1 == 0) {
+                                cupList1.add(personal1);
+                                cupList1.addAll(customerInfoList.get(0).getUserinfo().getPostData());
+                            } else {
+                                cupList1.addAll(customerInfoList.get(0).getUserinfo().getPostData());
+                            }
+                        }
+                    } else {
+                        cupList1.add(personal1);
+                    }
+                    //判断 RANK 是否有履历，如果有变更，没有添加履历
+                    float addflg2 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getRankData() != null) {
+                        if (personal2.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getRankData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal2.getDate())) {
+                                    addflg2 = 1;
+                                    pp.setBasic(personal2.getBasic());
+                                }
+                            }
+                            if (addflg2 == 0) {
+                                cupList2.add(personal2);
+                                cupList2.addAll(customerInfoList.get(0).getUserinfo().getRankData());
+                            } else {
+                                cupList2.addAll(customerInfoList.get(0).getUserinfo().getRankData());
+                            }
+                        }
+                    } else {
+                        cupList2.add(personal2);
+                    }
+                    //判断 养老 是否有履历，如果有变更，没有添加履历
+                    float addflg3 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getOldageData() != null) {
+                        if (personal3.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getOldageData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal3.getDate())) {
+                                    addflg3 = 1;
+                                    pp.setBasic(personal3.getBasic());
+                                }
+                            }
+                            if (addflg3 == 0) {
+                                cupList3.add(personal3);
+                                cupList3.addAll(customerInfoList.get(0).getUserinfo().getOldageData());
+                            } else {
+                                cupList3.addAll(customerInfoList.get(0).getUserinfo().getOldageData());
+                            }
+                        }
+                    } else {
+                        cupList3.add(personal3);
+                    }
+                    //判断 医疗 是否有履历，如果有变更，没有添加履历
+                    float addflg4 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getMedicalData() != null) {
+                        if (personal4.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getMedicalData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal4.getDate())) {
+                                    addflg4 = 1;
+                                    pp.setBasic(personal4.getBasic());
+                                }
+                            }
+                            if (addflg4 == 0) {
+                                cupList4.add(personal4);
+                                cupList4.addAll(customerInfoList.get(0).getUserinfo().getMedicalData());
+                            } else {
+                                cupList4.addAll(customerInfoList.get(0).getUserinfo().getMedicalData());
+                            }
+                        }
+                    } else {
+                        cupList4.add(personal4);
+                    }
+                    //判断 失业 是否有履历，如果有变更，没有添加履历
+                    float addflg5 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getSyeData() != null) {
+                        if (personal5.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getSyeData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal5.getDate())) {
+                                    addflg5 = 1;
+                                    pp.setBasic(personal5.getBasic());
+                                }
+                            }
+                            if (addflg5 == 0) {
+                                cupList5.add(personal5);
+                                cupList5.addAll(customerInfoList.get(0).getUserinfo().getSyeData());
+                            } else {
+                                cupList5.addAll(customerInfoList.get(0).getUserinfo().getSyeData());
+                            }
+                        }
+                    } else {
+                        cupList5.add(personal5);
+                    }
+                    //判断 工伤 是否有履历，如果有变更，没有添加履历
+                    float addflg6 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getGsData() != null) {
+                        if (personal6.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getGsData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal6.getDate())) {
+                                    addflg6 = 1;
+                                    pp.setBasic(personal6.getBasic());
+                                }
+                            }
+                            if (addflg6 == 0) {
+                                cupList6.add(personal6);
+                                cupList6.addAll(customerInfoList.get(0).getUserinfo().getGsData());
+                            } else {
+                                cupList6.addAll(customerInfoList.get(0).getUserinfo().getGsData());
+                            }
+                        }
+                    } else {
+                        cupList6.add(personal6);
+                    }
+
+                    //判断 生育 是否有履历，如果有变更，没有添加履历
+                    float addflg7 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getSyuData() != null) {
+                        if (personal7.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getSyuData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal7.getDate())) {
+                                    addflg7 = 1;
+                                    pp.setBasic(personal7.getBasic());
+                                }
+                            }
+                            if (addflg7 == 0) {
+                                cupList7.add(personal7);
+                                cupList7.addAll(customerInfoList.get(0).getUserinfo().getSyuData());
+                            } else {
+                                cupList7.addAll(customerInfoList.get(0).getUserinfo().getSyuData());
+                            }
+                        }
+                    } else {
+                        cupList7.add(personal7);
+                    }
+
+                    //判断 住房 是否有履历，如果有变更，没有添加履历
+                    float addflg8 = 0;
+                    if (customerInfoList.get(0).getUserinfo().getHouseData() != null) {
+                        if (personal8.getBasic() != null) {
+                            for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getHouseData()) {
+                                if (pp.getDate() != null && pp.getDate().equals(personal8.getDate())) {
+                                    addflg8 = 1;
+                                    pp.setBasic(personal8.getBasic());
+                                }
+                            }
+                            if (addflg8 == 0) {
+                                cupList8.add(personal8);
+                                cupList8.addAll(customerInfoList.get(0).getUserinfo().getHouseData());
+                            } else {
+                                cupList8.addAll(customerInfoList.get(0).getUserinfo().getHouseData());
+                            }
+                        }
+                    } else {
+                        cupList8.add(personal8);
+                    }
+
 
                     //如果有工资履历变更，給料変更日不能为空
                     if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
@@ -1319,7 +1569,33 @@ public class UserServiceImpl implements UserService {
                     if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
                     }
-                    customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                    if (cupList.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setGridData(cupList);
+                    }
+                    if (cupList1.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setPostData(cupList1);
+                    }
+                    if (cupList2.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setRankData(cupList2);
+                    }
+                    if (cupList3.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setOldageData(cupList3);
+                    }
+                    if (cupList4.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setMedicalData(cupList4);
+                    }
+                    if (cupList5.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setSyeData(cupList5);
+                    }
+                    if (cupList6.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setGsData(cupList6);
+                    }
+                    if (cupList7.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setSyuData(cupList7);
+                    }
+                    if (cupList8.size() > 0) {
+                        customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
+                    }
                     mongoTemplate.save(customerInfoList.get(0));
                     //如果更新AD域账号,登录名和密码默认设置成AD域账号
                     if (userAccount.getPassword() != null && userAccount.getAccount() != null) {

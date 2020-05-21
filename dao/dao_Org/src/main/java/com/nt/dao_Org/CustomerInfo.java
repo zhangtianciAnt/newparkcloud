@@ -375,6 +375,11 @@ public class CustomerInfo extends BaseModel {
         private List<Personal> medicalData;
         private List<Personal> houseData;
         private List<Personal> oldageData;
+        private List<Personal> syeData;
+        private List<Personal> syuData;
+        private List<Personal> gsData;
+        private List<Personal> postData;
+        private List<Personal> rankData;
 
         // ADD-LXX
         /**
