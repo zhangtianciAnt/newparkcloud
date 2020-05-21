@@ -1386,12 +1386,16 @@ public class UserServiceImpl implements UserService {
                         if (personal.getBasic() != null || personal.getDuty() != null) {
                             List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
                             perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
+                            int i = 0;
                             for (CustomerInfo.Personal pp : perList) {
-                                int aa = Integer.valueOf(personal.getDate().replace("-", ""));
-                                int bb = Integer.valueOf(pp.getDate().replace("-", ""));
-                                if (aa >= bb) {
-                                    customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
-                                    customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                i++;
+                                if (i == perList.size()) {
+                                    int aa = Integer.valueOf(personal.getDate().replace("-", ""));
+                                    int bb = Integer.valueOf(pp.getDate().replace("-", ""));
+                                    if (aa >= bb) {
+                                        customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                                        customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                    }
                                 }
                                 if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
                                     addflg = 1;
@@ -1582,31 +1586,41 @@ public class UserServiceImpl implements UserService {
                     if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
                     }
+                    //降序
                     if (cupList.size() > 0) {
+                        cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setGridData(cupList);
                     }
                     if (cupList1.size() > 0) {
+                        cupList1 = cupList1.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setPostData(cupList1);
                     }
                     if (cupList2.size() > 0) {
+                        cupList2 = cupList2.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setRankData(cupList2);
                     }
                     if (cupList3.size() > 0) {
+                        cupList3 = cupList3.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setOldageData(cupList3);
                     }
                     if (cupList4.size() > 0) {
+                        cupList4 = cupList4.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setMedicalData(cupList4);
                     }
                     if (cupList5.size() > 0) {
+                        cupList5 = cupList5.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setSyeData(cupList5);
                     }
                     if (cupList6.size() > 0) {
+                        cupList6 = cupList6.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setGsData(cupList6);
                     }
                     if (cupList7.size() > 0) {
+                        cupList7 = cupList7.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setSyuData(cupList7);
                     }
                     if (cupList8.size() > 0) {
+                        cupList8 = cupList8.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                     }
                     mongoTemplate.save(customerInfoList.get(0));
