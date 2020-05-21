@@ -12,6 +12,7 @@ import com.nt.utils.services.TokenService;
 import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,8 +114,9 @@ public class AOCHUAN3001Controller {
         Configure config = Configure.newBuilder()
                 .bind("enquiry", policy).build();
        //File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "Quotation.docx");
-        InputStream inputStream = this.getClass().getResourceAsStream("Quotation.docx");
-        XWPFTemplate template = XWPFTemplate.compile(inputStream, config).render(
+        ClassPathResource resource = new ClassPathResource("Quotation.docx");
+       // InputStream inputStream = this.getClass().getResourceAsStream("Quotation.docx");
+        XWPFTemplate template = XWPFTemplate.compile(resource.getInputStream(), config).render(
                 new HashMap<String, Object>() {{
                     put("enquiry", enquiry);
                     put("inquirydate",inquirydate);
