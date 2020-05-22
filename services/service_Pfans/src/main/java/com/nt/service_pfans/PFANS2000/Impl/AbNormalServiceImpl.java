@@ -918,9 +918,15 @@ public class AbNormalServiceImpl implements AbNormalService {
         if("4".equals(abNormal.getLengthtime())){
             lengths = 0.5;
         }
+        if("PR013006".equals(abNormal.getErrortype())){
+            lengths = Convert.toDouble(abNormal.getLengthtime())/8;
+        }
         if(StrUtil.isNotBlank(abNormal.getRelengthtime())) {
             if ("4".equals(abNormal.getRelengthtime())) {
                 relengths = 0.5;
+            }
+            if("PR013006".equals(abNormal.getErrortype())){
+                relengths = Convert.toDouble(abNormal.getRelengthtime())/8;
             }
             lengths = relengths - lengths;
         }
