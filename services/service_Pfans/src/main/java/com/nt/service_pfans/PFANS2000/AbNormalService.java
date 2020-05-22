@@ -26,4 +26,6 @@ public interface AbNormalService {
 
     //根据id获取数据
     Map<String,String> cklength(AbNormal abNormal) throws Exception;
+
+    void updateOvertime(AbNormal abNormal) throws Exception;
 }

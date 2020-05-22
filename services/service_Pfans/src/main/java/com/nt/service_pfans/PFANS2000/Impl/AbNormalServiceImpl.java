@@ -40,6 +40,8 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Autowired
     private AnnualLeaveMapper annualLeaveMapper;
     @Autowired
+    private OvertimeMapper overtimeMapper;
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
@@ -911,6 +913,7 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Override
     public Map<String, String> cklength(AbNormal abNormal) throws Exception {
+
         Map<String, String> rst = new HashMap<String, String>();
         double lengths = 1;
         double relengths = 1;
@@ -1011,6 +1014,27 @@ public class AbNormalServiceImpl implements AbNormalService {
         }
 
         return rst;
+    }
+
+    @Override
+    public void updateOvertime(AbNormal abNormal) throws Exception {
+        AbNormal ab = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
+        Double length = Convert.toDouble(ab.getRelengthtime());
+        if("PR013006".equals(ab.getErrortype())){
+            String[] ids = ab.getRestdate().split(",");
+            for(String id:ids){
+                Overtime ov = overtimeMapper.selectByPrimaryKey(id);
+                Double ov_length = 8D;
+                Double diff = Convert.toDouble(ab.getRelengthtime()) - ov_length + Convert.toDouble(ov.getUsedlength());
+                if(diff > 0){
+                    ov.setUsedlength("8");
+                }else{
+                    ov.setUsedlength(Convert.toStr(ov_length + diff));
+                }
+                overtimeMapper.updateByPrimaryKeySelective(ov);
+            }
+        }
+
     }
 
     //代休
