@@ -120,6 +120,9 @@ public class EvectionServiceImpl implements EvectionService {
                 String value1 = dictionaryL.get(4).getValue2();
                 List<Dictionary> dictionary = dictionaryService.getForSelect("PJ132");
                 String value2 = dictionary.get(4).getValue2();
+                List<Dictionary> dictionaryList = dictionaryService.getForSelect("PJ119");
+                String value3 = dictionary.get(4).getValue1();
+                accommodationdetails.setAnnexno(value3);
                 if (redirict.equals("0")) {
                     accommodationdetails.setRedirict(value1);
                 }
