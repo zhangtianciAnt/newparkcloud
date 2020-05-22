@@ -23,11 +23,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public List<Dictionary> getForSelect(String code) throws Exception{
-        Dictionary dictionary = new Dictionary();
-        if(StrUtil.isNotBlank(code)){
-            dictionary.setPcode(code);
-        }
-        return dictionaryMapper.selectOrder(dictionary);
+        return dictionaryMapper.selectOrder(code);
     }
 
     @Override
