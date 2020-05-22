@@ -111,6 +111,12 @@ public class Overtime extends BaseModel {
      */
     @Column(name = "OVERTIMELENGTH")
     private String overtimelength;
+
+    /**
+     * 使用长度
+     */
+    @Column(name = "USEDLENGTH")
+    private String usedlength;
 }
 
 

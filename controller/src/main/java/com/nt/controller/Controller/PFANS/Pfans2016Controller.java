@@ -75,6 +75,15 @@ public class Pfans2016Controller {
         return ApiResult.success(abNormalService.cklength(abNormal));
     }
 
+    @RequestMapping(value = "/updateOvertime", method = {RequestMethod.POST})
+    public ApiResult updateOvertime(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        abNormalService.updateOvertime(abNormal);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/getSickleave", method = {RequestMethod.GET})
     public ApiResult getSickleave(String userid, HttpServletRequest request) throws Exception {
         if (userid == null) {
