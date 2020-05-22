@@ -1039,16 +1039,20 @@ public class UserServiceImpl implements UserService {
                     if (item.get("现基本工资") != null) {
                         personal.setBasic(item.get("现基本工资").toString());
                         userinfo.setBasic(item.get("现基本工资").toString());
+                        personal.setDuty("0");
                     }
                     //现职责工资
                     if (item.get("现职责工资") != null) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic())) {
+                            personal.setBasic("0");
+                        }
                         personal.setDuty(item.get("现职责工资").toString());
                         userinfo.setDuty(item.get("现职责工资").toString());
                     }
                     //給料変更日
                     if (item.get("給料変更日") != null && item.get("給料変更日").toString().length() >= 10) {
 //                        personal.setDate(item.get("給料変更日").toString());
-                        String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
+                        String dateSubs = item.get("給料変更日").toString().substring(0, 10);
                         personal.setDate(dateSubs);
                     }
                     //养老保险基数
