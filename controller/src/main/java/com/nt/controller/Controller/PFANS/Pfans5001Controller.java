@@ -59,6 +59,11 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.selectById(companyprojectsid));
     }
 
+    @RequestMapping(value = "/selectAll", method = {RequestMethod.GET})
+    public ApiResult selectAll(HttpServletRequest request) throws Exception {
+        return ApiResult.success(companyProjectsService.selectAll());
+    }
+
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult List(@RequestBody CompanyProjects companyProjects, HttpServletRequest request) throws Exception {
         if (companyProjects == null) {
@@ -244,6 +249,15 @@ public class Pfans5001Controller {
         companyProjects.setOwners(tokenModel.getOwnerList());
         companyProjects.setOwner(tokenModel.getUserId());
         return ApiResult.success(companyProjectsService.getSiteList3(companyProjects));
+    }
+
+    @RequestMapping(value="/getSiteList5", method={RequestMethod.GET})
+    public ApiResult getSiteList5(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        CompanyProjects companyProjects = new CompanyProjects();
+        companyProjects.setOwners(tokenModel.getOwnerList());
+        companyProjects.setOwner(tokenModel.getUserId());
+        return ApiResult.success(companyProjectsService.getSiteList4(companyProjects));
     }
 
     @RequestMapping(value="/getSiteList2", method={RequestMethod.GET})

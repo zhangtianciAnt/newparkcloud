@@ -21,6 +21,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,6 +50,8 @@ public class EvectionServiceImpl implements EvectionService {
     private static final String FIELD_FOREIGNCURRENCY = "foreigncurrency";
     private static final String FIELD_INVOICENUMBER = "invoicenumber";
     @Autowired
+    private EvectionService evectionService;
+    @Autowired
     private EvectionMapper evectionMapper;
     @Autowired
     private TrafficDetailsMapper trafficdetailsMapper;
@@ -67,6 +71,187 @@ public class EvectionServiceImpl implements EvectionService {
     private MongoTemplate mongoTemplate;
 
     @Override
+    public Map<String, Object> exportjs(String evectionid, HttpServletRequest request) throws Exception {
+        EvectionVo evevo = evectionService.selectById(evectionid);
+        Map<String, Object> resultMap = new HashMap<>();
+        List<AccommodationDetails> acclist = evevo.getAccommodationdetails();
+        List<TrafficDetails> tralist = evevo.getTrafficdetails();
+        List<OtherDetails> otherlist = evevo.getOtherdetails();
+        List<Object> needMergeList = new ArrayList<>();
+        if (acclist.size() > 0 || tralist.size() > 0
+                || otherlist.size() > 0) {
+            needMergeList.addAll(acclist);
+            needMergeList.addAll(tralist);
+            needMergeList.addAll(otherlist);
+        }
+//        List<TrafficDetails> traffic = new ArrayList<>();
+//        List<AccommodationDetails> accommodation = new ArrayList<>();
+//        List<OtherDetails> other = new ArrayList<>();
+        Map<String, Object> oldmergeResult = null;
+        oldmergeResult = oldmergeDetailList(needMergeList);
+        List<TrafficDetails> traffic = (List<TrafficDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        List<AccommodationDetails> accommodation = (List<AccommodationDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        List<OtherDetails> other = (List<OtherDetails>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        for (Object o : oldmergeResult.values()) {
+            String accountcode = getProperty(o, "accountcode");
+            String budgetcoding = getProperty(o, "budgetcoding");
+            String currency = getProperty(o, "currency");
+            String subjectnumber = getProperty(o, "subjectnumber");
+            String redirict = getProperty(o, "redirict");
+            float rmb = getPropertyFloat(o, "rmb");
+            float subsidies = getPropertyFloat(o, "subsidies");
+            float foreigncurrency = getPropertyFloat(o, "foreigncurrency");
+            float travel = getPropertyFloat(o, "travel");
+            DecimalFormat df = new DecimalFormat("#0.00");
+            int scale = 2;//设置位数
+            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+            BigDecimal bd = new BigDecimal(rmb);
+            bd = bd.setScale(scale, roundingMode);
+            BigDecimal bd1 = new BigDecimal(foreigncurrency);
+            bd1 = bd1.setScale(scale, roundingMode);
+            BigDecimal bd2 = new BigDecimal(travel);
+            bd2 = bd2.setScale(scale, roundingMode);
+            BigDecimal bd3 = new BigDecimal(subsidies);
+            bd3 = bd3.setScale(scale, roundingMode);
+            if (accountcode.equals("PJ132001") || accountcode.equals("PJ119001")) {
+                AccommodationDetails accommodationdetails = new AccommodationDetails();
+                resultMap.put("住宿费", accommodation);
+                List<Dictionary> dictionaryL = dictionaryService.getForSelect("PJ119");
+                String value1 = dictionaryL.get(4).getValue2();
+                List<Dictionary> dictionary = dictionaryService.getForSelect("PJ132");
+                String value2 = dictionary.get(4).getValue2();
+                if (redirict.equals("0")) {
+                    accommodationdetails.setRedirict(value1);
+                }
+                else if (redirict.equals("1")) {
+                    accommodationdetails.setRedirict(value2);
+                }
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(currency)) {
+                        accommodationdetails.setCurrency(iteA.getValue1());
+                    }
+                }
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(budgetcoding)) {
+                        accommodationdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
+                    }
+                }
+                accommodationdetails.setSubjectnumber(subjectnumber);
+                if (accountcode.length() > 5) {
+                    String traAccountcode = accountcode.substring(0, 5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(accountcode)) {
+                            accommodationdetails.setAccountcode(iteA.getValue1());
+                        }
+                    }
+                }
+                accommodationdetails.setTravel(String.valueOf(bd2));
+                accommodationdetails.setRmb(String.valueOf(bd));
+                accommodationdetails.setSubsidies(String.valueOf(bd3));
+                accommodation.add(accommodationdetails);
+            }
+            else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
+                TrafficDetails trafficdetails = new TrafficDetails();
+                resultMap.put("交通费", traffic);
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(currency)) {
+                        trafficdetails.setCurrency(iteA.getValue1());
+                    }
+                }
+                trafficdetails.setSubjectnumber(subjectnumber);
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(budgetcoding)) {
+                        trafficdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
+                    }
+                }
+                if (accountcode.length() > 5) {
+                    String traAccountcode = accountcode.substring(0, 5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(accountcode)) {
+                            trafficdetails.setAccountcode(iteA.getValue1());
+                        }
+                    }
+                }
+                trafficdetails.setForeigncurrency(String.valueOf(bd1));
+                trafficdetails.setRmb(String.valueOf(bd));
+                traffic.add(trafficdetails);
+            }
+            else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
+                OtherDetails otherdetails = new OtherDetails();
+                resultMap.put("其他费用", other);
+                List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
+                for (Dictionary iteA : curListAc) {
+                    if (iteA.getCode().equals(currency)) {
+                        otherdetails.setCurrency(iteA.getValue1());
+                    }
+                }
+                otherdetails.setSubjectnumber(subjectnumber);
+                List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
+                for (Dictionary ite : curListT) {
+                    if (ite.getCode().equals(budgetcoding)) {
+                        otherdetails.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
+                    }
+                }
+                if (accountcode.length() > 5) {
+                    String traAccountcode = accountcode.substring(0, 5);
+                    List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                    for (Dictionary iteA : curListA) {
+                        if (iteA.getCode().equals(accountcode)) {
+                            otherdetails.setAccountcode(iteA.getValue1());
+                        }
+                    }
+                }
+                otherdetails.setForeigncurrency(String.valueOf(bd1));
+                otherdetails.setRmb(String.valueOf(bd));
+                other.add(otherdetails);
+            }
+        }
+        return resultMap;
+    }
+
+    private Map<String, Object> oldmergeDetailList(List<Object> detailList) throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Float> specialMap = new HashMap<>();
+        String inputType = getInputType(detailList.get(0));
+        for (Object detail : detailList) {
+            String isRmb = getProperty(detail, "rmb");
+            // 发票No
+            String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
+            String budgetcoding = getProperty(detail, "budgetcoding");
+            String subjectnumber = getProperty(detail, "subjectnumber");
+            String accountcode = getProperty(detail, "accountcode");
+            String mergeKey = "";
+            mergeKey = budgetcoding + " ... " + subjectnumber;
+            // 行合并
+            float money = getPropertyFloat(detail, "rmb");
+            float moneysum = getPropertyFloat(detail, "foreigncurrency");
+            float taxes = getPropertyFloat(detail, "travel");
+            float subsidies = getPropertyFloat(detail, "subsidies");
+            Object mergeObject = resultMap.get(mergeKey);
+            if (mergeObject != null) {
+                // 发现可以合并数据
+                float newMoney = getPropertyFloat(mergeObject, "rmb") + money;
+                float newMoneysum = getPropertyFloat(mergeObject, "foreigncurrency") + moneysum;
+                float oldMoneysum = getPropertyFloat(mergeObject, "travel") + taxes;
+                float oldsubsidies = getPropertyFloat(mergeObject, "subsidies") + subsidies;
+                setProperty(mergeObject, "rmb", newMoney + "");
+                setProperty(mergeObject, "foreigncurrency", newMoneysum + "");
+                setProperty(mergeObject, "travel", oldMoneysum + "");
+                setProperty(mergeObject, "subsidies", oldsubsidies + "");
+            } else {
+                resultMap.put(mergeKey, detail);
+            }
+        }
+        return resultMap;
+    }
+
+    @Override
     public List<Evection> get(Evection evection) throws Exception {
         return evectionMapper.select(evection);
     }
@@ -82,42 +267,42 @@ public class EvectionServiceImpl implements EvectionService {
             ListVo = ListVo.stream().sorted(Comparator.comparing(TravelCost::getNumber)).collect(Collectors.toList());
             Listvo.addAll(0, ListVo);
 
-            Currencyexchange currencyexchange = new Currencyexchange();
-            currencyexchange.setEvectionid(travelList.getEvectionid());
-            List<Currencyexchange> lscer = currencyexchangeMapper.select(currencyexchange);
-            if (lscer != null && lscer.size() > 0) {
-                TravelCost tc = new TravelCost();
-                String st = null;
-                Double ctsum = 0D;
-                for (Currencyexchange item : lscer) {
-                    Double ct = 0D;
-                    Double diff = Convert.toDouble(item.getCurrencyexchangerate()) - Convert.toDouble(item.getExchangerate());
-                    if (diff == 0) {
-                        continue;
-                    }
-                    BeanUtil.copyProperties(ListVo.get(0), tc);
-                    tc.setNumber(ListVo.size() + 1);
-                    tc.setBudgetcoding("000000");
-                    List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG024");
-                    String value1 = dictionaryList.get(0).getValue2();
-                    String value2 = dictionaryList.get(1).getValue2();
-                    if (diff < 0) {
-                        tc.setSubjectnumber(value2);
-                    } else {
-                        tc.setSubjectnumber(value1);
-                    }
-
-                    List<Double> costs = trafficdetailsMapper.getCount(travelList.getEvectionid(), item.getCurrency());
-                    for (Double cost : costs) {
-                        ct += cost;
-                    }
-                    ctsum += ct * diff;
-                }
-                DecimalFormat df = new DecimalFormat(".##");
-                st = df.format(ctsum);
-                tc.setLineamount(Convert.toStr(st));
-                Listvo.add(tc);
-            }
+//            Currencyexchange currencyexchange = new Currencyexchange();
+//            currencyexchange.setEvectionid(travelList.getEvectionid());
+//            List<Currencyexchange> lscer = currencyexchangeMapper.select(currencyexchange);
+//            if (lscer != null && lscer.size() > 0) {
+//                TravelCost tc = new TravelCost();
+//                String st = null;
+//                Double ctsum = 0D;
+//                for (Currencyexchange item : lscer) {
+//                    Double ct = 0D;
+//                    Double diff = Convert.toDouble(item.getCurrencyexchangerate()) - Convert.toDouble(item.getExchangerate());
+//                    if (diff == 0) {
+//                        continue;
+//                    }
+//                    BeanUtil.copyProperties(ListVo.get(0), tc);
+//                    tc.setNumber(ListVo.size() + 1);
+//                    tc.setBudgetcoding("000000");
+//                    List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG024");
+//                    String value1 = dictionaryList.get(0).getValue2();
+//                    String value2 = dictionaryList.get(1).getValue2();
+//                    if (diff < 0) {
+//                        tc.setSubjectnumber(value2);
+//                    } else {
+//                        tc.setSubjectnumber(value1);
+//                    }
+//
+//                    List<Double> costs = trafficdetailsMapper.getCount(travelList.getEvectionid(), item.getCurrency());
+//                    for (Double cost : costs) {
+//                        ct += cost;
+//                    }
+//                    ctsum += ct * diff;
+//                }
+//                DecimalFormat df = new DecimalFormat(".##");
+//                st = df.format(ctsum);
+//                tc.setLineamount(Convert.toStr(st));
+//                Listvo.add(tc);
+//            }
         }
         return Listvo;
     }
@@ -178,9 +363,12 @@ public class EvectionServiceImpl implements EvectionService {
         }
 
         Map<String, Object> mergeResult = null;
+        //add-ws-5/12-汇税收益与汇税损失问题对应
+        Map<String, Object> newmergeResult = null;
+        //add-ws-5/12-汇税收益与汇税损失问题对应
         Map<String, Float> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
-            if (SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
+            if (Double.valueOf(invoice.getInvoiceamount()) > 0.0) {
                 // 专票，获取税率
                 float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if (rate <= 0) {
@@ -203,9 +391,12 @@ public class EvectionServiceImpl implements EvectionService {
             needMergeList.addAll(otherDetailslist);
         }
         mergeResult = mergeDetailList(needMergeList, specialMap, currencyexchangeList);
-
+        //add-ws-5/12-汇税收益与汇税损失问题对应
+        newmergeResult = newmergeDetailList(needMergeList, specialMap, currencyexchangeList);
+        //add-ws-5/12-汇税收益与汇税损失问题对应
         List<TravelCost> csvList = new ArrayList<>();
         List<TravelCost> taxList = (List<TravelCost>) mergeResult.getOrDefault(TAX_KEY, new ArrayList<>());
+        List<TravelCost> newtaxList = (List<TravelCost>) newmergeResult.getOrDefault(TAX_KEY, new ArrayList<>());
         List<TravelCost> paddingList = (List<TravelCost>) mergeResult.getOrDefault(PADDING_KEY, new ArrayList<>());
         for (Object o : mergeResult.values()) {
             if (o instanceof TrafficDetails || o instanceof AccommodationDetails || o instanceof OtherDetails) {
@@ -222,6 +413,7 @@ public class EvectionServiceImpl implements EvectionService {
             }
         }
         csvList.addAll(taxList);
+        csvList.addAll(newtaxList);
         csvList.addAll(paddingList);
         //获取人名
         Query query = new Query();
@@ -234,25 +426,132 @@ public class EvectionServiceImpl implements EvectionService {
 
         int rowindex = 0;
         for (TravelCost insertInfo : csvList) {
-            rowindex = rowindex + 1;
-            insertInfo.preInsert(tokenModel);
-            insertInfo.setTravelcost_id(UUID.randomUUID().toString());
-            insertInfo.setEvectionid(evectionid);
-            insertInfo.setNumber(rowindex);
-            //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
-            insertInfo.setInvoicedate(date);
-            insertInfo.setConditiondate(date);
-            insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
-            insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
-            //发票说明
-            if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
-                insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+            if (insertInfo.getLineamount().equals("0")) {
+                continue;
+            } else {
+                rowindex = rowindex + 1;
+                insertInfo.preInsert(tokenModel);
+                insertInfo.setTravelcost_id(UUID.randomUUID().toString());
+                insertInfo.setEvectionid(evectionid);
+                insertInfo.setNumber(rowindex);
+                //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
+                insertInfo.setInvoicedate(date);
+                insertInfo.setConditiondate(date);
+                insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
+                insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
+                //发票说明
+                if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
+                    insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+                }
+
+                insertInfo.setInvoicenumber(invoiceNo);
+                travelcostmapper.insertSelective(insertInfo);
             }
 
-            insertInfo.setInvoicenumber(invoiceNo);
-            travelcostmapper.insertSelective(insertInfo);
         }
     }
+
+    //add-ws-5/12-汇税收益与汇税损失问题对应
+    private Map<String, Object> newmergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
+        Map<String, Object> newresultMap = new HashMap<>();
+        if (detailList.size() <= 0) {
+            throw new LogicalException("明细不能为空");
+        }
+        String inputType = getInputType(detailList.get(0));
+        for (Object detail : detailList) {
+            String isRmb = getProperty(detail, "rmb");
+            String currency = getProperty(detail, "currency");
+
+            String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
+            String budgetcoding = getProperty(detail, "budgetcoding");
+            String subjectnumber = getProperty(detail, "subjectnumber");
+            String mergeKey;
+
+            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
+
+            // 行合并
+            float money = getPropertyFloat(detail, "foreigncurrency");
+            float moneysum = getPropertyFloat(detail, "travel");
+            Object mergeObject = newresultMap.get(mergeKey);
+            if (mergeObject != null) {
+                // 发现可以合并数据
+                float newMoney = getPropertyFloat(mergeObject, "foreigncurrency") + money;
+                float newMoneysum = getPropertyFloat(mergeObject, "travel") + moneysum;
+                setProperty(mergeObject, "foreigncurrency", newMoney + "");
+                setProperty(mergeObject, "travel", newMoneysum + "");
+            } else {
+                newresultMap.put(mergeKey, detail);
+            }
+        }
+        float totalTax = 0f;
+        List<Object> list = new ArrayList<>(newresultMap.values());
+        List<TravelCost> newtaxList = (List<TravelCost>) newresultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+        newresultMap.put(TAX_KEY, newtaxList);
+        TravelCost newtaxCost = new TravelCost();
+        List<Dictionary> dictionaryL = dictionaryService.getForSelect("PG024");
+        String value1 = dictionaryL.get(0).getValue2();
+        String value2 = dictionaryL.get(1).getValue2();
+        float sum = 0f;
+        float sum1 = 0f;
+        float sum2 = 0f;
+        if (currencyexchangeList.size() > 0) {
+            for (Currencyexchange listchange : currencyexchangeList) {
+                for (Object detail : list) {
+                    String currency = getProperty(detail, "currency");
+                    if (listchange.getCurrency().equals(currency)) {
+                        float exchangerate = Float.valueOf(listchange.getExchangerate());
+                        float currencyexchangerate = Float.valueOf(listchange.getCurrencyexchangerate());
+                        float foreigncurrency = getPropertyFloat(detail, "foreigncurrency");
+                        float travel = getPropertyFloat(detail, "travel");
+                        float checkforeigncurrency = 0f;
+                        float checktravel = 0f;
+                        if (foreigncurrency != 0.0) {
+                            checkforeigncurrency = foreigncurrency * exchangerate - foreigncurrency * currencyexchangerate;
+//                        if (checkforeigncurrency > 0.0) {
+//                            newtaxCost.setSubjectnumber(value2);
+//                        } else {
+//                            newtaxCost.setSubjectnumber(value1);
+//                        }
+                        }
+                        if (travel != 0.0) {
+                            checktravel = travel * exchangerate - travel * currencyexchangerate;
+//                        if (checktravel > 0.0) {
+//                            newtaxCost.setSubjectnumber(value2);
+//                        } else {
+//                            newtaxCost.setSubjectnumber(value1);
+//                        }
+                        }
+
+                        DecimalFormat df = new DecimalFormat("#0.00");
+                        int scale = 2;//设置位数
+                        int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                        BigDecimal bd = new BigDecimal(checktravel);
+                        BigDecimal bd1 = new BigDecimal(checkforeigncurrency);
+                        bd = bd.setScale(scale, roundingMode);
+                        bd1 = bd1.setScale(scale, roundingMode);
+                        sum += bd.floatValue();
+                        sum1 += bd1.floatValue();
+                        sum2 = sum + sum1;
+                        newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                        //发票说明
+                        newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                        newtaxCost.setCurrency("CNY");
+                    }
+                }
+            }
+            if (sum2 > 0.0) {
+                newtaxCost.setLineamount(String.valueOf(sum2));
+                newtaxCost.setSubjectnumber(value2);
+            } else {
+                newtaxCost.setLineamount(String.valueOf(sum2));
+                newtaxCost.setSubjectnumber(value1);
+            }
+            newtaxList.add(newtaxCost);
+        }
+        return newresultMap;
+    }
+    //add-ws-5/12-汇税收益与汇税损失问题对应
+
 
     /**
      * 对明细数据分组
@@ -260,61 +559,68 @@ public class EvectionServiceImpl implements EvectionService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws LogicalException {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         if (detailList.size() <= 0) {
             throw new LogicalException("明细不能为空");
         }
         String inputType = getInputType(detailList.get(0));
         for (Object detail : detailList) {
+            String isRmb = getProperty(detail, "rmb");
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
-            String isRmb = getProperty(detail, "rmb");
             String mergeKey;
-            if (specialMap.containsKey(keyNo) && Float.parseFloat(isRmb) > 0) {
-                mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
-            } else {
-                mergeKey = budgetcoding + " ... " + subjectnumber;
-            }
+            mergeKey = budgetcoding + " ... " + subjectnumber;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
+            float moneysum = getPropertyFloat(detail, "subsidies");
+            float taxes = getPropertyFloat(detail, "taxes");
             Object mergeObject = resultMap.get(mergeKey);
             if (mergeObject != null) {
                 // 发现可以合并数据
                 float newMoney = getPropertyFloat(mergeObject, "rmb") + money;
+                float newMoneysum = getPropertyFloat(mergeObject, "subsidies") + moneysum;
+                float oldMoneysum = getPropertyFloat(mergeObject, "taxes") + taxes;
                 setProperty(mergeObject, "rmb", newMoney + "");
+                setProperty(mergeObject, "subsidies", newMoneysum + "");
+                setProperty(mergeObject, "taxes", oldMoneysum + "");
             } else {
                 resultMap.put(mergeKey, detail);
             }
+
         }
 
         float totalTax = 0f;
         List<Object> list = new ArrayList<>(resultMap.values());
+        DecimalFormat df1 = new DecimalFormat("######0.00");
         for (Object detail : list) {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, "rmb");
-            totalTax = totalTax + money;
+            float taxes = getPropertyFloat(detail, "taxes");
+            float moneysum = getPropertyFloat(detail, "subsidies");
+            totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
+            String gettaxes = getProperty(detail, "taxes");
+            String redirictchheck = getProperty(detail, "redirict");
             // 如果是专票，处理税
-            if (specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0) {
+            if (specialMap.containsKey(keyNo) && Float.parseFloat(gettaxes) > 0) {
                 List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, taxList);
                 float rate = specialMap.get(keyNo);
                 TravelCost taxCost = new TravelCost();
-
                 // 税拔
-                String lineCost = FNUM.format(money / (1 + rate));
+                String lineCost = FNUM.format(money - taxes);
                 // 税金
-                String lineRate = FNUM.format((money / (1 + rate)) * rate);
+                String lineRate = FNUM.format(taxes);
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
-                    if(!lineRate.equals("0")){
+                    if (!lineRate.equals("0")) {
                         taxCost.setSubjectnumber("2302-00-01A0");
-                    }else{
+                    } else {
                         taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
                     }
                     //add-ws-4/22-税金不为0存2302-00-01A0
@@ -341,10 +647,41 @@ public class EvectionServiceImpl implements EvectionService {
                     }
                 }
             }
+
+            //add-ws-5/13-获取当前人是否直属部门后台导出csv使用
+            List<Dictionary> dictionaryL = dictionaryService.getForSelect("PJ119");
+            String value1 = dictionaryL.get(4).getValue2();
+            List<Dictionary> dictionary = dictionaryService.getForSelect("PJ132");
+            String value2 = dictionary.get(4).getValue2();
+            if (redirictchheck.equals("0")) {
+                List<TravelCost> oldtaxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+                resultMap.put(TAX_KEY, oldtaxList);
+                TravelCost newtaxCost = new TravelCost();
+                newtaxCost.setSubjectnumber(value1);
+                newtaxCost.setLineamount(df1.format(moneysum));
+                newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                //发票说明
+                newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                newtaxCost.setCurrency("CNY");
+                oldtaxList.add(newtaxCost);
+            }
+            else if (redirictchheck.equals("1")) {
+                List<TravelCost> oldtaxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+                resultMap.put(TAX_KEY, oldtaxList);
+                TravelCost newtaxCost = new TravelCost();
+                newtaxCost.setSubjectnumber(value2);
+                newtaxCost.setLineamount(df1.format(moneysum));
+                newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                //发票说明
+                newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                newtaxCost.setCurrency("CNY");
+                oldtaxList.add(newtaxCost);
+            }
+            //add-ws-5/13-获取当前人是否直属部门后台导出csv使用
         }
-        if (totalTax != specialMap.get(TOTAL_TAX)) {
-            throw new LogicalException("发票合计金额与明细不匹配。");
-        }
+//        if (Float.valueOf(df1.format(totalTax)) != specialMap.get(TOTAL_TAX)) {
+//            throw new LogicalException("发票合计金额与明细不匹配。");
+//        }
         resultMap.put(INPUT_TYPE_KEY, "rmb");
         return resultMap;
     }

@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +26,22 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public List<Attendance> getAttendancelist(Attendance attendance) throws Exception {
-        return attendanceMapper.select(attendance);
+        //add-ws-5/6-根据当前月份和当前月的上个月获取数据
+        List<Attendance> attendancelist = attendanceMapper.select(attendance);
+        SimpleDateFormat sf1 = new SimpleDateFormat("MM");
+        String strTemp = sf1.format(new Date());
+        SimpleDateFormat format = new SimpleDateFormat("MM");
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date); // 设置为当前时间
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1); // 设置为上一个月
+        date = calendar.getTime();
+        String accDate = format.format(date);
+        attendancelist = attendancelist.stream()
+                .filter(item -> (item.getMonths().equals(accDate) || item.getMonths().equals(strTemp)))
+                .collect(Collectors.toList());
+        //add-ws-5/6-根据当前月份和当前月的上个月获取数据
+        return attendancelist;
     }
 
     @Override
@@ -35,4 +49,27 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendance.preUpdate(tokenModel);
         attendanceMapper.updateByPrimaryKeySelective(attendance);
     }
+
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+    @Override
+    public void updStatus(Attendance attendance, TokenModel tokenModel) throws Exception {
+        attendance.preUpdate(tokenModel);
+        attendanceMapper.updStatus(attendance.getUser_id(), attendance.getYears(), attendance.getMonths());
+//        Attendance att = new Attendance();
+//        if (attendance.getStatus().equals("4")) {
+//            att.setUser_id(attendance.getUser_id());
+//            att.setYears(attendance.getYears());
+//            att.setMonths(attendance.getMonths());
+//            List<Attendance> attList = attendanceMapper.select(att);
+//            if (attList.size() > 0) {
+//                for (Attendance at : attList) {
+//                    at.setRecognitionstate("1");
+//                    at.preUpdate(tokenModel);
+//                    attendanceMapper.updateByPrimaryKeySelective(at);
+//                }
+//            }
+//
+//        }
+    }
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
 }

@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.TalentPlan;
+import com.nt.dao_Pfans.PFANS2000.Vo.TalentPlanVo;
 import com.nt.service_pfans.PFANS2000.TalentPlanService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -68,4 +69,13 @@ public class Pfans2024Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    public ApiResult createByOrg(@RequestBody TalentPlanVo TalentPlanVo, HttpServletRequest request) throws Exception {
+        if (TalentPlanVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        talentplanService.insertByOrg(TalentPlanVo,tokenModel);
+        return ApiResult.success();
+    }
 }

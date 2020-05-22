@@ -3,6 +3,8 @@ package com.nt.service_pfans.PFANS6000;
 import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
+import com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo;
+import com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo;
 import com.nt.utils.LogicalException;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -13,11 +15,12 @@ import java.util.Map;
 
 public interface CompanyStatisticsService {
 
-    Map<String, Object> getCosts(Coststatistics coststatistics) throws Exception;
+    Map<String, Object> getCosts(String groupid,String years) throws Exception;
 
-    Map<String, Object> getWorkTimes(Coststatistics coststatistics);
 
-    Map<String, Object> getWorkerCounts(Coststatistics coststatistics);
+    List<bpSum2Vo> getWorkTimes(String groupid, String years) throws LogicalException;
 
-    XSSFWorkbook downloadExcel(HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
+    List<bpSum3Vo> getWorkerCounts(String groupid, String years) throws LogicalException;
+
+    XSSFWorkbook downloadExcel(String groupid,String years,HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
 }

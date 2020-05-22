@@ -34,9 +34,9 @@ public class Pltab extends BaseModel {
 
     private String emhours;//社員工数-
 
-    private String inhours;//外注工数(社内)-
+    private String inhours;//外注工数(构内)-
 
-    private String outhours;//外注工数(社外)-
+    private String outhours;//外注工数(构外)-
 
     private String peocost;//人件費(工资没有暂时没绑)
 
@@ -73,6 +73,63 @@ public class Pltab extends BaseModel {
     private String marginal;//限界利益
 
     private String Operating;//営業利益
+    private String centerintotal;
+    private String twocost;
+    private String peocostsum;
+    private String depreciationsoft;
+    private String depreciationequipment;
+    private String leasecost;
+    private String temporaryrent;
+    private String costsubtotal;
+    private String surveyfee;
+    private String othersoftwarefree;
+    private String expensessubtotal;
+    private String transferone;
+    private String transfertwo;
+    private String allocationsum;
+    private String threefree;
+    private String commonfee;
+    private String otherexpenses;
+    private String otherincome;
+    private String otherexpentotal;
+    private String interestrate;
+    private String operatingprofit;
+    private String pretaxprofit;
+    private String taxallowance;
+    private String posttaxbenefit;
+    private String operatingmargin;
+    private String outsourcinghours;
+    private String outsourcing;
+    private String outsourcingname;
+    private String employeename;
+    private String outsourcingpjhours;
+    private String employeepjhours;
+    private String employeeuptime;
+    private String externalpjrate;
+    private String externalinjectionrate;
+    private String memberpjrate;
+    private String membershiprate;
+    private String pjrateemployees;
+    private String staffingrate;
+    //    添加按分字段
+    private String unworktime;
+    private String unworktimeei;
+    private String unworktimeex;
+    private String unpublice;
+    private String unevec;
+    private String uncoststa;
+    private String unplpublice;
+    //    添加按分字段
+    //判断时候是要进行按分的数据
+    private String plmoneyflg;
+    //国内役務（6%税込み）
+    private String taxyw;
+    //国内販売（13%税込み）
+    private String taxsa;
+    //為替
+    private String exchanges;
+
+
 
 
 }

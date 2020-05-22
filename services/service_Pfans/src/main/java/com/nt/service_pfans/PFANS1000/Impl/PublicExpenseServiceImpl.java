@@ -67,6 +67,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     }
 
     @Override
+    public List<PublicExpense> getpublicelist(String publicexpenseid) throws Exception {
+        return publicExpenseMapper.getpublicelist(publicexpenseid);
+    }
+
+    @Override
     public  List<TotalCost> gettotalcost(TotalCostVo totalcostvo) throws Exception {
         List<TotalCost> listvo = new ArrayList<TotalCost>();
         TotalCost totalcost = new TotalCost();
@@ -270,27 +275,32 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
         int rowindex = 0;
         for (TotalCost insertInfo: csvList) {
-            rowindex = rowindex + 1;
-            insertInfo.preInsert(tokenModel);
-            insertInfo.setTotalcost_id(UUID.randomUUID().toString());
-            insertInfo.setPublicexpenseid(publicexpenseid);
-            insertInfo.setNumber(rowindex);
-            //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
-            insertInfo.setInvoicedate(date);
-            insertInfo.setConditiondate(date);
-            if(publicExpenseVo.getPublicexpense().getPayeecode()!=""){
-                insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getPayeecode());//供应商编号
+            if(insertInfo.getLineamount().equals("0")) {
+                continue;
             }else{
-                insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getCode());//个人编号
-            }
-            insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
-            //发票说明
-            if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
-                insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
-            }
+                rowindex = rowindex + 1;
+                insertInfo.preInsert(tokenModel);
+                insertInfo.setTotalcost_id(UUID.randomUUID().toString());
+                insertInfo.setPublicexpenseid(publicexpenseid);
+                insertInfo.setNumber(rowindex);
+                //日期格式，取当前日期， 输出CSV时需要格式化成28OCT2019
+                insertInfo.setInvoicedate(date);
+                insertInfo.setConditiondate(date);
+                if(publicExpenseVo.getPublicexpense().getPayeecode()!=""){
+                    insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getPayeecode());//供应商编号
+                }else{
+                    insertInfo.setVendorcode(publicExpenseVo.getPublicexpense().getCode());//个人编号
+                }
+                insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
+                //发票说明
+                if(insertInfo.getRemark() != "" && insertInfo.getRemark() != null ){
+                    insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+                }
 
-            insertInfo.setInvoicenumber(invoiceNo);
-            totalCostMapper.insertSelective(insertInfo);
+                insertInfo.setInvoicenumber(invoiceNo);
+
+                totalCostMapper.insertSelective(insertInfo);
+            }
         }
     }
 
@@ -351,8 +361,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         for (Object detail: list) {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
-            float money = getPropertyFloat(detail, inputType);
-            totalTax = totalTax + money;
+            float money = getPropertyFloat(detail, "rmb");
+            float moneysum = getPropertyFloat(detail, "foreigncurrency");
+            totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
             if ( specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0 ) {
@@ -399,7 +410,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     }
                 }
             }
-
         }
         if ( totalTax != specialMap.get(TOTAL_TAX) ) {
             throw new LogicalException("发票合计金额与明细不匹配。");

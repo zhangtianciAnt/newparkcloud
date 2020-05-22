@@ -2,22 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.PricesetMapper">
     <select id="selectByYear" resultType="com.nt.dao_Pfans.PFANS6000.Priceset">
-		<![CDATA[
-		select USER_ID, ASSESSTIME, TOTALUNIT from priceset
-		where
-			ASSESSTIME >= str_to_date(#{startTime}, '%Y-%m-%d')
-			and ASSESSTIME <= str_to_date(#{endTime}, '%Y-%m-%d')
-		UNION ALL
-		(
-			select b.USER_ID, b.ASSESSTIME, b.TOTALUNIT from (
-			select USER_ID, max(ASSESSTIME) as ASSESSTIME from priceset  where ASSESSTIME < str_to_date(#{startTime}, '%Y-%m-%d') group by USER_ID order by USER_ID, ASSESSTIME
-			) a
-			inner join priceset b
-			on a.USER_ID = b.USER_ID and a.ASSESSTIME = b.ASSESSTIME
-		)
-		order by USER_ID, ASSESSTIME
-        ]]>
-	</select>
+<!--		<![CDATA[-->
+<!--		select USER_ID, ASSESSTIME, TOTALUNIT from priceset-->
+<!--		where-->
+<!--			ASSESSTIME >= str_to_date(#{startTime}, '%Y-%m-%d')-->
+<!--			and ASSESSTIME <= str_to_date(#{endTime}, '%Y-%m-%d')-->
+<!--		UNION ALL-->
+<!--		(-->
+<!--			select b.USER_ID, b.ASSESSTIME, b.TOTALUNIT from (-->
+<!--			select USER_ID, max(ASSESSTIME) as ASSESSTIME from priceset  where ASSESSTIME < str_to_date(#{startTime}, '%Y-%m-%d') group by USER_ID order by USER_ID, ASSESSTIME-->
+<!--			) a-->
+<!--			inner join priceset b-->
+<!--			on a.USER_ID = b.USER_ID and a.ASSESSTIME = b.ASSESSTIME-->
+<!--		)-->
+<!--		order by USER_ID, ASSESSTIME-->
+<!--        ]]>-->
+
+        SELECT p.*
+        FROM `priceset` p
+        inner join pricesetgroup pg
+        on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
+        where
+        pg.PD_DATE  BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
+        AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
+
+    </select>
     <select id="gettlist" resultType="com.nt.dao_Pfans.PFANS6000.Vo.PricesetVo">
 select
 expatriatesinfor.expname,
@@ -60,4 +69,17 @@ priceset.yearunit
  from priceset INNER JOIN expatriatesinfor on priceset.USER_ID=expatriatesinfor.EXPATRIATESINFOR_ID
 
 	</select>
+    <select id="selectBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Priceset">
+        SELECT p.*
+        FROM `priceset` p
+        inner join pricesetgroup pg
+        on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
+            inner join expatriatesinfor as e
+            on p.USER_ID = e.EXPATRIATESINFOR_ID
+        where (pg.PD_DATE  BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
+        AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
+        <if test="groupid!=null and groupid !=''">
+            and e.GROUP_ID = #{groupid}
+        </if>
+    </select>
 </mapper>

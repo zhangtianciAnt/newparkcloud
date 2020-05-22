@@ -122,6 +122,16 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                         {
                             throw new LogicalException("第" + i + "行 供应商名称(中文) 长度超长，最大长度为50");
                         }
+                        if(supplierinfor.getSupchinese() != null && !supplierinfor.getSupchinese() .isEmpty())
+                        {
+                            Supplierinfor sup = new Supplierinfor();
+                            sup.setSupchinese(supplierinfor.getSupchinese().trim());
+                            List<Supplierinfor> supList = supplierinforMapper.select(sup);
+                            if(supList.size()>0)
+                            {
+                                throw new LogicalException("第" + i + "行 供应商名称(中文) 已经存在，请确认。");
+                            }
+                        }
                     }
                     if(value.size()>1)
                     {
@@ -161,6 +171,16 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                         if(supplierinfor.getVendornum() != null && supplierinfor.getVendornum().length() > 50)
                         {
                             throw new LogicalException("第" + i + "行 供应商编码（合同用） 长度超长，最大长度为50");
+                        }
+                        if(supplierinfor.getVendornum() != null && !supplierinfor.getVendornum() .isEmpty())
+                        {
+                            Supplierinfor sup = new Supplierinfor();
+                            sup.setVendornum(supplierinfor.getVendornum().trim());
+                            List<Supplierinfor> supList = supplierinforMapper.select(sup);
+                            if(supList.size()>0)
+                            {
+                                throw new LogicalException("第" + i + "行 供应商编码（合同用） 已经存在，请确认。");
+                            }
                         }
                     }
                     if(value.size()>6)
@@ -300,11 +320,7 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     {
                         String person= Convert.toStr(value.get(21));
                         if(StrUtil.isNotBlank(person)){
-                            person = person.trim();
-                            if(person.contains("≥") || person.contains("<"))
-                            {
-                                person = person.substring(1);
-                            }
+                            person = person.trim().replace("<","").replace(">","").replace("≥","").replace("=","").replace("≤","").replace("-","");
                             if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                                 supplierinfor.setPerscale("BP007001");  //改数据
                             }

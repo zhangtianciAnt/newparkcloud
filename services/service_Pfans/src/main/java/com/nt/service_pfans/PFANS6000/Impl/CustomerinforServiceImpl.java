@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.CustomerinforService;
 import com.nt.service_pfans.PFANS6000.mapper.CustomerinforMapper;
 import com.nt.utils.LogicalException;
@@ -121,6 +122,16 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                         if(customerinfor.getCustchinese() != null && customerinfor.getCustchinese().length() > 255)
                         {
                             throw new LogicalException("第" + i + "行 客户名称(中文) 长度超长，最大长度为255");
+                        }
+                        if(customerinfor.getCustchinese() != null && !customerinfor.getCustchinese().isEmpty())
+                        {
+                            Customerinfor customer = new Customerinfor();
+                            customer.setCustchinese(customerinfor.getCustchinese().trim());
+                            List<Customerinfor> customerList = customerinforMapper.select(customer);
+                            if(customerList.size()>0)
+                            {
+                                throw new LogicalException("第" + i + "行 客户名称(中文) 已经存在，请确认。");
+                            }
                         }
                     }
                     if(value.size()>1)
@@ -258,6 +269,16 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                         {
                             throw new LogicalException("第" + i + "行 事业场编码 长度超长，最大长度为20");
                         }
+                        if(customerinfor.getCustchinese() != null && !customerinfor.getCustchinese().isEmpty())
+                        {
+                            Customerinfor cust = new Customerinfor();
+                            cust.setCausecode(customerinfor.getCausecode().trim());
+                            List<Customerinfor> custList = customerinforMapper.select(cust);
+                            if(custList.size()>0)
+                            {
+                                throw new LogicalException("第" + i + "行 事业场编码 已经存在，请确认。");
+                            }
+                        }
                     }
                     if(value.size()>19)
                     {
@@ -275,11 +296,7 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                     {
                         String person=Convert.toStr(value.get(16));
                         if(StrUtil.isNotBlank(person)){
-                            person = person.trim();
-                            if(person.contains("≥") || person.contains("<"))
-                            {
-                                person = person.substring(1);
-                            }
+                            person = person.trim().replace("<","").replace(">","").replace("≥","").replace("=","").replace("≤","").replace("-","");
                             if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
                                 customerinfor.setPerscale("BP007001");  //改数据
                             }

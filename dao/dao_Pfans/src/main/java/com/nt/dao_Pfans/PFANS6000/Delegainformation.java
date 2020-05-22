@@ -128,16 +128,34 @@ public class Delegainformation extends BaseModel {
     private String monthlength;
 
     /**
+     * 备注
+     */
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    /**
      * 年度
      */
     @Column(name = "YEAR")
     private String year;
 
     /**
-     * ID
+     * 供应商信息
      */
     @Column(name = "SUPPLIERINFOR_ID")
     private String supplierinfor_id;
+
+    /**
+     * GROUP_ID
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    /**
+     * 外协ID
+     */
+    @Column(name = "ACCOUNT")
+    private String account;
 
 
 

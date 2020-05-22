@@ -55,4 +55,7 @@ public class Dictionary extends BaseModel {
     @Column(name = "PCODE")
     private String pcode;
 
+    @Column(name = "ORDERDIC")
+    private Integer orderdic;
+
 }

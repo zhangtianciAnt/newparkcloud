@@ -60,6 +60,12 @@ public class Psdcddetail extends BaseModel {
     private String account;
 
     /**
+     * 邮箱类型
+     */
+    @Column(name = "ACCOUNTTYPE")
+    private String accounttype;
+
+    /**
      * 社外送信
      */
     @Column(name = "TRANSMISSION")

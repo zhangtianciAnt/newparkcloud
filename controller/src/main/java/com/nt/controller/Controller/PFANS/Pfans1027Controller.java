@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,17 +77,41 @@ public class Pfans1027Controller {
             }
         }
         Map<String, Object> data = new HashMap<>();
+        //20200427 add by ztc format data start
+        //請求日
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat str = new SimpleDateFormat("dd/MM/yyyy");
+        Date tem_date = null;
+        String str_format = "";
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        BigDecimal bd = new BigDecimal(qu.getQuotation().getClaimamount());
+        str_format = df.format(bd);
+        data.put("claimamount", str_format);
+        for (int i = 0; i < qu.getNumbercounts().size(); i++) {
+            bd = new BigDecimal(qu.getNumbercounts().get(i).getClaimamount());
+            str_format = df.format(bd);
+            qu.getNumbercounts().get(i).setClaimamount(str_format);
+        }
+
+
         data.put("qu",qu.getQuotation());
         data.put("qulist",qu.getOthpersonfee());
 //        data.put("qualist",qu.getFruit());
         data.put("num", qu.getNumbercounts());
         data.put("qlist", qu.getPersonfee());
         if(qq.length > 0){
+            //20200427 add by ztc format date start
+            str_format = qq[0];
+            tem_date = sdf.parse(str_format);
+            qq[0] = str.format(tem_date);
+            str_format = qq[1];
+            tem_date = sdf.parse(str_format);
+            qq[1] = str.format(tem_date);
             data.put("statime",qq);
         } else {
             data.put("statime","");
         }
-        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_报价单","jianjishu_shoutuo.xlsx",data,response);
+        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase() + "_报价单", "jianjishu_shoutuo.xlsx", data, response);
     }
 
 }

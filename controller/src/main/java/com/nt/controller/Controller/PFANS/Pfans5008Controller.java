@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/logmanagement")
@@ -44,6 +47,15 @@ public class Pfans5008Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagementService.insert(logmanagement, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/deleteLog", method = {RequestMethod.POST})
+    public ApiResult deleteLog(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
+        if (logmanagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        logmanagementService.delete(logmanagement);
         return ApiResult.success();
     }
 
@@ -137,6 +149,22 @@ public class Pfans5008Controller {
         logmanagement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
     }
+
+    @RequestMapping(value = "/getDataList1", method = {RequestMethod.POST})
+    public ApiResult getDataList1(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
+        if (conditon == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        LogManagement logmanagement = new LogManagement();
+        logmanagement.setOwners(tokenModel.getOwnerList());
+        List<LogManagement> list = logmanagementService.getDataList(logmanagement);
+        list = list.stream().filter(item -> DateUtil.format(item.getLog_date(),"yyyy/MM").equals(
+                DateUtil.format(conditon.getLog_date(),"yyyy/MM")
+        )).collect(Collectors.toList());
+        return ApiResult.success(list);
+    }
+
     @RequestMapping(value = "/getCheckList", method = {RequestMethod.POST})
     public ApiResult getCheckList(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {

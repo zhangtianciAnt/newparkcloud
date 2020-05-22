@@ -60,6 +60,12 @@ public class Securitydetail extends BaseModel {
     @Column(name = "ENTRYMANAGER")
     private String entrymanager;
 
+    @Column(name = "COMPANY")
+    private String company;
+
+    @Column(name = "TIMEA")
+    private String timea;
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 

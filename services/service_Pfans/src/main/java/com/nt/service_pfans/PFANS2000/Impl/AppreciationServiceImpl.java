@@ -2,10 +2,13 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.Appreciation;
 import com.nt.service_pfans.PFANS2000.AppreciationService;
 import com.nt.service_pfans.PFANS2000.mapper.AppreciationMapper;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +40,9 @@ public class AppreciationServiceImpl implements AppreciationService {
 
     @Autowired
     private AppreciationMapper appreciationMapper;
+
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public void deleteteappreciation(Appreciation appreciation, TokenModel tokenModel) throws Exception {
@@ -83,25 +91,43 @@ public class AppreciationServiceImpl implements AppreciationService {
                         continue;
                     }
                     String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if (!Pattern.matches(click, value.get(4).toString())) {
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
-                        continue;
-                    }
-                    if (value.size() > 4) {
-                        if (value.get(4).toString().length() > 20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
-                            continue;
-                        }
-                    }
+//                    if (!Pattern.matches(click, value.get(4).toString())) {
+//                        error = error + 1;
+//                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
+//                        continue;
+//                    }
+//                    if (value.size() > 4) {
+//                        if (value.get(4).toString().length() > 20) {
+//                            error = error + 1;
+//                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
+//                            continue;
+//                        }
+//                    }
                     Query query = new Query();
                     String jobnumber = value.get(1).toString();
+                    appreciation.setAmount(value.get(4).toString());
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         appreciation.setUser_id(customerInfo.getUserid());
                         appreciation.setJobnumber(value.get(1).toString());
+                        if(StringUtils.isNullOrEmpty(value.get(4).toString())){
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setCode(customerInfo.getUserinfo().getRank());
+                            dictionary = dictionaryMapper.select(dictionary).get(0);
+                            Dictionary commentaryDic = new Dictionary();
+                            commentaryDic.setValue1(value.get(3).toString());
+                            commentaryDic.setPcode("PR056");
+                            commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
+                            if(commentaryDic != null){
+                                commentaryDic.setValue2(commentaryDic.getValue2().replace("%", ""));
+                                // 奖金计算
+                                // 月赏与
+                                double monthAppreciation = Double.parseDouble(dictionary.getValue2()) * 1.8d / 12d;
+                                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                                        * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+                            }
+                        }
                     }
                     if (customerInfo == null) {
                         error = error + 1;
@@ -110,7 +136,6 @@ public class AppreciationServiceImpl implements AppreciationService {
                     }
                     appreciation.setGiving_id(Givingid);
                     appreciation.setCommentary(value.get(3).toString());
-                    appreciation.setAmount(value.get(4).toString());
                     appreciation.setRemarks(value.get(5).toString());
                     appreciation.setOther1(value.get(6).toString());
                     appreciation.setOther2(value.get(7).toString());

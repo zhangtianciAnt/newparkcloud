@@ -32,35 +32,35 @@ public class Pfans6009Controller {
     private TokenService tokenService;
 
     @RequestMapping(value = "/getCompanyReport1", method = {RequestMethod.GET})
-    public ApiResult getCompanyReport1(HttpServletRequest request) throws Exception {
+    public ApiResult getCompanyReport1(String groupid,String years, HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getCosts(coststatistics));
+        return ApiResult.success(companyStatisticsService.getCosts(groupid,years));
     }
 
 
     @RequestMapping(value = "/getCompanyReport2", method = {RequestMethod.GET})
-    public ApiResult getCompanyReport2(HttpServletRequest request) throws Exception {
+    public ApiResult getCompanyReport2(String groupid,String years,HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getWorkTimes(coststatistics));
+        return ApiResult.success(companyStatisticsService.getWorkTimes(groupid,years));
     }
 
     @RequestMapping(value = "/getCompanyReport3", method = {RequestMethod.GET})
-    public ApiResult getCompanyReport3(HttpServletRequest request) throws Exception {
+    public ApiResult getCompanyReport3(String groupid,String years,HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getWorkerCounts(coststatistics));
+        return ApiResult.success(companyStatisticsService.getWorkerCounts(groupid,years));
     }
 
     /**
      * 导出Excel
      *
      */
-    @RequestMapping(value = "/downloadExcel", method = { RequestMethod.POST })
-    public ApiResult downloadExcel(HttpServletRequest request, HttpServletResponse resp) {
+    @RequestMapping(value = "/downloadExcel", method = { RequestMethod.GET })
+    public ApiResult downloadExcel(String groupid,String years,HttpServletRequest request, HttpServletResponse resp) {
         try {
-            XSSFWorkbook work =  companyStatisticsService.downloadExcel(request,resp);
+            XSSFWorkbook work =  companyStatisticsService.downloadExcel(groupid,years,request,resp);
             OutputStream os = resp.getOutputStream();// 取得输出流
             String fileName = "任务清单";
             resp.setContentType("application/vnd.ms-excel;charset=utf-8");

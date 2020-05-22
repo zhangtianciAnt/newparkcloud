@@ -55,8 +55,23 @@ public class Wages extends BaseModel {
     @Column(name = "PENSION")
     private String pension;     // 養老・失業・工傷保険基数
 
+    @Column(name = "YANGLAOJS")
+    private String yanglaojs;     // 養老保険基数
+
+    @Column(name = "SHIYEJS")
+    private String shiyejs;     // 失業保険基数
+
+    @Column(name = "GONGSHANGJS")
+    private String gongshangjs;     // 工傷保険基数
+
     @Column(name = "MEDICAL")
     private String medical;     // 医療・生育保険基数
+
+    @Column(name = "YILIAOJS")
+    private String yiliaojs;     // 医療保険基数
+
+    @Column(name = "SHENGYUJS")
+    private String shengyujs;     // 生育保険基数
 
     @Column(name = "ACCUMULATION")
     private String accumulation;        // 住房公积金基数

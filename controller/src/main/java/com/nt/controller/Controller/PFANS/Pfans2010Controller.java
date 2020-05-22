@@ -53,4 +53,16 @@ public class Pfans2010Controller {
         attendanceService.update(attendance, tokenModel);
         return ApiResult.success();
     }
+
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+    @RequestMapping(value = "/updStatus", method = {RequestMethod.POST})
+    public ApiResult updStatus(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendanceService.updStatus(attendance, tokenModel);
+        return ApiResult.success();
+    }
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
 }

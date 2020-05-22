@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Additional;
 import com.nt.service_pfans.PFANS2000.AdditionalService;
@@ -78,34 +79,46 @@ public class AdditionalServiceImpl implements AdditionalService {
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
-                    if (value.get(0).toString().equals("")) {
+                    if(StringUtils.isNullOrEmpty(value.get(1).toString())){
                         continue;
                     }
-                    String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!Pattern.matches(click, value.get(3).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的累计子女教育金额不符合规范，请输入正确的金额，导入失败");
-                        continue;
+                    //String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    String click = "^(-?[1-9]\\d*\\.?\\d*)|(-?0\\.\\d*[1-9])|(-?[0])|(-?[0]\\.\\d*)$";
+
+                    if(!StringUtils.isNullOrEmpty(value.get(3).toString())){
+                        if(!value.get(3).toString().matches(click)){
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的累计子女教育金额不符合规范，请输入正确的金额，导入失败");
+                            continue;
+                        }
                     }
-                    if(!Pattern.matches(click, value.get(4).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的累计住房贷款利息金额不符合规范，请输入正确的金额，导入失败");
-                        continue;
+                    if(!StringUtils.isNullOrEmpty(value.get(4).toString())){
+                        if(!value.get(4).toString().matches(click)){
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的累计住房贷款利息金额不符合规范，请输入正确的金额，导入失败");
+                            continue;
+                        }
                     }
-                    if(!Pattern.matches(click, value.get(5).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的累计住房租金金额不符合规范，请输入正确的金额，导入失败");
-                        continue;
+                    if(!StringUtils.isNullOrEmpty(value.get(5).toString())){
+                        if(!value.get(5).toString().matches(click)){
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的累计住房租金金额不符合规范，请输入正确的金额，导入失败");
+                            continue;
+                        }
                     }
-                    if(!Pattern.matches(click, value.get(6).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的累计赡养老人金额不符合规范，请输入正确的金额，导入失败");
-                        continue;
+                    if(!StringUtils.isNullOrEmpty(value.get(6).toString())){
+                        if(!value.get(6).toString().matches(click)){
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的累计赡养老人金额不符合规范，请输入正确的金额，导入失败");
+                            continue;
+                        }
                     }
-                    if(!Pattern.matches(click, value.get(7).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的累计继续教育金额不符合规范，请输入正确的金额，导入失败");
-                        continue;
+                    if(!StringUtils.isNullOrEmpty(value.get(7).toString())){
+                        if(!value.get(7).toString().matches(click)){
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的累计继续教育金额不符合规范，请输入正确的金额，导入失败");
+                            continue;
+                        }
                     }
                     if (value.size() > 3) {
                         if (value.get(3).toString().length() > 20) {

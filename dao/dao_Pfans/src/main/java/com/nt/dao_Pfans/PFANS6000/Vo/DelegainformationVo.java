@@ -43,8 +43,8 @@ public class DelegainformationVo {
     /**
      * 退场时间
      */
-    @Column(name = "EXITIME")
-    private String exitime;
+    @Column(name = "EXITTIME")
+    private String exittime;
 
 
     /**
@@ -127,6 +127,12 @@ public class DelegainformationVo {
     private String monthlength;
 
     /**
+     * 备注
+     */
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    /**
      * 年度
      */
     @Column(name = "YEAR")
@@ -135,14 +141,14 @@ public class DelegainformationVo {
     /**
      * 协力公司
      */
-    @Column(name = "COMPANY")
-    private String company;
+    @Column(name = "SUPPLIERNAME")
+    private String suppliername;
 
     /**
      * 外注人员ID
      */
-    @Column(name = "SUPPLIERINFOR_ID")
-    private String supplierinfor_id;
+    @Column(name = "ACCOUNT")
+    private String account;
 
     /**
      * 项目名称(中)
@@ -215,4 +221,10 @@ public class DelegainformationVo {
      */
     @Column(name = "VENUETARGET")
     private String venuetarget;
+
+    /**
+     * GROUP_ID
+     */
+    @Column(name = "GROUP_ID")
+    private String group_id;
 }

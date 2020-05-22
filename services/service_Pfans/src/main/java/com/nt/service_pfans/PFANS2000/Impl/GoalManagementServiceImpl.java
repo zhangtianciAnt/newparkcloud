@@ -31,6 +31,11 @@ public class GoalManagementServiceImpl implements GoalManagementService {
     }
 
     @Override
+    public List<GoalManagement> yearsCheck(GoalManagement goalManagement) throws Exception {
+        return goalmanagementMapper.yearsCheck(goalManagement);
+    }
+
+    @Override
     public void upd (GoalManagement goalManagement, TokenModel tokenModel) throws Exception {
         goalManagement.preUpdate(tokenModel);
         goalmanagementMapper.updateByPrimaryKeySelective(goalManagement);

@@ -9,15 +9,12 @@
 	team_id,
 	years,
 	months,
-CASE
-	WHEN min( recognitionstate ) - max( recognitionstate ) = -1 THEN
-	'0'
-	WHEN min( recognitionstate ) + max( recognitionstate ) = 0 THEN
-	'0'
-	WHEN max( recognitionstate ) is null or max( recognitionstate ) is  null THEN
-	'0'
-	ELSE '1'
-	END AS recognitionstate
+        CASE WHEN max(recognitionstate) = 1 AND  min(recognitionstate) =1
+        THEN '1'
+        WHEN max(recognitionstate) = 1 AND min(IF(IFNULL(recognitionstate,'')='',1,recognitionstate)) = 1
+        THEN '1'
+        ELSE '0'
+        END AS recognitionstate
 FROM
 	attendance
 WHERE status = '0'
@@ -92,4 +89,10 @@ GROUP BY
         and attendance.dates &lt;= #{dates}
         and attendance.user_id = #{user_id}
     </select>
+    <update id="updStatus" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance">
+        update attendance set RECOGNITIONSTATE = '1'
+        where USER_ID = #{user_id}
+        and MONTHS = #{months}
+        and YEARS = #{years}
+    </update>
 </mapper>

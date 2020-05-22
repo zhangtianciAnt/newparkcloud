@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,16 +75,18 @@ public class Pfans1012Controller {
                             tl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ119");
-                    for (Dictionary iteA : curListA) {
-                        if (iteA.getCode().equals(tl.getAccountcode())) {
-                            //科目名
-                            tl.setAccountcode(iteA.getValue1());
-                            //科目代码
+                    if(tl.getAccountcode().length() > 5){
+                        String traAccountcode = tl.getAccountcode().substring(0,5);
+                        List<Dictionary> curListA = dictionaryService.getForSelect(traAccountcode);
+                        for (Dictionary iteA : curListA) {
+                            if (iteA.getCode().equals(tl.getAccountcode())) {
+                                //科目名
+                                tl.setAccountcode(iteA.getValue1());
+                                //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                            }
                         }
                     }
-
                 }
             }
             //采购明细
@@ -96,60 +100,65 @@ public class Pfans1012Controller {
                             pl.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ121");
-                    for (Dictionary iteA : curListA) {
-                        if (iteA.getCode().equals(pl.getAccountcode())) {
-                            //科目名
-                            pl.setAccountcode(iteA.getValue1());
-                            //科目代码
+                    if(pl.getAccountcode().length() > 5) {
+                        String purAccountcode = pl.getAccountcode().substring(0,5);
+                        List<Dictionary> curListA = dictionaryService.getForSelect(purAccountcode);
+                        for (Dictionary iteA : curListA) {
+                            if (iteA.getCode().equals(pl.getAccountcode())) {
+                                //科目名
+                                pl.setAccountcode(iteA.getValue1());
+                                //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                            }
                         }
                     }
-
                 }
             }
             //其他费用明细
             List<OtherDetails> othlist = pubvo.getOtherdetails();
             String tro = "";
-            if(othlist.size() > 0){
+            if(othlist.size() > 0) {
                 tro = "其他费用";
-                for(OtherDetails ol : othlist){
+                for (OtherDetails ol : othlist) {
                     List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                     for (Dictionary ite : curListT) {
                         if (ite.getCode().equals(ol.getBudgetcoding())) {
-                            ol.setBudgetcoding(ite.getValue2() + "_"+ ite.getValue3());
+                            ol.setBudgetcoding(ite.getValue2() + "_" + ite.getValue3());
                         }
                     }
-                    List<Dictionary> curListA = dictionaryService.getForSelect("PJ130");
-                    for (Dictionary iteA : curListA) {
-                        if (iteA.getCode().equals(ol.getAccountcode())) {
-                            //科目名
-                            ol.setAccountcode(iteA.getValue1());
-                            //科目代码
+                    if (ol.getAccountcode().length() > 5) {
+                        String othAccountcode = ol.getAccountcode().substring(0,5);
+                        List<Dictionary> curListA = dictionaryService.getForSelect(othAccountcode);
+                        for (Dictionary iteA : curListA) {
+                            if (iteA.getCode().equals(ol.getAccountcode())) {
+                                //科目名
+                                ol.setAccountcode(iteA.getValue1());
+                                //科目代码
 //                            tl.setSubjectnumber(iteA.getValue2());
+                            }
                         }
                     }
+                }
+            }
 
-                }
-            }
-            String str = "";
-            if(pubvo.getTrafficdetails().size() > 0){
-                str = "交通费";
-            }
-            if(pubvo.getPurchasedetails().size() > 0){
-                if(str == ""){
-                    str = "采购费";
-                } else {
-                    str += ","+"采购费";
-                }
-            }
-            if(pubvo.getOtherdetails().size() > 0){
-                if(str == ""){
-                    str = "其他费用";
-                } else {
-                    str += ","+"其他费用";
-                }
-            }
+//            String str = "";
+//            if(pubvo.getTrafficdetails().size() > 0){
+//                str = "交通费";
+//            }
+//            if(pubvo.getPurchasedetails().size() > 0){
+//                if(str == ""){
+//                    str = "采购费";
+//                } else {
+//                    str += ","+"采购费";
+//                }
+//            }
+//            if(pubvo.getOtherdetails().size() > 0){
+//                if(str == ""){
+//                    str = "其他费用";
+//                } else {
+//                    str += ","+"其他费用";
+//                }
+//            }
             //模块
             List<Dictionary> curList1 = dictionaryService.getForSelect("PJ002");
             for (Dictionary item : curList1) {
@@ -157,12 +166,16 @@ public class Pfans1012Controller {
                     pubvo.getPublicexpense().setModuleid(item.getValue1());
                 }
             }
+            //申请人图片
+            String userim = "";
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(pubvo.getPublicexpense().getUser_id()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 //申请人
                 pubvo.getPublicexpense().setUser_id(customerInfo.getUserinfo().getCustomername());
+                userim = customerInfo.getUserinfo().getCustomername();
+                userim = sign.startGraphics2D(userim);
                 //部门
                 pubvo.getPublicexpense().setGroupid(customerInfo.getUserinfo().getGroupname());
             }
@@ -180,46 +193,66 @@ public class Pfans1012Controller {
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList1 = customerInfo.getUserinfo().getCustomername();
-//                    wfList1 = sign.startGraphics2D(wfList1);
+                    wfList1 = sign.startGraphics2D(wfList1);
                 }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList2 = customerInfo.getUserinfo().getCustomername();
-//                    wfList2 = sign.startGraphics2D(wfList2);
+                    wfList2 = sign.startGraphics2D(wfList2);
                 }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList3 = customerInfo.getUserinfo().getCustomername();
+                    wfList3 = sign.startGraphics2D(wfList3);
                 }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList4 = customerInfo.getUserinfo().getCustomername();
+                    wfList4 = sign.startGraphics2D(wfList4);
                 }
             }
             Map<String, Object> data = new HashMap<>();
+        String str_format = "";
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        if (pubvo.getPublicexpense().getRmbexpenditure() != null) {
+            BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getRmbexpenditure());
+            str_format = df.format(bd);
+            pubvo.getPublicexpense().setRmbexpenditure(str_format);
+        }
+        for (int k = 0; k < pubvo.getTrafficdetails().size(); k++) {
+            if (pubvo.getTrafficdetails().get(k).getRmb() != null) {
+                BigDecimal bd = new BigDecimal(pubvo.getTrafficdetails().get(k).getRmb());
+                str_format = df.format(bd);
+                pubvo.getTrafficdetails().get(k).setRmb(str_format);
+            }
+        }
             data.put("wfList1", wfList1);
             data.put("wfList2", wfList2);
             data.put("wfList3", wfList3);
             data.put("wfList4", wfList4);
+            data.put("userim", userim);
             data.put("trr", trr);
             data.put("tro", tro);
             data.put("pub", pubvo.getPublicexpense());
             data.put("tra", pubvo.getTrafficdetails());
             data.put("pur", pubvo.getPurchasedetails());
             data.put("otd", pubvo.getOtherdetails());
-            data.put("str", str);
             if(pubvo.getTrafficdetails().size() > 0){
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
-//                FileUtil.del("D:\\PFANS\\image\\" + "/" + wfList1);
             } else {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
             }
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+            FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
     @RequestMapping(value = "/get",method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception{
@@ -228,6 +261,16 @@ public class Pfans1012Controller {
         publicExpense.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(publicExpenseService.get(publicExpense));
     }
+
+    @RequestMapping(value = "/getpublicelist",method = {RequestMethod.GET})
+    public ApiResult getpublicelist(String publicexpenseid, HttpServletRequest request) throws Exception {
+        if (publicexpenseid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenMode1 = tokenService.getToken(request);
+        return ApiResult.success(publicExpenseService.getpublicelist(publicexpenseid));
+    }
+
     @RequestMapping(value = "/selectById",method = {RequestMethod.GET})
     public ApiResult selectById(String publicexpenseid, HttpServletRequest request) throws Exception {
         if (publicexpenseid == null) {
@@ -236,6 +279,7 @@ public class Pfans1012Controller {
         TokenModel tokenMode1 = tokenService.getToken(request);
         return ApiResult.success(publicExpenseService.selectById(publicexpenseid));
     }
+
     @RequestMapping(value = "/insert",method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
         if (publicExpenseVo == null) {

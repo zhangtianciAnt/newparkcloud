@@ -43,11 +43,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class LogManagementServiceImpl implements LogManagementService {
+
+    @Override
+    public void delete(LogManagement logmanagement) throws Exception {
+        logmanagementmapper.delete(logmanagement);
+    }
 
     @Autowired
     private LogManagementMapper logmanagementmapper;
@@ -74,8 +80,19 @@ public class LogManagementServiceImpl implements LogManagementService {
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(logmanagement.getCreateby()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-        if(customerInfo != null && customerInfo.getUserinfo() != null){
+        if (customerInfo != null && customerInfo.getUserinfo() != null) {
             logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            if (logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty()) {
+                logmanagement.setGroup_id(customerInfo.getUserinfo().getGroupid());
+            }
+        }
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setAccount(logmanagement.getCreateby());
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        if (expatriatesinforList.size() > 0) {
+            if (logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty()) {
+                logmanagement.setGroup_id(expatriatesinforList.get(0).getGroup_id());
+            }
         }
         logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
@@ -86,16 +103,21 @@ public class LogManagementServiceImpl implements LogManagementService {
     public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
         return logmanagementmapper.select(logmanagement);
     }
+
     @Override
     public List<LogManagement> getCheckList(LogManagement logmanagement) throws Exception {
-        return logmanagementmapper.select(logmanagement);
+        LogManagement logmanage = new LogManagement();
+        logmanage.setCreateby(logmanagement.getCreateby());
+        return logmanagementmapper.select(logmanage);
     }
+
     @Override
-    public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception{
+    public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception {
         return projectsystemMapper.select(projectsystem);
     }
+
     @Override
-    public List<LogmanagementConfirmVo> getProjectList(String StrFlg,String strDate,TokenModel tokenModel) throws Exception {
+    public List<LogmanagementConfirmVo> getProjectList(String StrFlg, String strDate, TokenModel tokenModel) throws Exception {
         //获取查看人的groupid
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
@@ -108,19 +130,18 @@ public class LogManagementServiceImpl implements LogManagementService {
         expatriatesinfor.setGroup_id(Groupid);
         //groupid下所有外协人员
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
-        if(expatriatesinforList.size() > 0){
+        if (expatriatesinforList.size() > 0) {
             List<String> ownerList = new ArrayList<String>();
-            for(Expatriatesinfor ex : expatriatesinforList){
+            for (Expatriatesinfor ex : expatriatesinforList) {
                 //ownerList.add(ex.getAccount());
                 tokenModel.getOwnerList().add(ex.getAccount());
             }
         }
         List<LogmanagementConfirmVo> Result = new ArrayList<LogmanagementConfirmVo>();
-        if(StrFlg.equals("1")){
-            Result = logmanagementmapper.getProjectList(tokenModel.getOwnerList(),tokenModel.getUserId());
-        }
-        else{
-            Result = logmanagementmapper.getunProjectList(strDate,tokenModel.getOwnerList());
+        if (StrFlg.equals("1")) {
+            Result = logmanagementmapper.getProjectList(tokenModel.getOwnerList(), tokenModel.getUserId());
+        } else {
+            Result = logmanagementmapper.getunProjectList(strDate, tokenModel.getOwnerList());
         }
         return Result;
     }
@@ -131,35 +152,41 @@ public class LogManagementServiceImpl implements LogManagementService {
         List<LogmanagementVo2> checkList = logmanagementmapper.getcheckList();
         if (checkList != null && checkList.size() > 0) {
             Result = logmanagementmapper.getcheckList3();
-        }else{
+        } else {
             Result = logmanagementmapper.getcheckList2();
         }
+//add-ws-No.179
+        String project_id = logmanagement.getProject_id();
+        Result = Result.stream()
+                .filter(item -> (item.getCOMPANYPROJECTS_ID().equals(project_id)))
+                .collect(Collectors.toList());
+        //add-ws-No.179
         return Result;
     }
 
     @Override
-    public List<LogmanagementStatusVo> getTimestart(String project_id,String starttime,String endtime) throws Exception {
-        return logmanagementmapper.getTimestart(project_id,starttime,endtime);
+    public List<LogmanagementStatusVo> getTimestart(String project_id, String starttime, String endtime) throws Exception {
+        return logmanagementmapper.getTimestart(project_id, starttime, endtime);
     }
 
     @Override
-    public List<LogmanagementStatusVo> getGroupTimestart(List<String> createby,String starttime,String endtime) throws Exception {
-        return logmanagementmapper.getGroupTimestart(createby,starttime,endtime);
+    public List<LogmanagementStatusVo> getGroupTimestart(List<String> createby, String starttime, String endtime) throws Exception {
+        return logmanagementmapper.getGroupTimestart(createby, starttime, endtime);
     }
 
     @Override
-    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo,TokenModel tokenModel) throws Exception {
+    public void updateTimestart(LogmanagementStatusVo LogmanagementStatusVo, TokenModel tokenModel) throws Exception {
         List<LogManagement> loglist = LogmanagementStatusVo.getLogmanagement();
         String confirmstatus = LogmanagementStatusVo.getConfirmstatus();
         String starttime = LogmanagementStatusVo.getStarttime();
         String endtime = LogmanagementStatusVo.getEndtime();
-        if(loglist.size() > 0){
-            for(int i = 0;i < loglist.size(); i++){
+        if (loglist.size() > 0) {
+            for (int i = 0; i < loglist.size(); i++) {
                 String createby = loglist.get(i).getCreateby();
-                logmanagementmapper.updateTimestart(createby,confirmstatus,starttime,endtime);
+                logmanagementmapper.updateTimestart(createby, confirmstatus, starttime, endtime);
 
                 //拒绝之后发代办
-                if(confirmstatus.equals("2")){
+                if (confirmstatus.equals("2")) {
                     ToDoNotice toDoNotice = new ToDoNotice();
                     toDoNotice.setTitle("您有一个项目日志填写被拒绝！");
                     toDoNotice.setType("2");//消息
@@ -172,6 +199,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             }
         }
     }
+
     @Override
     public List<LogManagement> gettlist() throws Exception {
         return logmanagementmapper.gettlist();
@@ -235,12 +263,12 @@ public class LogManagementServiceImpl implements LogManagementService {
                         date1 = date1.substring(8, 10);
                         if (Integer.parseInt(date1) > 31) {
                             error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的日子，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的日子，导入失败");
                             continue;
                         }
                         if (Integer.parseInt(date) > 12) {
                             error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的日期格式错误，请输入正确的月份，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的日期格式错误，请输入正确的月份，导入失败");
                             continue;
                         }
                     }
@@ -270,8 +298,8 @@ public class LogManagementServiceImpl implements LogManagementService {
                     logmanagement.preInsert(tokenModel);
                     PersonalProjects personalprojects = new PersonalProjects();
                     List<PersonalProjects> personalprojectsList = personalprojectsMapper.select(personalprojects);
-                    for(PersonalProjects projects : personalprojectsList){
-                        if( projects.getProject_name().equals(value.get(2).toString())){
+                    for (PersonalProjects projects : personalprojectsList) {
+                        if (projects.getProject_name().equals(value.get(2).toString())) {
                             logmanagement.setProject_id(projects.getProject_id());
                         }
                     }
@@ -290,6 +318,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             throw new LogicalException(e.getMessage());
         }
     }
+
     @SuppressWarnings("rawtypes")
     @Override
     public String downloadUserModel() throws LogicalException {

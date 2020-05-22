@@ -12,4 +12,8 @@ public interface AttendanceService {
     List<Attendance> getAttendancelist(Attendance attendance) throws Exception;
 
     void update(Attendance attendance, TokenModel tokenModel) throws Exception;
+
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+    void updStatus(Attendance attendance, TokenModel tokenModel) throws Exception;
+    //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
 }

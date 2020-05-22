@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Notification;
@@ -116,6 +117,7 @@ public class Pfans1008Controller {
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList1 = customerInfo.getUserinfo().getCustomername();
+                wfList1 = sign.startGraphics2D(wfList1);
             }
         }
         //字典
@@ -198,6 +200,7 @@ public class Pfans1008Controller {
         data.put("CtrTL", CtrTL);
         data.put("CtrGM", CtrGM);
         ExcelOutPutUtil.OutPutPdf("固定资产·软件移转申请", "gudingzichanzy.xls", data, response);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
         }
 //    }
 }

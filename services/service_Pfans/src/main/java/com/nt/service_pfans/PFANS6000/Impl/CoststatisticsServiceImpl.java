@@ -1,11 +1,13 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS6000.*;
+import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
-import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -30,6 +32,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,7 +51,13 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     private PricesetMapper pricesetMapper;
 
     @Autowired
+    private PricesetGroupMapper pricesetGroupMapper;
+
+    @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
+
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
@@ -56,27 +65,64 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     }
 
     @Override
-    public Integer insertCoststatistics(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
-        coststatisticsMapper.delete(coststatistics);
+    public List<Coststatistics> getCostListBygroupid(String groupid) throws Exception {
+        return coststatisticsMapper.selectBygroupid(groupid);
+    }
 
-        List<Coststatistics> allCostList = getCostList(coststatistics, tokenModel);
+    @Override
+    public Integer insertCoststatistics(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+
+
+        List<Coststatistics> allCostList = getCostList(groupid,coststatistics, tokenModel);
+
+        for (Coststatistics c : allCostList) {
+
+            coststatistics.setBpname(c.getBpname());
+            coststatistics.setYears(String.valueOf(year).trim());
+            coststatisticsMapper.delete(coststatistics);
+        }
 
         int insertCount = 0;
         if ( allCostList.size() > 0 ) {
-            insertCount = coststatisticsMapper.insertAll(allCostList);
-        }
-
+                insertCount = coststatisticsMapper.insertAll(allCostList);
+            }
         return insertCount;
     }
 
-    private List<Coststatistics> getCostList(Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+    private List<Coststatistics> getCostList(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         //获取经费
         Variousfunds variousfunds = new Variousfunds();
 //        variousfunds.setOwner(tokenModel.getUserId());
-        List<Variousfunds> allVariousfunds = variousfundsMapper.select(variousfunds);
+        Calendar calendar = Calendar.getInstance();
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, String.valueOf(year));
         Map<String, Double> variousfundsMap = new HashMap<String, Double>();
         for ( Variousfunds v : allVariousfunds ) {
-            String key = v.getBpplayer() + v.getPlmonthplan();
+            String plan = "";
+            if(v.getPlmonthplan()!=null && !v.getPlmonthplan().isEmpty())
+            {
+                Dictionary dictionary =new Dictionary();
+                dictionary = dictionaryMapper.selectByPrimaryKey(v.getPlmonthplan().trim());
+                if(dictionary!=null)
+                {
+                    plan = dictionary.getValue1().trim().replace("月","");
+                }
+            }
+            String key = v.getBpplayer() + plan;
             Double value = 0.0;
             try {
                 value = Double.parseDouble(v.getPayment().trim());
@@ -87,10 +133,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             variousfundsMap.put(key, value);
         }
 
-        Map<String, Double> pricesetMap = getUserPriceMap();
+        Map<String, Double> pricesetMap = getUserPriceMapBygroupid(groupid, String.valueOf(year));
 
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setGroup_id(groupid);
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> companyMap = new HashMap<String, String>();
         for ( Expatriatesinfor ex : companyList) {
@@ -98,11 +145,17 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             String value = ex.getSupplierinfor_id();
             companyMap.put(key, value);
         }
-        Calendar calendar= Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -3);
-        int year = calendar.get(Calendar.YEAR);
+//        Calendar calendar = Calendar.getInstance();
+//        //calendar.add(Calendar.MONTH, -3);
+//        int year = 0;
+//        int month = calendar.get(Calendar.MONTH);
+//        if(month >= 1 && month <= 3) {
+//            year = calendar.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
         // 获取活用情报信息
-        List<Coststatistics> allCostList = coststatisticsMapper.getExpatriatesinfor(year);
+        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(year, groupid);
         for ( Coststatistics c : allCostList ) {
             // 合计费用
             double totalmanhours = 0;
@@ -128,7 +181,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 totalcost += cost;
                 if ( i%3 ==0 ) {
                     // 经费处理
-                    String variousKey = c.getBpname() + i;
+                    String variousKey = c.getBpname1() + i;
                     double various = 0;
                     if ( variousfundsMap.containsKey(variousKey) ) {
                         various = variousfundsMap.get(variousKey);
@@ -164,49 +217,99 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public Map<String, Double> getUserPriceMap() throws Exception {
         // 获取所有人的单价设定
         Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH) + 1;
-        String startTime = "";
-        String endTime = "";
-        if(month >= 1 && month <= 4) {
-            startTime = String.valueOf(now.get(Calendar.YEAR) - 1) + "-" + "04" + "-" + "01";
-            endTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "03" + "-" + "31";
+        int year = 0;
+        int month = now.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = now.get(Calendar.YEAR) - 1;
         }else {
-            startTime = String.valueOf(now.get(Calendar.YEAR)) + "-" + "04" + "-" + "01";
-            endTime = String.valueOf(now.get(Calendar.YEAR) + 1) + "-" + "03" + "-" + "31";
+            year = now.get(Calendar.YEAR);
         }
 
-        List<Priceset> allPriceset = pricesetMapper.selectByYear(startTime, endTime);
+        List<Priceset> allPriceset = pricesetMapper.selectByYear(String.valueOf(year).trim());
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = sdf.parse(startTime);
+        //DateFormat df = DateFormat.getDateInstance();
+        //Date startDate = sdf.parse(startTime);
         for ( Priceset priceset : allPriceset ) {
-            Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
-            int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
+            //Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
+
+            //int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
             String totalUnit = "0";
             if(StringUtils.isNotBlank(priceset.getTotalunit())){
                 totalUnit = priceset.getTotalunit().trim();
             }
-            if ( pointDate.before(startDate) ) {
-                for ( int i=1; i<=12; i++) {
-                    String key = priceset.getUser_id() + "price" + i;
-                    Double value = 0.0;
-                    value = Double.parseDouble(totalUnit);
-                    pricesetMap.put(key, value);
-                }
-            }else {
-                if(startM >= 1 && startM<=3){
-                    for (int k = startM; k<=3; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-                    }
-                }else {
-                    for (int k = startM; k<=12; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-                    }
-                    for (int k = 1; k<=3; k++) {
-                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-                    }
-                }
+//            String key = priceset.getUser_id() + "price" + startM;
+//            Double value = 0.0;
+//            value = Double.parseDouble(totalUnit);
+//            pricesetMap.put(key, value);
+            PricesetGroup pricesetGroup = new PricesetGroup();
+            pricesetGroup.setPricesetgroup_id(priceset.getPricesetgroup_id());
+            pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
+            int i = 0;
+            i = Integer.parseInt(pricesetGroup.getPd_date().substring(5, 7));
+            String key = priceset.getUser_id() + "price" + i;
+            Double value = 0.0;
+            value = Double.parseDouble(totalUnit);
+            pricesetMap.put(key, value);
+
+//            for ( int i=1; i<=12; i++) {
+//                    String key = priceset.getUser_id() + "price" + i;
+//                    Double value = 0.0;
+//                    value = Double.parseDouble(totalUnit);
+//                    pricesetMap.put(key, value);
+//            }
+//            if ( pointDate.before(startDate) ) {
+//
+//            }else {
+//                if(startM >= 1 && startM<=3){
+//                    for (int k = startM; k<=3; k++) {
+//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
+//                    }
+//                }else {
+//                    for (int k = startM; k<=12; k++) {
+//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
+//                    }
+//                    for (int k = 1; k<=3; k++) {
+//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
+//                    }
+//                }
+//            }
+
+        }
+        return pricesetMap;
+    }
+
+    @Override
+    public Map<String, Double> getUserPriceMapBygroupid(String groupid,String years) throws Exception {
+        // 获取所有人的单价设定
+//        Calendar now = Calendar.getInstance();
+//        int year = 0;
+//        int month = now.get(Calendar.MONTH);
+//        if(month >= 1 && month <= 3) {
+//            year = now.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = now.get(Calendar.YEAR);
+//        }
+
+        List<Priceset> allPriceset = pricesetMapper.selectBygroupid(Integer.valueOf(years),groupid);
+
+        Map<String, Double> pricesetMap = new HashMap<String, Double>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for ( Priceset priceset : allPriceset ) {
+            String totalUnit = "0";
+            if(StringUtils.isNotBlank(priceset.getTotalunit())){
+                totalUnit = priceset.getTotalunit().trim();
             }
+            PricesetGroup pricesetGroup = new PricesetGroup();
+            pricesetGroup.setPricesetgroup_id(priceset.getPricesetgroup_id());
+            pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
+            int i = 0;
+            i = Integer.parseInt(pricesetGroup.getPd_date().substring(5, 7));
+            String key = priceset.getUser_id() + "price" + i;
+            Double value = 0.0;
+            value = Double.parseDouble(totalUnit);
+            pricesetMap.put(key, value);
+
         }
         return pricesetMap;
     }

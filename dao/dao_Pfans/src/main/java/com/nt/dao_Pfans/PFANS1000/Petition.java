@@ -42,7 +42,6 @@ public class Petition extends BaseModel {
     @Column(name = "PLACECHINESE")
     private String placechinese;
 
-
     @Column(name = "PJNAMEJAPANESE")
     private String pjnamejapanese;
 
@@ -54,7 +53,6 @@ public class Petition extends BaseModel {
 
     @Column(name = "OPENINGDATE")
     private Date openingdate;
-
 
     @Column(name = "ENDDATE")
     private Date enddate;

@@ -157,5 +157,16 @@ public class LoanApplication extends BaseModel {
      */
     @Column(name = "REASONFORDELAY")
     private String reasonfordelay;
-
+//add-ws-N0.70-相应字段添加
+    /**
+     * 决裁名
+     */
+    @Column(name = "JUDGEMENTS_NAME")
+    private String judgements_name;
+    /**
+     * 收款人
+     */
+    @Column(name = "USER_NAME")
+    private String user_name;
+//add-ws-N0.70-相应字段添加
 }
