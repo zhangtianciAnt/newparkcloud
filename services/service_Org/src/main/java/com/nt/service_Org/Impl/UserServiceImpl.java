@@ -1107,8 +1107,10 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get(0)) + "）" + "的 給料変更日 未填写");
                     }
                     //如果有給料変更日，工资履历不能为空
-                    if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                        }
                     }
                     userinfo.setGridData(cupList);
                     userinfo.setPostData(cupList1);
@@ -1601,8 +1603,10 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
                     }
                     //如果有給料変更日，工资履历不能为空
-                    if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                        }
                     }
                     //降序
                     if (cupList.size() > 0) {
