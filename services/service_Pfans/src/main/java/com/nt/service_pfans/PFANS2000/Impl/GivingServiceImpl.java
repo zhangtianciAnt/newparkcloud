@@ -1116,9 +1116,11 @@ public class GivingServiceImpl implements GivingService {
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
         // UPD_GBB_2020/05/20 ALL
         String thisMouth = "0";
+        //当月工资
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-            thisMouth = customerInfo.getUserinfo().getBasic();
+            thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
         }
+        //上月工资
         if(addMouth == 0){
             Calendar time = Calendar.getInstance();
             time.add(Calendar.MONTH, addMouth);
@@ -1133,8 +1135,8 @@ public class GivingServiceImpl implements GivingService {
                     if(!personal.getDate().equals("Invalid date")){
                         if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
                             // UPD_GBB_2020/05/20
-                            //thisMouth = personal.getAfter();
-                            thisMouth = personal.getBasic();
+                            //thisMouth = personal.getBasic();
+                            thisMouth = String.valueOf(Double.parseDouble(personal.getBasic()) + Double.parseDouble(personal.getDuty()));
                             // UPD_GBB_2020/05/20
                             break;
                         }
