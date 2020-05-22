@@ -235,6 +235,16 @@ public class Pfans1013Controller {
         } else {
             evevo.getEvection().setLoanamount("0.00");
         }
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getEvection().getTotalpay())) {
+            BigDecimal bd = new BigDecimal(evevo.getEvection().getTotalpay());
+            str_format = df.format(bd);
+            if (str_format.equals(".00")) {
+                str_format = "0.00";
+            }
+            evevo.getEvection().setTotalpay(str_format);
+        } else {
+            evevo.getEvection().setTotalpay("0.00");
+        }
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getEvection().getBalance())) {
             BigDecimal bd = new BigDecimal(evevo.getEvection().getBalance());
             str_format = df.format(bd);
