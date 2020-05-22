@@ -692,7 +692,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
 //        UPD_FJL_2020/05/12 --修改人员导入
-        try {
+//        try {
 //            List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -1392,11 +1392,18 @@ public class UserServiceImpl implements UserService {
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
                         if (personal.getBasic() != null || personal.getDuty() != null) {
                             List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
+                            if (perList != null) {
+                                //去除  null 的数据
+                                perList = perList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
+                            }
                             perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
                             int i = 0;
                             for (CustomerInfo.Personal pp : perList) {
                                 i++;
                                 if (i == perList.size()) {
+                                    if (pp.getDate().length() >= 10) {
+                                        pp.setDate(pp.getDate().substring(0, 10));
+                                    }
                                     int aa = Integer.valueOf(personal.getDate().replace("-", ""));
                                     int bb = Integer.valueOf(pp.getDate().replace("-", ""));
                                     if (aa >= bb) {
@@ -1650,8 +1657,8 @@ public class UserServiceImpl implements UserService {
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
+//        } catch (Exception e) {
+//            throw new LogicalException(e.getMessage());
+//        }
     }
 }
