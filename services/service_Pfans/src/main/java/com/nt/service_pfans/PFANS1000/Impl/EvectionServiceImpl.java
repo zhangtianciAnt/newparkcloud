@@ -97,6 +97,7 @@ public class EvectionServiceImpl implements EvectionService {
             String budgetcoding = getProperty(o, "budgetcoding");
             String currency = getProperty(o, "currency");
             String subjectnumber = getProperty(o, "subjectnumber");
+            String redirict = getProperty(o, "redirict");
             float rmb = getPropertyFloat(o, "rmb");
             float subsidies = getPropertyFloat(o, "subsidies");
             float foreigncurrency = getPropertyFloat(o, "foreigncurrency");
@@ -115,6 +116,16 @@ public class EvectionServiceImpl implements EvectionService {
             if (accountcode.equals("PJ132001") || accountcode.equals("PJ119001")) {
                 AccommodationDetails accommodationdetails = new AccommodationDetails();
                 resultMap.put("住宿费", accommodation);
+                List<Dictionary> dictionaryL = dictionaryService.getForSelect("PJ119");
+                String value1 = dictionaryL.get(4).getValue2();
+                List<Dictionary> dictionary = dictionaryService.getForSelect("PJ132");
+                String value2 = dictionary.get(4).getValue2();
+                if (redirict.equals("0")) {
+                    accommodationdetails.setRedirict(value1);
+                }
+                else if (redirict.equals("1")) {
+                    accommodationdetails.setRedirict(value2);
+                }
                 List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
                 for (Dictionary iteA : curListAc) {
                     if (iteA.getCode().equals(currency)) {
@@ -141,7 +152,8 @@ public class EvectionServiceImpl implements EvectionService {
                 accommodationdetails.setRmb(String.valueOf(bd));
                 accommodationdetails.setSubsidies(String.valueOf(bd3));
                 accommodation.add(accommodationdetails);
-            } else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
+            }
+            else if (accountcode.equals("PJ132002") || accountcode.equals("PJ119002")) {
                 TrafficDetails trafficdetails = new TrafficDetails();
                 resultMap.put("交通费", traffic);
                 List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
@@ -169,7 +181,8 @@ public class EvectionServiceImpl implements EvectionService {
                 trafficdetails.setForeigncurrency(String.valueOf(bd1));
                 trafficdetails.setRmb(String.valueOf(bd));
                 traffic.add(trafficdetails);
-            } else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
+            }
+            else if (accountcode.equals("PJ132007") || accountcode.equals("PJ119007")) {
                 OtherDetails otherdetails = new OtherDetails();
                 resultMap.put("其他费用", other);
                 List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
@@ -651,7 +664,8 @@ public class EvectionServiceImpl implements EvectionService {
                 newtaxCost.setRemarks(getProperty(detail, "accountcode"));
                 newtaxCost.setCurrency("CNY");
                 oldtaxList.add(newtaxCost);
-            } else if (redirictchheck.equals("1")) {
+            }
+            else if (redirictchheck.equals("1")) {
                 List<TravelCost> oldtaxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, oldtaxList);
                 TravelCost newtaxCost = new TravelCost();

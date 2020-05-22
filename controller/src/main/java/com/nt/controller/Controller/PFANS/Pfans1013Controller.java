@@ -100,17 +100,10 @@ public class Pfans1013Controller {
                 }
             }
         }
-        double rmbadd = 0;
-        for (AccommodationDetails as : accommodationlist) {
-            if (as.getSubsidies() != null) {
-                rmbadd += Double.valueOf(as.getSubsidies());
-            }
-            break;
-        }
-
         //住宿费用明细
         List<AccommodationDetails> acclist = evevo.getAccommodationdetails();
         String tro = "";
+        double rmbadd = 0;
         double aflg = 0;
         double accflg = 0;
         double rmbacc = 0;
@@ -118,6 +111,9 @@ public class Pfans1013Controller {
         if (acclist.size() > 0) {
             tro = "住宿津贴";
             for (AccommodationDetails ac : acclist) {
+                if (ac.getSubsidies() != null) {
+                    rmbadd += Double.valueOf(ac.getSubsidies());
+                }
                 if (ac.getRmb() != null) {
                     rmbacc += Double.valueOf(ac.getRmb());
                 }
@@ -304,6 +300,16 @@ public class Pfans1013Controller {
                 evevo.getAccommodationdetails().get(m).setRmb(str_format);
             } else {
                 evevo.getAccommodationdetails().get(m).setRmb("0.00");
+            }
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getAccommodationdetails().get(m).getSubsidies())) {
+                BigDecimal bd = new BigDecimal(evevo.getAccommodationdetails().get(m).getSubsidies());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0.00";
+                }
+                evevo.getAccommodationdetails().get(m).setSubsidies(str_format);
+            } else {
+                evevo.getAccommodationdetails().get(m).setSubsidies("0.00");
             }
         }
 
