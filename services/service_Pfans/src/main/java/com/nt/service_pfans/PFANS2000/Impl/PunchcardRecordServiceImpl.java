@@ -920,9 +920,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setNursingleave(strlengthtime);
                                                 }
                                             }
-                                            else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013018")
-                                                    || ab.getErrortype().equals("PR013019") || ab.getErrortype().equals("PR013020")) {
-                                                //家长会假// 労災休暇//其他休暇//工伤
+                                            else if (ab.getErrortype().equals("PR013014")  || ab.getErrortype().equals("PR013019")) {
+                                                //家长会假//其他休暇
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                     if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -938,8 +937,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             }
                                             else if (ab.getErrortype().equals("PR013011") || ab.getErrortype().equals("PR013015")
                                                     || ab.getErrortype().equals("PR013016") || ab.getErrortype().equals("PR013017")
-                                                    || ab.getErrortype().equals("PR013021")) {
-                                                //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假
+                                                    || ab.getErrortype().equals("PR013021") || ab.getErrortype().equals("PR013018")
+                                                    || ab.getErrortype().equals("PR013020")) {
+                                                //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假// 労災休暇//工伤
                                                 if (ab.getStatus().equals("7"))
                                                 {
                                                     if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
@@ -1648,9 +1648,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setNursingleave(strlengthtime);
                                             }
                                         }
-                                        else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013018")
-                                                || ab.getErrortype().equals("PR013019") || ab.getErrortype().equals("PR013020")) {
-                                            //家长会假// 労災休暇//其他休暇//工伤
+                                        else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013019")) {
+                                            //家长会假//其他休暇
 
                                             if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                 if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
@@ -1667,8 +1666,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                         else if (ab.getErrortype().equals("PR013011") || ab.getErrortype().equals("PR013015")
                                                 || ab.getErrortype().equals("PR013016") || ab.getErrortype().equals("PR013017")
-                                                || ab.getErrortype().equals("PR013021")) {
-                                            //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假
+                                                || ab.getErrortype().equals("PR013021") || ab.getErrortype().equals("PR013018")
+                                                || ab.getErrortype().equals("PR013020")) {
+                                            //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假// 労災休暇//工伤
                                             if (ab.getStatus().equals("7"))
                                             {
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
