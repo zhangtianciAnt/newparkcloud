@@ -692,7 +692,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
 //        UPD_FJL_2020/05/12 --修改人员导入
-        try {
+//        try {
 //            List<CustomerInfo> listVo = new ArrayList<CustomerInfo>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -1039,16 +1039,20 @@ public class UserServiceImpl implements UserService {
                     if (item.get("现基本工资") != null) {
                         personal.setBasic(item.get("现基本工资").toString());
                         userinfo.setBasic(item.get("现基本工资").toString());
+                        personal.setDuty("0");
                     }
                     //现职责工资
                     if (item.get("现职责工资") != null) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic())) {
+                            personal.setBasic("0");
+                        }
                         personal.setDuty(item.get("现职责工资").toString());
                         userinfo.setDuty(item.get("现职责工资").toString());
                     }
                     //給料変更日
                     if (item.get("給料変更日") != null && item.get("給料変更日").toString().length() >= 10) {
 //                        personal.setDate(item.get("給料変更日").toString());
-                        String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
+                        String dateSubs = item.get("給料変更日").toString().substring(0, 10);
                         personal.setDate(dateSubs);
                     }
                     //养老保险基数
@@ -1103,8 +1107,10 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get(0)) + "）" + "的 給料変更日 未填写");
                     }
                     //如果有給料変更日，工资履历不能为空
-                    if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                        }
                     }
                     userinfo.setGridData(cupList);
                     userinfo.setPostData(cupList1);
@@ -1392,11 +1398,18 @@ public class UserServiceImpl implements UserService {
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
                         if (personal.getBasic() != null || personal.getDuty() != null) {
                             List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
+                            if (perList != null) {
+                                //去除  null 的数据
+                                perList = perList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
+                            }
                             perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
                             int i = 0;
                             for (CustomerInfo.Personal pp : perList) {
                                 i++;
                                 if (i == perList.size()) {
+                                    if (pp.getDate().length() >= 10) {
+                                        pp.setDate(pp.getDate().substring(0, 10));
+                                    }
                                     int aa = Integer.valueOf(personal.getDate().replace("-", ""));
                                     int bb = Integer.valueOf(pp.getDate().replace("-", ""));
                                     if (aa >= bb) {
@@ -1590,8 +1603,10 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
                     }
                     //如果有給料変更日，工资履历不能为空
-                    if (!StringUtils.isNullOrEmpty(personal.getDate()) && (StringUtils.isNullOrEmpty(personal.getBasic()) || StringUtils.isNullOrEmpty(personal.getDuty()))) {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                        }
                     }
                     //降序
                     if (cupList.size() > 0) {
@@ -1650,8 +1665,8 @@ public class UserServiceImpl implements UserService {
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
+//        } catch (Exception e) {
+//            throw new LogicalException(e.getMessage());
+//        }
     }
 }
