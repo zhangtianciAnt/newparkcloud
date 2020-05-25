@@ -74,6 +74,7 @@ public class Pfans1012Controller {
         query3.addCriteria(Criteria.where("userid").is(user));
         CustomerInfo customerInfolist = mongoTemplate.findOne(query3, CustomerInfo.class);
         if (customerInfolist != null) {
+            pubvo.getPublicexpense().setUser_name(customerInfolist.getUserinfo().getCustomername());
             taa = customerInfolist.getUserinfo().getCaiwupersonalcode();
         }
         //add-ws-5/25-No.196
