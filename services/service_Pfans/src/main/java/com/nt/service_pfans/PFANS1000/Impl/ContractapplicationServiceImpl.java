@@ -5,8 +5,8 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
-//import com.nt.dao_Workflow.Workflowinstance;
-//import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
+import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
@@ -53,8 +53,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private PetitionMapper PetitionMapper;
     @Autowired
     private TokenService tokenService;
-//    @Autowired
-//    private WorkflowinstanceMapper workflowinstanceMapper;
+    @Autowired
+    private WorkflowinstanceMapper workflowinstanceMapper;
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
@@ -290,15 +290,15 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 //                    award2.setOwner(tokenModel.getUserId());
                     List<Award> orgin = AwardMapper.select(award2);
 
-//                    for(Award io:orgin){
-//                        Workflowinstance con = new Workflowinstance();
-//                        con.setDataid(io.getAward_id());
-//                        con.setFormid("/PFANS1030View");
-//                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-//                        if(workflowinstanceMapper.select(con).size() > 0){
-//                            throw new LogicalException("决裁书正在审批中，不可更新！");
-//                        }
-//                    }
+                    for(Award io:orgin){
+                        Workflowinstance con = new Workflowinstance();
+                        con.setDataid(io.getAward_id());
+                        con.setFormid("/PFANS1030View");
+                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                        if(workflowinstanceMapper.select(con).size() > 0){
+                            throw new LogicalException("决裁书正在审批中，不可更新！");
+                        }
+                    }
 
                     Award award = new Award();
                     award.preInsert(tokenModel);
@@ -435,15 +435,15 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 //                    award2.setOwner(tokenModel.getUserId());
                     List<Award> orgin = AwardMapper.select(award2);
 
-//                    for(Award io:orgin){
-//                        Workflowinstance con = new Workflowinstance();
-//                        con.setDataid(io.getAward_id());
-//                        con.setFormid("/PFANS1025View");
-//                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-//                        if(workflowinstanceMapper.select(con).size() > 0){
-//                            throw new LogicalException("决裁书正在审批中，不可更新！");
-//                        }
-//                    }
+                    for(Award io:orgin){
+                        Workflowinstance con = new Workflowinstance();
+                        con.setDataid(io.getAward_id());
+                        con.setFormid("/PFANS1025View");
+                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                        if(workflowinstanceMapper.select(con).size() > 0){
+                            throw new LogicalException("决裁书正在审批中，不可更新！");
+                        }
+                    }
 
                     Award award = new Award();
                     award.preInsert(tokenModel);
