@@ -225,6 +225,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     priceset.setGraduation(expatriatesinfor.getGraduation_year());
                     priceset.setCompany(expatriatesinfor.getSuppliername());
                     priceset.setAssesstime(thisDate);
+                    priceset.setUsername(expatriatesinfor.getExpname());
                     priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
                     priceset.setStatus("0");
                     pricesetMapper.insert(priceset);
