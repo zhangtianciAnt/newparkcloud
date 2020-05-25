@@ -124,6 +124,15 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
         }
     }
 
+    //    ADD_FJL_05/25  -- 删除驳回之后无用代办
+    @Override
+    public void delToDoNotice(String todonoticeid) throws Exception {
+        ToDoNotice toDoNotice = new ToDoNotice();
+        toDoNotice.setNoticeid(todonoticeid);
+        todoNoticeMapper.delete(toDoNotice);
+    }
+    //    ADD_FJL_05/25  -- 删除驳回之后无用代办
+
     private MessageHeaders createHeaders(String sessionId) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(sessionId);

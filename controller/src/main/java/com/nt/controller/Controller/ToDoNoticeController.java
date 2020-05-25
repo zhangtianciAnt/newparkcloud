@@ -85,4 +85,16 @@ public class ToDoNoticeController {
         }
         return ApiResult.success();
     }
+
+    //    ADD_FJL_05/25  -- 删除驳回之后无用代办
+    @RequestMapping(value = "/delToDoNotice", method = {RequestMethod.GET})
+    public ApiResult delToDoNotice(String todonoticeid, HttpServletRequest request) throws Exception {
+        if (todonoticeid == null || StringUtils.isEmpty(todonoticeid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        toDoNoticeService.delToDoNotice(todonoticeid);
+        return ApiResult.success();
+    }
+    //    ADD_FJL_05/25  -- 删除驳回之后无用代办
 }
