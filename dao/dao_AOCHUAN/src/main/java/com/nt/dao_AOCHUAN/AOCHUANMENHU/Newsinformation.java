@@ -41,6 +41,9 @@ public class Newsinformation extends BaseModel {
     @Column(name = "NEWSCONTENT")
     private String newscontent;
 
+    @Column(name = "BACKGROUNDCOLOR")
+    private String backgroundcolor;
+
 
 
 
