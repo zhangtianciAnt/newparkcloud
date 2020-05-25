@@ -237,6 +237,7 @@ public class AssetsServiceImpl implements AssetsService {
 
                 if (!StringUtils.isEmpty(trim(value.get(3)))) {
                     Assets condition = new Assets();
+                    checkBarCode(trim(value.get(3)));
                     condition.setBarcode(value.get(3).toString());
                     List<Assets> ls = assetsMapper.select(condition);
                     if (ls.size() > 0) {
@@ -280,16 +281,16 @@ public class AssetsServiceImpl implements AssetsService {
                     // 工号
                     // todo 用户信息未导入，此段先注掉
                     if(!StringUtils.isEmpty(trim(value.get(2)))){
-//                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(2).toString());
-//                        if (customerInfo != null) {
-//                            assets.setPrincipal(customerInfo.getUserid());
-//                        }
-//                        if (customerInfo == null) {
-//                            error = error + 1;
-//                            Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
-//                            continue;
-//                        }
-                        assets.setPrincipal(trim(value.get(2)));
+                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(2).toString());
+                        if (customerInfo != null) {
+                            assets.setPrincipal(customerInfo.getUserid());
+                        }
+                        if (customerInfo == null) {
+                            error = error + 1;
+                            Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                            continue;
+                        }
+//                        assets.setPrincipal(trim(value.get(2)));
                     }
 
                     // 条码类型
@@ -422,24 +423,24 @@ public class AssetsServiceImpl implements AssetsService {
 
                         // 輸出部門担当者, 現場担当者, 現場実施者, 現場担当者, 輸出部門担当者, 現場TL, 輸出部門TL
                         // todo 用户信息未导入，此段先注掉
-//                        int[] customerCols = {19, 22, 26, 31, 32, 35, 36};
-//                        for ( int customerCol : customerCols ) {
-//                            String val = trim(value.get(customerCol));
-//                            if ( StringUtils.hasText(val) ) {
-//                                CustomerInfo info = this.getCustomerInfo(val);
-//                                if (info == null) {
-//                                    error = error + 1;
-//                                    Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
-//                                    hasErr = true;
-//                                    break;
-//                                } else {
-//                                    value.set(customerCol, info.getUserid());
-//                                }
-//                            }
-//                        }
-//                        if ( hasErr ) {
-//                            continue;
-//                        }
+                        int[] customerCols = {19, 22, 26, 31, 32, 35, 36};
+                        for (int customerCol : customerCols) {
+                            String val = trim(value.get(customerCol));
+                            if (StringUtils.hasText(val)) {
+                                CustomerInfo info = this.getCustomerInfo(val);
+                                if (info == null) {
+                                    error = error + 1;
+                                    Result.add("模板第" + lineNo + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                                    hasErr = true;
+                                    break;
+                                } else {
+                                    value.set(customerCol, info.getUserid());
+                                }
+                            }
+                        }
+                        if (hasErr) {
+                            continue;
+                        }
 
                         // 是否处理 否->0  是->1
                         int[] iTrueCols = {17, 18, 21, 28, 29, 30, 34};
@@ -474,6 +475,7 @@ public class AssetsServiceImpl implements AssetsService {
                     assetsMapper.updateByPrimaryKey(assets);
                 } else {
                     if (!StringUtils.isEmpty(trim(value.get(3)))) {
+                        checkBarCode(trim(value.get(3)));
                         assets.setBarcode(trim(value.get(3)));
                     } else {
                         assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
@@ -500,7 +502,19 @@ public class AssetsServiceImpl implements AssetsService {
         return assetsMapper.getDepartment();
     }
 
+    //    add_fjl_05/25  --添加资产编号重复check
+    private void checkBarCode(String importBarcode) throws Exception {
+        if (StrUtil.isNotBlank(importBarcode)) {
+            Assets conditon = new Assets();
+            conditon.setBarcode(importBarcode);
+            List<Assets> rst = assetsMapper.select(conditon);
+            if (rst.size() > 0) {
+                throw new LogicalException("资产编号 " + importBarcode + " 资产编号重复！");
+            }
+        }
+    }
 
+    //    add_fjl_05/25  --添加资产编号重复check
     private int isDate(String str) {
         try{
             if ( StrUtil.isNotEmpty(str) ) {
