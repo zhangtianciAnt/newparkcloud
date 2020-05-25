@@ -148,7 +148,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         //add-ws-5/25-No.48
         for(LogmanagementConfirmVo listvo: Result){
             String str_format = "";
-            DecimalFormat df = new DecimalFormat("###,###.00");
+            DecimalFormat df = new DecimalFormat("#.00");
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(listvo.getUnconfirm())) {
                 BigDecimal bd = new BigDecimal(listvo.getUnconfirm());
                 str_format = df.format(bd);
