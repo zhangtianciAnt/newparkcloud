@@ -22,6 +22,8 @@ public class Customerbaseinfor extends BaseModel {
 
     private String customernameko;
 
+    private String customernamecn;
+
     private String nation;
 
     private String website;
