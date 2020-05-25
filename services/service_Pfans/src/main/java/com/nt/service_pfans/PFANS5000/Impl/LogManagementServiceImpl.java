@@ -41,6 +41,8 @@ import com.nt.utils.MsgConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -143,6 +145,22 @@ public class LogManagementServiceImpl implements LogManagementService {
         } else {
             Result = logmanagementmapper.getunProjectList(strDate, tokenModel.getOwnerList());
         }
+        //add-ws-5/25-No.48
+        for(LogmanagementConfirmVo listvo: Result){
+            String str_format = "";
+            DecimalFormat df = new DecimalFormat("###,###.00");
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(listvo.getUnconfirm())) {
+                BigDecimal bd = new BigDecimal(listvo.getUnconfirm());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0.00";
+                }
+                listvo.setUnconfirm(str_format);
+            } else {
+                listvo.setUnconfirm("0.00");
+            }
+        }
+        //add-ws-5/25-No.48
         return Result;
     }
 
