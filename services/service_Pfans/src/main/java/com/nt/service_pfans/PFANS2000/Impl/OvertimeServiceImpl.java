@@ -67,9 +67,9 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         overtime.preInsert(tokenModel);
         //总经理新建自动通过
-        if(strtus.equals(AuthConstants.APPROVED_FLAG_YES)){
-            overtime.setStatus(AuthConstants.APPROVED_FLAG_YES);
-        }
+//        if(strtus.equals(AuthConstants.APPROVED_FLAG_YES)){
+//            overtime.setStatus(AuthConstants.APPROVED_FLAG_YES);
+//        }
         overtime.setOvertimeid(UUID.randomUUID().toString());
         overtimeMapper.insert(overtime);
     }
@@ -391,7 +391,7 @@ public class OvertimeServiceImpl implements OvertimeService {
             }
         }
         */
-        
+
         overtime.preUpdate(tokenModel);
         overtimeMapper.updateByPrimaryKey(overtime);
     }
