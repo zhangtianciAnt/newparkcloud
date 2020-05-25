@@ -67,17 +67,6 @@ public class Pfans1012Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         PublicExpenseVo pubvo = publicExpenseService.selectById(publicexpenseid);
         String trr = "";
-        //add-ws-5/25-No.196
-        String taa = "";
-        String user = pubvo.getPublicexpense().getUser_id();
-        Query query3 = new Query();
-        query3.addCriteria(Criteria.where("userid").is(user));
-        CustomerInfo customerInfolist = mongoTemplate.findOne(query3, CustomerInfo.class);
-        if (customerInfolist != null) {
-            pubvo.getPublicexpense().setUser_name(customerInfolist.getUserinfo().getCustomername());
-            taa = customerInfolist.getUserinfo().getCaiwupersonalcode();
-        }
-        //add-ws-5/25-No.196
         //交通费的预算编码
         List<TrafficDetails> tralist = pubvo.getTrafficdetails();
         if (tralist.size() > 0) {
@@ -181,11 +170,24 @@ public class Pfans1012Controller {
             }
         }
         //申请人图片
+
+
+        //add-ws-5/25-No.196
+        String user = pubvo.getPublicexpense().getUser_name();
+        Query query3 = new Query();
+        query3.addCriteria(Criteria.where("userid").is(user));
+        CustomerInfo customerInfolist = mongoTemplate.findOne(query3, CustomerInfo.class);
+        if (customerInfolist != null) {
+            pubvo.getPublicexpense().setUser_name(customerInfolist.getUserinfo().getCustomername());
+        }
+        //add-ws-5/25-No.196
+        String taa = "";
         String userim = "";
         Query query = new Query();
         query.addCriteria(Criteria.where("userid").is(pubvo.getPublicexpense().getUser_id()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         if (customerInfo != null) {
+            taa = customerInfo.getUserinfo().getCaiwupersonalcode();
             //申请人
             pubvo.getPublicexpense().setUser_id(customerInfo.getUserinfo().getCustomername());
             userim = customerInfo.getUserinfo().getCustomername();
