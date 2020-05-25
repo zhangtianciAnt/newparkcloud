@@ -509,7 +509,7 @@ public class AssetsServiceImpl implements AssetsService {
             conditon.setBarcode(importBarcode);
             List<Assets> rst = assetsMapper.select(conditon);
             if (rst.size() > 0) {
-                throw new LogicalException("资产编号 " + importBarcode + " 资产编号重复！");
+                throw new LogicalException("资产编号 " + importBarcode + " 重复！");
             }
         }
     }
