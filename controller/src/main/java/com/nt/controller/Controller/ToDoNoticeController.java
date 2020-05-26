@@ -93,7 +93,7 @@ public class ToDoNoticeController {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        toDoNoticeService.delToDoNotice(todonoticeid);
+        toDoNoticeService.delToDoNotice(todonoticeid, tokenModel);
         return ApiResult.success();
     }
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
