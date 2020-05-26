@@ -23,6 +23,6 @@ public interface ToDoNoticeService {
     void updateNoticesStatus(ToDoNotice toDoNotice) throws Exception;
 
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
-    void delToDoNotice(String todonoticeid) throws Exception;
+    void delToDoNotice(String todonoticeid, TokenModel tokenModel) throws Exception;
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
 }
