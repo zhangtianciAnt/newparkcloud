@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,6 +149,14 @@ public class Pfans5008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(logmanagementService.getDataList(logmanagement));
+    }
+
+    @RequestMapping(value = "/getLogDataList", method = {RequestMethod.GET})
+    public ApiResult getLogDataList(String startDate ,String endDate , HttpServletRequest request) throws Exception {
+        LogManagement logmanagement = new LogManagement();
+        TokenModel tokenModel = tokenService.getToken(request);
+        logmanagement.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(logmanagementService.getLogDataList(logmanagement,startDate,endDate));
     }
 
     @RequestMapping(value = "/getDataList1", method = {RequestMethod.POST})

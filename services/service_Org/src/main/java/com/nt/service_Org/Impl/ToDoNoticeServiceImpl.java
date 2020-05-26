@@ -126,10 +126,12 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
     @Override
-    public void delToDoNotice(String todonoticeid) throws Exception {
+    public void delToDoNotice(String todonoticeid, TokenModel tokenModel) throws Exception {
         ToDoNotice toDoNotice = new ToDoNotice();
+        toDoNotice.preUpdate(tokenModel);
+        toDoNotice.setStatus(AuthConstants.TODO_STATUS_DELETE);
         toDoNotice.setNoticeid(todonoticeid);
-        todoNoticeMapper.delete(toDoNotice);
+        todoNoticeMapper.updateByPrimaryKeySelective(toDoNotice);
     }
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
 

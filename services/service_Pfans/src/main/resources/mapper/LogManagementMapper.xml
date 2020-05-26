@@ -15,6 +15,33 @@
         where HAS_PROJECT = '02';
     </select>
 
+    <select id="selectByDate" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+
+        select *
+        from logmanagement
+        where
+        1=1
+        <if test="startDate != null and startDate !=''">
+            and DATE_FORMAT(LOG_DATE, '%Y-%m-%d') >= DATE_FORMAT(#{startDate}, '%Y-%m-%d')
+        </if>
+
+        <if test="endDate != null and endDate !=''">
+        <![CDATA[
+            and DATE_FORMAT(LOG_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')
+        ]]>
+        </if>
+
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+    </select>
+
     <select id="getProjectList" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo">
         select companyprojects_id as projectid,numbers,project_name as projectname,logm.confirm,logm.unconfirm from
         companyprojects
