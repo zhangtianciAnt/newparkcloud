@@ -54,8 +54,8 @@ public class SampleServiceImpl implements SampleService {
     public void update(Sample sample, TokenModel tokenModel) throws Exception {
         sample.preUpdate(tokenModel);
         if(sample.isNotice()){
-            ToDoNotice(tokenModel,sample);
             sample.setType(sample.getType() + 1);
+            ToDoNotice(tokenModel,sample);
         }
         sampleMapper.updateByPrimaryKeySelective(sample);
     }
@@ -67,8 +67,8 @@ public class SampleServiceImpl implements SampleService {
         sample.setSampleorder(number);
         sample.preInsert(tokenModel);
         if(sample.isNotice()){
-            ToDoNotice(tokenModel,sample);
             sample.setType(1);
+            ToDoNotice(tokenModel,sample);
         }
         sampleMapper.insert(sample);
     }
