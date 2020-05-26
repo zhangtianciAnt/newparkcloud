@@ -185,5 +185,12 @@ public class AbNormal extends BaseModel {
      */
     @Column(name = "WORKTIME")
     private String worktime;
+    //add_fjl_05/26 --添加代休剩余
+    /**
+     * 代休剩余
+     */
+    @Column(name = "RESTDIFF")
+    private String restdiff;
+    //add_fjl_05/26 --添加代休剩余
 
 }

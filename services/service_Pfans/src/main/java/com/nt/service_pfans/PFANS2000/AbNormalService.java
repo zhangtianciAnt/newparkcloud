@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -28,4 +29,6 @@ public interface AbNormalService {
     Map<String,String> cklength(AbNormal abNormal) throws Exception;
 
     void updateOvertime(AbNormal abNormal) throws Exception;
+
+    List<restViewVo> getRestday(String user_id) throws Exception;
 }
