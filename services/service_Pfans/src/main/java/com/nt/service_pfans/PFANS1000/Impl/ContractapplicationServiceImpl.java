@@ -289,47 +289,66 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award2.setContractnumber(contractnumber);
 //                    award2.setOwner(tokenModel.getUserId());
                     List<Award> orgin = AwardMapper.select(award2);
-
-                    for(Award io:orgin){
-                        Workflowinstance con = new Workflowinstance();
-                        con.setDataid(io.getAward_id());
-                        con.setFormid("/PFANS1030View");
-                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                        if(workflowinstanceMapper.select(con).size() > 0){
-                            throw new LogicalException("决裁书正在审批中，不可更新！");
-                        }
-                    }
-
+//                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                     Award award = new Award();
-                    award.preInsert(tokenModel);
-                    award.setAward_id(UUID.randomUUID().toString());
-                    award.setContractnumber(contractnumber);
+                    if (orgin.size() > 0) {
+                        for (Award io : orgin) {
+                            Workflowinstance con = new Workflowinstance();
+                            con.setDataid(io.getAward_id());
+                            con.setFormid("/PFANS1030View");
+                            con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                            if (workflowinstanceMapper.select(con).size() > 0) {
+                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                            }
+                            award.preUpdate(tokenModel);
+                            award.setContractnumber(contractnumber);
 
-                    //13
-                    award.setContracttype(contractapp.getContracttype());
-                    award.setCustojapanese(contractapp.getCustojapanese());
-                    award.setCustochinese(contractapp.getCustochinese());
-                    award.setPlacejapanese(contractapp.getPlacejapanese());
-                    award.setPlacechinese(contractapp.getPlacechinese());
-                    award.setGroup_id(contractapp.getGroup_id());
-                    award.setDeployment(contractapp.getDeployment());
-                    award.setPjnamechinese(contractapp.getConchinese());
-                    award.setPjnamejapanese(contractapp.getConjapanese());
-                    award.setClaimdatetime(contractapp.getClaimdatetime());
-                    award.setDeliverydate(contractapp.getDeliverydate());
-                    award.setCurrencyposition(contractapp.getCurrencyposition());
-                    award.setClaimamount(contractapp.getClaimamount());
-                    award.setUser_id(contractapp.getUser_id());
-                    award.setRemarks(contractapp.getRemarks());
-                    award.setMaketype(rowindex);
-                    award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            //13
+                            award.setContracttype(contractapp.getContracttype());
+                            award.setCustojapanese(contractapp.getCustojapanese());
+                            award.setCustochinese(contractapp.getCustochinese());
+                            award.setPlacejapanese(contractapp.getPlacejapanese());
+                            award.setPlacechinese(contractapp.getPlacechinese());
+                            award.setGroup_id(contractapp.getGroup_id());
+                            award.setDeployment(contractapp.getDeployment());
+                            award.setPjnamechinese(contractapp.getConchinese());
+                            award.setPjnamejapanese(contractapp.getConjapanese());
+                            award.setClaimdatetime(contractapp.getClaimdatetime());
+                            award.setDeliverydate(contractapp.getDeliverydate());
+                            award.setCurrencyposition(contractapp.getCurrencyposition());
+                            award.setClaimamount(contractapp.getClaimamount());
+                            award.setUser_id(contractapp.getUser_id());
+                            award.setRemarks(contractapp.getRemarks());
+                            award.setMaketype(rowindex);
+                            award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            AwardMapper.updateByPrimaryKeySelective(award);
+                        }
+                    } else {
+                        award.preInsert(tokenModel);
+                        award.setAward_id(UUID.randomUUID().toString());
+                        award.setContractnumber(contractnumber);
 
-                    award2 = new Award();
-                    award2.setContractnumber(contractnumber);
-//                    award2.setOwner(tokenModel.getUserId());
-                    AwardMapper.delete(award2);
-
-                    AwardMapper.insert(award);
+                        //13
+                        award.setContracttype(contractapp.getContracttype());
+                        award.setCustojapanese(contractapp.getCustojapanese());
+                        award.setCustochinese(contractapp.getCustochinese());
+                        award.setPlacejapanese(contractapp.getPlacejapanese());
+                        award.setPlacechinese(contractapp.getPlacechinese());
+                        award.setGroup_id(contractapp.getGroup_id());
+                        award.setDeployment(contractapp.getDeployment());
+                        award.setPjnamechinese(contractapp.getConchinese());
+                        award.setPjnamejapanese(contractapp.getConjapanese());
+                        award.setClaimdatetime(contractapp.getClaimdatetime());
+                        award.setDeliverydate(contractapp.getDeliverydate());
+                        award.setCurrencyposition(contractapp.getCurrencyposition());
+                        award.setClaimamount(contractapp.getClaimamount());
+                        award.setUser_id(contractapp.getUser_id());
+                        award.setRemarks(contractapp.getRemarks());
+                        award.setMaketype(rowindex);
+                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        AwardMapper.insert(award);
+                    }
+//                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
                 //納品書作成
                 else if (rowindex.equals("5")) {
@@ -434,45 +453,63 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     award2.setContractnumber(contractnumber);
 //                    award2.setOwner(tokenModel.getUserId());
                     List<Award> orgin = AwardMapper.select(award2);
-
-                    for(Award io:orgin){
-                        Workflowinstance con = new Workflowinstance();
-                        con.setDataid(io.getAward_id());
-                        con.setFormid("/PFANS1025View");
-                        con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                        if(workflowinstanceMapper.select(con).size() > 0){
-                            throw new LogicalException("决裁书正在审批中，不可更新！");
-                        }
-                    }
-
+//                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                     Award award = new Award();
-                    award.preInsert(tokenModel);
-                    award.setAward_id(UUID.randomUUID().toString());
-                    award.setContractnumber(contractnumber);
-                    //13
-                    award.setContracttype(contractapp.getContracttype());
-                    award.setCustojapanese(contractapp.getCustojapanese());
-                    award.setCustochinese(contractapp.getCustochinese());
-                    award.setPlacejapanese(contractapp.getPlacejapanese());
-                    award.setPlacechinese(contractapp.getPlacechinese());
-                    award.setDeployment(contractapp.getDeployment());
-                    award.setPjnamechinese(contractapp.getConchinese());
-                    award.setPjnamejapanese(contractapp.getConjapanese());
-                    award.setClaimdatetime(contractapp.getContractdate());
-                    award.setDeliverydate(contractapp.getDeliverydate());
-                    award.setCurrencyposition(contractapp.getCurrencyposition());
-                    award.setClaimamount(contractapp.getClaimamount());
-                    award.setUser_id(contractapp.getUser_id());
-                    award.setRemarks(contractapp.getRemarks());
-                    award.setMaketype(rowindex);
-                    award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                    if (orgin.size() > 0) {
+                        for (Award io : orgin) {
+                            Workflowinstance con = new Workflowinstance();
+                            con.setDataid(io.getAward_id());
+                            con.setFormid("/PFANS1025View");
+                            con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                            if (workflowinstanceMapper.select(con).size() > 0) {
+                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                            }
+                        }
 
-                    award2 = new Award();
-                    award2.setContractnumber(contractnumber);
-//                    award2.setOwner(tokenModel.getUserId());
-                    AwardMapper.delete(award2);
-
-                    AwardMapper.insert(award);
+                        award.preUpdate(tokenModel);
+                        award.setContractnumber(contractnumber);
+                        //13
+                        award.setContracttype(contractapp.getContracttype());
+                        award.setCustojapanese(contractapp.getCustojapanese());
+                        award.setCustochinese(contractapp.getCustochinese());
+                        award.setPlacejapanese(contractapp.getPlacejapanese());
+                        award.setPlacechinese(contractapp.getPlacechinese());
+                        award.setDeployment(contractapp.getDeployment());
+                        award.setPjnamechinese(contractapp.getConchinese());
+                        award.setPjnamejapanese(contractapp.getConjapanese());
+                        award.setClaimdatetime(contractapp.getContractdate());
+                        award.setDeliverydate(contractapp.getDeliverydate());
+                        award.setCurrencyposition(contractapp.getCurrencyposition());
+                        award.setClaimamount(contractapp.getClaimamount());
+                        award.setUser_id(contractapp.getUser_id());
+                        award.setRemarks(contractapp.getRemarks());
+                        award.setMaketype(rowindex);
+                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        AwardMapper.updateByPrimaryKeySelective(award);
+                    } else {
+                        award.preInsert(tokenModel);
+                        award.setAward_id(UUID.randomUUID().toString());
+                        award.setContractnumber(contractnumber);
+                        //13
+                        award.setContracttype(contractapp.getContracttype());
+                        award.setCustojapanese(contractapp.getCustojapanese());
+                        award.setCustochinese(contractapp.getCustochinese());
+                        award.setPlacejapanese(contractapp.getPlacejapanese());
+                        award.setPlacechinese(contractapp.getPlacechinese());
+                        award.setDeployment(contractapp.getDeployment());
+                        award.setPjnamechinese(contractapp.getConchinese());
+                        award.setPjnamejapanese(contractapp.getConjapanese());
+                        award.setClaimdatetime(contractapp.getContractdate());
+                        award.setDeliverydate(contractapp.getDeliverydate());
+                        award.setCurrencyposition(contractapp.getCurrencyposition());
+                        award.setClaimamount(contractapp.getClaimamount());
+                        award.setUser_id(contractapp.getUser_id());
+                        award.setRemarks(contractapp.getRemarks());
+                        award.setMaketype(rowindex);
+                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        AwardMapper.insert(award);
+                    }
+//                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
                 contractapp.preUpdate(tokenModel);
                 contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
