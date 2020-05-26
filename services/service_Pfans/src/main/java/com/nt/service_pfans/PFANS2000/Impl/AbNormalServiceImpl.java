@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
@@ -924,7 +925,10 @@ public class AbNormalServiceImpl implements AbNormalService {
         if("PR013006".equals(abNormal.getErrortype())){
             lengths = Convert.toDouble(abNormal.getLengthtime())/8;
         }
-        if(StrUtil.isNotBlank(abNormal.getRelengthtime())) {
+        //                ADD_FJL_05/26  --添加非空判断
+//        if(StrUtil.isNotBlank(abNormal.getRelengthtime())) {
+        if (StrUtil.isNotBlank(abNormal.getRelengthtime()) && !abNormal.getRelengthtime().equals("0")) {
+            //                ADD_FJL_05/26  --添加非空判断
             if ("4".equals(abNormal.getRelengthtime())) {
                 relengths = 0.5;
             }
@@ -1025,7 +1029,14 @@ public class AbNormalServiceImpl implements AbNormalService {
             for(String id:ids){
                 Overtime ov = overtimeMapper.selectByPrimaryKey(id);
                 Double ov_length = 8D;
-                Double diff = Convert.toDouble(ab.getRelengthtime()) - ov_length + Convert.toDouble(ov.getUsedlength());
+//                ADD_FJL_05/26  --添加非空判断
+                Double diff = 0D;
+                if (!StringUtils.isNullOrEmpty(ov.getUsedlength())) {
+                    diff = Convert.toDouble(ab.getRelengthtime()) - ov_length + Convert.toDouble(ov.getUsedlength());
+                } else {
+                    diff = Convert.toDouble(ab.getRelengthtime()) - ov_length;
+                }
+//                ADD_FJL_05/26  --添加非空判断
                 if(diff > 0){
                     ov.setUsedlength("8");
                 }else{
