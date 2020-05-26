@@ -107,6 +107,11 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
+    public List<LogManagement> getLogDataList(LogManagement logmanagement,String startDate,String endDate) throws Exception {
+        return logmanagementmapper.selectByDate(logmanagement.getOwners(),startDate,endDate);
+    }
+
+    @Override
     public List<LogManagement> getCheckList(LogManagement logmanagement) throws Exception {
         LogManagement logmanage = new LogManagement();
         logmanage.setCreateby(logmanagement.getCreateby());
