@@ -27,7 +27,7 @@ public class ContractNumber {
         Dictionary dictionary = new Dictionary();
         dictionary.setCode(code);
         List<Dictionary> dictionaryList = dictionaryMapper.select(dictionary);
-        String number = dictionaryList!= null?dictionaryList.get(0).getValue1():"";
+        String number = dictionaryList.size() > 0 ? dictionaryList.get(0).getValue1():"";
         SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
         SimpleDateFormat dateFormatMonthDay = new SimpleDateFormat("MMdd");
         String year = dateFormatYear.format(new Date());
