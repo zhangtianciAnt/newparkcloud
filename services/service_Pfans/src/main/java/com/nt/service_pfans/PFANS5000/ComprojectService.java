@@ -45,4 +45,7 @@ public interface ComprojectService {
     List<CompanyProjectsVo3> getCompanyProject(String SyspName)throws Exception;
 
     List<Comproject> getComproject(Comproject comproject) throws Exception;
+    //add-ws-阚总日志问题修正
+    List<Comproject> getComproject2(Comproject comproject) throws Exception;
+    //add-ws-阚总日志问题修正
 }

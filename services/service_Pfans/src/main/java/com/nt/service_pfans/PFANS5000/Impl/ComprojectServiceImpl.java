@@ -965,7 +965,7 @@ public class ComprojectServiceImpl implements ComprojectService {
     public List<Comproject> getComproject(Comproject comproject) throws Exception {
         List<Comproject> rst = new ArrayList<Comproject>();
         Comproject con = new Comproject();
-        con.setOwners(comproject.getOwners());
+        con.setOwner(comproject.getOwner());
         con.setStatus("4");
         rst = comProjectMapper.select(con);
 
@@ -984,4 +984,24 @@ public class ComprojectServiceImpl implements ComprojectService {
         }
         return rst;
     }
+
+
+    //add-ws-阚总日志问题修正
+    @Override
+    public List<Comproject> getComproject2(Comproject comproject) throws Exception {
+        List<Comproject> rst = new ArrayList<Comproject>();
+        Prosystem prosystem = new Prosystem();
+        prosystem.setName(comproject.getOwner());
+        List<Prosystem> prosystemlist = prosystemMapper.select(prosystem);
+        for (Prosystem item : prosystemlist) {
+            Comproject rs = comProjectMapper.selectByPrimaryKey(item.getComproject_id());
+            if(rs!=null){
+                if ("4".equals(rs.getStatus())) {
+                    rst.add(rs);
+                }
+            }
+        }
+        return rst;
+    }
+//add-ws-阚总日志问题修正
 }
