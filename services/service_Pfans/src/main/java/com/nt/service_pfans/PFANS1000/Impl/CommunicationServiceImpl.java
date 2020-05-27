@@ -1,5 +1,5 @@
 package com.nt.service_pfans.PFANS1000.Impl;
-
+import java.text.SimpleDateFormat;
 import com.nt.dao_Pfans.PFANS1000.Communication;
 import com.nt.service_pfans.PFANS1000.CommunicationService;
 import com.nt.service_pfans.PFANS1000.mapper.CommunicationMapper;
@@ -7,7 +7,9 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import cn.hutool.core.date.DateUtil;
+import com.nt.utils.StringUtils;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +44,34 @@ public class CommunicationServiceImpl implements CommunicationService {
 
     @Override
     public void insert(Communication communication, TokenModel tokenModel) throws Exception {
-
+        //add-ws-5/27-No.170
+        List<Communication> companyProjectslist = communicationMapper.selectAll();
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String year = sf1.format(date);
+        int number = 0;
+        String Numbers = "";
+        String no = "";
+        if(companyProjectslist.size()>0){
+            for(Communication communi :companyProjectslist){
+                if(communi.getNumbercation()!="" && communi.getNumbercation()!=null){
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(communi.getNumbercation(), 0,8));
+                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
+                        number = number+1;
+                    }
+                }
+            }
+            if(number<=8){
+                no="00"+(number + 1);
+            }else{
+                no="0"+(number + 1);
+            }
+        }else{
+            no = "001";
+        }
+        Numbers = year+ no;
+        communication.setNumbercation(Numbers);
+        //add-ws-5/27-No.170
         communication.preInsert(tokenModel);
         communication.setCommunication_id(UUID.randomUUID().toString()) ;
         communicationMapper.insert(communication);
