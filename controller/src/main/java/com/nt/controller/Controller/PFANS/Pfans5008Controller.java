@@ -173,7 +173,20 @@ public class Pfans5008Controller {
         )).collect(Collectors.toList());
         return ApiResult.success(list);
     }
-
+    // add-ws-5/26-No.68
+    @RequestMapping(value = "/getDataList2", method = {RequestMethod.POST})
+    public ApiResult getDataList2(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
+        if (conditon == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        LogManagement logmanagement = new LogManagement();
+        logmanagement.setOwners(tokenModel.getOwnerList());
+        List<LogManagement> list = logmanagementService.getDataList(logmanagement);
+        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
+        return ApiResult.success(list);
+    }
+    // add-ws-5/26-No.68
     @RequestMapping(value = "/getCheckList", method = {RequestMethod.POST})
     public ApiResult getCheckList(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
         if (logmanagement == null) {
