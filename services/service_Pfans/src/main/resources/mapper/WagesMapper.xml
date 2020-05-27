@@ -361,7 +361,7 @@
         @LJYNSSDE := (
         IF
         (
-        TO_DAYS( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) - TO_DAYS( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) != 0,
+        DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') != 0,
         round(
         ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
         2
