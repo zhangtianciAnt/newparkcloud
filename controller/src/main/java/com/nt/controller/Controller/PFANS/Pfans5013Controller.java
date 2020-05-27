@@ -69,7 +69,16 @@ public class Pfans5013Controller {
         comproject.setOwner(tokenModel.getUserId());
         return ApiResult.success(comprojectService.getComproject(comproject));
     }
-
+    //add-ws-阚总日志问题修正
+    @RequestMapping(value = "/getMyConProject2", method = {RequestMethod.GET})
+    public ApiResult getMyConProject2(HttpServletRequest request) throws Exception {
+        Comproject comproject = new Comproject();
+        TokenModel tokenModel = tokenService.getToken(request);
+        comproject.setOwners(tokenModel.getOwnerList());
+        comproject.setOwner(tokenModel.getUserId());
+        return ApiResult.success(comprojectService.getComproject2(comproject));
+    }
+    //add-ws-阚总日志问题修正
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult List(@RequestBody Comproject Comproject, HttpServletRequest request) throws Exception {
         if (Comproject == null) {
