@@ -47,4 +47,10 @@ public interface ProductsService {
      * @throws Exception
      */
     List<Products> getProdutsExceptUnique() throws Exception;
+    /**
+     * 获取不在注册表中的数据
+     * @return
+     * @throws Exception
+     */
+    List<Products> getProdutsExceptUniqueInReg() throws Exception;
 }

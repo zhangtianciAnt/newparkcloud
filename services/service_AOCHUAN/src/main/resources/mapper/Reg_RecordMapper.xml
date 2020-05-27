@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.Reg_RecordMapper">
+
+    <!--selectByRegId-->
+    <select id="selectByRegId" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Reg_Record">
+        SELECT *
+        FROM REG_RECORD
+        WHERE
+        REG_ID = #{id}
+        AND STATUS != '1'
+    </select>
+    <!--existCheck-->
+    <select id="existCheck" resultType="int">
+        SELECT COUNT(*)
+        FROM REG_RECORD
+        WHERE
+        RECORD_ID = #{id}
+        AND STATUS != '1'
+    </select>
+    <!--deleteByRegId-->
+    <update id="deleteByRegId">
+        UPDATE REG_RECORD
+		SET
+		MODIFYON = now(),
+		MODIFYBY = #{modifyby},
+		STATUS = '1'
+		WHERE REG_ID = #{id}
+    </update>
+    <!--deleteByRecordId-->
+    <update id="deleteByRecordId">
+        UPDATE REG_RECORD
+		SET
+		MODIFYON = now(),
+		MODIFYBY = #{modifyby},
+		STATUS = '1'
+		WHERE RECORD_ID = #{id}
+    </update>
+</mapper>
+
