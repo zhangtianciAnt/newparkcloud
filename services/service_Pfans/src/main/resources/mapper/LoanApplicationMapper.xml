@@ -4,5 +4,10 @@
     <select id="getLoapp" resultType="com.nt.dao_Pfans.PFANS1000.LoanApplication">
         select * from loanapplication where `STATUS` = '4' and CREATEON>DATE_SUB(CURDATE(), INTERVAL 3 MONTH) ORDER BY CREATEON DESC
     </select>
+    <select id="getLoappCount" resultType="Integer">
+        select count(*) from loanapplication
+        where DATE_FORMAT(CREATEON,'%Y-%m-%d') = #{createon}
+        group by DATE_FORMAT(CREATEON,'%Y-%m-%d')
+    </select>
 </mapper>
 
