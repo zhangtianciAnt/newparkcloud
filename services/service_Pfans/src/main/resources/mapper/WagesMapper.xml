@@ -443,11 +443,11 @@
 				@BONUS = 1,
 				ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 2 ),
 			round(IF
-				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ) - @AMOUNT ,2)
-			)
+				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ),2)
+			) - @AMOUNT
 		) AS BONUSMONEY,#計上奨金
         @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
-	    @GZFZFDZJ + @NJJY + @JSJJ AS TOTALBONUS #总计+計上奨金
+	    IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ) AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
         WHERE
