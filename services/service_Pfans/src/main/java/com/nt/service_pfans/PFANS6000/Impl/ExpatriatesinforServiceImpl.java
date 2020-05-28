@@ -204,6 +204,10 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             }
         }
         expatriatesinfor.preUpdate(tokenModel);
+        //退场时修改卡号
+        if(expatriatesinfor.getExits().equals("0")){
+            expatriatesinfor.setNumber("00000");
+        }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
             Priceset priceset = new Priceset();

@@ -38,8 +38,9 @@ public class PunchcardRecordbpServiceImpl implements PunchcardRecordbpService {
     public List<PunchcardRecordDetailbp> getPunDetailbp(PunchcardRecordDetailbp detail) throws Exception{
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String Jobnumber = detail.getJobnumber();
+        String user_id = detail.getUser_id();
         String Punchcardrecord_date = sdf.format(detail.getPunchcardrecord_date());
-        List<PunchcardRecordDetailbp> detaillist = punchcardrecorddetailmapper.getPunDetailbp(Jobnumber,Punchcardrecord_date);
+        List<PunchcardRecordDetailbp> detaillist = punchcardrecorddetailmapper.getPunDetailbp(Jobnumber,user_id,Punchcardrecord_date);
         return detaillist;
     }
 }
