@@ -16,7 +16,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -423,6 +425,20 @@ public class TalentPlanServiceImpl implements TalentPlanService {
                 add.setTeam_id(user.getUserinfo().getTeamid());
                 add.setSkilllevel(user.getUserinfo().getRank());
                 add.setSkilllevelafter(user.getUserinfo().getRank());
+
+                if(user.getUserinfo().getFixedate() !=null && !user.getUserinfo().getFixedate().equals(""))
+                {
+                    SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
+                    String resignationdate = user.getUserinfo().getFixedate().substring(0, 10);
+                    Calendar rightNow = Calendar.getInstance();
+                    if(user.getUserinfo().getFixedate().length() >= 24)
+                    {
+                        rightNow.setTime(Convert.toDate(resignationdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                        resignationdate = sf1ymd.format(rightNow.getTime());
+                    }
+                    add.setContract(sf1ymd.parse(resignationdate));
+                }
                 add.setSchoolspecies(user.getUserinfo().getEducational());
                 add.setEntryyear(Convert.toDate(user.getUserinfo().getEnterday()));
                 add.setGraduationyear(Convert.toDate(user.getUserinfo().getGraduationday()));
