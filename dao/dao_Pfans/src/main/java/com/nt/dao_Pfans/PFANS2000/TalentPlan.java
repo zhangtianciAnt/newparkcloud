@@ -55,6 +55,10 @@ public class TalentPlan extends BaseModel {
     @Column(name = "SKILLLEVEL")
     private String skilllevel;
 
+
+    @Column(name = "SKILLLEVELAFTER")
+    private String skilllevelafter;
+
     /**
      * 校種
      */
