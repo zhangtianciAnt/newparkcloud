@@ -1048,6 +1048,12 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     }
 
+    //add_fjl_05/26 --添加代休剩余
+    public List<restViewVo> getRestday(String user_id) throws Exception {
+        return abNormalMapper.getRestday(user_id);
+    }
+
+    //add_fjl_05/26 --添加代休剩余
     //代休
     public void updateReplacerest(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         Replacerest replacerest = new Replacerest();

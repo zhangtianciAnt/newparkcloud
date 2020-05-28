@@ -66,5 +66,15 @@
         and status != '3'
         and user_id = #{userid}
     </select>
+    <select id="getRestday" resultType="com.nt.dao_Pfans.PFANS2000.Vo.restViewVo">
+        select 'PR013006' as 'codetype' ,sum(IFNULL(RESTDAYS,0)) as sumDay
+        from restview
+        where user_id = #{userid}
+
+        union all
+        select 'PR013007' as 'codetype' ,RESTDAYS as sumDay
+        from restview2
+        where user_id = #{userid}
+    </select>
 </mapper>
 

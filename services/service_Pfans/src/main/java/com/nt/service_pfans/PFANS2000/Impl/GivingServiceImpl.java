@@ -139,6 +139,7 @@ public class GivingServiceImpl implements GivingService {
 
         // region 专项控除 By SKAIXX
         List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary();
+        disciplinary = disciplinary.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setDisciplinaryVo(disciplinary);
         // endregion
 
@@ -210,6 +211,7 @@ public class GivingServiceImpl implements GivingService {
 
         // region 累计税金 By SKAIXX
         List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
+        accumulatedTaxVolist = accumulatedTaxVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         // 获取全年综合收入适用税率
         Dictionary taxDictionary = new Dictionary();
         taxDictionary.setPcode("PR048");    // 全年综合收入适用税率
@@ -219,11 +221,13 @@ public class GivingServiceImpl implements GivingService {
 
         // region 免税 By SKAIXX
         List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
+        dutyfreeVolist = dutyfreeVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setDutyfreeVo(dutyfreeVolist);
         // endregion
 
         // region 综合收入 By SKAIXX
         List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
+        comprehensiveVolist = comprehensiveVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setComprehensiveVo(comprehensiveVolist);
         // endregion
 

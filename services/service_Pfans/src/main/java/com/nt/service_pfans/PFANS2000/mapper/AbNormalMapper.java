@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.mapper;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,6 +13,8 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     List<AbNormal> selectAbNormalThisYear(AbNormal abNormal);
     Double selectAbNormalDate(@Param("userid") String userid);
     List<AbNormal> selectAbNormalParent(@Param("userid") String userid);
+
+    List<restViewVo> getRestday(@Param("userid") String userid);
 
 //    List<AbNormal> selectAbNormal1(@Param("") List<String>  );
 }

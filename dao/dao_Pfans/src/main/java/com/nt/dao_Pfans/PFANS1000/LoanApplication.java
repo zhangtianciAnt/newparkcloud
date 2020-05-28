@@ -169,4 +169,10 @@ public class LoanApplication extends BaseModel {
     @Column(name = "USER_NAME")
     private String user_name;
 //add-ws-N0.70-相应字段添加
+
+    /**
+     * 申请单编号
+     */
+    @Column(name = "LOANAPNO")
+    private String loanapno;
 }

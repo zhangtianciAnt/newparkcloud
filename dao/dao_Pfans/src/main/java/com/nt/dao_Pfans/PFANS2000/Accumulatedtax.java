@@ -43,8 +43,8 @@ public class Accumulatedtax extends BaseModel {
     /**
      * 名字
      */
-    @Column(name = "USER_ID1")
-    private String user_id1;
+    @Column(name = "USER_ID")
+    private String user_id;
 
     /**
      * 1月税金

@@ -109,5 +109,11 @@ public class Communication  extends BaseModel {
      */
     @Column(name = "PLACE")
     private String place;
-
+//add-ws-5/27-No.170
+    /**
+     * 编号
+     */
+    @Column(name = "NUMBERCATION")
+    private String numbercation;
+    //add-ws-5/27-No.170
 }

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +43,21 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public void insert(LoanApplication loanapplication, TokenModel tokenModel) throws Exception {
+//        add_fjl_05/27  --添加申请编号
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String year = sdf.format(new Date());
+        String no = "";
+        if (loanapplicationMapper.getLoappCount(year) != null) {
+            int count = loanapplicationMapper.getLoappCount(year);
+            no = String.format("%2d", count + 1).replace(" ", "0");
+        } else {
+            no = "01";
+        }
+
+        String apdate = year.replace("-", "");
+        String loanapNo = "Z" + apdate + no;
+        loanapplication.setLoanapno(loanapNo);
+//        add_fjl_05/27  --添加申请编号
         loanapplication.preInsert(tokenModel);
         loanapplication.setLoanapplication_id(UUID.randomUUID().toString());
         loanapplicationMapper.insert(loanapplication);

@@ -16,6 +16,7 @@ public class DutyfreeVo {
      * 基数表
      */
     private String user_id;
+    private String giving_id;
     /**
      * 工资表
      */
@@ -31,7 +32,7 @@ public class DutyfreeVo {
     private String october;
     private String november;
     private String december;
-    private String total;
+    private String cumulative;
 
 
 

@@ -361,7 +361,7 @@
         @LJYNSSDE := (
         IF
         (
-        TO_DAYS( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) - TO_DAYS( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) != 0,
+        DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') != 0,
         round(
         ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
         2
@@ -443,11 +443,11 @@
 				@BONUS = 1,
 				ROUND( @RNBASESALARY * DIC_JJJSXS1 / 12, 2 ),
 			round(IF
-				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ) - @AMOUNT ,2)
-			)
+				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ),2)
+			) - @AMOUNT
 		) AS BONUSMONEY,#計上奨金
         @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
-	    @GZFZFDZJ + @NJJY + @JSJJ AS TOTALBONUS #总计+計上奨金
+	    IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ) AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
         WHERE

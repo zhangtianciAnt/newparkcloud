@@ -102,4 +102,14 @@ public class Pfans2016Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(abNormalService.selectAbNormalParent(userid));
     }
+
+    //add_fjl_05/26 --添加代休剩余
+    @RequestMapping(value = "/getRestday", method = {RequestMethod.GET})
+    public ApiResult getRestday(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(abNormalService.getRestday(userid));
+    }
+    //add_fjl_05/26 --添加代休剩余
 }

@@ -267,8 +267,10 @@ public class UserServiceImpl implements UserService {
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
                 cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 userInfo.setGridData(cupList);
+//                if(userInfo.getGridData().size() > 0){
                 userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
                 userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+//                }
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);

@@ -12,7 +12,7 @@ public class AccumulatedTaxVo {
      * 基数表
      */
     private String user_id;
-
+    private String giving_id;
     private String january;
     private String february;
     private String march;

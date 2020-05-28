@@ -12,6 +12,7 @@ public class ComprehensiveVo {
      * 基数表
      */
     private String user_id;
+    private String giving_id;
     /**
      * 工资表
      */

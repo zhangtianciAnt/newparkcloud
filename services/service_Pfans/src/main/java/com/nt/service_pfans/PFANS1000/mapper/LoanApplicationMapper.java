@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface LoanApplicationMapper  extends MyMapper<LoanApplication> {
     List<LoanApplication> getLoapp();
+
+    Integer getLoappCount(String createon);
 }

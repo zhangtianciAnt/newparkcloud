@@ -18,4 +18,9 @@ public class restViewVo implements Serializable {
     private String applicationdate;
 
     private String restdays;
+    //add_fjl_05/26 --添加代休剩余
+    private String codetype;
+
+    private String sumDay;
+    //add_fjl_05/26 --添加代休剩余
 }
