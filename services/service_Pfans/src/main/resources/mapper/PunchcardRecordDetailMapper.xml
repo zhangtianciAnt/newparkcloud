@@ -48,6 +48,7 @@
     <select id="getPunDetail" resultType="com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetail">
         select JOBNUMBER,PUNCHCARDRECORD_DATE,EVENTNO from punchcardrecorddetail
         where JOBNUMBER = #{jobnumber}
+        and USER_ID = #{user_id}
         and  date_format(PUNCHCARDRECORD_DATE, '%Y-%m-%d') = #{punchcardrecord_date}
         order by PUNCHCARDRECORD_DATE
     </select>
