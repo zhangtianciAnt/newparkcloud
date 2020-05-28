@@ -13,14 +13,14 @@
     <!--existCheck-->
     <select id="existCheck" resultType="int">
         SELECT COUNT(*)
-        FROM REG_RECORD
+        FROM reg_record
         WHERE
         RECORD_ID = #{id}
         AND STATUS != '1'
     </select>
     <!--deleteByRegId-->
     <update id="deleteByRegId">
-        UPDATE REG_RECORD
+        UPDATE reg_record
 		SET
 		MODIFYON = now(),
 		MODIFYBY = #{modifyby},
@@ -29,7 +29,7 @@
     </update>
     <!--deleteByRecordId-->
     <update id="deleteByRecordId">
-        UPDATE REG_RECORD
+        UPDATE reg_record
 		SET
 		MODIFYON = now(),
 		MODIFYBY = #{modifyby},

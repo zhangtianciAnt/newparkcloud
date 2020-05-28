@@ -5,7 +5,7 @@
     <!--selectByRegId-->
     <select id="selectByRegId" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Registration">
         SELECT *
-        FROM REGISTRATION
+        FROM registration
         WHERE
         REG_ID = #{id}
         AND STATUS != '1'
@@ -13,14 +13,14 @@
     <!--existCheck-->
     <select id="existCheck" resultType="int">
         SELECT COUNT(*)
-        FROM REGISTRATION
+        FROM registration
         WHERE
         REG_ID = #{id}
         AND STATUS != '1'
     </select>
     <!--delete-->
     <update id="del">
-        UPDATE REGISTRATION
+        UPDATE registration
 		SET
 		MODIFYON = now(),
 		MODIFYBY = #{modifyby},
