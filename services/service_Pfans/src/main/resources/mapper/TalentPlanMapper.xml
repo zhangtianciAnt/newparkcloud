@@ -4,9 +4,7 @@
     <select id="selectByuserId" resultType="com.nt.dao_Pfans.PFANS2000.TalentPlan">
         SELECT t.*
         FROM `talentplan` as t
-        where  t.YEAR = case date_format(NOW(),'%m') when  '01' or '02' or '03' then date_format(concat(  CONVERT(date_format(NOW(),'%Y'), SIGNED) + 2 , '-01-01' ),'%Y')
-                        else date_format(concat(  CONVERT(date_format(NOW(),'%Y'), SIGNED) + 1 , '-01-01' ),'%Y')
-                        end
+        where  1=1
         <if test="userIdList != null and userIdList.size() > 0 ">
             and
             t.user_id in
