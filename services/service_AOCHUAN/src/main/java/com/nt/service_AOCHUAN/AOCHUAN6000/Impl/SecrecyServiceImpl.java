@@ -85,7 +85,7 @@ public class SecrecyServiceImpl implements SecrecyService {
 
 
     //系统服务（4月1日）
-    @Scheduled(cron="* * 1 * * ?")
+    @Scheduled(cron="0 0 11 * * ?")
     public void changestatus() throws Exception {
 
             List<Secrecy> secrelist = secrecyMapper.selectsecrecy();
@@ -102,7 +102,7 @@ public class SecrecyServiceImpl implements SecrecyService {
                 toDoNotice.setUrl("/AOCHUAN6007FormView");
                 //toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(secrecy1.getResponsible());
-                toDoNotice.setOwner("5ecc8476f1560b1e2ccda352");
+                toDoNotice.setOwner("5ecf201628569c918caea0d3");
                 toDoNoticeService.save(toDoNotice);
         }
 
@@ -133,7 +133,7 @@ public class SecrecyServiceImpl implements SecrecyService {
 //            }
 
         if (secrecy.getType() == 0) {
-            List<MembersVo> membersVos = roleService.getMembers("5ecc8476f1560b1e2ccda352");
+            List<MembersVo> membersVos = roleService.getMembers("5ecf201628569c918caea0d3");
             for (MembersVo membersVo :
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
