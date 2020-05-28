@@ -144,6 +144,8 @@ public class TransportGood extends BaseModel {
     //ﾊﾇｷ｢ﾆﾘｿ・
     private String returnpayment;
 
+    private String msds;
+
     @Transient
     private boolean notice;
 

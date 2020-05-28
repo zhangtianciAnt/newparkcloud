@@ -89,21 +89,35 @@ public class SecrecyServiceImpl implements SecrecyService {
     public void changestatus() throws Exception {
 
             List<Secrecy> secrelist = secrecyMapper.selectsecrecy();
+        List<MembersVo> membersVos = roleService.getMembers("5ecf201628569c918caea0d3");
             for( Secrecy secrecy1: secrelist){
-                ToDoNotice toDoNotice = new ToDoNotice();
-                toDoNotice.setNoticeid(UUID.randomUUID().toString());
-                toDoNotice.setTitle("【保密文件】：您有一条保密文件已到期需要处理。");
-                toDoNotice.setInitiator(secrecy1.getResponsible());  /*发起人*/
-                toDoNotice.setCreateby(secrecy1.getResponsible());
-                toDoNotice.setCreateon(new Date());   /*创建时间*/
-                toDoNotice.setStatus("0");
-                toDoNotice.setContent("归档文件编号【" + secrecy1.getNo() + "】");
-                toDoNotice.setDataid(secrecy1.getSecrecy_id());
-                toDoNotice.setUrl("/AOCHUAN6007FormView");
-                //toDoNotice.preInsert(tokenModel);
-                toDoNotice.setOwner(secrecy1.getResponsible());
-                toDoNotice.setOwner("5ecc8476f1560b1e2ccda352");
-                toDoNoticeService.save(toDoNotice);
+                for (MembersVo membersVo :
+                        membersVos) {
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    toDoNotice.setNoticeid(UUID.randomUUID().toString());
+                    toDoNotice.setTitle("【保密文件】：您有一条保密文件已到期需要处理。");
+                    toDoNotice.setInitiator(secrecy1.getResponsible());  /*发起人*/
+                    toDoNotice.setCreateby(secrecy1.getResponsible());
+                    toDoNotice.setCreateon(new Date());   /*创建时间*/
+                    toDoNotice.setStatus("0");
+                    toDoNotice.setContent("归档文件编号【" + secrecy1.getNo() + "】");
+                    toDoNotice.setDataid(secrecy1.getSecrecy_id());
+                    toDoNotice.setUrl("/AOCHUAN6007FormView");
+                    toDoNotice.setOwner(membersVo.getUserid());
+                    toDoNoticeService.save(toDoNotice);
+                }
+                ToDoNotice toDoNotice1 = new ToDoNotice();
+                toDoNotice1.setNoticeid(UUID.randomUUID().toString());
+                toDoNotice1.setTitle("【保密文件】：您有一条保密文件已到期需要处理。");
+                toDoNotice1.setInitiator(secrecy1.getResponsible());  /*发起人*/
+                toDoNotice1.setCreateby(secrecy1.getResponsible());
+                toDoNotice1.setCreateon(new Date());   /*创建时间*/
+                toDoNotice1.setStatus("0");
+                toDoNotice1.setContent("归档文件编号【" + secrecy1.getNo() + "】");
+                toDoNotice1.setDataid(secrecy1.getSecrecy_id());
+                toDoNotice1.setUrl("/AOCHUAN6007FormView");
+                toDoNotice1.setOwner(secrecy1.getResponsible());
+                toDoNoticeService.save(toDoNotice1);
         }
 
 
@@ -133,7 +147,7 @@ public class SecrecyServiceImpl implements SecrecyService {
 //            }
 
         if (secrecy.getType() == 0) {
-            List<MembersVo> membersVos = roleService.getMembers("5ecc8476f1560b1e2ccda352");
+            List<MembersVo> membersVos = roleService.getMembers("5ecf201628569c918caea0d3");
             for (MembersVo membersVo :
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
