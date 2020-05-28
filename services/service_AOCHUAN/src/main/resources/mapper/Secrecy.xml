@@ -6,7 +6,7 @@
     <select id="selectsecrecy" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Secrecy">
     SELECT *
 FROM secrecy
- WHERE secrecy.type='1'
+ WHERE secrecy.type='0'
  AND DateDiff(secrecy.DUEDATE,NOW())= 0
     </select>
 

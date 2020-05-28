@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -44,6 +45,8 @@ public class Secrecy extends BaseModel {
     private String upload;
 
     @Column(name = "TYPE")
-    private String type;
+    private Integer type;
 
+    @Transient
+    private boolean notice;
 }

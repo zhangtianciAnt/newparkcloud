@@ -52,7 +52,11 @@ public class Sample extends BaseModel {
 
     private String sampletype;
 
+    private String coa;
+
     @Transient
     private boolean notice;
+
+
 
 }

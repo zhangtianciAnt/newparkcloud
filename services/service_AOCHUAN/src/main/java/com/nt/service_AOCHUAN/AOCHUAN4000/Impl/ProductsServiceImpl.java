@@ -175,4 +175,13 @@ public class ProductsServiceImpl implements ProductsService {
     public List<Products> getProdutsExceptUnique() throws Exception {
         return productsMapper.getProdutsExceptUnique();
     }
+    /**
+     * 获取不在注册表中的数据
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<Products> getProdutsExceptUniqueInReg() throws Exception {
+        return productsMapper.getProdutsExceptUniqueInReg();
+    }
 }
