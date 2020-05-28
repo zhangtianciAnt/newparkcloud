@@ -85,7 +85,7 @@ public class SecrecyServiceImpl implements SecrecyService {
 
 
     //系统服务（4月1日）
-    @Scheduled(cron="0 0 11 * * ?")
+    @Scheduled(cron="* * 1 * * ?")
     public void changestatus() throws Exception {
 
             List<Secrecy> secrelist = secrecyMapper.selectsecrecy();
