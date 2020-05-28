@@ -108,7 +108,7 @@ public class TalentPlanServiceImpl implements TalentPlanService {
                     if(otherOrgs.getCenterid() !=null && !otherOrgs.getCenterid().equals("")
                             && !otherOrgs.getCenterid().equals(customerInfop.get(0).getUserinfo().getCenterid().trim()))
                     {
-                        customerInfoListZONGP = customerInfoList.stream().filter(customerInfo -> (customerInfo.getUserinfo().getPost().trim().equals("PG021002") || customerInfo.getUserinfo().getPost().trim().equals("PG021003"))
+                        customerInfoListZONGP = customerInfoList.stream().filter(customerInfo -> (customerInfo.getUserinfo().getPost().trim().equals("PG021002") || customerInfo.getUserinfo().getPost().trim().equals("PG021003") || customerInfo.getUserinfo().getPost().trim().equals("PG021014"))
                                 && customerInfo.getUserinfo().getCenterid().trim().equals(otherOrgs.getCenterid())).collect(Collectors.toList());
                         for(CustomerInfo c : customerInfoListZONGP){
                             userIdList.add(c.getUserid());
@@ -235,7 +235,8 @@ public class TalentPlanServiceImpl implements TalentPlanService {
             }
             //查询当前登录人伞下所有的人
             query1 = new Query();
-            query1.addCriteria(Criteria.where("userinfo.groupid").is(customerInfop.get(0).getUserinfo().getGroupid().trim()));
+            query1.addCriteria(new Criteria().andOperator(Criteria.where("userinfo.centerid").is(customerInfop.get(0).getUserinfo().getCenterid().trim()),
+                    Criteria.where("userinfo.groupid").is(customerInfop.get(0).getUserinfo().getGroupid().trim())));
             customerInfoListGM = mongoTemplate.find(query1,CustomerInfo.class);
             //伞下所有人中检索职位为TL的人
             List<CustomerInfo> customerInfoListGMP = new ArrayList<CustomerInfo>();
@@ -318,7 +319,8 @@ public class TalentPlanServiceImpl implements TalentPlanService {
             }
             //查询当前登录人伞下所有的人
             query1 = new Query();
-            query1.addCriteria(Criteria.where("userinfo.teamid").is(customerInfop.get(0).getUserinfo().getTeamid().trim()));
+            query1.addCriteria(new Criteria().andOperator(Criteria.where("userinfo.centerid").is(customerInfop.get(0).getUserinfo().getCenterid().trim()),
+                    Criteria.where("userinfo.groupid").is(customerInfop.get(0).getUserinfo().getGroupid().trim()),Criteria.where("userinfo.teamid").is(customerInfop.get(0).getUserinfo().getTeamid().trim())));
             customerInfoListTL = mongoTemplate.find(query1,CustomerInfo.class);
             //追加到最后的人员list中
             for(CustomerInfo c : customerInfoListTL){
