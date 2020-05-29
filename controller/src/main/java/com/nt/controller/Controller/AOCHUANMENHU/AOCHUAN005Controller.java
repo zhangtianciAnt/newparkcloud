@@ -20,10 +20,11 @@ public class AOCHUAN005Controller {
     private MenhuproductsService productsService;
 
     @RequestMapping(value="/getList",method = {RequestMethod.GET})
-    public ApiResult getList(HttpServletRequest request)throws  Exception{
+    public ApiResult getList(String dtitle,String xtitle,HttpServletRequest request)throws  Exception{
 
         Menhuproducts menhuproducts = new Menhuproducts();
-
+        menhuproducts.setDtitle(dtitle);
+        menhuproducts.setXtitle(xtitle);
         return ApiResult.success(productsService.get(menhuproducts));
 
     }

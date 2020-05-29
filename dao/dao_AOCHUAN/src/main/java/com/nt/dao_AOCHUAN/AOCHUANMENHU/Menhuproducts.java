@@ -39,6 +39,12 @@ public class Menhuproducts extends BaseModel {
     @Column(name = "STAUSS")
     private String stauss;
 
+    @Column(name = "DTITLE")
+    private String dtitle;
+
+    @Column(name = "XTITLE")
+    private String xtitle;
+
 
 
 }
