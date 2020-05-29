@@ -19,8 +19,8 @@ public class FinReport{
     @Column(name = "CONTRACTNUMBER")
     private String contractnumber;
     //产品中文名称
-    @Column(name = "PRODUCTUS")
-    private String productus;
+    @Column(name = "PRODUCTEN")
+    private String producten;
     //客户名称
     @Column(name = "CUSTOMER")
     private String customer;
