@@ -99,6 +99,7 @@ public class AOCHUAN3001Controller {
         List<Enquiry> enquiry = quotations.getEnquiry();
         String inquirydate = sf.format(quotations.getInquirydate());
         String quotationsno = quotations.getQuotationsno();
+        String others =quotations.getOthers();
         String account = quotations.getAccount();
         BigDecimal amounts = new BigDecimal(0);
         int i = 0;
@@ -123,6 +124,7 @@ public class AOCHUAN3001Controller {
                     put("quotationsno",quotationsno);
                     put("account",account);
                     put("amount",amount);
+                    put("others",others);
                 }}
         );
         ServletOutputStream out = response.getOutputStream();
