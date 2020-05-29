@@ -67,15 +67,15 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void update(TransportGood transportGood, TokenModel tokenModel) throws Exception {
         transportGood.preUpdate(tokenModel);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
-        if(transportGood.isNotice()){
-            ToDoNotice(tokenModel,transportGood);
+        if (transportGood.isNotice()) {
+            ToDoNotice(tokenModel, transportGood);
         }
-        ToDoNoticeFinance(tokenModel,transportGood);
+        ToDoNoticeFinance(tokenModel, transportGood);
     }
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
-        String number = contractNumber.getContractNumber("PT001010","transportgood");
+        String number = contractNumber.getContractNumber("PT001010", "transportgood");
         String id = UUID.randomUUID().toString();
         transportGood.setContractnumber(number);
         transportGood.setTransportgood_id(id);
@@ -102,32 +102,32 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         finSales.preInsert();
         finSales.setArrival_status("0");
         finSales.setCredential_status("PW001001");
-        String number = contractNumber.getContractNumber("PT001011","fin_sales");
+        String number = contractNumber.getContractNumber("PT001011", "fin_sales");
         finSales.setCredential_sales(number);
         finSalesMapper.insert(finSales);
     }
 
     //生成代办
     @Async
-    public void ToDoNotice(TokenModel tokenModel,TransportGood transportGood) throws Exception{
+    public void ToDoNotice(TokenModel tokenModel, TransportGood transportGood) throws Exception {
         // 创建代办
-        if(transportGood.getType() == 1){
-            List<MembersVo> membersVos =  roleService.getMembers("5eba6f09e52fa718db632696");
-            for (MembersVo membersVo:
+        if (transportGood.getType() == 1) {
+            List<MembersVo> membersVos = roleService.getMembers("5eba6f09e52fa718db632696");
+            for (MembersVo membersVo :
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
                 toDoNotice.setTitle("【采购进货】：您有一条走货单需要处理。");
                 toDoNotice.setInitiator(tokenModel.getUserId());
-                toDoNotice.setContent("订单号【" +transportGood.getContractnumber()+"】");
+                toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
                 toDoNotice.setDataid(transportGood.getTransportgood_id());
                 toDoNotice.setUrl("/AOCHUAN3002FormView");
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
-        }else if(transportGood.getType() == 2){
-            List<MembersVo> membersVos =  roleService.getMembers("5eba6f88e52fa718db632697");
-            for (MembersVo membersVo:
+        } else if (transportGood.getType() == 2) {
+            List<MembersVo> membersVos = roleService.getMembers("5eba6f88e52fa718db632697");
+            for (MembersVo membersVo :
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
                 toDoNotice.setTitle("【单据填写】：您有一条走货单需要处理。");
@@ -144,25 +144,25 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     //生成代办
     @Async
-    public void ToDoNoticeFinance(TokenModel tokenModel,TransportGood transportGood) throws Exception{
+    public void ToDoNoticeFinance(TokenModel tokenModel, TransportGood transportGood) throws Exception {
         // 创建代办
-        if(transportGood.getFinance() == 2){
-            List<MembersVo> membersVos =  roleService.getMembers("5eba7094e52fa718db63269c");
-            for (MembersVo membersVo:
+        if (transportGood.getFinance() == 2) {
+            List<MembersVo> membersVos = roleService.getMembers("5eba7094e52fa718db63269c");
+            for (MembersVo membersVo :
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
                 toDoNotice.setTitle("【发起请款】：您有一条请款单需要处理。");
                 toDoNotice.setInitiator(tokenModel.getUserId());
-                toDoNotice.setContent("订单号【" +transportGood.getContractnumber()+"】");
+                toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
                 toDoNotice.setDataid(transportGood.getTransportgood_id());
                 toDoNotice.setUrl("/AOCHUAN3002FormView");
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
             }
-        }else if(transportGood.getFinance() == 1){
-            List<MembersVo> membersVos =  roleService.getMembers("5eba7094e52fa718db63269c");
-            for (MembersVo membersVo:
+        } else if (transportGood.getFinance() == 1) {
+            List<MembersVo> membersVos = roleService.getMembers("5eba7094e52fa718db63269c");
+            for (MembersVo membersVo :
                     membersVos) {
                 ToDoNotice toDoNotice = new ToDoNotice();
                 toDoNotice.setTitle("【发起回款确认】：您有一条汇款单需要确认。");
@@ -180,7 +180,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     //系统服务
     public void othersToDoNotice() throws Exception {
         List<TransportGood> transportGoods = transportGoodMapper.deliveryTime();
-        for (TransportGood transportGood:
+        for (TransportGood transportGood :
                 transportGoods) {
             ToDoNotice toDoNotice = new ToDoNotice();
             toDoNotice.setTitle("【计划发货提醒】：您有一条走货单已到达发货时间。");
@@ -193,5 +193,4 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             toDoNoticeService.save(toDoNotice);
         }
     }
-
 }
