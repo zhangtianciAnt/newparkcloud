@@ -102,9 +102,19 @@ ORDER BY
 
     <!--    定时查询车辆（出场时间为空的数据）-->
     <select id="getQueryVehiclesRegularlyInfo" resultType="com.nt.dao_BASF.VO.VehicleinformationGpsArrVo">
+
         select *
         from vehicleinformation
-        where outtime is NULL
+        where
+        gps is not null
+        and
+        status = 0
+
+        and(
+        outtime is null
+        or
+        round((UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(outtime))/60) &lt; 3
+        )
     </select>
 
 <!--    增量更新GPS点位信息-->
