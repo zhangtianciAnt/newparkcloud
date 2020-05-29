@@ -59,6 +59,7 @@ public class Supplierbaseinfor extends BaseModel {
     private String planttype;
     private String newproduct;
     private String kisid;
+    private String supplier_owner;
     private String other;
 
     private String registeredcapital2;
