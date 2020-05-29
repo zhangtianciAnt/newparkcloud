@@ -51,10 +51,11 @@ public class Products extends BaseModel {
     @Column(name = "SIMILARDRUGS")
     private String similardrugs;
 
-
     @Column(name = "ORIGINAL")
     private String original;
 
+    @Column(name = "ORGDRUG_TIME")
+    private String orgdrug_time;
 
     @Column(name = "HSCODE")
     private String hscode;
