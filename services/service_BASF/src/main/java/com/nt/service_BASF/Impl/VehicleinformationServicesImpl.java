@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -197,7 +198,21 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         List<VehicleinformationGpsArrVo> list=vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
         for(VehicleinformationGpsArrVo vehicleinformationGpsArrVo:list){
             if(StringUtils.isNotEmpty(vehicleinformationGpsArrVo.getGps())){
-                vehicleinformationGpsArrVo.setGpsArr(vehicleinformationGpsArrVo.getGps().split(";"));
+
+                ArrayList arrayList = new ArrayList();
+                for(int i = 0;i<vehicleinformationGpsArrVo.getGps().split(";").length;i++)
+                {
+                    ArrayList arrayList1 = new ArrayList();
+                    for(int j=0;j<vehicleinformationGpsArrVo.getGps().split(";")[i].split(",").length;j++)
+                    {
+                        BigDecimal a= new BigDecimal(vehicleinformationGpsArrVo.getGps().split(";")[i].split(",")[j]);
+                        arrayList1.add(Arrays.asList(a));
+                    }
+                    arrayList.add(arrayList1);
+                }
+
+
+                vehicleinformationGpsArrVo.setGpsArr(arrayList);
             }
         }
         return list;
