@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,5 +21,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VehicleinformationGpsArrVo extends Vehicleinformation {
-    String[] gpsArr;
+    ArrayList gpsArr;
 }
