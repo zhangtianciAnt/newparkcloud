@@ -110,7 +110,7 @@ public class TalentPlanServiceImpl implements TalentPlanService {
                     if(otherOrgs.getCenterid() !=null && !otherOrgs.getCenterid().equals("")
                             && !otherOrgs.getCenterid().equals(customerInfop.get(0).getUserinfo().getCenterid().trim()))
                     {
-                        customerInfoListZONGP = customerInfoList.stream().filter(customerInfo -> (customerInfo.getUserinfo().getPost().trim().equals("PG021002") || customerInfo.getUserinfo().getPost().trim().equals("PG021003") || customerInfo.getUserinfo().getPost().trim().equals("PG021014"))
+                        customerInfoListZONGP = customerInfoList.stream().filter(customerInfo -> (customerInfo.getUserinfo().getPost().trim().equals("PG021002") || customerInfo.getUserinfo().getPost().trim().equals("PG021003"))
                                 && customerInfo.getUserinfo().getCenterid().trim().equals(otherOrgs.getCenterid())).collect(Collectors.toList());
                         for(CustomerInfo c : customerInfoListZONGP){
                             userIdList.add(c.getUserid());
