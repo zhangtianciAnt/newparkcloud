@@ -11,7 +11,7 @@ import java.util.List;
 public interface PunchcardRecordDetailMapper extends MyMapper<PunchcardRecordDetail> {
     List<PunchcardRecord> getPunchCardRecord();
 
-    List<PunchcardRecordDetail> getPunDetail(@Param("jobnumber") String jobnumber, @Param("punchcardrecord_date") String punchcardrecord_date);
+    List<PunchcardRecordDetail> getPunDetail(@Param("jobnumber") String jobnumber, @Param("user_id") String user_id,@Param("punchcardrecord_date") String punchcardrecord_date);
 
     void deletetepun(@Param("punchcardrecord_date") String punchcardrecord_date,@Param("staffNo") String staffNo);
 

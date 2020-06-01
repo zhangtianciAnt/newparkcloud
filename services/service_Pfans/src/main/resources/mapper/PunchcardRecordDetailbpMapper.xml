@@ -17,6 +17,7 @@
     <select id="getPunDetailbp" resultType="com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetailbp">
         select jobnumber,punchcardrecord_date,eventno from punchcardrecorddetailbp
         where jobnumber = #{jobnumber}
+        and user_id like CONCAT('%',#{user_id},'%')
         and  date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
         order by punchcardrecord_date
     </select>

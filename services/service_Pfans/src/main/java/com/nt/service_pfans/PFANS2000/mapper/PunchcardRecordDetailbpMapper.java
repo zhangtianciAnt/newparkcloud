@@ -12,7 +12,7 @@ public interface PunchcardRecordDetailbpMapper extends MyMapper<PunchcardRecordD
 
     List<Expatriatesinfor> getexpatriatesinforbp(@Param("ids") List<String> ids);
 
-    List<PunchcardRecordDetailbp> getPunDetailbp(@Param("jobnumber") String jobnumber, @Param("punchcardrecord_date") String punchcardrecord_date);
+    List<PunchcardRecordDetailbp> getPunDetailbp(@Param("jobnumber") String jobnumber, @Param("user_id") String user_id,@Param("punchcardrecord_date") String punchcardrecord_date);
 
     void deletetepunbp(@Param("punchcardrecord_date") String punchcardrecord_date,@Param("staffNo") String staffNo);
 
