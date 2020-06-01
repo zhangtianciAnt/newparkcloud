@@ -64,4 +64,12 @@ public class Reimbursement extends BaseModel {
     //行程
     @Column(name = "JOURNEY")
     private String journey;
+
+    //是否有发票
+    @Column(name = "INVOICE")
+    private String invoice;
+
+    //是否有报销
+    @Column(name = "REIMBURSEM")
+    private String reimbursem;
 }
