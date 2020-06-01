@@ -266,12 +266,14 @@ public class UserServiceImpl implements UserService {
 //                ADD_FJL_05/21   --添加降序
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
                 //去除Invalid date的数据
-                cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
-                cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                userInfo.setGridData(cupList);
-                if (userInfo.getGridData().size() > 0) {
-                    userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
-                    userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+                if (cupList != null && cupList.size() > 0) {
+                    cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
+                    cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                    userInfo.setGridData(cupList);
+                    if (userInfo.getGridData().size() > 0) {
+                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
+                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+                    }
                 }
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
