@@ -265,6 +265,8 @@ public class UserServiceImpl implements UserService {
                 customerInfo.setUserid(_id);
 //                ADD_FJL_05/21   --添加降序
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
+                //去除Invalid date的数据
+                cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
                 cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 userInfo.setGridData(cupList);
 //                if(userInfo.getGridData().size() > 0){
@@ -1402,7 +1404,7 @@ public class UserServiceImpl implements UserService {
                             List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
                             if (perList != null) {
                                 //去除  null 的数据
-                                perList = perList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
+                                perList = perList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
                             }
                             perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
                             int i = 0;
@@ -1612,38 +1614,47 @@ public class UserServiceImpl implements UserService {
                     }
                     //降序
                     if (cupList.size() > 0) {
+                        cupList = cupList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setGridData(cupList);
                     }
                     if (cupList1.size() > 0) {
+                        cupList1 = cupList1.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList1 = cupList1.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setPostData(cupList1);
                     }
                     if (cupList2.size() > 0) {
+                        cupList2 = cupList2.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList2 = cupList2.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setRankData(cupList2);
                     }
                     if (cupList3.size() > 0) {
+                        cupList3 = cupList3.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList3 = cupList3.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setOldageData(cupList3);
                     }
                     if (cupList4.size() > 0) {
+                        cupList4 = cupList4.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList4 = cupList4.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setMedicalData(cupList4);
                     }
                     if (cupList5.size() > 0) {
+                        cupList5 = cupList5.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList5 = cupList5.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setSyeData(cupList5);
                     }
                     if (cupList6.size() > 0) {
+                        cupList6 = cupList6.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList6 = cupList6.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setGsData(cupList6);
                     }
                     if (cupList7.size() > 0) {
+                        cupList7 = cupList7.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList7 = cupList7.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setSyuData(cupList7);
                     }
                     if (cupList8.size() > 0) {
+                        cupList8 = cupList8.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList8 = cupList8.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                     }
