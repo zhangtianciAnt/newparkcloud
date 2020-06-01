@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.FollowUpRecordMapper">
+
+    <!--  存在Check  -->
+    <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select * from followuprecord where FOLLOWUPRECORD_ID = #{id} AND  STATUS != '1'
+    </select>
+
+    <!--  获取记录表数据  -->
+    <select id="getFollowUpRecordList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.FollowUpRecord">
+        select
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID,
+        fur.SAL_CUSTOMER,
+        fur.SAL_DATE,
+        fur.SAL_EVENT,
+        fur.SAL_CONTENT,
+        fur.PROC_DATE,
+        fur.PROC_ANSWER
+        from followuprecord as fur
+        inner join projects as pro
+        on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
+        where fur.PRODUCTS_ID =#{products_id} AND fur.SUPPLIER_ID =#{supplier_id} AND fur.STATUS != '1'
+        order by fur.SAL_DATE
+	</select>
+
+    <!--  记录表删除  -->
+    <update id="deleteFromFollowUpRecordByDoubleKey">
+         UPDATE followuprecord
+		SET STATUS = #{status},
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		 WHERE PRODUCTS_ID = #{products_id}
+        AND SUPPLIER_ID = #{supplier_id}
+    </update>
+
+    <!--  记录表删除  -->
+    <update id="deleteFlw">
+        UPDATE followuprecord
+		SET STATUS = '1',
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		WHERE FOLLOWUPRECORD_ID = #{id}
+    </update>
+
+    <select id="getForSupplier" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProAndFoll">
+       select
+        pro.PROJECTS_ID,
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID
+        from followuprecord as fur
+        inner join projects as pro
+        on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
+        where fur.SUPPLIER_ID = #{id}
+    </select>
+
+    <select id="getForCustomer" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ProAndFoll">
+         select
+        pro.PROJECTS_ID,
+        fur.FOLLOWUPRECORD_ID,
+        fur.PRODUCTS_ID,
+        fur.PRODUCT_NM,
+        fur.SUPPLIER_ID,
+        fur.SUPPLIER,
+        fur.CUSTOMER_ID
+        from followuprecord as fur
+        inner join projects as pro
+        on fur.PRODUCTS_ID = pro.PRODUCTS_ID and fur.SUPPLIER_ID = pro.SUPPLIER_ID
+        where fur.CUSTOMER_ID = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN7000.mapper.VoucherRulesMapper">
+
+    <!--  delete  -->
+    <update id="delDocuruleid">
+        UPDATE docurule
+		SET STATUS = '1',
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		WHERE DOCURULE_ID = #{docurule_id}
+    </update>
+
+    <!--  Check  -->
+    <select id="existCheckAux" resultType="int">
+        SELECT COUNT(*) FROM docurule WHERE DOCURULE_ID = #{id} AND  STATUS != '1'
+    </select>
+
+</mapper>

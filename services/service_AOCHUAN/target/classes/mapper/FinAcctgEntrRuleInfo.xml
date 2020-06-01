@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAcctgRulMapper">
+
+    <!--  ACCTGRUL AND AUXACCTG  -->
+    <select id="getAcctgEntrInfoByCrdl_id" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule">
+         SELECT
+        acc.ACCTGRUL_ID ACCTGRUL_ID ,
+        acc.CRDLINFO_FID CRDLINFO_FID ,
+        acc.REMARKS REMARKS ,
+        acc.ACCT_CODE ACCT_CODE,
+        acc.DEBIT DEBIT ,
+        acc.CREDIT CREDIT ,
+        acc.TAXRATE TAXRATE ,
+        acc.AMOUNT AMOUNT,
+        acc.CURRENCY CURRENCY,
+        acc.EX_RATE EX_RATE,
+        acc.ORICURRENCY_AMOUNT ORICURRENCY_AMOUNT,
+        acc.UNIT UNIT,
+        acc.UNIT_PRICE UNIT_PRICE,
+        aux.AUXACCTG_ID AUXACCTG_ID,
+        aux.ACCTGRUL_FID ACCTGRUL_FID,
+        aux.BANKACCOUNT_CODE BANKACCOUNT_CODE,
+        aux.BANKACCOUNT BANKACCOUNT,
+        aux.DEPT_CODE DEPT_CODE,
+        aux.DEPT DEPT,
+        aux.IAE_CONTG_CODE IAE_CONTG_CODE,
+        aux.IAE_CONTG IAE_CONTG,
+        aux.AUXACCTG_CODE AUXACCTG_CODE,
+        aux.AUXACCTG AUXACCTG,
+        aux.MAINCASH_CODE MAINCASH_CODE,
+        aux.MAINCASHFLOW MAINCASHFLOW,
+        aux.ATTACHCASH_CODE ATTACHCASH_CODE,
+        aux.ATTACHCASHFLOW ATTACHCASHFLOW,
+        aux.AUXACCTG_AMOUNT AUXACCTG_AMOUNT
+        FROM acctgrul as acc
+        LEFT JOIN auxacctg as aux
+        ON aux.ACCTGRUL_FID = acc.ACCTGRUL_ID
+        WHERE acc.CRDLINFO_FID = #{crdlinfo_id}
+        AND acc.STATUS != '1'
+        AND aux.STATUS != '1'
+		ORDER BY acc.ROWINDEX
+
+    </select>
+
+    <!--  delete  -->
+    <update id="delAcctgRulByFid">
+        UPDATE acctgrul
+		SET STATUS = '1',
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		WHERE CRDLINFO_FID = #{crdlinfo_fid}
+    </update>
+    <update id="delAuxAcctgByFid">
+        UPDATE auxacctg
+		SET STATUS = '1',
+		MODIFYBY = #{modifyby},
+		MODIFYON = now()
+		WHERE ACCTGRUL_FID = #{acctgrul_fid}
+    </update>
+
+    <!--  ??Check  -->
+    <select id="existCheckAcc" resultType="int">
+        SELECT COUNT(*) FROM acctgrul WHERE ACCTGRUL_ID = #{id} AND  STATUS != '1'
+    </select>
+    <select id="existCheckAux" resultType="int">
+        SELECT COUNT(*) FROM auxacctg WHERE AUXACCTG_ID = #{id} AND  STATUS != '1'
+    </select>
+</mapper>

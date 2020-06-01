@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN0000.mapper.WorkPlanMapper">
+
+    <!--selectByMonth-->
+    <select id="selectByMonth" resultType="com.nt.dao_AOCHUAN.AOCHUAN0000.WorkPlan">
+        SELECT * FROM workplan
+        WHERE
+        YEAR(WORK_FTIME) = YEAR(NOW())
+        AND
+        MONTH(WORK_FTIME) = MONTH(NOW())
+        AND
+        EMP_ID = #{id}
+        AND  STATUS != '1'
+    </select>
+
+    <!--selectByToday-->
+    <select id="selectByToday" resultType="com.nt.dao_AOCHUAN.AOCHUAN0000.WorkPlan">
+       SELECT * FROM workplan
+        WHERE
+        TO_DAYS(NOW()) = TO_DAYS(WORK_FTIME)
+        AND  STATUS != '1'
+    </select>
+
+    <!--existCheck-->
+    <select id="existCheck" resultType="int">
+        SELECT count(*) FROM workplan WHERE WORKPLAN_ID = #{id} AND  STATUS != '1'
+    </select>
+
+    <!--delete-->
+    <update id="del">
+    UPDATE workplan
+    SET
+    STATUS = '1',
+    MODIFYBY = #{modifyby},
+    MODIFYON = now()
+    WHERE
+    WORKPLAN_ID = #{id}
+    </update>
+</mapper>

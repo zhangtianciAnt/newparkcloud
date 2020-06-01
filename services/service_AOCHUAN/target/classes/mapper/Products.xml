@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper">
+
+    <select id="getProdutsExceptUnique" resultType="com.nt.dao_AOCHUAN.AOCHUAN4000.Products">
+        SELECT *
+        FROM products
+        WHERE
+        STATUS != '1'
+        AND
+        PRODUCTS_ID NOT IN (
+        SELECT PRODUCTS_ID FROM projects
+        WHERE STATUS !='1'
+        )
+    </select>
+    <select id="getProdutsExceptUniqueInReg" resultType="com.nt.dao_AOCHUAN.AOCHUAN4000.Products">
+        SELECT *
+        FROM products
+        WHERE
+        STATUS != '1'
+        AND
+        PRODUCTS_ID NOT IN (
+        SELECT PRODUCTS_ID FROM registration
+        WHERE STATUS !='1'
+        )
+    </select>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper">
+
+    <!--  existCheck  -->
+    <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase">
+        SELECT * FROM fin_purchase WHERE PURCHASE_ID = #{id} AND  STATUS != '1'
+    </select>
+
+    <!--  uniqueCheck  -->
+    <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase">
+        SELECT * FROM fin_purchase WHERE PURCHASE_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS != '1'
+    </select>
+
+    <!--updateTransportgood-->
+    <update id="updateTransportGood">
+    UPDATE transportgood
+    SET AP_DATE = #{ap_date},
+     INVOICENUMBER = #{invoiceNo},
+     PAYMENTSTATUS = #{paymentstatus},
+     MODIFYBY = #{modifyby},
+     MODIFYON = now()
+    WHERE
+    TRANSPORTGOOD_ID = #{id}
+    </update>
+</mapper>
