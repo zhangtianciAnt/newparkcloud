@@ -113,6 +113,11 @@ public class Deviceinformation extends BaseModel {
      */
     private String devrow;
 
+    /**
+     * 电子围栏
+     */
+    private String fence;
+
 
 
 }
