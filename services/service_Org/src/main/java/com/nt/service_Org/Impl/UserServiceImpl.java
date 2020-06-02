@@ -356,8 +356,7 @@ public class UserServiceImpl implements UserService {
             query = new Query();
             customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
         }
-
-
+        customerInfos = customerInfos.stream().distinct().collect(Collectors.toList());
         return customerInfos;
     }
 
