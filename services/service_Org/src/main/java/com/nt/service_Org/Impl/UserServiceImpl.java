@@ -1464,7 +1464,13 @@ public class UserServiceImpl implements UserService {
                             for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getPostData()) {
                                 if (pp.getDate() != null && pp.getDate().equals(personal1.getDate())) {
                                     addflg1 = 1;
-                                    pp.setBasic(personal1.getBasic());
+                                    Dictionary dictionary = new Dictionary();
+                                    dictionary.setValue1(personal1.getBasic().trim());
+                                    dictionary.setType("CW");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if (dictionaryList.size() > 0) {
+                                        pp.setBasic(dictionaryList.get(0).getCode());
+                                    }
                                 }
                             }
                             if (addflg1 == 0) {
@@ -1484,7 +1490,13 @@ public class UserServiceImpl implements UserService {
                             for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getRankData()) {
                                 if (pp.getDate() != null && pp.getDate().equals(personal2.getDate())) {
                                     addflg2 = 1;
-                                    pp.setBasic(personal2.getBasic());
+                                    Dictionary dictionary = new Dictionary();
+                                    dictionary.setValue1(personal2.getBasic().trim());
+                                    dictionary.setType("RS");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if (dictionaryList.size() > 0) {
+                                        pp.setBasic(dictionaryList.get(0).getCode());
+                                    }
                                 }
                             }
                             if (addflg2 == 0) {
