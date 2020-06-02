@@ -388,13 +388,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         napalm.setContracttype(contractapp.getContracttype());
                         napalm.setToto(contractapp.getVarto());
                         napalm.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
-
-                        if (org.springframework.util.StringUtils.hasLength(contractapp.getClaimdatetime())) {
+//                        upd_fjl_06/02 --纳品回数请求期间 start
+                        if (org.springframework.util.StringUtils.hasLength(number.getClaimdatetimeqh())) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String[] startAndEnd = contractapp.getClaimdatetime().split(" ~ ");
+                            String[] startAndEnd = number.getClaimdatetimeqh().split(" ~ ");
                             napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
                             napalm.setEnddate(sdf.parse(startAndEnd[1]));
                         }
+                        //                        upd_fjl_06/02 --纳品回数请求期间 end
 
                         napalmMapper.insert(napalm);
                         //更新纳品进步状况=纳品完了
@@ -423,7 +424,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         petition.setResponerglish(contractapp.getResponerglish());
                         petition.setPlaceenglish(contractapp.getPlaceenglish());
                         petition.setPlacechinese(contractapp.getPlacechinese());
-                        petition.setClaimdatetime(contractapp.getClaimdatetime());
+//                        upd_fjl_06/02 --纳品回数请求期间 start
+//                        petition.setClaimdatetime(contractapp.getClaimdatetime());
+                        petition.setClaimdatetime(number.getClaimdatetimeqh());
+//                        upd_fjl_06/02 --纳品回数请求期间 end
                         petition.setBusinesscode(contractapp.getBusinesscode());
                         //add-ws-添加纳品做成日
                         petition.setDeliveryfinshdate(number.getDeliveryfinshdate());
