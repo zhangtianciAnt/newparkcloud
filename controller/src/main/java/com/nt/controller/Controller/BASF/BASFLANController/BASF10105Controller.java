@@ -2,6 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+//import com.nt.basf.subfactory.MainTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.Deviceinformation;
@@ -56,6 +57,8 @@ public class BASF10105Controller {
     private WebSocket ws = new WebSocket();
     private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
+//    private MainTask mt = new MainTask(this);
+
     /**
      * @param request
      * @Method list
@@ -107,10 +110,16 @@ public class BASF10105Controller {
                     String accunit ="";
                     String speloc ="";
                     String[] lastlist =linkagelist.get(0).getDetailedlocation().split("/");
-                    if(lastlist.length>0)
+                    if(lastlist.length>3)
                     {
                         accunit =lastlist[0] + "/" + lastlist[1];
                         speloc = lastlist[2] + "/" + lastlist[3];
+                        firealarm.setAccunit(accunit);
+                        firealarm.setSpeloc(speloc);
+                    }else if(lastlist.length>2)
+                    {
+                        accunit =lastlist[0] + "/" + lastlist[1];
+                        speloc = lastlist[2] ;
                         firealarm.setAccunit(accunit);
                         firealarm.setSpeloc(speloc);
                     }
