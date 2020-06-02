@@ -9,10 +9,12 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
@@ -65,6 +67,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
 
     /**
      * @方法名：getUserAccount
@@ -278,6 +283,19 @@ public class UserServiceImpl implements UserService {
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);
+                //add_fjl_0602  --删除代办
+                ToDoNotice toDoNotice1 = new ToDoNotice();
+                toDoNotice1.setDataid(customerInfo.getUserid());
+                toDoNotice1.setUrl("/usersFormView");
+                toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                if (rst1.size() > 0) {
+                    for (ToDoNotice item : rst1) {
+                        item.setStatus(AuthConstants.TODO_STATUS_DONE);
+                        toDoNoticeService.updateNoticesStatus(item);
+                    }
+                }
+                //add_fjl_0602  --删除代办
             }
             return customerInfo;
         } else {
