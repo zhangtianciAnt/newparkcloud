@@ -577,10 +577,12 @@ public class GivingServiceImpl implements GivingService {
         calLastOne.set(Calendar.DAY_OF_MONTH, 1);
         //入职日
         Calendar calEnterDay = Calendar.getInstance();
-        if (userinfo.getEnterday().indexOf("Z") < 0) {
-            userinfo.setEnterday(formatStringDate(userinfo.getEnterday()));
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(userinfo.getEnterday())){
+            if (userinfo.getEnterday().indexOf("Z") < 0) {
+                userinfo.setEnterday(formatStringDate(userinfo.getEnterday()));
+            }
+            calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         }
-        calEnterDay.setTime(sf.parse(userinfo.getEnterday().replace("Z", " UTC")));
         //退职日
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
@@ -1122,7 +1124,12 @@ public class GivingServiceImpl implements GivingService {
         String thisMouth = "0";
         //当月工资
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-            thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+            }
+            else{
+                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
+            }
         }
         //上月工资
         if(addMouth == 0){
@@ -2064,10 +2071,12 @@ public class GivingServiceImpl implements GivingService {
         // 工号
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
         // 入社日 客户导入日期是yy-mm-dd hh:mm:ss
-        if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
-            customerInfo.getUserinfo().setEnterday(formatStringDate(customerInfo.getUserinfo().getEnterday()));
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnterday())){
+            if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
+                customerInfo.getUserinfo().setEnterday(formatStringDate(customerInfo.getUserinfo().getEnterday()));
+            }
+            induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         }
-        induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
         // 本月基本工资
         String thisMonthSalary = getSalary(customerInfo, 1);
         induction.setThismonth(thisMonthSalary);
