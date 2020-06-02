@@ -35,6 +35,7 @@
             on typ6.APPLICANTERID = v.APPLICANTERID
             left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001007' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ7
             on typ7.APPLICANTERID = v.APPLICANTERID
+            where status = '4'
     </select>
 
     <select id="getVacation"  resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.LeaveDaysVo">
