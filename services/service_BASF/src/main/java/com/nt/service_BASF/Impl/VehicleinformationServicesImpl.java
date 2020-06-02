@@ -50,6 +50,41 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         return vehicleinformationMapper.select(vehicleinformation);
     }
 
+    @Override
+    public VehicleinformationGpsArrVo one(String vehicleinformationid) throws Exception {
+        Vehicleinformation vehicleinformation = new Vehicleinformation();
+        vehicleinformation.setVehicleinformationid(vehicleinformationid);
+
+        List<Vehicleinformation> list = vehicleinformationMapper.select(vehicleinformation);
+
+        VehicleinformationGpsArrVo listarr = new VehicleinformationGpsArrVo();
+
+        ArrayList arrayList = new ArrayList();
+        for(int i = 0; i< list.get(0).getGps().split(";").length; i++)
+        {
+            ArrayList arrayList1 = new ArrayList();
+            for(int j=0;j<list.get(0).getGps().split(";")[i].split(",").length;j++)
+            {
+                BigDecimal a= new BigDecimal(list.get(0).getGps().split(";")[i].split(",")[j]);
+                arrayList1.add(Arrays.asList(a));
+            }
+            arrayList.add(arrayList1);
+        }
+        listarr.setVehicleinformationid(list.get(0).getVehicleinformationid());
+        listarr.setVehiclenumber(list.get(0).getVehicleinformationid());
+        listarr.setDriver(list.get(0).getDriver());
+        listarr.setTransporter(list.get(0).getTransporter());
+        listarr.setIntime(list.get(0).getIntime());
+        listarr.setOuttime(list.get(0).getOuttime());
+        listarr.setIshazardous(list.get(0).getIshazardous());
+        listarr.setGps(list.get(0).getGps());
+        listarr.setStatus(list.get(0).getStatus());
+        listarr.setCreateby(list.get(0).getCreateby());
+        listarr.setCreateon(list.get(0).getCreateon());
+        listarr.setGpsArr(arrayList);
+        return listarr;
+    }
+
     /**
      * @param
      * @Method
