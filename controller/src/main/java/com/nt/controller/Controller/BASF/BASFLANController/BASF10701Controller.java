@@ -66,7 +66,7 @@ public class BASF10701Controller {
         if (StrUtil.isEmpty(vehicleinformationid)){
             return ApiResult.success(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(vehicletrajectoryServices.one(vehicleinformationid));
+        return ApiResult.success(vehicleinformationServices.one(vehicleinformationid));
     }
 
     /**
