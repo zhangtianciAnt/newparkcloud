@@ -22,8 +22,21 @@ public class Linkman extends BaseModel {
     @Column(name = "BASEINFOR_ID")
     private String baseinfor_id;
 
-    @Column(name = "NAME")
-    private String name;
+//    中文名
+    @Column(name = "CNAME")
+    private String cname;
+
+//    日文名
+    @Column(name = "JNAME")
+    private String jname;
+
+//    韩文名
+    @Column(name = "KNAME")
+    private String kname;
+
+//    英文名
+    @Column(name = "ENAME")
+    private String ename;
 
     @Column(name = "SEX")
     private String sex;
