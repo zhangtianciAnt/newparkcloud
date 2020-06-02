@@ -61,18 +61,15 @@
             SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'02') THEN TIME_START ELSE 0 END) AS february,
             SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'03') THEN TIME_START ELSE 0 END) AS march
             from logmanagement
-            left join expatriatesinfor
-            ON logmanagement.createby = expatriatesinfor.account
             where (DATE_FORMAT(LOG_DATE, '%Y') = #{year} OR DATE_FORMAT(LOG_DATE, '%Y') = #{year} + 1)
             <if test="group_id != null and group_id != ''" >
-                and expatriatesinfor.group_id = #{group_id}
+                and logmanagement.group_id = #{group_id}
             </if>
             group by logmanagement.createby) ment
             ) log
         on ex.account = log.createby
-        left join delegainformation de
+        inner join delegainformation de
         on ex.account = de.account
-        and ex.group_id = de.group_id
         and de.year = #{year}
         left join dictionary jo
         on jo.code = ex.jobclassification
@@ -91,7 +88,7 @@
         where ex.result = 'BP003001'
         and ex.account != ''
         <if test="group_id != null and group_id != ''" >
-            and ex.group_id = #{group_id}
+            and de.group_id = #{group_id}
         </if>
         order by ex.expname
     </select>

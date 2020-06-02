@@ -242,6 +242,7 @@ public class AuthServiceImpl implements AuthService {
             }
             return result;
         }
+        result = result.stream().distinct().collect(Collectors.toList());
         result.add("XXXXX");
         return result;
     }
