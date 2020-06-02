@@ -140,6 +140,7 @@ public class QuotationsServiceImpl implements QuotationsService {
                 toDoNotice.preInsert(tokenModel);
                 toDoNotice.setOwner(membersVo.getUserid());
                 toDoNoticeService.save(toDoNotice);
+                toDoNoticeService.updateNoticesStatus(toDoNotice);
             }
         }else if(quotations.getType() == 1){
             ToDoNotice toDoNotice = new ToDoNotice();
