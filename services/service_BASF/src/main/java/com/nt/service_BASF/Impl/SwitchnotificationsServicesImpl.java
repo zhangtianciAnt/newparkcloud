@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -38,6 +35,14 @@ public class SwitchnotificationsServicesImpl implements SwitchnotificationsServi
 //
         List<Switchnotifications> switchnotificationsList = switchnotificationsMapper.select(switchnotifications);
         return switchnotificationsList;
+    }
+
+    @Override
+    public void create(Switchnotifications switchnotifications) throws Exception {
+        switchnotifications.setSwitchnotificationsid(UUID.randomUUID().toString());
+        switchnotifications.setCreateon(new Date());
+        switchnotifications.setStatus("0");
+        switchnotificationsMapper.insert(switchnotifications);
     }
 
 

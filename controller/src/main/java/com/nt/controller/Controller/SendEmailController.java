@@ -66,6 +66,12 @@ public class SendEmailController {
         return ApiResult.success(switchnotificationsServices.list(switchnotifications));
     }
 
+    @RequestMapping(value = "/createswitch", method = {RequestMethod.POST})
+    public ApiResult create(@RequestBody Switchnotifications switchnotifications, HttpServletRequest request) throws Exception {
+        switchnotificationsServices.create(switchnotifications);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/deleteswitch", method = {RequestMethod.POST})
     public ApiResult delete(@RequestBody Switchnotifications switchnotifications, HttpServletRequest request) throws Exception {
         switchnotificationsServices.delete(switchnotifications);

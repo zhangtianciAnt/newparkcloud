@@ -12,6 +12,9 @@ public interface SwitchnotificationsServices {
     //获取主备服务通知表
     List<Switchnotifications> list(Switchnotifications switchnotifications) throws Exception;
 
+    //创建主备服务通知表
+    void create(Switchnotifications switchnotifications) throws Exception;
+
     //删除主备服务通知表
     void delete(Switchnotifications switchnotifications) throws Exception;
 

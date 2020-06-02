@@ -1,6 +1,10 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.dao_BASF.PersonnelPermissions;
+import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.PersonnelPermissionsServices;
 import com.nt.service_SQL.SqlViewDepartmentServices;
 import com.nt.utils.ApiResult;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -52,7 +57,10 @@ public class BASF10207Controller {
     @RequestMapping(value = "/getsqldepmentlist", method = {RequestMethod.POST})
     public ApiResult getsqldepmentlist(HttpServletRequest request) throws Exception {
         //获取SQL部门列表
-        return ApiResult.success(sqlviewdepartmentservices.sqllist());
+        MultiThreadScheduleTask mk = new MultiThreadScheduleTask();
+        JSONArray departarray = mk.returnpostlist("userInfo/getsqldepmentlist");
+        List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
+        return ApiResult.success(departlist);
     }
 
     /**
