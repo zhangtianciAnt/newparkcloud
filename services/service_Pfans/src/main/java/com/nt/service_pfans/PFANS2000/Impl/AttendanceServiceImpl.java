@@ -24,6 +24,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendanceMapper.getAttendance(attendance);
     }
 
+    //日志使用
     @Override
     public List<Attendance> getAttendancelist(Attendance attendance) throws Exception {
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
@@ -43,6 +44,14 @@ public class AttendanceServiceImpl implements AttendanceService {
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
         return attendancelist;
     }
+
+    //考勤使用
+    @Override
+    public List<Attendance> getAttendancelist1(Attendance attendance) throws Exception {
+        List<Attendance> attendancelist = attendanceMapper.select(attendance);
+        return attendancelist;
+    }
+
 
     @Override
     public void update(Attendance attendance, TokenModel tokenModel) throws Exception {

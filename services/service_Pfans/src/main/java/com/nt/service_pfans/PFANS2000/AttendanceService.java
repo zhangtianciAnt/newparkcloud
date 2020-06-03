@@ -9,7 +9,11 @@ public interface AttendanceService {
 
     List<Attendance> getlist(Attendance attendance) throws Exception;
 
+    //日志使用
     List<Attendance> getAttendancelist(Attendance attendance) throws Exception;
+
+    //考勤使用
+    List<Attendance> getAttendancelist1(Attendance attendance) throws Exception;
 
     void update(Attendance attendance, TokenModel tokenModel) throws Exception;
 

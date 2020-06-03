@@ -33,6 +33,7 @@ public class Pfans2010Controller {
         return ApiResult.success(attendanceService.getlist(attendance));
     }
 
+    //日志使用
     @RequestMapping(value = "/getAttendancelist", method = {RequestMethod.POST})
     public ApiResult getAttendancelist(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
         if (attendance == null) {
@@ -42,6 +43,17 @@ public class Pfans2010Controller {
         attendance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
 //        attendance.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(attendanceService.getAttendancelist(attendance));
+    }
+    //考勤使用
+    @RequestMapping(value = "/getAttendancelist1", method = {RequestMethod.POST})
+    public ApiResult getAttendancelist1(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//        attendance.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(attendanceService.getAttendancelist1(attendance));
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
