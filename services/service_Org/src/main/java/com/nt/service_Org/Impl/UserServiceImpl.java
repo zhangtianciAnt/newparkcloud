@@ -381,13 +381,13 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setJobnumber("");
             item.getUserinfo().setBudgetunit("");
-            item.getUserinfo().setPersonalcode("");
+//            item.getUserinfo().setPersonalcode("");
             item.getUserinfo().setType("");
             item.getUserinfo().setOccupationtype("");
             item.getUserinfo().setDifference("");
             item.getUserinfo().setLaborcontracttype("");
             item.getUserinfo().setFixedate("");
-            item.getUserinfo().setEnterday("");
+//            item.getUserinfo().setEnterday("");
             item.getUserinfo().setUpgraded("");
             item.getUserinfo().setEnddate("");
             item.getUserinfo().setAnnualyear("");
@@ -837,18 +837,45 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
                         }
                     }
-//                        //center
-//                        if (value.get(2) != null) {
-//                            userinfo.setCentername(value.get(2).toString());
-//                        }
-//                        //group
-//                        if (value.get(3) != null) {
-//                            userinfo.setGroupname(value.get(3).toString());
-//                        }
-//                        //team
-//                        if (value.get(4) != null) {
-////                            userinfo.setTeamname(value.get(4).toString());
-//                        }
+                    //center
+                    if (item.get("center") != null) {
+                        String cen = item.get("center").toString();
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
+                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (cuinfo != null) {
+                            userinfo.setCentername(cuinfo.getUserinfo().getCentername());
+                            userinfo.setCenterid(cuinfo.getUserinfo().getCenterid());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在，或者有空格！");
+                        }
+                    }
+                    //group
+                    if (item.get("group") != null) {
+                        String grp = item.get("group").toString();
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
+                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (cuinfo != null) {
+                            userinfo.setGroupname(cuinfo.getUserinfo().getGroupname());
+                            userinfo.setGroupid(cuinfo.getUserinfo().getGroupid());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或者有空格！");
+                        }
+                    }
+                    //team
+                    if (item.get("team") != null) {
+                        String tem = item.get("team").toString();
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (cuinfo != null) {
+                            userinfo.setTeamname(cuinfo.getUserinfo().getTeamname());
+                            userinfo.setTeamid(cuinfo.getUserinfo().getTeamid());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或者有空格！");
+                        }
+                    }
                     //入社时间
                     if (item.get("入社时间") != null) {
                         userinfo.setEnterday(item.get("入社时间").toString());
@@ -865,6 +892,8 @@ public class UserServiceImpl implements UserService {
                                 userinfo.setPost(dictionaryList.get(0).getCode());
                                 personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
                                 personal1.setBasic(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职务（" + item.get("职务").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -880,6 +909,8 @@ public class UserServiceImpl implements UserService {
                                 userinfo.setRank(dictionaryList.get(0).getCode());
                                 personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
                                 personal2.setBasic(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -893,6 +924,8 @@ public class UserServiceImpl implements UserService {
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setSex(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的性别（" + item.get("性别").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -993,6 +1026,8 @@ public class UserServiceImpl implements UserService {
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setDegree(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的最终学位（" + item.get("最终学位").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -1115,15 +1150,6 @@ public class UserServiceImpl implements UserService {
                         personal8.setBasic(item.get("住房公积金缴纳基数").toString());
                     }
 //                }
-                    cupList.add(personal);
-                    cupList1.add(personal1);
-                    cupList2.add(personal2);
-                    cupList3.add(personal3);
-                    cupList4.add(personal4);
-                    cupList5.add(personal5);
-                    cupList6.add(personal6);
-                    cupList7.add(personal7);
-                    cupList8.add(personal8);
                     //如果有工资履历变更，給料変更日不能为空
                     if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                             StringUtils.isNullOrEmpty(personal.getDate())) {
@@ -1135,6 +1161,17 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
                         }
                     }
+
+                    cupList.add(personal);
+                    cupList1.add(personal1);
+                    cupList2.add(personal2);
+                    cupList3.add(personal3);
+                    cupList4.add(personal4);
+                    cupList5.add(personal5);
+                    cupList6.add(personal6);
+                    cupList7.add(personal7);
+                    cupList8.add(personal8);
+
                     userinfo.setGridData(cupList);
                     userinfo.setPostData(cupList1);
                     userinfo.setRankData(cupList2);
@@ -1200,11 +1237,44 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                         //center
-//                                  customerInfoList.get(0).getUserinfo().setCentername(Convert.toStr(value.get(3)));
+                        if (item.get("center●") != null) {
+                            String cen = item.get("center●").toString();
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
+                            CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (cuinfo != null) {
+                                customerInfoList.get(0).getUserinfo().setCentername(cuinfo.getUserinfo().getCentername());
+                                customerInfoList.get(0).getUserinfo().setCenterid(cuinfo.getUserinfo().getCenterid());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center（" + item.get("center●").toString() + "）不存在，或者有空格！");
+                            }
+                        }
                         //group
-//                                  customerInfoList.get(0).getUserinfo().setGroupname(Convert.toStr(value.get(4)));
+                        if (item.get("group●") != null) {
+                            String grp = item.get("group●").toString();
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
+                            CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (cuinfo != null) {
+                                customerInfoList.get(0).getUserinfo().setGroupname(cuinfo.getUserinfo().getGroupname());
+                                customerInfoList.get(0).getUserinfo().setGroupid(cuinfo.getUserinfo().getGroupid());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group（" + item.get("group●").toString() + "）不存在，或者有空格！");
+                            }
+                        }
                         //team
-//                                  customerInfoList.get(0).getUserinfo().setTeamname(Convert.toStr(value.get(5)));
+                        if (item.get("team●") != null) {
+                            String tem = item.get("team●").toString();
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+                            CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (cuinfo != null) {
+                                customerInfoList.get(0).getUserinfo().setTeamname(cuinfo.getUserinfo().getTeamname());
+                                customerInfoList.get(0).getUserinfo().setTeamid(cuinfo.getUserinfo().getTeamid());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team（" + item.get("team●").toString() + "）不存在，或者有空格！");
+                            }
+                        }
 
                         if (item.get("入社时间●") != null) {
                             customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(item.get("入社时间●")));
@@ -1220,6 +1290,8 @@ public class UserServiceImpl implements UserService {
                                     customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
                                     personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
                                     personal1.setBasic(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职务（" + item.get("职务●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
@@ -1234,6 +1306,8 @@ public class UserServiceImpl implements UserService {
                                     customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
                                     personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
                                     personal2.setBasic(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
@@ -1246,6 +1320,8 @@ public class UserServiceImpl implements UserService {
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的性别（" + item.get("性别●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
@@ -1320,6 +1396,8 @@ public class UserServiceImpl implements UserService {
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的最终学位（" + item.get("最终学位●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
@@ -1416,6 +1494,19 @@ public class UserServiceImpl implements UserService {
                     } else {
                         throw new LogicalException("第" + k + "行卡号（" + Convert.toStr(item.get("卡号")) + "）" + "不存在,或输入格式不正确！");
                     }
+
+                    //如果有工资履历变更，給料変更日不能为空
+                    if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
+                            StringUtils.isNullOrEmpty(personal.getDate())) {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
+                    }
+                    //如果有給料変更日，工资履历不能为空
+                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                        }
+                    }
+
                     //判断 工资 是否有履历，如果有变更，没有添加履历
                     float addflg = 0;
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
@@ -1631,18 +1722,6 @@ public class UserServiceImpl implements UserService {
                         cupList8.add(personal8);
                     }
 
-
-                    //如果有工资履历变更，給料変更日不能为空
-                    if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
-                            StringUtils.isNullOrEmpty(personal.getDate())) {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
-                    }
-                    //如果有給料変更日，工资履历不能为空
-                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
-                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
-                        }
-                    }
                     //降序
                     if (cupList.size() > 0) {
                         cupList = cupList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
