@@ -71,7 +71,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             arrayList.add(arrayList1);
         }
         listarr.setVehicleinformationid(list.get(0).getVehicleinformationid());
-        listarr.setVehiclenumber(list.get(0).getVehicleinformationid());
+        listarr.setVehiclenumber(list.get(0).getVehiclenumber());
         listarr.setDriver(list.get(0).getDriver());
         listarr.setTransporter(list.get(0).getTransporter());
         listarr.setIntime(list.get(0).getIntime());
