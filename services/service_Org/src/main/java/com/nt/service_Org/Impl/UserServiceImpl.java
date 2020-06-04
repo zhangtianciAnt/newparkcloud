@@ -1527,8 +1527,12 @@ public class UserServiceImpl implements UserService {
                                     int aa = Integer.valueOf(personal.getDate().replace("-", ""));
                                     int bb = Integer.valueOf(pp.getDate().replace("-", ""));
                                     if (aa >= bb) {
-                                        customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
-                                        customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                        if (item.get("现职责工资●") != null) {
+                                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                                        }
+                                        if (item.get("现基本工资●") != null) {
+                                            customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                        }
                                     }
                                 }
                                 if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
