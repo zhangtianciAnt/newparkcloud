@@ -14,6 +14,7 @@ import com.nt.service_pfans.PFANS1000.JudgementService;
 
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
+import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -50,6 +51,9 @@ public class Pfans1012Controller {
 
     @Autowired
     private JudgementService judgementService;
+
+    @Autowired
+    private LoanApplicationMapper loanapplicationMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -233,7 +237,16 @@ public class Pfans1012Controller {
                 wfList4 = sign.startGraphics2D(wfList4);
             }
         }
+
+
         Map<String, Object> data = new HashMap<>();
+        if("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())){
+            String payeeName = "";
+            LoanApplication loanApplication = new LoanApplication();
+            loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
+            payeeName = loanApplication.getPayeename();
+            data.put("payeeName", payeeName);
+        }
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
         if (pubvo.getPublicexpense().getRmbexpenditure() != null) {

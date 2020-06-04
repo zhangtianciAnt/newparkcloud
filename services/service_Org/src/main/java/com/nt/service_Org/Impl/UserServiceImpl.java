@@ -9,10 +9,12 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
 import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
@@ -65,6 +67,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
 
     /**
      * @方法名：getUserAccount
@@ -265,15 +270,32 @@ public class UserServiceImpl implements UserService {
                 customerInfo.setUserid(_id);
 //                ADD_FJL_05/21   --添加降序
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
-                cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
-                userInfo.setGridData(cupList);
-//                if(userInfo.getGridData().size() > 0){
-                userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
-                userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
-//                }
+                //去除Invalid date的数据
+                if (cupList != null && cupList.size() > 0) {
+                    cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
+                    cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                    userInfo.setGridData(cupList);
+                    if (userInfo.getGridData().size() > 0) {
+                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
+                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+                    }
+                }
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);
+                //add_fjl_0602  --删除代办
+                ToDoNotice toDoNotice1 = new ToDoNotice();
+                toDoNotice1.setDataid(customerInfo.getUserid());
+                toDoNotice1.setUrl("/usersFormView");
+                toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                if (rst1.size() > 0) {
+                    for (ToDoNotice item : rst1) {
+                        item.setStatus(AuthConstants.TODO_STATUS_DONE);
+                        toDoNoticeService.updateNoticesStatus(item);
+                    }
+                }
+                //add_fjl_0602  --删除代办
             }
             return customerInfo;
         } else {
@@ -334,8 +356,7 @@ public class UserServiceImpl implements UserService {
             query = new Query();
             customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
         }
-
-
+        customerInfos = customerInfos.stream().distinct().collect(Collectors.toList());
         return customerInfos;
     }
 
@@ -360,13 +381,13 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setJobnumber("");
             item.getUserinfo().setBudgetunit("");
-            item.getUserinfo().setPersonalcode("");
+//            item.getUserinfo().setPersonalcode("");
             item.getUserinfo().setType("");
             item.getUserinfo().setOccupationtype("");
             item.getUserinfo().setDifference("");
             item.getUserinfo().setLaborcontracttype("");
             item.getUserinfo().setFixedate("");
-            item.getUserinfo().setEnterday("");
+//            item.getUserinfo().setEnterday("");
             item.getUserinfo().setUpgraded("");
             item.getUserinfo().setEnddate("");
             item.getUserinfo().setAnnualyear("");
@@ -816,18 +837,45 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
                         }
                     }
-//                        //center
-//                        if (value.get(2) != null) {
-//                            userinfo.setCentername(value.get(2).toString());
-//                        }
-//                        //group
-//                        if (value.get(3) != null) {
-//                            userinfo.setGroupname(value.get(3).toString());
-//                        }
-//                        //team
-//                        if (value.get(4) != null) {
-////                            userinfo.setTeamname(value.get(4).toString());
-//                        }
+                    //center
+                    if (item.get("center") != null) {
+                        String cen = item.get("center").toString();
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
+                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (cuinfo != null) {
+                            userinfo.setCentername(cuinfo.getUserinfo().getCentername());
+                            userinfo.setCenterid(cuinfo.getUserinfo().getCenterid());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在，或者有空格！");
+                        }
+                    }
+                    //group
+                    if (item.get("group") != null) {
+                        String grp = item.get("group").toString();
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
+                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (cuinfo != null) {
+                            userinfo.setGroupname(cuinfo.getUserinfo().getGroupname());
+                            userinfo.setGroupid(cuinfo.getUserinfo().getGroupid());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或者有空格！");
+                        }
+                    }
+                    //team
+                    if (item.get("team") != null) {
+                        String tem = item.get("team").toString();
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (cuinfo != null) {
+                            userinfo.setTeamname(cuinfo.getUserinfo().getTeamname());
+                            userinfo.setTeamid(cuinfo.getUserinfo().getTeamid());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或者有空格！");
+                        }
+                    }
                     //入社时间
                     if (item.get("入社时间") != null) {
                         userinfo.setEnterday(item.get("入社时间").toString());
@@ -838,27 +886,38 @@ public class UserServiceImpl implements UserService {
                         if (post != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(post.trim());
-                            dictionary.setType("CW");
+                            dictionary.setPcode("PG021");
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setPost(dictionaryList.get(0).getCode());
                                 personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
                                 personal1.setBasic(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职务（" + item.get("职务").toString() + "）在字典中不存在！");
                             }
                         }
                     }
                     //RANK
                     if (item.get("Rank") != null) {
-                        String rank = item.get("Rank").toString();
-                        if (rank != null) {
-                            Dictionary dictionary = new Dictionary();
-                            dictionary.setValue1(rank.trim());
-                            dictionary.setType("RS");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if (dictionaryList.size() > 0) {
-                                userinfo.setRank(dictionaryList.get(0).getCode());
-                                personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
-                                personal2.setBasic(dictionaryList.get(0).getCode());
+                        //1:出向者;2：正式社员
+                        if (item.get("Rank").toString().trim().equals("その他")) {
+                            userinfo.setType("1");
+                            userinfo.setRank("その他");
+                        } else {
+                            userinfo.setType("0");
+                            String rank = item.get("Rank").toString();
+                            if (rank != null) {
+                                Dictionary dictionary = new Dictionary();
+                                dictionary.setValue1(rank.trim());
+                                dictionary.setPcode("PR021");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if (dictionaryList.size() > 0) {
+                                    userinfo.setRank(dictionaryList.get(0).getCode());
+                                    personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                    personal2.setBasic(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank").toString() + "）在字典中不存在！");
+                                }
                             }
                         }
                     }
@@ -868,10 +927,12 @@ public class UserServiceImpl implements UserService {
                         if (sex != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(sex.trim());
-                            dictionary.setType("GT");
+                            dictionary.setPcode("PR019");
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setSex(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的性别（" + item.get("性别").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -968,10 +1029,12 @@ public class UserServiceImpl implements UserService {
                         if (degree != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(degree.trim());
-                            dictionary.setType("GT");
+                            dictionary.setPcode("PG018");
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setDegree(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的最终学位（" + item.get("最终学位").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -1094,15 +1157,6 @@ public class UserServiceImpl implements UserService {
                         personal8.setBasic(item.get("住房公积金缴纳基数").toString());
                     }
 //                }
-                    cupList.add(personal);
-                    cupList1.add(personal1);
-                    cupList2.add(personal2);
-                    cupList3.add(personal3);
-                    cupList4.add(personal4);
-                    cupList5.add(personal5);
-                    cupList6.add(personal6);
-                    cupList7.add(personal7);
-                    cupList8.add(personal8);
                     //如果有工资履历变更，給料変更日不能为空
                     if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                             StringUtils.isNullOrEmpty(personal.getDate())) {
@@ -1114,6 +1168,17 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
                         }
                     }
+
+                    cupList.add(personal);
+                    cupList1.add(personal1);
+                    cupList2.add(personal2);
+                    cupList3.add(personal3);
+                    cupList4.add(personal4);
+                    cupList5.add(personal5);
+                    cupList6.add(personal6);
+                    cupList7.add(personal7);
+                    cupList8.add(personal8);
+
                     userinfo.setGridData(cupList);
                     userinfo.setPostData(cupList1);
                     userinfo.setRankData(cupList2);
@@ -1126,7 +1191,11 @@ public class UserServiceImpl implements UserService {
                     customerInfo.setUserinfo(userinfo);
                     customerInfo.setType("1");
                     customerInfo.setStatus("0");
-                    customerInfo.getUserinfo().setType("0");
+                    if (item.get("Rank").toString().trim().equals("その他")) {
+                        customerInfo.getUserinfo().setType("1");
+                    } else {
+                        customerInfo.getUserinfo().setType("0");
+                    }
                     mongoTemplate.save(ust);
                     Query query = new Query();
                     query.addCriteria(Criteria.where("account").is(ust.getAccount()));
@@ -1179,11 +1248,44 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                         //center
-//                                  customerInfoList.get(0).getUserinfo().setCentername(Convert.toStr(value.get(3)));
+                        if (item.get("center●") != null) {
+                            String cen = item.get("center●").toString();
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
+                            CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (cuinfo != null) {
+                                customerInfoList.get(0).getUserinfo().setCentername(cuinfo.getUserinfo().getCentername());
+                                customerInfoList.get(0).getUserinfo().setCenterid(cuinfo.getUserinfo().getCenterid());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center（" + item.get("center●").toString() + "）不存在，或者有空格！");
+                            }
+                        }
                         //group
-//                                  customerInfoList.get(0).getUserinfo().setGroupname(Convert.toStr(value.get(4)));
+                        if (item.get("group●") != null) {
+                            String grp = item.get("group●").toString();
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
+                            CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (cuinfo != null) {
+                                customerInfoList.get(0).getUserinfo().setGroupname(cuinfo.getUserinfo().getGroupname());
+                                customerInfoList.get(0).getUserinfo().setGroupid(cuinfo.getUserinfo().getGroupid());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group（" + item.get("group●").toString() + "）不存在，或者有空格！");
+                            }
+                        }
                         //team
-//                                  customerInfoList.get(0).getUserinfo().setTeamname(Convert.toStr(value.get(5)));
+                        if (item.get("team●") != null) {
+                            String tem = item.get("team●").toString();
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+                            CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (cuinfo != null) {
+                                customerInfoList.get(0).getUserinfo().setTeamname(cuinfo.getUserinfo().getTeamname());
+                                customerInfoList.get(0).getUserinfo().setTeamid(cuinfo.getUserinfo().getTeamid());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team（" + item.get("team●").toString() + "）不存在，或者有空格！");
+                            }
+                        }
 
                         if (item.get("入社时间●") != null) {
                             customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(item.get("入社时间●")));
@@ -1193,26 +1295,37 @@ public class UserServiceImpl implements UserService {
                             if (post != null) {
                                 Dictionary dictionary = new Dictionary();
                                 dictionary.setValue1(post.trim());
-                                dictionary.setType("CW");
+                                dictionary.setPcode("PG021");
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
                                     personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
                                     personal1.setBasic(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职务（" + item.get("职务●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
                         if (item.get("Rank●") != null) {
-                            String rank = item.get("Rank●").toString();
-                            if (rank != null) {
-                                Dictionary dictionary = new Dictionary();
-                                dictionary.setValue1(rank.trim());
-                                dictionary.setType("RS");
-                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                if (dictionaryList.size() > 0) {
-                                    customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
-                                    personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
-                                    personal2.setBasic(dictionaryList.get(0).getCode());
+                            //1:出向者;2：正式社员
+                            if (item.get("Rank●").toString().trim().equals("その他")) {
+                                customerInfoList.get(0).getUserinfo().setType("1");
+                                customerInfoList.get(0).getUserinfo().setRank("その他");
+                            } else {
+                                customerInfoList.get(0).getUserinfo().setType("0");
+                                String rank = item.get("Rank●").toString();
+                                if (rank != null) {
+                                    Dictionary dictionary = new Dictionary();
+                                    dictionary.setValue1(rank.trim());
+                                    dictionary.setPcode("PR021");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if (dictionaryList.size() > 0) {
+                                        customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
+                                        personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                        personal2.setBasic(dictionaryList.get(0).getCode());
+                                    } else {
+                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank●").toString() + "）在字典中不存在！");
+                                    }
                                 }
                             }
                         }
@@ -1221,10 +1334,12 @@ public class UserServiceImpl implements UserService {
                             if (sex != null) {
                                 Dictionary dictionary = new Dictionary();
                                 dictionary.setValue1(sex.trim());
-                                dictionary.setType("GT");
+                                dictionary.setPcode("PR019");
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的性别（" + item.get("性别●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
@@ -1295,10 +1410,12 @@ public class UserServiceImpl implements UserService {
                             if (degree != null) {
                                 Dictionary dictionary = new Dictionary();
                                 dictionary.setValue1(degree.trim());
-                                dictionary.setType("GT");
+                                dictionary.setPcode("PG018");
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的最终学位（" + item.get("最终学位●").toString() + "）在字典中不存在！");
                                 }
                             }
                         }
@@ -1395,6 +1512,19 @@ public class UserServiceImpl implements UserService {
                     } else {
                         throw new LogicalException("第" + k + "行卡号（" + Convert.toStr(item.get("卡号")) + "）" + "不存在,或输入格式不正确！");
                     }
+
+                    //如果有工资履历变更，給料変更日不能为空
+                    if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
+                            StringUtils.isNullOrEmpty(personal.getDate())) {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
+                    }
+                    //如果有給料変更日，工资履历不能为空
+                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
+                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
+                        }
+                    }
+
                     //判断 工资 是否有履历，如果有变更，没有添加履历
                     float addflg = 0;
                     if (customerInfoList.get(0).getUserinfo().getGridData() != null) {
@@ -1402,7 +1532,7 @@ public class UserServiceImpl implements UserService {
                             List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
                             if (perList != null) {
                                 //去除  null 的数据
-                                perList = perList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
+                                perList = perList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
                             }
                             perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
                             int i = 0;
@@ -1415,8 +1545,12 @@ public class UserServiceImpl implements UserService {
                                     int aa = Integer.valueOf(personal.getDate().replace("-", ""));
                                     int bb = Integer.valueOf(pp.getDate().replace("-", ""));
                                     if (aa >= bb) {
-                                        customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
-                                        customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                        if (item.get("现职责工资●") != null) {
+                                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                                        }
+                                        if (item.get("现基本工资●") != null) {
+                                            customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                                        }
                                     }
                                 }
                                 if (pp.getDate() != null && pp.getDate().equals(personal.getDate())) {
@@ -1442,7 +1576,13 @@ public class UserServiceImpl implements UserService {
                             for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getPostData()) {
                                 if (pp.getDate() != null && pp.getDate().equals(personal1.getDate())) {
                                     addflg1 = 1;
-                                    pp.setBasic(personal1.getBasic());
+                                    Dictionary dictionary = new Dictionary();
+                                    dictionary.setValue1(personal1.getBasic().trim());
+                                    dictionary.setPcode("PG021");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if (dictionaryList.size() > 0) {
+                                        pp.setBasic(dictionaryList.get(0).getCode());
+                                    }
                                 }
                             }
                             if (addflg1 == 0) {
@@ -1462,7 +1602,13 @@ public class UserServiceImpl implements UserService {
                             for (CustomerInfo.Personal pp : customerInfoList.get(0).getUserinfo().getRankData()) {
                                 if (pp.getDate() != null && pp.getDate().equals(personal2.getDate())) {
                                     addflg2 = 1;
-                                    pp.setBasic(personal2.getBasic());
+                                    Dictionary dictionary = new Dictionary();
+                                    dictionary.setValue1(personal2.getBasic().trim());
+                                    dictionary.setPcode("PR021");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if (dictionaryList.size() > 0) {
+                                        pp.setBasic(dictionaryList.get(0).getCode());
+                                    }
                                 }
                             }
                             if (addflg2 == 0) {
@@ -1598,52 +1744,49 @@ public class UserServiceImpl implements UserService {
                         cupList8.add(personal8);
                     }
 
-
-                    //如果有工资履历变更，給料変更日不能为空
-                    if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
-                            StringUtils.isNullOrEmpty(personal.getDate())) {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
-                    }
-                    //如果有給料変更日，工资履历不能为空
-                    if (!StringUtils.isNullOrEmpty(personal.getDate())) {
-                        if (StringUtils.isNullOrEmpty(personal.getBasic()) && StringUtils.isNullOrEmpty(personal.getDuty())) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 工资履历 未填写");
-                        }
-                    }
                     //降序
                     if (cupList.size() > 0) {
+                        cupList = cupList.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setGridData(cupList);
                     }
                     if (cupList1.size() > 0) {
+                        cupList1 = cupList1.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList1 = cupList1.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setPostData(cupList1);
                     }
                     if (cupList2.size() > 0) {
+                        cupList2 = cupList2.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList2 = cupList2.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setRankData(cupList2);
                     }
                     if (cupList3.size() > 0) {
+                        cupList3 = cupList3.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList3 = cupList3.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setOldageData(cupList3);
                     }
                     if (cupList4.size() > 0) {
+                        cupList4 = cupList4.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList4 = cupList4.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setMedicalData(cupList4);
                     }
                     if (cupList5.size() > 0) {
+                        cupList5 = cupList5.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList5 = cupList5.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setSyeData(cupList5);
                     }
                     if (cupList6.size() > 0) {
+                        cupList6 = cupList6.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList6 = cupList6.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setGsData(cupList6);
                     }
                     if (cupList7.size() > 0) {
+                        cupList7 = cupList7.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList7 = cupList7.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setSyuData(cupList7);
                     }
                     if (cupList8.size() > 0) {
+                        cupList8 = cupList8.stream().filter(item1 -> (item1.getDate() != null)).collect(Collectors.toList());
                         cupList8 = cupList8.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                         customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                     }

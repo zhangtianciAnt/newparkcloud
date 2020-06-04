@@ -74,12 +74,10 @@ priceset.yearunit
         FROM `priceset` p
         inner join pricesetgroup pg
         on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
-            inner join expatriatesinfor as e
-            on p.USER_ID = e.EXPATRIATESINFOR_ID
         where (pg.PD_DATE  BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
         AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
         <if test="groupid!=null and groupid !=''">
-            and e.GROUP_ID = #{groupid}
+            and p.GROUP_ID = #{groupid}
         </if>
     </select>
 </mapper>

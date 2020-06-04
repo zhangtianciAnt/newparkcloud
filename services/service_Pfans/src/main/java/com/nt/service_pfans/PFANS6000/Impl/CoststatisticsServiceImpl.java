@@ -66,6 +66,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Override
     public List<Coststatistics> getCostListBygroupid(String groupid) throws Exception {
+
         return coststatisticsMapper.selectBygroupid(groupid);
     }
 
@@ -87,6 +88,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
             coststatistics.setBpname(c.getBpname());
             coststatistics.setYears(String.valueOf(year).trim());
+            coststatistics.setGroupid(groupid);
             coststatisticsMapper.delete(coststatistics);
         }
 
@@ -137,7 +139,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-        expatriatesinfor.setGroup_id(groupid);
+        //expatriatesinfor.setGroup_id(groupid);
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> companyMap = new HashMap<String, String>();
         for ( Expatriatesinfor ex : companyList) {
@@ -173,7 +175,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 double manhour = 0;
                 String property = "manhour" + i;
                 try {
-                    manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
+//                    if(price !=0)
+//                    {
+                        manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
+//                    }
                 } catch (Exception e) {}
                 double cost = price * manhour;
                 BeanUtils.setProperty(c, "cost" + i, String.format("%.2f", cost));

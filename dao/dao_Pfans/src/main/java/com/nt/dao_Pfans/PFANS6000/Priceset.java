@@ -220,4 +220,8 @@ public class Priceset extends BaseModel {
      */
     @Column(name = "USERNAME")
     private String username;
+
+   // GROUPID
+    @Column(name = "GROUP_ID")
+    private String groupid;
 }

@@ -5,30 +5,29 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
-import com.mysql.fabric.Response;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Pfans.PFANS1000.Holidaydetail;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS6000.ExpatriatesinforDetail;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_Org.DictionaryService;
-import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforDetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetGroupMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -44,8 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static com.nt.utils.MongoObject.CustmizeQuery;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -53,6 +51,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
+
+    @Autowired
+    private ExpatriatesinforDetailMapper expatriatesinforDetailMapper;
 
     @Autowired
     private SupplierinforMapper supplierinforMapper;
@@ -71,6 +72,40 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     public List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception {
+        // ceshi
+//        List<Expatriatesinfor> list = new ArrayList<>();
+//        list = expatriatesinforMapper.selectAll();
+//        list = list.stream().filter(item -> (item.getOperationform() !=null && !item.getOperationform().equals(""))).collect(Collectors.toList());
+//        list = list.stream().filter(item -> (item.getOperationform().equals("BP024001"))).collect(Collectors.toList());
+//
+//        for(Expatriatesinfor expatriatesinfor1: list)
+//        {
+//            Expatriatesinfor infor = new Expatriatesinfor();
+//            infor = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor1.getExpatriatesinfor_id());
+//            ExpatriatesinforDetail e =new ExpatriatesinforDetail();
+//            TokenModel tokenModel = new TokenModel();
+//            tokenModel.setUserId(infor.getAccount());
+//            tokenModel.setExpireDate(new Date());
+//            //登录新的履历
+//            e.preInsert(tokenModel);
+//            e.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+//            e.setExpatriatesinfor_id(expatriatesinfor1.getExpatriatesinfor_id());
+//            e.setGroup_id(expatriatesinfor1.getGroup_id());
+//            if(expatriatesinfor1.getExitime() == null)
+//            {
+//                e.setExdatestr(expatriatesinfor1.getAdmissiontime());
+//                e.setExdateend(expatriatesinfor1.getExitime());
+//            }
+//            else
+//            {
+//                e.setExdatestr(expatriatesinfor1.getAdmissiontime());
+//            }
+//
+//
+//            expatriatesinforDetailMapper.insert(e);
+//        }
+
+        //ceshi
         return expatriatesinforMapper.select(expatriatesinfor);
     }
 
@@ -85,6 +120,16 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             infor.setAccountname(account.getAccount());
         }
         return infor;
+    }
+
+    @Override
+    public List<ExpatriatesinforDetail> getGroupexpDetail(String expatriatesinfor_id) throws Exception {
+        ExpatriatesinforDetail expatriatesinforDetail =new ExpatriatesinforDetail();
+        expatriatesinforDetail.setExpatriatesinfor_id(expatriatesinfor_id);
+        List<ExpatriatesinforDetail> list =new ArrayList<>();
+        list = expatriatesinforDetailMapper.select(expatriatesinforDetail);
+        list = list.stream().sorted(Comparator.comparing(ExpatriatesinforDetail::getExdatestr)).collect(Collectors.toList());
+        return list;
     }
 
     @Override
@@ -212,6 +257,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
             Priceset priceset = new Priceset();
             priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+            //priceset.setGroupid(expatriatesinfor.getGroup_id());
             String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
             String sDate = DateUtil.format(new Date(), "yyyy-MM");
 
@@ -226,6 +272,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     priceset.preInsert(tokenModel);
                     priceset.setPriceset_id(UUID.randomUUID().toString());
                     priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                    priceset.setGroupid(expatriatesinfor.getGroup_id());
                     priceset.setGraduation(expatriatesinfor.getGraduation_year());
                     priceset.setCompany(expatriatesinfor.getSuppliername());
                     priceset.setAssesstime(thisDate);
@@ -235,7 +282,63 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     pricesetMapper.insert(priceset);
                 }
             }
+            else
+            {
+                PricesetGroup pricesetGroup = new PricesetGroup();
+                pricesetGroup.setPd_date(sDate);
+                List<PricesetGroup> pricesetGroupList = pricesetGroupMapper.select(pricesetGroup);
+                if(pricesetGroupList.size()>0)
+                {
+                    priceset.setGroupid(expatriatesinfor.getGroup_id());
+                    priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
+                    List<Priceset> pricesetlist = pricesetMapper.select(priceset);
+                    if(pricesetlist.size()==0)
+                    {
+                        Priceset priceset1 = new Priceset();
+                        priceset1.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
+                        priceset1.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                        pricesetlist = pricesetMapper.select(priceset1);
+                        if(pricesetlist.size()>0)
+                        {
+                            pricesetlist.get(0).preInsert(tokenModel);
+                            pricesetlist.get(0).setPriceset_id(UUID.randomUUID().toString());
+                            pricesetlist.get(0).setGroupid(expatriatesinfor.getGroup_id());
+                            pricesetlist.get(0).setStatus("0");
+                            pricesetMapper.insert(pricesetlist.get(0));
+                        }
+                    }
+                }
+            }
         }
+
+        //ccm add
+        ExpatriatesinforDetail e = new ExpatriatesinforDetail();
+        e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+        List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
+        expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
+        for(ExpatriatesinforDetail expDetail : expatriatesinforDetails)
+        {
+            if(expDetail.getExdateend() ==null)
+            {
+                if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
+                {
+                    //更新结束时间
+                    expDetail.setExdateend(new Date());
+                    expDetail.preUpdate(tokenModel);
+                    expatriatesinforDetailMapper.updateByPrimaryKey(expDetail);
+
+                    //登录新的履历
+                    e.preInsert(tokenModel);
+                    e.setGroup_id(expatriatesinfor.getGroup_id());
+                    e.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                    e.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
+                    e.setExdatestr(new Date());
+                    expatriatesinforDetailMapper.insert(e);
+                }
+            }
+        }
+        //ccm add
+
     }
 
     @Override
