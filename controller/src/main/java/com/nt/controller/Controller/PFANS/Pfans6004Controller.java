@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS6000.ExpatriatesinforDetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.SupplierinforService;
@@ -56,6 +57,16 @@ public class Pfans6004Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinforApplyOne(expatriatesinfor.getExpatriatesinfor_id()));
+    }
+
+    @RequestMapping(value = "/getGroupexpDetail", method = {RequestMethod.POST})
+    public ApiResult getGroupexpDetail(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
+        if (expatriatesinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+
+        return ApiResult.success(expatriatesinforService.getGroupexpDetail(expatriatesinfor.getExpatriatesinfor_id()));
     }
 
     @RequestMapping(value = "/updateinfor", method = {RequestMethod.POST})

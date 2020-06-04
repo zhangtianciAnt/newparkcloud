@@ -61,20 +61,28 @@ public class PricesetServiceImpl implements PricesetService {
                 expatriatesinfor.setWhetherentry("BP006001");
                 List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
                 for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
-                    Priceset priceset = new Priceset();
 
-                    List<Priceset> pl = list.stream().filter(pli -> expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())).collect(Collectors.toList());
+
+                    List<Priceset> pl = list.stream().filter(pli -> (expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())  )).collect(Collectors.toList());
 
 
                     if(pl.size() > 0){
-                        BeanUtil.copyProperties(pl.get(0),priceset);
+                        for(Priceset ip:pl){
+                            Priceset priceset = new Priceset();
+                            BeanUtil.copyProperties(ip,priceset);
+                            a.getDetail().add(priceset);
+                        }
+
                     } else{
+                        Priceset priceset = new Priceset();
+                        //priceset.setGroupid(expatriatesinforItem.getGroup_id());
                         priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
                         priceset.setUsername(expatriatesinforItem.getExpname());
                         priceset.setGraduation(expatriatesinforItem.getGraduation_year());
                         priceset.setCompany(expatriatesinforItem.getSuppliername());
+                        a.getDetail().add(priceset);
                     }
-                    a.getDetail().add(priceset);
+
                 }
 
                 rst.add(a);
@@ -102,6 +110,7 @@ public class PricesetServiceImpl implements PricesetService {
 
                         priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
                         priceset.setUsername(expatriatesinforItem.getExpname());
+                        priceset.setGroupid(expatriatesinforItem.getGroup_id());
                         priceset.setGraduation(expatriatesinforItem.getGraduation_year());
                         priceset.setCompany(expatriatesinforItem.getSuppliername());
                         if(pl.size() > 0){
@@ -124,6 +133,7 @@ public class PricesetServiceImpl implements PricesetService {
                 for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
                     Priceset priceset = new Priceset();
                     priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
+                    priceset.setGroupid(expatriatesinforItem.getGroup_id());
                     priceset.setUsername(expatriatesinforItem.getExpname());
                     priceset.setGraduation(expatriatesinforItem.getGraduation_year());
                     priceset.setCompany(expatriatesinforItem.getSuppliername());
