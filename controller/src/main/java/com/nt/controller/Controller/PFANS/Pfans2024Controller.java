@@ -46,12 +46,25 @@ public class Pfans2024Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        //talentPlan.setOwners(tokenModel.getOwnerList());
+        talentPlan.setOwners(tokenModel.getOwnerList());
         List<TalentPlan> talentPlanList = new ArrayList<TalentPlan>();
         talentPlanList = talentplanService.list(talentPlan,tokenModel);
         talentPlanList = talentPlanList.stream().filter(item -> (!item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
         return ApiResult.success(talentPlanList);
     }
+    //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
+    @RequestMapping(value = "/getDataList", method = {RequestMethod.POST})
+    public ApiResult getDataList(@RequestBody TalentPlan talentPlan, HttpServletRequest request) throws Exception {
+        if (talentPlan == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        talentPlan.setOwners(tokenModel.getOwnerList());
+        List<TalentPlan> talentPlanList = talentplanService.getDataList(talentPlan);
+        talentPlanList = talentPlanList.stream().filter(item -> (!item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+        return ApiResult.success(talentPlanList);
+    }
+    //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
     @RequestMapping(value = "/download", method = {RequestMethod.GET})
     public void download(String type, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
