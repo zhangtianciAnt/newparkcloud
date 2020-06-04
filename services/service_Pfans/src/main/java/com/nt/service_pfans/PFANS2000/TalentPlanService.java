@@ -13,4 +13,7 @@ public interface TalentPlanService {
     public void upd(TalentPlan talentPlan, TokenModel tokenModel)throws Exception;
     TalentPlan One(String talentplan_id) throws Exception;
     public void insertByOrg(TalentPlanVo TalentPlanVo, TokenModel tokenModel)throws Exception;
+    //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
+    public List<TalentPlan> getDataList(TalentPlan talentPlan) throws Exception;
+    //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
 }

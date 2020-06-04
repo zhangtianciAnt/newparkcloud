@@ -16,5 +16,7 @@ public interface DelegainformationMapper extends MyMapper<Delegainformation> {
                                       @Param("october") int october,@Param("november") int november,
                                       @Param("december") int december,@Param("january") int january,
                                       @Param("february") int february,@Param("march") int march);
+   List<DelegainformationVo> getYears1(@Param("year") String year,@Param("group_id") String group_id,
+                                       @Param("grouplist") List<DelegainformationVo> Vo);
 
 }
