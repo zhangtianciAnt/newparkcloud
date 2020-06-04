@@ -902,6 +902,7 @@ public class UserServiceImpl implements UserService {
                         //1:出向者;2：正式社员
                         if (item.get("Rank").toString().trim().equals("その他")) {
                             userinfo.setType("1");
+                            userinfo.setRank("その他");
                         } else {
                             userinfo.setType("0");
                             String rank = item.get("Rank").toString();
@@ -1309,6 +1310,7 @@ public class UserServiceImpl implements UserService {
                             //1:出向者;2：正式社员
                             if (item.get("Rank●").toString().trim().equals("その他")) {
                                 customerInfoList.get(0).getUserinfo().setType("1");
+                                customerInfoList.get(0).getUserinfo().setRank("その他");
                             } else {
                                 customerInfoList.get(0).getUserinfo().setType("0");
                                 String rank = item.get("Rank●").toString();
