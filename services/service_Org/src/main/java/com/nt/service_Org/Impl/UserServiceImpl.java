@@ -886,7 +886,7 @@ public class UserServiceImpl implements UserService {
                         if (post != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(post.trim());
-                            dictionary.setType("CW");
+                            dictionary.setPcode("PG021");
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setPost(dictionaryList.get(0).getCode());
@@ -899,18 +899,24 @@ public class UserServiceImpl implements UserService {
                     }
                     //RANK
                     if (item.get("Rank") != null) {
-                        String rank = item.get("Rank").toString();
-                        if (rank != null) {
-                            Dictionary dictionary = new Dictionary();
-                            dictionary.setValue1(rank.trim());
-                            dictionary.setType("RS");
-                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                            if (dictionaryList.size() > 0) {
-                                userinfo.setRank(dictionaryList.get(0).getCode());
-                                personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
-                                personal2.setBasic(dictionaryList.get(0).getCode());
-                            } else {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank").toString() + "）在字典中不存在！");
+                        //1:出向者;2：正式社员
+                        if (item.get("Rank").toString().trim().equals("その他")) {
+                            userinfo.setType("1");
+                        } else {
+                            userinfo.setType("0");
+                            String rank = item.get("Rank").toString();
+                            if (rank != null) {
+                                Dictionary dictionary = new Dictionary();
+                                dictionary.setValue1(rank.trim());
+                                dictionary.setPcode("PR021");
+                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                if (dictionaryList.size() > 0) {
+                                    userinfo.setRank(dictionaryList.get(0).getCode());
+                                    personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                    personal2.setBasic(dictionaryList.get(0).getCode());
+                                } else {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank").toString() + "）在字典中不存在！");
+                                }
                             }
                         }
                     }
@@ -920,7 +926,7 @@ public class UserServiceImpl implements UserService {
                         if (sex != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(sex.trim());
-                            dictionary.setType("GT");
+                            dictionary.setPcode("PR019");
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setSex(dictionaryList.get(0).getCode());
@@ -1022,7 +1028,7 @@ public class UserServiceImpl implements UserService {
                         if (degree != null) {
                             Dictionary dictionary = new Dictionary();
                             dictionary.setValue1(degree.trim());
-                            dictionary.setType("GT");
+                            dictionary.setPcode("PG018");
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setDegree(dictionaryList.get(0).getCode());
@@ -1184,7 +1190,11 @@ public class UserServiceImpl implements UserService {
                     customerInfo.setUserinfo(userinfo);
                     customerInfo.setType("1");
                     customerInfo.setStatus("0");
-                    customerInfo.getUserinfo().setType("0");
+                    if (item.get("Rank").toString().trim().equals("その他")) {
+                        customerInfo.getUserinfo().setType("1");
+                    } else {
+                        customerInfo.getUserinfo().setType("0");
+                    }
                     mongoTemplate.save(ust);
                     Query query = new Query();
                     query.addCriteria(Criteria.where("account").is(ust.getAccount()));
@@ -1284,7 +1294,7 @@ public class UserServiceImpl implements UserService {
                             if (post != null) {
                                 Dictionary dictionary = new Dictionary();
                                 dictionary.setValue1(post.trim());
-                                dictionary.setType("CW");
+                                dictionary.setPcode("PG021");
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
@@ -1296,18 +1306,24 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                         if (item.get("Rank●") != null) {
-                            String rank = item.get("Rank●").toString();
-                            if (rank != null) {
-                                Dictionary dictionary = new Dictionary();
-                                dictionary.setValue1(rank.trim());
-                                dictionary.setType("RS");
-                                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                                if (dictionaryList.size() > 0) {
-                                    customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
-                                    personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
-                                    personal2.setBasic(dictionaryList.get(0).getCode());
-                                } else {
-                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank●").toString() + "）在字典中不存在！");
+                            //1:出向者;2：正式社员
+                            if (item.get("Rank●").toString().trim().equals("その他")) {
+                                customerInfoList.get(0).getUserinfo().setType("1");
+                            } else {
+                                customerInfoList.get(0).getUserinfo().setType("0");
+                                String rank = item.get("Rank●").toString();
+                                if (rank != null) {
+                                    Dictionary dictionary = new Dictionary();
+                                    dictionary.setValue1(rank.trim());
+                                    dictionary.setPcode("PR021");
+                                    List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                                    if (dictionaryList.size() > 0) {
+                                        customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
+                                        personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                        personal2.setBasic(dictionaryList.get(0).getCode());
+                                    } else {
+                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank●").toString() + "）在字典中不存在！");
+                                    }
                                 }
                             }
                         }
@@ -1316,7 +1332,7 @@ public class UserServiceImpl implements UserService {
                             if (sex != null) {
                                 Dictionary dictionary = new Dictionary();
                                 dictionary.setValue1(sex.trim());
-                                dictionary.setType("GT");
+                                dictionary.setPcode("PR019");
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
@@ -1392,7 +1408,7 @@ public class UserServiceImpl implements UserService {
                             if (degree != null) {
                                 Dictionary dictionary = new Dictionary();
                                 dictionary.setValue1(degree.trim());
-                                dictionary.setType("GT");
+                                dictionary.setPcode("PG018");
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setDegree(dictionaryList.get(0).getCode());
@@ -1560,7 +1576,7 @@ public class UserServiceImpl implements UserService {
                                     addflg1 = 1;
                                     Dictionary dictionary = new Dictionary();
                                     dictionary.setValue1(personal1.getBasic().trim());
-                                    dictionary.setType("CW");
+                                    dictionary.setPcode("PG021");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if (dictionaryList.size() > 0) {
                                         pp.setBasic(dictionaryList.get(0).getCode());
@@ -1586,7 +1602,7 @@ public class UserServiceImpl implements UserService {
                                     addflg2 = 1;
                                     Dictionary dictionary = new Dictionary();
                                     dictionary.setValue1(personal2.getBasic().trim());
-                                    dictionary.setType("RS");
+                                    dictionary.setPcode("PR021");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if (dictionaryList.size() > 0) {
                                         pp.setBasic(dictionaryList.get(0).getCode());
