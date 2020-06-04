@@ -392,4 +392,8 @@ public class Coststatistics extends BaseModel {
      */
     @Column(name = "PRICE12")
     private Double price12;
+
+    // GROUPID
+    @Column(name = "GROUP_ID")
+    private String groupid;
 }

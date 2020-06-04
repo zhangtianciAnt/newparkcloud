@@ -76,5 +76,8 @@ public class Variousfunds extends BaseModel {
      */
     @Column(name = "YEAR")
     private Date year;
+    // GROUPID
+    @Column(name = "GROUP_ID")
+    private String groupid;
 
 }

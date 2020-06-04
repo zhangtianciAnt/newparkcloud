@@ -124,10 +124,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid, years);
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-        if(groupid !=null && !groupid.isEmpty())
-        {
-            expatriatesinfor.setGroup_id(groupid);
-        }
+//        if(groupid !=null && !groupid.isEmpty())
+//        {
+//            expatriatesinfor.setGroup_id(groupid);
+//        }
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> user2CompanyMap = new HashMap<String, String>();
         for (Expatriatesinfor ex : companyList) {
