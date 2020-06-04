@@ -237,12 +237,16 @@ public class Pfans1012Controller {
                 wfList4 = sign.startGraphics2D(wfList4);
             }
         }
-        String payeeName = "";
-        LoanApplication loanApplication = new LoanApplication();
-        loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
-        payeeName = loanApplication.getPayeename();
+
 
         Map<String, Object> data = new HashMap<>();
+        if("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())){
+            String payeeName = "";
+            LoanApplication loanApplication = new LoanApplication();
+            loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
+            payeeName = loanApplication.getPayeename();
+            data.put("payeeName", payeeName);
+        }
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
         if (pubvo.getPublicexpense().getRmbexpenditure() != null) {
@@ -265,7 +269,6 @@ public class Pfans1012Controller {
         data.put("taa", taa);
         data.put("trr", trr);
         data.put("tro", tro);
-        data.put("payeeName", payeeName);
         data.put("pub", pubvo.getPublicexpense());
         data.put("tra", pubvo.getTrafficdetails());
         data.put("pur", pubvo.getPurchasedetails());

@@ -89,5 +89,69 @@
         and ex.account != ''
         order by ex.expname
     </select>
+
+    <select id="getYears1" parameterType="com.nt.dao_Pfans.PFANS6000.Delegainformation"
+            resultType="com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo">
+        select
+        de.delegainformation_id,
+        #{year} as year,
+        ex.group_id,
+        ex.account,
+        ex.suppliername,
+        ex.expname,
+        op.value1 as operationform,
+        jo.value1 as jobclassification,
+        if((de.april is null or de.april = '' or de.april = '0'),'',de.april) as april,
+        if((de.may is null or de.may = '' or de.may = '0'),'',de.may) as may,
+        if((de.june is null or de.june = '' or de.june = '0'),'',de.june) as june,
+        if((de.july is null or de.july = '' or de.july = '0'),'',de.july) as july,
+        if((de.august is null or de.august = '' or de.august = '0'),'',de.august) as august,
+        if((de.september is null or de.september = '' or de.september = '0'),'',de.september) as september,
+        if((de.october is null or de.october = '' or de.october = '0'),'',de.october) as october,
+        if((de.november is null or de.november = '' or de.november = '0'),'',de.november) as november,
+        if((de.december is null or de.december = '' or de.december = '0'),'',de.december) as december,
+        if((de.january is null or de.january = '' or de.january = '0'),'',de.january) as january,
+        if((de.february is null or de.february = '' or de.february = '0'),'',de.february) as february,
+        if((de.march is null or de.march = '' or de.march = '0'),'',de.march) as march,
+        '' as remarks,
+        al.value1 as alltechnology,
+        si.value1 assitevaluation,
+        exi.value1 as exitreason,
+        bu.value1 as businessimpact,
+        cou.value1 as countermeasure
+        from
+        expatriatesinfor ex
+        left join delegainformation de
+        on ex.account = de.account
+        and de.group_id = ex.group_id
+        and de.year = #{year}
+        left join dictionary jo
+        on jo.code = ex.jobclassification
+        left join dictionary op
+        on op.code = ex.operationform
+        left join dictionary al
+        on al.code = ex.alltechnology
+        left join dictionary si
+        on si.code = ex.sitevaluation
+        left join dictionary exi
+        on exi.code = ex.exitreason
+        left join dictionary bu
+        on bu.code = ex.businessimpact
+        left join dictionary cou
+        on cou.code = ex.countermeasure
+        where ex.result = 'BP003001'
+        and ex.account != ''
+        <if test="group_id != null and group_id != ''" >
+            and ex.group_id = #{group_id}
+        </if>
+        <if test="grouplist != null and grouplist.size() > 0">
+            and ex.account not in
+            <foreach item="item" index="index" collection="grouplist"
+                     open="(" separator="," close=")">
+                #{item.account}
+            </foreach>
+        </if>
+        order by ex.expname
+    </select>
 </mapper>
 

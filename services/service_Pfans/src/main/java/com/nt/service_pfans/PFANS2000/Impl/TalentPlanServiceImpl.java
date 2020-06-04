@@ -388,6 +388,12 @@ public class TalentPlanServiceImpl implements TalentPlanService {
 
         return talentPlanListALL;
     }
+    //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
+    @Override
+    public List<TalentPlan> getDataList(TalentPlan talentplan) throws Exception {
+        return talentPlanMapper.selectByuserId(talentplan.getOwners());
+    }
+    //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
     @Override
     public TalentPlan One(String talentplan_id) throws Exception {
 

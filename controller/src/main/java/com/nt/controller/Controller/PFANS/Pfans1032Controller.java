@@ -99,14 +99,13 @@ public class Pfans1032Controller {
             data.put("statime", "");
         }
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
-        if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")) {
+        if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")|| pd.getContracttype().equals("HT008009")) {
             for (Dictionary item : dictionaryList) {
                 if (item.getCode().equals(pd.getCurrencyposition())) {
 
                     pd.setCurrencyposition(item.getValue4());
                 }
             }
-
             ExcelOutPutUtil.OutPut(pd.getClaimnumber().toUpperCase() + "_請求書(国内受託)", "qingqiushu_guonei.xlsx", data, response);
         } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")) {
             if (pd.getCurrencyposition().equals("PG019003")) {
