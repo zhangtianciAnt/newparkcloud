@@ -165,9 +165,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public String insertBook(Contractapplication contractapplication, TokenModel tokenModel) throws Exception {
-        String contractnumber = contractapplication.getContractnumber();
-        String rowindex = contractapplication.getRowindex();
+    public String insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception {
+//        String contractnumber = contractapplication.getContractnumber();
+//        String rowindex = contractapplication.getRowindex();
         Contractapplication co = new Contractapplication();
         co.setContractnumber(contractnumber);
         List<Contractapplication> coList = contractapplicationMapper.select(co);
@@ -356,52 +356,63 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     napalm2.setContractnumber(contractnumber);
 //                    napalm2.setOwner(tokenModel.getUserId());
                     napalmMapper.delete(napalm2);
+                    // add_fjl_0604 --添加请求书和纳品书的选择生成 start
+                    String numcount[] = countNumber.split(",");
+                    if (numcount.length > 0) {
+                        for (int i = 0; i < numcount.length; i++) {
+                            contractnumbercount = new Contractnumbercount();
+                            contractnumbercount.setClaimnumber(numcount[i]);
+                            List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
+                            if (countLi.size() > 0) {
 
-                    for (Contractnumbercount number : countList) {
-                        Napalm napalm = new Napalm();
-                        napalm.preInsert(tokenModel);
-                        napalm.setNapalm_id(UUID.randomUUID().toString());
-                        napalm.setContractnumber(contractnumber);
-                        //7
-                        napalm.setDepositjapanese(contractapp.getCustojapanese());
-                        napalm.setDepositenglish(contractapp.getCustoenglish());
-                        napalm.setEntrustment(contractapp.getCustoabbreviation());
-                        napalm.setDeployment(contractapp.getDeployment());
-                        napalm.setPjnamechinese(contractapp.getConchinese());
-                        napalm.setPjnamejapanese(contractapp.getConjapanese());
-                        napalm.setClaimtype(contractapp.getClaimtype());
-                        //del_fjl
+//                    for (Contractnumbercount number : countList) {
+                                Napalm napalm = new Napalm();
+                                napalm.preInsert(tokenModel);
+                                napalm.setNapalm_id(UUID.randomUUID().toString());
+                                napalm.setContractnumber(contractnumber);
+                                //7
+                                napalm.setDepositjapanese(contractapp.getCustojapanese());
+                                napalm.setDepositenglish(contractapp.getCustoenglish());
+                                napalm.setEntrustment(contractapp.getCustoabbreviation());
+                                napalm.setDeployment(contractapp.getDeployment());
+                                napalm.setPjnamechinese(contractapp.getConchinese());
+                                napalm.setPjnamejapanese(contractapp.getConjapanese());
+                                napalm.setClaimtype(contractapp.getClaimtype());
+                                //del_fjl
 //                        napalm.setDeliveryfinshdate(number.getDeliverydate());
-                        //del_fjl
-                        napalm.setDeliverydate(number.getDeliverydate());//納品予定日
-                        //add-ws-添加纳品做成日和出荷判定实施者
-                        napalm.setDeliveryfinshdate(number.getDeliveryfinshdate());
-                        napalm.setLoadingjudge(number.getLoadingjudge());
-                        //add-ws-添加纳品做成日和出荷判定实施者
-                        //add_fjl
-                        napalm.setClaimdate(number.getClaimdate()); //请求日
-                        //add_fjl
-                        napalm.setCompletiondate(number.getCompletiondate());//検収完了日
-                        napalm.setClaimamount(number.getClaimamount());//請求金額
-                        napalm.setClaimnumber(number.getClaimnumber());//請求番号
-                        napalm.setCurrencyformat(contractapp.getCurrencyposition());
-                        napalm.setContracttype(contractapp.getContracttype());
-                        napalm.setToto(contractapp.getVarto());
-                        napalm.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                                //del_fjl
+                                napalm.setDeliverydate(countLi.get(0).getDeliverydate());//納品予定日
+                                //add-ws-添加纳品做成日和出荷判定实施者
+                                napalm.setDeliveryfinshdate(countLi.get(0).getDeliveryfinshdate());
+                                napalm.setLoadingjudge(countLi.get(0).getLoadingjudge());
+                                //add-ws-添加纳品做成日和出荷判定实施者
+                                //add_fjl
+                                napalm.setClaimdate(countLi.get(0).getClaimdate()); //请求日
+                                //add_fjl
+                                napalm.setCompletiondate(countLi.get(0).getCompletiondate());//検収完了日
+                                napalm.setClaimamount(countLi.get(0).getClaimamount());//請求金額
+                                napalm.setClaimnumber(countLi.get(0).getClaimnumber());//請求番号
+                                napalm.setCurrencyformat(contractapp.getCurrencyposition());
+                                napalm.setContracttype(contractapp.getContracttype());
+                                napalm.setToto(contractapp.getVarto());
+                                napalm.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 //                        upd_fjl_06/02 --纳品回数请求期间 start
-                        if (org.springframework.util.StringUtils.hasLength(number.getClaimdatetimeqh())) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            String[] startAndEnd = number.getClaimdatetimeqh().split(" ~ ");
-                            napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
-                            napalm.setEnddate(sdf.parse(startAndEnd[1]));
-                        }
-                        //                        upd_fjl_06/02 --纳品回数请求期间 end
+                                if (org.springframework.util.StringUtils.hasLength(countLi.get(0).getClaimdatetimeqh())) {
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                    String[] startAndEnd = countLi.get(0).getClaimdatetimeqh().split(" ~ ");
+                                    napalm.setOpeningdate(sdf.parse(startAndEnd[0]));
+                                    napalm.setEnddate(sdf.parse(startAndEnd[1]));
+                                }
+//                        upd_fjl_06/02 --纳品回数请求期间 end
 
-                        napalmMapper.insert(napalm);
-                        //更新纳品进步状况=纳品完了
-                        contractapp.preUpdate(tokenModel);
-                        contractapp.setDeliverycondition("HT009001");
-                        contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+                                napalmMapper.insert(napalm);
+                                //更新纳品进步状况=纳品完了
+                                contractapp.preUpdate(tokenModel);
+                                contractapp.setDeliverycondition("HT009001");
+                                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+                            }
+                        }
+                        // add_fjl_0604 --添加请求书和纳品书的选择生成 end
                     }
                 }
                 //請求書作成
@@ -410,44 +421,55 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     petition2.setContractnumber(contractnumber);
 //                    petition2.setOwner(tokenModel.getUserId());
                     PetitionMapper.delete(petition2);
+                    // add_fjl_0604 --添加请求书和纳品书的选择生成 start
+                    String numcount[] = countNumber.split(",");
+                    if (numcount.length > 0) {
+                        for (int i = 0; i < numcount.length; i++) {
+                            contractnumbercount = new Contractnumbercount();
+                            contractnumbercount.setClaimnumber(numcount[i]);
+                            List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
+                            if (countLi.size() > 0) {
+//                                for (Contractnumbercount number : countList) {
+                                Petition petition = new Petition();
+                                petition.preInsert(tokenModel);
+                                petition.setPetition_id(UUID.randomUUID().toString());
+                                petition.setContractnumber(contractnumber);
 
-                    for (Contractnumbercount number : countList) {
-                        Petition petition = new Petition();
-                        petition.preInsert(tokenModel);
-                        petition.setPetition_id(UUID.randomUUID().toString());
-                        petition.setContractnumber(contractnumber);
-
-                        //12
-                        petition.setContracttype(contractapp.getContracttype());
-                        petition.setCustoenglish(contractapp.getCustoenglish());
-                        petition.setCustochinese(contractapp.getCustochinese());
-                        petition.setResponerglish(contractapp.getResponerglish());
-                        petition.setPlaceenglish(contractapp.getPlaceenglish());
-                        petition.setPlacechinese(contractapp.getPlacechinese());
+                                //12
+                                petition.setContracttype(contractapp.getContracttype());
+                                petition.setCustoenglish(contractapp.getCustoenglish());
+                                petition.setCustochinese(contractapp.getCustochinese());
+                                petition.setResponerglish(contractapp.getResponerglish());
+                                petition.setPlaceenglish(contractapp.getPlaceenglish());
+                                petition.setPlacechinese(contractapp.getPlacechinese());
 //                        upd_fjl_06/02 --纳品回数请求期间 start
 //                        petition.setClaimdatetime(contractapp.getClaimdatetime());
-                        petition.setClaimdatetime(number.getClaimdatetimeqh());
+                                petition.setClaimdatetime(countLi.get(0).getClaimdatetimeqh());
 //                        upd_fjl_06/02 --纳品回数请求期间 end
-                        petition.setBusinesscode(contractapp.getBusinesscode());
-                        //add-ws-添加纳品做成日
-                        petition.setDeliveryfinshdate(number.getDeliveryfinshdate());
-                        //add-ws-添加纳品做成日
-                        petition.setResponphone(contractapp.getResponphone());
-                        petition.setClaimtype(contractapp.getClaimtype());
-                        petition.setCurrencyposition(contractapp.getCurrencyposition());
-                        petition.setPjnamechinese(contractapp.getConchinese());
-                        petition.setPjnamejapanese(contractapp.getConjapanese());
-                        petition.setClaimamount(number.getClaimamount());//請求金額
-                        petition.setClaimdate(number.getClaimdate());//請求日
-                        petition.setClaimnumber(number.getClaimnumber());//請求番号
-                        petition.setRemarks(contractapp.getQingremarks());//备注
-                        petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                                petition.setBusinesscode(contractapp.getBusinesscode());
+                                //add-ws-添加纳品做成日
+                                petition.setDeliveryfinshdate(countLi.get(0).getDeliveryfinshdate());
+                                //add-ws-添加纳品做成日
+                                petition.setResponphone(contractapp.getResponphone());
+                                petition.setClaimtype(contractapp.getClaimtype());
+                                petition.setCurrencyposition(contractapp.getCurrencyposition());
+                                petition.setPjnamechinese(contractapp.getConchinese());
+                                petition.setPjnamejapanese(contractapp.getConjapanese());
+                                petition.setClaimamount(countLi.get(0).getClaimamount());//請求金額
+                                petition.setClaimdate(countLi.get(0).getClaimdate());//請求日
+                                petition.setClaimnumber(countLi.get(0).getClaimnumber());//請求番号
+                                petition.setRemarks(contractapp.getQingremarks());//备注
+                                petition.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
 
-                        PetitionMapper.insert(petition);
-                        //更新请求进步状况=請求完了
-                        contractapp.preUpdate(tokenModel);
-                        contractapp.setClaimcondition("HT011001");
-                        contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+                                PetitionMapper.insert(petition);
+                                //更新请求进步状况=請求完了
+                                contractapp.preUpdate(tokenModel);
+                                contractapp.setClaimcondition("HT011001");
+                                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+//                                }
+                            }
+                        }
+                        // add_fjl_0604 --添加请求书和纳品书的选择生成 end
                     }
                 }
                 //決裁書作成(委託)

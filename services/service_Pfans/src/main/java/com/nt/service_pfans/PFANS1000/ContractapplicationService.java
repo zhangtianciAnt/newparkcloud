@@ -18,7 +18,7 @@ public interface ContractapplicationService {
 
     public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel)throws Exception;
 
-    String insertBook(Contractapplication contractapplication, TokenModel tokenModel)throws Exception;
+    String insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception;
     //存在check
     ExistVo existCheck(String contractNumber) throws Exception;
 }
