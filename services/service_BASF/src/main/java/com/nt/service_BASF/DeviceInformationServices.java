@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.VO.DeviceinformationListVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.lang.reflect.Array;
@@ -33,5 +34,5 @@ public interface DeviceInformationServices {
     void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception;
 
     //查询设备列表（GIS专用）
-    List<Deviceinformation> deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception;
+    DeviceinformationListVo deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception;
 }

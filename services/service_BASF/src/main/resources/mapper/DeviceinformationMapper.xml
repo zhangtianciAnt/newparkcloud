@@ -69,4 +69,40 @@
         </if>
 
     </select>
+
+    <select id="selectDeviceListcount" resultType="string">
+        SELECT
+        count(1)
+        FROM deviceinformation AS d
+        WHERE
+        `STATUS`="0"
+        AND
+        (
+        <foreach collection="mapid" item="item" separator="OR">
+            mapid=#{item}
+        </foreach>
+        )
+        AND
+        <if test="devicetype!=null">
+            (
+            <foreach collection="devicetype" item="item" separator="OR">
+                devicetype=#{item}
+            </foreach>
+            )
+        </if>
+        <if test="devicetypesmall!=null">
+            AND
+            (
+            <foreach collection="devicetypesmall" item="item" separator="OR">
+                devicetypesmall=#{item}
+            </foreach>
+            )
+        </if>
+        <if test="devicename!=null">
+            AND
+            (devicename like #{devicename} OR detailedlocation like #{devicename})
+        </if>
+        ORDER BY
+        d.CREATEON DESC
+    </select>
 </mapper>

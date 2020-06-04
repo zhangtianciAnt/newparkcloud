@@ -12,4 +12,7 @@ public interface DeviceinformationMapper extends MyMapper<Deviceinformation> {
             @Param("mapid") List<String> mapid, @Param("devicetype") String[] devicetype, @Param("devicetypesmall") String[] devicetypesmall,
             @Param("devicename") String devicename, @Param("pageindex") Integer pageindex,
             @Param("pagesize") Integer pagesize) throws Exception;
+    String selectDeviceListcount(
+            @Param("mapid") List<String> mapid, @Param("devicetype") String[] devicetype, @Param("devicetypesmall") String[] devicetypesmall,
+            @Param("devicename") String devicename) throws Exception;
 }

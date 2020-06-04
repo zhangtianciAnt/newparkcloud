@@ -2,6 +2,7 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.VO.DeviceinformationListVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
@@ -143,7 +144,7 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
      * @Date 2019/12/12 14:36
      */
     @Override
-    public List<Deviceinformation> deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception {
+    public DeviceinformationListVo deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception {
         if (Arrays.asList(devicetype).contains("BC004006")) {
             //查询更新路障信息
             Deviceinformation deviceinformation0 = new Deviceinformation();
@@ -164,7 +165,11 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             }
         }
         List<String> mapidList = mapBox_mapLevelServices.getChildrensStr(mapid);
-        return deviceinformationMapper.selectDeviceList(mapidList, devicetype, devicetypesmall, devicename, pageindex, pagesize);
+        DeviceinformationListVo lv = new DeviceinformationListVo();
+        deviceinformationMapper.selectDeviceList(mapidList, devicetype, devicetypesmall, devicename, pageindex, pagesize);
+        lv.setDeviceinformationlist(deviceinformationMapper.selectDeviceList(mapidList, devicetype, devicetypesmall, devicename, pageindex, pagesize));
+        lv.setTotal(deviceinformationMapper.selectDeviceListcount(mapidList, devicetype, devicetypesmall, devicename));
+        return lv;
 
     }
 }
