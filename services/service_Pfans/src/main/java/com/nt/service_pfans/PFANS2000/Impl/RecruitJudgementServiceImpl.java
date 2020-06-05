@@ -166,7 +166,7 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                     for (MembersVo rs : rolelist) {
                         ToDoNotice toDoNotice = new ToDoNotice();
                         List<String> params = new ArrayList<String>();
-                        toDoNotice.setTitle("您有一个【人员信息】审批待处理！");
+                        toDoNotice.setTitle("您有一个新入职员工的信息待完善！");
                         toDoNotice.setInitiator(customerInfo.getUserid());
                         toDoNotice.setContent("您有一个人员信息申请！");
 //                        toDoNotice.setDataid(recruitJudgement.getRecruitjudgement_id());
