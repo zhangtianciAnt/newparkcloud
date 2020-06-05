@@ -55,12 +55,26 @@ public class Pfans5013Controller {
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String comproject_id, HttpServletRequest request) throws Exception {
-        if(comproject_id==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        if (comproject_id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(comprojectService.selectById(comproject_id));
     }
 
+    //add-ws-6/5-禅道075任务，项目名称问题修正
+    @RequestMapping(value = "/Listproject", method = {RequestMethod.GET})
+    public ApiResult Listproject(HttpServletRequest request) throws Exception {
+        Comproject comproject = new Comproject();
+        comproject.setStatus("4");
+        return ApiResult.success(comprojectService.Listproject(comproject));
+    }
+    @RequestMapping(value = "/Listproject2", method = {RequestMethod.GET})
+    public ApiResult Listproject2(HttpServletRequest request) throws Exception {
+        CompanyProjects companyprojects = new CompanyProjects();
+        companyprojects.setStatus("4");
+        return ApiResult.success(comprojectService.Listproject2(companyprojects));
+    }
+    //add-ws-6/5-禅道075任务，项目名称问题修正
     @RequestMapping(value = "/getMyConProject", method = {RequestMethod.GET})
     public ApiResult getMyConProject(HttpServletRequest request) throws Exception {
         Comproject comproject = new Comproject();
@@ -69,6 +83,7 @@ public class Pfans5013Controller {
         comproject.setOwner(tokenModel.getUserId());
         return ApiResult.success(comprojectService.getComproject(comproject));
     }
+
     //add-ws-阚总日志问题修正
     @RequestMapping(value = "/getMyConProject2", method = {RequestMethod.GET})
     public ApiResult getMyConProject2(HttpServletRequest request) throws Exception {
@@ -78,6 +93,7 @@ public class Pfans5013Controller {
         comproject.setOwner(tokenModel.getUserId());
         return ApiResult.success(comprojectService.getComproject2(comproject));
     }
+
     //add-ws-阚总日志问题修正
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult List(@RequestBody Comproject Comproject, HttpServletRequest request) throws Exception {
@@ -109,47 +125,43 @@ public class Pfans5013Controller {
     }
 
     /**
-     *
      * 获取工时确认列表
      */
     @RequestMapping(value = "/getProjectList", method = {RequestMethod.GET})
-    public ApiResult getProjectList(String StrFlg, String StrDate,HttpServletRequest request) throws Exception {
+    public ApiResult getProjectList(String StrFlg, String StrDate, HttpServletRequest request) throws Exception {
         if (StrFlg == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.getProjectList(StrFlg,StrDate,tokenModel));
+        return ApiResult.success(logmanagementService.getProjectList(StrFlg, StrDate, tokenModel));
     }
 
     /**
-     *
      * 查询工时确认
      */
     @RequestMapping(value = "/getTimestart", method = {RequestMethod.GET})
-    public ApiResult getTimestart(String project_id, String starttime,String endtime,HttpServletRequest request) throws Exception {
+    public ApiResult getTimestart(String project_id, String starttime, String endtime, HttpServletRequest request) throws Exception {
         if (project_id == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(logmanagementService.getTimestart(project_id,starttime,endtime));
+        return ApiResult.success(logmanagementService.getTimestart(project_id, starttime, endtime));
     }
 
     /**
-     *
      * 查询共通工时确认
      */
     @RequestMapping(value = "/getGroupTimestart", method = {RequestMethod.POST})
-    public ApiResult getGroupTimestart(@RequestBody List<ArrayList> strData,HttpServletRequest request) throws Exception {
+    public ApiResult getGroupTimestart(@RequestBody List<ArrayList> strData, HttpServletRequest request) throws Exception {
         if (strData == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         List<String> createby = strData.get(0);
         String starttime = strData.get(1).get(0).toString();
         String endtime = strData.get(1).get(1).toString();
-        return ApiResult.success(logmanagementService.getGroupTimestart(createby,starttime,endtime));
+        return ApiResult.success(logmanagementService.getGroupTimestart(createby, starttime, endtime));
     }
 
     /**
-     *
      * 修改工时确认
      */
     @RequestMapping(value = "/updateTimestart", method = {RequestMethod.POST})
@@ -158,11 +170,11 @@ public class Pfans5013Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        logmanagementService.updateTimestart(LogmanagementStatusVo,tokenModel);
+        logmanagementService.updateTimestart(LogmanagementStatusVo, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value="/list1", method={RequestMethod.POST})
+    @RequestMapping(value = "/list1", method = {RequestMethod.POST})
     public ApiResult List1(HttpServletRequest request) throws Exception {
         CompanyProjects companyProjects = new CompanyProjects();
         TokenModel tokenModel = tokenService.getToken(request);
@@ -171,16 +183,15 @@ public class Pfans5013Controller {
     }
 
     /**
-     *
      * 修改
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody CompanyProjectsVo companyProjectsVo, HttpServletRequest request) throws Exception {
-        if(companyProjectsVo==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        if (companyProjectsVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
-        comprojectService.update(companyProjectsVo,tokenModel);
+        TokenModel tokenModel = tokenService.getToken(request);
+        comprojectService.update(companyProjectsVo, tokenModel);
         return ApiResult.success();
     }
 
@@ -188,18 +199,18 @@ public class Pfans5013Controller {
     /**
      * 新建
      */
-    @RequestMapping(value = "/insert", method = { RequestMethod.POST })
-    public ApiResult insert(@RequestBody CompanyProjectsVo companyProjectsVo, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
+    public ApiResult insert(@RequestBody CompanyProjectsVo companyProjectsVo, HttpServletRequest request) throws Exception {
         if (companyProjectsVo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        comprojectService.insert(companyProjectsVo,tokenModel);
+        comprojectService.insert(companyProjectsVo, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/getcustomer", method = { RequestMethod.POST })
-    public ApiResult getcustomer(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getcustomer", method = {RequestMethod.POST})
+    public ApiResult getcustomer(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception {
         if (customerinfor == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -207,21 +218,21 @@ public class Pfans5013Controller {
         return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
     }
 
-    @RequestMapping(value = "/getexpat", method = { RequestMethod.POST })
-    public ApiResult getexpat(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getexpat", method = {RequestMethod.POST})
+    public ApiResult getexpat(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
         if (expatriatesinfor == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
+        TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
 
-    @RequestMapping(value = "/getstageInformation", method = { RequestMethod.POST })
-    public ApiResult getstageInformation(@RequestBody StageInformation stageInformation, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getstageInformation", method = {RequestMethod.POST})
+    public ApiResult getstageInformation(@RequestBody StageInformation stageInformation, HttpServletRequest request) throws Exception {
         if (stageInformation == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
+        TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getstageInformation(stageInformation));
     }
 
@@ -233,7 +244,7 @@ public class Pfans5013Controller {
      * @参数：[]
      * @返回值：List<CompanyProjectsVo2>
      */
-    @RequestMapping(value="/getSiteList", method={RequestMethod.GET})
+    @RequestMapping(value = "/getSiteList", method = {RequestMethod.GET})
     public ApiResult getSiteList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         CompanyProjects companyProjects = new CompanyProjects();
@@ -251,14 +262,15 @@ public class Pfans5013Controller {
      * @参数：[]
      * @返回值：List<CompanyProjectsVo2>
      */
-    @RequestMapping(value="/getPjList", method={RequestMethod.GET})
-    public ApiResult getPjList(HttpServletRequest request,String flag) throws Exception {
+    @RequestMapping(value = "/getPjList", method = {RequestMethod.GET})
+    public ApiResult getPjList(HttpServletRequest request, String flag) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getPjList(flag));
     }
+
     //获取共同完了操作
-    @RequestMapping(value="/getList2", method={RequestMethod.GET})
-    public ApiResult getList2(HttpServletRequest request,String flag) throws Exception {
+    @RequestMapping(value = "/getList2", method = {RequestMethod.GET})
+    public ApiResult getList2(HttpServletRequest request, String flag) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(comprojectService.getList2(flag));
     }

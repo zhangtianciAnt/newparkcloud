@@ -960,7 +960,16 @@ public class ComprojectServiceImpl implements ComprojectService {
     public List<CompanyProjectsVo3> getCompanyProject(String SyspName) throws Exception {
         return companyprojectsMapper.getCompanyProject(SyspName);
     }
-
+    //add-ws-6/5-禅道075任务，项目名称问题修正
+    @Override
+    public List<Comproject> Listproject(Comproject comproject) throws Exception {
+        return comProjectMapper.select(comproject);
+    }
+    @Override
+    public List<CompanyProjects> Listproject2(CompanyProjects companyprojects) throws Exception {
+        return companyprojectsMapper.select(companyprojects);
+    }
+    //add-ws-6/5-禅道075任务，项目名称问题修正
     @Override
     public List<Comproject> getComproject(Comproject comproject) throws Exception {
         List<Comproject> rst = new ArrayList<Comproject>();
