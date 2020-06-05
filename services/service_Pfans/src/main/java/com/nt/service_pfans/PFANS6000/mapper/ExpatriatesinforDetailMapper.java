@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface ExpatriatesinforDetailMapper extends MyMapper<ExpatriatesinforDetail> {
-
+    List<ExpatriatesinforDetail> selectByDate(@Param("exdatestr") String exdatestr, @Param("eid") String eid);
 }
