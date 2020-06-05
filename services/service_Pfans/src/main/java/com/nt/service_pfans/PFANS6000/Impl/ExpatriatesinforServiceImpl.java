@@ -253,6 +253,29 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         if(expatriatesinfor.getExits().equals("0")){
             expatriatesinfor.setNumber("00000");
         }
+
+        //add ccm 20200605
+        List<Expatriatesinfor> accountlist = new ArrayList<>();
+        Expatriatesinfor ef =new Expatriatesinfor();
+        ef.setAccount(expatriatesinfor.getAccount());
+        accountlist = expatriatesinforMapper.select(ef);
+        if(accountlist.size()>0)
+        {
+            if(!accountlist.get(0).getAccountname().equals(expatriatesinfor.getAccountname()))
+            {
+                Query query = new Query();
+                query.addCriteria(Criteria.where("_id").is(accountlist.get(0).getAccount()));
+                UserAccount userAcount = mongoTemplate.findOne(query, UserAccount.class);
+                if(userAcount!=null)
+                {
+                    userAcount.setAccount(expatriatesinfor.getAccountname());
+                    userAcount.setPassword(expatriatesinfor.getAccountname());
+                    mongoTemplate.save(userAcount);
+                }
+            }
+        }
+        //add ccm 20200605
+
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
             Priceset priceset = new Priceset();
