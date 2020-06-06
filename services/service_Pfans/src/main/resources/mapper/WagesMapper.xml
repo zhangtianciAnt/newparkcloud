@@ -316,7 +316,7 @@
         ),
         2
         ) AS YKBZ,#一括补助
-        @JBBZ := base.SUBSIDY AS OVERTIMESUBSIDY,# 加班补助
+        @JBBZ := (IF(@TYPE = '4',base.SUBSIDY,base.LASTTOTALY)) AS OVERTIMESUBSIDY,# 加班补助 gbb base.SUBSIDY
         @XJ1 := round( ( @BASE_SJJE + @JBBZ + @YKBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
         @AMOUNT := round(base.APPRECIATION_AMOUNT,2) AS APPRECIATION,#月度賞与
