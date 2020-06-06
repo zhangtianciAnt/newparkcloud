@@ -34,14 +34,4 @@ public class Pfans1042Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(pltabService.selectPl(groupid,year,month));
     }
-    //add-ws-5/6-添加按份金额
-    @RequestMapping(value = "/selectPlmoney",method={RequestMethod.GET})
-    public ApiResult two( @RequestParam String groupid, @RequestParam String year, @RequestParam String month,HttpServletRequest request) throws Exception {
-        if (groupid == null || year == null || month == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(pltabService.selectPlmoney(groupid,year,month));
-    }
-    //add-ws-5/6-添加按份金额
 }

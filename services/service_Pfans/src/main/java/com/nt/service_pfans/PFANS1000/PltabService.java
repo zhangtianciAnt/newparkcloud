@@ -5,11 +5,8 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ContractVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PltabService {
-
-    List<Pltab> selectPl(String groupid,String year,String month)throws Exception;
-    //add-ws-5/6-添加按份金额
-    List<Pltab> selectPlmoney(String groupid,String year,String month)throws Exception;
-    //add-ws-5/6-添加按份金额
+    List<Pltab> selectPl(String groupid, String year, String month)throws Exception;
 }

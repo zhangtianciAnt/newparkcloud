@@ -1,5 +1,8 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
@@ -16,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,7 +47,7 @@ public class PricesetServiceImpl implements PricesetService {
     public List<PricesetVo> gettlist(PricesetGroup pricesetGroup) throws Exception {
         List<PricesetVo> rst = new ArrayList<PricesetVo>();
         List<PricesetGroup> ms = pricesetGroupMapper.select(pricesetGroup);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
         if(ms.size() > 0){
             for(PricesetGroup item:ms){
                 PricesetVo a = new PricesetVo();
@@ -57,34 +59,53 @@ public class PricesetServiceImpl implements PricesetService {
                 rst.add(a);
             }
         }else{
-            String pddate = pricesetGroup.getPd_date();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(sdf.parse(pddate + "-01"));
-            cal.add(Calendar.MONTH, -1);
-            PricesetGroup priceGroup =new PricesetGroup();
-            priceGroup.setPd_date(sdf.format(cal.getTime()));
-            List<PricesetGroup> ms1 = pricesetGroupMapper.select(priceGroup);
+            pricesetGroup.setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,-1),"yyyy-MM"));
+            ms = pricesetGroupMapper.select(pricesetGroup);
+            if(ms.size() > 0){
+                for(PricesetGroup item:ms){
+                    Priceset conditon = new Priceset();
+                    conditon.setPricesetgroup_id(item.getPricesetgroup_id());
+                    List<Priceset> list = pricesetMapper.select(conditon);
 
-            PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
+                    PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
 
-            a.getMain().setPd_date(pricesetGroup.getPd_date());
+                    a.getMain().setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,1),"yyyy-MM"));
 
-            Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-            expatriatesinfor.setWhetherentry("BP006001");
-            List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
-            for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
-                Priceset priceset = new Priceset();
-                priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
-                priceset.setUsername(expatriatesinforItem.getExpname());
-                priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                priceset.setCompany(expatriatesinforItem.getSuppliername());
-                priceset.setPricesetgroup_id(ms1.get(0).getPricesetgroup_id());
-                priceset = pricesetMapper.selectOne(priceset);
-                priceset.setPricesetgroup_id(null);
-                priceset.setPriceset_id(null);
-                a.getDetail().add(priceset);
+                    Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                    expatriatesinfor.setWhetherentry("BP006001");
+                    List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
+                    for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
+                        Priceset priceset = new Priceset();
+
+                        List<Priceset> pl = list.stream().filter(pli -> expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())).collect(Collectors.toList());
+
+                        if(pl.size() > 0){
+                            BeanUtil.copyProperties(pl.get(0),priceset);
+                        }
+                        priceset.setPriceset_id("");
+                        priceset.setPricesetgroup_id("");
+                        a.getDetail().add(priceset);
+                    }
+                    rst.add(a);
+                }
+            }else{
+                PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
+
+                a.getMain().setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,1),"yyyy-MM"));
+
+                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                expatriatesinfor.setWhetherentry("BP006001");
+                List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
+                for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
+                    Priceset priceset = new Priceset();
+                    priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
+                    priceset.setUsername(expatriatesinforItem.getExpname());
+                    priceset.setGraduation(expatriatesinforItem.getGraduation_year());
+                    priceset.setCompany(expatriatesinforItem.getSuppliername());
+                    a.getDetail().add(priceset);
+                }
+                rst.add(a);
             }
-            rst.add(a);
         }
 
         return rst;

@@ -86,14 +86,17 @@ public class Pfans1027Controller {
         DecimalFormat df = new DecimalFormat("###,###.00");
         BigDecimal bd = new BigDecimal(qu.getQuotation().getClaimamount());
         str_format = df.format(bd);
-        data.put("claimamount", str_format);
+        data.put("claimamo", str_format);
         for (int i = 0; i < qu.getNumbercounts().size(); i++) {
             bd = new BigDecimal(qu.getNumbercounts().get(i).getClaimamount());
             str_format = df.format(bd);
             qu.getNumbercounts().get(i).setClaimamount(str_format);
         }
-
-
+        for (int t = 0; t < qu.getOthpersonfee().size(); t++) {
+            bd = new BigDecimal(qu.getOthpersonfee().get(t).getCost1());
+            str_format = df.format(bd);
+            qu.getOthpersonfee().get(t).setCost1(str_format);
+        }
         data.put("qu",qu.getQuotation());
         data.put("qulist",qu.getOthpersonfee());
 //        data.put("qualist",qu.getFruit());
@@ -111,7 +114,7 @@ public class Pfans1027Controller {
         } else {
             data.put("statime","");
         }
-        ExcelOutPutUtil.OutPut(qu.getQuotation().getContractnumber().toUpperCase()+"_报价单","jianjishu_shoutuo.xlsx",data,response);
+        ExcelOutPutUtil.OutPutPdf(qu.getQuotation().getContractnumber().toUpperCase() + "_报价单", "jianjishu_shoutuo.xls", data, response);
     }
 
 }

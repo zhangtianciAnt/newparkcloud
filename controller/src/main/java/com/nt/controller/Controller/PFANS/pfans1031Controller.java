@@ -126,7 +126,7 @@ public class pfans1031Controller {
                         na.setCurrencyformat(item.getValue4());
                     }
                 }
-                ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(日本受託‐技術開発-RMB)","napinshu_rmb.xlsx",data,response);
+                ExcelOutPutUtil.OutPutPdf(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-RMB)", "napinshu_rmb.xls", data, response);
             } else if (na.getCurrencyformat().equals("PG019001")){
                 for(Dictionary item:dictionaryList){
                     if(item.getCode().equals(na.getCurrencyformat())) {
@@ -135,7 +135,7 @@ public class pfans1031Controller {
 
                     }
                 }
-                ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase()+"_納品書(日本受託‐技術開発-US$)","napinshu_us.xlsx",data,response);
+                ExcelOutPutUtil.OutPutPdf(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-US$)", "napinshu_us.xls", data, response);
             }
 //        }
     }

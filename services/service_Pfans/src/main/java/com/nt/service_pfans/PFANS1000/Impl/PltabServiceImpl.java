@@ -16,8 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 
@@ -46,14 +45,9 @@ public class PltabServiceImpl implements PltabService {
                 }
             }
         }
+        List<Pltab> pltabs2  = pltabMapper.selectPlmoney(groupid,year,month);
         List<Pltab> pltabs  = pltabMapper.getPltab(groupid,year,month);
-        return pltabs;
+        pltabs2.addAll(pltabs);
+        return pltabs2;
     }
-//add-ws-5/6-添加按份金额
-    @Override
-    public List<Pltab> selectPlmoney(String groupid, String year, String month) throws Exception {
-        List<Pltab> pltabsselectPlmoney  = pltabMapper.selectPlmoney(groupid,year,month);
-        return pltabsselectPlmoney;
-    }
-//add-ws-5/6-添加按份金额
 }
