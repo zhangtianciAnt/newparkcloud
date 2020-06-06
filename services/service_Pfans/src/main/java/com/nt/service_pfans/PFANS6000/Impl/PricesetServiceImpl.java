@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ public class PricesetServiceImpl implements PricesetService {
     public List<PricesetVo> gettlist(PricesetGroup pricesetGroup) throws Exception {
         List<PricesetVo> rst = new ArrayList<PricesetVo>();
         List<PricesetGroup> ms = pricesetGroupMapper.select(pricesetGroup);
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         if(ms.size() > 0){
             for(PricesetGroup item:ms){
                 PricesetVo a = new PricesetVo();
@@ -56,6 +57,14 @@ public class PricesetServiceImpl implements PricesetService {
                 rst.add(a);
             }
         }else{
+            String pddate = pricesetGroup.getPd_date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(sdf.parse(pddate + "-01"));
+            cal.add(Calendar.MONTH, -1);
+            PricesetGroup priceGroup =new PricesetGroup();
+            priceGroup.setPd_date(sdf.format(cal.getTime()));
+            List<PricesetGroup> ms1 = pricesetGroupMapper.select(priceGroup);
+
             PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
 
             a.getMain().setPd_date(pricesetGroup.getPd_date());
@@ -69,6 +78,10 @@ public class PricesetServiceImpl implements PricesetService {
                 priceset.setUsername(expatriatesinforItem.getExpname());
                 priceset.setGraduation(expatriatesinforItem.getGraduation_year());
                 priceset.setCompany(expatriatesinforItem.getSuppliername());
+                priceset.setPricesetgroup_id(ms1.get(0).getPricesetgroup_id());
+                priceset = pricesetMapper.selectOne(priceset);
+                priceset.setPricesetgroup_id(null);
+                priceset.setPriceset_id(null);
                 a.getDetail().add(priceset);
             }
             rst.add(a);
