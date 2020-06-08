@@ -246,6 +246,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sfy = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat sdfxx = new SimpleDateFormat("EEE MMM dd 00:00:00 zzz yyyy", Locale.US);
         DecimalFormat df = new DecimalFormat("######0.00");
         //上班时间开始
@@ -318,9 +319,109 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             for (CustomerInfo customerInfo : customerInfoList) {
                 try {
                     TokenModel tokenModel = new TokenModel();
-//                    if(customerInfo.getUserid().equals("5e78b2294e3b194874180f49"))
+//                    if(customerInfo.getUserid().equals("5eb8ee1d29b7371b2840ba58"))
 //                    {
-                    if (customerInfo.getUserinfo().getResignation_date() == null || customerInfo.getUserinfo().getResignation_date().isEmpty()) {
+                    Calendar rightNow = Calendar.getInstance();
+                    //上月1号
+                    Calendar calStart = Calendar.getInstance();
+                    calStart.setTime(new Date());
+                    calStart.add(Calendar.MONTH, -1);
+                    calStart.set(Calendar.DAY_OF_MONTH, 1);
+
+                    //本月末日
+                    Calendar calend = Calendar.getInstance();
+                    calend.setTime(new Date());
+                    int maxCurrentMonthDay = calend.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    calend.set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
+
+                    //入职日
+                    String enterdate = customerInfo.getUserinfo().getEnterday().substring(0, 10);
+                    if (customerInfo.getUserinfo().getEnterday().length() >= 24) {
+                        rightNow.setTime(Convert.toDate(enterdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                        enterdate = sf1ymd.format(rightNow.getTime());
+                    }
+
+                    if((customerInfo.getUserinfo().getResignation_date() == null || customerInfo.getUserinfo().getResignation_date().isEmpty())
+                            && (sf1ymd.parse(sf1ymd.format(calStart.getTime())).getTime() <= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enterdate)))).getTime())
+                                && sf1ymd.parse(sf1ymd.format(calend.getTime())).getTime() >= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enterdate)))).getTime())))
+                    {
+                        //俩个月内入职的人员
+                        //入职日期月份与计算考勤日期月份比较
+                        if (sfy.parse(Convert.toStr(sfy.format(Convert.toDate(enterdate)))).getTime() == sfy.parse(sfy.format(cal.getTime())).getTime())
+                        {
+                            //入职日和计算考勤当天比较
+                            if(sf1ymd.parse(sf1ymd.format(cal.getTime())).getTime() < (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enterdate)))).getTime()))
+                            {
+                                Attendance attendance = new Attendance();
+                                attendance.setUser_id(customerInfo.getUserid());
+                                attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                attendance.setAttendanceid(UUID.randomUUID().toString());
+                                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                                attendance.setRecognitionstate("");
+                                tokenModel.setUserId(attendance.getUser_id());
+                                tokenModel.setExpireDate(new Date());
+                                saveAttendance(attendance, "1", tokenModel);
+                            }
+                            else
+                            {
+                                //查询更新一天的考勤数据
+                                Attendance attendance = new Attendance();
+                                attendance.setUser_id(customerInfo.getUserid());
+                                attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                                List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                                if (attendanceList.size() > 0) {
+                                    if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
+                                    {
+                                        attendanceList.get(0).setNormal("0");
+                                        attendanceList.get(0).setActual(null);
+                                        attendanceList.get(0).setOrdinaryindustry(null);
+                                        attendanceList.get(0).setWeekendindustry(null);
+                                        attendanceList.get(0).setStatutoryresidue(null);
+                                        attendanceList.get(0).setAnnualrestday(null);
+                                        attendanceList.get(0).setSpecialday(null);
+                                        attendanceList.get(0).setYouthday(null);
+                                        attendanceList.get(0).setWomensday(null);
+                                        attendanceList.get(0).setShortsickleave(null);
+                                        attendanceList.get(0).setLongsickleave(null);
+                                        attendanceList.get(0).setCompassionateleave(null);
+                                        attendanceList.get(0).setAnnualrest(null);
+                                        attendanceList.get(0).setDaixiu(null);
+                                        attendanceList.get(0).setNursingleave(null);
+                                        attendanceList.get(0).setWelfare(null);
+                                        attendanceList.get(0).setAbsenteeism(null);
+                                        attendanceList.get(0).setTshortsickleave(null);
+                                        attendanceList.get(0).setTlongsickleave(null);
+                                        attendanceList.get(0).setTabsenteeism(null);
+                                        tokenModel.setUserId(attendanceList.get(0).getUser_id());
+                                        tokenModel.setExpireDate(new Date());
+                                        saveAttendance(attendanceList.get(0), "0", tokenModel);
+                                        attendancelist.add(attendanceList.get(0));
+                                    }
+                                }
+                                else {
+                                    attendance.setNormal("0");
+                                    attendance.setAbsenteeism("0");
+                                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                    attendance.setAttendanceid(UUID.randomUUID().toString());
+                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                                    tokenModel.setUserId(attendance.getUser_id());
+                                    tokenModel.setExpireDate(new Date());
+                                    saveAttendance(attendance, "1", tokenModel);
+                                    attendancelist.add(attendance);
+                                }
+                            }
+                        }
+                    }
+                    else if (customerInfo.getUserinfo().getResignation_date() == null || customerInfo.getUserinfo().getResignation_date().isEmpty()) {
                         // 俩月内在职人员
                         //查询更新一天的考勤数据
                         Attendance attendance = new Attendance();
@@ -356,45 +457,33 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendancelist.add(attendanceList.get(0));
                             }
                         } else {
-                            if (Integer.parseInt(customerInfo.getUserinfo().getEnterday()) <= (Integer.parseInt(attendance.getDates().toString().substring(5, 7)) + 1))
-                            {
-                                attendance.setNormal("0");
-                                attendance.setAbsenteeism("0");
-                                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                                attendance.setAttendanceid(UUID.randomUUID().toString());
-                                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                                tokenModel.setUserId(attendance.getUser_id());
-                                tokenModel.setExpireDate(new Date());
-                                saveAttendance(attendance, "1", tokenModel);
-                                attendancelist.add(attendance);
-                            }
+                            attendance.setNormal("0");
+                            attendance.setAbsenteeism("0");
+                            attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                            attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                            attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                            attendance.setAttendanceid(UUID.randomUUID().toString());
+                            attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                            attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                            attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                            tokenModel.setUserId(attendance.getUser_id());
+                            tokenModel.setExpireDate(new Date());
+                            saveAttendance(attendance, "1", tokenModel);
+                            attendancelist.add(attendance);
+
                         }
-                    } else {
+                    }
+                    else {
                         //俩月内离职人员
-                        Calendar rightNow = Calendar.getInstance();
+                        //离职日
                         String resignationdate = customerInfo.getUserinfo().getResignation_date().substring(0, 10);
-
-                        //上月1号
-                        Calendar calStart = Calendar.getInstance();
-                        calStart.setTime(new Date());
-                        calStart.add(Calendar.MONTH, -1);
-                        calStart.set(Calendar.DAY_OF_MONTH, 1);
-
-                        //本月末日
-                        Calendar calend = Calendar.getInstance();
-                        calend.setTime(new Date());
-                        int maxCurrentMonthDay = calend.getActualMaximum(Calendar.DAY_OF_MONTH);
-                        calend.set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
 
                         if (customerInfo.getUserinfo().getResignation_date().length() >= 24) {
                             rightNow.setTime(Convert.toDate(resignationdate));
                             rightNow.add(Calendar.DAY_OF_YEAR, 1);
                             resignationdate = sf1ymd.format(rightNow.getTime());
                         }
+                        //离职日期与计算考勤日期比较
                         if (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime() >= sf1ymd.parse(sf1ymd.format(cal.getTime())).getTime()) {
                             //查询更新一天的考勤数据
                             Attendance attendance = new Attendance();
@@ -430,64 +519,74 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendancelist.add(attendanceList.get(0));
                                 }
                             } else {
-                                if (Integer.parseInt(customerInfo.getUserinfo().getResignation_date()) >= (Integer.parseInt(attendance.getDates().toString().substring(5, 7)) - 1)) {
-                                    attendance.setNormal("0");
-                                    attendance.setAbsenteeism("0");
-                                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                                    attendance.setAttendanceid(UUID.randomUUID().toString());
-                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                                    tokenModel.setUserId(attendance.getUser_id());
-                                    tokenModel.setExpireDate(new Date());
-                                    saveAttendance(attendance, "1", tokenModel);
-                                    attendancelist.add(attendance);
-                                }
-                            }
-                        } else if (sf1ymd.parse(sf1ymd.format(calStart.getTime())).getTime() <= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime()) && sf1ymd.parse(sf1ymd.format(calend.getTime())).getTime() >= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime())) {
-                            //查询更新一天的考勤数据
-                            Attendance attendance = new Attendance();
-                            attendance.setUser_id(customerInfo.getUserid());
-                            attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
-                            List<Attendance> attendanceList = attendanceMapper.select(attendance);
-                            if (attendanceList.size() > 0) {
-                                attendanceList.get(0).setNormal(null);
-                                attendanceList.get(0).setActual(null);
-                                attendanceList.get(0).setOrdinaryindustry(null);
-                                attendanceList.get(0).setWeekendindustry(null);
-                                attendanceList.get(0).setStatutoryresidue(null);
-                                attendanceList.get(0).setAnnualrestday(null);
-                                attendanceList.get(0).setSpecialday(null);
-                                attendanceList.get(0).setYouthday(null);
-                                attendanceList.get(0).setWomensday(null);
-                                attendanceList.get(0).setShortsickleave(null);
-                                attendanceList.get(0).setLongsickleave(null);
-                                attendanceList.get(0).setCompassionateleave(null);
-                                attendanceList.get(0).setAnnualrest(null);
-                                attendanceList.get(0).setDaixiu(null);
-                                attendanceList.get(0).setNursingleave(null);
-                                attendanceList.get(0).setWelfare(null);
-                                attendanceList.get(0).setAbsenteeism(null);
-                                attendanceList.get(0).setTshortsickleave(null);
-                                attendanceList.get(0).setTlongsickleave(null);
-                                attendanceList.get(0).setTabsenteeism(null);
-                                attendanceList.get(0).setRecognitionstate("");
-                                tokenModel.setUserId(attendanceList.get(0).getUser_id());
-                                tokenModel.setExpireDate(new Date());
-                                saveAttendance(attendanceList.get(0), "0", tokenModel);
-                            } else {
+                                attendance.setNormal("0");
+                                attendance.setAbsenteeism("0");
                                 attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
                                 attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                                 attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                                 attendance.setAttendanceid(UUID.randomUUID().toString());
                                 attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
                                 attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                                attendance.setRecognitionstate("");
+                                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                 tokenModel.setUserId(attendance.getUser_id());
                                 tokenModel.setExpireDate(new Date());
                                 saveAttendance(attendance, "1", tokenModel);
+                                attendancelist.add(attendance);
+                            }
+                        }
+                        else if (sf1ymd.parse(sf1ymd.format(calStart.getTime())).getTime() <= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime()) && sf1ymd.parse(sf1ymd.format(calend.getTime())).getTime() >= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime())) {
+                            if (sfy.parse(Convert.toStr(sfy.format(Convert.toDate(resignationdate)))).getTime() == sfy.parse(sfy.format(cal.getTime())).getTime())
+                            {
+                                //查询更新一天的考勤数据
+                                Attendance attendance = new Attendance();
+                                attendance.setUser_id(customerInfo.getUserid());
+                                attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                                List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                                if (attendanceList.size() > 0) {
+                                    attendanceList.get(0).setNormal(null);
+                                    attendanceList.get(0).setActual(null);
+                                    attendanceList.get(0).setOrdinaryindustry(null);
+                                    attendanceList.get(0).setWeekendindustry(null);
+                                    attendanceList.get(0).setStatutoryresidue(null);
+                                    attendanceList.get(0).setAnnualrestday(null);
+                                    attendanceList.get(0).setSpecialday(null);
+                                    attendanceList.get(0).setYouthday(null);
+                                    attendanceList.get(0).setWomensday(null);
+                                    attendanceList.get(0).setShortsickleave(null);
+                                    attendanceList.get(0).setLongsickleave(null);
+                                    attendanceList.get(0).setCompassionateleave(null);
+                                    attendanceList.get(0).setAnnualrest(null);
+                                    attendanceList.get(0).setDaixiu(null);
+                                    attendanceList.get(0).setNursingleave(null);
+                                    attendanceList.get(0).setWelfare(null);
+                                    attendanceList.get(0).setAbsenteeism(null);
+                                    attendanceList.get(0).setTshortsickleave(null);
+                                    attendanceList.get(0).setTlongsickleave(null);
+                                    attendanceList.get(0).setTabsenteeism(null);
+                                    attendanceList.get(0).setRecognitionstate("");
+                                    tokenModel.setUserId(attendanceList.get(0).getUser_id());
+                                    tokenModel.setExpireDate(new Date());
+                                    saveAttendance(attendanceList.get(0), "0", tokenModel);
+                                }
+                                else {
+                                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                    attendance.setAttendanceid(UUID.randomUUID().toString());
+                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                                    attendance.setRecognitionstate("");
+                                    tokenModel.setUserId(attendance.getUser_id());
+                                    tokenModel.setExpireDate(new Date());
+                                    saveAttendance(attendance, "1", tokenModel);
+                                }
+                            }
+                            else
+                            {
+                                Attendance attendance = new Attendance();
+                                attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                                attendance.setUser_id(customerInfo.getUserid());
+                                attendanceMapper.delete(attendance);
                             }
                         }
                     }
@@ -503,7 +602,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if (attendancelist.size() > 0) {
                 for (Attendance ad : attendancelist) {
                     try {
-//                        if(ad.getUser_id().equals("5e78b2294e3b194874180f49"))
+//                        if(ad.getUser_id().equals("5eb8ee1d29b7371b2840ba58"))
 //                        {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
@@ -790,45 +889,50 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                                 nomal = String.valueOf(Double.valueOf(nomal) + Double.valueOf(strlengthtime));
                                             } else if (ab.getErrortype().equals("PR013005")) {//年休
-                                                if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
-                                                    if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                        strlengthtime = df.format(Double.valueOf(workinghours));
-                                                    } else {
-                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
+                                                if (ab.getStatus().equals("7")) {
+                                                    if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
+                                                        if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                            strlengthtime = df.format(Double.valueOf(workinghours));
+                                                        } else {
+                                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
+                                                        }
                                                     }
+                                                    if (Double.valueOf(strlengthtime) > 0) {
+                                                        j = j + 1;
+                                                    }
+                                                    ad.setAnnualrest(strlengthtime);
                                                 }
-                                                if (Double.valueOf(strlengthtime) > 0) {
-                                                    j = j + 1;
-                                                }
-                                                ad.setAnnualrest(strlengthtime);
                                             } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
-                                                if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
-                                                    if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                        strlengthtime = df.format(Double.valueOf(workinghours));
-                                                    } else {
-                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                                if (ab.getStatus().equals("7")) {
+                                                    if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
+                                                        if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                            strlengthtime = df.format(Double.valueOf(workinghours));
+                                                        } else {
+                                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                                        }
                                                     }
-                                                }
-                                                //代休-周末大于等于15分
-                                                if (Double.valueOf(strlengthtime) % (Double.valueOf(lateearlyleave)) == 0) {
+                                                    //代休-周末大于等于15分
+                                                    if (Double.valueOf(strlengthtime) % (Double.valueOf(lateearlyleave)) == 0) {
+                                                        ad.setDaixiu(strlengthtime);
+                                                    } else {
+                                                        ad.setDaixiu(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                    }
                                                     ad.setDaixiu(strlengthtime);
-                                                } else {
-                                                    ad.setDaixiu(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                 }
-
-                                                ad.setDaixiu(strlengthtime);
                                             } else if (ab.getErrortype().equals("PR013007")) {//代休-特殊
-                                                if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
-                                                    if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                        strlengthtime = df.format(Double.valueOf(workinghours));
-                                                    } else {
-                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                                if (ab.getStatus().equals("7")) {
+                                                    if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
+                                                        if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                            strlengthtime = df.format(Double.valueOf(workinghours));
+                                                        } else {
+                                                            strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                                        }
                                                     }
+                                                    if (Double.valueOf(strlengthtime) > 0) {
+                                                        i = i + 1;
+                                                    }
+                                                    ad.setDaixiu(strlengthtime);
                                                 }
-                                                if (Double.valueOf(strlengthtime) > 0) {
-                                                    i = i + 1;
-                                                }
-                                                ad.setDaixiu(strlengthtime);
                                             } else if (ab.getErrortype().equals("PR013008")) {//事休
                                                 if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
                                                     if (Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
@@ -1449,38 +1553,44 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             nomal = String.valueOf(Double.valueOf(nomal) + Double.valueOf(strlengthtime));
 
                                         } else if (ab.getErrortype().equals("PR013005")) {//年休
-                                            if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
-                                                if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                    strlengthtime = df.format(Double.valueOf(workinghours));
-                                                } else {
-                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
+                                            if (ab.getStatus().equals("7")) {
+                                                if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
+                                                    if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getAnnualrest())));
+                                                    }
                                                 }
+                                                ad.setAnnualrest(strlengthtime);
                                             }
-                                            ad.setAnnualrest(strlengthtime);
                                         } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
-                                            if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
-                                                if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                    strlengthtime = df.format(Double.valueOf(workinghours));
-                                                } else {
-                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                            if (ab.getStatus().equals("7")) {
+                                                if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
+                                                    if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                                    }
                                                 }
-                                            }
-                                            //代休-周末大于等于15分
-                                            if (Double.valueOf(strlengthtime) % (Double.valueOf(lateearlyleave)) == 0) {
+                                                //代休-周末大于等于15分
+                                                if (Double.valueOf(strlengthtime) % (Double.valueOf(lateearlyleave)) == 0) {
+                                                    ad.setDaixiu(strlengthtime);
+                                                } else {
+                                                    ad.setDaixiu(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                }
                                                 ad.setDaixiu(strlengthtime);
-                                            } else {
-                                                ad.setDaixiu(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                             }
-                                            ad.setDaixiu(strlengthtime);
                                         } else if (ab.getErrortype().equals("PR013007")) {//代休-特殊
-                                            if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
-                                                if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
-                                                    strlengthtime = df.format(Double.valueOf(workinghours));
-                                                } else {
-                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                            if (ab.getStatus().equals("7")) {
+                                                if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
+                                                    if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getDaixiu())));
+                                                    }
                                                 }
+                                                ad.setDaixiu(strlengthtime);
                                             }
-                                            ad.setDaixiu(strlengthtime);
                                         } else if (ab.getErrortype().equals("PR013008")) {//事休
                                             if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
                                                 if (Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
