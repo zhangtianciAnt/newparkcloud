@@ -1,6 +1,6 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
-
+import cn.hutool.core.date.DateUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
@@ -133,7 +133,44 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 
     @Override
     public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
+        String sDate = DateUtil.format(new Date(), "MM");
         for (Delegainformation delegainformation : delegainformationList) {
+            if(sDate.equals("04")) {
+                delegainformation.setApril("");
+            }
+            if(sDate.equals("05")){
+                delegainformation.setMay("");
+            }
+            if(sDate.equals("06")){
+                delegainformation.setJune("");
+            }
+            if(sDate.equals("07")){
+                delegainformation.setJuly("");
+            }
+            if(sDate.equals("08")){
+                delegainformation.setAugust("");
+            }
+            if(sDate.equals("09")){
+                delegainformation.setSeptember("");
+            }
+            if(sDate.equals("10")){
+                delegainformation.setOctober("");
+            }
+            if(sDate.equals("11")){
+                delegainformation.setNovember("");
+            }
+            if(sDate.equals("12")){
+                delegainformation.setDecember("");
+            }
+            if(sDate.equals("01")){
+                delegainformation.setJanuary("");
+            }
+            if(sDate.equals("02")){
+                delegainformation.setFebruary("");
+            }
+            if(sDate.equals("03")){
+                delegainformation.setMarch("");
+            }
             if(!StringUtils.isNullOrEmpty(delegainformation.getDelegainformation_id())){
                 delegainformation.preUpdate(tokenModel);
                 delegainformationMapper.updateByPrimaryKeySelective(delegainformation);
