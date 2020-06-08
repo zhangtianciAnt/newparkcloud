@@ -72,6 +72,9 @@ public class MapBox_MapLevel extends BaseModel {
 
     private String cascids;
 
+    private String introduction;
+    private String gisarr;
+    private String colour;
     @Transient
     private List<MapBox_MapLevel> children;
 
