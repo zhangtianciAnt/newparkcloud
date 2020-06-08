@@ -356,7 +356,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendancelist.add(attendanceList.get(0));
                             }
                         } else {
-                            if (Integer.parseInt(customerInfo.getUserinfo().getEnterday()) <= Integer.parseInt(attendance.getDates().toString().substring(5, 7)) + 1)
+                            if (Integer.parseInt(customerInfo.getUserinfo().getEnterday()) <= (Integer.parseInt(attendance.getDates().toString().substring(5, 7)) + 1))
                             {
                                 attendance.setNormal("0");
                                 attendance.setAbsenteeism("0");
@@ -430,7 +430,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendancelist.add(attendanceList.get(0));
                                 }
                             } else {
-                                if (Integer.parseInt(customerInfo.getUserinfo().getResignation_date()) >= Integer.parseInt(attendance.getDates().toString().substring(5, 7)) - 1) {
+                                if (Integer.parseInt(customerInfo.getUserinfo().getResignation_date()) >= (Integer.parseInt(attendance.getDates().toString().substring(5, 7)) - 1)) {
                                     attendance.setNormal("0");
                                     attendance.setAbsenteeism("0");
                                     attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
