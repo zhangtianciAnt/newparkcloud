@@ -341,7 +341,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         List<Attendance> attendanceList = attendanceMapper.select(attendance);
                         if(attendanceList.size()>0)
                         {
-                            if(attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
+                            if(attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO)
+                                    || Integer.parseInt(customerInfo.getUserinfo().getEnterday()) >= Integer.parseInt(attendance.getDates().toString().substring(5,7)) + 1)
                             {
                                 attendanceList.get(0).setNormal("0");
                                 attendanceList.get(0).setActual(null);
@@ -419,7 +420,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             List<Attendance> attendanceList = attendanceMapper.select(attendance);
                             if(attendanceList.size()>0)
                             {
-                                if(attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
+                                if(attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO)
+                                        || Integer.parseInt(customerInfo.getUserinfo().getResignation_date()) <= Integer.parseInt(attendance.getDates().toString().substring(5,7)) - 1)
                                 {
                                     attendanceList.get(0).setNormal("0");
                                     attendanceList.get(0).setActual(null);
