@@ -13,7 +13,9 @@ public interface AbNormalService {
 
     //获取异常申请列表信息
     List<AbNormal> list(AbNormal abNormal) throws Exception;
-
+    //add-ws-6/8-禅道035
+    List<AbNormal> list2(AbNormal abNormal) throws Exception;
+    //add-ws-6/8-禅道035
     //查询家长会申请
     List<AbNormal> selectAbNormalParent(String userid) throws Exception;
 
