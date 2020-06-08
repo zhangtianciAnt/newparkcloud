@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,8 +76,21 @@ public class LunarbonusServiceImpl implements LunarbonusService {
 
         if (lunardetailVo.getEvaluatenum().equals("PJ104001")) {
             Query query = new Query();
+            SimpleDateFormat sff = new SimpleDateFormat("yyyy-MM-dd");
             List<CustomerInfo> CustomerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-            for (CustomerInfo customerInfo : CustomerInfoList) {
+//            add_fjl_0608 --填在在职人员筛选
+            List<CustomerInfo> cust = new ArrayList<>();
+            if (CustomerInfoList.size() > 0) {
+                for (int i = 0; i < CustomerInfoList.size(); i++) {
+                    if (StringUtils.isNullOrEmpty(CustomerInfoList.get(i).getUserinfo().getResignation_date())) {
+                        cust.add(CustomerInfoList.get(i));
+                    } else if (!StringUtils.isNullOrEmpty(CustomerInfoList.get(i).getUserinfo().getResignation_date()) && sff.parse(CustomerInfoList.get(i).getUserinfo().getResignation_date()).compareTo(new Date()) > 0) {
+                        cust.add(CustomerInfoList.get(i));
+                    }
+                }
+            }
+//            add_fjl_0608 --填在在职人员筛选
+            for (CustomerInfo customerInfo : cust) {
                 Lunardetail lunardetail = new Lunardetail();
                 if (customerInfo != null) {
                     SimpleDateFormat sf = new SimpleDateFormat("yyyy");
