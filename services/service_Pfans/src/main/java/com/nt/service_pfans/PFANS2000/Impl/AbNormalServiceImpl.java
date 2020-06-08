@@ -49,7 +49,12 @@ public class AbNormalServiceImpl implements AbNormalService {
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
         return abNormalMapper.select(abNormal);
     }
-
+    //add-ws-6/8-禅道035
+    @Override
+    public List<AbNormal> list2(AbNormal abNormal) throws Exception {
+        return abNormalMapper.select(abNormal);
+    }
+    //add-ws-6/8-禅道035
     @Override
     public List<AbNormal> selectAbNormalParent(String userid) throws Exception {
         return abNormalMapper.selectAbNormalParent(userid);

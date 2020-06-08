@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/abNormal")
@@ -31,7 +32,16 @@ public class Pfans2016Controller {
         abNormal.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(abNormalService.list(abNormal));
     }
-
+    //add-ws-6/8-禅道035
+    @RequestMapping(value = "/list2", method = {RequestMethod.POST})
+    public ApiResult list2(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        AbNormal abnormal =new  AbNormal();
+        List<AbNormal> abNormalList = abNormalService.list2(abnormal);
+        abNormalList = abNormalList.stream().filter(item -> (item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+        return ApiResult.success(abNormalList);
+    }
+    //add-ws-6/8-禅道035
     @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
         try{
