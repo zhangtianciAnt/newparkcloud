@@ -1517,8 +1517,12 @@ public class GivingServiceImpl implements GivingService {
         if ("pre".equals(mode)) {   // 前月加班费计算
             // 3个月前小时工资 = 月工资÷21.75天÷8小时
             double salaryPerHourTma = Double.parseDouble(base.getTmabasic()) / 21.75d / 8d;
+            // 2020/06/05 UPDATE by myt start //GBB
             // 前月小时工资
-            double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
+            //double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
+            //上月基本工资
+            double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
+            // 2020/06/05 UPDATE by myt END //GBB
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
             // 休日加班费 200%
