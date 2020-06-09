@@ -244,10 +244,16 @@
     </select>
 
     <select id="lastMonthWage" resultType="java.lang.String">
-   select USER_ID from wages
-   where YEAR(wages.CREATEON) = #{year}
-   and MONTH(wages.CREATEON) = #{month}
- </select>
+       select USER_ID from wages
+       where YEAR(wages.CREATEON) = #{year}
+       and MONTH(wages.CREATEON) = #{month}
+     </select>
+
+    <select id="lastWages" resultType="com.nt.dao_Pfans.PFANS2000.Wages">
+       select * from wages
+       where YEAR(wages.CREATEON) = #{year}
+       AND MONTH(wages.CREATEON) = #{month}
+     </select>
 
     <select id="getWagesByGivingId" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         SELECT

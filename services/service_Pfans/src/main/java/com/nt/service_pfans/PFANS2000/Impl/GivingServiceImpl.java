@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
@@ -110,6 +111,7 @@ public class GivingServiceImpl implements GivingService {
     private AnnualLeaveMapper annualLeaveMapper;
 
     private static List<CustomerInfo> customerInfos;
+    private static List<Wages> lastwages;
 
     // 日期基数
     private static final double dateBase = 21.75;
@@ -894,6 +896,8 @@ public class GivingServiceImpl implements GivingService {
     public void insert(String generation, TokenModel tokenModel) throws Exception {
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
         init();
+        //获取上月工资
+        lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1);
         // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String strTemp = sf1.format(new Date());
@@ -1123,38 +1127,55 @@ public class GivingServiceImpl implements GivingService {
         // UPD_GBB_2020/05/20 ALL
         String thisMouth = "0";
         //当月工资
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
-                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
-            }
-            else{
-                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
-            }
-        }
-        //上月工资
-        if(addMouth == 0){
-            Calendar time = Calendar.getInstance();
-            time.add(Calendar.MONTH, addMouth);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-            if (customerInfo.getUserinfo().getGridData() != null) {
-                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
-                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
-                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                        .collect(Collectors.toList());
-
-                for (CustomerInfo.Personal personal : personals) {
-                    if(!personal.getDate().equals("Invalid date")){
-                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
-                            // UPD_GBB_2020/05/20
-                            //thisMouth = personal.getBasic();
-                            thisMouth = String.valueOf(Double.parseDouble(personal.getBasic()) + Double.parseDouble(personal.getDuty()));
-                            // UPD_GBB_2020/05/20
-                            break;
-                        }
-                    }
+//        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+//            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+//                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+//            }
+//            else{
+//                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
+//            }
+//        }
+        // UPD_GBB_2020/6/9 start
+        //本月工资
+        if(addMouth == 1){
+//            Calendar time = Calendar.getInstance();
+//            time.add(Calendar.MONTH, addMouth);
+//            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+//            if (customerInfo.getUserinfo().getGridData() != null) {
+//                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
+//                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
+//                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+//                        .collect(Collectors.toList());
+//
+//                for (CustomerInfo.Personal personal : personals) {
+//                    if(!personal.getDate().equals("Invalid date")){
+//                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+//                            // UPD_GBB_2020/05/20
+//                            //thisMouth = personal.getBasic();
+//                            thisMouth = String.valueOf(Double.parseDouble(personal.getBasic()) + Double.parseDouble(personal.getDuty()));
+//                            // UPD_GBB_2020/05/20
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                    thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+                }
+                else{
+                    thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
                 }
             }
         }
+        else{ //上月基本工資
+            List<Wages> Wages = lastwages.stream().filter(coi -> (coi.getUser_id().contains(customerInfo.getUserid()))).collect(Collectors.toList());
+            if(Wages.size() > 0){
+                //本月基本工资 + 本月职责工资
+                thisMouth = String.valueOf(Double.parseDouble(Wages.get(0).getBasethismonthbasic()) + Double.parseDouble(Wages.get(0).getThismonthduty()));
+            }
+        }
+        // UPD_GBB_2020/6/9 end
         return thisMouth;
     }
 
@@ -1163,38 +1184,63 @@ public class GivingServiceImpl implements GivingService {
         String thisMonth = "0";
         String thisMonthBasic = "0";
         String thisMonthDuty = "0";
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-            thisMonth = customerInfo.getUserinfo().getBasic();
-            thisMonthBasic = customerInfo.getUserinfo().getBasic();
-        }
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
-            thisMonthDuty = customerInfo.getUserinfo().getDuty();
-        }
-        if(addMouth == 0){
-            Calendar time = Calendar.getInstance();
-            time.add(Calendar.MONTH, addMouth);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-            if (customerInfo.getUserinfo().getGridData() != null) {
-                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
-                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
-                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                        .collect(Collectors.toList());
-
-                for (CustomerInfo.Personal personal : personals) {
-                    if(!personal.getDate().equals("Invalid date")){
-                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
-                            // UPD_GBB_2020/05/20
-                            //thisMonth = personal.getAfter();
-                            thisMonth = personal.getBasic();
-                            // UPD_GBB_2020/05/20
-                            thisMonthBasic = personal.getBasic();
-                            thisMonthDuty = personal.getDuty();
-                            break;
-                        }
-                    }
-                }
+        // UPD_GBB_2020/6/9 start
+//        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+//            thisMonth = customerInfo.getUserinfo().getBasic();
+//            thisMonthBasic = customerInfo.getUserinfo().getBasic();
+//        }
+//        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+//            thisMonthDuty = customerInfo.getUserinfo().getDuty();
+//        }
+//        if(addMouth == 0){
+//            Calendar time = Calendar.getInstance();
+//            time.add(Calendar.MONTH, addMouth);
+//            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+//            if (customerInfo.getUserinfo().getGridData() != null) {
+//                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
+//                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
+//                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+//                        .collect(Collectors.toList());
+//
+//                for (CustomerInfo.Personal personal : personals) {
+//                    if(!personal.getDate().equals("Invalid date")){
+//                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+//                            // UPD_GBB_2020/05/20
+//                            //thisMonth = personal.getAfter();
+//                            thisMonth = personal.getBasic();
+//                            // UPD_GBB_2020/05/20
+//                            thisMonthBasic = personal.getBasic();
+//                            thisMonthDuty = personal.getDuty();
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        // UPD_GBB_2020/6/9 start
+        //本月工资
+        if(addMouth == 1){
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+                thisMonth = customerInfo.getUserinfo().getBasic();
+                thisMonthBasic = customerInfo.getUserinfo().getBasic();
+            }
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                thisMonthDuty = customerInfo.getUserinfo().getDuty();
             }
         }
+        else{ //上月基本工資
+            List<Wages> Wages = lastwages.stream().filter(coi -> (coi.getUser_id().contains(customerInfo.getUserid()))).collect(Collectors.toList());
+            if(Wages.size() > 0){
+                //本月基本工资（上月）
+                thisMonth = Wages.get(0).getBasethismonthbasic();
+                //本月基本工资（上月）
+                thisMonthBasic = Wages.get(0).getBasethismonthbasic();
+                //本月职责工资（上月）
+                thisMonthDuty = Wages.get(0).getThismonthduty();
+            }
+        }
+        // UPD_GBB_2020/6/9 end
+
         Map<String, String> map = new HashMap<String, String>();
         map.put("thisMonth", thisMonth);
         map.put("thisMonthBasic", thisMonthBasic);
