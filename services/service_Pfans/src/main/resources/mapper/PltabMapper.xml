@@ -228,6 +228,7 @@
                                              '5' || companyprojects.`STATUS` = '6')
                 where ca.state = '有效'
                   and ca.type = "1"
+                  and year (projectcontract.DELIVERYFINSHDATE) = #{year} and month (projectcontract.DELIVERYFINSHDATE) = #{month}
                   and companyprojects.GROUP_ID = #{groupid}
                 AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
                 GROUP BY contracttype1,companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
@@ -358,7 +359,6 @@
                             on company.COMPANYPROJECTS_ID = contract.COMPANYPROJECTSID
                                 and (company.`STATUS` = '4' || company.`STATUS` = '5' || company.`STATUS` = '6')
         where company.GROUP_ID = #{groupid}
-        and year (contract.DELIVERYFINSHDATE) = #{year} and month (contract.DELIVERYFINSHDATE) = #{month}
         AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(company.STARTDATE,'%Y%m') AND DATE_FORMAT(company.ENDDATE,'%Y%m')
         GROUP BY code,company.PROJECT_NAME,company.COMPANYPROJECTS_ID
 
