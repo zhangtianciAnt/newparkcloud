@@ -11,6 +11,8 @@ public interface WagesMapper extends MyMapper<Wages> {
 
     List<Wages> selectWage();
 
+    List<Wages> lastWages(@Param("year") int year, @Param("month") int month);
+
     List<String> lastMonthWage(@Param("year") int year, @Param("month") int month);
 
 //    List<Wages> getWageList(Wages wages);
