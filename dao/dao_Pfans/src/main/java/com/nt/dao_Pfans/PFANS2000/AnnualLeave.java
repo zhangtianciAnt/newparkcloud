@@ -128,4 +128,7 @@ public class AnnualLeave extends BaseModel {
      */
     private String remaining_parent_teacher_meeting;
 
+    //申请中
+    private BigDecimal annual_leave_shenqingzhong;
+
 }
