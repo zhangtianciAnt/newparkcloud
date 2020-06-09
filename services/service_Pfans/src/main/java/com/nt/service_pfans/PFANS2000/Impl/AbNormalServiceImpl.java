@@ -948,8 +948,12 @@ public class AbNormalServiceImpl implements AbNormalService {
             ls.add(abNormal.getUser_id());
             List<AnnualLeave> list = annualLeaveMapper.getDataList(ls);
             if(list.size() > 0 ){
-                if(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() >= lengths){
-                    String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue());
+                //upd ccm 2020/6/9
+//                if(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() >= lengths){
+                if((list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - list.get(0).getAnnual_leave_shenqingzhong().doubleValue()) >= lengths){
+                    //String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue());
+                    String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - list.get(0).getAnnual_leave_shenqingzhong().doubleValue());
+                    //upd ccm 2020/6/9
                     rst.put("dat",Timecheck);
                     rst.put("error",abNormal.getErrortype());
                     rst.put("can","yes");

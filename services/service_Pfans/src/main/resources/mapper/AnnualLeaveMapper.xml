@@ -26,7 +26,8 @@
         REMAINING_ANNUAL_LEAVE_LASTYEAR remaining_annual_leave_lastyear,
         ANNUAL_LEAVE_THISYEAR annual_leave_thisyear,
         DEDUCT_ANNUAL_LEAVE_THISYEAR deduct_annual_leave_thisyear,
-        REMAINING_ANNUAL_LEAVE_THISYEAR remaining_annual_leave_thisyear
+        REMAINING_ANNUAL_LEAVE_THISYEAR remaining_annual_leave_thisyear,
+        remaining_annual_leave_thisyear_shenqingzhong annual_leave_shenqingzhong
         from annulleaveView
              where
              1=1
