@@ -277,7 +277,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         //add ccm 20200605
 
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-        if (expatriatesinfor.getWhetherentry().equals("BP006001")) {
+        if (expatriatesinfor.getWhetherentry().equals("BP006001") && !expatriatesinfor.getGroup_id().equals("")) {
             Priceset priceset = new Priceset();
             priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
             //priceset.setGroupid(expatriatesinfor.getGroup_id());
@@ -295,7 +295,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     priceset.preInsert(tokenModel);
                     priceset.setPriceset_id(UUID.randomUUID().toString());
                     priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-                    priceset.setGroupid(expatriatesinfor.getGroup_id());
+                    priceset.setGroup_id(expatriatesinfor.getGroup_id());
                     priceset.setGraduation(expatriatesinfor.getGraduation_year());
                     priceset.setCompany(expatriatesinfor.getSuppliername());
                     priceset.setAssesstime(thisDate);
@@ -312,7 +312,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 List<PricesetGroup> pricesetGroupList = pricesetGroupMapper.select(pricesetGroup);
                 if(pricesetGroupList.size()>0)
                 {
-                    priceset.setGroupid(expatriatesinfor.getGroup_id());
+                    priceset.setGroup_id(expatriatesinfor.getGroup_id());
                     priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
                     List<Priceset> pricesetlist = pricesetMapper.select(priceset);
                     if(pricesetlist.size()==0)
@@ -325,7 +325,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         {
                             pricesetlist.get(0).preInsert(tokenModel);
                             pricesetlist.get(0).setPriceset_id(UUID.randomUUID().toString());
-                            pricesetlist.get(0).setGroupid(expatriatesinfor.getGroup_id());
+                            pricesetlist.get(0).setGroup_id(expatriatesinfor.getGroup_id());
                             pricesetlist.get(0).setStatus("0");
                             pricesetMapper.insert(pricesetlist.get(0));
                         }
@@ -335,28 +335,46 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         }
 
         //ccm add
-        ExpatriatesinforDetail e = new ExpatriatesinforDetail();
-        e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
-        List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
-        expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
-        for(ExpatriatesinforDetail expDetail : expatriatesinforDetails)
+        if(!expatriatesinfor.getGroup_id().equals(""))
         {
-            if(expDetail.getExdateend() ==null)
+            ExpatriatesinforDetail e = new ExpatriatesinforDetail();
+            e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+            List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
+            expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
+            if(expatriatesinforDetails.size() == 0)
             {
-                if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
+                //登录新的履历
+                ExpatriatesinforDetail e1 = new ExpatriatesinforDetail();
+                e1.preInsert(tokenModel);
+                e1.setGroup_id(expatriatesinfor.getGroup_id());
+                e1.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                e1.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                e1.setExdatestr(new Date());
+                expatriatesinforDetailMapper.insert(e1);
+            }
+            else
+            {
+                for(ExpatriatesinforDetail expDetail : expatriatesinforDetails)
                 {
-                    //更新结束时间
-                    expDetail.setExdateend(new Date());
-                    expDetail.preUpdate(tokenModel);
-                    expatriatesinforDetailMapper.updateByPrimaryKey(expDetail);
+                    if(expDetail.getExdateend() ==null)
+                    {
+                        if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
+                        {
+                            //更新结束时间
+                            expDetail.setExdateend(new Date());
+                            expDetail.preUpdate(tokenModel);
+                            expatriatesinforDetailMapper.updateByPrimaryKey(expDetail);
 
-                    //登录新的履历
-                    e.preInsert(tokenModel);
-                    e.setGroup_id(expatriatesinfor.getGroup_id());
-                    e.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
-                    e.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
-                    e.setExdatestr(new Date());
-                    expatriatesinforDetailMapper.insert(e);
+                            //登录新的履历
+                            ExpatriatesinforDetail e2 = new ExpatriatesinforDetail();
+                            e2.preInsert(tokenModel);
+                            e2.setGroup_id(expatriatesinfor.getGroup_id());
+                            e2.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                            e2.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
+                            e2.setExdatestr(new Date());
+                            expatriatesinforDetailMapper.insert(e2);
+                        }
+                    }
                 }
             }
         }
@@ -496,6 +514,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(sex.trim());
                                     dictionary.setType("GT");
+                                    dictionary.setPcode("PR019");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -509,7 +528,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 if(birth!=null && birth.length() > 9)
                                 {
                                     birth = birth.trim().substring(0,10);
-                                    expatriatesinfor.setBirth(sff.format(birth));
+                                    expatriatesinfor.setBirth(sff.format(sff.parse(birth)));
                                 }
                             }
                             if(value.size()>3)
@@ -524,6 +543,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(education.trim());
                                     dictionary.setType("RS");
+                                    dictionary.setPcode("PR022");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -569,6 +589,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(rn.trim());
                                     dictionary.setType("RS");
+                                    dictionary.setPcode("PR021");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -611,6 +632,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(operationform.trim());
                                     dictionary.setType("BP");
+                                    dictionary.setPcode("BP024");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -646,6 +668,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(jobclassification.trim());
                                     dictionary.setType("BP");
+                                    dictionary.setPcode("BP025");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -693,6 +716,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(result.trim());
                                     dictionary.setType("BP");
+                                    dictionary.setPcode("BP003");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -708,6 +732,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     Dictionary dictionary =new Dictionary();
                                     dictionary.setValue1(whetherentry.trim());
                                     dictionary.setType("BP");
+                                    dictionary.setPcode("BP006");
                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                     if(dictionaryList.size()>0)
                                     {
@@ -757,6 +782,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             Dictionary dictionary =new Dictionary();
                                             dictionary.setValue1(exitreason.trim());
                                             dictionary.setType("BP");
+                                            dictionary.setPcode("BP012");
                                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                             if(dictionaryList.size()>0)
                                             {
@@ -788,6 +814,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             Dictionary dictionary =new Dictionary();
                                             dictionary.setValue1(sitevaluation.trim());
                                             dictionary.setType("BP");
+                                            dictionary.setPcode("BP009");
                                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                             if(dictionaryList.size()>0)
                                             {
@@ -803,6 +830,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             Dictionary dictionary =new Dictionary();
                                             dictionary.setValue1(businessimpact.trim());
                                             dictionary.setType("BP");
+                                            dictionary.setPcode("BP010");
                                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                             if(dictionaryList.size()>0)
                                             {
@@ -841,6 +869,17 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     expatriatesinfor.preInsert();
                     expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
                     expatriatesinforMapper.insert(expatriatesinfor);
+                    //登录新的履历
+                    if(!expatriatesinfor.getGroup_id().isEmpty() && expatriatesinfor.getGroup_id() !=null)
+                    {
+                        ExpatriatesinforDetail e2 = new ExpatriatesinforDetail();
+                        e2.preInsert(tokenModel);
+                        e2.setGroup_id(expatriatesinfor.getGroup_id());
+                        e2.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                        e2.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                        e2.setExdatestr(new Date());
+                        expatriatesinforDetailMapper.insert(e2);
+                    }
                     listVo.add(expatriatesinfor);
                     accesscount = accesscount + 1;
                 }
@@ -904,6 +943,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(sex.trim());
                                                 dictionary.setType("GT");
+                                                dictionary.setPcode("PR019");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -924,6 +964,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(education.trim());
                                                 dictionary.setType("RS");
+                                                dictionary.setPcode("PR022");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -965,6 +1006,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(rn.trim());
                                                 dictionary.setType("RS");
+                                                dictionary.setPcode("PR021");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -1004,6 +1046,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(operationform.trim());
                                                 dictionary.setType("BP");
+                                                dictionary.setPcode("BP024");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -1020,6 +1063,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(jobclassification.trim());
                                                 dictionary.setType("BP");
+                                                dictionary.setPcode("BP025");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -1063,6 +1107,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(result.trim());
                                                 dictionary.setType("BP");
+                                                dictionary.setPcode("BP003");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -1077,6 +1122,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 Dictionary dictionary =new Dictionary();
                                                 dictionary.setValue1(whetherentry.trim());
                                                 dictionary.setType("BP");
+                                                dictionary.setPcode("BP006");
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
@@ -1126,6 +1172,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                     Dictionary dictionary =new Dictionary();
                                                     dictionary.setValue1(exitreason.trim());
                                                     dictionary.setType("BP");
+                                                    dictionary.setPcode("BP012");
                                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                     if(dictionaryList.size()>0)
                                                     {
@@ -1161,6 +1208,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                     Dictionary dictionary =new Dictionary();
                                                     dictionary.setValue1(sitevaluation.trim());
                                                     dictionary.setType("BP");
+                                                    dictionary.setPcode("BP009");
                                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                     if(dictionaryList.size()>0)
                                                     {
@@ -1178,6 +1226,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                     Dictionary dictionary =new Dictionary();
                                                     dictionary.setValue1(businessimpact.trim());
                                                     dictionary.setType("BP");
+                                                    dictionary.setPcode("BP010");
                                                     List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                     if(dictionaryList.size()>0)
                                                     {
@@ -1212,6 +1261,51 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             }
                             expatriatesinforList.get(0).preUpdate(tokenModel);
                             expatriatesinforMapper.updateByPrimaryKey(expatriatesinforList.get(0));
+                            if(!expatriatesinforList.get(0).getGroup_id().isEmpty() && expatriatesinforList.get(0).getGroup_id() !=null)
+                            {
+                                //ccm add
+                                ExpatriatesinforDetail e = new ExpatriatesinforDetail();
+                                e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                                List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
+                                expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
+                                if(expatriatesinforDetails.size() == 0)
+                                {
+                                    //登录新的履历
+                                    ExpatriatesinforDetail e1 = new ExpatriatesinforDetail();
+                                    e1.preInsert(tokenModel);
+                                    e1.setGroup_id(expatriatesinfor.getGroup_id());
+                                    e1.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                                    e1.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                                    e1.setExdatestr(new Date());
+                                    expatriatesinforDetailMapper.insert(e1);
+                                }
+                                else
+                                {
+                                    for(ExpatriatesinforDetail expDetail : expatriatesinforDetails)
+                                    {
+                                        if(expDetail.getExdateend() ==null)
+                                        {
+                                            if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
+                                            {
+                                                //更新结束时间
+                                                expDetail.setExdateend(new Date());
+                                                expDetail.preUpdate(tokenModel);
+                                                expatriatesinforDetailMapper.updateByPrimaryKey(expDetail);
+
+                                                //登录新的履历
+                                                ExpatriatesinforDetail e2 = new ExpatriatesinforDetail();
+                                                e2.preInsert(tokenModel);
+                                                e2.setGroup_id(expatriatesinfor.getGroup_id());
+                                                e2.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                                                e2.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
+                                                e2.setExdatestr(new Date());
+                                                expatriatesinforDetailMapper.insert(e2);
+                                            }
+                                        }
+                                    }
+                                }
+                                //ccm add
+                            }
                             accesscount = accesscount + 1;
                         }
                         else
