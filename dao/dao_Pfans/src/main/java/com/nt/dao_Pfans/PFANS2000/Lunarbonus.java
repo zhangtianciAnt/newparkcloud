@@ -28,7 +28,7 @@ public class Lunarbonus extends BaseModel {
 
 
     @Column(name = "EVALUATIONDAY")
-    private Date evaluationday;
+    private String evaluationday;
 
 
     @Column(name = "SUBJECTMON")
@@ -45,8 +45,6 @@ public class Lunarbonus extends BaseModel {
 
     @Column(name = "USER_ID")
     private String user_id;
-
-
 
 
 }
