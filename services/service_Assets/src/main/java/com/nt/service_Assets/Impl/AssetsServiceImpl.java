@@ -195,8 +195,8 @@ public class AssetsServiceImpl implements AssetsService {
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
             String[] qitazican = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,通関資料管理番号,型号,价格,HS编码,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,设备写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考,部门".split(",");
-            String[] gudingzichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,PC管理号,使用部门,部门代码,购入时间,价格,帐面净值,型号,备注".split(",");
-            String[] buwaizichan = "名称,资产类型,工号,资产编号,条码类型,资产状态,在库状态,资产说明,序列号,启用日期,成本,标签号,型号,地点,使用部门,部门代码,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认".split(",");
+            String[] gudingzichan = "资产类型,资产编号,名称,资产状态,管理者,使用部门,部门代码,条码类型,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注".split(",");
+            String[] jieruzichan = "资产类型,资产编号,名称,担当者,使用部门,部门代码,型号,借出单位,担当者,联系电话,借用合同,借用合同编号,借用开始日,预定返还日,实际返还日,备注1,备注2,备注3".split(",");
 
             List<Object> header = list.get(0);
             int typeLength = header.size();
@@ -212,10 +212,10 @@ public class AssetsServiceImpl implements AssetsService {
                         throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + gudingzichan[i]);
                     }
                 }
-            } else if ( typeLength == buwaizichan.length ) {
+            } else if (typeLength == jieruzichan.length) {
                 for ( int i = 0; i<typeLength; i++ ) {
-                    if (!header.get(i).toString().trim().equals(buwaizichan[i])) {
-                        throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + buwaizichan[i]);
+                    if (!header.get(i).toString().trim().equals(jieruzichan[i])) {
+                        throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + jieruzichan[i]);
                     }
                 }
             } else {
@@ -234,18 +234,173 @@ public class AssetsServiceImpl implements AssetsService {
                 Assets assets = new Assets();
 
                 List<Object> value = list.get(lineNo);
-
-                if (!StringUtils.isEmpty(trim(value.get(3)))) {
-                    Assets condition = new Assets();
-                    checkBarCode(trim(value.get(3)));
-                    condition.setBarcode(value.get(3).toString());
-                    List<Assets> ls = assetsMapper.select(condition);
-                    if (ls.size() > 0) {
-                        assets = ls.get(0);
+                //固定资产导入用
+                if (value != null && !value.isEmpty() && ("固定资产".equals(value.get(0).toString())
+                        || "簿外_SD卡/U盘/硬盘/光盘/手机/平板电脑/路由器".equals(value.get(0).toString())
+                        || "簿外_电脑".equals(value.get(0).toString())
+                        || "簿外_其他".equals(value.get(0).toString())
+                        || "无形资产".equals(value.get(0).toString()))) {
+                    if (!StringUtils.isEmpty(trim(value.get(1)))) {
+                        Assets condition = new Assets();
+                        checkBarCod(trim(value.get(1)));
+                        condition.setBarcode(value.get(1).toString());
+                        List<Assets> ls = assetsMapper.select(condition);
+                        if (ls.size() > 0) {
+                            assets = ls.get(0);
+                        }
                     }
+                    // 资产类型
+                    if (!StringUtils.isEmpty(trim(value.get(0)))) {
+                        String tValue = trim(value.get(0));
+                        if (PA001Map.containsKey(tValue)) {
+                            assets.setTypeassets(PA001Map.get(tValue));
+                        } else {
+                            error++;
+                            Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
+                            continue;
+                        }
+                    } else {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的资产类型不能为空，导入失败");
+                        continue;
+                    }
+                    //名称
+                    if (StringUtils.isEmpty(value.get(2))) {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setFilename(trim(value.get(2)));
+                    // 资产状态
+                    if (!StringUtils.isEmpty(trim(value.get(3)))) {
+                        String tValue = trim(value.get(3));
+                        if (PA003Map.containsKey(tValue)) {
+                            assets.setAssetstatus(PA003Map.get(tValue));
+                        } else {
+                            error++;
+                            Result.add("模板第" + lineNo + "行的资产状态没有找到，导入失败");
+                            continue;
+                        }
+                    }
+                    // 管理者
+                    if (!StringUtils.isEmpty(trim(value.get(4)))) {
+                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(4).toString());
+                        if (customerInfo != null) {
+                            assets.setPrincipal(value.get(4).toString());
+                        }
+                        if (customerInfo == null) {
+                            error = error + 1;
+                            Result.add("模板第" + lineNo + "行的管理者的个人MEGAS编码未找到，请输入正确的个人MEGAS编码，导入失败");
+                            continue;
+                        }
+                    }
+                    //使用部门
+                    if (StringUtils.isEmpty(value.get(5))) {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setUsedepartment(trim(value.get(5)));
+                    //部门代码
+                    if (StringUtils.isEmpty(value.get(6))) {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setDepartmentcode(trim(value.get(6)));
+                    if (value.size() > 1) {
+                        int dateCheck = isDate(trim(value.get(9)));
+                        if (dateCheck != 0) {
+                            Result.add(getDateErrMsg(dateCheck, lineNo));
+                            error = error + 1;
+                            continue;
+                        }
+                    }
+                    //条码类型,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注
+                    String[] gudingCols = "bartype,stockstatus,purchasetime,purchasetime,price,realprice,model,pcno,psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation,remarks".split(",");
+                    int start = 7;
+                    setOrderedValues(start, assets, gudingCols, value);
+//                    }
                 }
-                if (value != null && !value.isEmpty()) {
-                    if ( StringUtils.isEmpty(value.get(0)) ) {
+                //借入用导入模板
+                if (value != null && !value.isEmpty() && "借用設備".equals(value.get(0).toString())) {
+                    if (!StringUtils.isEmpty(trim(value.get(1)))) {
+                        Assets condition = new Assets();
+                        checkBarCod(trim(value.get(1)));
+                        condition.setBarcode(value.get(1).toString());
+                        List<Assets> ls = assetsMapper.select(condition);
+                        if (ls.size() > 0) {
+                            assets = ls.get(0);
+                        }
+                    }
+                    // 资产类型
+                    if (!StringUtils.isEmpty(trim(value.get(0)))) {
+                        String tValue = trim(value.get(0));
+                        if (PA001Map.containsKey(tValue)) {
+                            assets.setTypeassets(PA001Map.get(tValue));
+                        } else {
+                            error++;
+                            Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
+                            continue;
+                        }
+                    } else {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的资产类型不能为空，导入失败");
+                        continue;
+                    }
+                    //名称
+                    if (StringUtils.isEmpty(value.get(2))) {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setFilename(trim(value.get(2)));
+
+                    // 管理者
+                    if (!StringUtils.isEmpty(trim(value.get(3)))) {
+                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(3).toString());
+                        if (customerInfo != null) {
+                            assets.setPrincipal(value.get(3).toString());
+                        }
+                        if (customerInfo == null) {
+                            error = error + 1;
+                            Result.add("模板第" + lineNo + "行的管理者的个人MEGAS编码未找到，请输入正确的个人MEGAS编码，导入失败");
+                            continue;
+                        }
+                    }
+                    //使用部门
+                    if (StringUtils.isEmpty(value.get(4))) {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setUsedepartment(trim(value.get(4)));
+                    //部门代码
+                    if (StringUtils.isEmpty(value.get(5))) {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setDepartmentcode(trim(value.get(5)));
+                    //型号,借出单位,担当者,联系电话,借用合同,借用合同编号,借用开始日,预定返还日,实际返还日,备注1,备注2,备注3
+                    String[] gudingCols = "model,remarks".split(","); //0605--与客户确认字段
+                    int start = 6;
+                    setOrderedValues(start, assets, gudingCols, value);
+//                    }
+                }
+                //对外资产用模板
+                if (value != null && !value.isEmpty() && ("加工贸易".equals(value.get(1).toString())
+                        || "无偿借用".equals(value.get(1).toString()))) {
+                    if (!StringUtils.isEmpty(trim(value.get(3)))) {
+                        Assets condition = new Assets();
+                        condition.setBarcode(value.get(3).toString());
+                        List<Assets> ls = assetsMapper.select(condition);
+                        if (ls.size() > 0) {
+                            assets = ls.get(0);
+                        }
+                    }
+
+                    if (StringUtils.isEmpty(value.get(0))) {
                         error++;
                         Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
                         continue;
@@ -263,15 +418,6 @@ public class AssetsServiceImpl implements AssetsService {
                             Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
                             continue;
                         }
-//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA001");
-//                        dicIds = diclist.stream().filter(item -> (item.getValue1().equals(value.get(1).toString()))).collect(Collectors.toList());
-//                        if (dicIds.size() > 0) {
-//                            assets.setTypeassets(dicIds.get(0).getCode());
-//                        } else {
-//                            error++;
-//                            Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
-//                            continue;
-//                        }
                     }else {
                         error++;
                         Result.add("模板第" + lineNo + "行的资产类型不能为空，导入失败");
@@ -304,15 +450,6 @@ public class AssetsServiceImpl implements AssetsService {
                             continue;
                         }
 
-//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA004");
-//                        List<Dictionary> dicIds1 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(4).toString()))).collect(Collectors.toList());
-//                        if (dicIds1.size() > 0) {
-//                            assets.setBartype(dicIds1.get(0).getCode());
-//                        } else {
-//                            error++;
-//                            Result.add("模板第" + lineNo + "行的条码类型没有找到，导入失败");
-//                            continue;
-//                        }
                     } else {
                         error++;
                         Result.add("模板第" + lineNo + "行的条码类型不能为空，导入失败");
@@ -330,15 +467,6 @@ public class AssetsServiceImpl implements AssetsService {
                             continue;
                         }
 
-//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA003");
-//                        List<Dictionary> dicIds2 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(5).toString()))).collect(Collectors.toList());
-//                        if (dicIds2.size() > 0) {
-//                            assets.setAssetstatus(dicIds2.get(0).getCode());
-//                        } else {
-//                            error++;
-//                            Result.add("模板第" + lineNo + "行的资产状态没有找到，导入失败");
-//                            continue;
-//                        }
                     }
 
                     // 在库状态
@@ -351,58 +479,11 @@ public class AssetsServiceImpl implements AssetsService {
                             Result.add("模板第" + lineNo + "行的在库状态没有找到，导入失败");
                             continue;
                         }
-
-//                        List<Dictionary> diclist = dictionaryService.getForSelect("PA002");
-//                        List<Dictionary> dicIds3 = diclist.stream().filter(item -> (item.getValue1().equals(value.get(6).toString()))).collect(Collectors.toList());
-//                        if (dicIds3.size() > 0) {
-//                            assets.setStockstatus(dicIds3.get(0).getCode());
-//                        } else {
-//                            error++;
-//                            Result.add("模板第" + lineNo + "行的在库状态没有找到，导入失败");
-//                            continue;
-//                        }
                     }
 
                     // start by zy
-                    if ("固定资产".equals(value.get(1).toString())) {
-                        if (value.size() > 1) {
-                            int dateCheck = isDate(trim(value.get(10)));
-                            if ( dateCheck != 0 ) {
-                                Result.add(getDateErrMsg(dateCheck, lineNo));
-                                error = error + 1;
-                                continue;
-                            }
-                        }
-                        //PC管理号， 使用部门，部门代码，购入时间，价格，帐面净值，型号，备注
-                        String[] gudingCols = "pcno,usedepartment,departmentcode,purchasetime,price,realprice,model,remarks".split(",");
-                        int start = 7;
-                        setOrderedValues(start, assets, gudingCols, value);
-                    }
-                    else if ("簿外_SD卡/U盘/硬盘/光盘/手机/平板电脑/路由器".equals(value.get(1).toString())
-                            || "簿外_电脑".equals(value.get(1).toString())
-                            || "簿外_其他".equals(value.get(1).toString())) {
-                        if (value.size() > 1) {
-                            int dateCheck = isDate(trim(value.get(9)));
-                            if ( dateCheck != 0 ) {
-                                error = error + 1;
-                                Result.add(getDateErrMsg(dateCheck, lineNo));
-                                continue;
-                            }
-                        }
-                        // 是否处理 否->0  是->1
-                        value.set(20, convertToOne(value.get(20)));
-
-                        // (7-15)资产说明，序列号，启用日期，成本，标签号，型号，地点，使用部门，部门代码，
-                        // (16-23)PSDCD_借还情况，PSDCD_带出理由，PSDCD_带出开始日，PSDCD_预计归还日，PSDCD_是否逾期，PSDCD_对方单位，PSDCD_责任人，PSDCD_归还确认
-                        String[] buwaiCols = ("remarks,no,activitiondate,price,assetnumber,model,address,usedepartment,departmentcode," +
-                                "psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation").split(",");
-                        int start = 7;
-                        setOrderedValues(start, assets, buwaiCols, value);
-                    }
-                    else if ("加工贸易".equals(value.get(1).toString())
-                            || "无偿借用".equals(value.get(1).toString())
-                            || "引っ越し設備".equals(value.get(1).toString())
-                            || "借用設備".equals(value.get(1).toString())){
+//                   if ("加工贸易".equals(value.get(1).toString())
+//                            || "无偿借用".equals(value.get(1).toString())){
                         boolean hasErr = false;
                         if (value.size() > 1) {
                             int[] dateCols = {11, 12, 20, 23, 27, 33, 37};
@@ -467,7 +548,7 @@ public class AssetsServiceImpl implements AssetsService {
                         qitaCols = qitaList.toArray(new String[qitaList.size()]);
                         int start = 7;
                         setOrderedValues(start, assets, qitaCols, value);
-                    }
+//                    }
                     // end by zy
                 }
                 if (StrUtil.isNotBlank(assets.getAssets_id())) {
@@ -475,7 +556,6 @@ public class AssetsServiceImpl implements AssetsService {
                     assetsMapper.updateByPrimaryKey(assets);
                 } else {
                     if (!StringUtils.isEmpty(trim(value.get(3)))) {
-                        checkBarCode(trim(value.get(3)));
                         assets.setBarcode(trim(value.get(3)));
                     } else {
                         assets.setBarcode(DateUtil.format(new Date(), "yyyyMMddHHmmssSSSSSS"));
@@ -503,7 +583,7 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     //    add_fjl_05/25  --添加资产编号重复check
-    private void checkBarCode(String importBarcode) throws Exception {
+    private void checkBarCod(String importBarcode) throws Exception {
         if (StrUtil.isNotBlank(importBarcode)) {
             Assets conditon = new Assets();
             conditon.setBarcode(importBarcode);
