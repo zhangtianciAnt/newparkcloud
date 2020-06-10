@@ -783,10 +783,14 @@ public class GivingServiceImpl implements GivingService {
         }
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
-        map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
-        map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
-        map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        //map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
+        map.put("thisMonthDays", calculateAttendanceDays(Double.valueOf(thisMonthDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(thisMonthDays))));
+        //map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
+        map.put("thisMonthSuitDays", calculateAttendanceDays(Double.valueOf(thisMonthSuitDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(thisMonthSuitDays))));
+        //map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
+        map.put("lastMonthDays", calculateAttendanceDays(Double.valueOf(lastMonthDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(lastMonthDays))));
+        //map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        map.put("lastMonthSuitDays", calculateAttendanceDays(Double.valueOf(lastMonthSuitDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(lastMonthSuitDays))));
         return map;
     }
 
@@ -2153,6 +2157,15 @@ public class GivingServiceImpl implements GivingService {
         if (StringUtils.isNotEmpty(staffStartDate)) {
             induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
         } else {
+            //本月之前的试用人员当月无转正的情况:【先月出勤日数】/【今月試用社員出勤日数】设空值（kang）
+            if(!DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getWorddate(), "yyyyMM"))){
+                // 今月試用社員出勤日数
+                lastAttendanceDays = 0d;
+                induction.setAttendance(String.valueOf(""));
+                // 今月試用社員出勤日数
+                thisMonthSuitDays = 0d;
+                induction.setTrial(String.valueOf(""));
+            }
             if (lastAttendanceDays > 0) {
                 induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
             } else {
@@ -2164,6 +2177,7 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         // 一括补助
+        //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
         induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
                 thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
     }
