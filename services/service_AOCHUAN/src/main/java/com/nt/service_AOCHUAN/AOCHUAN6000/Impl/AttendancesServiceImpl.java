@@ -11,6 +11,7 @@ import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.VacationMapper;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.LogicalException;
+import com.nt.utils.dao.EWxBaseResponse;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,11 +26,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class AttendancesServiceImpl implements AttendancesService {
 
     @Autowired
@@ -53,13 +55,13 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<Attendance> attendanceList = attendanceMapper.select(attendance);
-        for(Attendance att : attendanceList){
+        for (Attendance att : attendanceList) {
             Vacation vacation = new Vacation();
             vacation.setApplicanterid(att.getNames());
             vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);//休假
-            for(Vacation vac : vacationList){
+            for (Vacation vac : vacationList) {
                 String vacstart = simpleDateFormat.format(vac.getStartdate());
                 Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
 
@@ -73,46 +75,46 @@ public class AttendancesServiceImpl implements AttendancesService {
                 int compareToKS = attdate.compareTo(datestart);
                 int compareToJS = attdate.compareTo(datestaend);
 
-                if(compareToKS == 1 && compareToJS == -1){
+                if (compareToKS == 1 && compareToJS == -1) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 1){
+                if (compareToKS == 1 && compareToJS == 1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == -1 && compareToJS == -1){
+                if (compareToKS == -1 && compareToJS == -1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("3");
                     break;
@@ -125,18 +127,18 @@ public class AttendancesServiceImpl implements AttendancesService {
         return attendanceList;
     }
 
-//    考勤异常数据
+    //    考勤异常数据
     @Override
     public List<Attendance> getYICHANG(Attendance attendance) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Attendance> attendanceList = attendanceMapper.getYICHANG("星期一","星期二","星期三","星期四","星期五");
-        for(Attendance att : attendanceList){
+        List<Attendance> attendanceList = attendanceMapper.getYICHANG("星期一", "星期二", "星期三", "星期四", "星期五");
+        for (Attendance att : attendanceList) {
             Vacation vacation = new Vacation();
             vacation.setApplicanterid(att.getNames());
             vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);//休假
-            for(Vacation vac : vacationList){
+            for (Vacation vac : vacationList) {
                 String vacstart = simpleDateFormat.format(vac.getStartdate());
                 Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
 
@@ -150,46 +152,46 @@ public class AttendancesServiceImpl implements AttendancesService {
                 int compareToKS = attdate.compareTo(datestart);
                 int compareToJS = attdate.compareTo(datestaend);
 
-                if(compareToKS == 1 && compareToJS == -1){
+                if (compareToKS == 1 && compareToJS == -1) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 1){
+                if (compareToKS == 1 && compareToJS == 1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == -1 && compareToJS == -1){
+                if (compareToKS == -1 && compareToJS == -1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("3");
                     break;
@@ -208,13 +210,13 @@ public class AttendancesServiceImpl implements AttendancesService {
     public List<Attendance> getNow(Attendance attendance) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<Attendance> attendanceList = attendanceMapper.select(attendance);
-        for(Attendance att : attendanceList){
+        for (Attendance att : attendanceList) {
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());
             vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);
-            for(Vacation vac : vacationList){
+            for (Vacation vac : vacationList) {
                 String vacstart = simpleDateFormat.format(vac.getStartdate());
                 Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
 
@@ -228,27 +230,27 @@ public class AttendancesServiceImpl implements AttendancesService {
                 int compareToJS = attdate.compareTo(datestart);
                 int compareToKS = attdate.compareTo(datestaend);
 
-                if(compareToJS == 1 && compareToKS == -1){
+                if (compareToJS == 1 && compareToKS == -1) {
                     att.setLeaves("1");
                     break;
                 }
-                if((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)){
+                if ((compareToJS == 0 && compareToKS == -1) || (compareToJS == 1 && compareToKS == 0)) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToJS == 1 && compareToKS == 1){
+                if (compareToJS == 1 && compareToKS == 1) {
                     att.setLeaves("0");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")){
+                if (compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("1")) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")){
+                if (compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("2")) {
                     att.setLeaves("0.5");
                     break;
                 }
-                if(compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")){
+                if (compareToJS == 0 && compareToKS == 0 && vac.getDatetype().equals("3")) {
                     att.setLeaves("0.5");
                     break;
                 }
@@ -260,18 +262,19 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         return attendanceList;
     }
+
     //考勤一览根据月，年去查询
     @Override
-    public List<Attendance> getNowMons(String id,String attendancetim) throws Exception {
+    public List<Attendance> getNowMons(String id, String attendancetim) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Attendance> attendanceList = attendanceMapper.getNowMon(id,attendancetim);
-        for(Attendance att : attendanceList){
+        List<Attendance> attendanceList = attendanceMapper.getNowMon(id, attendancetim);
+        for (Attendance att : attendanceList) {
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());
             vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);
-            for(Vacation vac : vacationList){
+            for (Vacation vac : vacationList) {
                 String vacstart = simpleDateFormat.format(vac.getStartdate());
                 Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
 
@@ -285,46 +288,46 @@ public class AttendancesServiceImpl implements AttendancesService {
                 int compareToKS = attdate.compareTo(datestart);
                 int compareToJS = attdate.compareTo(datestaend);
 
-                if(compareToKS == 1 && compareToJS == -1){
+                if (compareToKS == 1 && compareToJS == -1) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 1){
+                if (compareToKS == 1 && compareToJS == 1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == -1 && compareToJS == -1){
+                if (compareToKS == -1 && compareToJS == -1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("3");
                     break;
@@ -340,16 +343,16 @@ public class AttendancesServiceImpl implements AttendancesService {
 
     //考勤异常根据天，月，年去查询
     @Override
-    public List<Attendance> getNowMonYC(String id,String attendancetim) throws Exception {
+    public List<Attendance> getNowMonYC(String id, String attendancetim) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Attendance> attendanceList = attendanceMapper.getNowMonYC(id,"星期一","星期二","星期三","星期四","星期五",attendancetim);
-        for(Attendance att : attendanceList){
+        List<Attendance> attendanceList = attendanceMapper.getNowMonYC(id, "星期一", "星期二", "星期三", "星期四", "星期五", attendancetim);
+        for (Attendance att : attendanceList) {
             Vacation vacation = new Vacation();//异常申请表
             vacation.setApplicanterid(att.getNames());
             vacation.setStatus("4");
 
             List<Vacation> vacationList = vacationMapper.select(vacation);
-            for(Vacation vac : vacationList){
+            for (Vacation vac : vacationList) {
                 String vacstart = simpleDateFormat.format(vac.getStartdate());
                 Date datestart = simpleDateFormat.parse(vacstart); //请假开始时间
 
@@ -363,46 +366,46 @@ public class AttendancesServiceImpl implements AttendancesService {
                 int compareToKS = attdate.compareTo(datestart);
                 int compareToJS = attdate.compareTo(datestaend);
 
-                if(compareToKS == 1 && compareToJS == -1){
+                if (compareToKS == 1 && compareToJS == -1) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2") )){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("1") || vac.getStarttim().equals("2"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))){
+                if (compareToKS == 0 && compareToJS == -1 && (vac.getStarttim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("1") || vac.getStarttim().equals("3"))) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))){
+                if (compareToKS == 1 && compareToJS == 0 && (vac.getEndtim().equals("2"))) {
                     att.setLeaves("0.5");
                     att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 1 && compareToJS == 1){
+                if (compareToKS == 1 && compareToJS == 1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == -1 && compareToJS == -1){
+                if (compareToKS == -1 && compareToJS == -1) {
                     att.setLeaves("0");
 
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("1")) {
                     att.setLeaves("1");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("2")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("2");
                     break;
                 }
-                if(compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")){
+                if (compareToKS == 0 && compareToJS == 0 && vac.getDatetype().equals("3")) {
                     att.setLeaves("0.5");
 //                    att.setTimtype("3");
                     break;
@@ -416,7 +419,7 @@ public class AttendancesServiceImpl implements AttendancesService {
     }
 
 
-    //打卡记录导入
+    //  打卡记录导入 钉钉EXCEL
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
@@ -431,7 +434,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 //            ExcelReader reader = ExcelUtil.getReader(f,1);
 
             //直接读取路径导入
-            ExcelReader reader = ExcelUtil.getReader("E:\\Excel\\奥川生物666_考勤报表_20200401-20200430.xlsx" , 1);
+            ExcelReader reader = ExcelUtil.getReader("E:\\Excel\\奥川生物666_考勤报表_20200401-20200430.xlsx", 1);
 
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
@@ -441,9 +444,9 @@ public class AttendancesServiceImpl implements AttendancesService {
             model.add("上班时间");
             model.add("下班时间");
 
-            for(int j = 4 ; j <list.size() ; j ++){
+            for (int j = 4; j < list.size(); j++) {
 
-                if (!"总计".equals(list.get(j).get(6).toString())){
+                if (!"总计".equals(list.get(j).get(6).toString())) {
                     Attendance attendance = new Attendance();
                     attendance.preInsert(tokenModel);
                     //工号
@@ -453,9 +456,9 @@ public class AttendancesServiceImpl implements AttendancesService {
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(list.get(j).get(3).toString()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     //姓名
-                    if(customerInfo == null){
+                    if (customerInfo == null) {
                         //attendance.setNames(customerInfo.getUserinfo().getCustomername());
-                    }else{
+                    } else {
                         attendance.setNames(customerInfo.getUserid());
                     }
                     //上班1班次打卡时间
@@ -476,15 +479,88 @@ public class AttendancesServiceImpl implements AttendancesService {
         }
     }
 
+    //打卡记录导入企业微信
+    @Override
+    public List<Attendance> getCheckInData(EWxBaseResponse data) throws Exception {
+
+        try {
+            Query query = new Query();
+            Attendance attendance = new Attendance();
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int j = 0; j < data.getCheckindata().size(); j++) {
+                for (int k = 1; k < data.getCheckindata().size(); k++) {
+                    if (data.getCheckindata().get(j).getUserid().equals(data.getCheckindata().get(k).getUserid())) {
+                        if (data.getCheckindata().get(j).getCheckin_time() < data.getCheckindata().get(k).getCheckin_time()) {
+                            if (!"上班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
+                                long endepoch = data.getCheckindata().get(j).getCheckin_time();
+                                Date dateendepoch = new Date(endepoch * 1000);
+                                String stroff = df.format(dateendepoch);
+                                //下班打卡时间
+                                String off = stroff.substring(11);
+                                attendance.setOffhours(off);
+                            }
+                        }
+                        if (data.getCheckindata().get(j).getCheckin_time() > data.getCheckindata().get(k).getCheckin_time()) {
+                            if (!"下班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
+                                long strepoch = data.getCheckindata().get(j).getCheckin_time();
+                                Date datestrepoch = new Date(strepoch * 1000);
+                                String strworking = df.format(datestrepoch);
+                                //上班打卡时间
+                                String working = strworking.substring(11);
+                                //attendance.setAttendancetim(list.get(j).get(6).toString());
+                                attendance.setWorkinghours(working);
+                            }
+                        }
+                    }
+                }
+                attendance.setAttendance_id(UUID.randomUUID().toString());
+                attendanceMapper.insert(attendance);
+            }
+            //            for (int j = 0; j < data.getCheckindata().size(); j++) {
+
+//
+////                query.addCriteria(Criteria.where("userinfo.ewechat").is(data.getCheckindata().get(j).getUserid()));
+////                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//
+//                if (!"上班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
+//                    long endepoch = data.getCheckindata().get(j).getCheckin_time();
+//                    Date dateendepoch = new Date(endepoch*1000);
+//                    String stroff = df.format(dateendepoch);
+//                    //下班打卡时间
+//                    String off = stroff.substring(11);
+//                    attendance.setOffhours(off);
+//                }
+//                if (!"下班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
+//                    long strepoch = data.getCheckindata().get(j).getCheckin_time();
+//                    Date datestrepoch = new Date(strepoch*1000);
+//                    String strworking = df.format(datestrepoch);
+//                    //上班打卡时间
+//                    String working = strworking.substring(11);
+////                    attendance.setAttendancetim(list.get(j).get(6).toString());
+//                    attendance.setWorkinghours(working);
+//                }
+//            }
+
+            //打卡日期
+//            attendance.setAttendancetim(list.get(j).get(6).toString());
+//            attendance.setAttendance_id(UUID.randomUUID().toString());
+//            attendanceMapper.insert(attendance);
+            return null;
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+
+
     @Override
     public List<Attendance> getByUserId(String userId) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM");
         Date now = new Date();
         String nowMons = sdf.format(now);
-        Calendar date=Calendar.getInstance();
+        Calendar date = Calendar.getInstance();
         date.setTime(now);
-        date.set(Calendar.MONTH, date.get(Calendar.MONTH)-1);
+        date.set(Calendar.MONTH, date.get(Calendar.MONTH) - 1);
         String lastMons = sdf.format(date.getTime());
-        return attendanceMapper.getByUserId(userId,nowMons,lastMons);
+        return attendanceMapper.getByUserId(userId, nowMons, lastMons);
     }
 }
