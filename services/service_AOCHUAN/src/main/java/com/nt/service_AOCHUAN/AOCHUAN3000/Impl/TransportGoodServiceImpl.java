@@ -1,14 +1,13 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
+import com.alibaba.fastjson.JSON;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
-import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
-import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.*;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
@@ -19,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 @Service
@@ -42,15 +43,47 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Autowired
     private ContractNumber contractNumber;
 
+    @Autowired
+    private SaledetailsMapper saledetailsMapper;
+
+    @Autowired
+    private ReceivablesrecordMapper receivablesrecordMapper;
+
+    @Autowired
+    private ApplicationrecordMapper applicationrecordMapper;
+
+
+    DecimalFormat df = new DecimalFormat("#.00");
+
 
     @Override
     public List<TransportGood> get(TransportGood transportGood) throws Exception {
         return transportGoodMapper.select(transportGood);
+
     }
 
     @Override
     public TransportGood getOne(String id) throws Exception {
-        return transportGoodMapper.selectByPrimaryKey(id);
+        TransportGood transportGood =  transportGoodMapper.selectByPrimaryKey(id);
+        Saledetails saledetails = new Saledetails();
+        saledetails.setTransportgood_id(id);
+        List<Saledetails> saledetailsList = saledetailsMapper.select(saledetails);
+        if(saledetailsList.size() > 0){
+            transportGood.setSaledetails(saledetailsList);
+        }
+        Receivablesrecord receivablesrecord = new Receivablesrecord();
+        receivablesrecord.setTransportgood_id(id);
+        List<Receivablesrecord> receivablesrecords = receivablesrecordMapper.select(receivablesrecord);
+        if(receivablesrecords.size() > 0){
+            transportGood.setReceivablesrecord(receivablesrecords);
+        }
+        Applicationrecord applicationrecord = new Applicationrecord();
+        applicationrecord.setTransportgood_id(id);
+        List<Applicationrecord> applicationrecords = applicationrecordMapper.select(applicationrecord);
+        if(applicationrecords.size() > 0){
+            transportGood.setApplicationrecord(applicationrecords);
+        }
+        return  transportGood;
     }
 
     @Override
@@ -67,6 +100,11 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void update(TransportGood transportGood, TokenModel tokenModel) throws Exception {
         transportGood.preUpdate(tokenModel);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
+        String id = transportGood.getTransportgood_id();
+        if(transportGood.getFinance() == 0){
+            DeleteSonTable(id);
+            InsertSonTable(transportGood,id);
+        }
         if (transportGood.isNotice()) {
             ToDoNotice(tokenModel, transportGood);
         }
@@ -81,30 +119,141 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
         transportGoodMapper.insert(transportGood);
+        InsertSonTable(transportGood,id);
     }
 
     @Override
     public void delete(String id) throws Exception {
         transportGoodMapper.deleteByPrimaryKey(id);
+        DeleteSonTable(id);
+    }
+
+    private void InsertSonTable(TransportGood transportGood,String id){
+        if(transportGood.getSaledetails().size() > 0){
+            List<Saledetails> saledetailsList = transportGood.getSaledetails();
+            for (Saledetails val:saledetailsList) {
+                val.setTransportgood_id(id);
+                val.setSaledetails_id(UUID.randomUUID().toString());
+            }
+            saledetailsMapper.insertSaledetailsList(saledetailsList);
+        }
+
+        if(transportGood.getReceivablesrecord().size() > 0){
+            List<Receivablesrecord> receivablesrecords = transportGood.getReceivablesrecord();
+            for (Receivablesrecord val:receivablesrecords) {
+                val.setTransportgood_id(id);
+                val.setReceivablesrecord_id(UUID.randomUUID().toString());
+            }
+            receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
+        }
+
+        if(transportGood.getApplicationrecord().size() > 0){
+            List<Applicationrecord> applicationrecords = transportGood.getApplicationrecord();
+            for (Applicationrecord val:applicationrecords) {
+                val.setTransportgood_id(id);
+                val.setApplicationrecord_id(UUID.randomUUID().toString());
+            }
+            applicationrecordMapper.insertApplicationrecordList(applicationrecords);
+        }
+    }
+
+    private void DeleteSonTable(String id){
+        Saledetails saledetails = new Saledetails();
+        saledetails.setTransportgood_id(id);
+        saledetailsMapper.delete(saledetails);
+        Receivablesrecord receivablesrecord = new Receivablesrecord();
+        receivablesrecord.setTransportgood_id(id);
+        receivablesrecordMapper.delete(receivablesrecord);
+        Applicationrecord applicationrecord = new Applicationrecord();
+        applicationrecordMapper.delete(applicationrecord);
+    }
+    @Override
+    public void insertCW(TransportGood transportGood, TokenModel token) {
+        List<Applicationrecord> applicationrecords = transportGood.getApplicationrecord();
+        for (Applicationrecord val:
+        applicationrecords) {
+            FinPurchase finPurchase = new FinPurchase();
+            finPurchase.setPurchase_id(UUID.randomUUID().toString());
+            finPurchase.setContractnumber(transportGood.getContractnumber());
+            finPurchase.setSupplier(val.getSuppliername());
+            finPurchase.setPaymenttime(val.getRealdate());
+            finPurchase.setInvoicenumber(val.getInvoiceno());
+            finPurchase.setCredential_status("PW001001");
+            finPurchase.setPaymentaccount("");
+            finPurchase.setRealpay(val.getRealpay().toString());
+            finPurchase.setRealamount(val.getRealamount());
+            finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
+            finPurchase.preInsert();
+            finPurchaseMapper.insert(finPurchase);
+        }
+//        finPurchase.setPurchase_id(UUID.randomUUID().toString());
+//        finPurchase.setCredential_status("PW001001");
+//        finPurchase.preInsert();
+//        finPurchaseMapper.insert(finPurchase);
     }
 
     @Override
-    public void insertCW(FinPurchase finPurchase, TokenModel token) {
-        finPurchase.setPurchase_id(UUID.randomUUID().toString());
-        finPurchase.setCredential_status("PW001001");
-        finPurchase.preInsert();
-        finPurchaseMapper.insert(finPurchase);
+    public void insertHK(TransportGood transportGood, TokenModel token) throws Exception {
+        List<Receivablesrecord> receivablesrecords = transportGood.getReceivablesrecord();
+        for (Receivablesrecord val:
+        receivablesrecords) {
+            FinSales finSales = new FinSales();
+            finSales.setSales_id(UUID.randomUUID().toString());
+            finSales.setContractnumber(transportGood.getContractnumber());
+            finSales.setCustomer(val.getCustomername());
+            finSales.setCollectionaccount(transportGood.getCollectionaccount());
+            finSales.setReceamount(val.getReceamount().toString());
+            finSales.setReceduedate(val.getReceduedate());
+            finSales.setSalesamount(val.getRealamount());
+            finSales.setArrivaltime(val.getPaybackdate());
+            finSales.setReceivablesrecord_id(val.getReceivablesrecord_id());
+            finSales.setCredential_status("PW001001");
+            finSales.setArrival_status("0");
+            finSales.preInsert();
+            finSalesMapper.insert(finSales);
+        }
+//        finSales.setSales_id(UUID.randomUUID().toString());
+//        finSales.preInsert();
+//        finSales.setArrival_status("0");
+//        finSales.setCredential_status("PW001001");
+//        String number = contractNumber.getContractNumber("PT001011", "fin_sales");
+//        finSales.setCredential_sales(number);
+//        finSalesMapper.insert(finSales);
     }
 
     @Override
-    public void insertHK(FinSales finSales, TokenModel token) throws Exception {
-        finSales.setSales_id(UUID.randomUUID().toString());
-        finSales.preInsert();
-        finSales.setArrival_status("0");
-        finSales.setCredential_status("PW001001");
-        String number = contractNumber.getContractNumber("PT001011", "fin_sales");
-        finSales.setCredential_sales(number);
-        finSalesMapper.insert(finSales);
+    public void paymentCG(List<FinSales> finSales, TokenModel token) {
+        for (FinSales finSale:
+        finSales) {
+            Receivablesrecord receivablesrecord = new Receivablesrecord();
+            receivablesrecord.setReceivablesrecord_id(finSale.getReceivablesrecord_id());
+            receivablesrecord.setRealamount(finSale.getReceamount()!= "" ? df.format(finSale.getReceamount()) : "0.00");
+            receivablesrecord.setPaybackdate(new Date());
+            receivablesrecord.setPaybackstatus("已完成");
+            receivablesrecordMapper.updateByPrimaryKeySelective(receivablesrecord);
+            finSale.setSalesamount(finSale.getReceamount());
+            finSale.setArrivaltime(new Date());
+            finSale.setArrival_status("1");
+            finSalesMapper.updateByPrimaryKeySelective(finSale);
+
+        }
+    }
+
+    @Override
+    public void paymentXS(List<FinPurchase> finPurchases, TokenModel token) {
+        for (FinPurchase finPurchase:
+                finPurchases) {
+            Applicationrecord applicationrecord = new Applicationrecord();
+            applicationrecord.setApplicationrecord_id(finPurchase.getApplicationrecord_id());
+            applicationrecord.setRealamount(finPurchase.getRealamount() != "" ? df.format(finPurchase.getRealamount()) : "0.00");
+            applicationrecord.setRealdate(finPurchase.getAp_date());
+            applicationrecord.setPaymentstatus("已收款");
+            applicationrecordMapper.updateByPrimaryKeySelective(applicationrecord);
+            finPurchase.setAp_date(new Date());
+            finPurchase.setRealamount(finPurchase.getRealpay());
+            finPurchase.setPaymentstatus("1");
+            finPurchaseMapper.updateByPrimaryKeySelective(finPurchase);
+        }
     }
 
     //生成代办

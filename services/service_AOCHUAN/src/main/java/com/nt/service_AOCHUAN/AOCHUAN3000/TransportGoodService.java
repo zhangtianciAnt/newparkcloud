@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000;
 
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Applicationrecord;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
@@ -23,7 +24,11 @@ public interface TransportGoodService {
 
     void delete(String id) throws Exception;
 
-    void insertCW(FinPurchase finPurchase, TokenModel token);
+    void insertCW(TransportGood transportGood, TokenModel token);
 
-    void insertHK(FinSales finSales, TokenModel token) throws Exception;
+    void insertHK(TransportGood transportGood, TokenModel token) throws Exception;
+
+    void paymentCG(List<FinSales> finSales, TokenModel token);
+
+    void paymentXS(List<FinPurchase> finPurchases, TokenModel token);
 }

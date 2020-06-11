@@ -27,7 +27,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
 
     @Override
     public List<Supplierbaseinfor> get() throws Exception {
-        return supplierbaseinforMapper.selectAll();
+        return supplierbaseinforMapper.allSelect();
     }
 
     @Override

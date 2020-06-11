@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReceivablesrecordMapper" >
+    <insert id="insertReceivablesrecordList" parameterType="java.util.List">
+        INSERT INTO receivablesrecord (receivablesrecord_id, customername, receamount, receduedate, realamount, paybackdate, paybackstatus, customerid, transportgood_id)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.receivablesrecord_id}, #{item.customername}, #{item.receamount}, #{item.receduedate}, #{item.realamount}, #{item.paybackdate}, #{item.paybackstatus},
+            #{item.customerid}, #{item.transportgood_id})
+        </foreach>
+    </insert>
+</mapper>

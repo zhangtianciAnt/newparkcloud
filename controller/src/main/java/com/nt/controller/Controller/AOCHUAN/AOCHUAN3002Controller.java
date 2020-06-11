@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.AOCHUAN;
 
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Applicationrecord;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
@@ -88,20 +89,38 @@ public class AOCHUAN3002Controller {
     }
 
     @RequestMapping(value = "/insertcw",method={RequestMethod.POST})
-    public ApiResult insertcw(@RequestBody FinPurchase FinPurchase, HttpServletRequest request) throws Exception {
-        if (FinPurchase == null) {
+    public ApiResult insertcw(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
+        if (transportGood == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        transportGoodService.insertCW(FinPurchase, tokenService.getToken(request));
+        transportGoodService.insertCW(transportGood, tokenService.getToken(request));
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/inserthk",method={RequestMethod.POST})
-    public ApiResult inserthk(@RequestBody FinSales FinSales, HttpServletRequest request) throws Exception {
-        if (FinSales == null) {
+    public ApiResult inserthk(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
+        if (transportGood == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        transportGoodService.insertHK(FinSales, tokenService.getToken(request));
+        transportGoodService.insertHK(transportGood, tokenService.getToken(request));
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/paymentcg",method={RequestMethod.POST})
+    public ApiResult paymentCG(@RequestBody List<FinSales> finSales, HttpServletRequest request) throws Exception {
+        if (finSales == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        transportGoodService.paymentCG(finSales, tokenService.getToken(request));
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/paymentxs",method={RequestMethod.POST})
+    public ApiResult paymentXS(@RequestBody List<FinPurchase> finPurchases, HttpServletRequest request) throws Exception {
+        if (finPurchases == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        transportGoodService.paymentXS(finPurchases, tokenService.getToken(request));
         return ApiResult.success();
     }
 }

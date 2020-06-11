@@ -102,4 +102,17 @@ public class FinPurchase extends BaseModel {
     //单位
     @Column(name="UNIT1")
     private String unit1;
+
+    @Column(name="PAYMENTACCOUNT")
+    private String paymentaccount;
+
+    @Column(name="REALPAY")
+    private String realpay;
+
+    @Column(name="REALAMOUNT")
+    private String realamount;
+
+    @Column(name="APPLICATIONRECORD_ID")
+    private String applicationrecord_id;
+
 }

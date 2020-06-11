@@ -105,5 +105,14 @@ public class FinSales extends BaseModel {
     //保费
     @Column(name = "PREMIUM")
     private  String premium;
+
+    @Column(name = "RECEAMOUNT")
+    private String receamount;
+
+    @Column(name = "RECEDUEDATE")
+    private Date receduedate;
+
+    @Column(name = "RECEIVABLESRECORD_ID")
+    private String receivablesrecord_id;
 }
 

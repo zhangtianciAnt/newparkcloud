@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SaledetailsMapper" >
+    <insert id="insertSaledetailsList" parameterType="java.util.List">
+        INSERT INTO saledetails (saledetails_id, productname, productid, currency, numbers, unit, supplierid, suppliername, unitprice1, unitprice, salesamount, note, currency1, numbers1, purchaseamount, deliverytime, deliverystatus, signback1,hscode,drawback,dangerous,marks,note1,transportgood_id)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.saledetails_id}, #{item.productname}, #{item.productid}, #{item.currency}, #{item.numbers}, #{item.unit}, #{item.supplierid},
+            #{item.suppliername}, #{item.unitprice1}, #{item.unitprice}, #{item.salesamount}, #{item.note}, #{item.currency1}, #{item.numbers1},
+            #{item.purchaseamount}, #{item.deliverytime}, #{item.deliverystatus}, #{item.signback1}, #{item.hscode}, #{item.drawback}, #{item.dangerous}, #{item.marks}, #{item.note1}, #{item.transportgood_id})
+        </foreach>
+    </insert>
+</mapper>
