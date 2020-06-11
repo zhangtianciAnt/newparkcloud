@@ -239,13 +239,27 @@ public class AssetsServiceImpl implements AssetsService {
                 Assets assets = new Assets();
 
                 List<Object> value = list.get(lineNo);
+                if (!StringUtils.isEmpty(trim(value.get(1)))) {
+                    String tValue = trim(value.get(1));
+                    if (PA001Map.containsKey(tValue)) {
+                        assets.setTypeassets(PA001Map.get(tValue));
+                    } else {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
+                        continue;
+                    }
+                } else {
+                    error++;
+                    Result.add("模板第" + lineNo + "行的资产类型不能为空，导入失败");
+                    continue;
+                }
                 //固定资产导入用
                 if (value != null && !value.isEmpty() && ("固定资产".equals(value.get(1).toString())
                         || "簿外_SD卡/U盘/硬盘/光盘/手机/平板电脑/路由器".equals(value.get(1).toString())
                         || "簿外_电脑".equals(value.get(1).toString())
                         || "簿外_其他".equals(value.get(1).toString())
                         || "无形资产".equals(value.get(1).toString()))) {
-                    if (!StringUtils.isEmpty(trim(value.get(1)))) {
+                    if (!StringUtils.isEmpty(trim(value.get(2)))) {
                         Assets condition = new Assets();
                         checkBarCod(trim(value.get(2)), ultc);
                         condition.setBarcode(value.get(2).toString());
