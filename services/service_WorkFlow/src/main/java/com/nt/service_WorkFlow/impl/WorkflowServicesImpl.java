@@ -991,6 +991,21 @@ private String upFlg = "0";
                         workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                         outOperationWorkflowVo.setState("2");
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                        //为发起人创建完成通知
+                        ToDoNotice toDoNotice = new ToDoNotice();
+                        List<String> params = new ArrayList<String>();
+                        params.add(workflowname);
+                        toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                        toDoNotice.setInitiator(workflowinstance.getOwner());
+                        toDoNotice.setContent(item.getNodename());
+                        toDoNotice.setDataid(dataId);
+                        toDoNotice.setUrl(url);
+                        toDoNotice.setWorkflowurl(workFlowurl);
+                        toDoNotice.preInsert(tokenModel);
+                        toDoNotice.setOwner(workflowinstance.getOwner());
+                        toDoNoticeService.save(toDoNotice);
+
                         return outOperationWorkflowVo;
                     }
 
