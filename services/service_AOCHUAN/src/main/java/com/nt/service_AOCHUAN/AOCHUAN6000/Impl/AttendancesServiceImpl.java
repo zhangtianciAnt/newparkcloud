@@ -12,6 +12,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.EWxBaseResponse;
+import com.nt.utils.dao.EWxCheckData;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -485,34 +486,50 @@ public class AttendancesServiceImpl implements AttendancesService {
 
         try {
             Query query = new Query();
-            Attendance attendance = new Attendance();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            for (int j = 0; j < data.getCheckindata().size(); j++) {
-                for (int k = 1; k < data.getCheckindata().size(); k++) {
-                    if (data.getCheckindata().get(j).getUserid().equals(data.getCheckindata().get(k).getUserid())) {
-                        if (data.getCheckindata().get(j).getCheckin_time() < data.getCheckindata().get(k).getCheckin_time()) {
-                            if (!"上班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
-                                long endepoch = data.getCheckindata().get(j).getCheckin_time();
-                                Date dateendepoch = new Date(endepoch * 1000);
-                                String stroff = df.format(dateendepoch);
-                                //下班打卡时间
-                                String off = stroff.substring(11);
-                                attendance.setOffhours(off);
+            HashSet<String> set = new HashSet<>();
+            for (EWxCheckData eWxCheckData :
+                    data.getCheckindata()) {
+                set.add(eWxCheckData.getUserid());
+            }
+            for (String val : set) {
+                Attendance attendance = new Attendance();
+                for (int k = 0; k < data.getCheckindata().size(); k++) {
+                    if (val.equals(data.getCheckindata().get(k).getUserid())) {
+                        if (!"上班打卡".equals(data.getCheckindata().get(k).getCheckin_type())) {
+                            long endepoch = data.getCheckindata().get(k).getCheckin_time();
+                            Date dateendepoch = new Date(endepoch * 1000);
+                            String stroff = df.format(dateendepoch);
+                            //下班打卡时间
+                            String off = stroff.substring(11);
+                            String workdate = off;
+                            String wo = stroff.substring(0, 11);
+                            String[] weeks = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(dateendepoch);
+                            int week_index = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                            if (week_index < 0) {
+                                week_index = 0;
                             }
+                            String xingqi = weeks[week_index];
+                            attendance.setAttendancetim(wo);
+                            attendance.setOffhours(off);
                         }
-                        if (data.getCheckindata().get(j).getCheckin_time() > data.getCheckindata().get(k).getCheckin_time()) {
-                            if (!"下班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
-                                long strepoch = data.getCheckindata().get(j).getCheckin_time();
-                                Date datestrepoch = new Date(strepoch * 1000);
-                                String strworking = df.format(datestrepoch);
-                                //上班打卡时间
-                                String working = strworking.substring(11);
-                                //attendance.setAttendancetim(list.get(j).get(6).toString());
-                                attendance.setWorkinghours(working);
-                            }
+                        if (!"下班打卡".equals(data.getCheckindata().get(k).getCheckin_type())) {
+                            long strepoch = data.getCheckindata().get(k).getCheckin_time();
+                            Date datestrepoch = new Date(strepoch * 1000);
+                            String strworking = df.format(datestrepoch);
+                            //上班打卡时间
+                            String working = strworking.substring(11);
+                            String workdate = working;
+                            String wo = strworking.substring(0, 11);
+                            attendance.setAttendancetim(wo);
+                            attendance.setWorkinghours(working);
                         }
                     }
                 }
+                //打卡日期
+
                 attendance.setAttendance_id(UUID.randomUUID().toString());
                 attendanceMapper.insert(attendance);
             }
