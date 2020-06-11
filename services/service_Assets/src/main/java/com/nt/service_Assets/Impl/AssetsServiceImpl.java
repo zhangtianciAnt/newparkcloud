@@ -230,6 +230,11 @@ public class AssetsServiceImpl implements AssetsService {
             int successCount = 0;
             int error = 0;
 
+            List<String> ultc = new ArrayList<String>();
+            for (int linec = 1; linec < list.size(); linec++) {
+                List<Object> value = list.get(linec);
+                ultc.add(value.get(2).toString());
+            }
             for (int lineNo = 1; lineNo < list.size(); lineNo++) {
                 Assets assets = new Assets();
 
@@ -242,13 +247,11 @@ public class AssetsServiceImpl implements AssetsService {
                         || "无形资产".equals(value.get(1).toString()))) {
                     if (!StringUtils.isEmpty(trim(value.get(1)))) {
                         Assets condition = new Assets();
-                        checkBarCod(trim(value.get(2)));
+                        checkBarCod(trim(value.get(2)), ultc);
                         condition.setBarcode(value.get(2).toString());
                         List<Assets> ls = assetsMapper.select(condition);
                         if (ls.size() > 0) {
                             assets = ls.get(0);
-                        } else {
-                            assets.setBarcode(value.get(2).toString());
                         }
                     }
                     // 资产类型
@@ -328,13 +331,11 @@ public class AssetsServiceImpl implements AssetsService {
                 if (value != null && !value.isEmpty() && "借用設備".equals(value.get(1).toString())) {
                     if (!StringUtils.isEmpty(trim(value.get(2)))) {
                         Assets condition = new Assets();
-                        checkBarCod(trim(value.get(2)));
+                        checkBarCod(trim(value.get(2)), ultc);
                         condition.setBarcode(value.get(2).toString());
                         List<Assets> ls = assetsMapper.select(condition);
                         if (ls.size() > 0) {
                             assets = ls.get(0);
-                        } else {
-                            assets.setBarcode(value.get(2).toString());
                         }
                     }
                     // 资产类型
@@ -591,14 +592,23 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     //    add_fjl_05/25  --添加资产编号重复check
-    private void checkBarCod(String importBarcode) throws Exception {
+    private void checkBarCod(String importBarcode, List<String> ultc) throws Exception {
+        int cf = 0;
         if (StrUtil.isNotBlank(importBarcode)) {
-            Assets conditon = new Assets();
-            conditon.setBarcode(importBarcode);
-            List<Assets> rst = assetsMapper.select(conditon);
-            if (rst.size() > 0) {
-                throw new LogicalException("资产编号 " + importBarcode + " 重复！");
+            for (int a = 0; a < ultc.size(); a++) {
+                if (importBarcode.equals(ultc.get(a))) {
+                    cf++;
+                }
+                if (cf > 1) {
+                    throw new LogicalException("资产编号 " + importBarcode + " 重复！");
+                }
             }
+//            Assets conditon = new Assets();
+//            conditon.setBarcode(importBarcode);
+//            List<Assets> rst = assetsMapper.select(conditon);
+//            if (rst.size() > 0) {
+//                throw new LogicalException("资产编号 " + importBarcode + " 重复！");
+//            }
         }
     }
 
