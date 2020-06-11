@@ -1086,6 +1086,17 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                //奖金记上区分
+                if (item.get("奖金记上区分") != null) {
+                    String dlnation = item.get("奖金记上区分").toString();
+                    if (dlnation != null) {
+                        if (dlnation.equals("老员工")) {
+                            userinfo.setDifference("2");
+                        } else if (dlnation.equals("新员工")) {
+                            userinfo.setDifference("1");
+                        }
+                    }
+                }
                 //今年年休数(残)
 //                        if (value.get(27) != null) {
 //                            userinfo.annualyearto(value.get(27).toString());
@@ -1470,6 +1481,16 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setDlnation("0");
                             } else if (dlnation.equals("是")) {
                                 customerInfoList.get(0).getUserinfo().setDlnation("1");
+                            }
+                        }
+                    }
+                    if (item.get("奖金记上区分●") != null) {
+                        String dlnation = item.get("奖金记上区分●").toString();
+                        if (dlnation != null) {
+                            if (dlnation.equals("老员工")) {
+                                customerInfoList.get(0).getUserinfo().setDifference("2");
+                            } else if (dlnation.equals("新员工")) {
+                                customerInfoList.get(0).getUserinfo().setDifference("1");
                             }
                         }
                     }
