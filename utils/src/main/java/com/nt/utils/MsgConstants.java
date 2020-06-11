@@ -31,5 +31,5 @@ public class MsgConstants {
     public final static String WORKFLOW_08 = "WORKFLOW_08";
     public final static String WORKFLOW_09 = "WORKFLOW_09";
     public final static String WORKFLOW_10 = "WORKFLOW_10";
-
+    public final static String WORKFLOW_11 = "WORKFLOW_11";
 }
