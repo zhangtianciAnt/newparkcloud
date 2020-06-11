@@ -121,7 +121,7 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 CustomerInfo.UserInfo info = new CustomerInfo.UserInfo();
                 customerInfo.setUserid(_id);
                 Query query = new Query();
-                query.addCriteria(Criteria.where("userinfo.customername").is(recruitJudgement.getName()));
+                query.addCriteria(Criteria.where("userinfo.customername").regex(recruitJudgement.getName()));
                 List<CustomerInfo> cnameL = mongoTemplate.find(query, CustomerInfo.class);
                 int cn = 0;
                 String cs = "";
@@ -129,10 +129,10 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                     for (CustomerInfo n : cnameL) {
                         cn++;
                     }
-                    if (uf <= 9) {
-                        cs = "0" + (cn + 1);
+                    if (cn <= 9) {
+                        cs = "00" + (cn + 1);
                     } else {
-                        cs = String.valueOf(cn + 1);
+                        cs = "0" + (cn + 1);
                     }
                 }
                 info.setCustomername(recruitJudgement.getName() + cs);
