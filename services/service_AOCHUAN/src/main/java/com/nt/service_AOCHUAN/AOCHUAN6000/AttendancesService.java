@@ -1,6 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN6000;
 
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance;
+import com.nt.utils.dao.EWxBaseResponse;
 import com.nt.utils.dao.TokenModel;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -21,7 +22,7 @@ public interface AttendancesService {
 
     List<Attendance> getByUserId(String userId) throws Exception;
 
-
-
+    //获取企业微信打卡
+    List<Attendance> getCheckInData (EWxBaseResponse data) throws Exception;
 
 }

@@ -144,6 +144,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String jobnumber;
         /**
+         * 企业微信号
+         */
+        private String ewechatid;
+        /**
          * 头像
          */
         private String profilephoto;
