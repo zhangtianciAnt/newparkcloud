@@ -1075,6 +1075,17 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                //是否大连户籍
+                if (item.get("是否大连户籍") != null) {
+                    String dlnation = item.get("是否大连户籍").toString();
+                    if (dlnation != null) {
+                        if (dlnation.equals("否")) {
+                            userinfo.setDlnation("0");
+                        } else if (dlnation.equals("是")) {
+                            userinfo.setDlnation("1");
+                        }
+                    }
+                }
                 //今年年休数(残)
 //                        if (value.get(27) != null) {
 //                            userinfo.annualyearto(value.get(27).toString());
@@ -1449,6 +1460,16 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setChildren("0");
                             } else if (children.equals("是")) {
                                 customerInfoList.get(0).getUserinfo().setChildren("1");
+                            }
+                        }
+                    }
+                    if (item.get("是否大连户籍●") != null) {
+                        String dlnation = item.get("是否大连户籍●").toString();
+                        if (dlnation != null) {
+                            if (dlnation.equals("否")) {
+                                customerInfoList.get(0).getUserinfo().setDlnation("0");
+                            } else if (dlnation.equals("是")) {
+                                customerInfoList.get(0).getUserinfo().setDlnation("1");
                             }
                         }
                     }

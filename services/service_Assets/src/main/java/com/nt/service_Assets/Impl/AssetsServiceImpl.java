@@ -247,6 +247,8 @@ public class AssetsServiceImpl implements AssetsService {
                         List<Assets> ls = assetsMapper.select(condition);
                         if (ls.size() > 0) {
                             assets = ls.get(0);
+                        } else {
+                            assets.setBarcode(value.get(1).toString());
                         }
                     }
                     // 资产类型
@@ -284,7 +286,7 @@ public class AssetsServiceImpl implements AssetsService {
                     }
                     // 管理者
                     if (!StringUtils.isEmpty(trim(value.get(4)))) {
-                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(4).toString());
+                        CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(4).toString());
                         if (customerInfo != null) {
                             assets.setPrincipal(value.get(4).toString());
                         }
@@ -308,16 +310,16 @@ public class AssetsServiceImpl implements AssetsService {
                         continue;
                     }
                     assets.setDepartmentcode(trim(value.get(6)));
-                    if (value.size() > 1) {
-                        int dateCheck = isDate(trim(value.get(9)));
-                        if (dateCheck != 0) {
-                            Result.add(getDateErrMsg(dateCheck, lineNo));
-                            error = error + 1;
-                            continue;
-                        }
-                    }
+//                    if (value.size() > 1) {
+//                        int dateCheck = isDate(trim(value.get(9)));
+//                        if (dateCheck != 0) {
+//                            Result.add(getDateErrMsg(dateCheck, lineNo));
+//                            error = error + 1;
+//                            continue;
+//                        }
+//                    }
                     //条码类型,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注
-                    String[] gudingCols = "bartype,stockstatus,purchasetime,purchasetime,price,realprice,model,pcno,psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation,remarks".split(",");
+                    String[] gudingCols = "bartype,stockstatus,purchasetime,price,realprice,model,pcno,psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation,remarks".split(",");
                     int start = 7;
                     setOrderedValues(start, assets, gudingCols, value);
 //                    }
@@ -331,6 +333,8 @@ public class AssetsServiceImpl implements AssetsService {
                         List<Assets> ls = assetsMapper.select(condition);
                         if (ls.size() > 0) {
                             assets = ls.get(0);
+                        } else {
+                            assets.setBarcode(value.get(1).toString());
                         }
                     }
                     // 资产类型
@@ -358,7 +362,7 @@ public class AssetsServiceImpl implements AssetsService {
 
                     // 管理者
                     if (!StringUtils.isEmpty(trim(value.get(3)))) {
-                        CustomerInfo customerInfo = this.getCustomerInfo(value.get(3).toString());
+                        CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(3).toString());
                         if (customerInfo != null) {
                             assets.setPrincipal(value.get(3).toString());
                         }
@@ -627,15 +631,17 @@ public class AssetsServiceImpl implements AssetsService {
     private static final SimpleDateFormat _SF = new SimpleDateFormat("yyyy-MM-dd");
     private void setOrderedValues(int start, Object target, String[] cols, List<Object> value) throws Exception{
         for ( String col : cols ) {
-            String val = trim(value.get(start));
-            if ( StringUtils.hasText(val) ) {
-                Class c = PropertyUtils.getPropertyType(target, col);
-                if ( c.equals(Date.class) ) {
-                    val = val.replace("/", "-");
-                    Date d = _SF.parse(val);
-                    PropertyUtils.setProperty(target, col, d);
-                } else {
-                    PropertyUtils.setProperty(target, col, val);
+            if (value.size() > start) {
+                String val = trim(value.get(start));
+                if (StringUtils.hasText(val)) {
+                    Class c = PropertyUtils.getPropertyType(target, col);
+                    if (c.equals(Date.class)) {
+                        val = val.replace("/", "-");
+                        Date d = _SF.parse(val);
+                        PropertyUtils.setProperty(target, col, d);
+                    } else {
+                        PropertyUtils.setProperty(target, col, val);
+                    }
                 }
             }
             start++;
@@ -648,6 +654,14 @@ public class AssetsServiceImpl implements AssetsService {
             return null;
         }
         return o.toString().trim();
+    }
+
+    private CustomerInfo getCustomerInfoPer(String personalcodeIn) {
+        Query query = new Query();
+        String personalcode = personalcodeIn;
+        query.addCriteria(Criteria.where("userinfo.personalcode").is(personalcode));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        return customerInfo;
     }
 
     private CustomerInfo getCustomerInfo(String jobnumberIn) {
