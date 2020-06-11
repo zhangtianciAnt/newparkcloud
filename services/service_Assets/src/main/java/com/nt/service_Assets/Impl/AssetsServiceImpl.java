@@ -288,7 +288,7 @@ public class AssetsServiceImpl implements AssetsService {
                     if (!StringUtils.isEmpty(trim(value.get(4)))) {
                         CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(4).toString());
                         if (customerInfo != null) {
-                            assets.setPrincipal(value.get(4).toString());
+                            assets.setPrincipal(customerInfo.getUserid());
                         }
                         if (customerInfo == null) {
                             error = error + 1;
@@ -364,7 +364,7 @@ public class AssetsServiceImpl implements AssetsService {
                     if (!StringUtils.isEmpty(trim(value.get(3)))) {
                         CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(3).toString());
                         if (customerInfo != null) {
-                            assets.setPrincipal(value.get(3).toString());
+                            assets.setPrincipal(customerInfo.getUserid());
                         }
                         if (customerInfo == null) {
                             error = error + 1;
