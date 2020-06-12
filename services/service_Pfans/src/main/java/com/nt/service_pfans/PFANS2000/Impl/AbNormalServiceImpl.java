@@ -956,9 +956,41 @@ public class AbNormalServiceImpl implements AbNormalService {
             }
         }
 
+<<<<<<< HEAD
         if("PR013005".equals(abNormal.getErrortype())
                 && ( abNormal.getStatus().equals("0") || abNormal.getStatus().equals("4") )){
             if(abNormal.getStatus().equals("0"))
+=======
+        if("PR013005".equals(abNormal.getErrortype())){
+            if(abNormal.getStatus()==null || abNormal.getStatus().isEmpty())
+            {
+                List<String> ls = new ArrayList<String>();
+                ls.add(abNormal.getUser_id());
+                List<AnnualLeave> listannualLeave = annualLeaveMapper.getDataList(ls);
+                double shengyu = 0;
+                if(listannualLeave.size()>0)
+                {
+                    shengyu = listannualLeave.get(0).getRemaining_annual_leave_thisyear().doubleValue();
+                    if(shengyu>0)
+                    {
+                        String Timecheck = String.valueOf(shengyu);
+                        rst.put("dat",Timecheck);
+                        rst.put("error",abNormal.getErrortype());
+                        rst.put("can","yes");
+                    }
+                    else{
+                        rst.put("dat","");
+                        rst.put("can","no");
+                    }
+                }
+                else{
+                    rst.put("dat","");
+                    rst.put("can","no");
+                }
+
+            }
+            else if(abNormal.getStatus().equals("0") || abNormal.getStatus().equals("3"))
+>>>>>>> remotes/origin/P-FANS-DEV
             {
                 List<String> ls = new ArrayList<String>();
                 ls.add(abNormal.getUser_id());
@@ -982,7 +1014,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                     rst.put("can","no");
                 }
             }
+<<<<<<< HEAD
             else if(abNormal.getStatus().equals("4"))
+=======
+            else if(abNormal.getStatus().equals("4") || abNormal.getStatus().equals("6"))
+>>>>>>> remotes/origin/P-FANS-DEV
             {
                 List<String> ls = new ArrayList<String>();
                 ls.add(abNormal.getUser_id());
@@ -1037,6 +1073,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                 }
             }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> remotes/origin/P-FANS-DEV
         }else if("PR013006".equals(abNormal.getErrortype())){
 
                 List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());

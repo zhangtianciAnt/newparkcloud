@@ -204,6 +204,21 @@ public class UserServiceImpl implements UserService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
+//        add_fjl_06/12 start -- 新员工添加默认正式社员的角色
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+        List<UserAccount> userAcco = mongoTemplate.find(query1, UserAccount.class);
+        if (userAcco.size() == 0) {
+            List<Role> rl = new ArrayList<>();
+            Role role = new Role();
+            role.set_id("5e7860c68f43163084351131");
+            role.setRolename("正式社员");
+            role.setDescription("正式社员");
+            role.setDefaultrole("true");
+            rl.add(role);
+            userAccount.setRoles(rl);
+        }
+//        add_fjl_06/12 end -- 新员工添加默认正式社员的角色
         mongoTemplate.save(userAccount);
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
@@ -1216,11 +1231,24 @@ public class UserServiceImpl implements UserService {
                 customerInfo.setUserinfo(userinfo);
                 customerInfo.setType("1");
                 customerInfo.setStatus("0");
-                if (item.get("Rank").toString().trim().equals("その他")) {
-                    customerInfo.getUserinfo().setType("1");
-                } else {
-                    customerInfo.getUserinfo().setType("0");
+                if (item.get("Rank") != null) {
+                    if (item.get("Rank").toString().trim().equals("その他")) {
+                        customerInfo.getUserinfo().setType("1");
+                    } else {
+                        customerInfo.getUserinfo().setType("0");
+                    }
                 }
+//        add_fjl_06/12 start -- 新员工添加默认正式社员的角色
+                List<Role> rl = new ArrayList<>();
+                Role role = new Role();
+                role.set_id("5e7860c68f43163084351131");
+                role.setRolename("正式社员");
+                role.setDescription("正式社员");
+                role.setDefaultrole("true");
+                rl.add(role);
+                ust.setRoles(rl);
+                ust.setStatus("0");
+//        add_fjl_06/12 end -- 新员工添加默认正式社员的角色
                 mongoTemplate.save(ust);
                 Query query = new Query();
                 query.addCriteria(Criteria.where("account").is(ust.getAccount()));
