@@ -204,6 +204,21 @@ public class UserServiceImpl implements UserService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
+//        add_fjl_06/12 start -- 新员工添加默认正式社员的角色
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+        List<UserAccount> userAcco = mongoTemplate.find(query1, UserAccount.class);
+        if (userAcco.size() == 0) {
+            List<Role> rl = new ArrayList<>();
+            Role role = new Role();
+            role.set_id("5e7860c68f43163084351131");
+            role.setRolename("正式社员");
+            role.setDescription("正式社员");
+            role.setDefaultrole("true");
+            rl.add(role);
+            userAccount.setRoles(rl);
+        }
+//        add_fjl_06/12 end -- 新员工添加默认正式社员的角色
         mongoTemplate.save(userAccount);
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
@@ -257,13 +272,13 @@ public class UserServiceImpl implements UserService {
 
 //AD域重复check
             Query queryAD = new Query();
-            if (!StringUtils.isNullOrEmpty(userInfo.getPersonalcode())) {
-                queryAD.addCriteria(Criteria.where("userinfo.personalcode").is(userInfo.getPersonalcode()));
+            if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
+                queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
                 List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
                 if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
                     flg3 = 1;
                 } else {
-                    throw new LogicalException("个人编码重复");
+                    throw new LogicalException("卡号重复");
                 }
             }
             if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
@@ -1075,6 +1090,28 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                //是否大连户籍
+                if (item.get("是否大连户籍") != null) {
+                    String dlnation = item.get("是否大连户籍").toString();
+                    if (dlnation != null) {
+                        if (dlnation.equals("否")) {
+                            userinfo.setDlnation("0");
+                        } else if (dlnation.equals("是")) {
+                            userinfo.setDlnation("1");
+                        }
+                    }
+                }
+                //奖金记上区分
+                if (item.get("奖金记上区分") != null) {
+                    String dlnation = item.get("奖金记上区分").toString();
+                    if (dlnation != null) {
+                        if (dlnation.equals("老员工")) {
+                            userinfo.setDifference("2");
+                        } else if (dlnation.equals("新员工")) {
+                            userinfo.setDifference("1");
+                        }
+                    }
+                }
                 //今年年休数(残)
 //                        if (value.get(27) != null) {
 //                            userinfo.annualyearto(value.get(27).toString());
@@ -1194,11 +1231,24 @@ public class UserServiceImpl implements UserService {
                 customerInfo.setUserinfo(userinfo);
                 customerInfo.setType("1");
                 customerInfo.setStatus("0");
-                if (item.get("Rank").toString().trim().equals("その他")) {
-                    customerInfo.getUserinfo().setType("1");
-                } else {
-                    customerInfo.getUserinfo().setType("0");
+                if (item.get("Rank") != null) {
+                    if (item.get("Rank").toString().trim().equals("その他")) {
+                        customerInfo.getUserinfo().setType("1");
+                    } else {
+                        customerInfo.getUserinfo().setType("0");
+                    }
                 }
+//        add_fjl_06/12 start -- 新员工添加默认正式社员的角色
+                List<Role> rl = new ArrayList<>();
+                Role role = new Role();
+                role.set_id("5e7860c68f43163084351131");
+                role.setRolename("正式社员");
+                role.setDescription("正式社员");
+                role.setDefaultrole("true");
+                rl.add(role);
+                ust.setRoles(rl);
+                ust.setStatus("0");
+//        add_fjl_06/12 end -- 新员工添加默认正式社员的角色
                 mongoTemplate.save(ust);
                 Query query = new Query();
                 query.addCriteria(Criteria.where("account").is(ust.getAccount()));
@@ -1449,6 +1499,26 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setChildren("0");
                             } else if (children.equals("是")) {
                                 customerInfoList.get(0).getUserinfo().setChildren("1");
+                            }
+                        }
+                    }
+                    if (item.get("是否大连户籍●") != null) {
+                        String dlnation = item.get("是否大连户籍●").toString();
+                        if (dlnation != null) {
+                            if (dlnation.equals("否")) {
+                                customerInfoList.get(0).getUserinfo().setDlnation("0");
+                            } else if (dlnation.equals("是")) {
+                                customerInfoList.get(0).getUserinfo().setDlnation("1");
+                            }
+                        }
+                    }
+                    if (item.get("奖金记上区分●") != null) {
+                        String dlnation = item.get("奖金记上区分●").toString();
+                        if (dlnation != null) {
+                            if (dlnation.equals("老员工")) {
+                                customerInfoList.get(0).getUserinfo().setDifference("2");
+                            } else if (dlnation.equals("新员工")) {
+                                customerInfoList.get(0).getUserinfo().setDifference("1");
                             }
                         }
                     }

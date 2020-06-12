@@ -372,7 +372,7 @@
         @OTHERFOUR_TOTAL := round(base.OTHERFOUR_TOTAL,2) AS OTHER4,#其他4公司负担社保（24元）
         @OTHERFIVE_TOTAL := round(base.OTHERFIVE_TOTAL,2) AS OTHER5,#其他5（保険：福祉）
         @DYYKGZ := round( ( @GZZE + @ZFGJJYNSJE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL ), 2 ) AS SHOULDWAGES,#当月応発工資（工资总额(纳税+免税)+只納税）
-        @YEARSTOTAL12 := ( base.COMPREHENSIVE_YEARSTOTAL12 + @DYYKGZ ) AS SHOULDCUMULATIVE,#累計応発工資（当月含）
+        @YEARSTOTAL12 := round(base.COMPREHENSIVE_YEARSTOTAL12 + @DYYKGZ,2) AS SHOULDCUMULATIVE,#累計応発工資（当月含）
         @LJYNSSDE := (
         IF
         (
@@ -462,7 +462,7 @@
 			) - @AMOUNT
 		) AS BONUSMONEY,#計上奨金
         @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
-	    IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ) AS TOTALBONUS #总计+計上奨金
+	    ROUND(IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ),2) AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
         WHERE

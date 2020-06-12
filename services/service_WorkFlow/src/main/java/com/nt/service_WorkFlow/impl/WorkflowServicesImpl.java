@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class WorkflowServicesImpl implements WorkflowServices {
 
     private static Logger log = LoggerFactory.getLogger(WorkflowServicesImpl.class);
-private String upFlg = "0";
+    private String upFlg = "0";
     @Autowired
     private WorkflowMapper workflowMapper;
 
@@ -388,12 +388,12 @@ private String upFlg = "0";
     @Override
     public List<Workflowinstance> allWorkFlowIns(String menuUrl) throws Exception {
         Workflowinstance con = new Workflowinstance();
-        if(StrUtil.isNotBlank(menuUrl)){
+        if (StrUtil.isNotBlank(menuUrl)) {
             con.setFormid(menuUrl);
         }
         List<Workflowinstance> rst = workflowinstanceMapper.select(con);
-        for(Workflowinstance item:rst){
-            item.setStatus(workResultConvert(item.getStatus(),""));
+        for (Workflowinstance item : rst) {
+            item.setStatus(workResultConvert(item.getStatus(), ""));
         }
 
         return rst;
@@ -495,8 +495,8 @@ private String upFlg = "0";
             return outOperationWorkflowVo;
         }
 
-        // 转办&指定审批人
-        else if ("11".equals(operationWorkflowVo.getResult()) || "5".equals(operationWorkflowVo.getResult())) {
+        // 转办
+        else if ("11".equals(operationWorkflowVo.getResult())) {
             // 创建转办节点
             Workflowstep step = new Workflowstep();
             step.setWorkflowstepid(UUID.randomUUID().toString());
@@ -504,27 +504,15 @@ private String upFlg = "0";
             if ("11".equals(operationWorkflowVo.getResult())) {
 
                 step.setName(MessageUtil.getMessage(MsgConstants.WORKFLOW_07, tokenModel.getLocale()));
-            } else {
-
-                step.setName(MessageUtil.getMessage(MsgConstants.WORKFLOW_08, tokenModel.getLocale()));
             }
 
             step.setCreateby(tokenModel.getUserId());
             step.setCreateon(new Date());
             step.setStatus(AuthConstants.DEL_FLAG_NORMAL);
             step.setTenantid(operationWorkflowVo.getTenantid());
-            if ("11".equals(operationWorkflowVo.getResult())) {
-                step.setItemid(operationWorkflowVo.getToAnotherUser());
-                step.setOwner(operationWorkflowVo.getToAnotherUser());
-                workflowstepMapper.insert(step);
-
-            } else {
-                for (int i = 0; i < operationWorkflowVo.getUsers().split(",").length; i++) {
-                    step.setItemid(operationWorkflowVo.getUsers().split(",")[i]);
-                    step.setOwner(operationWorkflowVo.getUsers().split(",")[i]);
-                    workflowstepMapper.insert(step);
-                }
-            }
+            step.setItemid(operationWorkflowVo.getToAnotherUser());
+            step.setOwner(operationWorkflowVo.getToAnotherUser());
+            workflowstepMapper.insert(step);
 
         }
         // 生成下一节点信息
@@ -534,17 +522,17 @@ private String upFlg = "0";
 
     }
 
-    private String getUpUser(String curentUser,String nodeName) throws Exception {
+    private String getUpUser(String curentUser, String nodeName) throws Exception {
         String userId = "";
         UserVo user = userService.getAccountCustomerById(curentUser);
         String orgId = "";
-        if(nodeName.toUpperCase().contains("TL")) {
+        if (nodeName.toUpperCase().contains("TL")) {
             orgId = user.getCustomerInfo().getUserinfo().getTeamid();
         } else if (nodeName.toUpperCase().contains("GM")) {
             orgId = user.getCustomerInfo().getUserinfo().getGroupid();
         } else if (nodeName.toUpperCase().contains("CENTER")) {
             orgId = user.getCustomerInfo().getUserinfo().getCenterid();
-        }else if (nodeName.toUpperCase().contains("一次上司")) {
+        } else if (nodeName.toUpperCase().contains("一次上司")) {
             if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getTeamid())) {
                 orgId = user.getCustomerInfo().getUserinfo().getTeamid();
             } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getGroupid())) {
@@ -558,13 +546,13 @@ private String upFlg = "0";
 
         OrgTree currentOrg = getCurrentOrg(orgs, orgId);
 
-        if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+        if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
             throw new LogicalException("无上级人员信息！");
         }
         if (currentOrg.getUser().equals(curentUser)) {
             upFlg = "0";
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
-            if(upOrgs != null){
+            if (upOrgs != null) {
                 userId = upOrgs.getUser();
             }
         } else {
@@ -597,16 +585,16 @@ private String upFlg = "0";
 
     private OrgTree upCurrentOrg(OrgTree org, String orgId) throws Exception {
         if (org.get_id().equals(orgId)) {
-            return  null;
+            return null;
         } else {
             if (org.getOrgs() != null) {
                 for (OrgTree item : org.getOrgs()) {
                     OrgTree rst = upCurrentOrg(item, orgId);
-                    if(rst == null){
+                    if (rst == null) {
                         upFlg = "1";
                         return org;
                     }
-                    if(upFlg == "1"){
+                    if (upFlg == "1") {
                         return rst;
                     }
                 }
@@ -641,6 +629,8 @@ private String upFlg = "0";
                     //指定审批人
                     if ("1".equals(item.getNodeusertype())) {
                         for (String user : item.getItemid().split(",")) {
+
+
                             // 创建节点
                             Workflowstep workflowstep = new Workflowstep();
                             workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
@@ -648,13 +638,27 @@ private String upFlg = "0";
                             workflowstep.setName(item.getNodename());
                             workflowstep.setItemid(user);
                             workflowstep.preInsert(tokenModel);
+                            //通知节点
+                            if ("3".equals(item.getNodetype())) {
+                                workflowstep.setResult("0");
+                                workflowstep.setRemark("通知节点");
+                                workflowstep.setModifyby(tokenModel.getUserId());
+                                workflowstep.setModifyon(new Date());
+                                workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                            }
                             workflowstepMapper.insert(workflowstep);
+
 
                             // 创建代办
                             ToDoNotice toDoNotice = new ToDoNotice();
                             List<String> params = new ArrayList<String>();
                             params.add(workflowname);
-                            toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                            if (!"3".equals(item.getNodetype()) || ("3".equals(item.getNodetype()) && StrUtil.isEmpty(item.getRemarks()))) {
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                            } else {
+                                toDoNotice.setTitle(item.getRemarks());
+                            }
+
                             toDoNotice.setInitiator(workflowinstance.getOwner());
                             toDoNotice.setContent(item.getNodename());
                             toDoNotice.setDataid(dataId);
@@ -664,16 +668,47 @@ private String upFlg = "0";
                             toDoNotice.setOwner(user);
                             toDoNoticeService.save(toDoNotice);
                         }
+                        if ("3".equals(item.getNodetype())) {
+
+                            // 如果节点为最后一个节点时，结束流程
+                            if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                workflowinstance.setModifyby(tokenModel.getUserId());
+                                workflowinstance.setModifyon(new Date());
+                                workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                outOperationWorkflowVo.setState("2");
+                                outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                params.add(workflowname);
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                toDoNotice.setInitiator(workflowinstance.getOwner());
+                                toDoNotice.setContent(item.getNodename());
+                                toDoNotice.setDataid(dataId);
+                                toDoNotice.setUrl(url);
+                                toDoNotice.setWorkflowurl(workFlowurl);
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(workflowinstance.getOwner());
+                                toDoNoticeService.save(toDoNotice);
+
+                                return outOperationWorkflowVo;
+                            }
+
+                            continue;
+                        }
                         //上级审批
                     } else if ("2".equals(item.getNodeusertype())) {
+                        String user = "";
+
 
                         UserVo userInfo = userService.getAccountCustomerById(workflowinstance.getOwner());
                         //TL
-                        if(item.getNodename().toUpperCase().contains("TL")){
+                        if (item.getNodename().toUpperCase().contains("TL")) {
                             if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
                                 OrgTree orgs = orgTreeService.get(new OrgTree());
                                 OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getTeamid());
-                                if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                     throw new LogicalException("无上级人员信息！");
                                 }
                                 if (currentOrg.getUser().equals(tokenModel.getUserId())) {
@@ -698,6 +733,20 @@ private String upFlg = "0";
                                         workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                                         outOperationWorkflowVo.setState("2");
                                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                        ToDoNotice toDoNotice = new ToDoNotice();
+                                        List<String> params = new ArrayList<String>();
+                                        params.add(workflowname);
+                                        toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                        toDoNotice.setInitiator(workflowinstance.getOwner());
+                                        toDoNotice.setContent(item.getNodename());
+                                        toDoNotice.setDataid(dataId);
+                                        toDoNotice.setUrl(url);
+                                        toDoNotice.setWorkflowurl(workFlowurl);
+                                        toDoNotice.preInsert(tokenModel);
+                                        toDoNotice.setOwner(workflowinstance.getOwner());
+                                        toDoNoticeService.save(toDoNotice);
+
                                         return outOperationWorkflowVo;
                                     }
 
@@ -726,6 +775,20 @@ private String upFlg = "0";
                                     workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                                     outOperationWorkflowVo.setState("2");
                                     outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    params.add(workflowname);
+                                    toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                    toDoNotice.setInitiator(workflowinstance.getOwner());
+                                    toDoNotice.setContent(item.getNodename());
+                                    toDoNotice.setDataid(dataId);
+                                    toDoNotice.setUrl(url);
+                                    toDoNotice.setWorkflowurl(workFlowurl);
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(workflowinstance.getOwner());
+                                    toDoNoticeService.save(toDoNotice);
+
                                     return outOperationWorkflowVo;
                                 }
 
@@ -734,13 +797,13 @@ private String upFlg = "0";
                         }
 
                         // GM
-                        if(item.getNodename().toUpperCase().contains("GM")){
+                        if (item.getNodename().toUpperCase().contains("GM")) {
                             if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
 
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
                                     OrgTree orgs = orgTreeService.get(new OrgTree());
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
-                                    if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                    if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
                                     }
                                     if (currentOrg.getUser().equals(tokenModel.getUserId())) {
@@ -766,12 +829,26 @@ private String upFlg = "0";
                                             workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                                             outOperationWorkflowVo.setState("2");
                                             outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                            ToDoNotice toDoNotice = new ToDoNotice();
+                                            List<String> params = new ArrayList<String>();
+                                            params.add(workflowname);
+                                            toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                            toDoNotice.setInitiator(workflowinstance.getOwner());
+                                            toDoNotice.setContent(item.getNodename());
+                                            toDoNotice.setDataid(dataId);
+                                            toDoNotice.setUrl(url);
+                                            toDoNotice.setWorkflowurl(workFlowurl);
+                                            toDoNotice.preInsert(tokenModel);
+                                            toDoNotice.setOwner(workflowinstance.getOwner());
+                                            toDoNoticeService.save(toDoNotice);
+
                                             return outOperationWorkflowVo;
                                         }
 
                                         continue;
                                     }
-                                }else {
+                                } else {
                                     Workflowstep workflowstep = new Workflowstep();
                                     workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
                                     workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
@@ -794,16 +871,30 @@ private String upFlg = "0";
                                         workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                                         outOperationWorkflowVo.setState("2");
                                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                        ToDoNotice toDoNotice = new ToDoNotice();
+                                        List<String> params = new ArrayList<String>();
+                                        params.add(workflowname);
+                                        toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                        toDoNotice.setInitiator(workflowinstance.getOwner());
+                                        toDoNotice.setContent(item.getNodename());
+                                        toDoNotice.setDataid(dataId);
+                                        toDoNotice.setUrl(url);
+                                        toDoNotice.setWorkflowurl(workFlowurl);
+                                        toDoNotice.preInsert(tokenModel);
+                                        toDoNotice.setOwner(workflowinstance.getOwner());
+                                        toDoNoticeService.save(toDoNotice);
+
                                         return outOperationWorkflowVo;
                                     }
 
                                     continue;
                                 }
-                            }else{
+                            } else {
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
                                     OrgTree orgs = orgTreeService.get(new OrgTree());
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
-                                    if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                    if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
                                     }
 
@@ -838,13 +929,13 @@ private String upFlg = "0";
                         }
 
                         //CENTER
-                        if(item.getNodename().toUpperCase().contains("CENTER")){
+                        if (item.getNodename().toUpperCase().contains("CENTER")) {
                             if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid()) && StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
 
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getCenterid())) {
                                     OrgTree orgs = orgTreeService.get(new OrgTree());
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getCenterid());
-                                    if(currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())){
+                                    if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
                                     }
                                     if (currentOrg.getUser().equals(tokenModel.getUserId())) {
@@ -870,6 +961,20 @@ private String upFlg = "0";
                                             workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                                             outOperationWorkflowVo.setState("2");
                                             outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                            ToDoNotice toDoNotice = new ToDoNotice();
+                                            List<String> params = new ArrayList<String>();
+                                            params.add(workflowname);
+                                            toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                            toDoNotice.setInitiator(workflowinstance.getOwner());
+                                            toDoNotice.setContent(item.getNodename());
+                                            toDoNotice.setDataid(dataId);
+                                            toDoNotice.setUrl(url);
+                                            toDoNotice.setWorkflowurl(workFlowurl);
+                                            toDoNotice.preInsert(tokenModel);
+                                            toDoNotice.setOwner(workflowinstance.getOwner());
+                                            toDoNoticeService.save(toDoNotice);
+
                                             return outOperationWorkflowVo;
                                         }
 
@@ -878,34 +983,10 @@ private String upFlg = "0";
                                 }
                             }
                         }
-                        String user = "";
-//                        if(item.getNodename().toUpperCase().contains("CENTER")){
-//
-//                            List<Workflownodeinstance> noderst =  workflownodeinstancelist.stream().filter(node -> (node.getNodename().toUpperCase().contains("GM"))).collect(Collectors.toList());
-//                            if(noderst.size() > 0){
-//
-//                                Workflowstep conditionWorkflowstepi = new Workflowstep();
-//                                conditionWorkflowstepi.setWorkflownodeinstanceid(noderst.get(0).getWorkflownodeinstanceid());
-//                                List<Workflowstep> workflowsteplisti = workflowstepMapper.select(conditionWorkflowstepi);
-//                                if(workflowsteplisti.size() > 0){
-//
-//                                    user = getUpUser(workflowsteplisti.get(0).getItemid());
-//
-//                                }else{
-//
-//                                    user = getUpUser(tokenModel.getUserId());
-//                                }
-//                            }else{
-//
-//                                user = getUpUser(tokenModel.getUserId());
-//                            }
-//                            user = getUpUser(tokenModel.getUserId());
-//
-//                        }else{
 
-                            user = getUpUser(workflowinstance.getOwner(),item.getNodename().toUpperCase());
-//                        }
-                        if(StrUtil.isEmpty(user)){
+                        user = getUpUser(workflowinstance.getOwner(), item.getNodename().toUpperCase());
+
+                        if (StrUtil.isEmpty(user)) {
                             continue;
                         }
                         // 创建节点
@@ -915,13 +996,27 @@ private String upFlg = "0";
                         workflowstep.setName(item.getNodename());
                         workflowstep.setItemid(user);
                         workflowstep.preInsert(tokenModel);
+
+                        //通知节点
+                        if ("3".equals(item.getNodetype())) {
+                            workflowstep.setResult("0");
+                            workflowstep.setRemark("通知节点");
+                            workflowstep.setModifyby(tokenModel.getUserId());
+                            workflowstep.setModifyon(new Date());
+                            workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                        }
+
                         workflowstepMapper.insert(workflowstep);
 
                         // 创建代办
                         ToDoNotice toDoNotice = new ToDoNotice();
                         List<String> params = new ArrayList<String>();
                         params.add(workflowname);
-                        toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                        if (!"3".equals(item.getNodetype()) || ("3".equals(item.getNodetype()) && StrUtil.isEmpty(item.getRemarks()))) {
+                            toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                        } else {
+                            toDoNotice.setTitle(item.getRemarks());
+                        }
                         toDoNotice.setInitiator(workflowinstance.getOwner());
                         toDoNotice.setContent(item.getNodename());
                         toDoNotice.setDataid(dataId);
@@ -931,6 +1026,35 @@ private String upFlg = "0";
                         toDoNotice.setOwner(user);
                         toDoNoticeService.save(toDoNotice);
 
+                        if ("3".equals(item.getNodetype())) {
+
+                            // 如果节点为最后一个节点时，结束流程
+                            if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                workflowinstance.setModifyby(tokenModel.getUserId());
+                                workflowinstance.setModifyon(new Date());
+                                workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                outOperationWorkflowVo.setState("2");
+                                outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                toDoNotice = new ToDoNotice();
+                                params = new ArrayList<String>();
+                                params.add(workflowname);
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                toDoNotice.setInitiator(workflowinstance.getOwner());
+                                toDoNotice.setContent(item.getNodename());
+                                toDoNotice.setDataid(dataId);
+                                toDoNotice.setUrl(url);
+                                toDoNotice.setWorkflowurl(workFlowurl);
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(workflowinstance.getOwner());
+                                toDoNoticeService.save(toDoNotice);
+
+                                return outOperationWorkflowVo;
+                            }
+
+                            continue;
+                        }
                         //节点指定
                     } else if ("3".equals(item.getNodeusertype())) {
 
@@ -939,6 +1063,7 @@ private String upFlg = "0";
                         }
 
                         for (String user : userList) {
+
                             // 创建节点
                             Workflowstep workflowstep = new Workflowstep();
                             workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
@@ -946,13 +1071,26 @@ private String upFlg = "0";
                             workflowstep.setName(item.getNodename());
                             workflowstep.setItemid(user);
                             workflowstep.preInsert(tokenModel);
+
+                            //通知节点
+                            if ("3".equals(item.getNodetype())) {
+                                workflowstep.setResult("0");
+                                workflowstep.setRemark("通知节点");
+                                workflowstep.setModifyby(tokenModel.getUserId());
+                                workflowstep.setModifyon(new Date());
+                                workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                            }
                             workflowstepMapper.insert(workflowstep);
 
                             // 创建代办
                             ToDoNotice toDoNotice = new ToDoNotice();
                             List<String> params = new ArrayList<String>();
                             params.add(workflowname);
-                            toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                            if (!"3".equals(item.getNodetype()) || ("3".equals(item.getNodetype()) && StrUtil.isEmpty(item.getRemarks()))) {
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                            } else {
+                                toDoNotice.setTitle(item.getRemarks());
+                            }
                             toDoNotice.setInitiator(workflowinstance.getOwner());
                             toDoNotice.setContent(item.getNodename());
                             toDoNotice.setDataid(dataId);
@@ -963,6 +1101,37 @@ private String upFlg = "0";
                             toDoNoticeService.save(toDoNotice);
                         }
 
+                        if ("3".equals(item.getNodetype())) {
+
+                            // 如果节点为最后一个节点时，结束流程
+                            if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                workflowinstance.setModifyby(tokenModel.getUserId());
+                                workflowinstance.setModifyon(new Date());
+                                workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                outOperationWorkflowVo.setState("2");
+                                outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+
+                                //为发起人创建完成通知
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                params.add(workflowname);
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                toDoNotice.setInitiator(workflowinstance.getOwner());
+                                toDoNotice.setContent(item.getNodename());
+                                toDoNotice.setDataid(dataId);
+                                toDoNotice.setUrl(url);
+                                toDoNotice.setWorkflowurl(workFlowurl);
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(workflowinstance.getOwner());
+                                toDoNoticeService.save(toDoNotice);
+
+                                return outOperationWorkflowVo;
+                            }
+
+                            continue;
+                        }
                     }
 
                     outOperationWorkflowVo.setState("0");
@@ -971,12 +1140,12 @@ private String upFlg = "0";
                 }
                 // 有节点信息
                 else {
-                    // 当前有未审批节点
+                    // 当前所有审批节点
                     conditionWorkflowstep = new Workflowstep();
                     conditionWorkflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
 //                    conditionWorkflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                     workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
-                    if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi ->(AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() == 0) {
+                    if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() == 0) {
                         // 结束操作
                         outOperationWorkflowVo.setState("0");
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
@@ -991,6 +1160,21 @@ private String upFlg = "0";
                         workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
                         outOperationWorkflowVo.setState("2");
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                        //为发起人创建完成通知
+                        ToDoNotice toDoNotice = new ToDoNotice();
+                        List<String> params = new ArrayList<String>();
+                        params.add(workflowname);
+                        toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                        toDoNotice.setInitiator(workflowinstance.getOwner());
+                        toDoNotice.setContent(item.getNodename());
+                        toDoNotice.setDataid(dataId);
+                        toDoNotice.setUrl(url);
+                        toDoNotice.setWorkflowurl(workFlowurl);
+                        toDoNotice.preInsert(tokenModel);
+                        toDoNotice.setOwner(workflowinstance.getOwner());
+                        toDoNoticeService.save(toDoNotice);
+
                         return outOperationWorkflowVo;
                     }
 
@@ -1049,7 +1233,7 @@ private String upFlg = "0";
         }
 
         // 生成节点操作
-       return cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
+        return cresteStep(workflowinstance.getWorkflowinstanceid(), tokenModel, startWorkflowVo.getDataId(),
                 startWorkflowVo.getDataUrl(), startWorkflowVo.getMenuUrl(), workflow.getWorkflowname(), startWorkflowVo.getUserList());
 
     }
@@ -1065,24 +1249,24 @@ private String upFlg = "0";
         workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
         if (Workflowinstancelist.size() > 0) {
-            Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
-            workflownodeinstance.setWorkflowinstanceid(Workflowinstancelist.get(0).getWorkflowinstanceid());
-            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
-            List<Workflownodeinstance> Workflownodeinstancelist = workflownodeinstanceMapper
-                    .select(workflownodeinstance);
-            for (Workflownodeinstance item : Workflownodeinstancelist) {
-                Workflowstep workflowstep = new Workflowstep();
-                workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-                List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
-
-                for (Workflowstep it : Workflowsteplist) {
-                    if (!StringUtils.isNullOrEmpty(it.getResult())) {
-                        return "";
-
-                    }
-                }
-            }
+//            Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
+//            workflownodeinstance.setWorkflowinstanceid(Workflowinstancelist.get(0).getWorkflowinstanceid());
+//            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
+//            List<Workflownodeinstance> Workflownodeinstancelist = workflownodeinstanceMapper
+//                    .select(workflownodeinstance);
+//            for (Workflownodeinstance item : Workflownodeinstancelist) {
+//                Workflowstep workflowstep = new Workflowstep();
+//                workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+//                List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
+//
+//                for (Workflowstep it : Workflowsteplist) {
+//                    if (!StringUtils.isNullOrEmpty(it.getResult())) {
+//                        return "";
+//
+//                    }
+//                }
+//            }
 
             return Workflowinstancelist.get(0).getWorkflowinstanceid();
         }
@@ -1102,18 +1286,40 @@ private String upFlg = "0";
         Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
         workflownodeinstance.setWorkflowinstanceid(instanceId);
         List<Workflownodeinstance> workflownodeinstancelist = workflownodeinstanceMapper.select(workflownodeinstance);
-        for (Workflownodeinstance item : workflownodeinstancelist) {
+
+        if (workflownodeinstancelist.size() > 0) {
+            workflownodeinstancelist = workflownodeinstancelist.stream()
+                    .sorted(Comparator.comparing(Workflownodeinstance::getNodeord).reversed()).collect(Collectors.toList());
+
             Workflowstep workflowstep = new Workflowstep();
-            workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-            List<Workflowstep> workflowsteplist = workflowstepMapper.select(workflowstep);
-            for (Workflowstep it : workflowsteplist) {
-                it.setResult("3");
-                it.setRemark(MessageUtil.getMessage(MsgConstants.WORKFLOW_09, locale));
-                it.setModifyby(workflowinstance.getCreateby());
-                it.setModifyon(new Date());
-                workflowstepMapper.updateByPrimaryKeySelective(it);
-            }
+            workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+            workflowstep.setWorkflownodeinstanceid(workflownodeinstancelist.get(0).getWorkflownodeinstanceid());
+            workflowstep.setName(MessageUtil.getMessage(MsgConstants.WORKFLOW_09, locale));
+            workflowstep.setItemid(workflowinstance.getOwner());
+            workflowstep.setCreateby(workflowinstance.getCreateby());
+            workflowstep.setCreateon(new Date());
+            workflowstep.setResult("3");
+            workflowstep.setRemark(MessageUtil.getMessage(MsgConstants.WORKFLOW_09, locale));
+            workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+
+            workflowstepMapper.insert(workflowstep);
+
         }
+
+
+//        for (Workflownodeinstance item : workflownodeinstancelist) {
+//            Workflowstep workflowstep = new Workflowstep();
+//            workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+//            List<Workflowstep> workflowsteplist = workflowstepMapper.select(workflowstep);
+//            for (Workflowstep it : workflowsteplist) {
+//                it.setResult("3");
+//                it.setRemark(MessageUtil.getMessage(MsgConstants.WORKFLOW_09, locale));
+//                it.setModifyby(workflowinstance.getCreateby());
+//                it.setModifyon(new Date());
+//                workflowstepMapper.updateByPrimaryKeySelective(it);
+//            }
+//        }
+
         // 结束所有代办
 
         ToDoNotice toDoNotice = new ToDoNotice();
