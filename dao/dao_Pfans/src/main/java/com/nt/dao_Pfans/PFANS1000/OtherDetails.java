@@ -32,9 +32,9 @@ public class OtherDetails extends BaseModel {
     private Date otherdetailsdate;
 
     @Column(name = "SERVICEHOURS")
-    private Date servicehours;
+    private String servicehours;
 
-    
+
     @Column(name = "PLSUMMARY")
     private String  plsummary;
 
