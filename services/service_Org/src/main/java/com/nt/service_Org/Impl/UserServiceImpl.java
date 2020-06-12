@@ -1231,10 +1231,12 @@ public class UserServiceImpl implements UserService {
                 customerInfo.setUserinfo(userinfo);
                 customerInfo.setType("1");
                 customerInfo.setStatus("0");
-                if (item.get("Rank").toString().trim().equals("その他")) {
-                    customerInfo.getUserinfo().setType("1");
-                } else {
-                    customerInfo.getUserinfo().setType("0");
+                if (item.get("Rank") != null) {
+                    if (item.get("Rank").toString().trim().equals("その他")) {
+                        customerInfo.getUserinfo().setType("1");
+                    } else {
+                        customerInfo.getUserinfo().setType("0");
+                    }
                 }
 //        add_fjl_06/12 start -- 新员工添加默认正式社员的角色
                 List<Role> rl = new ArrayList<>();
@@ -1245,6 +1247,7 @@ public class UserServiceImpl implements UserService {
                 role.setDefaultrole("true");
                 rl.add(role);
                 ust.setRoles(rl);
+                ust.setStatus("0");
 //        add_fjl_06/12 end -- 新员工添加默认正式社员的角色
                 mongoTemplate.save(ust);
                 Query query = new Query();
