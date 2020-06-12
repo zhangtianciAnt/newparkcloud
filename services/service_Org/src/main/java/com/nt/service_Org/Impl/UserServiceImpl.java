@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -729,6 +730,35 @@ public class UserServiceImpl implements UserService {
 //            throw new LogicalException(e.getMessage());
 //        }
 //    }
+    //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add start
+    @Scheduled(cron = "0 05 0 * * ?")
+    public void updUseraccountStatus() throws Exception {
+        SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
+        String redate = st.format(new Date());
+        int re = Integer.parseInt(redate.replace("-", ""));
+        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
+        Query query = new Query();
+        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+        if (customerInfos.size() > 0) {
+//            customerInfos = customerInfos.stream().filter(item -> item.getUserinfo().getResignation_date() != null).collect(Collectors.toList());
+            for (CustomerInfo c : customerInfos) {
+                if (!StringUtils.isNullOrEmpty(c.getUserinfo().getResignation_date())) {
+                    int ret = Integer.parseInt(c.getUserinfo().getResignation_date().replace("-", ""));
+                    if (re > ret) {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("_id").is(c.getUserid()));
+                        UserAccount usount = mongoTemplate.findOne(query, UserAccount.class);
+                        if (usount != null) {
+                            usount.setStatus("1");
+                            mongoTemplate.save(usount);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add  end
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
