@@ -930,37 +930,113 @@ public class AbNormalServiceImpl implements AbNormalService {
         if("PR013006".equals(abNormal.getErrortype())){
             lengths = Convert.toDouble(abNormal.getLengthtime())/8;
         }
+        if("PR013005".equals(abNormal.getErrortype()) )
+        {
+            if(StrUtil.isNotBlank(abNormal.getLengthtime()))
+            {
+                lengths = Convert.toDouble(abNormal.getLengthtime())/8;
+            }
+        }
         //                ADD_FJL_05/26  --添加非空判断
 //        if(StrUtil.isNotBlank(abNormal.getRelengthtime())) {
         if (StrUtil.isNotBlank(abNormal.getRelengthtime()) && !abNormal.getRelengthtime().equals("0")) {
             //                ADD_FJL_05/26  --添加非空判断
             if ("4".equals(abNormal.getRelengthtime())) {
                 relengths = 0.5;
+                lengths = relengths - lengths;
             }
             if("PR013006".equals(abNormal.getErrortype())){
                 relengths = Convert.toDouble(abNormal.getRelengthtime())/8;
+                lengths = relengths - lengths;
             }
-            lengths = relengths - lengths;
+
+            if("PR013005".equals(abNormal.getErrortype()) && Convert.toDouble(abNormal.getRelengthtime()) > 8){
+                relengths = Convert.toDouble(abNormal.getRelengthtime())/8;
+                lengths = relengths;
+            }
         }
 
-        if("PR013005".equals(abNormal.getErrortype())){
-            List<String> ls = new ArrayList<String>();
-            ls.add(abNormal.getUser_id());
-            List<AnnualLeave> list = annualLeaveMapper.getDataList(ls);
-            if(list.size() > 0 ){
-                if(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() >= lengths){
-                    String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue());
-                    rst.put("dat",Timecheck);
-                    rst.put("error",abNormal.getErrortype());
-                    rst.put("can","yes");
+        if("PR013005".equals(abNormal.getErrortype())
+                && ( abNormal.getStatus().equals("0") || abNormal.getStatus().equals("4") )){
+            if(abNormal.getStatus().equals("0"))
+            {
+                List<String> ls = new ArrayList<String>();
+                ls.add(abNormal.getUser_id());
+                List<AnnualLeave> list = annualLeaveMapper.getDataList(ls);
+                if(list.size() > 0 ){
+                    //upd ccm 2020/6/9
+//                if(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() >= lengths){
+                    if((list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - list.get(0).getAnnual_leave_shenqingzhong().doubleValue()) >= lengths){
+                        //String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue());
+                        String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - list.get(0).getAnnual_leave_shenqingzhong().doubleValue());
+                        //upd ccm 2020/6/9
+                        rst.put("dat",Timecheck);
+                        rst.put("error",abNormal.getErrortype());
+                        rst.put("can","yes");
+                    }else{
+                        rst.put("dat","");
+                        rst.put("can","no");
+                    }
                 }else{
                     rst.put("dat","");
                     rst.put("can","no");
                 }
-            }else{
-                rst.put("dat","");
-                rst.put("can","no");
             }
+            else if(abNormal.getStatus().equals("4"))
+            {
+                List<String> ls = new ArrayList<String>();
+                ls.add(abNormal.getUser_id());
+                List<AnnualLeave> listannualLeave = annualLeaveMapper.getDataList(ls);
+                double shengyu = 0;
+                if(listannualLeave.size()>0)
+                {
+                    shengyu = listannualLeave.get(0).getRemaining_annual_leave_thisyear().doubleValue();
+
+                    AbNormal ab =new AbNormal();
+                    ab.setUser_id(abNormal.getUser_id());
+                    ab.setErrortype("PR013005");
+                    List<AbNormal> list = abNormalMapper.select(ab);
+                    if(list.size() > 0 ){
+                        double shenqing = 0;
+                        for(AbNormal a : list)
+                        {
+                            if(a.getStatus().equals("2") || a.getStatus().equals("3"))
+                            {
+                                shenqing = shenqing + Double.valueOf(a.getLengthtime());
+                            }
+                            else if(a.getStatus().equals("5") || a.getStatus().equals("6"))
+                            {
+                                shenqing = shenqing + Double.valueOf(a.getLengthtime());
+                            }
+                            else if(a.getStatus().equals("4") && !a.getAbnormalid().equals(abNormal.getAbnormalid()))
+                            {
+                                shenqing = shenqing + Double.valueOf(a.getLengthtime());
+                            }
+                        }
+                        shenqing = shenqing / 8;
+                        if(shengyu - shenqing >= lengths){
+                            String Timecheck = String.valueOf(shengyu - shenqing);
+
+                            rst.put("dat",Timecheck);
+                            rst.put("error",abNormal.getErrortype());
+                            rst.put("can","yes");
+                        }else{
+                            rst.put("dat","");
+                            rst.put("can","no");
+                        }
+                    }else{
+                        String Timecheck = String.valueOf(shengyu);
+                        rst.put("dat",Timecheck);
+                        rst.put("error",abNormal.getErrortype());
+                        rst.put("can","yes");
+                    }
+                }
+                else{
+                    rst.put("dat","");
+                    rst.put("can","no");
+                }
+            }
+
         }else if("PR013006".equals(abNormal.getErrortype())){
 
                 List<restViewVo> list = annualLeaveMapper.getrest(abNormal.getUser_id());

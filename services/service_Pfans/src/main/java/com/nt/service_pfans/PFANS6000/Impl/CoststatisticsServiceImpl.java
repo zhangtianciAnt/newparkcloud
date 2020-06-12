@@ -167,7 +167,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             for ( int i = 1 ; i <= 12; i++ ) {
                 // 单价
                 double price = 0;
-                String priceKey = c.getBpname() + "price" + i;
+                String priceKey = c.getBpname() + c.getGroupid() +  "price" + i;
                 if ( pricesetMap.containsKey(priceKey) ) {
                     price = pricesetMap.get(priceKey);
                 }
@@ -252,7 +252,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
             int i = 0;
             i = Integer.parseInt(pricesetGroup.getPd_date().substring(5, 7));
-            String key = priceset.getUser_id() + "price" + i;
+            String key = priceset.getUser_id() + priceset.getGroup_id() +"price" + i;
             Double value = 0.0;
             value = Double.parseDouble(totalUnit);
             pricesetMap.put(key, value);
@@ -310,7 +310,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
             int i = 0;
             i = Integer.parseInt(pricesetGroup.getPd_date().substring(5, 7));
-            String key = priceset.getUser_id() + "price" + i;
+            String key = priceset.getUser_id() + priceset.getGroup_id() +  "price" + i;
             Double value = 0.0;
             value = Double.parseDouble(totalUnit);
             pricesetMap.put(key, value);

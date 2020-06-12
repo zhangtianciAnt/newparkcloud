@@ -60,5 +60,11 @@ public class ProjectContract extends BaseModel {
      */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
+    // add-ws-6/9-禅道任务
+    @Column(name = "DELIVERYFINSHDATE")
+    private Date deliveryfinshdate;
 
+    @Column(name = "CLAIMTYPE")
+    private String claimtype;
+    // add-ws-6/9-禅道任务
 }

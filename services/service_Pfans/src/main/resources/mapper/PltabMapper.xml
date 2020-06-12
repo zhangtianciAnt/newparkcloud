@@ -215,9 +215,11 @@
                             then 'HT008006'
                         else NULL
                         end                                                    as contracttype1,
-                    cast(SUM(projectcontract.contractamount) AS decimal(15,2)) as rmb,
+                    cast(SUM(projectcontract.contractamount*d.VALUE2) AS decimal(15,2)) as rmb,
                     companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID
                 from contractapplication ca
+                        left join dictionary d
+						on d.code = ca.CURRENCYPOSITION
                          inner join projectcontract
                                     on projectcontract.CONTRACT = ca.CONTRACTNUMBER
                          inner join companyprojects
@@ -226,6 +228,7 @@
                                              '5' || companyprojects.`STATUS` = '6')
                 where ca.state = '有效'
                   and ca.type = "1"
+                  and year (projectcontract.DELIVERYFINSHDATE) = #{year} and month (projectcontract.DELIVERYFINSHDATE) = #{month}
                   and companyprojects.GROUP_ID = #{groupid}
                 AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(companyprojects.STARTDATE,'%Y%m') AND DATE_FORMAT(companyprojects.ENDDATE,'%Y%m')
                 GROUP BY contracttype1,companyprojects.PROJECT_NAME,companyprojects.COMPANYPROJECTS_ID

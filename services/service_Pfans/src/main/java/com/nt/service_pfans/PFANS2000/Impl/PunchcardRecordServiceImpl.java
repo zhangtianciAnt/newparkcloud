@@ -348,7 +348,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     {
                         //俩个月内入职的人员
                         //入职日期月份与计算考勤日期月份比较
-                        if (sfy.parse(Convert.toStr(sfy.format(Convert.toDate(enterdate)))).getTime() == sfy.parse(sfy.format(cal.getTime())).getTime())
+                        if (sfy.parse(Convert.toStr(sfy.format(Convert.toDate(enterdate)))).getTime() <= sfy.parse(sfy.format(cal.getTime())).getTime())
                         {
                             //入职日和计算考勤当天比较
                             if(sf1ymd.parse(sf1ymd.format(cal.getTime())).getTime() < (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(enterdate)))).getTime()))
@@ -535,7 +535,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                         }
                         else if (sf1ymd.parse(sf1ymd.format(calStart.getTime())).getTime() <= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime()) && sf1ymd.parse(sf1ymd.format(calend.getTime())).getTime() >= (sf1ymd.parse(Convert.toStr(sf1ymd.format(Convert.toDate(resignationdate)))).getTime())) {
-                            if (sfy.parse(Convert.toStr(sfy.format(Convert.toDate(resignationdate)))).getTime() == sfy.parse(sfy.format(cal.getTime())).getTime())
+                            if (sfy.parse(Convert.toStr(sfy.format(Convert.toDate(resignationdate)))).getTime() >= sfy.parse(sfy.format(cal.getTime())).getTime())
                             {
                                 //查询更新一天的考勤数据
                                 Attendance attendance = new Attendance();

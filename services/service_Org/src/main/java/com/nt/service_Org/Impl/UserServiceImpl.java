@@ -257,13 +257,13 @@ public class UserServiceImpl implements UserService {
 
 //AD域重复check
             Query queryAD = new Query();
-            if (!StringUtils.isNullOrEmpty(userInfo.getPersonalcode())) {
-                queryAD.addCriteria(Criteria.where("userinfo.personalcode").is(userInfo.getPersonalcode()));
+            if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
+                queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
                 List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
                 if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
                     flg3 = 1;
                 } else {
-                    throw new LogicalException("个人编码重复");
+                    throw new LogicalException("卡号重复");
                 }
             }
             if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
@@ -840,6 +840,30 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
                     }
                 }
+                //AD域账号
+                if (item.get("AD域账号") != null) {
+                    userinfo.setAdfield(item.get("AD域账号").toString());
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userinfo.adfield").is(userinfo.getAdfield()));
+                    List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                    customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+                    if (customerInfoList.size() > 0) {
+                        throw new LogicalException("卡号（" + item.get("卡号").toString() + "）" + "对应的 AD域账号 在人员表中已存在，请勿重复填写。");
+                    } else {
+//                            UserAccount userAccount = new UserAccount();
+                        ust.setAccount(userinfo.getAdfield());
+                        ust.setPassword(userinfo.getAdfield());
+                        ust.setUsertype("0");
+                        query = new Query();
+                        query.addCriteria(Criteria.where("account").is(ust.getAccount()));
+                        query.addCriteria(Criteria.where("password").is(ust.getPassword()));
+                        query.addCriteria(Criteria.where("usertype").is(ust.getUsertype()));
+                        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                        if (userAccountlist.size() > 0) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                        }
+                    }
+                }
                 //center
                 if (item.get("center") != null) {
                     String cen = item.get("center").toString();
@@ -959,30 +983,6 @@ public class UserServiceImpl implements UserService {
                 if (item.get("生年月日") != null) {
                     userinfo.setBirthday(item.get("生年月日").toString());
                 }
-                //AD域账号
-                if (item.get("AD域账号") != null) {
-                    userinfo.setAdfield(item.get("AD域账号").toString());
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.adfield").is(userinfo.getAdfield()));
-                    List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
-                    customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-                    if (customerInfoList.size() > 0) {
-                        throw new LogicalException("卡号（" + item.get("卡号").toString() + "）" + "对应的 AD域账号 在人员表中已存在，请勿重复填写。");
-                    } else {
-//                            UserAccount userAccount = new UserAccount();
-                        ust.setAccount(userinfo.getAdfield());
-                        ust.setPassword(userinfo.getAdfield());
-                        ust.setUsertype("0");
-                        query = new Query();
-                        query.addCriteria(Criteria.where("account").is(ust.getAccount()));
-                        query.addCriteria(Criteria.where("password").is(ust.getPassword()));
-                        query.addCriteria(Criteria.where("usertype").is(ust.getUsertype()));
-                        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                        if (userAccountlist.size() > 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
-                        }
-                    }
-                }
                 //国籍
                 if (item.get("国籍") != null) {
                     userinfo.setNationality(item.get("国籍").toString());
@@ -1072,6 +1072,28 @@ public class UserServiceImpl implements UserService {
                             userinfo.setChildren("0");
                         } else if (children.equals("是")) {
                             userinfo.setChildren("1");
+                        }
+                    }
+                }
+                //是否大连户籍
+                if (item.get("是否大连户籍") != null) {
+                    String dlnation = item.get("是否大连户籍").toString();
+                    if (dlnation != null) {
+                        if (dlnation.equals("否")) {
+                            userinfo.setDlnation("0");
+                        } else if (dlnation.equals("是")) {
+                            userinfo.setDlnation("1");
+                        }
+                    }
+                }
+                //奖金记上区分
+                if (item.get("奖金记上区分") != null) {
+                    String dlnation = item.get("奖金记上区分").toString();
+                    if (dlnation != null) {
+                        if (dlnation.equals("老员工")) {
+                            userinfo.setDifference("2");
+                        } else if (dlnation.equals("新员工")) {
+                            userinfo.setDifference("1");
                         }
                     }
                 }
@@ -1250,6 +1272,28 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
+                    if (item.get("AD域账号●") != null) {
+                        customerInfoList.get(0).getUserinfo().setAdfield(item.get("AD域账号●").toString());
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
+                        List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
+                        customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
+                        if (customerInfoLists.size() > 0) {
+                            throw new LogicalException("AD域账号（" + item.get("AD域账号●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                        } else {
+                            userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
+                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                            userAccount.setUsertype("0");
+                            query = new Query();
+                            query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                            query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+                            query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                            if (userAccountlist.size() > 0) {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                            }
+                        }
+                    }
                     //center
                     if (item.get("center●") != null) {
                         String cen = item.get("center●").toString();
@@ -1352,28 +1396,7 @@ public class UserServiceImpl implements UserService {
                     if (item.get("生年月日●") != null) {
                         customerInfoList.get(0).getUserinfo().setBirthday(item.get("生年月日●").toString());
                     }
-                    if (item.get("AD域账号●") != null) {
-                        customerInfoList.get(0).getUserinfo().setAdfield(item.get("AD域账号●").toString());
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
-                        List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
-                        customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
-                        if (customerInfoLists.size() > 0) {
-                            throw new LogicalException("AD域账号（" + item.get("AD域账号●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
-                        } else {
-                            userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
-                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
-                            userAccount.setUsertype("0");
-                            query = new Query();
-                            query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                            query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-                            query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                            if (userAccountlist.size() > 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
-                            }
-                        }
-                    }
+
                     if (item.get("国籍●") != null) {
                         customerInfoList.get(0).getUserinfo().setNationality(item.get("国籍●").toString());
                     }
@@ -1448,6 +1471,26 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setChildren("0");
                             } else if (children.equals("是")) {
                                 customerInfoList.get(0).getUserinfo().setChildren("1");
+                            }
+                        }
+                    }
+                    if (item.get("是否大连户籍●") != null) {
+                        String dlnation = item.get("是否大连户籍●").toString();
+                        if (dlnation != null) {
+                            if (dlnation.equals("否")) {
+                                customerInfoList.get(0).getUserinfo().setDlnation("0");
+                            } else if (dlnation.equals("是")) {
+                                customerInfoList.get(0).getUserinfo().setDlnation("1");
+                            }
+                        }
+                    }
+                    if (item.get("奖金记上区分●") != null) {
+                        String dlnation = item.get("奖金记上区分●").toString();
+                        if (dlnation != null) {
+                            if (dlnation.equals("老员工")) {
+                                customerInfoList.get(0).getUserinfo().setDifference("2");
+                            } else if (dlnation.equals("新员工")) {
+                                customerInfoList.get(0).getUserinfo().setDifference("1");
                             }
                         }
                     }

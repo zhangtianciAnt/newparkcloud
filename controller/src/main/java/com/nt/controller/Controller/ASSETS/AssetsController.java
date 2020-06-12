@@ -127,14 +127,14 @@ public class AssetsController {
         String templateName = null;
         String fileName = null;
         if ( "0".equals(type) ) {
-            templateName = "qitazichan.xlsx";
-            fileName = "资产";
+            templateName = "duiwaizichan.xlsx";
+            fileName = "对外资产";
         } else if ( "1".equals(type) ) {
-            templateName = "buwaizichan.xlsx";
-            fileName = "簿外";
+            templateName = "jieruzichan.xlsx";
+            fileName = "借入资产";
         } else  if ( "2".equals(type) ) {
             templateName = "gudingzichan.xlsx";
-            fileName = "固定";
+            fileName = "固定资产";
         }
         if (templateName != null ) {
             ExcelOutPutUtil.OutPut(fileName,templateName,data,response);

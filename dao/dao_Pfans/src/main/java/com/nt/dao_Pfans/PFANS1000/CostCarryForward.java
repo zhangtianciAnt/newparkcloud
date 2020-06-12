@@ -220,4 +220,7 @@ public class CostCarryForward extends BaseModel {
     //    累计仕掛品
     @Column(name = "TOTALPRO")
     private String totalpro;
+    //    界限利益率
+    @Column(name = "BENEFITRATE")
+    private String benefitrate;
 }

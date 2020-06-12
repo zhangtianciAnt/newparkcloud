@@ -244,10 +244,16 @@
     </select>
 
     <select id="lastMonthWage" resultType="java.lang.String">
-   select USER_ID from wages
-   where YEAR(wages.CREATEON) = #{year}
-   and MONTH(wages.CREATEON) = #{month}
- </select>
+       select USER_ID from wages
+       where YEAR(wages.CREATEON) = #{year}
+       and MONTH(wages.CREATEON) = #{month}
+     </select>
+
+    <select id="lastWages" resultType="com.nt.dao_Pfans.PFANS2000.Wages">
+       select * from wages
+       where YEAR(wages.CREATEON) = #{year}
+       AND MONTH(wages.CREATEON) = #{month}
+     </select>
 
     <select id="getWagesByGivingId" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         SELECT
@@ -301,7 +307,16 @@
         @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',round((@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),2),round((@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE),2)) as THISMONTHBASICGEI, #本月基本给
         round( @BASE_SJJE - @THISMONTHBASICGEI, 2 ) AS THISMONTHDUTYGEI,#本月职责给
         @YKBZJS := base.DIC_YKBZZS AS YKBZJS, # 一括补助基本給
-        @YKBZ := round(
+        @YKBZ :=
+        CASE
+        WHEN ( @TYPE &lt;=> '2' ) THEN
+        round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS ), 2 )
+        WHEN ( @TYPE &lt;=> '1' ) THEN
+        base.INDUCTION_LUNCH
+        WHEN ( @TYPE &lt;=> '4' ) THEN
+        round(base.RETIRE_LUNCH - @YKBZJS / 21.75 / 8 * (@SHORTDEFICIENCY + @CHRONICDEFICIENCY + @DILIGENCE),2)
+        ELSE
+        round(
         IF
         (
         base.LASTMONTHSUITDAYS &lt;=> 0,
@@ -315,7 +330,7 @@
         base.DIC_YKBZZS * ( 168 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / 168
         ),
         2
-        ) AS YKBZ,#一括补助
+        ) END AS YKBZ,#一括补助
         @JBBZ := (IF(@TYPE = '4',base.SUBSIDY,base.LASTTOTALY)) AS OVERTIMESUBSIDY,# 加班补助 gbb base.SUBSIDY
         @XJ1 := round( ( @BASE_SJJE + @JBBZ + @YKBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
@@ -357,7 +372,7 @@
         @OTHERFOUR_TOTAL := round(base.OTHERFOUR_TOTAL,2) AS OTHER4,#其他4公司负担社保（24元）
         @OTHERFIVE_TOTAL := round(base.OTHERFIVE_TOTAL,2) AS OTHER5,#其他5（保険：福祉）
         @DYYKGZ := round( ( @GZZE + @ZFGJJYNSJE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL ), 2 ) AS SHOULDWAGES,#当月応発工資（工资总额(纳税+免税)+只納税）
-        @YEARSTOTAL12 := ( base.COMPREHENSIVE_YEARSTOTAL12 + @DYYKGZ ) AS SHOULDCUMULATIVE,#累計応発工資（当月含）
+        @YEARSTOTAL12 := round(base.COMPREHENSIVE_YEARSTOTAL12 + @DYYKGZ,2) AS SHOULDCUMULATIVE,#累計応発工資（当月含）
         @LJYNSSDE := (
         IF
         (
@@ -447,7 +462,7 @@
 			) - @AMOUNT
 		) AS BONUSMONEY,#計上奨金
         @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
-	    IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ) AS TOTALBONUS #总计+計上奨金
+	    ROUND(IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ),2) AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
         WHERE

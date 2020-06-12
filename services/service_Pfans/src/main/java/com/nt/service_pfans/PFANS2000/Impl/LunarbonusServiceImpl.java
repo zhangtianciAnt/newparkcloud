@@ -58,8 +58,24 @@ public class LunarbonusServiceImpl implements LunarbonusService {
     public void insert(LunardetailVo lunardetailVo, TokenModel tokenModel) throws Exception {
         Lunarbonus lunarbonus = new Lunarbonus();
         SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-        Date Evaluationday = new SimpleDateFormat("yyyy-MM-dd").parse(sd.format(lunardetailVo.getEvaluationday()));
-        lunarbonus.setEvaluationday(Evaluationday);
+//        upd_fjl_06/10 start --添加先申请一次评价的check
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+        String evaluationday = simpleDateFormat.format(lunardetailVo.getEvaluationday());
+        Lunarbonus lu = new Lunarbonus();
+        lu.setEvaluationday(evaluationday);
+        lu.setSubjectmon(lunardetailVo.getSubjectmon());
+        List<Lunarbonus> Li = lunarbonusMapper.select(lu);
+        if (Li.size() > 0) {
+            for (Lunarbonus ll : Li) {
+                if (!lunardetailVo.getEvaluatenum().equals("PJ104001")) {
+                    if (!StringUtils.isNullOrEmpty(ll.getEvaluatenum()) && !ll.getEvaluatenum().equals("PJ104001")) {
+                        throw new LogicalException("请先申请【一次評価】");
+                    }
+                }
+            }
+        }
+//        upd_fjl_06/10 start --添加先申请一次评价的check
+        lunarbonus.setEvaluationday(evaluationday);
         lunarbonus.setSubjectmon(lunardetailVo.getSubjectmon());
         lunarbonus.setEvaluatenum(lunardetailVo.getEvaluatenum());
 
@@ -68,6 +84,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             lunarbonus.setSubject(lunardetailVo.getSubjectmon());
             lunarbonus.setUser_id(lunardetailVo.getUser_id());
             lunarbonus.preInsert(tokenModel);
+            lunarbonus.preUpdate(tokenModel);
             lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
             lunarbonusMapper.insert(lunarbonus);
         } else {

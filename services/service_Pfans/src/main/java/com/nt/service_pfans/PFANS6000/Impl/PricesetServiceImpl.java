@@ -74,7 +74,7 @@ public class PricesetServiceImpl implements PricesetService {
                             BeanUtil.copyProperties(ip,priceset);
                             a.getDetail().add(priceset);
                         }
-                        List<Priceset> p = pl.stream().filter(pli -> (expatriatesinforItem.getGroup_id().equals(pli.getGroupid()))).collect(Collectors.toList());
+                        List<Priceset> p = pl.stream().filter(pli -> (expatriatesinforItem.getGroup_id().equals(pli.getGroup_id()))).collect(Collectors.toList());
                         if(p.size() ==0)
                         {
                             //查询履历
@@ -86,7 +86,7 @@ public class PricesetServiceImpl implements PricesetService {
                                 for(ExpatriatesinforDetail eDetail:expatriatesinforDetails)
                                 {
                                     Priceset priceset = new Priceset();
-                                    priceset.setGroupid(eDetail.getGroup_id());
+                                    priceset.setGroup_id(eDetail.getGroup_id());
                                     priceset.setUser_id(eDetail.getExpatriatesinfor_id());
                                     priceset.setUsername(expatriatesinforItem.getExpname());
                                     priceset.setGraduation(expatriatesinforItem.getGraduation_year());
@@ -98,7 +98,7 @@ public class PricesetServiceImpl implements PricesetService {
                     }
                     else{
                         Priceset priceset = new Priceset();
-                        priceset.setGroupid(expatriatesinforItem.getGroup_id());
+                        priceset.setGroup_id(expatriatesinforItem.getGroup_id());
                         priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
                         priceset.setUsername(expatriatesinforItem.getExpname());
                         priceset.setGraduation(expatriatesinforItem.getGraduation_year());
@@ -136,7 +136,7 @@ public class PricesetServiceImpl implements PricesetService {
                             for(ExpatriatesinforDetail eDetail:expatriatesinforDetails)
                             {
                                 Priceset priceset = new Priceset();
-                                priceset.setGroupid(eDetail.getGroup_id());
+                                priceset.setGroup_id(eDetail.getGroup_id());
                                 priceset.setUser_id(eDetail.getExpatriatesinfor_id());
                                 priceset.setUsername(expatriatesinforItem.getExpname());
                                 priceset.setGraduation(expatriatesinforItem.getGraduation_year());
@@ -151,7 +151,7 @@ public class PricesetServiceImpl implements PricesetService {
 
                             priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
                             priceset.setUsername(expatriatesinforItem.getExpname());
-                            priceset.setGroupid(expatriatesinforItem.getGroup_id());
+                            priceset.setGroup_id(expatriatesinforItem.getGroup_id());
                             priceset.setGraduation(expatriatesinforItem.getGraduation_year());
                             priceset.setCompany(expatriatesinforItem.getSuppliername());
                             if(pl.size() > 0){
@@ -176,7 +176,7 @@ public class PricesetServiceImpl implements PricesetService {
                 for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
                     Priceset priceset = new Priceset();
                     priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
-                    priceset.setGroupid(expatriatesinforItem.getGroup_id());
+                    priceset.setGroup_id(expatriatesinforItem.getGroup_id());
                     priceset.setUsername(expatriatesinforItem.getExpname());
                     priceset.setGraduation(expatriatesinforItem.getGraduation_year());
                     priceset.setCompany(expatriatesinforItem.getSuppliername());

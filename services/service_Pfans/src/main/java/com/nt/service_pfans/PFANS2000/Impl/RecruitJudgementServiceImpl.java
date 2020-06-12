@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.UserAccount;
@@ -81,8 +82,8 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
             userAccount.setAccount(PinyinHelper.convertToPinyinString(recruitJudgement.getName(), "", PinyinFormat.WITHOUT_TONE));
             userAccount.setPassword(PinyinHelper.convertToPinyinString(recruitJudgement.getName(), "", PinyinFormat.WITHOUT_TONE));
             userAccount.setUsertype("0");
-            query0.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-            query0.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+            query0.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
+//            query0.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
             query0.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
             List<UserAccount> list = mongoTemplate.find(query0, UserAccount.class);
             int uf = 0;
@@ -96,9 +97,15 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 } else {
                     us = "0" + (uf + 1);
                 }
-            } else {
-                us = "001";
             }
+            List<Role> rl = new ArrayList<>();
+            Role role = new Role();
+            role.set_id("5e7860c68f43163084351131");
+            role.setRolename("正式社员");
+            role.setDescription("正式社员");
+            role.setDefaultrole("true");
+            rl.add(role);
+            userAccount.setRoles(rl);
             userAccount.setAccount(userAccount.getAccount() + us);
             userAccount.setPassword(userAccount.getPassword() + us);
             userAccount.preInsert(tokenModel);
@@ -114,7 +121,7 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 CustomerInfo.UserInfo info = new CustomerInfo.UserInfo();
                 customerInfo.setUserid(_id);
                 Query query = new Query();
-                query.addCriteria(Criteria.where("userinfo.customername").is(recruitJudgement.getName()));
+                query.addCriteria(Criteria.where("userinfo.customername").regex(recruitJudgement.getName()));
                 List<CustomerInfo> cnameL = mongoTemplate.find(query, CustomerInfo.class);
                 int cn = 0;
                 String cs = "";
@@ -122,10 +129,10 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                     for (CustomerInfo n : cnameL) {
                         cn++;
                     }
-                    if (uf <= 9) {
-                        cs = "0" + (cn + 1);
+                    if (cn <= 9) {
+                        cs = "00" + (cn + 1);
                     } else {
-                        cs = String.valueOf(cn + 1);
+                        cs = "0" + (cn + 1);
                     }
                 }
                 info.setCustomername(recruitJudgement.getName() + cs);

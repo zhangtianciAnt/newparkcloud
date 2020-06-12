@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
@@ -110,6 +111,7 @@ public class GivingServiceImpl implements GivingService {
     private AnnualLeaveMapper annualLeaveMapper;
 
     private static List<CustomerInfo> customerInfos;
+    private static List<Wages> lastwages;
 
     // 日期基数
     private static final double dateBase = 21.75;
@@ -439,9 +441,11 @@ public class GivingServiceImpl implements GivingService {
                 base.setSex(customer.getUserinfo().getSex());  //性别
                 /*设置type lxx */
                 for (Base basetype : baseType) {
-                    if (basetype.getUser_id().equals(customer.getUserid())) {
-                        base.setType(basetype.getType());
-                        break;
+                    if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(basetype.getUser_id())) {
+                        if (basetype.getUser_id().equals(customer.getUserid())) {
+                            base.setType(basetype.getType());
+                            break;
+                        }
                     }
                 }
                 /*设置type lxx */
@@ -461,11 +465,12 @@ public class GivingServiceImpl implements GivingService {
                         base.setSociology("2");
                     }
                 }
+                base.setRegistered("2");
                 //大連戸籍
-                if (!StringUtils.isEmpty(customer.getUserinfo().getRegister()) && customer.getUserinfo().getRegister().contains("大连")) {
-                    base.setRegistered("1");
-                } else {
-                    base.setRegistered("2");
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customer.getUserinfo().getDlnation())) {
+                    if(customer.getUserinfo().getDlnation().equals("1")){
+                        base.setRegistered("1");
+                    }
                 }
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
                 //上月工资
@@ -781,10 +786,14 @@ public class GivingServiceImpl implements GivingService {
         }
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
-        map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
-        map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
-        map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        //map.put("thisMonthDays", thisMonthDays > 21.75 ? "21.75" : thisMonthDays.toString());
+        map.put("thisMonthDays", calculateAttendanceDays(Double.valueOf(thisMonthDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(thisMonthDays))));
+        //map.put("thisMonthSuitDays", thisMonthSuitDays > 21.75 ? "21.75" : thisMonthSuitDays.toString());
+        map.put("thisMonthSuitDays", calculateAttendanceDays(Double.valueOf(thisMonthSuitDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(thisMonthSuitDays))));
+        //map.put("lastMonthDays", lastMonthDays > 21.75 ? "21.75" : lastMonthDays.toString());
+        map.put("lastMonthDays", calculateAttendanceDays(Double.valueOf(lastMonthDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(lastMonthDays))));
+        //map.put("lastMonthSuitDays", lastMonthSuitDays > 21.75 ? "21.75" : lastMonthSuitDays.toString());
+        map.put("lastMonthSuitDays", calculateAttendanceDays(Double.valueOf(lastMonthSuitDays)) > 21.75 ? "21.75" : String.valueOf(calculateAttendanceDays(Double.valueOf(lastMonthSuitDays))));
         return map;
     }
 
@@ -894,6 +903,8 @@ public class GivingServiceImpl implements GivingService {
     public void insert(String generation, TokenModel tokenModel) throws Exception {
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
         init();
+        //获取上月工资
+        lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1);
         // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String strTemp = sf1.format(new Date());
@@ -1123,38 +1134,57 @@ public class GivingServiceImpl implements GivingService {
         // UPD_GBB_2020/05/20 ALL
         String thisMouth = "0";
         //当月工资
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
-                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
-            }
-            else{
-                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
-            }
-        }
-        //上月工资
-        if(addMouth == 0){
-            Calendar time = Calendar.getInstance();
-            time.add(Calendar.MONTH, addMouth);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-            if (customerInfo.getUserinfo().getGridData() != null) {
-                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
-                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
-                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                        .collect(Collectors.toList());
-
-                for (CustomerInfo.Personal personal : personals) {
-                    if(!personal.getDate().equals("Invalid date")){
-                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
-                            // UPD_GBB_2020/05/20
-                            //thisMouth = personal.getBasic();
-                            thisMouth = String.valueOf(Double.parseDouble(personal.getBasic()) + Double.parseDouble(personal.getDuty()));
-                            // UPD_GBB_2020/05/20
-                            break;
-                        }
-                    }
+//        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+//            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+//                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+//            }
+//            else{
+//                thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
+//            }
+//        }
+        // UPD_GBB_2020/6/9 start
+        //本月工资
+        if(addMouth == 1){
+//            Calendar time = Calendar.getInstance();
+//            time.add(Calendar.MONTH, addMouth);
+//            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+//            if (customerInfo.getUserinfo().getGridData() != null) {
+//                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
+//                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
+//                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+//                        .collect(Collectors.toList());
+//
+//                for (CustomerInfo.Personal personal : personals) {
+//                    if(!personal.getDate().equals("Invalid date")){
+//                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+//                            // UPD_GBB_2020/05/20
+//                            //thisMouth = personal.getBasic();
+//                            thisMouth = String.valueOf(Double.parseDouble(personal.getBasic()) + Double.parseDouble(personal.getDuty()));
+//                            // UPD_GBB_2020/05/20
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                    thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+                }
+                else{
+                    thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
                 }
             }
         }
+        else{ //上月基本工資
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserid())) {
+                List<Wages> Wages = lastwages.stream().filter(coi -> (coi.getUser_id().contains(customerInfo.getUserid()))).collect(Collectors.toList());
+                if(Wages.size() > 0){
+                    //本月基本工资 + 本月职责工资
+                    thisMouth = String.valueOf(Double.parseDouble(Wages.get(0).getBasethismonthbasic()) + Double.parseDouble(Wages.get(0).getThismonthduty()));
+                }
+            }
+        }
+        // UPD_GBB_2020/6/9 end
         return thisMouth;
     }
 
@@ -1163,38 +1193,63 @@ public class GivingServiceImpl implements GivingService {
         String thisMonth = "0";
         String thisMonthBasic = "0";
         String thisMonthDuty = "0";
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-            thisMonth = customerInfo.getUserinfo().getBasic();
-            thisMonthBasic = customerInfo.getUserinfo().getBasic();
-        }
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
-            thisMonthDuty = customerInfo.getUserinfo().getDuty();
-        }
-        if(addMouth == 0){
-            Calendar time = Calendar.getInstance();
-            time.add(Calendar.MONTH, addMouth);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-            if (customerInfo.getUserinfo().getGridData() != null) {
-                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
-                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
-                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
-                        .collect(Collectors.toList());
-
-                for (CustomerInfo.Personal personal : personals) {
-                    if(!personal.getDate().equals("Invalid date")){
-                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
-                            // UPD_GBB_2020/05/20
-                            //thisMonth = personal.getAfter();
-                            thisMonth = personal.getBasic();
-                            // UPD_GBB_2020/05/20
-                            thisMonthBasic = personal.getBasic();
-                            thisMonthDuty = personal.getDuty();
-                            break;
-                        }
-                    }
-                }
+        // UPD_GBB_2020/6/9 start
+//        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+//            thisMonth = customerInfo.getUserinfo().getBasic();
+//            thisMonthBasic = customerInfo.getUserinfo().getBasic();
+//        }
+//        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+//            thisMonthDuty = customerInfo.getUserinfo().getDuty();
+//        }
+//        if(addMouth == 0){
+//            Calendar time = Calendar.getInstance();
+//            time.add(Calendar.MONTH, addMouth);
+//            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+//            if (customerInfo.getUserinfo().getGridData() != null) {
+//                List<CustomerInfo.Personal> personals = customerInfo.getUserinfo().getGridData();
+//                personals = personals.stream().filter(coi -> (!com.mysql.jdbc.StringUtils.isNullOrEmpty(coi.getDate()))).collect(Collectors.toList());
+//                personals = personals.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed())
+//                        .collect(Collectors.toList());
+//
+//                for (CustomerInfo.Personal personal : personals) {
+//                    if(!personal.getDate().equals("Invalid date")){
+//                        if (sf.parse(personal.getDate()).getTime() < sf.parse((time.get(Calendar.YEAR) + "-" + getMouth(sf.format(time.getTime())) + "-01")).getTime()) {
+//                            // UPD_GBB_2020/05/20
+//                            //thisMonth = personal.getAfter();
+//                            thisMonth = personal.getBasic();
+//                            // UPD_GBB_2020/05/20
+//                            thisMonthBasic = personal.getBasic();
+//                            thisMonthDuty = personal.getDuty();
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        // UPD_GBB_2020/6/9 start
+        //本月工资
+        if(addMouth == 1){
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
+                thisMonth = customerInfo.getUserinfo().getBasic();
+                thisMonthBasic = customerInfo.getUserinfo().getBasic();
+            }
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                thisMonthDuty = customerInfo.getUserinfo().getDuty();
             }
         }
+        else{ //上月基本工資
+            List<Wages> Wages = lastwages.stream().filter(coi -> (coi.getUser_id().contains(customerInfo.getUserid()))).collect(Collectors.toList());
+            if(Wages.size() > 0){
+                //本月基本工资（上月）
+                thisMonth = Wages.get(0).getBasethismonthbasic();
+                //本月基本工资（上月）
+                thisMonthBasic = Wages.get(0).getBasethismonthbasic();
+                //本月职责工资（上月）
+                thisMonthDuty = Wages.get(0).getThismonthduty();
+            }
+        }
+        // UPD_GBB_2020/6/9 end
+
         Map<String, String> map = new HashMap<String, String>();
         map.put("thisMonth", thisMonth);
         map.put("thisMonthBasic", thisMonthBasic);
@@ -1692,9 +1747,10 @@ public class GivingServiceImpl implements GivingService {
             attendance.setMonths(preMonth);
             List<Attendance> attendanceList = attendanceMapper.select(attendance);
 
-            // 欠勤-试用
-            lackattendance.setLastdiligencetry(BigDecimal.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            // 欠勤-试用(试用无故旷工 + 试用事假)
+            double Lastdiligencetry  =  attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTcompassionateleave()))).sum();
+            lackattendance.setLastdiligencetry(BigDecimal.valueOf(Lastdiligencetry).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-试用
             lackattendance.setLastshortdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
@@ -1704,9 +1760,10 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setLastchronicdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
-            // 欠勤-正式
-            lackattendance.setLastdiligenceformal(BigDecimal.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            // 欠勤-正式(无故旷工 + 正式事假)
+            double Lastdiligenceformal = attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getCompassionateleave()))).sum();
+            lackattendance.setLastdiligenceformal(BigDecimal.valueOf(Lastdiligenceformal).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-正式
             lackattendance.setLastshortdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
@@ -1735,9 +1792,10 @@ public class GivingServiceImpl implements GivingService {
             attendance.setMonths(currentMonth);
             attendanceList = attendanceMapper.select(attendance);
 
-            // 欠勤-试用
-            lackattendance.setThisdiligencetry(BigDecimal.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            // 欠勤-试用(试用无故旷工 + 试用事假)
+            double Thisdiligencetry  =  attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTcompassionateleave()))).sum();
+            lackattendance.setThisdiligencetry(BigDecimal.valueOf(Thisdiligencetry).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-试用
             lackattendance.setThisshortdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
@@ -1747,9 +1805,10 @@ public class GivingServiceImpl implements GivingService {
             lackattendance.setThischronicdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
                     .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
-            // 欠勤-正式
-            lackattendance.setThisdiligenceformal(BigDecimal.valueOf(attendanceList.stream()
-                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            // 欠勤-正式(无故旷工 + 正式事假)
+            double Thisdiligenceformal = attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getCompassionateleave()))).sum();
+            lackattendance.setThisdiligenceformal(BigDecimal.valueOf(Thisdiligenceformal).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // 短病欠-正式
             lackattendance.setThisshortdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
@@ -1780,9 +1839,9 @@ public class GivingServiceImpl implements GivingService {
                     + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             // give不为0.00的时候数据加负号
-            if (!"0.00".equals(lackattendance.getGive())) {
-                lackattendance.setGive("-" + lackattendance.getGive());
-            }
+//            if (!"0.00".equals(lackattendance.getGive())) {
+//                lackattendance.setGive("-" + lackattendance.getGive());
+//            }
 
             if (tokenModel != null) {
                 lackattendance.preInsert(tokenModel);
@@ -1833,40 +1892,69 @@ public class GivingServiceImpl implements GivingService {
         // 长病欠小时工资
         double longSalary = Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d;
 
+        // UPD_GBB_2020/06/11 update
         if ("pre".equals(mode)) {   // 前月欠勤费用
             // 欠勤费用-正式
-            total += Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour;
+            //total += Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour;
+            double Lastdiligenceformal = Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour;
             // 欠勤费用-试用
-            total += Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
+            //total += Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
+            double Lastdiligencetry = Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
             // 短病欠-正式
-            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
+//            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Lastshortdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2());
             // 短病欠-试用
-            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
+//            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Lastshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
                     * Double.parseDouble(shortDictionary.getValue2());
 
             // 长病欠-正式
-            total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
+            //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
+            double Lastchronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
             // 长病欠-试用
-            total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+            //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+            double Lastchronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+
+            //费用-正式
+            double totala = - Lastdiligenceformal - Lastshortdeficiencyformal - Lastchronicdeficiencyformal;
+            //费用-试用
+            double totalb = - Lastdiligencetry - Lastshortdeficiencytry - Lastchronicdeficiencytry;
+            total = totala + totalb;
         } else {    // 当月欠勤费用
             // 欠勤费用-正式
-            total += Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
+            //total += Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
+            double Thisdiligenceformal = Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
             // 欠勤费用-试用
-            total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+            //total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+            double Thisdiligencetry = Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
 
             // 短病欠-正式
             total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2());
+            double Thisshortdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
+                    * Double.parseDouble(shortDictionary.getValue2());
             // 短病欠-试用
-            total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//            total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Thisshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
                     * Double.parseDouble(shortDictionary.getValue2());
 
             // 长病欠-正式
-            total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
+            //total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
+            double Thischronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
             // 长病欠-试用
-            total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            //total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            double Thischronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            //费用-正式
+            double totala = - Thisdiligenceformal - Thisshortdeficiencyformal - Thisshortdeficiencytry;
+            //费用-试用
+            double totalb = - Thisdiligencetry - Thischronicdeficiencyformal - Thischronicdeficiencytry;
+            total = totala + totalb;
         }
+        // UPD_GBB_2020/06/11 update
         return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 
@@ -2107,6 +2195,15 @@ public class GivingServiceImpl implements GivingService {
         if (StringUtils.isNotEmpty(staffStartDate)) {
             induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
         } else {
+            //本月之前的试用人员当月无转正的情况:【先月出勤日数】/【今月試用社員出勤日数】设空值（kang）
+            if(!DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getWorddate(), "yyyyMM"))){
+                // 今月試用社員出勤日数
+                lastAttendanceDays = 0d;
+                induction.setAttendance(String.valueOf(""));
+                // 今月試用社員出勤日数
+                thisMonthSuitDays = 0d;
+                induction.setTrial(String.valueOf(""));
+            }
             if (lastAttendanceDays > 0) {
                 induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
             } else {
@@ -2118,6 +2215,7 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         // 一括补助
+        //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
         induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
                 thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
     }

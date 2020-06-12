@@ -40,7 +40,7 @@ public class Workflownodeinstance extends BaseModel {
     private Integer nodeord;
 
     /**
-     * 节点类型(1-审批;2-确认;3-循环)
+     * 节点类型(1-审批;2-确认;3-通知)
      */
     @Column(name = "NODETYPE")
     private String nodetype;

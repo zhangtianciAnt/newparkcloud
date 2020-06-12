@@ -148,6 +148,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         DecimalFormat df = new DecimalFormat("######0.00");
         DecimalFormat dlf = new DecimalFormat("#0.00");
         for (Coststatistics c : allCostList) {
+
             String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
             CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
 //            if(!StringUtils.isNullOrEmpty(company.getManhour5())){
@@ -155,7 +156,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 //            }
             company.setBpcompany(bpcompany);
 
-            String userPriceKey = c.getBpname() + "price";
+            String userPriceKey = c.getBpname() + c.getGroupid() + "price";
             // 个人单位的合计费用(行合计)
             double totalmanhours = 0;
             // 个人单位的合计工数(行合计)
@@ -217,6 +218,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             company.setTotalcost(df.format(oldTotalcost + totalcost));
             company.setTotalmanhours(df.format(oldTotalmanhours + totalmanhours));
             companyMap.put(bpcompany, company);
+
         }
         result.put("company", new ArrayList<>(companyMap.values()));
 

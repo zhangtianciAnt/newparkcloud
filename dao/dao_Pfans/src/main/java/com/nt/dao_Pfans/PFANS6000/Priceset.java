@@ -223,5 +223,5 @@ public class Priceset extends BaseModel {
 
    // GROUPID
     @Column(name = "GROUP_ID")
-    private String groupid;
+    private String group_id;
 }

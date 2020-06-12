@@ -197,6 +197,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String marital;
         /**
+         * 是否大连户籍
+         */
+        private String dlnation;
+        /**
          * 独生子女光栄書締切日
          */
         private String children;
