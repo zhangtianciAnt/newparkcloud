@@ -8,11 +8,9 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
-import com.nt.dao_Org.CustomerInfo;
-import com.nt.dao_Org.ToDoNotice;
-import com.nt.dao_Org.UserAccount;
-import com.nt.dao_Org.Vo.UserVo;
+import com.nt.dao_Org.*;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
@@ -913,40 +911,115 @@ public class UserServiceImpl implements UserService {
                 //center
                 if (item.get("center") != null) {
                     String cen = item.get("center").toString();
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
-                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (cuinfo != null) {
-                        userinfo.setCentername(cuinfo.getUserinfo().getCentername());
-                        userinfo.setCenterid(cuinfo.getUserinfo().getCenterid());
-                    } else {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在，或者有空格！");
+                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    int cf = 0;
+                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                            if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                cf++;
+                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                userinfo.setGroupname(null);
+                                userinfo.setGroupid(null);
+                                userinfo.setTeamname(null);
+                                userinfo.setTeamid(null);
+                                break;
+                            }
+                        }
+                        if (cf == 0) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                        }
                     }
                 }
                 //group
                 if (item.get("group") != null) {
+                    if (item.get("center") == null) {
+                        throw new LogicalException("请输入同一组织的 center");
+                    }
+                    String cen = item.get("center").toString();
                     String grp = item.get("group").toString();
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
-                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (cuinfo != null) {
-                        userinfo.setGroupname(cuinfo.getUserinfo().getGroupname());
-                        userinfo.setGroupid(cuinfo.getUserinfo().getGroupid());
-                    } else {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或者有空格！");
+                    int cf = 0;
+                    int gf = 0;
+                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                            if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                cf++;
+                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                            }
+                            if (item.get("group") != null) {
+                                for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                        gf++;
+                                        userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                        userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                        userinfo.setTeamname(null);
+                                        userinfo.setTeamid(null);
+                                        break;
+                                    }
+                                }
+                                if (gf == 0) {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+                                }
+                            }
+                        }
+                        if (cf == 0) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                        }
                     }
                 }
                 //team
                 if (item.get("team") != null) {
+                    if (item.get("center") == null) {
+                        throw new LogicalException("请输入同一组织的 center");
+                    }
+                    if (item.get("group") == null) {
+                        throw new LogicalException("请输入同一组织的 group");
+                    }
+                    String cen = item.get("center").toString();
+                    String grp = item.get("group").toString();
                     String tem = item.get("team").toString();
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
-                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (cuinfo != null) {
-                        userinfo.setTeamname(cuinfo.getUserinfo().getTeamname());
-                        userinfo.setTeamid(cuinfo.getUserinfo().getTeamid());
-                    } else {
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或者有空格！");
+                    int cf = 0;
+                    int gf = 0;
+                    int tf = 0;
+                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                            if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                cf++;
+                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                            }
+                            if (item.get("group") != null) {
+                                for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                        gf++;
+                                        userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                        userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                    }
+                                    if (item.get("team") != null) {
+                                        for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
+                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+                                                tf++;
+                                                userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
+                                                userinfo.setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
+                                                break;
+                                            }
+                                        }
+                                        if (tf == 0) {
+                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或不属于本组织！");
+                                        }
+                                    }
+                                }
+                                if (gf == 0) {
+                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+                                }
+                            }
+                        }
+                        if (cf == 0) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                        }
                     }
                 }
                 //入社时间
@@ -1356,41 +1429,146 @@ public class UserServiceImpl implements UserService {
                     //center
                     if (item.get("center●") != null) {
                         String cen = item.get("center●").toString();
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
-                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (cuinfo != null) {
-                            customerInfoList.get(0).getUserinfo().setCentername(cuinfo.getUserinfo().getCentername());
-                            customerInfoList.get(0).getUserinfo().setCenterid(cuinfo.getUserinfo().getCenterid());
-                        } else {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center（" + item.get("center●").toString() + "）不存在，或者有空格！");
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        int cf = 0;
+                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    cf++;
+                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                    customerInfoList.get(0).getUserinfo().setGroupname(null);
+                                    customerInfoList.get(0).getUserinfo().setGroupid(null);
+                                    customerInfoList.get(0).getUserinfo().setTeamname(null);
+                                    customerInfoList.get(0).getUserinfo().setTeamid(null);
+                                    break;
+                                }
+                            }
+                            if (cf == 0) {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+                            }
                         }
+
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
+//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (cuinfo != null) {
+//                        customerInfoList.get(0).getUserinfo().setCentername(cuinfo.getUserinfo().getCentername());
+//                        customerInfoList.get(0).getUserinfo().setCenterid(cuinfo.getUserinfo().getCenterid());
+//                    } else {
+//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在，或者有空格！");
+//                    }
                     }
                     //group
                     if (item.get("group●") != null) {
-                        String grp = item.get("group●").toString();
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
-                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (cuinfo != null) {
-                            customerInfoList.get(0).getUserinfo().setGroupname(cuinfo.getUserinfo().getGroupname());
-                            customerInfoList.get(0).getUserinfo().setGroupid(cuinfo.getUserinfo().getGroupid());
-                        } else {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group（" + item.get("group●").toString() + "）不存在，或者有空格！");
+                        if (item.get("center●") == null) {
+                            throw new LogicalException("请输入同一组织的 center");
                         }
+                        String cen = item.get("center●").toString();
+                        String grp = item.get("group●").toString();
+                        int cf = 0;
+                        int gf = 0;
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    cf++;
+                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                }
+                                if (item.get("group●") != null) {
+                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                            gf++;
+                                            customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                            customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                            customerInfoList.get(0).getUserinfo().setTeamname(null);
+                                            customerInfoList.get(0).getUserinfo().setTeamid(null);
+                                            break;
+                                        }
+                                    }
+                                    if (gf == 0) {
+                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+                                    }
+                                }
+                            }
+                            if (cf == 0) {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+                            }
+                        }
+//                    String grp = item.get("group").toString();
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
+//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (cuinfo != null) {
+//                        customerInfoList.get(0).getUserinfo().setGroupname(cuinfo.getUserinfo().getGroupname());
+//                        customerInfoList.get(0).getUserinfo().setGroupid(cuinfo.getUserinfo().getGroupid());
+//                    } else {
+//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或者有空格！");
+//                    }
                     }
                     //team
                     if (item.get("team●") != null) {
-                        String tem = item.get("team●").toString();
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
-                        CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (cuinfo != null) {
-                            customerInfoList.get(0).getUserinfo().setTeamname(cuinfo.getUserinfo().getTeamname());
-                            customerInfoList.get(0).getUserinfo().setTeamid(cuinfo.getUserinfo().getTeamid());
-                        } else {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team（" + item.get("team●").toString() + "）不存在，或者有空格！");
+                        if (item.get("center●") == null) {
+                            throw new LogicalException("请输入同一组织的 center");
                         }
+                        if (item.get("group●") == null) {
+                            throw new LogicalException("请输入同一组织的 group");
+                        }
+                        String cen = item.get("center●").toString();
+                        String grp = item.get("group●").toString();
+                        String tem = item.get("team●").toString();
+                        int cf = 0;
+                        int gf = 0;
+                        int tf = 0;
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    cf++;
+                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                }
+                                if (item.get("group●") != null) {
+                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                            gf++;
+                                            customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                            customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                        }
+                                        if (item.get("team●") != null) {
+                                            for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
+                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+                                                    tf++;
+                                                    customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
+                                                    customerInfoList.get(0).getUserinfo().setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
+                                                    break;
+                                                }
+                                            }
+                                            if (tf == 0) {
+                                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或不属于本组织！");
+                                            }
+                                        }
+                                    }
+                                    if (gf == 0) {
+                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+                                    }
+                                }
+                            }
+                            if (cf == 0) {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+                            }
+                        }
+//                    String tem = item.get("team●").toString();
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (cuinfo != null) {
+//                        customerInfoList.get(0).getUserinfo().setTeamname(cuinfo.getUserinfo().getTeamname());
+//                        customerInfoList.get(0).getUserinfo().setTeamid(cuinfo.getUserinfo().getTeamid());
+//                    } else {
+//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或者有空格！");
+//                    }
                     }
 
                     if (item.get("入社时间●") != null) {
