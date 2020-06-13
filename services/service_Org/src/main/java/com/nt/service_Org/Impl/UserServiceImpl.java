@@ -220,70 +220,71 @@ public class UserServiceImpl implements UserService {
             userAccount.setRoles(rl);
         }
 //        add_fjl_06/12 end -- 新员工添加默认正式社员的角色
-        mongoTemplate.save(userAccount);
-        Query query = new Query();
-        query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-        query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-        if (userAccountlist.size() > 0) {
-            String _id = userAccountlist.get(0).get_id();
-            CustomerInfo customerInfo = new CustomerInfo();
-            BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
-            CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
-            BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
-            int flg1 = 0;
-            int flg2 = 0;
-            int flg3 = 0;
-            int flg4 = 0;
+        CustomerInfo customerInfo = new CustomerInfo();
+        BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
+        CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
+        BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
+        int flg1 = 0;
+        int flg2 = 0;
+        int flg3 = 0;
+        int flg4 = 0;
 //邮箱重复check
-            Query queryEmail = new Query();
-            if (!StringUtils.isNullOrEmpty(userInfo.getEmail())) {
-                queryEmail.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
-                List<CustomerInfo> qcEmail = mongoTemplate.find(queryEmail, CustomerInfo.class);
-                if (qcEmail.size() == 0 || qcEmail.get(0).getUserid().equals(customerInfo.getUserid())) {
-                    flg1 = 1;
-                } else {
-                    throw new LogicalException("邮箱已存在！");
-                }
+        Query queryEmail = new Query();
+        if (!StringUtils.isNullOrEmpty(userInfo.getEmail())) {
+            queryEmail.addCriteria(Criteria.where("userinfo.email").is(userInfo.getEmail()));
+            List<CustomerInfo> qcEmail = mongoTemplate.find(queryEmail, CustomerInfo.class);
+            if (qcEmail.size() == 0 || qcEmail.get(0).getUserid().equals(customerInfo.getUserid())) {
+                flg1 = 1;
+            } else {
+                throw new LogicalException("邮箱已存在！");
             }
+        }
 //add-ws-4/28-人员重复check
-            Query queryname = new Query();
-            if (!StringUtils.isNullOrEmpty(userInfo.getCustomername())) {
-                queryname.addCriteria(Criteria.where("userinfo.customername").is(userInfo.getCustomername()));
-                List<CustomerInfo> qcname = mongoTemplate.find(queryname, CustomerInfo.class);
-                if (qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())) {
-                    flg4 = 1;
-                } else {
-                    throw new LogicalException("人名已存在！");
-                }
+        Query queryname = new Query();
+        if (!StringUtils.isNullOrEmpty(userInfo.getCustomername())) {
+            queryname.addCriteria(Criteria.where("userinfo.customername").is(userInfo.getCustomername()));
+            List<CustomerInfo> qcname = mongoTemplate.find(queryname, CustomerInfo.class);
+            if (qcname.size() == 0 || qcname.get(0).getUserid().equals(customerInfo.getUserid())) {
+                flg4 = 1;
+            } else {
+                throw new LogicalException("人名已存在！");
             }
+        }
 
 //add-ws-4/28-人员重复check
 //个人编码重复check
-            Query queryCode = new Query();
-            if (!StringUtils.isNullOrEmpty(userInfo.getAdfield())) {
-                queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
-                List<CustomerInfo> qcAD = mongoTemplate.find(queryCode, CustomerInfo.class);
-                if (qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())) {
-                    flg2 = 1;
-                } else {
-                    throw new LogicalException("AD域账号重复");
-                }
+        Query queryCode = new Query();
+        if (!StringUtils.isNullOrEmpty(userInfo.getAdfield())) {
+            queryCode.addCriteria(Criteria.where("userinfo.adfield").is(userInfo.getAdfield()));
+            List<CustomerInfo> qcAD = mongoTemplate.find(queryCode, CustomerInfo.class);
+            if (qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())) {
+                flg2 = 1;
+            } else {
+                throw new LogicalException("AD域账号重复");
             }
+        }
 
 //AD域重复check
-            Query queryAD = new Query();
-            if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
-                queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
-                List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
-                if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
-                    flg3 = 1;
-                } else {
-                    throw new LogicalException("卡号重复");
-                }
+        Query queryAD = new Query();
+        if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
+            queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
+            List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
+            if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
+                flg3 = 1;
+            } else {
+                throw new LogicalException("卡号重复");
             }
-            if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
+        }
+        if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
+            mongoTemplate.save(userAccount);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+            query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+            List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+            if (userAccountlist.size() > 0) {
+                String _id = userAccountlist.get(0).get_id();
                 customerInfo.setUserid(_id);
+//                }
 //                ADD_FJL_05/21   --添加降序
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
                 //去除Invalid date的数据
