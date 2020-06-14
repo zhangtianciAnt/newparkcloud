@@ -488,7 +488,7 @@ public class AttendancesServiceImpl implements AttendancesService {
             Date date = new Date();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strDateFormat = dateFormat.format(date);
-            attendanceMapper.getStatus("2020-06-12");
+            attendanceMapper.getStatus(strDateFormat);
             attendanceMapper.getdel("1");
 
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
