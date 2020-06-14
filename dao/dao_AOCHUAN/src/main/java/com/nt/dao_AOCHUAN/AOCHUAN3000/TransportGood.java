@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -131,6 +133,7 @@ public class TransportGood extends BaseModel {
 
     private String firstorderduration;
 
+    private String ordertype;
 
     private String receptgoods;
 
@@ -138,10 +141,8 @@ public class TransportGood extends BaseModel {
 
     private Date ap_date;
 
-    //ﾊﾇｷ｢ﾆ・・
     private String requestpayment;
 
-    //ﾊﾇｷ｢ﾆﾘｿ・
     private String returnpayment;
 
     private String msds;
@@ -151,5 +152,12 @@ public class TransportGood extends BaseModel {
 
     @Transient
     private Integer finance = 0;
+
+    @Transient
+    private List<Saledetails> saledetails = new ArrayList<>();
+    @Transient
+    private List<Receivablesrecord> receivablesrecord = new ArrayList<>();
+    @Transient
+    private List<Applicationrecord> applicationrecord =  new ArrayList<>();
 
 }

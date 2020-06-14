@@ -26,7 +26,7 @@ public class EWxUserApi {
     public final static String EWECHAT_SERVICE_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=ww5c49fd2e4bbc6981&corpsecret=h-kQQjJMqhxYk9OmzPRXtwl0JsGRDS2pNx9erhv2Vw8";
 
     // 获取企业微信打卡数据
-    public final static String EWECHAT_SERVICE_CHECKINDATA = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=bSzMY5ifeG4nel77T2Hy97T3m6UfcERsiG9D4mDdja4-MBz_6EVba4-qSWSmojL2COrb3VnTWMNWqmjoi9HAii6fW8VXP8B0gC2rLyjHEHgqIRQShlpEuH8JQ7cjjO6npjaNCkVEjmDM_ZxWP4hdr2mQMxxLJ-mPIyfiIZRHG8utvZ-kgfJsACe06Nj-V-1FdTt98piIB2U7gskcpRtZ_A";
+    public final static String EWECHAT_SERVICE_CHECKINDATA = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=B0q6k-j-JwLLzyTP7TFktaO3TksYFu3DNwC0TayXwScA_6anZ-0gqV2IMOsmstPgzzZ2-0tEEtRUnoz2UHixcpEUr4aYCF83f5ZDrQw1HA2KK3fTDemsrUDUDJnPRHEfTQbZp-ZPXI00PM0MP_sPS5JLRZZETqCIKytWudgNCFXuXVMqNDUAzQpo6Ohqoddrgf1cGSWuZyLFW-Od-3MG1w";
 
     /**
      * 获取企业微信access_token
@@ -71,7 +71,7 @@ public class EWxUserApi {
         jsob.put("opencheckindatatype", openCheckInDataType);
         jsob.put("starttime", startTime);
         jsob.put("endtime", endTime);
-        jsob.put("useridlist", new String[]{"ZhangYing", "YangShuBo"});
+        jsob.put("useridlist", new String[]{"409a81d084aa2ebb7671684177e45342", "YangShuBo" , "lifeline"});
 //        jsob.put("useridlist", userIdList);
         String json = JSON.toJSONString(jsob);
 
