@@ -113,9 +113,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
-        String number = contractNumber.getContractNumber("PT001010", "transportgood");
+       // String number = contractNumber.getContractNumber("PT001010", "transportgood");
         String id = UUID.randomUUID().toString();
-        transportGood.setContractnumber(number);
+        //transportGood.setContractnumber(number);
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
         transportGoodMapper.insert(transportGood);
@@ -180,7 +180,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finPurchase.setInvoicenumber(val.getInvoiceno());
             finPurchase.setCredential_status("PW001001");
             finPurchase.setPaymentaccount("");
-            finPurchase.setRealpay(val.getRealpay().toString());
+            finPurchase.setRealpay(val.getRealpay() == null ?"0.00":val.getRealpay().toString());
             finPurchase.setRealamount(val.getRealamount());
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
             finPurchase.preInsert();
@@ -202,7 +202,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finSales.setContractnumber(transportGood.getContractnumber());
             finSales.setCustomer(val.getCustomername());
             finSales.setCollectionaccount(transportGood.getCollectionaccount());
-            finSales.setReceamount(val.getReceamount().toString());
+            finSales.setReceamount(val.getReceamount() == null ? "0.00" : val.getReceamount().toString());
             finSales.setReceduedate(val.getReceduedate());
             finSales.setSalesamount(val.getRealamount());
             finSales.setArrivaltime(val.getPaybackdate());
@@ -227,9 +227,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         finSales) {
             Receivablesrecord receivablesrecord = new Receivablesrecord();
             receivablesrecord.setReceivablesrecord_id(finSale.getReceivablesrecord_id());
-            receivablesrecord.setRealamount(finSale.getReceamount()!= "" ? df.format(finSale.getReceamount()) : "0.00");
+            receivablesrecord.setRealamount(finSale.getReceamount());
             receivablesrecord.setPaybackdate(new Date());
-            receivablesrecord.setPaybackstatus("已完成");
+            receivablesrecord.setPaybackstatus("PY011002");
             receivablesrecordMapper.updateByPrimaryKeySelective(receivablesrecord);
             finSale.setSalesamount(finSale.getReceamount());
             finSale.setArrivaltime(new Date());
@@ -245,9 +245,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 finPurchases) {
             Applicationrecord applicationrecord = new Applicationrecord();
             applicationrecord.setApplicationrecord_id(finPurchase.getApplicationrecord_id());
-            applicationrecord.setRealamount(finPurchase.getRealamount() != "" ? df.format(finPurchase.getRealamount()) : "0.00");
+            applicationrecord.setRealamount(finPurchase.getRealamount());
             applicationrecord.setRealdate(finPurchase.getAp_date());
-            applicationrecord.setPaymentstatus("已收款");
+            applicationrecord.setPaymentstatus("PY011002");
             applicationrecordMapper.updateByPrimaryKeySelective(applicationrecord);
             finPurchase.setAp_date(new Date());
             finPurchase.setRealamount(finPurchase.getRealpay());
