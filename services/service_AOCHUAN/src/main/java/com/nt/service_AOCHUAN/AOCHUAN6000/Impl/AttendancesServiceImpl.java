@@ -485,7 +485,6 @@ public class AttendancesServiceImpl implements AttendancesService {
     public List<Attendance> getCheckInData(EWxBaseResponse data) throws Exception {
 
         try {
-            Query query = new Query();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             HashSet<String> set = new HashSet<>();
             for (EWxCheckData eWxCheckData :
@@ -502,7 +501,6 @@ public class AttendancesServiceImpl implements AttendancesService {
                             String stroff = df.format(dateendepoch);
                             //下班打卡时间
                             String off = stroff.substring(11);
-                            String workdate = off;
                             String wo = stroff.substring(0, 11);
                             String[] weeks = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
                             Calendar cal = Calendar.getInstance();
@@ -512,6 +510,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                                 week_index = 0;
                             }
                             String xingqi = weeks[week_index];
+                            wo = wo + " " + xingqi;
                             attendance.setAttendancetim(wo);
                             attendance.setOffhours(off);
                         }
@@ -519,17 +518,39 @@ public class AttendancesServiceImpl implements AttendancesService {
                             long strepoch = data.getCheckindata().get(k).getCheckin_time();
                             Date datestrepoch = new Date(strepoch * 1000);
                             String strworking = df.format(datestrepoch);
+
+                            String[] weeks = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(datestrepoch);
+                            int week_index = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                            if (week_index < 0) {
+                                week_index = 0;
+                            }
+                            String xingqi = weeks[week_index];
                             //上班打卡时间
                             String working = strworking.substring(11);
-                            String workdate = working;
                             String wo = strworking.substring(0, 11);
+                            wo = wo + " " + xingqi;
                             attendance.setAttendancetim(wo);
                             attendance.setWorkinghours(working);
                         }
+                        //mongodb
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("userinfo.ewechatid").is(data.getCheckindata().get(k).getUserid()));
+                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        //姓名
+                        if (customerInfo == null) {
+                            //attendance.setNames(customerInfo.getUserinfo().getCustomername());
+                        } else {
+                            attendance.setNames(customerInfo.getUserid());
+                            attendance.setJobnum(customerInfo.getUserinfo().getJobnumber());
+                            attendance.setStatus("0");
+                            
+                        }
                     }
+
                 }
                 //打卡日期
-
                 attendance.setAttendance_id(UUID.randomUUID().toString());
                 attendanceMapper.insert(attendance);
             }

@@ -27,7 +27,7 @@
 
     <select id="getNowMonYC" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         SELECT aaa.* from (
-        SELECT *,left(ATTENDANCETIM,8) FROM `attendance`
+        SELECT *,left(ATTENDANCETIM,10) FROM `attendance`
         where (
         STR_TO_DATE(WORKINGHOURS,'%H:%i') &gt; STR_TO_DATE('08:30','%H:%i')
         or
@@ -37,7 +37,7 @@
         (
         right(ATTENDANCETIM,3) = #{Mon} or right(ATTENDANCETIM,3) = #{Tus} or right(ATTENDANCETIM,3) = #{Wed} or right(ATTENDANCETIM,3) = #{Thu}
         or right(ATTENDANCETIM,3) = #{Fri} or
-        left(ATTENDANCETIM,8) in (SELECT right(WORKINGDATE,8) from workingday where type=4)
+        left(ATTENDANCETIM,10) in (SELECT right(WORKINGDATE,8) from workingday where type=4)
         )
         ) as aaa
         where aaa.attendancetim LIKE #{attendancetim}"%"

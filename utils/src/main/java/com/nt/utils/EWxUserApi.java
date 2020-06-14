@@ -39,6 +39,9 @@ public class EWxUserApi {
         String responseContent = null;
         try {
             String accessToken = WxBaseApi.getAccessToken(corpid, corpsecret);
+
+            String EWECHAT_SERVICE_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + corpid + "&corpsecret=" + corpsecret;
+
             String requestUrl = String.format(EWECHAT_SERVICE_ACCESS_TOKEN, accessToken);
 
             responseContent = WxHttpUtils.httpsRequest(requestUrl, "GET");
@@ -71,13 +74,14 @@ public class EWxUserApi {
         jsob.put("opencheckindatatype", openCheckInDataType);
         jsob.put("starttime", startTime);
         jsob.put("endtime", endTime);
-        jsob.put("useridlist", new String[]{"409a81d084aa2ebb7671684177e45342", "YangShuBo" , "lifeline"});
-//        jsob.put("useridlist", userIdList);
+//        jsob.put("useridlist", new String[]{"409a81d084aa2ebb7671684177e45342", "YangShuBo", "lifeline"});
+        jsob.put("useridlist", userIdList);
         String json = JSON.toJSONString(jsob);
 
         try {
 //            String accessToken = WxBaseApi.getAccessToken(access_Token, openCheckInDataType);
-            String requestUrl = String.format(EWECHAT_SERVICE_CHECKINDATA, access_Token);
+            String SERVICE_CHECKINDATA = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=" + access_Token;
+            String requestUrl = String.format(SERVICE_CHECKINDATA, access_Token);
             responseContent = WxHttpUtils.httpsRequestWithJson(requestUrl, "POST", json);
             if (logger.isInfoEnabled()) {
                 logger.info("获取打卡数据返回信息：" + responseContent);
