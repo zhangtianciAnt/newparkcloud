@@ -12,6 +12,8 @@ import com.nt.utils.dao.EWxBaseResponse;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/attendance")
-
+@EnableScheduling
 public class AOCHUAN6004Controller {
 
     @Autowired
@@ -110,12 +112,13 @@ public class AOCHUAN6004Controller {
     }
 
     //自动获取企业微信打卡记录
+    @Scheduled( cron="* * 21 * * ?")
     @RequestMapping(value = "/getautocheckindata", method = {RequestMethod.GET})
     public ApiResult getAutoCheckInData(String code) throws Exception {
 
         try {
-            String corpid = "ww5c49fd2e4bbc6981";
-            String corpSecret = "kQQjJMqhxYk9OmzPRXtwl0JsGRDS2pNx9erhv2Vw8";
+            String corpid = "ww52676ba41e44fb89";
+            String corpSecret = "CP6colO-9OR5HRGZt7IAEzN5xYQH09H7yiuNvMextNE";
             EWeixinOauth2Token eweixinOauth = EWxUserApi.getWeChatOauth2Token(corpid, corpSecret);
             if (eweixinOauth != null && eweixinOauth.getErrcode() == 0) {
                 String token = eweixinOauth.getAccess_token();
@@ -132,7 +135,7 @@ public class AOCHUAN6004Controller {
                 long endTime = endDatDateFormat.getTime() / 1000;
                 String[] strList = new String[userIdList.size()];
                 for (int i = 0; i < userIdList.size(); i++) {
-                    strList[i] = userIdList.get(i).getUserinfo().getJobnumber();
+                    strList[i] = userIdList.get(i).getUserinfo().getEwechatid();
                 }
                 EWxBaseResponse jsob = new EWxBaseResponse();
                 jsob = EWxUserApi.inData(access_token, 1, startTime, endTime, strList);
