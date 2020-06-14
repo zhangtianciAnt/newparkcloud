@@ -112,7 +112,7 @@ public class AOCHUAN6004Controller {
     }
 
     //自动获取企业微信打卡记录
-    @Scheduled( cron="* * 21 * * ?")
+//    @Scheduled( cron="* * 21 * * ?")
     @RequestMapping(value = "/getautocheckindata", method = {RequestMethod.GET})
     public ApiResult getAutoCheckInData(String code) throws Exception {
 
@@ -138,7 +138,7 @@ public class AOCHUAN6004Controller {
                     strList[i] = userIdList.get(i).getUserinfo().getEwechatid();
                 }
                 EWxBaseResponse jsob = new EWxBaseResponse();
-                jsob = EWxUserApi.inData(access_token, 1, startTime, endTime, strList);
+                jsob = EWxUserApi.inData(access_token, 1, 1591916460, 1591974060, strList);
                 return ApiResult.success(attendanceService.getCheckInData(jsob));
 //              return ApiResult.success(ewechatService.ewxLogin(access_token));
             } else {

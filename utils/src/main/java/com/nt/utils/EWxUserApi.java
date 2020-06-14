@@ -90,7 +90,6 @@ public class EWxUserApi {
                 Exception e) {
             logger.error("获取打卡数据调用失败：", e);
         }
-//        return EWxBaseResponse.fromJson(responseContent);
         return EWxBaseResponse.fromJson(responseContent);
     }
 

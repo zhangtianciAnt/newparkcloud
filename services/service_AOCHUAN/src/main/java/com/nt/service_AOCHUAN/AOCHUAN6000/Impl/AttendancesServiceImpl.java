@@ -333,10 +333,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 //                    att.setTimtype("3");
                     break;
                 }
-
-
             }
-
         }
         return attendanceList;
     }
@@ -485,6 +482,15 @@ public class AttendancesServiceImpl implements AttendancesService {
     public List<Attendance> getCheckInData(EWxBaseResponse data) throws Exception {
 
         try {
+
+            //删除之前同步的信息
+            Attendance attendancedel = new Attendance();
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String strDateFormat = dateFormat.format(date);
+            attendanceMapper.getStatus("2020-06-12");
+            attendanceMapper.getdel("1");
+
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             HashSet<String> set = new HashSet<>();
             for (EWxCheckData eWxCheckData :
@@ -510,7 +516,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                                 week_index = 0;
                             }
                             String xingqi = weeks[week_index];
-                            wo = wo + " " + xingqi;
+                            wo = wo + "" + xingqi;
                             attendance.setAttendancetim(wo);
                             attendance.setOffhours(off);
                         }
@@ -518,7 +524,6 @@ public class AttendancesServiceImpl implements AttendancesService {
                             long strepoch = data.getCheckindata().get(k).getCheckin_time();
                             Date datestrepoch = new Date(strepoch * 1000);
                             String strworking = df.format(datestrepoch);
-
                             String[] weeks = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
                             Calendar cal = Calendar.getInstance();
                             cal.setTime(datestrepoch);
@@ -530,7 +535,7 @@ public class AttendancesServiceImpl implements AttendancesService {
                             //上班打卡时间
                             String working = strworking.substring(11);
                             String wo = strworking.substring(0, 11);
-                            wo = wo + " " + xingqi;
+                            wo = wo + "" + xingqi;
                             attendance.setAttendancetim(wo);
                             attendance.setWorkinghours(working);
                         }
@@ -540,55 +545,23 @@ public class AttendancesServiceImpl implements AttendancesService {
                         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                         //姓名
                         if (customerInfo == null) {
-                            //attendance.setNames(customerInfo.getUserinfo().getCustomername());
                         } else {
                             attendance.setNames(customerInfo.getUserid());
                             attendance.setJobnum(customerInfo.getUserinfo().getJobnumber());
                             attendance.setStatus("0");
-                            
                         }
                     }
-
                 }
                 //打卡日期
                 attendance.setAttendance_id(UUID.randomUUID().toString());
                 attendanceMapper.insert(attendance);
             }
-            //            for (int j = 0; j < data.getCheckindata().size(); j++) {
 
-//
-////                query.addCriteria(Criteria.where("userinfo.ewechat").is(data.getCheckindata().get(j).getUserid()));
-////                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//
-//                if (!"上班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
-//                    long endepoch = data.getCheckindata().get(j).getCheckin_time();
-//                    Date dateendepoch = new Date(endepoch*1000);
-//                    String stroff = df.format(dateendepoch);
-//                    //下班打卡时间
-//                    String off = stroff.substring(11);
-//                    attendance.setOffhours(off);
-//                }
-//                if (!"下班打卡".equals(data.getCheckindata().get(j).getCheckin_type())) {
-//                    long strepoch = data.getCheckindata().get(j).getCheckin_time();
-//                    Date datestrepoch = new Date(strepoch*1000);
-//                    String strworking = df.format(datestrepoch);
-//                    //上班打卡时间
-//                    String working = strworking.substring(11);
-////                    attendance.setAttendancetim(list.get(j).get(6).toString());
-//                    attendance.setWorkinghours(working);
-//                }
-//            }
-
-            //打卡日期
-//            attendance.setAttendancetim(list.get(j).get(6).toString());
-//            attendance.setAttendance_id(UUID.randomUUID().toString());
-//            attendanceMapper.insert(attendance);
             return null;
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
-
 
     @Override
     public List<Attendance> getByUserId(String userId) throws Exception {
