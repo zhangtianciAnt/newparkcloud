@@ -9,7 +9,7 @@
         and names = #{id}
 	</select>
 
-<!--考勤异常数据-->
+    <!--考勤异常数据-->
     <select id="getYICHANG" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         SELECT *,left(ATTENDANCETIM,8) FROM `attendance`
         where (
@@ -27,7 +27,7 @@
 
     <select id="getNowMonYC" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         SELECT aaa.* from (
-        SELECT *,left(ATTENDANCETIM,8) FROM `attendance`
+        SELECT *,left(ATTENDANCETIM,10) FROM `attendance`
         where (
         STR_TO_DATE(WORKINGHOURS,'%H:%i') &gt; STR_TO_DATE('08:30','%H:%i')
         or
@@ -37,7 +37,7 @@
         (
         right(ATTENDANCETIM,3) = #{Mon} or right(ATTENDANCETIM,3) = #{Tus} or right(ATTENDANCETIM,3) = #{Wed} or right(ATTENDANCETIM,3) = #{Thu}
         or right(ATTENDANCETIM,3) = #{Fri} or
-        left(ATTENDANCETIM,8) in (SELECT right(WORKINGDATE,8) from workingday where type=4)
+        left(ATTENDANCETIM,10) in (SELECT right(WORKINGDATE,8) from workingday where type=4)
         )
         ) as aaa
         where aaa.attendancetim LIKE #{attendancetim}"%"
@@ -52,4 +52,28 @@
 		having names = #{id}
 		order by attendancetim desc
 	</select>
+
+    <!--    判断是否有今天考勤数据-->
+    <!--    <select id="getByUserId" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">-->
+    <!--        select *-->
+    <!--        from attendance-->
+    <!--        where attendancetim LIKE #{nowMons}"%" or attendancetim LIKE #{lastMons}"%"-->
+    <!--		having names = #{id}-->
+    <!--		order by attendancetim desc-->
+    <!--	</select>-->
+
+    <!--    删除-->
+    <select id="getStatus" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
+        update attendance
+        SET STATUS = '1',
+        MODIFYON = now()
+        where left(ATTENDANCETIM,10) = #{attendancetim}
+	</select>
+
+    <!--    删除-->
+    <select id="getdel" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
+       DELETE  FROM attendance
+       where `STATUS` = '1'
+	</select>
+
 </mapper>

@@ -103,12 +103,9 @@ public class EWachatServiceImpl implements EWechatService {
     @Override
     public List<CustomerInfo> useridList() throws Exception {
         //mongodb
-        CustomerInfo customerInfo = new CustomerInfo();
         Query query = new Query();
-//      query.addCriteria(Criteria.where("userinfo.ewchatid").is(customerInfo.getUserinfo().getEwechatid()));
-        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
-        query.fields().include("userinfo.jobnumber");
-//        query.addCriteria(Criteria.where("userinfo.jobnumber").is(customerInfo.getUserinfo().getJobnumber()));
+        query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL).andOperator(Criteria.where("userinfo.mobilenumber").ne("15900000000")));
+        query.fields().include("userinfo.ewechatid");
         List<CustomerInfo> customerInfolist = mongoTemplate.find(query, CustomerInfo.class);
         return customerInfolist;
     }
