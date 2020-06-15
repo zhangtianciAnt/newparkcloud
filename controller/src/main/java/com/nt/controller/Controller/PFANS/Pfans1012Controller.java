@@ -204,6 +204,7 @@ public class Pfans1012Controller {
         String wfList2 = "";
         String wfList3 = "";
         String wfList4 = "";
+        String wfList7 = "";
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
@@ -236,6 +237,17 @@ public class Pfans1012Controller {
                 wfList4 = customerInfo.getUserinfo().getCustomername();
                 wfList4 = sign.startGraphics2D(wfList4);
             }
+            //ADD-WS-6/12-禅道105
+            query = new Query();
+            if (wfList.size()>4){
+                query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList7 = customerInfo.getUserinfo().getCustomername();
+                    wfList7 = sign.startGraphics2D(wfList7);
+                }
+            }
+            //ADD-WS-6/12-禅道105
         }
 
 
@@ -265,6 +277,7 @@ public class Pfans1012Controller {
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
         data.put("wfList4", wfList4);
+        data.put("wfList7", wfList7);
         data.put("userim", userim);
         data.put("taa", taa);
         data.put("trr", trr);
