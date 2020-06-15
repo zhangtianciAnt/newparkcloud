@@ -905,7 +905,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     {
                                         case 0:
                                             String name = Convert.toStr(value.get(0));
-                                            expatriatesinforList.get(0).setExpname(Convert.toStr(value.get(0)));
+
                                             if(name != null && name.trim().length() > 36)
                                             {
                                                 throw new LogicalException("卡号（"+ Convert.toStr(value.get(12)) +"）"  + "对应的 姓名 长度超长，最大长度为36");
@@ -913,6 +913,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             if(!(name.equals(expatriatesinforList.get(0).getExpname())))
                                             {
                                                 Expatriatesinfor expatriatesinforName = new Expatriatesinfor();
+                                                expatriatesinforList.get(0).setExpname(Convert.toStr(value.get(0)));
                                                 expatriatesinforName.setExpname(expatriatesinforList.get(0).getExpname().trim());
                                                 List<Expatriatesinfor> inforList = new ArrayList<Expatriatesinfor>();
                                                 inforList = expatriatesinforMapper.select(expatriatesinforName);
@@ -973,7 +974,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             }
                                             break;
                                         case 5:
-                                            expatriatesinfor.setContactinformation(Convert.toStr(value.get(5)));
+                                            expatriatesinforList.get(0).setContactinformation(Convert.toStr(value.get(5)));
                                             break;
                                         case 6:
                                             String graduation_year = Convert.toStr(value.get(6));
@@ -1111,7 +1112,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
-                                                    expatriatesinfor.setResult(dictionaryList.get(0).getCode());
+                                                    expatriatesinforList.get(0).setResult(dictionaryList.get(0).getCode());
                                                 }
                                             }
                                             break;
@@ -1126,7 +1127,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                                 if(dictionaryList.size()>0)
                                                 {
-                                                    expatriatesinfor.setWhetherentry(dictionaryList.get(0).getCode());
+                                                    expatriatesinforList.get(0).setWhetherentry(dictionaryList.get(0).getCode());
                                                 }
                                             }
                                             break;
@@ -1254,7 +1255,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             }
                                             break;
                                         case 27:
-                                            expatriatesinfor.setRemarks(Convert.toStr(value.get(27)));
+                                            expatriatesinforList.get(0).setRemarks(Convert.toStr(value.get(27)));
                                             break;
                                     }
                                 }
@@ -1265,7 +1266,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             {
                                 //ccm add
                                 ExpatriatesinforDetail e = new ExpatriatesinforDetail();
-                                e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                                e.setExpatriatesinfor_id(expatriatesinforList.get(0).getExpatriatesinfor_id());
                                 List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
                                 expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
                                 if(expatriatesinforDetails.size() == 0)
@@ -1273,9 +1274,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     //登录新的履历
                                     ExpatriatesinforDetail e1 = new ExpatriatesinforDetail();
                                     e1.preInsert(tokenModel);
-                                    e1.setGroup_id(expatriatesinfor.getGroup_id());
+                                    e1.setGroup_id(expatriatesinforList.get(0).getGroup_id());
                                     e1.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
-                                    e1.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                                    e1.setExpatriatesinfor_id(expatriatesinforList.get(0).getExpatriatesinfor_id());
                                     e1.setExdatestr(new Date());
                                     expatriatesinforDetailMapper.insert(e1);
                                 }
@@ -1285,7 +1286,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     {
                                         if(expDetail.getExdateend() ==null)
                                         {
-                                            if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
+                                            if(!expDetail.getGroup_id().equals(expatriatesinforList.get(0).getGroup_id()))
                                             {
                                                 //更新结束时间
                                                 expDetail.setExdateend(new Date());
@@ -1295,7 +1296,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 //登录新的履历
                                                 ExpatriatesinforDetail e2 = new ExpatriatesinforDetail();
                                                 e2.preInsert(tokenModel);
-                                                e2.setGroup_id(expatriatesinfor.getGroup_id());
+                                                e2.setGroup_id(expatriatesinforList.get(0).getGroup_id());
                                                 e2.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
                                                 e2.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
                                                 e2.setExdatestr(new Date());
