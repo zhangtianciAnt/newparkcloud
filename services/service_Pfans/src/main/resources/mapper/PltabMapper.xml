@@ -67,27 +67,26 @@
                               ) as d
                                   left join publicexpense p on 1 = 1
                                   left join (
-                                 select rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 select rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
                                  from trafficdetails
                                  union all
-                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
                                  from purchasedetails
                                  union all
-                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
                                  from otherdetails
                              ) tao
                                             on p.PUBLICEXPENSE_ID = tao.PUBLICEXPENSE_ID
                                                 and tao.PLSUMMARY = d.CODE
                                                 and tao.DEPARTMENTNAME = #{groupid}
                                                 and tao.SUBJECTNUMBER not in ('1099-A1-0000', '0504-00-0000')
+                                                and tao.ACCOUNTCODE not in ('PJ116008','PJ121012','PJ130010','PJ134013')
                                   inner join companyprojects cp
                                              on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
                                                  and cp.GROUP_ID = #{groupid}
                                                  and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
-                         where year (p.MODIFYON
-                         )
-                         =
-                         #{year}
+                         where year (p.MODIFYON)=#{year}
+                         AND p.MODULEID !='PJ002002'
                         AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(cp.STARTDATE,'%Y%m') AND DATE_FORMAT(cp.ENDDATE,'%Y%m')
                          and
                          month
