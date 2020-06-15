@@ -19,6 +19,7 @@ import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
 import com.nt.utils.services.TokenService;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -1022,9 +1023,11 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+
                 //入社时间
-                if (item.get("入社时间") != null) {
-                    userinfo.setEnterday(item.get("入社时间").toString());
+                if (item.get("入社时间") != null && item.get("入社时间").toString().length() >= 10) {
+                    String enterday = item.get("入社时间").toString().substring(0, 10).replace("-", "/");
+                    userinfo.setEnterday(enterday);
                 }
                 //职务
                 if (item.get("职务") != null) {
@@ -1570,9 +1573,9 @@ public class UserServiceImpl implements UserService {
 //                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或者有空格！");
 //                    }
                     }
-
-                    if (item.get("入社时间●") != null) {
-                        customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(item.get("入社时间●")));
+                    if (item.get("入社时间●") != null && item.get("入社时间●").toString().length() >= 10) {
+                        String enterday = item.get("入社时间●").toString().substring(0, 10).replace("-", "/");
+                        customerInfoList.get(0).getUserinfo().setEnterday(enterday);
                     }
                     if (item.get("职务●") != null) {
                         String post = item.get("职务●").toString();
