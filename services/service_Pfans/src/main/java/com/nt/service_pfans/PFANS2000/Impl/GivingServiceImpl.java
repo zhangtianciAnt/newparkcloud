@@ -9,6 +9,7 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -379,6 +380,8 @@ public class GivingServiceImpl implements GivingService {
                         }
                         otherOne.setType("2");
                     }
+                    otherOne.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                    otherOne.setCreateon(new Date());
                     otherOnes.add(otherOne);
                 }
 
