@@ -330,15 +330,25 @@ public class Pfans1012Controller {
         data.put("tra", pubvo.getTrafficdetails());
         data.put("pur", pubvo.getPurchasedetails());
         data.put("otd", pubvo.getOtherdetails());
-        if (pubvo.getTrafficdetails().size() > 0) {
-            ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
-        } else {
-            ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+        BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
+        if(bd.intValue()>=20000){
+            if (pubvo.getTrafficdetails().size() > 0) {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu.xls", data, response);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu_other.xls", data, response);
+            }
+        }else{
+            if (pubvo.getTrafficdetails().size() > 0) {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+            }
         }
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
         FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
 
