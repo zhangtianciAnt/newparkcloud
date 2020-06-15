@@ -127,7 +127,7 @@ public class AOCHUAN6004Controller {
                 Date date = new Date();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String strDateFormat = dateFormat.format(date);
-                String startStrDateFormat = strDateFormat + " " + "08:01:01";
+                String startStrDateFormat = strDateFormat + " " + "06:00:01";
                 String endStrDateFormat = strDateFormat + " " + "23:59:59";
                 Date startDatDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startStrDateFormat);
                 Date endDatDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endStrDateFormat);
@@ -138,8 +138,9 @@ public class AOCHUAN6004Controller {
                     strList[i] = userIdList.get(i).getUserinfo().getEwechatid();
                 }
                 EWxBaseResponse jsob = new EWxBaseResponse();
-                jsob = EWxUserApi.inData(access_token, 1, 1591916460, 1591974060, strList);
-                return ApiResult.success(attendanceService.getCheckInData(jsob));
+                jsob = EWxUserApi.inData(access_token, 1, startTime, endTime, strList);
+                attendanceService.getCheckInData(jsob);
+                return ApiResult.success("dasdasdsa");
 //              return ApiResult.success(ewechatService.ewxLogin(access_token));
             } else {
                 return ApiResult.fail("获取企业微信access_token失败");
