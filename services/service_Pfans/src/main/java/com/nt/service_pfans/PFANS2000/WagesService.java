@@ -28,6 +28,10 @@ public interface WagesService {
 
     int insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception;
 
+    List<Wages> getWagesdepartment(String dates) throws Exception;
+
+    List<Wages> getWagecompany() throws Exception;
+
 }
 
 
