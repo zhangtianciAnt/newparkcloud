@@ -227,4 +227,11 @@ public class Purchase  extends BaseModel {
     @Column(name = "PURNUMBERS")
     private String purnumbers;
     //add-ws-4/28-采购编号添加
+//add-ws-6/16-禅道137
+    /**
+     * 项目id
+     */
+    @Column(name = "PROJECT_ID")
+    private String project_id;
+//add-ws-6/16-禅道137
 }

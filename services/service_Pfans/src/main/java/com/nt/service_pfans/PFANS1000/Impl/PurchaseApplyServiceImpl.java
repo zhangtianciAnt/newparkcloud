@@ -96,7 +96,7 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         if(purchaseApplylist.size()>0){
             for(PurchaseApply purchase :purchaseApplylist){
                 if(purchase.getPurchasenumbers()!="" && purchase.getPurchasenumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purchase.getPurchasenumbers(), 2,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purchase.getPurchasenumbers(), 2,10));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }

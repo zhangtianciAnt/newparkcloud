@@ -55,7 +55,7 @@ public class CommunicationServiceImpl implements CommunicationService {
         if(companyProjectslist.size()>0){
             for(Communication communi :companyProjectslist){
                 if(communi.getNumbercation()!="" && communi.getNumbercation()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(communi.getNumbercation(), 3,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(communi.getNumbercation(), 3,11));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
