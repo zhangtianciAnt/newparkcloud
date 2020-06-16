@@ -167,4 +167,12 @@ public class PublicExpense extends BaseModel {
     private String exportcsv;
 
     //add_fjl --希望付款日
+
+
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
+
 }
