@@ -62,9 +62,9 @@ public class AssetsServiceImpl implements AssetsService {
         Assets assets = new Assets();
         assets.setRfidcd(code);
         List<Assets> rst = assetsMapper.select(assets);
-        if(rst.size() > 0){
+        if (rst.size() > 0) {
             return rst.get(0);
-        }else{
+        } else {
             return new Assets();
         }
     }
@@ -74,14 +74,14 @@ public class AssetsServiceImpl implements AssetsService {
         Inventoryplan cond = new Inventoryplan();
         cond.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Inventoryplan> list = inventoryplanMapper.select(cond);
-        for (Inventoryplan item:
-                list ) {
-            if(item.getInventorycycle().split("~").length > 1){
+        for (Inventoryplan item :
+                list) {
+            if (item.getInventorycycle().split("~").length > 1) {
 
                 String st = item.getInventorycycle().split("~")[0].trim();
                 String ed = item.getInventorycycle().split("~")[1].trim();
                 String now = DateUtil.today();
-                if(st.compareTo(now) <= 0 && now.compareTo(ed) <= 0){
+                if (st.compareTo(now) <= 0 && now.compareTo(ed) <= 0) {
                     InventoryResults condition = new InventoryResults();
                     condition.setInventoryplan_id(item.getInventoryplan_id());
                     condition.setRfidcd(code);
@@ -136,16 +136,16 @@ public class AssetsServiceImpl implements AssetsService {
         assetsMapper.insert(assets);
     }
 
-    private void checkBarCode(Assets assets)throws Exception{
+    private void checkBarCode(Assets assets) throws Exception {
 
-        if(StrUtil.isNotBlank(assets.getBarcode())){
+        if (StrUtil.isNotBlank(assets.getBarcode())) {
             Assets conditon = new Assets();
             conditon.setBarcode(assets.getBarcode());
             List<Assets> rst = assetsMapper.select(conditon);
-            if(rst.size() > 0){
-                for(Assets item:rst){
-                    if(!"PA003002".equals(assets.getAssetstatus())){
-                        if(!item.getAssets_id().equals(assets.getAssets_id())){
+            if (rst.size() > 0) {
+                for (Assets item : rst) {
+                    if (!"PA003002".equals(assets.getAssetstatus())) {
+                        if (!item.getAssets_id().equals(assets.getAssets_id())) {
                             throw new LogicalException("资产编号重复！");
                         }
                     }
@@ -155,10 +155,11 @@ public class AssetsServiceImpl implements AssetsService {
 
     }
 
-    private String getBarCode(Assets assets){
-        String barCode = assetsMapper.getMaxCode(assets.getTypeassets(),assets.getBartype());
+    private String getBarCode(Assets assets) {
+        String barCode = assetsMapper.getMaxCode(assets.getTypeassets(), assets.getBartype());
         return barCode;
     }
+
     @Override
     public void insertLosts(AssetsVo assetsVo, TokenModel tokenModel) throws Exception {
 
@@ -200,20 +201,20 @@ public class AssetsServiceImpl implements AssetsService {
 
             List<Object> header = list.get(0);
             int typeLength = header.size();
-            if ( typeLength == qitazican.length ) {
-                for ( int i = 0; i<typeLength; i++ ) {
+            if (typeLength == qitazican.length) {
+                for (int i = 0; i < typeLength; i++) {
                     if (!header.get(i).toString().trim().equals(qitazican[i])) {
                         throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + qitazican[i]);
                     }
                 }
-            } else if ( typeLength == gudingzichan.length ) {
-                for ( int i = 0; i<typeLength; i++ ) {
+            } else if (typeLength == gudingzichan.length) {
+                for (int i = 0; i < typeLength; i++) {
                     if (!header.get(i).toString().trim().equals(gudingzichan[i])) {
                         throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + gudingzichan[i]);
                     }
                 }
             } else if (typeLength == jieruzichan.length) {
-                for ( int i = 0; i<typeLength; i++ ) {
+                for (int i = 0; i < typeLength; i++) {
                     if (!header.get(i).toString().trim().equals(jieruzichan[i])) {
                         throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + jieruzichan[i]);
                     }
@@ -428,16 +429,16 @@ public class AssetsServiceImpl implements AssetsService {
                     assets.setFilename(trim(value.get(0)));
                     List<Dictionary> dicIds = new ArrayList<Dictionary>();
                     // 资产类型
-                    if(!StringUtils.isEmpty(trim(value.get(1)))){
+                    if (!StringUtils.isEmpty(trim(value.get(1)))) {
                         String tValue = trim(value.get(1));
-                        if ( PA001Map.containsKey(tValue) ) {
+                        if (PA001Map.containsKey(tValue)) {
                             assets.setTypeassets(PA001Map.get(tValue));
                         } else {
                             error++;
                             Result.add("模板第" + lineNo + "行的资产类型没有找到，导入失败");
                             continue;
                         }
-                    }else {
+                    } else {
                         error++;
                         Result.add("模板第" + lineNo + "行的资产类型不能为空，导入失败");
                         continue;
@@ -445,7 +446,7 @@ public class AssetsServiceImpl implements AssetsService {
 
                     // 工号
                     // todo 用户信息未导入，此段先注掉
-                    if(!StringUtils.isEmpty(trim(value.get(2)))){
+                    if (!StringUtils.isEmpty(trim(value.get(2)))) {
                         CustomerInfo customerInfo = this.getCustomerInfoname(value.get(2).toString());
                         if (customerInfo != null) {
                             assets.setPrincipal(customerInfo.getUserid());
@@ -459,9 +460,9 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     // 条码类型
-                    if(!StringUtils.isEmpty(trim(value.get(4)))){
+                    if (!StringUtils.isEmpty(trim(value.get(4)))) {
                         String tValue = trim(value.get(4));
-                        if ( PA004Map.containsKey(tValue) ) {
+                        if (PA004Map.containsKey(tValue)) {
                             assets.setBartype(PA004Map.get(tValue));
                         } else {
                             error++;
@@ -476,9 +477,9 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     // 资产状态
-                    if(!StringUtils.isEmpty(trim(value.get(5)))){
+                    if (!StringUtils.isEmpty(trim(value.get(5)))) {
                         String tValue = trim(value.get(5));
-                        if ( PA003Map.containsKey(tValue) ) {
+                        if (PA003Map.containsKey(tValue)) {
                             assets.setAssetstatus(PA003Map.get(tValue));
                         } else {
                             error++;
@@ -489,9 +490,9 @@ public class AssetsServiceImpl implements AssetsService {
                     }
 
                     // 在库状态
-                    if(!StringUtils.isEmpty(trim(value.get(6)))){
+                    if (!StringUtils.isEmpty(trim(value.get(6)))) {
                         String tValue = trim(value.get(6));
-                        if ( PA002Map.containsKey(tValue) ) {
+                        if (PA002Map.containsKey(tValue)) {
                             assets.setStockstatus(PA002Map.get(tValue));
                         } else {
                             error++;
@@ -506,23 +507,23 @@ public class AssetsServiceImpl implements AssetsService {
                     boolean hasErr = false;
                     if (value.size() > 1) {
                         int[] dateCols = {11, 12, 20, 23, 27, 33, 37};
-                        for ( int col : dateCols ) {
+                        for (int col : dateCols) {
                             int dateCheck = isDate(trim(value.get(col)));
-                            if ( dateCheck != 0 ) {
+                            if (dateCheck != 0) {
                                 error = error + 1;
                                 Result.add(getDateErrMsg(dateCheck, lineNo));
                                 hasErr = true;
                                 break;
                             }
                         }
-                        if ( hasErr ) {
+                        if (hasErr) {
                             continue;
                         }
                     }
 
 
                     // 輸出部門担当者, 現場担当者, 現場実施者, 現場担当者, 輸出部門担当者, 現場TL, 輸出部門TL
-                    // todo 用户信息未导入，此段先注掉
+//                    // todo 用户信息未导入，此段先注掉
                     int[] customerCols = {19, 22, 26, 31, 32, 35, 36};
                     for (int customerCol : customerCols) {
                         String val = trim(value.get(customerCol));
@@ -530,7 +531,23 @@ public class AssetsServiceImpl implements AssetsService {
                             CustomerInfo info = this.getCustomerInfoname(val);
                             if (info == null) {
                                 error = error + 1;
-                                Result.add("模板第" + lineNo + "行的姓名字段没有找到，请输入正确的姓名，导入失败");
+                                //add-ws-6/16-禅道任务137
+                                if (customerCol == 19) {
+                                    Result.add("模板第" + lineNo + "行的輸出部門担当者字段没有找到，请输入正确的輸出部門担当者，导入失败");
+                                } else if (customerCol == 22) {
+                                    Result.add("模板第" + lineNo + "行的現場担当者字段没有找到，请输入正确的現場担当者，导入失败");
+                                } else if (customerCol == 26) {
+                                    Result.add("模板第" + lineNo + "行的現場実施者字段没有找到，请输入正确的現場実施者，导入失败");
+                                } else if (customerCol == 31) {
+                                    Result.add("模板第" + lineNo + "行的現場担当者字段没有找到，请输入正确的現場担当者，导入失败");
+                                } else if (customerCol == 32) {
+                                    Result.add("模板第" + lineNo + "行的輸出部門担当者字段没有找到，请输入正确的輸出部門担当者，导入失败");
+                                } else if (customerCol == 35) {
+                                    Result.add("模板第" + lineNo + "行的現場TL字段没有找到，请输入正确的現場TL，导入失败");
+                                } else if (customerCol == 36) {
+                                    Result.add("模板第" + lineNo + "行的輸出部門TL字段没有找到，请输入正确的輸出部門TL，导入失败");
+                                }
+                                //add-ws-6/16-禅道任务137
                                 hasErr = true;
                                 break;
                             } else {
@@ -541,10 +558,9 @@ public class AssetsServiceImpl implements AssetsService {
                     if (hasErr) {
                         continue;
                     }
-
                     // 是否处理 否->0  是->1
                     int[] iTrueCols = {17, 18, 21, 28, 29, 30, 34};
-                    for ( int col : iTrueCols ) {
+                    for (int col : iTrueCols) {
                         value.set(col, convertToOne(value.get(col)));
                     }
 
@@ -560,7 +576,7 @@ public class AssetsServiceImpl implements AssetsService {
                             "inparams1,inparams2,inparams3,inparams4,inparams5,inparams6,inparams7,inparams8") //17- 24
                             .split(",");
                     List<String> qitaList = new ArrayList<String>(Arrays.asList(qitaCols));
-                    for ( int i = 1; i<=14; i++) {
+                    for (int i = 1; i <= 14; i++) {
                         qitaList.add("outparams" + i);
                     }
                     qitaList.add("usedepartment");
@@ -628,19 +644,19 @@ public class AssetsServiceImpl implements AssetsService {
 
     //    add_fjl_05/25  --添加资产编号重复check
     private int isDate(String str) {
-        try{
-            if ( StrUtil.isNotEmpty(str) ) {
+        try {
+            if (StrUtil.isNotEmpty(str)) {
                 String month = str.substring(5, 7);
                 String day = str.substring(8, 10);
-                if ( Integer.parseInt(day) > 31 ) {
+                if (Integer.parseInt(day) > 31) {
                     //"模板第" + lineNo + "行的日期格式错误，请输入正确的日子，导入失败"
                     return 3;
-                } else if ( Integer.parseInt(month) > 12 ) {
+                } else if (Integer.parseInt(month) > 12) {
                     //"模板第" + lineNo + "行的日期格式错误，请输入正确的月份，导入失败"
                     return 2;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return 2;
         }
         return 0;
@@ -648,7 +664,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     private String getDateErrMsg(int errCode, int line) {
         if (errCode == 2) {
-            return "模板第" + line  + "行的日期格式错误，请输入正确的月份，导入失败";
+            return "模板第" + line + "行的日期格式错误，请输入正确的月份，导入失败";
         } else if (errCode == 3) {
             return "模板第" + line + "行的日期格式错误，请输入正确的日子，导入失败";
         } else {
@@ -657,8 +673,9 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
     private static final SimpleDateFormat _SF = new SimpleDateFormat("yyyy-MM-dd");
-    private void setOrderedValues(int start, Object target, String[] cols, List<Object> value) throws Exception{
-        for ( String col : cols ) {
+
+    private void setOrderedValues(int start, Object target, String[] cols, List<Object> value) throws Exception {
+        for (String col : cols) {
             if (value.size() > start) {
                 String val = trim(value.get(start));
                 if (StringUtils.hasText(val)) {
@@ -678,7 +695,7 @@ public class AssetsServiceImpl implements AssetsService {
 
 
     private String trim(Object o) {
-        if ( o==null ) {
+        if (o == null) {
             return null;
         }
         return o.toString().trim();
@@ -699,6 +716,7 @@ public class AssetsServiceImpl implements AssetsService {
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         return customerInfo;
     }
+
     //add-ws-6/11-禅道094
     private CustomerInfo getCustomerInfoname(String customernameIn) {
         Query query = new Query();
@@ -708,14 +726,15 @@ public class AssetsServiceImpl implements AssetsService {
         return customerInfo;
     }
     //add-ws-6/11-禅道094
+
     /**
      * 是否处理 否->0  是->1
+     *
      * @param o
-     * @return
-     *  o==是 || o==1 return 1
+     * @return o==是 || o==1 return 1
      */
     private String convertToOne(Object o) {
-        String s = o!=null ? o.toString().trim() : "";
+        String s = o != null ? o.toString().trim() : "";
         if ("是".equals(s) || "1".equals(s)) {
             return "1";
         }

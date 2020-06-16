@@ -55,7 +55,7 @@ public class CommunicationServiceImpl implements CommunicationService {
         if(companyProjectslist.size()>0){
             for(Communication communi :companyProjectslist){
                 if(communi.getNumbercation()!="" && communi.getNumbercation()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(communi.getNumbercation(), 0,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(communi.getNumbercation(), 3,8));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
@@ -69,7 +69,7 @@ public class CommunicationServiceImpl implements CommunicationService {
         }else{
             no = "001";
         }
-        Numbers = year+ no;
+        Numbers = "JJF"+year+ no;
         communication.setNumbercation(Numbers);
         //add-ws-5/27-No.170
         communication.preInsert(tokenModel);
