@@ -246,8 +246,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 finPurchases) {
             Applicationrecord applicationrecord = new Applicationrecord();
             applicationrecord.setApplicationrecord_id(finPurchase.getApplicationrecord_id());
-            applicationrecord.setRealamount(finPurchase.getRealamount());
-            applicationrecord.setRealdate(finPurchase.getAp_date());
+            applicationrecord.setRealamount(finPurchase.getRealpay());
+            applicationrecord.setPaiddate(new Date());
             applicationrecord.setPaymentstatus("PY011002");
             applicationrecordMapper.updateByPrimaryKeySelective(applicationrecord);
             finPurchase.setAp_date(new Date());
