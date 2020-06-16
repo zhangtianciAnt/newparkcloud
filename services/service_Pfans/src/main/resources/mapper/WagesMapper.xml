@@ -488,15 +488,16 @@
             ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
             ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
             ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
-            ROUND(SUM(otherfour.total),2) as other4,#其他4F/社保大病险
-            ROUND(SUM(otherfive.welfaretotal),2) as other5,#其他5H/福利
+            ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+            ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
             ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
             ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
             ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
             ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
             ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
             ROUND(SUM(realwages),2) as realwages,#实发工资
-            ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+otherfour.total+socialinsurance),2) as shouldcumulative,#社保总计
+            ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+            if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
             ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
             ROUND(SUM(labourunionbase),2) as labourunionbase#工会经费基数
         from wages
@@ -514,7 +515,7 @@
     <select id="getWagecompany" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         select
             wages.CREATEON,#时间
-            count(*) as usercount,#人数
+            count(*) as user_id,#人数
             ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
             ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
             ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
@@ -523,13 +524,14 @@
             ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
             ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
             ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
-            ROUND(SUM(otherfour.total),2) as other4,#其他4F/社保大病险
-            ROUND(SUM(otherfive.welfaretotal),2) as other5,#其他5H/福利
+            ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+            ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
             ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
             ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
             ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
             ROUND(SUM(realwages),2) as realwages,#实发工资
-            ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+otherfour.total+socialinsurance),2) as totalsocialsecurity,#社保总计
+            ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+            if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
             ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
         from wages
         left join otherfour
