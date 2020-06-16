@@ -20,5 +20,6 @@ public interface TransportGoodMapper extends MyMapper<TransportGood> {
 
     @Select("select * from transportgood where DATE_FORMAT(deliverytime,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d');\n")
     public List<TransportGood> deliveryTime();
-
+    //获取走货列表
+    List<TransportGood> getTransportGoodList() throws Exception;
 }

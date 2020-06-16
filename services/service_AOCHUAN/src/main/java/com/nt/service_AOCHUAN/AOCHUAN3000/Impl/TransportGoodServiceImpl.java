@@ -58,8 +58,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public List<TransportGood> get(TransportGood transportGood) throws Exception {
-        return transportGoodMapper.select(transportGood);
-
+//        return transportGoodMapper.select(transportGood);
+        return transportGoodMapper.getTransportGoodList();
     }
 
     @Override

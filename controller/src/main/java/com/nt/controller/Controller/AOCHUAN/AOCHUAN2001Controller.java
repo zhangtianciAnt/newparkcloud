@@ -34,10 +34,7 @@ public class AOCHUAN2001Controller {
     private String baseinfoId;
     @RequestMapping(value = "/get",method={RequestMethod.GET})
     public ApiResult get(HttpServletRequest request)throws Exception{
-        TokenModel tokenModel = tokenService.getToken(request);
-        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
-        customerbaseinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(customerbaseinforService.get(customerbaseinfor));
+        return ApiResult.success(customerbaseinforService.get());
     }
 
     @RequestMapping(value = "/getLinkman",method={RequestMethod.GET})
