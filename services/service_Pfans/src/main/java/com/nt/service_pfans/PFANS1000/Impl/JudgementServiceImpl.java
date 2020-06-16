@@ -100,7 +100,7 @@ public class JudgementServiceImpl implements JudgementService {
         if(judgementlist.size()>0){
             for(Judgement judge :judgementlist){
                 if(judge.getJudgnumbers()!="" && judge.getJudgnumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 0,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 2,8));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
@@ -115,9 +115,13 @@ public class JudgementServiceImpl implements JudgementService {
         }else{
             no = "001";
         }
-        Numbers = year+ no;
-        //add-ws-根据当前年月日从001开始增加决裁编号
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
+        if(judgement.getEquipment().equals("1")){
+            Numbers = "WC"+year+ no;
+        }else{
+            Numbers = "JC"+year+ no;
+        }
+        //add-ws-根据当前年月日从001开始增加决裁编号
         judgement.preInsert(tokenModel);
         judgement.setJudgementid(judgementid);
         judgement.setJudgnumbers(Numbers);

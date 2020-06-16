@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,7 @@ public class Pfans1012Controller {
 
     @Autowired
     private LoanApplicationService loanapplicationService;
+
 
     @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
     public void exportjs(String publicexpenseid, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -205,6 +207,22 @@ public class Pfans1012Controller {
         String wfList3 = "";
         String wfList4 = "";
         String wfList7 = "";
+        //add-ws-禅道103任务2
+        String username = "";
+        if(!pubvo.getPublicexpense().getLoan().equals("")){
+            query = new Query();
+            LoanApplication loanapplication = new LoanApplication();
+            loanapplication.setLoanapplication_id(pubvo.getPublicexpense().getLoan());
+            List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
+            if(list.size()>0){
+                query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    username = customerInfo.getUserinfo().getCustomername();
+                }
+            }
+        }
+        //add-ws-禅道103任务2
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
@@ -317,6 +335,7 @@ public class Pfans1012Controller {
                 pubvo.getTrafficdetails().get(k).setRmb(str_format);
             }
         }
+        data.put("username", username);
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
