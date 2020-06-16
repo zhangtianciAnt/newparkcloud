@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -1193,4 +1194,34 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     }
 
+    //    add_fjl_06/16  -- 添加异常申请每天累计不超过8小时check  start
+    public Double getLeaveNumber(AbNormal abNormal) throws Exception {
+        //List<AbNormal> abNormalList =  abNormalMapper.getLeaveNumber(abNormal.getUser_id());
+        AbNormal ab = new AbNormal();
+        ab.setUser_id(abNormal.getUser_id());
+        List<AbNormal> abNormalList = abNormalMapper.select(ab);
+        SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
+        double retime = 0.0;
+        double time = 0.0;
+        double timeSum = 0.0;
+        if (abNormalList.size() > 0) {
+            for (int a = 0; a < abNormalList.size(); a++) {
+                //实际日期
+                if (Integer.parseInt(abNormalList.get(a).getStatus()) > 4) {
+                    if (st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(st.format(abNormal.getOccurrencedate())) >= 0
+                            && st.format(abNormalList.get(a).getRefinisheddate()).compareTo(st.format(abNormal.getFinisheddate())) <= 0) {
+                        retime += Double.valueOf(abNormalList.get(a).getRelengthtime());
+                    }
+                } else { //预计日期
+                    if (st.format(abNormalList.get(a).getOccurrencedate()).compareTo(st.format(abNormal.getOccurrencedate())) >= 0
+                            && st.format(abNormalList.get(a).getFinisheddate()).compareTo(st.format(abNormal.getFinisheddate())) <= 0) {
+                        time += Double.valueOf(abNormalList.get(a).getLengthtime());
+                    }
+                }
+                timeSum = retime + time;
+            }
+        }
+        return timeSum;
+    }
+    //    add_fjl_06/16  -- 添加异常申请每天累计不超过8小时check  end
 }
