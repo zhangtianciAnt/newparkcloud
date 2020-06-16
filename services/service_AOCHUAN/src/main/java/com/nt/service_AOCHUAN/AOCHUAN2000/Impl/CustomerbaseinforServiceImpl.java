@@ -17,8 +17,8 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
     private CustomerbaseinforMapper customerbaseinforMapper;
 
     @Override
-    public List<Customerbaseinfor> get(Customerbaseinfor customerbaseinfor) throws Exception {
-        return customerbaseinforMapper.select(customerbaseinfor);
+    public List<Customerbaseinfor> get() throws Exception {
+        return customerbaseinforMapper.selectAll();
     }
 
     @Override
