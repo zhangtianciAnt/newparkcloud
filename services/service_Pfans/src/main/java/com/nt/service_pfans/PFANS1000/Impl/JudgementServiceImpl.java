@@ -100,7 +100,7 @@ public class JudgementServiceImpl implements JudgementService {
         if(judgementlist.size()>0){
             for(Judgement judge :judgementlist){
                 if(judge.getJudgnumbers()!="" && judge.getJudgnumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 2,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 2,10));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
