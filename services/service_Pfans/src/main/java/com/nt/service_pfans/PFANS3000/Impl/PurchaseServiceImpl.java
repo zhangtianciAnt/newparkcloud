@@ -56,7 +56,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         if(purchaselist.size()>0){
             for(Purchase purcha :purchaselist){
                 if(purcha.getPurnumbers()!="" && purcha.getPurnumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purcha.getPurnumbers(), 0,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purcha.getPurnumbers(), 2,8));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
@@ -71,7 +71,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         }else{
             no = "001";
         }
-        Numbers = year+ no;
+        Numbers = "CG"+year+ no;
         //add-ws-根据当前年月日从001开始增加采购编号
         purchase.preInsert(tokenModel);
         purchase.setPurnumbers(Numbers);
