@@ -540,7 +540,8 @@
         left join otherfive
         on otherfive.GIVING_ID = wages.GIVING_ID
         and otherfive.USER_ID = wages.USER_ID
-        GROUP BY DATE_FORMAT(wages.CREATEON,'%Y-%m')
+        group by DATE_FORMAT(wages.CREATEON,'%Y-%m')
+        order by wages.CREATEON
     </select>
 
 </mapper>
