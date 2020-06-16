@@ -165,6 +165,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         receivablesrecord.setTransportgood_id(id);
         receivablesrecordMapper.delete(receivablesrecord);
         Applicationrecord applicationrecord = new Applicationrecord();
+        applicationrecord.setTransportgood_id(id);
         applicationrecordMapper.delete(applicationrecord);
     }
     @Override
