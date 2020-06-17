@@ -25,7 +25,8 @@ public class PersonnelPlan extends BaseModel {
     //groupid
     private String groupid;
     //种类
-    private int type;
+    //private int type;
+    private Integer type;
     //现实点人员
     private String employed;
     //新入职人员
