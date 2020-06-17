@@ -122,4 +122,14 @@ public class Pfans2016Controller {
         return ApiResult.success(abNormalService.getRestday(userid));
     }
     //add_fjl_05/26 --添加代休剩余
+
+    //    add_fjl_06/16  -- 添加异常申请每天累计不超过8小时check  start
+    @RequestMapping(value = "/getLeaveNumber", method = {RequestMethod.POST})
+    public ApiResult getLeaveNumber(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(abNormalService.getLeaveNumber(abNormal));
+    }
+//    add_fjl_06/16  -- 添加异常申请每天累计不超过8小时check  end
 }

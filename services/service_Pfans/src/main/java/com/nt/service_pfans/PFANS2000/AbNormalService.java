@@ -33,4 +33,6 @@ public interface AbNormalService {
     void updateOvertime(AbNormal abNormal) throws Exception;
 
     List<restViewVo> getRestday(String user_id) throws Exception;
+
+    Double getLeaveNumber(AbNormal abNormal) throws Exception;
 }
