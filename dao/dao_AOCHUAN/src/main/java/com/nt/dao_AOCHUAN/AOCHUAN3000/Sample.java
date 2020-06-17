@@ -54,9 +54,20 @@ public class Sample extends BaseModel {
 
     private String coa;
 
+    //保管条件
+    private String storageconditions;
+
+    //采购附件
+    private String purchasingaccessories;
+
+    //销售附件
+    private String salesaccessories;
+
+    //备注
+    private String remarks;
+
     @Transient
     private boolean notice;
-
 
 
 }
