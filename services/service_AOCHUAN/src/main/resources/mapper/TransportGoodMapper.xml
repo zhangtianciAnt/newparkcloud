@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper">
     <select id="getTransportGoodList"  resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood">
-      select t.transportgood_id, t.contractnumber,t.producten,t.customer,t.supplier,t.type,t.status,t.paymentstatus,t.paybackstatus
+      select t.transportgood_id, t.contractnumber,t.producten,t.customer,t.supplier,t.type,t.status,t.paymentstatus,t.paybackstatus,t.owner
       from transportgood t
       order by t.contractnumber desc
     </select>
