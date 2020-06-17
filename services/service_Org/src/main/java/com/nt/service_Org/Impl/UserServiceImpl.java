@@ -399,7 +399,7 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setWorkday("");
             item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setJobnumber("");
-            item.getUserinfo().setBudgetunit("");
+//          item.getUserinfo().setBudgetunit("");
 //            item.getUserinfo().setPersonalcode("");
             item.getUserinfo().setType("");
             item.getUserinfo().setOccupationtype("");
