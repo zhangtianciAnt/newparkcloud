@@ -249,7 +249,7 @@ public class ComprojectServiceImpl implements ComprojectService {
             for (Comproject comprotect : comprojectlist) {
                 //add-ws-根据当前年月日从001开始增加项目编号
                 if (comprotect.getNumbers() != "" && comprotect.getNumbers() != null) {
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 0, 8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 2, 10));
                     if (Integer.valueOf(year).equals(Integer.valueOf(checknumber))) {
                         number = number + 1;
                     }
@@ -265,7 +265,7 @@ public class ComprojectServiceImpl implements ComprojectService {
         } else {
             no = "001";
         }
-        Numbers = year + no;
+        Numbers = "GT"+year + no;
         comproject.setNumbers(Numbers);
         //add-ws-项目编码添加
         comproject.preInsert(tokenModel);

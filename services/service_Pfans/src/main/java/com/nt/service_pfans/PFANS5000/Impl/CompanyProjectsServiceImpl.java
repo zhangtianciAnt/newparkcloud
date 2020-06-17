@@ -1081,7 +1081,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             for(CompanyProjects comprotect :companyProjectslist){
                 //add-ws-根据当前年月日从001开始增加项目编号
                 if(comprotect.getNumbers()!="" && comprotect.getNumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 0,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(comprotect.getNumbers(), 2,10));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
@@ -1097,7 +1097,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }else{
             no = "001";
         }
-        Numbers = year+ no;
+        Numbers = "PJ"+year+ no;
         companyProjects.setNumbers(Numbers);
         companyProjects.preInsert(tokenModel);
         companyProjects.setCompanyprojects_id(companyprojectsid);

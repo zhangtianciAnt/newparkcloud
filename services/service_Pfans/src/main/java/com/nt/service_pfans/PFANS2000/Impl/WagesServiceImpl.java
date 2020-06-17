@@ -172,6 +172,16 @@ public class WagesServiceImpl implements WagesService {
     public List<Wages> getWagesByGivingId(String givingId) throws Exception {
         return wagesMapper.getWagesByGivingId(givingId);
     }
+    //获取工资公司集计
+    @Override
+    public List<Wages> getWagesdepartment(String dates) throws Exception {
+        return wagesMapper.getWagesdepartment(dates);
+    }
+
+    @Override
+    public List<Wages> getWagecompany() throws Exception {
+        return wagesMapper.getWagecompany();
+    }
 
     @Override
     public int insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {

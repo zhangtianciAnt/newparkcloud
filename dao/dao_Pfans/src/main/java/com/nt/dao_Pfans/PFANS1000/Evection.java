@@ -196,4 +196,12 @@ public class Evection extends BaseModel {
 
     @Column(name = "INVOICENO")
     private String invoiceno;
+
+
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
+
 }

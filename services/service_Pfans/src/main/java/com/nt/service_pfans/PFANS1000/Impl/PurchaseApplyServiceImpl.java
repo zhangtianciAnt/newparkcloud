@@ -96,7 +96,7 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         if(purchaseApplylist.size()>0){
             for(PurchaseApply purchase :purchaseApplylist){
                 if(purchase.getPurchasenumbers()!="" && purchase.getPurchasenumbers()!=null){
-                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purchase.getPurchasenumbers(), 0,8));
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(purchase.getPurchasenumbers(), 2,10));
                     if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
                         number = number+1;
                     }
@@ -111,7 +111,7 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         }else{
             no = "001";
         }
-        Numbers = year+ no;
+        Numbers = "QY"+year+ no;
         //add-ws-根据当前年月日从001开始增加费用编号
         BeanUtils.copyProperties(purchaseApplyVo.getPurchaseApply(), purchaseApply);
         purchaseApply.preInsert(tokenModel);

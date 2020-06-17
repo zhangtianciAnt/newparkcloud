@@ -19,6 +19,7 @@ import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
 import com.nt.utils.services.TokenService;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -398,7 +399,7 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setWorkday("");
             item.getUserinfo().setBeforeWorkTable(new ArrayList<CustomerInfo.TableInfo>());
             item.getUserinfo().setJobnumber("");
-            item.getUserinfo().setBudgetunit("");
+//          item.getUserinfo().setBudgetunit("");
 //            item.getUserinfo().setPersonalcode("");
             item.getUserinfo().setType("");
             item.getUserinfo().setOccupationtype("");
@@ -930,11 +931,21 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
                         }
                     }
+
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
+//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (cuinfo != null) {
+//                        userinfo.setCentername(cuinfo.getUserinfo().getCentername());
+//                        userinfo.setCenterid(cuinfo.getUserinfo().getCenterid());
+//                    } else {
+//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在，或者有空格！");
+//                    }
                 }
                 //group
                 if (item.get("group") != null) {
                     if (item.get("center") == null) {
-                        throw new LogicalException("请输入同一组织的 center");
+                        throw new LogicalException("请输入与" + item.get("group").toString() + "同一组织的 center");
                     }
                     String cen = item.get("center").toString();
                     String grp = item.get("group").toString();
@@ -943,39 +954,55 @@ public class UserServiceImpl implements UserService {
                     List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
-                                cf++;
-                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
-                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                            }
-                            if (item.get("group") != null) {
-                                for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                        gf++;
-                                        userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
-                                        userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                        userinfo.setTeamname(null);
-                                        userinfo.setTeamid(null);
-                                        break;
+                            if (gf == 0) {
+
+//                                }
+                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    cf++;
+                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                }
+                                if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                            gf++;
+                                            userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                            userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                            userinfo.setTeamname(null);
+                                            userinfo.setTeamid(null);
+                                            break;
+                                        }
+                                    }
+                                    if (gf == 0) {
+                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
                                     }
                                 }
-                                if (gf == 0) {
-                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
-                                }
+                            } else {
+                                break;
                             }
                         }
                         if (cf == 0) {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
                         }
                     }
+//                    String grp = item.get("group").toString();
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
+//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (cuinfo != null) {
+//                        userinfo.setGroupname(cuinfo.getUserinfo().getGroupname());
+//                        userinfo.setGroupid(cuinfo.getUserinfo().getGroupid());
+//                    } else {
+//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或者有空格！");
+//                    }
                 }
                 //team
                 if (item.get("team") != null) {
-                    if (item.get("center") == null) {
-                        throw new LogicalException("请输入同一组织的 center");
-                    }
                     if (item.get("group") == null) {
-                        throw new LogicalException("请输入同一组织的 group");
+                        throw new LogicalException("请输入与" + item.get("team").toString() + "同一组织的 group");
+                    }
+                    if (item.get("center") == null) {
+                        throw new LogicalException("请输入与" + item.get("group").toString() + "同一组织的 center");
                     }
                     String cen = item.get("center").toString();
                     String grp = item.get("group").toString();
@@ -986,45 +1013,69 @@ public class UserServiceImpl implements UserService {
                     List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
-                                cf++;
-                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
-                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                            }
-                            if (item.get("group") != null) {
-                                for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                        gf++;
-                                        userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
-                                        userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                    }
-                                    if (item.get("team") != null) {
-                                        for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
-                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
-                                                tf++;
-                                                userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
-                                                userinfo.setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
-                                                break;
-                                            }
-                                        }
+                            if (tf == 0 && gf == 0) {
+
+//                                }
+                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    cf++;
+                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                }
+                                if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
                                         if (tf == 0) {
-                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或不属于本组织！");
+
+//                                        }
+                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                                gf++;
+                                                userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                                userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                            }
+                                            if (gf > 0 && item.get("team") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
+                                                for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
+                                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+                                                        tf++;
+                                                        userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
+                                                        userinfo.setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
+                                                        break;
+                                                    }
+                                                }
+                                                if (tf == 0) {
+                                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或不属于本组织！");
+                                                }
+                                            }
+                                        } else {
+                                            break;
                                         }
                                     }
+                                    if (gf == 0) {
+                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+                                    }
                                 }
-                                if (gf == 0) {
-                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
-                                }
+                            } else {
+                                break;
                             }
                         }
                         if (cf == 0) {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
                         }
                     }
+//                    String tem = item.get("team").toString();
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (cuinfo != null) {
+//                        userinfo.setTeamname(cuinfo.getUserinfo().getTeamname());
+//                        userinfo.setTeamid(cuinfo.getUserinfo().getTeamid());
+//                    } else {
+//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或者有空格！");
+//                    }
                 }
+
                 //入社时间
-                if (item.get("入社时间") != null) {
-                    userinfo.setEnterday(item.get("入社时间").toString());
+                if (item.get("入社时间") != null && item.get("入社时间").toString().length() >= 10) {
+                    String enterday = item.get("入社时间").toString().substring(0, 10).replace("-", "/");
+                    userinfo.setEnterday(enterday);
                 }
                 //职务
                 if (item.get("职务") != null) {
@@ -1462,7 +1513,7 @@ public class UserServiceImpl implements UserService {
                     //group
                     if (item.get("group●") != null) {
                         if (item.get("center●") == null) {
-                            throw new LogicalException("请输入同一组织的 center");
+                            throw new LogicalException("请输入与" + item.get("group●").toString() + "同一组织的 center");
                         }
                         String cen = item.get("center●").toString();
                         String grp = item.get("group●").toString();
@@ -1471,25 +1522,31 @@ public class UserServiceImpl implements UserService {
                         List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
-                                    cf++;
-                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
-                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                }
-                                if (item.get("group●") != null) {
-                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                            gf++;
-                                            customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
-                                            customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                            customerInfoList.get(0).getUserinfo().setTeamname(null);
-                                            customerInfoList.get(0).getUserinfo().setTeamid(null);
-                                            break;
+                                if (gf == 0) {
+
+//                                }
+                                    if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                        cf++;
+                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                        customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                    }
+                                    if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+                                        for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                                gf++;
+                                                customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                                customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                                customerInfoList.get(0).getUserinfo().setTeamname(null);
+                                                customerInfoList.get(0).getUserinfo().setTeamid(null);
+                                                break;
+                                            }
+                                        }
+                                        if (gf == 0) {
+                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
                                         }
                                     }
-                                    if (gf == 0) {
-                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
-                                    }
+                                } else {
+                                    break;
                                 }
                             }
                             if (cf == 0) {
@@ -1509,11 +1566,11 @@ public class UserServiceImpl implements UserService {
                     }
                     //team
                     if (item.get("team●") != null) {
-                        if (item.get("center●") == null) {
-                            throw new LogicalException("请输入同一组织的 center");
-                        }
                         if (item.get("group●") == null) {
-                            throw new LogicalException("请输入同一组织的 group");
+                            throw new LogicalException("请输入与" + item.get("team●").toString() + "同一组织的 group");
+                        }
+                        if (item.get("center●") == null) {
+                            throw new LogicalException("请输入与" + item.get("group●").toString() + "同一组织的 center");
                         }
                         String cen = item.get("center●").toString();
                         String grp = item.get("group●").toString();
@@ -1524,35 +1581,47 @@ public class UserServiceImpl implements UserService {
                         List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
-                                    cf++;
-                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
-                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                }
-                                if (item.get("group●") != null) {
-                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                            gf++;
-                                            customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
-                                            customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                        }
-                                        if (item.get("team●") != null) {
-                                            for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
-                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
-                                                    tf++;
-                                                    customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
-                                                    customerInfoList.get(0).getUserinfo().setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
-                                                    break;
-                                                }
-                                            }
+                                if (tf == 0 && gf == 0) {
+
+//                                }
+                                    if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                        cf++;
+                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                        customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                    }
+                                    if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+                                        for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
                                             if (tf == 0) {
-                                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或不属于本组织！");
+
+//                                        }
+                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                                    gf++;
+                                                    customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                                    customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+                                                }
+                                                if (gf > 0 && item.get("team●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
+                                                    for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
+                                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+                                                            tf++;
+                                                            customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
+                                                            customerInfoList.get(0).getUserinfo().setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (tf == 0) {
+                                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或不属于本组织！");
+                                                    }
+                                                }
+                                            } else {
+                                                break;
                                             }
                                         }
+                                        if (gf == 0) {
+                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+                                        }
                                     }
-                                    if (gf == 0) {
-                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
-                                    }
+                                } else {
+                                    break;
                                 }
                             }
                             if (cf == 0) {
@@ -1570,9 +1639,9 @@ public class UserServiceImpl implements UserService {
 //                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或者有空格！");
 //                    }
                     }
-
-                    if (item.get("入社时间●") != null) {
-                        customerInfoList.get(0).getUserinfo().setEnterday(Convert.toStr(item.get("入社时间●")));
+                    if (item.get("入社时间●") != null && item.get("入社时间●").toString().length() >= 10) {
+                        String enterday = item.get("入社时间●").toString().substring(0, 10).replace("-", "/");
+                        customerInfoList.get(0).getUserinfo().setEnterday(enterday);
                     }
                     if (item.get("职务●") != null) {
                         String post = item.get("职务●").toString();

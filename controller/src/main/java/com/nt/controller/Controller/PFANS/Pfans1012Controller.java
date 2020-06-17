@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,7 @@ public class Pfans1012Controller {
 
     @Autowired
     private LoanApplicationService loanapplicationService;
+
 
     @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
     public void exportjs(String publicexpenseid, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -205,52 +207,112 @@ public class Pfans1012Controller {
         String wfList3 = "";
         String wfList4 = "";
         String wfList7 = "";
+        //add-ws-禅道103任务2
+        String username = "";
+        if(!pubvo.getPublicexpense().getLoan().equals("")){
+            query = new Query();
+            LoanApplication loanapplication = new LoanApplication();
+            loanapplication.setLoanapplication_id(pubvo.getPublicexpense().getLoan());
+            List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
+            if(list.size()>0){
+                query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    username = customerInfo.getUserinfo().getCustomername();
+                }
+            }
+        }
+        //add-ws-禅道103任务2
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         if (wfList.size() > 0) {
+          //UPD-WS-6/12-禅道105
             query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList1 = customerInfo.getUserinfo().getCustomername();
-                wfList1 = sign.startGraphics2D(wfList1);
-            }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList2 = customerInfo.getUserinfo().getCustomername();
-                wfList2 = sign.startGraphics2D(wfList2);
-            }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList3 = customerInfo.getUserinfo().getCustomername();
-                wfList3 = sign.startGraphics2D(wfList3);
-            }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList4 = customerInfo.getUserinfo().getCustomername();
-                wfList4 = sign.startGraphics2D(wfList4);
-            }
-            //ADD-WS-6/12-禅道105
-            query = new Query();
-            if (wfList.size()>4){
-                query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
+            if (wfList.size()>5){
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
                     wfList7 = customerInfo.getUserinfo().getCustomername();
                     wfList7 = sign.startGraphics2D(wfList7);
                 }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                if(wfList.get(3).getRemark().equals("系统自动跳过")){
+                    wfList3 = "";
+                }else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList3 = customerInfo.getUserinfo().getCustomername();
+                        wfList3 = sign.startGraphics2D(wfList3);
+                    }
+                }
+                if(wfList.get(4).getRemark().equals("系统自动跳过")){
+                    wfList4 = "";
+                }else{
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList4 = customerInfo.getUserinfo().getCustomername();
+                        wfList4 = sign.startGraphics2D(wfList4);
+                    }
+                }
+
+            }else{
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                if(wfList.get(2).getRemark().equals("系统自动跳过")){
+                    wfList3 = "";
+                }else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList3 = customerInfo.getUserinfo().getCustomername();
+                        wfList3 = sign.startGraphics2D(wfList3);
+                    }
+                }
+                if(wfList.get(3).getRemark().equals("系统自动跳过")){
+                    wfList4 = "";
+                }else{
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList4 = customerInfo.getUserinfo().getCustomername();
+                        wfList4 = sign.startGraphics2D(wfList4);
+                    }
+                }
             }
-            //ADD-WS-6/12-禅道105
+            //UPD-WS-6/12-禅道105
         }
-
-
         Map<String, Object> data = new HashMap<>();
         if("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())){
             String payeeName = "";
@@ -273,6 +335,7 @@ public class Pfans1012Controller {
                 pubvo.getTrafficdetails().get(k).setRmb(str_format);
             }
         }
+        data.put("username", username);
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
@@ -286,15 +349,25 @@ public class Pfans1012Controller {
         data.put("tra", pubvo.getTrafficdetails());
         data.put("pur", pubvo.getPurchasedetails());
         data.put("otd", pubvo.getOtherdetails());
-        if (pubvo.getTrafficdetails().size() > 0) {
-            ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
-        } else {
-            ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+        BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
+        if(bd.intValue()>=20000){
+            if (pubvo.getTrafficdetails().size() > 0) {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu.xls", data, response);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu_other.xls", data, response);
+            }
+        }else{
+            if (pubvo.getTrafficdetails().size() > 0) {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+            }
         }
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
         FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
 
