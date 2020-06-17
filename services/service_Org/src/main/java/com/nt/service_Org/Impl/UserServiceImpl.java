@@ -1271,6 +1271,14 @@ public class UserServiceImpl implements UserService {
 //                        if (value.get(27) != null) {
 //                            userinfo.annualyearto(value.get(27).toString());
 //                        }
+                //社会保险号码
+                if (item.get("社会保险号码") != null) {
+                    userinfo.setSecurity(item.get("社会保险号码").toString());
+                }
+                //住房公积金号码
+                if (item.get("住房公积金号码") != null) {
+                    userinfo.setHousefund(item.get("住房公积金号码").toString());
+                }
                 //今年年休数
                 if (item.get("今年年休数") != null) {
                     userinfo.setAnnualyear(item.get("今年年休数").toString());
@@ -1799,6 +1807,14 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setDifference("1");
                             }
                         }
+                    }
+                    //社会保险号码
+                    if (item.get("社会保险号码●") != null) {
+                        customerInfoList.get(0).getUserinfo().setSecurity(item.get("社会保险号码●").toString());
+                    }
+                    //住房公积金号码
+                    if (item.get("住房公积金号码●") != null) {
+                        customerInfoList.get(0).getUserinfo().setHousefund(item.get("住房公积金号码●").toString());
                     }
                     if (item.get("今年年休数●") != null) {
                         customerInfoList.get(0).getUserinfo().setAnnualyear(item.get("今年年休数●").toString());

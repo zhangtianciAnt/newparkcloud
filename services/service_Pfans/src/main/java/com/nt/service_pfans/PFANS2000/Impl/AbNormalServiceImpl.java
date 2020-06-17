@@ -1217,12 +1217,32 @@ public class AbNormalServiceImpl implements AbNormalService {
             for (int a = 0; a < abNormalList.size(); a++) {
                 //实际日期
                 if (Integer.parseInt(abNormalList.get(a).getStatus()) > 4) {
-                    // 新建包含DB,取DB中的时间长度
-                    if (st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(odate) >= 0
-                            && st.format(abNormalList.get(a).getRefinisheddate()).compareTo(fdate) <= 0) {
+                    //把新建的开始日包含在DB区间内
+                    if (odate.compareTo(st.format(abNormalList.get(a).getReoccurrencedate())) >= 0
+                            && odate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) <= 0
+                            && fdate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) >= 0) {
+                        double da = Double.valueOf(st.format(abNormalList.get(a).getRefinisheddate()).replace("-", "")) - Double.valueOf(odate.replace("-", "")) + 1;
+                        if (da == 1 && fdate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) == 0 && st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(st.format(abNormalList.get(a).getRefinisheddate())) == 0) {
+                            retime += Double.valueOf(abNormalList.get(a).getRelengthtime());
+                        } else {
+                            retime += (da) * 8;
+                        }
+                        //把DB区间的开始日包含在新建区间内
+                    } else if (st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(odate) >= 0
+                            && st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(fdate) <= 0
+                            && st.format(abNormalList.get(a).getRefinisheddate()).compareTo(fdate) >= 0) {
+                        double dr = Double.valueOf(fdate.replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getReoccurrencedate()).replace("-", "")) + 1;
+                        if (dr == 1 && st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(st.format(abNormalList.get(a).getRefinisheddate())) == 0) {
+                            retime += Double.valueOf(abNormalList.get(a).getRelengthtime());
+                        } else {
+                            retime += (dr) * 8;
+                        }
+                        // 新建包含DB,取DB中的时间长度
+                    } else if (st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(odate) > 0
+                            && st.format(abNormalList.get(a).getRefinisheddate()).compareTo(fdate) < 0) {
                         //加餐，哺乳（女）
                         if (abNormalList.get(a).getErrortype().equals("PR013022")) {
-                            double t = Double.valueOf(st.format(abNormalList.get(a).getRefinisheddate()).replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getReoccurrencedate()).replace("-", ""));
+                            double t = Double.valueOf(st.format(abNormalList.get(a).getRefinisheddate()).replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getReoccurrencedate()).replace("-", "")) + 1;
                             retime += Double.valueOf(abNormalList.get(a).getRelengthtime()) * t;
                         } else {
                             retime += Double.valueOf(abNormalList.get(a).getRelengthtime());
@@ -1230,43 +1250,53 @@ public class AbNormalServiceImpl implements AbNormalService {
                         //DB包含新建，取新建的时间长度
                     } else if (odate.compareTo(st.format(abNormalList.get(a).getReoccurrencedate())) >= 0
                             && fdate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) <= 0) {
-                        retime += Double.valueOf(fdate.replace("-", "")) - Double.valueOf(odate.replace("-", ""));
-                        //把新建的开始日包含在DB区间内
-                    } else if (odate.compareTo(st.format(abNormalList.get(a).getReoccurrencedate())) >= 0
-                            && odate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) <= 0
-                            && fdate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) >= 0) {
-                        retime += Double.valueOf(st.format(abNormalList.get(a).getRefinisheddate()).replace("-", "")) - Double.valueOf(odate.replace("-", ""));
-                        //把DB区间的开始日包含在新建区间内
-                    } else if (st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(odate) >= 0
-                            && st.format(abNormalList.get(a).getReoccurrencedate()).compareTo(fdate) <= 0
-                            && st.format(abNormalList.get(a).getRefinisheddate()).compareTo(fdate) >= 0) {
-                        retime += Double.valueOf(fdate.replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getReoccurrencedate()).replace("-", ""));
+                        if (odate.compareTo(st.format(abNormalList.get(a).getReoccurrencedate())) == 0
+                                && fdate.compareTo(st.format(abNormalList.get(a).getRefinisheddate())) == 0) {
+                            retime += Double.valueOf(abNormalList.get(a).getRelengthtime());
+                        } else {
+                            retime += Double.valueOf(abNormal.getRelengthtime());
+                        }
                     }
                 } else { //预计日期
-                    // 新建包含DB,取DB中的时间长度
-                    if (st.format(abNormalList.get(a).getOccurrencedate()).compareTo(odate) >= 0
-                            && st.format(abNormalList.get(a).getFinisheddate()).compareTo(fdate) <= 0) {
+                    //把新建的开始日包含在DB区间内
+                    if (odate.compareTo(st.format(abNormalList.get(a).getOccurrencedate())) >= 0
+                            && odate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) <= 0
+                            && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) >= 0) {
+                        double da = Double.valueOf(st.format(abNormalList.get(a).getFinisheddate()).replace("-", "")) - Double.valueOf(odate.replace("-", "")) + 1;
+                        if (da == 1 && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) == 0 && st.format(abNormalList.get(a).getOccurrencedate()).compareTo(st.format(abNormalList.get(a).getFinisheddate())) == 0) {
+                            time += Double.valueOf(abNormalList.get(a).getLengthtime());
+                        } else {
+                            time += (da) * 8;
+                        }
+                        //把DB区间的开始日包含在新建区间内
+                    } else if (st.format(abNormalList.get(a).getOccurrencedate()).compareTo(odate) >= 0
+                            && st.format(abNormalList.get(a).getOccurrencedate()).compareTo(fdate) <= 0
+                            && st.format(abNormalList.get(a).getFinisheddate()).compareTo(fdate) >= 0) {
+                        double dr = Double.valueOf(fdate.replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getOccurrencedate()).replace("-", "")) + 1;
+                        if (dr == 1 && st.format(abNormalList.get(a).getOccurrencedate()).compareTo(st.format(abNormalList.get(a).getFinisheddate())) == 0) {
+                            time += Double.valueOf(abNormalList.get(a).getLengthtime());
+                        } else {
+                            time += (dr) * 8;
+                        }
+                        // 新建包含DB,取DB中的时间长度
+                    } else if (st.format(abNormalList.get(a).getOccurrencedate()).compareTo(odate) > 0
+                            && st.format(abNormalList.get(a).getFinisheddate()).compareTo(fdate) < 0) {
                         //加餐，哺乳（女）
                         if (abNormalList.get(a).getErrortype().equals("PR013022")) {
-                            double t = Double.valueOf(st.format(abNormalList.get(a).getFinisheddate()).replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getOccurrencedate()).replace("-", ""));
-                            retime += Double.valueOf(abNormalList.get(a).getLengthtime()) * t;
+                            double t = Double.valueOf(st.format(abNormalList.get(a).getFinisheddate()).replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getOccurrencedate()).replace("-", "")) + 1;
+                            time += Double.valueOf(abNormalList.get(a).getLengthtime()) * t;
                         } else {
                             time += Double.valueOf(abNormalList.get(a).getLengthtime());
                         }
                         //DB包含新建，取新建的时间长度
                     } else if (odate.compareTo(st.format(abNormalList.get(a).getOccurrencedate())) >= 0
                             && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) <= 0) {
-                        time += Double.valueOf(fdate.replace("-", "")) - Double.valueOf(odate.replace("-", ""));
-                        //把新建的开始日包含在DB区间内
-                    } else if (odate.compareTo(st.format(abNormalList.get(a).getOccurrencedate())) >= 0
-                            && odate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) <= 0
-                            && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) >= 0) {
-                        time += Double.valueOf(st.format(abNormalList.get(a).getFinisheddate()).replace("-", "")) - Double.valueOf(odate.replace("-", ""));
-                        //把DB区间的开始日包含在新建区间内
-                    } else if (st.format(abNormalList.get(a).getOccurrencedate()).compareTo(odate) >= 0
-                            && st.format(abNormalList.get(a).getOccurrencedate()).compareTo(fdate) <= 0
-                            && st.format(abNormalList.get(a).getFinisheddate()).compareTo(fdate) >= 0) {
-                        time += Double.valueOf(fdate.replace("-", "")) - Double.valueOf(st.format(abNormalList.get(a).getOccurrencedate()).replace("-", ""));
+                        if (odate.compareTo(st.format(abNormalList.get(a).getOccurrencedate())) == 0
+                                && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) == 0) {
+                            time += Double.valueOf(abNormalList.get(a).getLengthtime());
+                        } else {
+                            time += Double.valueOf(abNormal.getLengthtime());
+                        }
                     }
                 }
                 timeSum = retime + time;
