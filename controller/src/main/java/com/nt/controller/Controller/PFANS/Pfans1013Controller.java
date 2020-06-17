@@ -192,25 +192,23 @@ public class Pfans1013Controller {
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(evevo.getEvection().getEvectionid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
-        if (wfList.size() > 0) {
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList1 = customerInfo.getUserinfo().getCustomername();
-                wfList1 = sign.startGraphics2D(wfList1);
-            }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList2 = customerInfo.getUserinfo().getCustomername();
-                wfList2 = sign.startGraphics2D(wfList2);
-            }
-            //upd-ws-禅道102
-            if(wfList.get(2).getRemark().equals("系统自动跳过")){
-                wfList3 = "";
-            }else {
+        //upd-ws-6/17-禅道101
+        if (evevo.getEvection().getUserid().equals("5e78b2264e3b194874180f35") || evevo.getEvection().getUserid().equals("5e78b2574e3b194874181099")) {
+            if (wfList.size() > 0) {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -218,20 +216,51 @@ public class Pfans1013Controller {
                     wfList3 = customerInfo.getUserinfo().getCustomername();
                     wfList3 = sign.startGraphics2D(wfList3);
                 }
+
             }
-            if(wfList.get(3).getRemark().equals("系统自动跳过")){
-                wfList4 = "";
-            }else{
+        } else {
+            if (wfList.size() > 0) {
                 query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
-                    wfList4 = customerInfo.getUserinfo().getCustomername();
-                    wfList4 = sign.startGraphics2D(wfList4);
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
                 }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                //upd-ws-禅道102
+                if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+                    wfList3 = "";
+                } else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList3 = customerInfo.getUserinfo().getCustomername();
+                        wfList3 = sign.startGraphics2D(wfList3);
+                    }
+                }
+                if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                    wfList4 = "";
+                } else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList4 = customerInfo.getUserinfo().getCustomername();
+                        wfList4 = sign.startGraphics2D(wfList4);
+                    }
+                }
+                //upd-ws-禅道102
             }
-            //upd-ws-禅道102
         }
+        //upd-ws-6/17-禅道101
         Map<String, Object> data = new HashMap<>();
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
@@ -390,14 +419,33 @@ public class Pfans1013Controller {
 //        data.put("add", AccommodationList);
         data.put("acc", accommodationlist);
         data.put("other", otherDetailslist);
-        if (evevo.getEvection().getType().equals("0")) {
-            ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xls", data, response);
-        } else {
-            ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "jingwaijingsuanshu.xls", data, response);
+
+        //upd-ws-6/17-禅道101
+        if (evevo.getEvection().getUserid().equals("5e78b2264e3b194874180f35") || evevo.getEvection().getUserid().equals("5e78b2574e3b194874181099")) {
+            if (evevo.getEvection().getType().equals("0")) {
+                ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "newjingneijingsuanshu.xls", data, response);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "newjingwaijingsuanshu.xls", data, response);
+            }
+        }else{
+            if (evevo.getEvection().getType().equals("0")) {
+                ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xls", data, response);
+            } else {
+                ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "jingwaijingsuanshu.xls", data, response);
+            }
         }
+        //upd-ws-6/17-禅道101
+        //add-ws-6/16-禅道101
+        if (wfList3 != "") {
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+        }
+        if (wfList4 != "") {
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        }
+        //add-ws-6/16-禅道101
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
         FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
