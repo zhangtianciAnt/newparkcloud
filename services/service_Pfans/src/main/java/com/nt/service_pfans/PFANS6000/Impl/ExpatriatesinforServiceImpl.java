@@ -189,6 +189,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
                 if(list.size() > 0){
                     userAccount.setAccount(userAccount.getAccount() + Convert.toStr(list.size()));
+                    userAccount.setPassword(userAccount.getAccount());
 //                    userAccount = list.get(0);
                 }
 
@@ -257,7 +258,14 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         //add ccm 20200605
         List<Expatriatesinfor> accountlist = new ArrayList<>();
         Expatriatesinfor ef =new Expatriatesinfor();
-        ef.setAccount(expatriatesinfor.getAccount());
+        if(expatriatesinfor.getAccount() ==null || expatriatesinfor.getAccount().equals(""))
+        {
+            ef.setAccount("1");
+        }
+        else
+        {
+            ef.setAccount(expatriatesinfor.getAccount());
+        }
         accountlist = expatriatesinforMapper.select(ef);
         if(accountlist.size()>0)
         {
@@ -268,11 +276,54 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 UserAccount userAcount = mongoTemplate.findOne(query, UserAccount.class);
                 if(userAcount!=null)
                 {
-                    userAcount.setAccount(expatriatesinfor.getAccountname());
-                    userAcount.setPassword(expatriatesinfor.getAccountname());
+                    Query q = new Query();
+                    q.addCriteria(Criteria.where("account").regex(expatriatesinfor.getAccountname()));
+                    q.addCriteria(Criteria.where("usertype").is("1"));
+                    List<UserAccount> list1 = mongoTemplate.find(q, UserAccount.class);
+                    if(list1.size() > 0){
+                        userAcount.setAccount(userAcount.getAccount() + Convert.toStr(list1.size()));
+                        userAcount.setPassword(userAcount.getAccount());
+
+                    }
+                    else
+                    {
+                        userAcount.setAccount(expatriatesinfor.getAccountname());
+                        userAcount.setPassword(expatriatesinfor.getAccountname());
+                    }
+                    expatriatesinfor.setAccountname(userAcount.getAccount());
                     mongoTemplate.save(userAcount);
                 }
             }
+        }
+        else
+        {
+            UserAccount userAccount = new UserAccount();
+            userAccount.setAccount(expatriatesinfor.getAccountname());
+            userAccount.setPassword(expatriatesinfor.getAccountname());
+            userAccount.setUsertype("1");
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
+//                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+            query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+            List<UserAccount> list1 = mongoTemplate.find(query, UserAccount.class);
+
+            if(list1.size() > 0){
+                userAccount.setAccount(userAccount.getAccount() + Convert.toStr(list1.size()));
+                userAccount.setPassword(userAccount.getAccount());
+            }
+
+            query = new Query();
+            query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+            query.addCriteria(Criteria.where("rolename").is("外协员工"));
+            List<Role>  rolss =  mongoTemplate.find(query, Role.class);
+
+            userAccount.setRoles(rolss);
+            userAccount.preInsert(tokenModel);
+            mongoTemplate.save(userAccount);
+
+            expatriatesinfor.setAccountname(userAccount.getAccount());
+            expatriatesinfor.setAccount(userAccount.get_id());
         }
         //add ccm 20200605
 
