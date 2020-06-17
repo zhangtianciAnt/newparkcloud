@@ -24,9 +24,9 @@ public interface TransportGoodService {
 
     void delete(String id) throws Exception;
 
-    void insertCW(TransportGood transportGood, TokenModel token);
-
-    void insertHK(TransportGood transportGood, TokenModel token) throws Exception;
+//    void insertCW(TransportGood transportGood, TokenModel token);
+//
+//    void insertHK(TransportGood transportGood, TokenModel token) throws Exception;
 
     void paymentCG(List<FinSales> finSales, TokenModel token);
 

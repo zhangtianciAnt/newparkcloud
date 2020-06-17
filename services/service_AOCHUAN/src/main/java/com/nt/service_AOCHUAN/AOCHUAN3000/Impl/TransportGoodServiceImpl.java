@@ -101,10 +101,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         transportGood.preUpdate(tokenModel);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
         String id = transportGood.getTransportgood_id();
-        if(transportGood.getFinance() == 0){
-            DeleteSonTable(id);
-            InsertSonTable(transportGood,id);
-        }
+        DeleteSonTable(id);
+        InsertSonTable(transportGood,id);
         if (transportGood.isNotice()) {
             ToDoNotice(tokenModel, transportGood);
         }
@@ -128,7 +126,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         DeleteSonTable(id);
     }
 
-    private void InsertSonTable(TransportGood transportGood,String id){
+    private void InsertSonTable(TransportGood transportGood,String id) throws Exception {
         if(transportGood.getSaledetails().size() > 0){
             List<Saledetails> saledetailsList = transportGood.getSaledetails();
             for (Saledetails val:saledetailsList) {
@@ -144,6 +142,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setTransportgood_id(id);
                 val.setReceivablesrecord_id(UUID.randomUUID().toString());
             }
+            if(transportGood.getFinance() == 2){
+                insertHK(receivablesrecords,transportGood.getContractnumber(),transportGood.getCollectionaccount());
+            }
             receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
         }
 
@@ -152,6 +153,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             for (Applicationrecord val:applicationrecords) {
                 val.setTransportgood_id(id);
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
+            }
+            if(transportGood.getFinance() == 1){
+                insertCW(applicationrecords,transportGood.getContractnumber());
             }
             applicationrecordMapper.insertApplicationrecordList(applicationrecords);
         }
@@ -168,14 +172,14 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         applicationrecord.setTransportgood_id(id);
         applicationrecordMapper.delete(applicationrecord);
     }
-    @Override
-    public void insertCW(TransportGood transportGood, TokenModel token) {
-        List<Applicationrecord> applicationrecords = transportGood.getApplicationrecord();
+
+
+    public void insertCW(List<Applicationrecord> applicationrecords,String contractNumber) {
         for (Applicationrecord val:
         applicationrecords) {
             FinPurchase finPurchase = new FinPurchase();
             finPurchase.setPurchase_id(UUID.randomUUID().toString());
-            finPurchase.setContractnumber(transportGood.getContractnumber());
+            finPurchase.setContractnumber(contractNumber);
             finPurchase.setSupplier(val.getSuppliername());
             finPurchase.setPaymenttime(val.getRealdate());
             finPurchase.setInvoicenumber(val.getInvoiceno());
@@ -193,16 +197,15 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 //        finPurchaseMapper.insert(finPurchase);
     }
 
-    @Override
-    public void insertHK(TransportGood transportGood, TokenModel token) throws Exception {
-        List<Receivablesrecord> receivablesrecords = transportGood.getReceivablesrecord();
+
+    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber,String collectionAccount) throws Exception {
         for (Receivablesrecord val:
         receivablesrecords) {
             FinSales finSales = new FinSales();
             finSales.setSales_id(UUID.randomUUID().toString());
-            finSales.setContractnumber(transportGood.getContractnumber());
+            finSales.setContractnumber(contractNumber);
             finSales.setCustomer(val.getCustomername());
-            finSales.setCollectionaccount(transportGood.getCollectionaccount());
+            finSales.setCollectionaccount(collectionAccount);
             finSales.setReceamount(val.getReceamount() == null ? "0.00" : val.getReceamount().toString());
             finSales.setReceduedate(val.getReceduedate());
             finSales.setSalesamount(val.getRealamount());

@@ -88,23 +88,23 @@ public class AOCHUAN3002Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/insertcw",method={RequestMethod.POST})
-    public ApiResult insertcw(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
-        if (transportGood == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        transportGoodService.insertCW(transportGood, tokenService.getToken(request));
-        return ApiResult.success();
-    }
-
-    @RequestMapping(value = "/inserthk",method={RequestMethod.POST})
-    public ApiResult inserthk(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
-        if (transportGood == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        transportGoodService.insertHK(transportGood, tokenService.getToken(request));
-        return ApiResult.success();
-    }
+//    @RequestMapping(value = "/insertcw",method={RequestMethod.POST})
+//    public ApiResult insertcw(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
+//        if (transportGood == null) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        transportGoodService.insertCW(transportGood, tokenService.getToken(request));
+//        return ApiResult.success();
+//    }
+//
+//    @RequestMapping(value = "/inserthk",method={RequestMethod.POST})
+//    public ApiResult inserthk(@RequestBody TransportGood transportGood, HttpServletRequest request) throws Exception {
+//        if (transportGood == null) {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
+//        transportGoodService.insertHK(transportGood, tokenService.getToken(request));
+//        return ApiResult.success();
+//    }
 
     @RequestMapping(value = "/paymentcg",method={RequestMethod.POST})
     public ApiResult paymentCG(@RequestBody List<FinSales> finSales, HttpServletRequest request) throws Exception {
