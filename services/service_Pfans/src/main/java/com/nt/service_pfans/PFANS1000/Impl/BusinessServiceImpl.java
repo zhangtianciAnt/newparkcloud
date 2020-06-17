@@ -4,13 +4,16 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -75,9 +78,35 @@ public class BusinessServiceImpl implements BusinessService {
     public void insertBusinessVo(BusinessVo businessVo, TokenModel tokenModel) throws Exception {
         String businessid = UUID.randomUUID().toString();
         Business business = new Business();
+        List<Business> businessList = businessMapper.selectAll();
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String new_date = sdf1.format(date);
+        int number = 0;
+        String number_str = "";
+        String no_str = "";
+        if(businessList.size() > 0){
+            for(Business busin : businessList){
+                if(busin.getBusiness_number() != "" && busin.getBusiness_number() != null){
+                    String checkNumber = StringUtils.uncapitalize(StringUtils.substring(busin.getBusiness_number(),0,8));
+                    if(new_date.equals(checkNumber)){
+                        number = number + 1;
+                    }
+                }
+            }
+            if(number <= 8){
+                no_str = "0" + (number +1);
+            }else{
+                no_str = String.valueOf(number + 1);
+            }
+        }else{
+            no_str = "01";
+        }
+        number_str = new_date + no_str;
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preInsert(tokenModel);
         business.setBusiness_id(businessid);
+        business.setBusiness_number(number_str);
         businessMapper.insertSelective(business);
         List<TravelContent> travelcontentlist = businessVo.getTravelcontent();
         if (travelcontentlist != null) {
