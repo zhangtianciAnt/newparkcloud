@@ -1249,24 +1249,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
         workflowinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
         if (Workflowinstancelist.size() > 0) {
-//            Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
-//            workflownodeinstance.setWorkflowinstanceid(Workflowinstancelist.get(0).getWorkflowinstanceid());
-//            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-//            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
-//            List<Workflownodeinstance> Workflownodeinstancelist = workflownodeinstanceMapper
-//                    .select(workflownodeinstance);
-//            for (Workflownodeinstance item : Workflownodeinstancelist) {
-//                Workflowstep workflowstep = new Workflowstep();
-//                workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
-//                List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
-//
-//                for (Workflowstep it : Workflowsteplist) {
-//                    if (!StringUtils.isNullOrEmpty(it.getResult())) {
-//                        return "";
-//
-//                    }
-//                }
-//            }
+            Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
+            workflownodeinstance.setWorkflowinstanceid(Workflowinstancelist.get(0).getWorkflowinstanceid());
+            workflownodeinstance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+            workflownodeinstance.setTenantid(startWorkflowVo.getTenantId());
+            List<Workflownodeinstance> Workflownodeinstancelist = workflownodeinstanceMapper
+                    .select(workflownodeinstance);
+            for (Workflownodeinstance item : Workflownodeinstancelist) {
+                Workflowstep workflowstep = new Workflowstep();
+                workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                List<Workflowstep> Workflowsteplist = workflowstepMapper.select(workflowstep);
+
+                for (Workflowstep it : Workflowsteplist) {
+                    if (!StringUtils.isNullOrEmpty(it.getResult())) {
+                        return "";
+
+                    }
+                }
+            }
 
             return Workflowinstancelist.get(0).getWorkflowinstanceid();
         }
