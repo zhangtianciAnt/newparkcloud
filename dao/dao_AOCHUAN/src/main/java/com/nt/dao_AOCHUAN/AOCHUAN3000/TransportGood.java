@@ -147,6 +147,8 @@ public class TransportGood extends BaseModel {
 
     private String msds;
 
+    private String casnum;
+
     @Transient
     private boolean notice;
 

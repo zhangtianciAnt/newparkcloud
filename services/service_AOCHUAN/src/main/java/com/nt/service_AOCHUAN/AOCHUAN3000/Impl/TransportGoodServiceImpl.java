@@ -13,6 +13,7 @@ import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -99,6 +100,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Override
     public void update(TransportGood transportGood, TokenModel tokenModel) throws Exception {
         transportGood.preUpdate(tokenModel);
+        String[] arr =  getMergeField(transportGood.getSaledetails());
+        transportGood.setProducten(arr[0]);
+        transportGood.setSupplier(arr[1]);
+        transportGood.setCasnum(arr[2]);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
         String id = transportGood.getTransportgood_id();
         DeleteSonTable(id);
@@ -113,6 +118,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
        // String number = contractNumber.getContractNumber("PT001010", "transportgood");
         String id = UUID.randomUUID().toString();
+        String[] arr =  getMergeField(transportGood.getSaledetails());
+        transportGood.setProducten(arr[0]);
+        transportGood.setSupplier(arr[1]);
+        transportGood.setCasnum(arr[2]);
         //transportGood.setContractnumber(number);
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
@@ -125,6 +134,21 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         transportGoodMapper.deleteByPrimaryKey(id);
         DeleteSonTable(id);
     }
+
+    private String[] getMergeField(List<Saledetails> saledetails){
+        String[] product = new String[saledetails.size()];
+        String[] supplier = new String[saledetails.size()];
+        String[] cas = new String[saledetails.size()];
+
+        for (int i = 0 ; i < saledetails.size(); i++ ) {
+            product[i] = StringUtils.isNotBlank(saledetails.get(i).getProductname()) ? saledetails.get(i).getProductname() : "无";
+            supplier[i] = StringUtils.isNotBlank(saledetails.get(i).getSuppliername()) ? saledetails.get(i).getSuppliername() : "无";
+            cas[i] = StringUtils.isNotBlank(saledetails.get(i).getCasnum()) ? saledetails.get(i).getCasnum() : "无";
+        }
+
+       return  new String[]{StringUtils.join(product,"、"),StringUtils.join(supplier,"、"),StringUtils.join(cas,"、")};
+    }
+
 
     private void InsertSonTable(TransportGood transportGood,String id) throws Exception {
         if(transportGood.getSaledetails().size() > 0){

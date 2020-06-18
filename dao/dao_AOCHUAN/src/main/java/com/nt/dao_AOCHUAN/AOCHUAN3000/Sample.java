@@ -69,5 +69,7 @@ public class Sample extends BaseModel {
     @Transient
     private boolean notice;
 
+    private String assessstatus;
+
 
 }

@@ -68,4 +68,6 @@ public class Saledetails extends BaseModel {
 
     private String transportgood_id;
 
+    private String casnum;
+
 }

@@ -32,7 +32,8 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
 
     @Override
     public Supplierbaseinfor getOne(String id) throws Exception {
-        return supplierbaseinforMapper.selectByPrimaryKey(id);
+        Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(id);
+        return supplierbaseinfor;
     }
 
     @Override
