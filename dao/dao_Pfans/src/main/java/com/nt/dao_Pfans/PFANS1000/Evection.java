@@ -204,4 +204,8 @@ public class Evection extends BaseModel {
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
+    @Column(name = "ARRIVENIGHT")
+    private String arrivenight;
+
+
 }
