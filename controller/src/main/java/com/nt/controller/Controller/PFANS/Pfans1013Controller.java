@@ -233,9 +233,19 @@ public class Pfans1013Controller {
                     wfList2 = sign.startGraphics2D(wfList2);
                 }
                 //upd-ws-禅道102
-                if (wfList.get(2).getRemark().equals("系统自动跳过")) {
-                    wfList3 = "";
-                } else {
+                if (wfList.get(2).getRemark() != null) {
+                    if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+                        wfList3 = "";
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList3 = customerInfo.getUserinfo().getCustomername();
+                            wfList3 = sign.startGraphics2D(wfList3);
+                        }
+                    }
+                }else{
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -244,9 +254,19 @@ public class Pfans1013Controller {
                         wfList3 = sign.startGraphics2D(wfList3);
                     }
                 }
-                if (wfList.get(3).getRemark().equals("系统自动跳过")) {
-                    wfList4 = "";
-                } else {
+                if (wfList.get(3).getRemark() != null) {
+                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                        wfList4 = "";
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList4 = customerInfo.getUserinfo().getCustomername();
+                            wfList4 = sign.startGraphics2D(wfList4);
+                        }
+                    }
+                }else{
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);

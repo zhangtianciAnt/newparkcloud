@@ -46,11 +46,16 @@ public class sign {
         g.draw(circle);
 
         if(name.length() == 2){
-
             g.setFont(new Font("宋体", Font.BOLD, 60));
             g.drawString(name, CENTERX-60, CENTERY+25);
         }else if(name.length() == 3){
             g.setFont(new Font("宋体", Font.BOLD, 50));
+            g.drawString(name, CENTERX-75, CENTERY+20);
+        }else if(name.length() == 4){
+            g.setFont(new Font("宋体", Font.BOLD, 40));
+            g.drawString(name, CENTERX-75, CENTERY+20);
+        }else if(name.length() == 5){
+            g.setFont(new Font("宋体", Font.BOLD, 40));
             g.drawString(name, CENTERX-75, CENTERY+20);
         }
 

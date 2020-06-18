@@ -72,6 +72,8 @@ public class Pfans1012Controller {
     public void exportjs(String publicexpenseid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         PublicExpenseVo pubvo = publicExpenseService.selectById(publicexpenseid);
+//        Map<String, Object> list = publicExpenseService.exportjs(publicexpenseid, request);
+
         String trr = "";
         //交通费的预算编码
         List<TrafficDetails> tralist = pubvo.getTrafficdetails();
@@ -209,12 +211,12 @@ public class Pfans1012Controller {
         String wfList7 = "";
         //add-ws-禅道103任务2
         String username = "";
-        if(!pubvo.getPublicexpense().getLoan().equals("")){
+        if (!pubvo.getPublicexpense().getLoan().equals("")) {
             query = new Query();
             LoanApplication loanapplication = new LoanApplication();
             loanapplication.setLoanapplication_id(pubvo.getPublicexpense().getLoan());
             List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
-            if(list.size()>0){
+            if (list.size() > 0) {
                 query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
@@ -227,9 +229,9 @@ public class Pfans1012Controller {
         startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         if (wfList.size() > 0) {
-          //UPD-WS-6/12-禅道105
+            //UPD-WS-6/12-禅道105
             query = new Query();
-            if (wfList.size()>5){
+            if (wfList.size() > 5) {
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
@@ -250,9 +252,19 @@ public class Pfans1012Controller {
                     wfList2 = customerInfo.getUserinfo().getCustomername();
                     wfList2 = sign.startGraphics2D(wfList2);
                 }
-                if(wfList.get(3).getRemark().equals("系统自动跳过")){
-                    wfList3 = "";
-                }else {
+                if (wfList.get(3).getRemark() != null) {
+                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                        wfList3 = "";
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList3 = customerInfo.getUserinfo().getCustomername();
+                            wfList3 = sign.startGraphics2D(wfList3);
+                        }
+                    }
+                } else {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -261,9 +273,19 @@ public class Pfans1012Controller {
                         wfList3 = sign.startGraphics2D(wfList3);
                     }
                 }
-                if(wfList.get(4).getRemark().equals("系统自动跳过")){
-                    wfList4 = "";
-                }else{
+                if (wfList.get(4).getRemark() != null) {
+                    if (wfList.get(4).getRemark().equals("系统自动跳过")) {
+                        wfList4 = "";
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList4 = customerInfo.getUserinfo().getCustomername();
+                            wfList4 = sign.startGraphics2D(wfList4);
+                        }
+                    }
+                } else {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -272,8 +294,7 @@ public class Pfans1012Controller {
                         wfList4 = sign.startGraphics2D(wfList4);
                     }
                 }
-
-            }else{
+            } else {
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -288,9 +309,19 @@ public class Pfans1012Controller {
                     wfList2 = customerInfo.getUserinfo().getCustomername();
                     wfList2 = sign.startGraphics2D(wfList2);
                 }
-                if(wfList.get(2).getRemark().equals("系统自动跳过")){
-                    wfList3 = "";
-                }else {
+                if (wfList.get(2).getRemark() != null) {
+                    if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+                        wfList3 = "";
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList3 = customerInfo.getUserinfo().getCustomername();
+                            wfList3 = sign.startGraphics2D(wfList3);
+                        }
+                    }
+                } else {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -299,9 +330,19 @@ public class Pfans1012Controller {
                         wfList3 = sign.startGraphics2D(wfList3);
                     }
                 }
-                if(wfList.get(3).getRemark().equals("系统自动跳过")){
-                    wfList4 = "";
-                }else{
+                if (wfList.get(3).getRemark() != null) {
+                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                        wfList4 = "";
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList4 = customerInfo.getUserinfo().getCustomername();
+                            wfList4 = sign.startGraphics2D(wfList4);
+                        }
+                    }
+                } else {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -314,7 +355,7 @@ public class Pfans1012Controller {
             //UPD-WS-6/12-禅道105
         }
         Map<String, Object> data = new HashMap<>();
-        if("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())){
+        if ("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())) {
             String payeeName = "";
             LoanApplication loanApplication = new LoanApplication();
             loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
@@ -350,13 +391,13 @@ public class Pfans1012Controller {
         data.put("pur", pubvo.getPurchasedetails());
         data.put("otd", pubvo.getOtherdetails());
         BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
-        if(bd.intValue()>=20000){
+        if (bd.intValue() >= 20000) {
             if (pubvo.getTrafficdetails().size() > 0) {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu.xls", data, response);
             } else {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu_other.xls", data, response);
             }
-        }else{
+        } else {
             if (pubvo.getTrafficdetails().size() > 0) {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
             } else {
@@ -365,8 +406,14 @@ public class Pfans1012Controller {
         }
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        //add-ws-6/16-禅道101
+        if (wfList3 != "") {
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+        }
+        if (wfList4 != "") {
+            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+        }
+        //add-ws-6/16-禅道101
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
         FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
