@@ -177,8 +177,6 @@ public class Pfans1013Controller {
         query.addCriteria(Criteria.where("userid").is(evevo.getEvection().getUserid()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         if (customerInfo != null) {
-            //申请人
-            evevo.getEvection().setUserid(customerInfo.getUserinfo().getCustomername());
             userim = customerInfo.getUserinfo().getCustomername();
             userim = sign.startGraphics2D(userim);
             //部门
@@ -449,6 +447,10 @@ public class Pfans1013Controller {
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
         FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
+
+
+
+
 
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
