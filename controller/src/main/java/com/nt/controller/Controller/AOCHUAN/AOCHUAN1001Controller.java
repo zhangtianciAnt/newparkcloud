@@ -2,6 +2,7 @@ package com.nt.controller.Controller.AOCHUAN;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Linkman;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierproductrelation;
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Vo.ContactstitchingVo;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Vo.SupplierproductrelationVo;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
@@ -61,7 +62,30 @@ public class AOCHUAN1001Controller {
     }
 
     @RequestMapping(value = "/update",method={RequestMethod.POST})
-    public ApiResult update(@RequestBody Supplierbaseinfor supplierbaseinfor, HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody ContactstitchingVo contactstitchingVo , HttpServletRequest request) throws Exception {
+
+        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
+
+        String linkman = " ";
+        String mobilephone = " ";
+        for (int i = 0;i < contactstitchingVo.getContactperson().size();i++){
+            if (linkman == " "){
+                linkman = contactstitchingVo.getContactperson().get(i).getCname();
+            }else{
+                linkman = linkman + "、" + contactstitchingVo.getContactperson().get(i).getCname();
+            }
+        }
+        for (int i = 0;i < contactstitchingVo.getContactperson().size();i++){
+            if (mobilephone == " "){
+                mobilephone = contactstitchingVo.getContactperson().get(i).getMobilephone();
+            }else{
+                mobilephone = mobilephone + "、" + contactstitchingVo.getContactperson().get(i).getMobilephone();
+            }
+        }
+        supplierbaseinfor = contactstitchingVo.getSupplier();
+        supplierbaseinfor.setMobilephone(mobilephone);
+        supplierbaseinfor.setLinkman(linkman);
+
         if(supplierbaseinfor == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

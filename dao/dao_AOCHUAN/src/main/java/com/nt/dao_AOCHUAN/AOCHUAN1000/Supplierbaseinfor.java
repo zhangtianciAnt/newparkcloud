@@ -80,4 +80,6 @@ public class Supplierbaseinfor extends BaseModel {
     private String paymentterms;
     private String ratio;
 
+    //联系人手机号
+    private String mobilephone;
 }

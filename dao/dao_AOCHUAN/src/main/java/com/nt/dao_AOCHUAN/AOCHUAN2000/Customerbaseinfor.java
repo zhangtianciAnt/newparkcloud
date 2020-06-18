@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -101,4 +102,20 @@ public class Customerbaseinfor extends BaseModel {
     private String customermanager;
 
     private String ratio;
+
+    //联系人手机号
+    private String mobilephone;
+
+    //    中文名
+    private String cname;
+
+    //    日文名
+    private String jname;
+
+    //    韩文名
+    private String kname;
+
+    //    英文名
+    private String ename;
+
 }
