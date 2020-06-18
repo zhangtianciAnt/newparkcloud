@@ -57,6 +57,12 @@ public class sign {
         }else if(name.length() == 5){
             g.setFont(new Font("宋体", Font.BOLD, 40));
             g.drawString(name, CENTERX-75, CENTERY+20);
+        }else if(name.length() == 6){
+            g.setFont(new Font("宋体", Font.BOLD, 40));
+            g.drawString(name, CENTERX-75, CENTERY+20);
+        }else if(name.length() == 7){
+            g.setFont(new Font("宋体", Font.BOLD, 40));
+            g.drawString(name, CENTERX-75, CENTERY+20);
         }
 
         String filename = new Date().getTime()+ name + ".png";
