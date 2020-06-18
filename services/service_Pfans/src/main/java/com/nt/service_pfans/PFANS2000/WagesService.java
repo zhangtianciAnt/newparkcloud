@@ -15,7 +15,7 @@ public interface WagesService {
 
     List<Bonussend> bonusList(Bonussend bonussend) throws Exception;
 
-    List<BaseVo> selectBase() throws Exception;
+    List<BaseVo> selectBase(String dates) throws Exception;
 
     /**
      * 根据givingid获取工资

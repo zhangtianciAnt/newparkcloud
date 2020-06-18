@@ -158,8 +158,8 @@ public class WagesServiceImpl implements WagesService {
     }
 
     @Override
-    public List<BaseVo> selectBase() throws Exception {
-        return givingMapper.selectBase();
+    public List<BaseVo> selectBase(String dates) throws Exception {
+        return givingMapper.selectBase(dates);
     }
 
     @Override

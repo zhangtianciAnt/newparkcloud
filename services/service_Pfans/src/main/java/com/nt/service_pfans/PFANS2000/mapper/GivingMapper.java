@@ -14,5 +14,5 @@ public interface GivingMapper extends MyMapper<Giving> {
 
     List<Attendance> selectAttendance(@Param("user_id")String user_id, @Param("years") String years, @Param("months") String months);
 
-    List<BaseVo> selectBase();
+    List<BaseVo> selectBase(@Param("dates")String dates);
 }

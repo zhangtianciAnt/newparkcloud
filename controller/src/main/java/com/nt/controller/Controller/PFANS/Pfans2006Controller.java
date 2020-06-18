@@ -34,13 +34,13 @@ public class Pfans2006Controller {
         return ApiResult.success(wagesService.wagesList(wages));
     }
 
-    @RequestMapping(value = "/getwagesList", method = {RequestMethod.POST})
-    public ApiResult getwagesList(@RequestBody BaseVo basevo, HttpServletRequest request) throws Exception {
-        if (basevo == null) {
+    @RequestMapping(value = "/getwagesList", method = {RequestMethod.GET})
+    public ApiResult getwagesList(@RequestParam String dates, HttpServletRequest request) throws Exception {
+        if (dates == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(wagesService.selectBase());
+        return ApiResult.success(wagesService.selectBase(dates));
     }
 
     @RequestMapping(value = "/getBonusList", method = {RequestMethod.GET})

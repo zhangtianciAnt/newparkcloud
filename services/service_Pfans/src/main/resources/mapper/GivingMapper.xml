@@ -29,16 +29,17 @@
      group by user_id
     </select>
 
-    <select id="selectBase"  resultType="com.nt.dao_Pfans.PFANS2000.Vo.BaseVo">
+    <select id="selectBase"  resultType="com.nt.dao_Pfans.PFANS2000.Vo.BaseVo" parameterType="java.lang.String">
     select
-        wages.*, base.lastmonthbasic,
-        base.lastmonthduty,
+        wages.*,
+		base.lastmonthduty,
         base.thismonthbasic as thisbasic,
         base.thismonthduty
     from  wages
     left join base
     ON base.giving_id=wages.giving_id
     AND base.user_id=wages.user_id
+    where DATE_FORMAT(wages.CREATEON,'%Y-%m') = #{dates}
     </select>
 
 </mapper>
