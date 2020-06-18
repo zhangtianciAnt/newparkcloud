@@ -68,6 +68,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         PersonnelPlan personnel = new PersonnelPlan();
         personnel.setYears(personnelPlan.getYears());
         personnel.setGroupid(personnelPlan.getGroupid());
+        personnel.setType(personnelPlan.getType());
         List<PersonnelPlan>  personnelPlanList = personnelplanMapper.select(personnel);
         if(personnelPlanList.size()>0){
             throw new LogicalException("当前年份已填写人员计划");
@@ -79,12 +80,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
 
     @Override
     public List<PersonnelPlan> get(PersonnelPlan personnelPlan) {
-        personnelPlan.setStatus("0");
+      personnelPlan.setStatus("0");
       List<PersonnelPlan> personnelPlan1 =  personnelplanMapper.select(personnelPlan);
-      personnelPlan.setType(1);
-      if(personnelplanMapper.select(personnelPlan).size() > 0) {
-          personnelPlan1.addAll(personnelplanMapper.select(personnelPlan));
-      }
+
       return  personnelPlan1;
     }
 }

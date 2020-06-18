@@ -11,7 +11,9 @@ import java.util.List;
 public interface BusinessService {
 
     List<Business> get(Business business) throws Exception;
+
     List<Business> getBuse() throws Exception;
+
     public BusinessVo selectById(String businessid) throws Exception;
 
     public void insertBusinessVo(BusinessVo businessvo, TokenModel tokenModel)throws Exception;

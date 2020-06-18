@@ -16,6 +16,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Scanner;
+
 @SpringBootApplication
 @ComponentScan(basePackages={"com.nt.*"})
 @MapperScan(basePackages = "com.nt.**.mapper")
@@ -25,10 +27,37 @@ public class Start {
 
     private static Logger log = LoggerFactory.getLogger(Start.class);
     public static void main(String[] args) throws Exception {
+        //启动输入通行证
+        //if (au());
         SpringApplication.run(Start.class, args);
         log.info("服务已启动！！！");
     }
-
+    public static Boolean au() {
+        System.out.println("please input pass:");
+        Scanner sc = new Scanner(System.in);
+        String s1 = sc.next();
+        // 设置运行所需密码
+        String p = "pfans2020!";
+        if (!s1.equals(p)) {
+            System.out.println("pass error! 1s");
+            String s2 = sc.next();
+            if (!s2.equals(p)) {
+                System.out.println("pass error! 2s");
+                String s3 = sc.next();
+                if (!s3.equals(p)) {
+                    System.out.println("pass error! 3s");
+                    System.exit(0);
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
     @Bean
     public FilterRegistrationBean corsFilter() {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

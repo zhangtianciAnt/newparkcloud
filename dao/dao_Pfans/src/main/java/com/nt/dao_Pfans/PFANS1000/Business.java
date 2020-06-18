@@ -345,5 +345,12 @@ public class Business extends BaseModel {
     //add-ws-4/29-是否夜间到达添加
     @Column(name = "ARRIVENIGHT")
     private String arrivenight;
-//add-ws-4/29-是否夜间到达添加
+    //add-ws-4/29-是否夜间到达添加
+
+
+    /**
+     * 他の説明（其他说明）
+     */
+    @Column(name = "BUSINESS_NUMBER")
+    private String business_number;
 }
