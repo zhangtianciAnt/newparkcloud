@@ -404,18 +404,19 @@ public class Pfans1012Controller {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
             }
         }
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
         //add-ws-6/16-禅道101
-        if (wfList3 != "") {
-            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        }
-        if (wfList4 != "") {
-            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        }
-        //add-ws-6/16-禅道101
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
-        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
+//        if (wfList3 != "") {
+//            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+//        }
+//        if (wfList4 != "") {
+//            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        }
+//        //add-ws-6/16-禅道101
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})

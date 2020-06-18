@@ -454,18 +454,19 @@ public class Pfans1013Controller {
         }
         //upd-ws-6/17-禅道101
         //add-ws-6/16-禅道101
-        if (wfList3 != "") {
-            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        }
-        if (wfList4 != "") {
-            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        }
-        //add-ws-6/16-禅道101
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
+//        if (wfList3 != "") {
+//            FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+//        }
+//        if (wfList4 != "") {
+//            FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        }
+//        //add-ws-6/16-禅道101
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+//
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
 
 

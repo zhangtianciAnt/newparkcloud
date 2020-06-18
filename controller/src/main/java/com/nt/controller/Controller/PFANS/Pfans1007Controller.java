@@ -266,12 +266,13 @@ public class Pfans1007Controller {
         data.put("saList", asvo.getSalesdetails());
         data.put("scList", asvo.getScrapdetails());
         ExcelOutPutUtil.OutPutPdf("固定资产·软件处理决裁", "gudingzichanfq.xls", data, response);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList6);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList6);
     }
 //    }
 }
