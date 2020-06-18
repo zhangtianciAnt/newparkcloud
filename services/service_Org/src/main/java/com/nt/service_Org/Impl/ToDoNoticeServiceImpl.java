@@ -129,7 +129,7 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     public void delToDoNotice(String todonoticeid, TokenModel tokenModel) throws Exception {
         ToDoNotice toDoNotice = new ToDoNotice();
         toDoNotice.preUpdate(tokenModel);
-        toDoNotice.setStatus(AuthConstants.TODO_STATUS_DELETE);
+        toDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
         toDoNotice.setNoticeid(todonoticeid);
         todoNoticeMapper.updateByPrimaryKeySelective(toDoNotice);
     }
