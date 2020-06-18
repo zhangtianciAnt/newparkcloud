@@ -88,7 +88,7 @@ public class BusinessServiceImpl implements BusinessService {
         if(businessList.size() > 0){
             for(Business busin : businessList){
                 if(busin.getBusiness_number() != "" && busin.getBusiness_number() != null){
-                    String checkNumber = StringUtils.uncapitalize(StringUtils.substring(busin.getBusiness_number(),0,8));
+                    String checkNumber = StringUtils.uncapitalize(StringUtils.substring(busin.getBusiness_number(),1,9));
                     if(new_date.equals(checkNumber)){
                         number = number + 1;
                     }
@@ -102,7 +102,7 @@ public class BusinessServiceImpl implements BusinessService {
         }else{
             no_str = "01";
         }
-        number_str = new_date + no_str;
+        number_str = "C" + new_date + no_str;
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preInsert(tokenModel);
         business.setBusiness_id(businessid);
