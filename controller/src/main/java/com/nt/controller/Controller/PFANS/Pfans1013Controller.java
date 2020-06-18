@@ -173,17 +173,7 @@ public class Pfans1013Controller {
         }
 //        }
         Query query = new Query();
-        String userim = "";
-        query.addCriteria(Criteria.where("userid").is(evevo.getEvection().getUserid()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-        if (customerInfo != null) {
-            //申请人
-            evevo.getEvection().setUserid(customerInfo.getUserinfo().getCustomername());
-            userim = customerInfo.getUserinfo().getCustomername();
-            userim = sign.startGraphics2D(userim);
-            //部门
-            evevo.getEvection().setGroupid(customerInfo.getUserinfo().getGroupname());
-        }
         //获取审批节点的负责人
         String wfList1 = "";
         String wfList2 = "";
@@ -259,6 +249,16 @@ public class Pfans1013Controller {
                 }
                 //upd-ws-禅道102
             }
+        }
+        String userim = "";
+        query.addCriteria(Criteria.where("userid").is(evevo.getEvection().getUserid()));
+        if (customerInfo != null) {
+            //申请人
+            evevo.getEvection().setUserid(customerInfo.getUserinfo().getCustomername());
+            userim = customerInfo.getUserinfo().getCustomername();
+            userim = sign.startGraphics2D(userim);
+            //部门
+            evevo.getEvection().setGroupid(customerInfo.getUserinfo().getGroupname());
         }
         //upd-ws-6/17-禅道101
         Map<String, Object> data = new HashMap<>();
@@ -449,6 +449,10 @@ public class Pfans1013Controller {
         FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
         FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
+
+
+
+
 
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
