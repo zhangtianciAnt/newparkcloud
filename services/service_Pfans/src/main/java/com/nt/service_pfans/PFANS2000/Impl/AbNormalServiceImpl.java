@@ -1214,6 +1214,10 @@ public class AbNormalServiceImpl implements AbNormalService {
         double time = 0.0;
         double timeSum = 0.0;
         if (abNormalList.size() > 0) {
+            //如果这条数据已经存在，筛选掉
+            if (!StringUtils.isNullOrEmpty(abNormal.getAbnormalid())) {
+                abNormalList = abNormalList.stream().filter(item -> !abNormal.getAbnormalid().equals(item.getAbnormalid())).collect(Collectors.toList());
+            }
             for (int a = 0; a < abNormalList.size(); a++) {
                 //实际日期
                 if (Integer.parseInt(abNormalList.get(a).getStatus()) > 4) {
