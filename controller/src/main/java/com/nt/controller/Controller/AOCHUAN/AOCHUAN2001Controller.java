@@ -109,7 +109,32 @@ public class AOCHUAN2001Controller {
     }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody Customerbaseinfor customerbaseinfor, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody CustomerbaseinforVo customerbaseinforvo, HttpServletRequest request) throws Exception {
+
+        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+
+        String linkman = " ";
+        String mobilephone = " ";
+        for (int i = 0; i < customerbaseinforvo.getContactperson().size(); i++) {
+            if (linkman == " ") {
+//                判断
+//                if(StringUtils.isBlank(customerbaseinforvo.getContactperson().get(i).getCname())){}
+                linkman = customerbaseinforvo.getContactperson().get(i).getCname() + "、" + customerbaseinforvo.getContactperson().get(i).getJname() + "、" + customerbaseinforvo.getContactperson().get(i).getEname() + "、" + customerbaseinforvo.getContactperson().get(i).getKname();
+            } else {
+                linkman = linkman + "、" + customerbaseinforvo.getContactperson().get(i).getCname() + "、" + customerbaseinforvo.getContactperson().get(i).getJname() + "、" + customerbaseinforvo.getContactperson().get(i).getEname() + "、" + customerbaseinforvo.getContactperson().get(i).getKname();
+            }
+        }
+        for (int i = 0; i < customerbaseinforvo.getContactperson().size(); i++) {
+            if (mobilephone == " ") {
+                mobilephone = customerbaseinforvo.getContactperson().get(i).getMobilephone();
+            } else {
+                mobilephone = mobilephone + "、" + customerbaseinforvo.getContactperson().get(i).getMobilephone();
+            }
+        }
+        customerbaseinfor = customerbaseinforvo.getCustomerbaseinfor();
+        customerbaseinfor.setMobilephone(mobilephone);
+        customerbaseinfor.setLinkman(linkman);
+
         if (customerbaseinfor == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -146,7 +171,7 @@ public class AOCHUAN2001Controller {
         }
         Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
         customerbaseinfor = customerbaseinforService.getOne(baseinfoId);
-        customerbaseinfor.setLinkman(linkmanId);
+//        customerbaseinfor.setLinkman(linkmanId);
         customerbaseinforService.update(customerbaseinfor, tokenService.getToken(request));
         return ApiResult.success();
     }
