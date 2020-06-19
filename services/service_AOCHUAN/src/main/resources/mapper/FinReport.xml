@@ -5,6 +5,7 @@
     <select id="getAll" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport">
        select * from transportgood tpg
        where tpg.STATUS != '1'
+       ORDER BY contractnumber desc
     </select>
 
 </mapper>
