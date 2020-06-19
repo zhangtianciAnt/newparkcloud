@@ -319,7 +319,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             for (CustomerInfo customerInfo : customerInfoList) {
                 try {
                     TokenModel tokenModel = new TokenModel();
-//                    if(customerInfo.getUserid().equals("5eb8ee1d29b7371b2840ba58"))
+//                    if(customerInfo.getUserid().equals("5eb8ee1d29b7371b2840ba58") || customerInfo.getUserid().equals("5eb5199b29b7371e7c8bffc7"))
 //                    {
                     Calendar rightNow = Calendar.getInstance();
                     //上月1号
@@ -356,16 +356,20 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 Attendance attendance = new Attendance();
                                 attendance.setUser_id(customerInfo.getUserid());
                                 attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
-                                attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
-                                attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                                attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                                attendance.setAttendanceid(UUID.randomUUID().toString());
-                                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
-                                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
-                                attendance.setRecognitionstate("");
-                                tokenModel.setUserId(attendance.getUser_id());
-                                tokenModel.setExpireDate(new Date());
-                                saveAttendance(attendance, "1", tokenModel);
+                                List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                                if(attendanceList.size()==0)
+                                {
+                                    attendance.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                    attendance.setAttendanceid(UUID.randomUUID().toString());
+                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                    attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
+                                    attendance.setRecognitionstate("");
+                                    tokenModel.setUserId(attendance.getUser_id());
+                                    tokenModel.setExpireDate(new Date());
+                                    saveAttendance(attendance, "1", tokenModel);
+                                }
                             }
                             else
                             {
@@ -602,7 +606,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if (attendancelist.size() > 0) {
                 for (Attendance ad : attendancelist) {
                     try {
-//                        if(ad.getUser_id().equals("5eb8ee1d29b7371b2840ba58"))
+//                        if(ad.getUser_id().equals("5eb5199b29b7371e7c8bffc7") || ad.getUser_id().equals("5eb8ee1d29b7371b2840ba58"))
 //                        {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
@@ -1823,8 +1827,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         continue;
                     }
                     //---------不定时考勤人员(非不定时考勤人员才计算)end-------
+//                }
                 }
-                //}
             }
         }
         //---------查询考勤表是否有数据end-------
