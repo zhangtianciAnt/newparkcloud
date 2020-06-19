@@ -9,8 +9,12 @@ import com.nt.service_AOCHUAN.AOCHUAN6000.AttendancesService;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.AttendancesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.VacationMapper;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.EWechatService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.utils.ApiResult;
+import com.nt.utils.EWxUserApi;
 import com.nt.utils.LogicalException;
+import com.nt.utils.dao.EWeixinOauth2Token;
 import com.nt.utils.dao.EWxBaseResponse;
 import com.nt.utils.dao.EWxCheckData;
 import com.nt.utils.dao.TokenModel;
@@ -18,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@EnableScheduling
 @Transactional(rollbackFor = Exception.class)
 public class AttendancesServiceImpl implements AttendancesService {
 
@@ -49,6 +56,12 @@ public class AttendancesServiceImpl implements AttendancesService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private EWechatService ewechatService;
+
+    @Autowired
+    private AttendancesService attendanceService;
 
     //考勤一览初期值
     @Override
@@ -663,5 +676,45 @@ public class AttendancesServiceImpl implements AttendancesService {
         date.set(Calendar.MONTH, date.get(Calendar.MONTH) - 1);
         String lastMons = sdf.format(date.getTime());
         return attendanceMapper.getByUserId(userId, nowMons, lastMons);
+    }
+
+
+    //自动获取企业微信打卡记录
+    @Scheduled(cron = "* * 1 * * ?")
+    public ApiResult getautocheckindata() throws Exception {
+
+        try {
+            String corpid = "ww52676ba41e44fb89";
+            String corpSecret = "CP6colO-9OR5HRGZt7IAEzN5xYQH09H7yiuNvMextNE";
+            EWeixinOauth2Token eweixinOauth = EWxUserApi.getWeChatOauth2Token(corpid, corpSecret);
+            if (eweixinOauth != null && eweixinOauth.getErrcode() == 0) {
+                String token = eweixinOauth.getAccess_token();
+                String access_token = ewechatService.ewxLogin(token);
+                List<CustomerInfo> userIdList = ewechatService.useridList();
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, -1);
+                String strDateFormat = dateFormat.format(calendar.getTime());
+                String startStrDateFormat = strDateFormat + " " + "0:10:00";
+                String endStrDateFormat = strDateFormat + " " + "23:59:59";
+                Date startDatDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startStrDateFormat);
+                Date endDatDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endStrDateFormat);
+                long startTime = startDatDateFormat.getTime() / 1000;
+                long endTime = endDatDateFormat.getTime() / 1000;
+                String[] strList = new String[userIdList.size()];
+                for (int i = 0; i < userIdList.size(); i++) {
+                    strList[i] = userIdList.get(i).getUserinfo().getEwechatid();
+                }
+                EWxBaseResponse jsob = new EWxBaseResponse();
+                jsob = EWxUserApi.inData(access_token, 1, startTime, endTime, strList);
+                attendanceService.getAutoCheckInData(jsob);
+                return ApiResult.success("成功");
+            } else {
+                return ApiResult.fail("获取企业微信access_token失败");
+            }
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        }
     }
 }

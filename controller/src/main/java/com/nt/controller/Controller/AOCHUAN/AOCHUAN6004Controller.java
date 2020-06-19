@@ -24,7 +24,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/attendance")
-@EnableScheduling
 public class AOCHUAN6004Controller {
 
     @Autowired
@@ -111,48 +110,6 @@ public class AOCHUAN6004Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(attendanceService.getByUserId(id));
     }
-
-    //自动获取企业微信打卡记录
-    @Scheduled(cron = "* * 1 * * ?")
-    @RequestMapping(value = "/getautocheckindata", method = {RequestMethod.GET})
-    public ApiResult getautocheckindata() throws Exception {
-
-        try {
-            String corpid = "ww52676ba41e44fb89";
-            String corpSecret = "CP6colO-9OR5HRGZt7IAEzN5xYQH09H7yiuNvMextNE";
-            EWeixinOauth2Token eweixinOauth = EWxUserApi.getWeChatOauth2Token(corpid, corpSecret);
-            if (eweixinOauth != null && eweixinOauth.getErrcode() == 0) {
-                String token = eweixinOauth.getAccess_token();
-                String access_token = ewechatService.ewxLogin(token);
-                List<CustomerInfo> userIdList = ewechatService.useridList();
-                Date date = new Date();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, -1);
-                String strDateFormat = dateFormat.format(calendar.getTime());
-                String startStrDateFormat = strDateFormat + " " + "0:10:00";
-                String endStrDateFormat = strDateFormat + " " + "23:59:59";
-                Date startDatDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startStrDateFormat);
-                Date endDatDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endStrDateFormat);
-                long startTime = startDatDateFormat.getTime() / 1000;
-                long endTime = endDatDateFormat.getTime() / 1000;
-                String[] strList = new String[userIdList.size()];
-                for (int i = 0; i < userIdList.size(); i++) {
-                    strList[i] = userIdList.get(i).getUserinfo().getEwechatid();
-                }
-                EWxBaseResponse jsob = new EWxBaseResponse();
-                jsob = EWxUserApi.inData(access_token, 1, startTime, endTime, strList);
-                attendanceService.getAutoCheckInData(jsob);
-                return ApiResult.success("成功");
-//              return ApiResult.success(ewechatService.ewxLogin(access_token));
-            } else {
-                return ApiResult.fail("获取企业微信access_token失败");
-            }
-        } catch (LogicalException e) {
-            return ApiResult.fail(e.getMessage());
-        }
-    }
-
 
     //手动获取企业微信打卡记录
     @RequestMapping(value = "/getManualcheckindata", method = {RequestMethod.GET})
