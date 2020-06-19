@@ -207,11 +207,12 @@ public class Pfans2026Controller {
         data.put("leavedate", str.format(staVo.getStaffexitprocedure().getHope_exit_date()));
         data.put("staff", staVo.getStaffexitprocedure());
         ExcelOutPutUtil.OutPutPdf("劳动者离职报告", "laodongzhelizhibaogao.xls", data, response);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList6);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList6);
     }
 }

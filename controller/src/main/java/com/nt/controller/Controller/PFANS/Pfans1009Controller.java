@@ -183,11 +183,12 @@ public class Pfans1009Controller {
             data.put("statime", "");
         }
         ExcelOutPutUtil.OutPutPdf("固定資産貸出修理持出決裁願", "gdzcjcxl.xls", data, response);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList2);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList3);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList4);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList5);
 //        }
     }
 }

@@ -200,7 +200,8 @@ public class Pfans1008Controller {
         data.put("CtrTL", CtrTL);
         data.put("CtrGM", CtrGM);
         ExcelOutPutUtil.OutPutPdf("固定资产·软件移转申请", "gudingzichanzy.xls", data, response);
-        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+//        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
         }
 //    }
 }
