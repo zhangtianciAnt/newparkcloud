@@ -469,7 +469,7 @@
         ) AS THISMONTHADJUSTMENT,#本月应扣缴所得税
         round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
         @YLBXHS := round( @YANGLAOJS * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
-        @YILIAOBXHS := round( @YILIAOJS * DIC_YILIAOBXGRFDHS * 0.5, 2 ) AS COMMEDICALINSURANCE,#医疗保险gbb0.5
+        @YILIAOBXHS := round( @YILIAOJS * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
         @SYBXGRFDHS := round( @SHIYEJS * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
         @GSBXHS := round( @GONGSHANGJS * DIC_GSBXHS, 2 ) AS COMINJURYINSURANCE,#工伤保险
         @SYBXHS := round( @SHENGYUJS * DIC_SYBXHS, 2 ) AS COMBIRTHINSURANCE,#生育保险
@@ -500,7 +500,7 @@
         order by base.USER_ID
     </select>
 
-    <select id="getWagesdepartment" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
+    <select id="getWagesdepartmentold" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         select
             wages.DEPARTMENT_ID,#部门
             count(*) as user_id,#人数
@@ -543,7 +543,217 @@
 		ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
     </select>
 
-    <select id="getWagecompany" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
+    <select id="getWagesdepartment" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
+        select * from
+        (
+            select
+                wages.DEPARTMENT_ID as DEPARTMENT_ID,#部门
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as pension, #社保（企业）(养老--暖房费)
+                ROUND(SUM(comendowmentinsurance),2) as comendowmentinsurance,#养老保险/养老（企业）
+                ROUND(SUM(commedicalinsurance),2) as commedicalinsurance,#医疗保险/医疗（企业）
+                ROUND(SUM(comunemploymentinsurance),2) as comunemploymentinsurance,#失业保险/失业（企业）
+                ROUND(SUM(cominjuryinsurance),2) as cominjuryinsurance,#工伤保险/工伤（企业）
+                ROUND(SUM(combirthinsurance),2) as combirthinsurance,#生育保险/生育（企业）
+                ROUND(SUM(comheating),2) as comheating,#暖房费/暖房费（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
+                ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                      if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
+                ROUND(SUM(labourunionbase),2) as labourunionbase#工会经费基数
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where DATE_FORMAT(wages.CREATEON,'%Y-%m')  = #{dates}
+            AND wages.actual = '0'
+            GROUP BY wages.DEPARTMENT_ID
+            ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
+        ) estimate
+		union all
+        select * from
+        (
+            select
+                wages.DEPARTMENT_ID as DEPARTMENT_ID,#部门
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as pension, #社保（企业）(养老--暖房费)
+                ROUND(SUM(comendowmentinsurance),2) as comendowmentinsurance,#养老保险/养老（企业）
+                ROUND(SUM(commedicalinsurance),2) as commedicalinsurance,#医疗保险/医疗（企业）
+                ROUND(SUM(comunemploymentinsurance),2) as comunemploymentinsurance,#失业保险/失业（企业）
+                ROUND(SUM(cominjuryinsurance),2) as cominjuryinsurance,#工伤保险/工伤（企业）
+                ROUND(SUM(combirthinsurance),2) as combirthinsurance,#生育保险/生育（企业）
+                ROUND(SUM(comheating),2) as comheating,#暖房费/暖房费（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
+                ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                      if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
+                ROUND(SUM(labourunionbase),2) as labourunionbase#工会经费基数
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where DATE_FORMAT(wages.CREATEON,'%Y-%m')  = #{dates}
+            AND wages.actual = '1'
+            GROUP BY wages.DEPARTMENT_ID
+            ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
+        ) actual
+		union all
+        select
+            actual.DEPARTMENT_ID,
+            '2' as actual,
+            ROUND((actual.user_id - estimate.user_id),2) as user_id,
+            ROUND((actual.totalwages - estimate.totalwages),2) as totalwages,
+            ROUND((actual.taxestotal - estimate.taxestotal),2) as taxestotal,
+            ROUND((actual.total3 - estimate.total3),2) as total3,
+            ROUND((actual.pension - estimate.pension),2) as pension,
+            ROUND((actual.comendowmentinsurance - estimate.comendowmentinsurance),2) as comendowmentinsurance,
+            ROUND((actual.commedicalinsurance - estimate.commedicalinsurance),2) as commedicalinsurance,
+            ROUND((actual.comunemploymentinsurance - estimate.comunemploymentinsurance),2) as comunemploymentinsurance,
+            ROUND((actual.cominjuryinsurance - estimate.cominjuryinsurance),2) as cominjuryinsurance,
+            ROUND((actual.combirthinsurance - estimate.combirthinsurance),2) as combirthinsurance,
+            ROUND((actual.comheating - estimate.comheating),2) as comheating,
+            ROUND((actual.comaccumulationfund - estimate.comaccumulationfund),2) as comaccumulationfund,
+            ROUND((actual.bonusmoney - estimate.bonusmoney),2) as bonusmoney,
+            ROUND((actual.appreciation - estimate.appreciation),2) as appreciation,
+            ROUND((actual.labourunionfunds - estimate.labourunionfunds),2) as labourunionfunds,
+            ROUND((actual.other4 - estimate.other4),2) as other4,
+            ROUND((actual.other5 - estimate.other5),2) as other5,
+            ROUND((actual.total - estimate.total),2) as total,
+            ROUND((actual.overtimesubsidy - estimate.overtimesubsidy),2) as overtimesubsidy,
+            ROUND((actual.thismonthadjustment - estimate.thismonthadjustment),2) as thismonthadjustment,
+            ROUND((actual.socialinsurance - estimate.socialinsurance),2) as socialinsurance,
+            ROUND((actual.accumulationfund - estimate.accumulationfund),2) as accumulationfund,
+            ROUND((actual.realwages - estimate.realwages),2) as realwages,
+            ROUND((actual.shouldcumulative - estimate.shouldcumulative),2) as shouldcumulative,
+            ROUND((actual.other6 - estimate.other6),2) as other6,
+            ROUND((actual.labourunionbase - estimate.labourunionbase),2) as labourunionbase
+        from
+        (
+            select
+                wages.DEPARTMENT_ID as DEPARTMENT_ID,#部门
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as pension, #社保（企业）(养老--暖房费)
+                ROUND(SUM(comendowmentinsurance),2) as comendowmentinsurance,#养老保险/养老（企业）
+                ROUND(SUM(commedicalinsurance),2) as commedicalinsurance,#医疗保险/医疗（企业）
+                ROUND(SUM(comunemploymentinsurance),2) as comunemploymentinsurance,#失业保险/失业（企业）
+                ROUND(SUM(cominjuryinsurance),2) as cominjuryinsurance,#工伤保险/工伤（企业）
+                ROUND(SUM(combirthinsurance),2) as combirthinsurance,#生育保险/生育（企业）
+                ROUND(SUM(comheating),2) as comheating,#暖房费/暖房费（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
+                ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                      if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
+                ROUND(SUM(labourunionbase),2) as labourunionbase#工会经费基数
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where DATE_FORMAT(wages.CREATEON,'%Y-%m')  = #{dates}
+            AND wages.actual = '0'
+            GROUP BY wages.DEPARTMENT_ID
+            ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
+        ) estimate,
+        (
+            select
+                wages.DEPARTMENT_ID as DEPARTMENT_ID,#部门
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as pension, #社保（企业）(养老--暖房费)
+                ROUND(SUM(comendowmentinsurance),2) as comendowmentinsurance,#养老保险/养老（企业）
+                ROUND(SUM(commedicalinsurance),2) as commedicalinsurance,#医疗保险/医疗（企业）
+                ROUND(SUM(comunemploymentinsurance),2) as comunemploymentinsurance,#失业保险/失业（企业）
+                ROUND(SUM(cominjuryinsurance),2) as cominjuryinsurance,#工伤保险/工伤（企业）
+                ROUND(SUM(combirthinsurance),2) as combirthinsurance,#生育保险/生育（企业）
+                ROUND(SUM(comheating),2) as comheating,#暖房费/暖房费（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
+                ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                      if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
+                ROUND(SUM(labourunionbase),2) as labourunionbase#工会经费基数
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where DATE_FORMAT(wages.CREATEON,'%Y-%m')  = #{dates}
+            AND wages.actual = '1'
+            GROUP BY wages.DEPARTMENT_ID
+            ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
+        ) actual
+        where  estimate.DEPARTMENT_ID = actual.DEPARTMENT_ID
+    </select>
+
+    <select id="getWagecompanyold" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         select
             DATE_FORMAT(wages.createon,'%Y-%m') as createonym,#时间
             count(*) as user_id,#人数
@@ -574,6 +784,163 @@
         where wages.actual = #{actual}
         group by DATE_FORMAT(wages.createon,'%Y-%m')
         order by DATE_FORMAT(wages.createon,'%Y-%m')
+    </select>
+
+    <select id="getWagecompany" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
+        select * from
+        (
+            select
+                wages.createonym,#时间
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as socialinsurance, #社保（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where wages.actual = '0'
+            GROUP BY wages.createonym
+        ) estimate
+		union all
+        select * from
+        (
+            select
+                wages.createonym,#时间
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as socialinsurance, #社保（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where wages.actual = '1'
+            GROUP BY wages.createonym
+        ) actual
+		union all
+        select
+            actual.createonym,
+            '2' as actual,
+            ROUND((actual.user_id - estimate.user_id),2) as user_id,
+            ROUND((actual.totalwages - estimate.totalwages),2) as totalwages,
+            ROUND((actual.taxestotal - estimate.taxestotal),2) as taxestotal,
+            ROUND((actual.total3 - estimate.total3),2) as total3,
+            ROUND((actual.socialinsurance - estimate.socialinsurance),2) as socialinsurance,
+            ROUND((actual.comaccumulationfund - estimate.comaccumulationfund),2) as comaccumulationfund,
+            ROUND((actual.bonusmoney - estimate.bonusmoney),2) as bonusmoney,
+            ROUND((actual.appreciation - estimate.appreciation),2) as appreciation,
+            ROUND((actual.labourunionfunds - estimate.labourunionfunds),2) as labourunionfunds,
+            ROUND((actual.other4 - estimate.other4),2) as other4,
+            ROUND((actual.other5 - estimate.other5),2) as other5,
+            ROUND((actual.total - estimate.total),2) as total,
+            ROUND((actual.overtimesubsidy - estimate.overtimesubsidy),2) as overtimesubsidy,
+            ROUND((actual.thismonthadjustment - estimate.thismonthadjustment),2) as thismonthadjustment,
+            ROUND((actual.realwages - estimate.realwages),2) as realwages,
+            ROUND((actual.shouldcumulative - estimate.shouldcumulative),2) as shouldcumulative,
+            ROUND((actual.other6 - estimate.other6),2) as other6
+        from
+        (
+            select
+                wages.createonym,#时间
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as socialinsurance, #社保（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where wages.actual = '0'
+            GROUP BY wages.createonym
+        ) estimate,
+        (
+            select
+                wages.createonym,#时间
+                wages.actual as actual,
+                count(*) as user_id,#人数
+                ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
+                ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
+                ROUND(SUM(total3),2) as total3, #小计3/免税工资总额
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as socialinsurance, #社保（企业）
+                ROUND(SUM(comaccumulationfund),2) as comaccumulationfund,#公积金（企业）
+                ROUND(SUM(bonusmoney),2) as bonusmoney,#計上奨金
+                ROUND(SUM(appreciation),2) as appreciation,#月度奨金（纳税）
+                ROUND(SUM(labourunionfunds),2) as labourunionfunds,#工会经费
+                ROUND(SUM(if(otherfour.total is null,0,otherfour.total)),2) as other4,#其他4F/社保大病险
+                ROUND(SUM(if(otherfive.welfaretotal is null,0,otherfive.welfaretotal)),2) as other5,#其他5H/福利
+                ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
+                ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
+                ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
+                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
+                if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
+                ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
+            from wages
+            left join otherfour
+            on otherfour.GIVING_ID = wages.GIVING_ID
+            and otherfour.USER_ID = wages.USER_ID
+            left join otherfive
+            on otherfive.GIVING_ID = wages.GIVING_ID
+            and otherfive.USER_ID = wages.USER_ID
+            where wages.actual = '1'
+            GROUP BY wages.createonym
+        ) actual
+        where  estimate.createonym = actual.createonym
     </select>
 
     <select id="updateWages">

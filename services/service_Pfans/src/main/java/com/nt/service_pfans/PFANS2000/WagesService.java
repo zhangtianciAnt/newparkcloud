@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.BaseVo;
+import com.nt.dao_Pfans.PFANS2000.Vo.WagesVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -27,9 +28,9 @@ public interface WagesService {
 
     void insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception;
 
-    List<Wages> getWagesdepartment(String dates) throws Exception;
+    WagesVo getWagesdepartment(String dates) throws Exception;
 
-    List<Wages> getWagecompany() throws Exception;
+    WagesVo getWagecompany() throws Exception;
 
     //获取离职人员工资
     List<Wages> getWagesByResign(String user_id,TokenModel tokenModel) throws Exception;

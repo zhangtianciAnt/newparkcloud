@@ -21,7 +21,7 @@ public interface WagesMapper extends MyMapper<Wages> {
 
     List<Wages> getWagesByGivingId(@Param("givingId") String givingId,@Param("userid") String userid);
 
-    List<Wages> getWagesdepartment(@Param("dates") String dates,@Param("actual") String actual);
+    List<Wages> getWagesdepartment(@Param("dates") String dates);
 
-    List<Wages> getWagecompany(@Param("actual") String actual);
+    List<Wages> getWagecompany();
 }

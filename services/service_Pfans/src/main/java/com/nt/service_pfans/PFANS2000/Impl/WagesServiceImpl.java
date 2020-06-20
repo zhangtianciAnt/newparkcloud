@@ -240,15 +240,29 @@ public class WagesServiceImpl implements WagesService {
     }
     //获取工资公司集计
     @Override
-    public List<Wages> getWagesdepartment(String dates) throws Exception {
-        return wagesMapper.getWagesdepartment(dates,"0");
+    public WagesVo getWagesdepartment(String dates) throws Exception {
+        WagesVo wagesvo = new WagesVo();
+        List<Wages> wagesList = wagesMapper.getWagesdepartment(dates);
+        //预计
+        wagesvo.setWagesListestimate(wagesList.stream().filter(coi -> (coi.getActual().contains("0"))).collect(Collectors.toList()));
+        //实际
+        wagesvo.setWagesListactual(wagesList.stream().filter(coi -> (coi.getActual().contains("1"))).collect(Collectors.toList()));
+        //比较
+        wagesvo.setWagesListdiff(wagesList.stream().filter(coi -> (coi.getActual().contains("2"))).collect(Collectors.toList()));
+        return wagesvo;
     }
 
     @Override
-    public List<Wages> getWagecompany() throws Exception {
-        List<Wages>  Wageslist = new ArrayList<>();
-        Wageslist = wagesMapper.getWagecompany("0");
-        return Wageslist;
+    public WagesVo getWagecompany() throws Exception {
+        WagesVo wagesvo = new WagesVo();
+        List<Wages> wagesList = wagesMapper.getWagecompany();
+        //预计
+        wagesvo.setWagesListestimate(wagesList.stream().filter(coi -> (coi.getActual().contains("0"))).collect(Collectors.toList()));
+        //实际
+        wagesvo.setWagesListactual(wagesList.stream().filter(coi -> (coi.getActual().contains("1"))).collect(Collectors.toList()));
+        //比较
+        wagesvo.setWagesListdiff(wagesList.stream().filter(coi -> (coi.getActual().contains("2"))).collect(Collectors.toList()));
+        return wagesvo;
     }
 
     @Override
