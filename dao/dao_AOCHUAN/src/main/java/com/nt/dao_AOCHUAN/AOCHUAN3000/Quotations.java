@@ -61,4 +61,6 @@ public class Quotations extends BaseModel {
 
     @Transient
     private boolean notice;
+
+    private Date quotationdate;
 }

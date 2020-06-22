@@ -110,7 +110,7 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
 
     //系统服务(每天：0：00：00)
     //@Scheduled( cron="0 0 24 * * ?")
-    @Scheduled( cron="3 * * * * ?")
+    //@Scheduled( cron="* */1 * * * ?")
     public void createNotice() throws Exception {
         FinPurchase finPurchase = new FinPurchase();
         finPurchase.setPaymentstatus("PY011001");//未付款
