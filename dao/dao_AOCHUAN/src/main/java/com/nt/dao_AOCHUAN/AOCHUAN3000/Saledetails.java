@@ -70,4 +70,6 @@ public class Saledetails extends BaseModel {
 
     private String casnum;
 
+    private String productenname;
+
 }
