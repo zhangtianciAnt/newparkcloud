@@ -16,5 +16,13 @@ public interface MenhuproductsService {
 
     List<Menhuproducts> get(Menhuproducts menhuproducts) throws Exception;
 
+    public void insert(Menhuproducts menhuproducts, TokenModel tokenModel)throws  Exception;
+
+    public Menhuproducts One(String ids)throws  Exception;
+
+    void delete(String id) throws Exception;
+
+    public void update(Menhuproducts menhuproducts, TokenModel tokenModel)throws  Exception;
+
 
 }
