@@ -1,6 +1,7 @@
 package com.nt.service_WorkFlow.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
@@ -18,6 +19,7 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -1145,7 +1147,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     conditionWorkflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
 //                    conditionWorkflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                     workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
-                    if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() == 0) {
+                    if(item.getOutcondition() == null){
+                        item.setOutcondition("1");
+                    }
+                    if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() < Convert.toInt(item.getOutcondition())) {
                         // 结束操作
                         outOperationWorkflowVo.setState("0");
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
