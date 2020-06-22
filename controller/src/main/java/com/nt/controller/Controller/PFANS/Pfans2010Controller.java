@@ -77,4 +77,16 @@ public class Pfans2010Controller {
         return ApiResult.success();
     }
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+
+    // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
+    @RequestMapping(value = "/updStatus1", method = {RequestMethod.POST})
+    public ApiResult updStatus1(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendanceService.updStatus1(attendance, tokenModel);
+        return ApiResult.success();
+    }
+    // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
 }
