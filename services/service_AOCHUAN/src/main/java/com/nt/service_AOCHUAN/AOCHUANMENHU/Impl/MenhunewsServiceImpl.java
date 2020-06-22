@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +40,16 @@ public class MenhunewsServiceImpl implements MenhunewsService {
             newsinformation.setBackgroundcolor("redbackgrounddate");
         }
 
+        String yearmon = newsinformation.getNewsyearmon().substring(0,7);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        Date date = simpleDateFormat.parse(yearmon);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, 1);
+        String b = simpleDateFormat.format(calendar.getTime());
+
+        newsinformation.setNewsyearmon(b);
         menhunewsMapper.insert(newsinformation);
     }
 
@@ -56,6 +69,16 @@ public class MenhunewsServiceImpl implements MenhunewsService {
         if(newsinformation.getNewsyearmon().substring(5,7).equals("01")){
             newsinformation.setBackgroundcolor("redbackgrounddate");
         }
+        String yearmon = newsinformation.getNewsyearmon().substring(0,7);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        Date date = simpleDateFormat.parse(yearmon);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, 1);
+        String b = simpleDateFormat.format(calendar.getTime());
+
+        newsinformation.setNewsyearmon(b);
         menhunewsMapper.updateByPrimaryKey(newsinformation);
     }
 }
