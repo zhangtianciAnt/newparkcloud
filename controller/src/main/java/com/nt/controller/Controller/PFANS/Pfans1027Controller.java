@@ -86,14 +86,13 @@ public class Pfans1027Controller {
         DecimalFormat df = new DecimalFormat("###,###.00");
         BigDecimal bd = new BigDecimal(qu.getQuotation().getClaimamount());
         str_format = df.format(bd);
-        data.put("claimamount", str_format);
+        data.put("claimam", str_format);
         for (int i = 0; i < qu.getNumbercounts().size(); i++) {
+            String str_format1 = "";
             bd = new BigDecimal(qu.getNumbercounts().get(i).getClaimamount());
-            str_format = df.format(bd);
-            qu.getNumbercounts().get(i).setClaimamount(str_format);
+            str_format1 = df.format(bd);
+            qu.getNumbercounts().get(i).setClaimamount(str_format1);
         }
-
-
         data.put("qu",qu.getQuotation());
         data.put("qulist",qu.getOthpersonfee());
 //        data.put("qualist",qu.getFruit());
