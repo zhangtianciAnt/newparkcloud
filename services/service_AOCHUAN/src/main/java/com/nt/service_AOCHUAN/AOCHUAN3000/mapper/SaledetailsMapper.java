@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface SaledetailsMapper extends MyMapper<Saledetails> {
     int insertSaledetailsList(@Param("list") List<Saledetails> EnquiryList);
+
+    List<Saledetails> getSailDetails(@Param("id") String id);
 }

@@ -68,7 +68,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         TransportGood transportGood =  transportGoodMapper.selectByPrimaryKey(id);
         Saledetails saledetails = new Saledetails();
         saledetails.setTransportgood_id(id);
-        List<Saledetails> saledetailsList = saledetailsMapper.select(saledetails);
+        List<Saledetails> saledetailsList = saledetailsMapper.getSailDetails(id);
         if(saledetailsList.size() > 0){
             transportGood.setSaledetails(saledetailsList);
         }

@@ -10,4 +10,38 @@
             #{item.purchaseamount}, #{item.deliverytime}, #{item.deliverystatus}, #{item.signback1}, #{item.hscode}, #{item.drawback}, #{item.dangerous}, #{item.marks}, #{item.note1}, #{item.transportgood_id},#{item.productenname})
         </foreach>
     </insert>
+    <select id="getSailDetails"  resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Saledetails">
+select
+saledetails.saledetails_id,
+products.CHINANAME as productenname,
+saledetails.productid,
+saledetails.currency,
+saledetails.numbers,
+saledetails.unit,
+saledetails.suppliername,
+saledetails.supplierid,
+saledetails.UNITPRICE1,
+saledetails.UNITPRICE,
+saledetails.salesamount,
+saledetails.note,
+saledetails.currency1,
+saledetails.numbers1,
+saledetails.purchaseamount,
+saledetails.deliverytime,
+saledetails.deliverystatus,
+saledetails.signback1,
+saledetails.hscode,
+saledetails.drawback,
+saledetails.marks,
+saledetails.note1,
+saledetails.transportgood_id,
+products.CASNUM as casnum,
+products.ENGLISHNAME as productname
+from saledetails
+inner join transportgood
+on transportgood.transportgood_id = saledetails.transportgood_id
+and transportgood.transportgood_id = #{id}
+inner join products
+on products.PRODUCTS_ID = saledetails.productid
+    </select>
 </mapper>
