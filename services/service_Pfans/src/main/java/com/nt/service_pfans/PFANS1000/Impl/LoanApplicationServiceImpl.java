@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,20 +27,20 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     @Override
     public List<LoanApplication> getLoanApplication(LoanApplication loanapplication) {
         List<LoanApplication> loanApplicationList = loanapplicationMapper.select(loanapplication);
-        for(LoanApplication loanApplication : loanApplicationList){
+        for (LoanApplication loanApplication : loanApplicationList) {
             PublicExpense publicExpense = new PublicExpense();
             publicExpense.setJudgement(loanApplication.getJudgements());
             List<PublicExpense> publicExpenseList = publicExpenseMapper.select(publicExpense);
-//            if(loanApplication.getCanafver() != null && loanApplication.getCanafver() != ""){
-            if(publicExpenseList.size() != 0){
-                if(publicExpenseList.get(0).getStatus().equals("4")){
-                    loanApplication.setCanafver("1");
-                }else{
-                    loanApplication.setCanafver("0");
+            if (loanApplication.getCanafver() != null && loanApplication.getCanafver() != "") {
+                if (publicExpenseList.size() != 0) {
+                    if (publicExpenseList.get(0).getStatus().equals("4")) {
+                        loanApplication.setCanafver("1");
+                    } else {
+                        loanApplication.setCanafver("0");
+                    }
+                    loanapplicationMapper.updateByPrimaryKeySelective(loanApplication);
                 }
-                loanapplicationMapper.updateByPrimaryKeySelective(loanApplication);
             }
-//            }
         }
         return loanapplicationMapper.select(loanapplication);
     }
