@@ -100,10 +100,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Override
     public void update(TransportGood transportGood, TokenModel tokenModel) throws Exception {
         transportGood.preUpdate(tokenModel);
-        String[] arr =  getMergeField(transportGood.getSaledetails());
-        transportGood.setProducten(arr[0]);
-        transportGood.setSupplier(arr[1]);
-        transportGood.setCasnum(arr[2]);
+//        String[] arr =  getMergeField(transportGood.getSaledetails());
+//        transportGood.setProducten(arr[0]);
+//        transportGood.setSupplier(arr[1]);
+//        transportGood.setCasnum(arr[2]);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
         String id = transportGood.getTransportgood_id();
         DeleteSonTable(id);
@@ -118,10 +118,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
        // String number = contractNumber.getContractNumber("PT001010", "transportgood");
         String id = UUID.randomUUID().toString();
-        String[] arr =  getMergeField(transportGood.getSaledetails());
-        transportGood.setProducten(arr[0]);
-        transportGood.setSupplier(arr[1]);
-        transportGood.setCasnum(arr[2]);
+//        String[] arr =  getMergeField(transportGood.getSaledetails());
+//        transportGood.setProducten(arr[0]);
+//        transportGood.setSupplier(arr[1]);
+//        transportGood.setCasnum(arr[2]);
         //transportGood.setContractnumber(number);
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
