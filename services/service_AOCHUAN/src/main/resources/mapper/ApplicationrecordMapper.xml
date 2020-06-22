@@ -2,11 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper" >
     <insert id="insertApplicationrecordList" parameterType="java.util.List">
-        INSERT INTO applicationrecord (applicationrecord_id, suppliername, supplierid, realpay, realdate, realamount, paiddate, invoiceno,paymentstatus, transportgood_id)
+        INSERT INTO applicationrecord (applicationrecord_id, suppliername, supplierid, realpay, realdate, realamount, paiddate, invoiceno,paymentstatus, transportgood_id,productid)
         values
         <foreach item="item" collection="list" separator=",">
             (#{item.applicationrecord_id}, #{item.suppliername}, #{item.supplierid}, #{item.realpay}, #{item.realdate}, #{item.realamount}, #{item.paiddate},
-            #{item.invoiceno}, #{item.paymentstatus},#{item.transportgood_id})
+            #{item.invoiceno}, #{item.paymentstatus},#{item.transportgood_id},#{item.productid})
         </foreach>
     </insert>
+
+    <select id="getApplicationRecord" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Applicationrecord">
+     select
+     applicationrecord.applicationrecord_id,
+     applicationrecord.suppliername,
+     applicationrecord.realpay,
+     applicationrecord.realdate,
+     applicationrecord.realamount,
+     applicationrecord.paiddate,
+     applicationrecord.invoiceno,
+     applicationrecord.paymentstatus,
+     applicationrecord.supplierid,
+     applicationrecord.transportgood_id,
+     applicationrecord.productid,
+     products.CHINANAME as productname
+     from applicationrecord
+    inner join products
+    on applicationrecord.productid = products.PRODUCTS_ID
+    where applicationrecord.transportgood_id = #{id}
+
+    </select>
 </mapper>

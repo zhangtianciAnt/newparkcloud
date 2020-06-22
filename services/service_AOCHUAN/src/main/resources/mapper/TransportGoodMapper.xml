@@ -5,15 +5,15 @@
         select
 	t.transportgood_id,
 	t.contractnumber,
-	group_concat(products.CHINANAME) as producten,
+	group_concat(DISTINCT products.CHINANAME) as producten,
 	t.customer,
-	group_concat(supplierbaseinfor.SUPPLIERNAMECN) as supplier,
+	group_concat(DISTINCT supplierbaseinfor.SUPPLIERNAMECN) as supplier,
 	t.type,
 	t.status,
 	t.paymentstatus,
 	t.paybackstatus,
 	t.owner,
-  group_concat(products.CASNUM) as casnum,
+  group_concat(DISTINCT products.CASNUM) as casnum,
 	t.saleresponsibility,
 	t.productresponsibility,
 	t.orders

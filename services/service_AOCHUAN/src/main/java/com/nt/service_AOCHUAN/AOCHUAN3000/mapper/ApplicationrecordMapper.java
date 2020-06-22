@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface ApplicationrecordMapper extends MyMapper<Applicationrecord> {
     int insertApplicationrecordList(@Param("list") List<Applicationrecord> EnquiryList);
+
+    List<Applicationrecord> getApplicationRecord(@Param("id") String id);
 }

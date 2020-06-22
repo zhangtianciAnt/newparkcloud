@@ -2,11 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReceivablesrecordMapper" >
     <insert id="insertReceivablesrecordList" parameterType="java.util.List">
-        INSERT INTO receivablesrecord (receivablesrecord_id, customername, receamount, receduedate, realamount, paybackdate, paybackstatus, customerid, transportgood_id)
+        INSERT INTO receivablesrecord (receivablesrecord_id, customername, receamount, receduedate, realamount, paybackdate, paybackstatus, customerid, transportgood_id,productid)
         values
         <foreach item="item" collection="list" separator=",">
             (#{item.receivablesrecord_id}, #{item.customername}, #{item.receamount}, #{item.receduedate}, #{item.realamount}, #{item.paybackdate}, #{item.paybackstatus},
-            #{item.customerid}, #{item.transportgood_id})
+            #{item.customerid}, #{item.transportgood_id},#{item.productid})
         </foreach>
     </insert>
+
+    <select id="getReceivablesRecord" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Receivablesrecord">
+     select
+     receivablesrecord.receivablesrecord_id,
+     receivablesrecord.customername,
+     receivablesrecord.customerid,
+     receivablesrecord.receamount,
+     receivablesrecord.receduedate,
+     receivablesrecord.realamount,
+     receivablesrecord.paybackdate,
+     receivablesrecord.paybackstatus,
+     receivablesrecord.transportgood_id,
+     receivablesrecord.productid,
+     products.ENGLISHNAME as productname
+     from receivablesrecord
+    inner join products
+    on receivablesrecord.productid = products.PRODUCTS_ID
+    where receivablesrecord.transportgood_id = #{id}
+    </select>
 </mapper>
