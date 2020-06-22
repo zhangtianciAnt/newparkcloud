@@ -181,4 +181,10 @@ public class LoanApplication extends BaseModel {
      */
     @Column(name = "UPLOADFILE")
     private String uploadfile;
+
+    /**
+     * 核销
+     */
+    @Column(name = "CANAFVER")
+    private String canafver;
 }

@@ -1,14 +1,17 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
+import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -19,11 +22,30 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Autowired
     private LoanApplicationMapper loanapplicationMapper;
+    @Autowired
+    private PublicExpenseMapper publicExpenseMapper;
 
     @Override
     public List<LoanApplication> getLoanApplication(LoanApplication loanapplication) {
+        List<LoanApplication> loanApplicationList = loanapplicationMapper.select(loanapplication);
+        for(LoanApplication loanApplication : loanApplicationList){
+            PublicExpense publicExpense = new PublicExpense();
+            publicExpense.setJudgement(loanApplication.getJudgements());
+            List<PublicExpense> publicExpenseList = publicExpenseMapper.select(publicExpense);
+//            if(loanApplication.getCanafver() != null && loanApplication.getCanafver() != ""){
+            if(publicExpenseList.size() != 0){
+                if(publicExpenseList.get(0).getStatus().equals("4")){
+                    loanApplication.setCanafver("1");
+                }else{
+                    loanApplication.setCanafver("0");
+                }
+                loanapplicationMapper.updateByPrimaryKeySelective(loanApplication);
+            }
+//            }
+        }
         return loanapplicationMapper.select(loanapplication);
     }
+
 
     @Override
     public List<LoanApplication> getLoapp() throws Exception {
