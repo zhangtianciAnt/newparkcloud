@@ -47,7 +47,12 @@ public class AwardServiceImpl implements AwardService {
     public List<Award> get(Award award) throws Exception {
         return awardMapper.select(award);
     }
-
+    // 禅道任务152
+    @Override
+    public  List<Award> One(Award award) throws Exception {
+        return awardMapper.select(award);
+    }
+    // 禅道任务152
     @Override
     public AwardVo selectById(String award_id) throws Exception {
         AwardVo awavo=new AwardVo();

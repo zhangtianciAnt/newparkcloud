@@ -94,5 +94,13 @@ GROUP BY
         where USER_ID = #{user_id}
         and MONTHS = #{months}
         and YEARS = #{years}
+        and RECOGNITIONSTATE = '0'
+    </update>
+    <update id="updStatus1" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance">
+        update attendance set RECOGNITIONSTATE = '0'
+        where USER_ID = #{user_id}
+        and MONTHS = #{months}
+        and YEARS = #{years}
+        and RECOGNITIONSTATE = '1'
     </update>
 </mapper>

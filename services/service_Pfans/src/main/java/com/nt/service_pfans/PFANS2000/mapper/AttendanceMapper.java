@@ -15,4 +15,5 @@ public interface AttendanceMapper extends MyMapper<Attendance> {
     Double selectAttenSumSick(Attendance attendance);
 
     void updStatus(@Param("user_id") String user_id, @Param("years") String years, @Param("months") String months);
+    void updStatus1(@Param("user_id") String user_id, @Param("years") String years, @Param("months") String months);
 }

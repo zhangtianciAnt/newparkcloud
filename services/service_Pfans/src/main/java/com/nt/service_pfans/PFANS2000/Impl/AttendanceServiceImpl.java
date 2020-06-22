@@ -81,4 +81,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 //        }
     }
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+
+    @Override
+    public void updStatus1(Attendance attendance, TokenModel tokenModel) throws Exception {
+        attendance.preUpdate(tokenModel);
+        attendanceMapper.updStatus1(attendance.getUser_id(), attendance.getYears(), attendance.getMonths());
+    }
 }

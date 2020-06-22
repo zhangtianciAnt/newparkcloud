@@ -1,12 +1,11 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Pfans.PFANS1000.Award;
-import com.nt.dao_Pfans.PFANS1000.AwardDetail;
-import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.AwardService;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -30,10 +29,29 @@ public class Pfans1025Controller {
     private AwardService awardService;
 
     @Autowired
+    private PetitionMapper petitionMapper;
+
+    @Autowired
+    private AwardMapper awardMapper;
+
+    @Autowired
+    private ContractMapper contractMapper;
+
+    @Autowired
+    private QuotationMapper quotationMapper;
+
+    @Autowired
     private TokenService tokenService;
 
     @Autowired
+    private NapalmMapper napalmMapper;
+
+    @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private NonJudgmentMapper nonJudgmentMapper;
+
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
     public void generateJxls(@RequestBody AwardVo av, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -222,6 +240,49 @@ public class Pfans1025Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(awardService.selectById(award_id));
     }
+
+    // 禅道任务152
+    @RequestMapping(value = "/selectById2", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(awardService.One(award));
+    }
+    @RequestMapping(value = "/selectList", method = {RequestMethod.POST})
+    public ApiResult selectList(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        Map<String, Object> data = new HashMap<>();
+        Quotation quotation = new Quotation();
+        quotation.setContractnumber(award.getContractnumber());
+        List<Quotation> quolist = quotationMapper.select(quotation);
+        NonJudgment nonJudgment = new NonJudgment();
+        nonJudgment.setContractnumber(award.getContractnumber());
+        List<NonJudgment> nonlist = nonJudgmentMapper.select(nonJudgment);
+        Contract contract = new Contract();
+        contract.setContractnumber(award.getContractnumber());
+        List<Contract> conlist = contractMapper.select(contract);
+        Award award1 = new Award();
+        award1.setContractnumber(award.getContractnumber());
+        List<Award> awardlist = awardMapper.select(award1);
+        Napalm napalm = new Napalm();
+        napalm.setContractnumber(award.getContractnumber());
+        List<Napalm> naplist = napalmMapper.select(napalm);
+        Petition petition = new Petition();
+        petition.setContractnumber(award.getContractnumber());
+        List<Petition> petilist = petitionMapper.select(petition);
+        data.put("quolist", quolist);
+        data.put("nonlist", nonlist);
+        data.put("conlist", conlist);
+        data.put("awardlist", awardlist);
+        data.put("naplist", naplist);
+        data.put("petilist", petilist);
+        return ApiResult.success(data);
+    }
+    // 禅道任务152
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody AwardVo awardVo, HttpServletRequest request) throws Exception {

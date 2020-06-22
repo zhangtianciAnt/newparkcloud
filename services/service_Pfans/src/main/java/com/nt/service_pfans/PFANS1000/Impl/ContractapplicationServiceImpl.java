@@ -571,12 +571,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             //取引先会社
                             co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().sorted(Comparator.comparing(Contractapplication::getContractnumber).reversed()).collect(Collectors.toList());
                             coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if(coList.size() > 0){
-                                String strcon = coList.get(0).getContractnumber();
-                                coListcount = String.valueOf(Integer.valueOf(strcon.substring(strcon.length() -2,strcon.length())) + 1);
+                                List<String> coString = new ArrayList<String>();
+                                for (int i = 0; i < coList.size(); i ++){
+                                    String strcon = coList.get(i).getContractnumber();
+                                    coListcount = String.valueOf(strcon.substring(strcon.length() -2,strcon.length()));
+                                    coString.add(coListcount);
+                                }
+                                Collections.sort(coString);
+                                coListcount = String.valueOf(Integer.valueOf(coString.get(coString.size() - 1)) + 1);
                             }
                             if (coListcount.length() == 1) {
                                 number = "0" + coListcount;
@@ -586,12 +593,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             newcontractnumber = contractnumber + number;
                         } else if (citation.getType().equals("1")) {
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().sorted(Comparator.comparing(Contractapplication::getContractnumber).reversed()).collect(Collectors.toList());
                             coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "0001";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if(coList.size() > 0){
-                                String strcon = coList.get(0).getContractnumber();
-                                coListcount = String.valueOf(Integer.valueOf(strcon.substring(strcon.length() -4,strcon.length())) + 1);
+                                List<String> coString = new ArrayList<String>();
+                                for (int i = 0; i < coList.size(); i ++){
+                                    String strcon = coList.get(i).getContractnumber();
+                                    coListcount = String.valueOf(strcon.substring(strcon.length() -4,strcon.length()));
+                                    coString.add(coListcount);
+                                }
+                                Collections.sort(coString);
+                                coListcount = String.valueOf(Integer.valueOf(coString.get(coString.size() - 1)) + 1);
                             }
                             if (coListcount.length() == 1) {
                                 number = "000" + coListcount;
@@ -604,12 +618,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         } else {
                             //co.setCustojapanese(citation.getCustojapanese());
                             List<Contractapplication> coList = contractapplicationMapper.select(co);
+                            coList = coList.stream().sorted(Comparator.comparing(Contractapplication::getContractnumber).reversed()).collect(Collectors.toList());
                             coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
                             if(coList.size() > 0){
-                                String strcon = coList.get(0).getContractnumber();
-                                coListcount = String.valueOf(Integer.valueOf(strcon.substring(strcon.length() -2,strcon.length())) + 1);
+                                List<String> coString = new ArrayList<String>();
+                                for (int i = 0; i < coList.size(); i ++){
+                                    String strcon = coList.get(i).getContractnumber();
+                                    coListcount = String.valueOf(strcon.substring(strcon.length() -2,strcon.length()));
+                                    coString.add(coListcount);
+                                }
+                                Collections.sort(coString);
+                                coListcount = String.valueOf(Integer.valueOf(coString.get(coString.size() - 1)) + 1);
                             }
                             if (coListcount.length() == 1) {
                                 number = "0" + coListcount;

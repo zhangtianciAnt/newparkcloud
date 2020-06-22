@@ -20,4 +20,8 @@ public interface AttendanceService {
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
     void updStatus(Attendance attendance, TokenModel tokenModel) throws Exception;
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
+
+    // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
+    void updStatus1(Attendance attendance, TokenModel tokenModel) throws Exception;
+    // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
 }
