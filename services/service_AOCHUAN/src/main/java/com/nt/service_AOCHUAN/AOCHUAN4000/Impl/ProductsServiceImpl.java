@@ -6,6 +6,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Sample;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
+import com.nt.dao_AOCHUAN.AOCHUAN4000.Marketproducts;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierproductrelationMapper;
@@ -14,6 +15,7 @@ import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SampleMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
+import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.MarketproductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -45,6 +47,9 @@ public class ProductsServiceImpl implements ProductsService {
     @Autowired
     private CustomerbaseinforMapper customerbaseinforMapper;
 
+    @Autowired
+    private MarketproductsMapper marketproductsMapper;
+
 
     @Override
     public List<Products> get(Products products) throws Exception {
@@ -64,6 +69,13 @@ public class ProductsServiceImpl implements ProductsService {
         else {
             products.setProducts_id(UUID.randomUUID().toString());
             productsMapper.insert(products);
+            List<Marketproducts> marketproductsList = products.getScTable();
+            for(Marketproducts m : marketproductsList){
+                m.preInsert(tokenModel);
+                m.setMarketproducts_id(UUID.randomUUID().toString());
+                m.setProducts_id(products.getProducts_id());
+                marketproductsMapper.insert(m);
+            }
         }
 
 
@@ -71,13 +83,31 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     public Products One(String ids) throws Exception {
-        return productsMapper.selectByPrimaryKey(ids);
+
+        Products products  = productsMapper.selectByPrimaryKey(ids);
+        Marketproducts m = new Marketproducts();
+        m.setProducts_id(ids);
+        List<Marketproducts> list = marketproductsMapper.select(m);
+        products.setScTable(list);
+
+        return products;
     }
 
     @Override
     public void update(Products products, TokenModel tokenModel) throws Exception {
         products.preUpdate(tokenModel);
+        Marketproducts marketproducts = new Marketproducts();
         productsMapper.updateByPrimaryKey(products);
+
+        List<Marketproducts> list = products.getScTable();
+        marketproducts.setProducts_id(products.getProducts_id());
+        marketproductsMapper.delete(marketproducts);
+
+        for(Marketproducts m : list){
+            m.setMarketproducts_id(UUID.randomUUID().toString());
+            m.setProducts_id(products.getProducts_id());
+            marketproductsMapper.insert(m);
+        }
 
     }
 

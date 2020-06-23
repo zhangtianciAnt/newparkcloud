@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -222,5 +224,8 @@ public class Products extends BaseModel {
 
     @Column(name = "APPROVALPROGRESS")
     private String approvalprogress;
+
+    @Transient
+    private List<Marketproducts> scTable;
 
 }
