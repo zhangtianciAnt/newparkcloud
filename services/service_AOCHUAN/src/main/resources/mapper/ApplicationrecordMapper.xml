@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper" >
+<mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper">
     <insert id="insertApplicationrecordList" parameterType="java.util.List">
-        INSERT INTO applicationrecord (applicationrecord_id, suppliername, supplierid, realpay, realdate, realamount, paiddate, invoiceno,paymentstatus, transportgood_id,productid)
+        INSERT INTO applicationrecord (applicationrecord_id, suppliername, supplierid, realpay, realdate, realamount,
+        paiddate, invoiceno,paymentstatus, transportgood_id,productid)
         values
         <foreach item="item" collection="list" separator=",">
-            (#{item.applicationrecord_id}, #{item.suppliername}, #{item.supplierid}, #{item.realpay}, #{item.realdate}, #{item.realamount}, #{item.paiddate},
+            (#{item.applicationrecord_id}, #{item.suppliername}, #{item.supplierid}, #{item.realpay}, #{item.realdate},
+            #{item.realamount}, #{item.paiddate},
             #{item.invoiceno}, #{item.paymentstatus},#{item.transportgood_id},#{item.productid})
         </foreach>
     </insert>
@@ -30,4 +32,10 @@
     where applicationrecord.transportgood_id = #{id}
 
     </select>
+    <select id="selectExportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ExportVo">
+            SELECT * FROM	saledetails
+                INNER JOIN receivablesrecord ON saledetails.productid = saledetails.productid
+                LEFT JOIN transportgood ON transportgood.transportgood_id = saledetails.transportgood_id
+                where transportgood.transportgood_id = #{id}
+        </select>
 </mapper>

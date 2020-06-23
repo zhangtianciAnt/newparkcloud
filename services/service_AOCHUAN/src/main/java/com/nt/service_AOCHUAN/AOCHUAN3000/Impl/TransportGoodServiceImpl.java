@@ -2,6 +2,7 @@ package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.alibaba.fastjson.JSON;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
@@ -15,14 +16,18 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.jxls.util.JxlsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
 @Service
 public class TransportGoodServiceImpl implements TransportGoodService {
 
@@ -53,7 +58,6 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Autowired
     private ApplicationrecordMapper applicationrecordMapper;
 
-
     DecimalFormat df = new DecimalFormat("#.00");
 
 
@@ -65,26 +69,26 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public TransportGood getOne(String id) throws Exception {
-        TransportGood transportGood =  transportGoodMapper.selectByPrimaryKey(id);
+        TransportGood transportGood = transportGoodMapper.selectByPrimaryKey(id);
         Saledetails saledetails = new Saledetails();
         saledetails.setTransportgood_id(id);
         List<Saledetails> saledetailsList = saledetailsMapper.getSailDetails(id);
-        if(saledetailsList.size() > 0){
+        if (saledetailsList.size() > 0) {
             transportGood.setSaledetails(saledetailsList);
         }
         Receivablesrecord receivablesrecord = new Receivablesrecord();
         receivablesrecord.setTransportgood_id(id);
         List<Receivablesrecord> receivablesrecords = receivablesrecordMapper.getReceivablesRecord(id);
-        if(receivablesrecords.size() > 0){
+        if (receivablesrecords.size() > 0) {
             transportGood.setReceivablesrecord(receivablesrecords);
         }
         Applicationrecord applicationrecord = new Applicationrecord();
         applicationrecord.setTransportgood_id(id);
         List<Applicationrecord> applicationrecords = applicationrecordMapper.getApplicationRecord(id);
-        if(applicationrecords.size() > 0){
+        if (applicationrecords.size() > 0) {
             transportGood.setApplicationrecord(applicationrecords);
         }
-        return  transportGood;
+        return transportGood;
     }
 
     @Override
@@ -107,7 +111,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
         String id = transportGood.getTransportgood_id();
         DeleteSonTable(id);
-        InsertSonTable(transportGood,id);
+        InsertSonTable(transportGood, id);
         if (transportGood.isNotice()) {
             ToDoNotice(tokenModel, transportGood);
         }
@@ -116,7 +120,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void insert(TransportGood transportGood, TokenModel tokenModel) throws Exception {
-       // String number = contractNumber.getContractNumber("PT001010", "transportgood");
+        // String number = contractNumber.getContractNumber("PT001010", "transportgood");
         String id = UUID.randomUUID().toString();
 //        String[] arr =  getMergeField(transportGood.getSaledetails());
 //        transportGood.setProducten(arr[0]);
@@ -126,7 +130,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
         transportGoodMapper.insert(transportGood);
-        InsertSonTable(transportGood,id);
+        InsertSonTable(transportGood, id);
     }
 
     @Override
@@ -135,57 +139,57 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         DeleteSonTable(id);
     }
 
-    private String[] getMergeField(List<Saledetails> saledetails){
+    private String[] getMergeField(List<Saledetails> saledetails) {
         String[] product = new String[saledetails.size()];
         String[] supplier = new String[saledetails.size()];
         String[] cas = new String[saledetails.size()];
 
-        for (int i = 0 ; i < saledetails.size(); i++ ) {
+        for (int i = 0; i < saledetails.size(); i++) {
             product[i] = StringUtils.isNotBlank(saledetails.get(i).getProductname()) ? saledetails.get(i).getProductname() : "无";
             supplier[i] = StringUtils.isNotBlank(saledetails.get(i).getSuppliername()) ? saledetails.get(i).getSuppliername() : "无";
             cas[i] = StringUtils.isNotBlank(saledetails.get(i).getCasnum()) ? saledetails.get(i).getCasnum() : "无";
         }
 
-       return  new String[]{StringUtils.join(product,"、"),StringUtils.join(supplier,"、"),StringUtils.join(cas,"、")};
+        return new String[]{StringUtils.join(product, "、"), StringUtils.join(supplier, "、"), StringUtils.join(cas, "、")};
     }
 
 
-    private void InsertSonTable(TransportGood transportGood,String id) throws Exception {
-        if(transportGood.getSaledetails().size() > 0){
+    private void InsertSonTable(TransportGood transportGood, String id) throws Exception {
+        if (transportGood.getSaledetails().size() > 0) {
             List<Saledetails> saledetailsList = transportGood.getSaledetails();
-            for (Saledetails val:saledetailsList) {
+            for (Saledetails val : saledetailsList) {
                 val.setTransportgood_id(id);
                 val.setSaledetails_id(UUID.randomUUID().toString());
             }
             saledetailsMapper.insertSaledetailsList(saledetailsList);
         }
 
-        if(transportGood.getReceivablesrecord().size() > 0){
+        if (transportGood.getReceivablesrecord().size() > 0) {
             List<Receivablesrecord> receivablesrecords = transportGood.getReceivablesrecord();
-            for (Receivablesrecord val:receivablesrecords) {
+            for (Receivablesrecord val : receivablesrecords) {
                 val.setTransportgood_id(id);
                 val.setReceivablesrecord_id(UUID.randomUUID().toString());
             }
-            if(transportGood.getFinance() == 2){
-                insertHK(receivablesrecords,transportGood.getContractnumber(),transportGood.getCollectionaccount());
+            if (transportGood.getFinance() == 2) {
+                insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount());
             }
             receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
         }
 
-        if(transportGood.getApplicationrecord().size() > 0){
+        if (transportGood.getApplicationrecord().size() > 0) {
             List<Applicationrecord> applicationrecords = transportGood.getApplicationrecord();
-            for (Applicationrecord val:applicationrecords) {
+            for (Applicationrecord val : applicationrecords) {
                 val.setTransportgood_id(id);
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
             }
-            if(transportGood.getFinance() == 1){
-                insertCW(applicationrecords,transportGood.getContractnumber());
+            if (transportGood.getFinance() == 1) {
+                insertCW(applicationrecords, transportGood.getContractnumber());
             }
             applicationrecordMapper.insertApplicationrecordList(applicationrecords);
         }
     }
 
-    private void DeleteSonTable(String id){
+    private void DeleteSonTable(String id) {
         Saledetails saledetails = new Saledetails();
         saledetails.setTransportgood_id(id);
         saledetailsMapper.delete(saledetails);
@@ -198,9 +202,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertCW(List<Applicationrecord> applicationrecords,String contractNumber) {
-        for (Applicationrecord val:
-        applicationrecords) {
+    public void insertCW(List<Applicationrecord> applicationrecords, String contractNumber) {
+        for (Applicationrecord val :
+                applicationrecords) {
             FinPurchase finPurchase = new FinPurchase();
             finPurchase.setPurchase_id(UUID.randomUUID().toString());
             finPurchase.setContractnumber(contractNumber);
@@ -209,7 +213,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finPurchase.setInvoicenumber(val.getInvoiceno());
             finPurchase.setCredential_status("PW001001");
             finPurchase.setPaymentaccount("");
-            finPurchase.setRealpay(val.getRealpay() == null ?"0.00":val.getRealpay().toString());
+            finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());
             finPurchase.setRealamount(val.getRealamount());
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
             finPurchase.preInsert();
@@ -222,9 +226,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber,String collectionAccount) throws Exception {
-        for (Receivablesrecord val:
-        receivablesrecords) {
+    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount) throws Exception {
+        for (Receivablesrecord val :
+                receivablesrecords) {
             FinSales finSales = new FinSales();
             finSales.setSales_id(UUID.randomUUID().toString());
             finSales.setContractnumber(contractNumber);
@@ -251,8 +255,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void paymentCG(List<FinSales> finSales, TokenModel token) {
-        for (FinSales finSale:
-        finSales) {
+        for (FinSales finSale :
+                finSales) {
             Receivablesrecord receivablesrecord = new Receivablesrecord();
             receivablesrecord.setReceivablesrecord_id(finSale.getReceivablesrecord_id());
             receivablesrecord.setRealamount(finSale.getReceamount());
@@ -269,7 +273,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Override
     public void paymentXS(List<FinPurchase> finPurchases, TokenModel token) {
-        for (FinPurchase finPurchase:
+        for (FinPurchase finPurchase :
                 finPurchases) {
             Applicationrecord applicationrecord = new Applicationrecord();
             applicationrecord.setApplicationrecord_id(finPurchase.getApplicationrecord_id());
@@ -371,20 +375,37 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         }
     }
 
-    public void setExport(String a ) throws Exception {
-        List<TransportGood> transportGoods = transportGoodMapper.deliveryTime();
-        for (TransportGood transportGood :
-                transportGoods) {
-            ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【计划发货提醒】：您有一条走货单已到达发货时间。");
-            toDoNotice.setInitiator("5eba6585e52fa718db63268d");
-            toDoNotice.setContent("订单号【" + transportGood.getContractnumber() + "】");
-            toDoNotice.setDataid(transportGood.getTransportgood_id());
-            toDoNotice.setUrl("/AOCHUAN3002FormView");
-            //toDoNotice.preInsert(tokenModel);
-            toDoNotice.setOwner(transportGood.getSaleresponsibility());
-            toDoNoticeService.save(toDoNotice);
+    @Override
+    public void setExport(String a) throws Exception {
+        try {
+            //List<MyTest> exportList = myTestService.findAll(); //获取列表数据
+            ExportVo exprot = new ExportVo();
+            List<ExportVo> exportList = applicationrecordMapper.selectExportList("TRANSPORTGOODXXXXXX2XXXXXXXXX3000001");//获取列表数据
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream("excel/deliverytemplate.xls");   //得到文档的路径
+            //列表数据将存储到指定的excel文件路径，这个路径是在项目编译之后的target目录下
+            FileOutputStream out = new FileOutputStream("target/classes/excel/qqq.xls");
+            //这里的context是jxls框架上的context内容
+            org.jxls.common.Context context = new org.jxls.common.Context();
+            //将列表参数放入context中
+//            context.putVar("exportList", exportList);
+            //将List<Exam>列表数据按照模板文件中的格式生成到scoreOutput.xls文件中
+            JxlsHelper.getInstance().processTemplate(in, out, context);
+//            //下面步骤为浏览器下载部分
+//            //指定数据生成后的文件输入流（将上述out的路径作为文件的输入流）
+//            FileInputStream fileInputStream = new FileInputStream("target/classes/excel/aaaa.xls");
+//            //导出excel文件，设置文件名
+//            String filename = URLEncoder.encode("test信息.xls", "UTF-8");
+//            //设置下载头
+//            response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+//            ServletOutputStream outputStream = response.getOutputStream();
+//            //将文件写入浏览器
+//            byte[] bys = new byte[fileInputStream.available()];
+//            fileInputStream.read(bys);
+//            outputStream.write(bys);
+//            outputStream.flush();
+//            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
 }

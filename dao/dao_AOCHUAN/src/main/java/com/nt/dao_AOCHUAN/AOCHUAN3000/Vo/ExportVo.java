@@ -26,9 +26,5 @@ public class ExportVo {
      * 走货-用款申请记录子表
      */
     private Applicationrecord applicationrecord;
-
-//    /**
-//     * 记录表
-//     */
-//    private List<Reg_Record> reg_records;
+    
 }
