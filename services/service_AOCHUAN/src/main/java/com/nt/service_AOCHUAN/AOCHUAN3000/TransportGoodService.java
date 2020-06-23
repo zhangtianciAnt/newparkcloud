@@ -20,7 +20,7 @@ public interface TransportGoodService {
 
     void update(TransportGood quotations, TokenModel tokenModel) throws Exception;
 
-    void insert(TransportGood quotations, TokenModel tokenModel)throws Exception;
+    void insert(TransportGood quotations, TokenModel tokenModel) throws Exception;
 
     void delete(String id) throws Exception;
 
@@ -31,4 +31,7 @@ public interface TransportGoodService {
     void paymentCG(List<FinSales> finSales, TokenModel token);
 
     void paymentXS(List<FinPurchase> finPurchases, TokenModel token);
+
+    //    导出
+    void setExport(String id) throws Exception;
 }
