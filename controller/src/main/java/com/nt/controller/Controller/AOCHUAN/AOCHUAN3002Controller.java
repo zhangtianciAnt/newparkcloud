@@ -125,11 +125,11 @@ public class AOCHUAN3002Controller {
     }
 
     @RequestMapping(value = "/getexport",method={RequestMethod.GET})
-    public ApiResult getexport(@RequestParam String id, HttpServletRequest request) throws Exception {
+    public ApiResult getexport(@RequestParam String id, HttpServletResponse response) throws Exception {
         if(!StringUtils.isNotBlank(id)){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        transportGoodService.setExport(id);
+        transportGoodService.setExport(id , response);
         return ApiResult.success();
     }
 

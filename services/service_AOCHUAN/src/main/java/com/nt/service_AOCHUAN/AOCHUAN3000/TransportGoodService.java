@@ -7,6 +7,8 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface TransportGoodService {
@@ -33,5 +35,5 @@ public interface TransportGoodService {
     void paymentXS(List<FinPurchase> finPurchases, TokenModel token);
 
     //    导出
-    void setExport(String id) throws Exception;
+    void setExport(String id , HttpServletResponse response) throws Exception;
 }
