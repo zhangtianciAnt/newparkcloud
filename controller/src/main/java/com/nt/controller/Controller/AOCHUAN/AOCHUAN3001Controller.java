@@ -6,6 +6,7 @@ import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -30,6 +31,8 @@ import java.util.List;
 @RequestMapping("/quotations")
 public class AOCHUAN3001Controller {
 
+    @Autowired
+    private QuotationsMapper quotationsMapper;
     @Autowired
     private QuotationsService quotationsService;
     @Autowired
@@ -133,5 +136,12 @@ public class AOCHUAN3001Controller {
         document.loadFromFile("E:\\Quotation1.docx");
         document.saveToStream(out, FileFormat.PDF);
         template.close();
+
+        if(quotations.isNotice() == true){
+            Quotations quotation = new Quotations();
+            quotation.setQuotations_id(quotations.getQuotations_id());
+            quotation.setQuotationdate1(quotations.getQuotationdate1());
+            quotationsMapper.updateByPrimaryKeySelective(quotation);
+        }
     }
 }

@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface ReceivablesrecordMapper extends MyMapper<Receivablesrecord> {
 int insertReceivablesrecordList(@Param("list") List<Receivablesrecord> EnquiryList);
+
+    List<Receivablesrecord> getReceivablesRecord(@Param("id") String id);
 }

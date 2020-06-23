@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -39,4 +40,9 @@ public class Applicationrecord extends BaseModel {
     private String paymentstatus;
 
     private String transportgood_id;
+
+    private String productid;
+
+    @Transient
+    private String productname;
 }

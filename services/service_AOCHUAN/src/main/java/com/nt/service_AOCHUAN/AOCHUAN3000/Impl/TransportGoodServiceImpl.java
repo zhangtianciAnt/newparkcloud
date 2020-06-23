@@ -74,13 +74,13 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         }
         Receivablesrecord receivablesrecord = new Receivablesrecord();
         receivablesrecord.setTransportgood_id(id);
-        List<Receivablesrecord> receivablesrecords = receivablesrecordMapper.select(receivablesrecord);
+        List<Receivablesrecord> receivablesrecords = receivablesrecordMapper.getReceivablesRecord(id);
         if(receivablesrecords.size() > 0){
             transportGood.setReceivablesrecord(receivablesrecords);
         }
         Applicationrecord applicationrecord = new Applicationrecord();
         applicationrecord.setTransportgood_id(id);
-        List<Applicationrecord> applicationrecords = applicationrecordMapper.select(applicationrecord);
+        List<Applicationrecord> applicationrecords = applicationrecordMapper.getApplicationRecord(id);
         if(applicationrecords.size() > 0){
             transportGood.setApplicationrecord(applicationrecords);
         }
