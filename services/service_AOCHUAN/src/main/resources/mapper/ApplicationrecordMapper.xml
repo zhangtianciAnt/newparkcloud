@@ -32,7 +32,7 @@
     where applicationrecord.transportgood_id = #{id}
 
     </select>
-    <select id="selectExportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ExportVo">
+    <select id="selectExportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo">
             SELECT * FROM	saledetails
                 INNER JOIN receivablesrecord ON saledetails.productid = saledetails.productid
                 LEFT JOIN transportgood ON transportgood.transportgood_id = saledetails.transportgood_id

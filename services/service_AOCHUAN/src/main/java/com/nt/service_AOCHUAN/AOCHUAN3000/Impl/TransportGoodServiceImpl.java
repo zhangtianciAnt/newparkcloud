@@ -1,7 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ExportVo;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
@@ -17,13 +17,11 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.jxls.util.JxlsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.DecimalFormat;
@@ -376,45 +374,6 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         }
     }
 
-//    @Override
-//    public void setExport(String a) throws Exception {
-//        try {
-//            List<String> users = new ArrayList<>();
-//            users.add("asd");
-//            users.add("sfdasf");
-//
-//            ExportVo exprot = new ExportVo();
-//            List<ExportVo> exportList = applicationrecordMapper.selectExportList("TRANSPORTGOODXXXXXX2XXXXXXXXX3000001");//获取列表数据
-//            exportList.remove(Collections.singleton(null));
-//            InputStream in = this.getClass().getClassLoader().getResourceAsStream("excel/goodsdeliverytemplate.xlsx");   //模板路径
-//            //创建一个文件 列表数据将存储到指定的excel文件路径，发布需要改路径项目编译之后的target目录下
-//            File file1 = new File("H:/Git/newparkcloud/controller/target/classes/excel/aaaa.xlsx");
-//            FileOutputStream out = new FileOutputStream("H:/Git/newparkcloud/controller/target/classes/excel/aaaa.xlsx");
-//            //这里的context是jxls框架上的context内容
-//            org.jxls.common.Context context = new org.jxls.common.Context();
-//            //将列表参数放入context中
-//            context.putVar("exportList", exportList);
-//            //将List<Exam>列表数据按照模板文件中的格式生成到scoreOutput.xls文件中
-//            JxlsHelper.getInstance().processTemplate(in, out, context);
-////            //浏览器下载
-////            //指定数据生成后的文件输入流（将上述out的路径作为文件的输入流）
-////            FileInputStream fileInputStream = new FileInputStream("target/classes/excel/aaaa.xls");
-////            //导出excel文件，设置文件名
-////            String filename = URLEncoder.encode("test信息.xls", "UTF-8");
-////            //设置下载头
-////            response.setHeader("Content-Disposition", "attachment;filename=" + filename);
-////            ServletOutputStream outputStream = response.getOutputStream();
-////            //将文件写入浏览器
-////            byte[] bys = new byte[fileInputStream.available()];
-////            fileInputStream.read(bys);
-////            outputStream.write(bys);
-////            outputStream.flush();
-////            outputStream.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     /**
      * excel导出
      * 1.获取数据集List 插入到map集合中
@@ -423,26 +382,27 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * 4.删除新生成的模板文件
      */
     @Override
-    public void setExport(String a  ,HttpServletResponse response) throws Exception {
+    public void setExport(String id, HttpServletResponse response) throws Exception {
 
-//        List<ExportVo> list = new ArrayList();
-//        list.add(new User(1, "zs", 21, new Date()));
-//        list.add(new User(2, "ls", 22, new Date()));
-        List<ExportVo> exportList = applicationrecordMapper.selectExportList("TRANSPORTGOODXXXXXX2XXXXXXXXX3000001");//获取列表数据
+        List<SalesExportVo> salesexportList = applicationrecordMapper.selectExportList(id);//获取销售数据
+        List<SalesExportVo> purchaseexportList = applicationrecordMapper.selectExportList(id);//获取采购数据
+        List<SalesExportVo> documentexportList = applicationrecordMapper.selectExportList(id);//获取单据数据
 
         Map<String, Object> beans = new HashMap();
-        beans.put("list", exportList);
+        beans.put("slist", salesexportList);
+        beans.put("plist", purchaseexportList);
+        beans.put("dlist", documentexportList);
 
         //加载excel模板文件
         File file = null;
         try {
-            file = ResourceUtils.getFile("H:/Git/企业微信/springboot-example/target/classes/excel/aaa.xlsx");
+            file = ResourceUtils.getFile("classpath:excel/goodsdeliverytemplate.xlsx");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         //配置下载路径
-        String path = "H:/Git";
+        String path = "/download/";
         createDir(new File(path));
 
         //根据模板生成新的excel
@@ -453,7 +413,6 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         //删除服务器生成文件
         deleteFile(excelFile);
-
     }
 
     /**
@@ -467,12 +426,13 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     private File createNewFile(Map<String, Object> beans, File file, String path) {
         XLSTransformer transformer = new XLSTransformer();
 
-        //可以写工具类来生成命名规则
+        //命名
         String name = "bbb.xlsx";
         File newFile = new File(path + name);
 
         try (InputStream in = new BufferedInputStream(new FileInputStream(file));
              OutputStream out = new FileOutputStream(newFile)) {
+            //poi版本使用3.1.7要不然会报错
             Workbook workbook = transformer.transformXLS(in, beans);
             workbook.write(out);
             out.flush();
