@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -72,4 +74,8 @@ public class Reimbursement extends BaseModel {
     //是否有报销
     @Column(name = "REIMBURSEM")
     private String reimbursem;
+
+//    明细日常费用
+    @Transient
+    private List<Dailyfee> tablercList;
 }
