@@ -1,13 +1,12 @@
 package com.nt.dao_Pfans.PFANS2000;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.nt.utils.AESEncryptHandler;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tk.mybatis.mapper.annotation.ColumnType;
 
 import javax.persistence.*;
 import java.util.*;
@@ -26,7 +25,6 @@ public class Overtime extends BaseModel {
      * 加班申请ID
      */
     @Id
-    @TableId
     @Column(name = "OVERTIME_ID")
     private String overtimeid;
 
@@ -99,7 +97,7 @@ public class Overtime extends BaseModel {
     /**
      * 加班事由
      */
-    @TableField(typeHandler = AESEncryptHandler.class)
+    @ColumnType(typeHandler = AESEncryptHandler.class)
     @Column(name = "CAUSE")
     private String cause;
 
