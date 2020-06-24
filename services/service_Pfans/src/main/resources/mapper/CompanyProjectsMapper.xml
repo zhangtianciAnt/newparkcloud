@@ -8,21 +8,21 @@
         c.`PROJECT_NAME` as PROJECT_NAME,
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
-            s.`PHASE` as phase,
-            s.`PRODUCTSTATUS` as productstatus,
-            <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
-            when s.`COMPANYPROJECTS_ID` != "" then '1'
-            ELSE '' END as phasestatus,
-            s.`ESTIMATEDWORK` as estimatedwork,
-            s.`ACTUALWORK` as actualwork,
-            <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
-            <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>
-            then '3'
-            <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then
-            '0'
-            <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
-            then '1'
-            else "" end contractstatus,
+        s.`PHASE` as phase,
+        s.`PRODUCTSTATUS` as productstatus,
+        <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+        when s.`COMPANYPROJECTS_ID` != "" then '1'
+        ELSE '' END as phasestatus,
+        s.`ESTIMATEDWORK` as estimatedwork,
+        s.`ACTUALWORK` as actualwork,
+        <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>
+        then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then
+        '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
+        then '1'
+        else "" end contractstatus,
         c.`STATUS` as status,
         c.`COMPANYPROJECTS_ID`,
         c.ENTRUST as ENTRUST,
@@ -36,8 +36,8 @@
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
         where
         <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
-            on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
-            and s.status = '0'
+        on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+        and s.status = '0'
         left join (
         select p.COMPANYPROJECTS_ID,
         max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
@@ -270,6 +270,9 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
         c.OWNER as OWNER,
+        c.`STARTDATE` as startdate,
+        c.`ENDDATE` as enddate,
+        c.`ENDTIME` as endtime,
         c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
@@ -307,6 +310,9 @@
         c.`PROJECT_NAME` as PROJECT_NAME,
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
+        c.`STARTDATE` as STARTDATE,
+        c.`ENDDATE` as ENDDATE,
+        c.`ENDTIME` as ENDTIME,
         s.`PHASE` as phase,
         s.`PRODUCTSTATUS` as productstatus,
         <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
@@ -328,15 +334,17 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
         c.OWNER as OWNER,
+        c.`STARTDATE` as startdate,
+        c.`ENDDATE` as enddate,
+        c.`ENDTIME` as endtime,
         c.GROUP_ID as group_id
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
-            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
         where
         <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
         on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
         and s.status = '0'
-
         left join (
         select p.COMPANYPROJECTS_ID,
         max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
@@ -388,5 +396,17 @@
              where cp.COMPROJECT_ID = ps.COMPROJECT_ID
                and ps.name = #{SyspName}) as pp
         ORDER BY pp.ADMISSIONTIME desc
+    </select>
+
+    <!--?????????-->
+    <select id="getContract" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+       select
+	p.companyprojects_id,
+	p.contract
+        from
+	projectcontract p,
+	companyprojects c
+        where
+	p.companyprojects_id = c.companyprojects_id
     </select>
 </mapper>
