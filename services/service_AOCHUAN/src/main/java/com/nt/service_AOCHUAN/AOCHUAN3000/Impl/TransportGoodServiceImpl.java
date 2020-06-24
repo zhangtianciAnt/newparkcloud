@@ -1,7 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ExportVo;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
@@ -17,13 +17,11 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.jxls.util.JxlsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.DecimalFormat;
@@ -384,11 +382,11 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * 4.删除新生成的模板文件
      */
     @Override
-    public void setExport(String a, HttpServletResponse response) throws Exception {
+    public void setExport(String id, HttpServletResponse response) throws Exception {
 
-        List<ExportVo> salesexportList = applicationrecordMapper.selectExportList("TRANSPORTGOODXXXXXX2XXXXXXXXX3000001");//获取销售数据
-        List<ExportVo> purchaseexportList = applicationrecordMapper.selectExportList("TRANSPORTGOODXXXXXX2XXXXXXXXX3000001");//获取采购数据
-        List<ExportVo> documentexportList = applicationrecordMapper.selectExportList("TRANSPORTGOODXXXXXX2XXXXXXXXX3000001");//获取单据数据
+        List<SalesExportVo> salesexportList = applicationrecordMapper.selectExportList(id);//获取销售数据
+        List<SalesExportVo> purchaseexportList = applicationrecordMapper.selectExportList(id);//获取采购数据
+        List<SalesExportVo> documentexportList = applicationrecordMapper.selectExportList(id);//获取单据数据
 
         Map<String, Object> beans = new HashMap();
         beans.put("slist", salesexportList);
@@ -434,6 +432,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         try (InputStream in = new BufferedInputStream(new FileInputStream(file));
              OutputStream out = new FileOutputStream(newFile)) {
+            //poi版本使用3.1.7要不然会报错
             Workbook workbook = transformer.transformXLS(in, beans);
             workbook.write(out);
             out.flush();

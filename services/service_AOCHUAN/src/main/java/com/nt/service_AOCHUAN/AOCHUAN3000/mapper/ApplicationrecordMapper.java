@@ -1,9 +1,7 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.mapper;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Applicationrecord;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Receivablesrecord;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Saledetails;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.ExportVo;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,5 +12,5 @@ public interface ApplicationrecordMapper extends MyMapper<Applicationrecord> {
 
     List<Applicationrecord> getApplicationRecord(@Param("id") String id);
 
-    List<ExportVo> selectExportList(@Param("id") String ExportList_id);
+    List<SalesExportVo> selectExportList(@Param("id") String ExportList_id);
 }
