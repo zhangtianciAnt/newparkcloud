@@ -1,8 +1,11 @@
 package com.nt.service_AOCHUAN.AOCHUAN6000.Impl;
 
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Dailyfee;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.ReimAndReimDetail;
 import com.nt.service_AOCHUAN.AOCHUAN6000.ReimbursementService;
+import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.DailyfreeMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.ReimbursementDetailMapper;
 import com.nt.service_AOCHUAN.AOCHUAN6000.mapper.ReimbursementMapper;
 import com.nt.utils.dao.TokenModel;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ReimbursementServiceImpl implements ReimbursementService {
@@ -20,6 +24,9 @@ public class ReimbursementServiceImpl implements ReimbursementService {
     @Autowired
     private ReimbursementDetailMapper reimbursementDetailMapper;
 
+    @Autowired
+    private DailyfreeMapper dailyfreeMapper;
+
     //获取费用主表
     @Override
     public List<Reimbursement> getReimbursementList(Reimbursement reimbursement) throws Exception {
@@ -28,7 +35,16 @@ public class ReimbursementServiceImpl implements ReimbursementService {
 
     @Override
     public Reimbursement getForm(String id) throws Exception {
-        return reimbursementMapper.selectByPrimaryKey(id);
+        Reimbursement reimbursement = new Reimbursement();
+        Dailyfee dailyfee = new Dailyfee();
+        reimbursement = reimbursementMapper.selectByPrimaryKey(id);
+        dailyfee.setReimbursement_id(id);
+        List<Dailyfee> list = dailyfreeMapper.select(dailyfee);
+
+
+        reimbursement.setTablercList(list);
+
+        return reimbursement;
     }
 
     //获取费用明细表
@@ -135,4 +151,22 @@ public class ReimbursementServiceImpl implements ReimbursementService {
 
         return true;
     }
+
+    @Override
+    public void insertDailyfree(ReimAndReimDetail reimAndReimDetail, TokenModel tokenModel) throws Exception {
+        List<Dailyfee> list = reimAndReimDetail.getReimrcFormList();
+        for(Dailyfee d : list){
+            d.preInsert(tokenModel);
+            d.setReimbursement_id(reimAndReimDetail.getReimForm().getReimbursement_id());
+            d.setDailyfeeid(UUID.randomUUID().toString());
+            dailyfreeMapper.insert(d);
+        }
+    }
+
+    @Override
+    public void deleteDailyfree(Dailyfee dailyfee, TokenModel tokenModel) throws Exception {
+        dailyfreeMapper.delete(dailyfee);
+    }
+
+
 }

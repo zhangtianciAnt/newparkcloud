@@ -1,4 +1,5 @@
 package com.nt.controller.Controller.AOCHUAN;
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Dailyfee;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.ReimAndReimDetail;
@@ -76,6 +77,12 @@ public class AOCHUAN6006Controller {
         reimbursement.setReimbursement_id(id);
         reimbursement.setReimbursement_no(number);
 
+
+
+        if(reimAndReimDetail.getReimrcFormList().size() > 0){
+            reimbursementService.insertDailyfree(reimAndReimDetail,tokenService.getToken(request));
+        }
+
         //存在Check
         if (!reimbursementService.existCheck(reimbursement)) {
             //唯一性Check
@@ -120,6 +127,23 @@ public class AOCHUAN6006Controller {
         if (reimAndReimDetail == null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+
+        if(reimAndReimDetail.getReimrcFormList().size() > 0){
+            List<Dailyfee> list = reimAndReimDetail.getReimrcFormList();
+            Dailyfee dailyfee = new Dailyfee();
+            for(Dailyfee d : list){
+                dailyfee.setReimbursement_id(reimAndReimDetail.getReimForm().getReimbursement_id());
+                d.setReimbursement_id(reimAndReimDetail.getReimForm().getReimbursement_id());
+                reimbursementService.deleteDailyfree(dailyfee,tokenService.getToken(request));
+                reimbursementService.insertDailyfree(reimAndReimDetail,tokenService.getToken(request));
+            }
+        }
+        else{
+            Dailyfee dailyfee = new Dailyfee();
+            dailyfee.setReimbursement_id(reimAndReimDetail.getReimForm().getReimbursement_id());
+            reimbursementService.deleteDailyfree(dailyfee,tokenService.getToken(request));
+        }
+
 
         //UPDATE:PROJECTS
         Reimbursement reimbursement = reimAndReimDetail.getReimForm();

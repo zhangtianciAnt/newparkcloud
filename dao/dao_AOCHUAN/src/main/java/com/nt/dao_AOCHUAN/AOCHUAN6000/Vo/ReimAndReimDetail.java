@@ -1,5 +1,6 @@
 package com.nt.dao_AOCHUAN.AOCHUAN6000.Vo;
 
+import com.nt.dao_AOCHUAN.AOCHUAN6000.Dailyfee;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.Reimbursement;
 import com.nt.dao_AOCHUAN.AOCHUAN6000.ReimbursementDetail;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,12 @@ public class ReimAndReimDetail {
     private Reimbursement reimForm;
 
     /**
-     * 明细表
+     * 差旅费
      */
     private List<ReimbursementDetail> reimFormList;
+
+
+//    日常费
+    private List<Dailyfee> reimrcFormList;
 }
 
