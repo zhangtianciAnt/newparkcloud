@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper">
     <select id="getTransportGoodList"  resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood">
-        select
+          select
 	t.transportgood_id,
 	t.contractnumber,
 	group_concat(DISTINCT products.CHINANAME) as producten,
@@ -16,7 +16,8 @@
   group_concat(DISTINCT products.CASNUM) as casnum,
 	t.saleresponsibility,
 	t.productresponsibility,
-	t.orders
+	t.orders,
+	CONCAT(LEFT(t.contractnumber,4),RIGHT(t.contractnumber,4)) as numberoreder
   from transportgood t
   left join saledetails
 	on saledetails.transportgood_id = t.transportgood_id
@@ -25,7 +26,7 @@
 	left JOIN supplierbaseinfor
 	on supplierbaseinfor.SUPPLIERBASEINFOR_ID = saledetails.supplierid
 	GROUP BY t.transportgood_id
-  order by t.contractnumber desc
+  order by numberoreder desc
     </select>
 
 </mapper>
