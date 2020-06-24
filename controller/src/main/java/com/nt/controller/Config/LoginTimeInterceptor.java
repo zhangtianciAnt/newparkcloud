@@ -35,6 +35,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         String token = request.getHeader(AuthConstants.AUTH_TOKEN);
         String url = request.getHeader(AuthConstants.CURRENTURL);
         String locale = request.getHeader(AuthConstants.LOCALE);
+        String datatype = request.getHeader(AuthConstants.DATATYPE);
         try {
             if (StrUtil.isNotBlank(token)) {
                  //验证token
@@ -85,8 +86,14 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
                     return false;
                 }
             }else{
+                if("company".equals(datatype)){
 
-                tokenModel.setOwnerList(ownerList);
+                    tokenModel.setOwnerList(ownerList);
+                }else{
+                    ownerList = new ArrayList<String>();
+                    ownerList.add(tokenModel.getUserId());
+                    tokenModel.setOwnerList(ownerList);
+                }
             }
         }
         jsTokenService.createTokenModel(tokenModel);
