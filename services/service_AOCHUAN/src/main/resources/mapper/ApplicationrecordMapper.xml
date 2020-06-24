@@ -32,10 +32,25 @@
     where applicationrecord.transportgood_id = #{id}
 
     </select>
+
     <select id="selectExportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo">
             SELECT * FROM	saledetails
                 INNER JOIN receivablesrecord ON saledetails.productid = saledetails.productid
                 LEFT JOIN transportgood ON transportgood.transportgood_id = saledetails.transportgood_id
                 where transportgood.transportgood_id = #{id}
-        </select>
+    </select>
+
+    <select id="purchaseexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo">
+            SELECT * FROM	saledetails
+                INNER JOIN receivablesrecord ON saledetails.productid = saledetails.productid
+                LEFT JOIN transportgood ON transportgood.transportgood_id = saledetails.transportgood_id
+                where transportgood.transportgood_id = #{id}
+    </select>
+
+    <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">
+            SELECT * FROM	saledetails
+                INNER JOIN receivablesrecord ON saledetails.productid = saledetails.productid
+                LEFT JOIN transportgood ON transportgood.transportgood_id = saledetails.transportgood_id
+                where transportgood.transportgood_id = #{id}
+    </select>
 </mapper>

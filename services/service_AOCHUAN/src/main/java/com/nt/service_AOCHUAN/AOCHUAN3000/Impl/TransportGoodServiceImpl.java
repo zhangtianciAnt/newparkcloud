@@ -1,6 +1,8 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
@@ -382,13 +384,21 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * 4.删除新生成的模板文件
      */
     @Override
-    public void setExport(String id, HttpServletResponse response) throws Exception {
-
-        List<SalesExportVo> salesexportList = applicationrecordMapper.selectExportList(id);//获取销售数据
-        List<SalesExportVo> purchaseexportList = applicationrecordMapper.selectExportList(id);//获取采购数据
-        List<SalesExportVo> documentexportList = applicationrecordMapper.selectExportList(id);//获取单据数据
+    public void setExport(HttpServletResponse response, List<TransportGood> exportVo) throws Exception {
 
         Map<String, Object> beans = new HashMap();
+        List<SalesExportVo> salesexportList = new ArrayList<>();
+        List<PurchaseExportVo> purchaseexportList = new ArrayList<>();
+        List<DocumentExportVo> documentexportList = new ArrayList<>();
+        for (int i = 0; i < exportVo.size(); i++) {
+            String id = exportVo.get(i).getTransportgood_id();
+            List<SalesExportVo> salesexportListBase = applicationrecordMapper.selectExportList(id);//获取销售数据
+            salesexportList.addAll(salesexportListBase);
+            List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
+            purchaseexportList.addAll(purchaseexportListBase);
+            List<DocumentExportVo> documentexportListBase = applicationrecordMapper.documentexportList(id);//获取单据数据
+            documentexportList.addAll(documentexportListBase);
+        }
         beans.put("slist", salesexportList);
         beans.put("plist", purchaseexportList);
         beans.put("dlist", documentexportList);

@@ -120,11 +120,7 @@ public class AOCHUAN3002Controller {
 
     @RequestMapping(value = "/getexport", method = {RequestMethod.POST})
     public ApiResult getexport(@RequestBody List<TransportGood> exportVo, HttpServletResponse response) throws Exception {
-
-        for (int i = 0; i < exportVo.size(); i++) {
-            String id = exportVo.get(i).getTransportgood_id();
-            transportGoodService.setExport(id, response);
-        }
+        transportGoodService.setExport(response , exportVo);
         return ApiResult.success();
     }
 

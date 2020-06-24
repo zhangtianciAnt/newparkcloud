@@ -35,5 +35,5 @@ public interface TransportGoodService {
     void paymentXS(List<FinPurchase> finPurchases, TokenModel token);
 
     //    导出
-    void setExport(String id , HttpServletResponse response) throws Exception;
+    void setExport(HttpServletResponse response , List<TransportGood> exportVo) throws Exception;
 }
