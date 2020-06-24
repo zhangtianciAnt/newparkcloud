@@ -1156,16 +1156,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
                         return outOperationWorkflowVo;
                     }else{
-                        ToDoNotice toDoNotice1 = new ToDoNotice();
-                        toDoNotice1.setDataid(dataId);
-                        toDoNotice1.setUrl(url);
-                        toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                        List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
-                        for (ToDoNotice itemToDoNotice :
-                                rst1) {
-                            itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
-                            toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                        for (String user : item.getItemid().split(",")) {
+                            ToDoNotice toDoNotice1 = new ToDoNotice();
+                            toDoNotice1.setDataid(dataId);
+                            toDoNotice1.setUrl(url);
+                            toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                            toDoNotice1.setOwner(user);
+                            List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                            for (ToDoNotice itemToDoNotice :
+                                    rst1) {
+                                itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+                                toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                            }
                         }
+
                     }
 
                     // 如果节点为最后一个节点时，结束流程
