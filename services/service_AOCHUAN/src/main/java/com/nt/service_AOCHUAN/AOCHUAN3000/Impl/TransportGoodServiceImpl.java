@@ -7,6 +7,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.*;
@@ -14,12 +15,16 @@ import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -58,6 +63,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
     private ApplicationrecordMapper applicationrecordMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     DecimalFormat df = new DecimalFormat("#.00");
 
@@ -393,6 +401,20 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         for (int i = 0; i < exportVo.size(); i++) {
             String id = exportVo.get(i).getTransportgood_id();
             List<SalesExportVo> salesexportListBase = applicationrecordMapper.selectExportList(id);//获取销售数据
+            for (int j = 0; j < salesexportListBase.size(); j++) {
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(salesexportListBase.get(j).getSaleresponsibility()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                salesexportListBase.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
+                String unitCode = salesexportListBase.get(j).getUnit();
+                salesexportListBase.get(i).setUnit(applicationrecordMapper.dictionaryExportList(unitCode));
+                String currencyCode = salesexportListBase.get(j).getCurrency();
+                salesexportListBase.get(i).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
+                String collectionaccountCode = salesexportListBase.get(j).getCollectionaccount();
+                salesexportListBase.get(i).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
+                String paymentCode = salesexportListBase.get(j).getPayment();
+                salesexportListBase.get(i).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
+            }
             salesexportList.addAll(salesexportListBase);
             List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
             purchaseexportList.addAll(purchaseexportListBase);

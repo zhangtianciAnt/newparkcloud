@@ -20,4 +20,6 @@ public interface ApplicationrecordMapper extends MyMapper<Applicationrecord> {
 
     List<DocumentExportVo> documentexportList(@Param("id") String documentExportList_id);
 
+    String dictionaryExportList(@Param("id") String dictionary_id);
+
 }

@@ -79,4 +79,7 @@ public class SalesExportVo {
     //    订单要求
     private String order;
 
+    //    数据字典
+    private String value1;
+
 }
