@@ -20,8 +20,8 @@ public class Citation extends BaseModel {
     @Id
     @Column(name = "CITATION_ID")
     private String citation_id;
-    @Column(name = "STAFFEXITPROCEDURE_ID")
-    private String staffexitprocedure_id;
+    @Column(name = "STAFFEXITPROCE_ID")
+    private String staffexitproce_id;
     @Column(name = "CONTENT")
     private String content;
     @Column(name = "USER_ID")

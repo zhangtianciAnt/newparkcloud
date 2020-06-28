@@ -6,11 +6,15 @@ import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 
 public interface PublicExpenseService {
     List<PublicExpense> get(PublicExpense publicExpense) throws Exception;
+
+//    Map<String, Object> exportjs(String publicexpenseid, HttpServletRequest request) throws Exception;
 
     List<PublicExpense> getpublicelist(String publicexpenseid) throws Exception;
 

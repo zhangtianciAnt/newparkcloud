@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
@@ -7,10 +8,8 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
@@ -25,12 +24,18 @@ public class Pfans2016Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
+    public ApiResult list(HttpServletRequest request,@RequestParam String dates) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         AbNormal abNormal = new AbNormal();
         abNormal.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(abNormalService.list(abNormal));
+        List<AbNormal> AbNormalList = abNormalService.list(abNormal);
+        //add-gbb-6/28-禅道166 添加申请日期筛选
+        if(!dates.equals("Invalid date")){
+            AbNormalList = AbNormalList.stream().filter(item -> DateUtil.format(item.getApplicationdate(),"yyyy-MM").equals(dates)).collect(Collectors.toList());
+        }
+        //add-gbb-6/28-禅道166 添加申请日期筛选
+        return ApiResult.success(AbNormalList);
     }
     //add-ws-6/8-禅道035
     @RequestMapping(value = "/list2", method = {RequestMethod.POST})
