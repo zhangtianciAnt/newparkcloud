@@ -1147,7 +1147,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     conditionWorkflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
 //                    conditionWorkflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                     workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
-                    if(item.getOutcondition() == null){
+                    if (item.getOutcondition() == null) {
                         item.setOutcondition("1");
                     }
                     if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() < Convert.toInt(item.getOutcondition())) {
@@ -1155,20 +1155,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         outOperationWorkflowVo.setState("0");
                         outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
                         return outOperationWorkflowVo;
-                    }else{
-                        for (String user : item.getItemid().split(",")) {
-                            ToDoNotice toDoNotice1 = new ToDoNotice();
-                            toDoNotice1.setDataid(dataId);
-                            toDoNotice1.setUrl(url);
-                            toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                            toDoNotice1.setOwner(user);
-                            List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
-                            for (ToDoNotice itemToDoNotice :
-                                    rst1) {
-                                itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
-                                toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                    } else {
+                        if (item.getItemid() != null) {
+                            for (String user : item.getItemid().split(",")) {
+                                ToDoNotice toDoNotice1 = new ToDoNotice();
+                                toDoNotice1.setDataid(dataId);
+                                toDoNotice1.setUrl(url);
+                                toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                toDoNotice1.setOwner(user);
+                                List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                                for (ToDoNotice itemToDoNotice :
+                                        rst1) {
+                                    itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+                                    toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                                }
                             }
                         }
+
 
                     }
 

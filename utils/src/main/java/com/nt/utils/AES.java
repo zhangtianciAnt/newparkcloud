@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class AES {
 
     // 密钥
-    public static String key = "AD42F6697B035B7580E4FEF93BE20BAD";
+    public static String key = AuthConstants.AESKEY;
     // 偏移量
     private static final int offset = 16;
     private static final String transformation = "AES/CBC/PKCS5Padding";

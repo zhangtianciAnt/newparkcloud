@@ -1215,6 +1215,57 @@ public class UserServiceImpl implements UserService {
                 if (item.get("仕事开始年月日") != null) {
                     userinfo.setWorkday(item.get("仕事开始年月日").toString());
                 }
+
+                //        ws-6/28-禅道141任务
+                //离职理由分类
+                if (item.get("离职理由分类") != null) {
+                    String classification = item.get("离职理由分类").toString();
+                    if (classification != null) {
+                        Dictionary dictionary = new Dictionary();
+                        dictionary.setValue1(classification.trim());
+                        dictionary.setPcode("RS002");
+                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                        if (dictionaryList.size() > 0) {
+                            userinfo.setClassification(dictionaryList.get(0).getCode());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的离职理由分类（" + item.get("离职理由分类").toString() + "）在字典中不存在！");
+                        }
+                    }
+                }
+                //离职去向
+                if (item.get("离职去向") != null) {
+                    String wheretoleave = item.get("离职去向").toString();
+                    if (wheretoleave != null) {
+                        Dictionary dictionary = new Dictionary();
+                        dictionary.setValue1(wheretoleave.trim());
+                        dictionary.setPcode("RS003");
+                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                        if (dictionaryList.size() > 0) {
+                            userinfo.setWheretoleave(dictionaryList.get(0).getCode());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的离职去向（" + item.get("离职去向").toString() + "）在字典中不存在！");
+                        }
+                    }
+                }
+                //离职去向（手动）
+                if (item.get("离职去向（手动）") != null) {
+                    userinfo.setWheretoleave2(item.get("离职去向（手动）").toString());
+                }
+                //转职公司
+                if (item.get("转职公司") != null) {
+                    userinfo.setTransfercompany(item.get("转职公司").toString());
+                }
+                //退职理由
+                if (item.get("退职理由") != null) {
+                    userinfo.setReason2(item.get("退职理由").toString());
+                }
+                //其他
+                if (item.get("其他") != null) {
+                    userinfo.setOther(item.get("其他").toString());
+                }
+
+
+                //        ws-6/28-禅道141任务
                 //员工ID
                 if (item.get("员工ID") != null) {
                     userinfo.setPersonalcode(item.get("员工ID").toString());
@@ -1424,7 +1475,8 @@ public class UserServiceImpl implements UserService {
                 }
                 accesscount = accesscount + 1;
             }
-        } else {
+        }
+        else {
             for (Map<String, Object> item : readAll) {
                 UserAccount userAccount = new UserAccount();
                 List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
@@ -1667,6 +1719,54 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
+                    //        ws-6/28-禅道141任务
+                    //离职理由分类
+                    if (item.get("离职理由分类●") != null) {
+                        String classification = item.get("离职理由分类●").toString();
+                        if (classification != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(classification.trim());
+                            dictionary.setPcode("RS002");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                customerInfoList.get(0).getUserinfo().setClassification(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的离职理由分类（" + item.get("离职理由分类●").toString() + "）在字典中不存在！");
+                            }
+                        }
+                    }
+                    //离职去向
+                    if (item.get("离职去向●") != null) {
+                        String wheretoleave = item.get("离职去向●").toString();
+                        if (wheretoleave != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(wheretoleave.trim());
+                            dictionary.setPcode("RS003");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                customerInfoList.get(0).getUserinfo().setWheretoleave(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的离职去向（" + item.get("离职去向●").toString() + "）在字典中不存在！");
+                            }
+                        }
+                    }
+                    //离职去向（手动）
+                    if (item.get("离职去向（手动）●") != null) {
+                        customerInfoList.get(0).getUserinfo().setWheretoleave2(item.get("离职去向（手动）●").toString());
+                    }
+                    //转职公司
+                    if (item.get("转职公司●") != null) {
+                        customerInfoList.get(0).getUserinfo().setTransfercompany(item.get("转职公司●").toString());
+                    }
+                    //退职理由
+                    if (item.get("退职理由●") != null) {
+                        customerInfoList.get(0).getUserinfo().setReason2(item.get("退职理由●").toString());
+                    }
+                    //其他
+                    if (item.get("其他●") != null) {
+                        customerInfoList.get(0).getUserinfo().setOther(item.get("其他●").toString());
+                    }
+                    //        ws-6/28-禅道141任务
                     if (item.get("Rank●") != null) {
                         //1:出向者;2：正式社员
                         if (item.get("Rank●").toString().trim().equals("その他")) {

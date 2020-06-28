@@ -360,6 +360,37 @@ public class CustomerInfo extends BaseModel {
          * 退职理由
          */
         private String reason2;
+//        ws-6/28-禅道141任务
+        /**
+         * 离职去向
+         * （选项）
+         */
+        private String wheretoleave;
+
+        /**
+         * 离职去向
+         * （手动输入）
+         */
+        private String wheretoleave2;
+
+        /**
+         * 转职公司
+         * （手动输入）
+         */
+        private String transfercompany;
+
+        /**
+         * 离职理由分类（可多选）
+         */
+        private String classification;
+
+        /**
+         * 其他
+         */
+        private String other;
+
+//        ws-6/28-禅道141任务
+
 
         /**
          * 离职申请
