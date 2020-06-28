@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.SoftwaretransferMapper">
+    <select id="getSoftware" resultType="com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo2">
+       SELECT
+	tt.SOFTWARETRANSFER_ID,
+	tt.USER_ID,
+	tt.center_id,
+	tt.group_id,
+	tt.team_id,
+	tt.ferrygroup_id,
+	tt.tubegroup_id,
+	tt.createon,
+	tt.status,
+	GROUP_CONCAT( tt.management SEPARATOR ',' ) management ,
+	GROUP_CONCAT( tt.assetname SEPARATOR ',' ) assetname
+FROM
+	(
+SELECT
+	s.SOFTWARETRANSFER_ID,
+	s.USER_ID,
+	s.center_id,
+	s.group_id,
+	s.team_id,
+	s.ferrygroup_id,
+	s.tubegroup_id,
+	s.createon,
+	s.status,
+	n.management,
+	n.assetname
+FROM
+	notification n,
+	softwaretransfer s
+WHERE
+	n.SOFTWARETRANSFER_ID = s.SOFTWARETRANSFER_ID
+	) tt
+GROUP BY
+	tt.SOFTWARETRANSFER_ID
+    </select>
+</mapper>
+

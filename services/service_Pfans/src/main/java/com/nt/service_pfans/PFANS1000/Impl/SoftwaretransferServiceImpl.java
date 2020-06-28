@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Notification;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo2;
 import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
 import com.nt.service_pfans.PFANS1000.mapper.SoftwaretransferMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NotificationMapper;
@@ -26,9 +27,14 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     @Autowired
     private NotificationMapper notificationMapper;
 
+//    @Override
+//    public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
+//        return softwaretransferMapper.select(softwaretransfer);
+//    }
+
     @Override
-    public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
-        return softwaretransferMapper.select(softwaretransfer);
+    public  List<SoftwaretransferVo2> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
+        return softwaretransferMapper.getSoftware(softwaretransfer.getOwner());
     }
 
     @Override

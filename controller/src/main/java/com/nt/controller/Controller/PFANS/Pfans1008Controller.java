@@ -44,8 +44,16 @@ public class Pfans1008Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request) throws Exception {
+//    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+//    public ApiResult get(HttpServletRequest request) throws Exception {
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        Softwaretransfer softwaretransfer = new Softwaretransfer();
+//        softwaretransfer.setOwners(tokenModel.getOwnerList());
+//        return ApiResult.success(softwaretransferService.getSoftwaretransfer(softwaretransfer));
+//    }
+
+    @RequestMapping(value = "/getSoftwaretransfer", method = {RequestMethod.GET})
+    public ApiResult getSoftwaretransfer(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Softwaretransfer softwaretransfer = new Softwaretransfer();
         softwaretransfer.setOwners(tokenModel.getOwnerList());
