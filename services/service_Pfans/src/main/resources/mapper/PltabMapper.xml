@@ -67,13 +67,13 @@
                               ) as d
                                   left join publicexpense p on 1 = 1
                                   left join (
-                                 select rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 select rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME,BUDGETCODING
                                  from trafficdetails
                                  union all
-                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME,BUDGETCODING
                                  from purchasedetails
                                  union all
-                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME
+                                 SELECT rmb,tormb,PUBLICEXPENSE_ID,ACCOUNTCODE,PLSUMMARY,SUBJECTNUMBER,DEPARTMENTNAME,BUDGETCODING
                                  from otherdetails
                              ) tao
                                             on p.PUBLICEXPENSE_ID = tao.PUBLICEXPENSE_ID
@@ -81,6 +81,7 @@
                                                 and tao.DEPARTMENTNAME = #{groupid}
                                                 and tao.SUBJECTNUMBER not in ('1099-A1-0000', '0504-00-0000')
                                                 and tao.ACCOUNTCODE not in ('PJ116008','PJ121012','PJ130010','PJ134013')
+                                                and tao.BUDGETCODING != '00000'
                                   inner join companyprojects cp
                                              on p.PROJECT_ID = cp.COMPANYPROJECTS_ID
                                                  and cp.GROUP_ID = #{groupid}
