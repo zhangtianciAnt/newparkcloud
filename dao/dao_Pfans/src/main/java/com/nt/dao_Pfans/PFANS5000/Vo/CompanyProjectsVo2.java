@@ -115,4 +115,19 @@ public class CompanyProjectsVo2 {
      * 负责人
      */
     private String owner;
+
+    /**
+     * 开始时间
+     */
+    private Date startdate;
+
+    /**
+     * 预计结束时间
+     */
+    private Date enddate;
+
+    /**
+     * 实际结束时间
+     */
+    private Date endtime;
 }

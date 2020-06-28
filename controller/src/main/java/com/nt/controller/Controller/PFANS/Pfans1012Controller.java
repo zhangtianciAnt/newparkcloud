@@ -211,6 +211,7 @@ public class Pfans1012Controller {
         String wfList7 = "";
         //add-ws-禅道103任务2
         String username = "";
+        BigDecimal bd7 = new BigDecimal(pubvo.getPublicexpense().getMoneys());
         if (!pubvo.getPublicexpense().getLoan().equals("")) {
             query = new Query();
             LoanApplication loanapplication = new LoanApplication();
@@ -231,7 +232,7 @@ public class Pfans1012Controller {
         if (wfList.size() > 0) {
             //UPD-WS-6/12-禅道105
             query = new Query();
-            if (wfList.size() > 5) {
+            if (bd7.intValue() >= 20000) {
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
@@ -390,8 +391,8 @@ public class Pfans1012Controller {
         data.put("tra", pubvo.getTrafficdetails());
         data.put("pur", pubvo.getPurchasedetails());
         data.put("otd", pubvo.getOtherdetails());
-        BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
-        if (bd.intValue() >= 20000) {
+
+        if (bd7.intValue() >= 20000) {
             if (pubvo.getTrafficdetails().size() > 0) {
                 ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu.xls", data, response);
             } else {
@@ -446,7 +447,8 @@ public class Pfans1012Controller {
     }
 
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
+    public ApiResult insert(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws
+            Exception {
         if (publicExpenseVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -456,7 +458,8 @@ public class Pfans1012Controller {
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody PublicExpenseVo publicExpenseVo, HttpServletRequest request) throws
+            Exception {
         if (publicExpenseVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -466,7 +469,8 @@ public class Pfans1012Controller {
     }
 
     @RequestMapping(value = "/gettotalcost", method = {RequestMethod.POST})
-    public ApiResult gettotalcost(@RequestBody TotalCostVo totalcostvo, HttpServletRequest request) throws Exception {
+    public ApiResult gettotalcost(@RequestBody TotalCostVo totalcostvo, HttpServletRequest request) throws
+            Exception {
         if (totalcostvo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -485,7 +489,8 @@ public class Pfans1012Controller {
 
 
     @RequestMapping(value = "/getLoanApplication", method = {RequestMethod.POST})
-    public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+    public ApiResult getLoanApplication(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws
+            Exception {
         if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

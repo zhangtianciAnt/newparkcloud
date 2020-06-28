@@ -13,7 +13,7 @@ public class AuthConstants {
     // 请求头中的用来标记token的名称
     public final static String AUTH_TOKEN = "x-auth-token";
     public final static String LOCALE = "locale";
-
+    public final static String DATATYPE = "datatype";
     // 请求头中的用来标记当前画面的名称
     public final static String CURRENTURL = "currentUrl";
 
