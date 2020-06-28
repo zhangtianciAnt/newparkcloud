@@ -6,6 +6,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuoAndEnq;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.EnquiryMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReturngoodsMapper;
@@ -17,7 +18,9 @@ import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
+import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -25,12 +28,13 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class QuotationsServiceImpl implements QuotationsService {
@@ -58,6 +62,9 @@ public class QuotationsServiceImpl implements QuotationsService {
 
     @Autowired
     TodoNoticeMapper todoNoticeMapper;
+
+    @Autowired
+    private ApplicationrecordMapper applicationrecordMapper;
 
 
     @Override
@@ -121,6 +128,139 @@ public class QuotationsServiceImpl implements QuotationsService {
     @Override
     public void delete(String id) throws Exception {
         quotationsMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void setExport(HttpServletResponse response, List<Quotations> quotationsList) throws Exception {
+        Map<String, Object> beans = new HashMap();
+
+        //业务逻辑
+        beans = logicExport(response, quotationsList);
+
+        //加载excel模板文件
+        File file = null;
+        try {
+            file = ResourceUtils.getFile("classpath:excel/quote.xlsx");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //配置下载路径
+        String path = "/download/";
+        createDir(new File(path));
+
+        //根据模板生成新的excel
+        File excelFile = createNewFile(beans, file, path);
+
+        //浏览器端下载文件
+        downloadFile(response, excelFile);
+
+        //删除服务器生成文件
+        deleteFile(excelFile);
+
+    }
+
+
+    /**
+     * 业务逻辑把数据存到Map中
+     *
+     */
+    private Map<String, Object> logicExport(HttpServletResponse response, List<Quotations> quotationsList) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        for(Quotations quotations : quotationsList){
+
+            String date = simpleDateFormat.format(quotations.getInquirydate());
+            quotations.setXjdate(date);
+
+            String producttype = applicationrecordMapper.dictionaryExportList(quotations.getProducttype());
+            quotations.setProducttype(producttype);
+
+            String purpose = applicationrecordMapper.dictionaryExportList(quotations.getPurpose());
+            quotations.setPurpose(purpose);
+
+        }
+
+        Map<String, Object> beans = new HashMap();
+        List<Quotations> xiaoshou = quotationsList;
+        List<Quotations> caigou = quotationsList;
+
+        beans.put("xiaoshou", xiaoshou);
+        beans.put("caigou", caigou);
+
+
+        return beans;
+    }
+
+    //如果目录不存在创建目录 存在则不创建
+    private void createDir(File file) {
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+    /**
+     * 根据excel模板生成新的excel
+     *
+     * @param beans
+     * @param file
+     * @param path
+     * @return
+     **/
+    private File createNewFile(Map<String, Object> beans, File file, String path) {
+        XLSTransformer transformer = new XLSTransformer();
+
+        //命名
+        String name = "bbb.xlsx";
+        File newFile = new File(path + name);
+
+        try (InputStream in = new BufferedInputStream(new FileInputStream(file));
+             OutputStream out = new FileOutputStream(newFile)) {
+            //poi版本使用3.1.7要不然会报错
+            Workbook workbook = transformer.transformXLS(in, beans);
+            workbook.write(out);
+            out.flush();
+            return newFile;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return newFile;
+    }
+
+    /**
+     * 将服务器新生成的excel从浏览器下载
+     *
+     * @param response
+     * @param excelFile
+     */
+    private void downloadFile(HttpServletResponse response, File excelFile) {
+        /* 设置文件ContentType类型，这样设置，会自动判断下载文件类型 */
+        response.setContentType("multipart/form-data");
+        /* 设置文件头：最后一个参数是设置下载文件名 */
+        response.setHeader("Content-Disposition", "attachment;filename=" + excelFile.getName());
+        try (
+                InputStream ins = new FileInputStream(excelFile);
+                OutputStream os = response.getOutputStream()
+        ) {
+            byte[] b = new byte[1024];
+            int len;
+            while ((len = ins.read(b)) > 0) {
+                os.write(b, 0, len);
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    /**
+     * 浏览器下载完成之后删除服务器生成的文件
+     * 也可以设置定时任务去删除服务器文件
+     *
+     * @param excelFile
+     */
+    private void deleteFile(File excelFile) {
+
+        excelFile.delete();
     }
 
     //生成代办
