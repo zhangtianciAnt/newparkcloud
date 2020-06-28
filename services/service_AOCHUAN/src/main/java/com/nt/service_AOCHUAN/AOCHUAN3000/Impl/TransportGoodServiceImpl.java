@@ -15,7 +15,6 @@ import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
-import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -395,6 +394,43 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     public void setExport(HttpServletResponse response, List<TransportGood> exportVo) throws Exception {
 
         Map<String, Object> beans = new HashMap();
+
+        //业务逻辑
+        beans = logicExport(response, exportVo);
+
+        //加载excel模板文件
+        File file = null;
+        try {
+            file = ResourceUtils.getFile("classpath:excel/goodsdeliverytemplate.xlsx");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //配置下载路径
+        String path = "/download/";
+        createDir(new File(path));
+
+        //根据模板生成新的excel
+        File excelFile = createNewFile(beans, file, path);
+
+        //浏览器端下载文件
+        downloadFile(response, excelFile);
+
+        //删除服务器生成文件
+        deleteFile(excelFile);
+    }
+
+
+    /**
+     * 业务逻辑把数据存到Map中
+     *
+     * @param response
+     * @param exportVo
+     * @return beans
+     */
+    private Map<String, Object> logicExport(HttpServletResponse response, List<TransportGood> exportVo) {
+
+        Map<String, Object> beans = new HashMap();
         List<SalesExportVo> salesexportList = new ArrayList<>();
         List<PurchaseExportVo> purchaseexportList = new ArrayList<>();
         List<DocumentExportVo> documentexportList = new ArrayList<>();
@@ -441,26 +477,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         beans.put("plist", purchaseexportList);
         beans.put("dlist", documentexportList);
 
-        //加载excel模板文件
-        File file = null;
-        try {
-            file = ResourceUtils.getFile("classpath:excel/goodsdeliverytemplate.xlsx");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        //配置下载路径
-        String path = "/download/";
-        createDir(new File(path));
-
-        //根据模板生成新的excel
-        File excelFile = createNewFile(beans, file, path);
-
-        //浏览器端下载文件
-        downloadFile(response, excelFile);
-
-        //删除服务器生成文件
-        deleteFile(excelFile);
+        return beans;
     }
 
     /**
