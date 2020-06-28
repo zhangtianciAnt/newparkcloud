@@ -65,4 +65,12 @@ public class Pfans2017Controller {
     public ApiResult getPunDetail(@RequestBody PunchcardRecordDetail detail, HttpServletRequest request) throws Exception {
         return ApiResult.success(punchcardrecordService.getPunDetail(detail));
     }
+
+    @RequestMapping(value = "/getTodaylist", method = {RequestMethod.POST})
+    public ApiResult getTodaylist(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        PunchcardRecord punchcardrecord = new PunchcardRecord();
+        punchcardrecord.setOwner(tokenModel.getUserId());
+        return ApiResult.success(punchcardrecordService.getTodaylist(punchcardrecord,tokenModel));
+    }
 }
