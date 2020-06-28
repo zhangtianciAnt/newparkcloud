@@ -428,6 +428,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * @param exportVo
      * @return beans
      */
+
     private Map<String, Object> logicExport(HttpServletResponse response, List<TransportGood> exportVo) {
 
         Map<String, Object> beans = new HashMap();
