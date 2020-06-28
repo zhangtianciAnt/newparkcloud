@@ -6,7 +6,14 @@
         select *
         from attendance
         where attendancetim LIKE #{attendancetim}"%"
-        and names = #{id}
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            names in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
 	</select>
 
     <!--考勤异常数据-->
@@ -41,8 +48,16 @@
         )
         ) as aaa
         where aaa.attendancetim LIKE #{attendancetim}"%"
-        and names = #{id}
-	</select>
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            names in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
 
 
     <select id="getByUserId" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">

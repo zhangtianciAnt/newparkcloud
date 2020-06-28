@@ -196,6 +196,8 @@ public class UserServiceImpl implements UserService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
+        //判断空
+        //非空后获取用户名，用户名非空的话，赋用户名，密码
         mongoTemplate.save(userAccount);
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
@@ -648,7 +650,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CustomerInfo> getOKRS(String orgid) throws Exception{
         Query query = new Query();
-        if (StrUtil.isNotBlank(orgid)) {
+        //追加判断，如果是组织架构id等于管理部id的，能看到所有人okrs
+        if (StrUtil.isNotBlank(orgid) && !("3ABA0BE332D478E9470D01A364AA3E89F046".equals(orgid))) {
             query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
@@ -675,7 +678,10 @@ public class UserServiceImpl implements UserService {
             Criteria cri = Criteria.where("_time").regex(month);
             Query query = new Query();
             query.addCriteria(Criteria.where("status").is("0"));
-            query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
+            //追加判断，如果是组织架构id等于管理部id的，能看到所有人okrs
+            if(!"3ABA0BE332D478E9470D01A364AA3E89F046".equals(orgid)){
+                query.addCriteria(Criteria.where("userinfo.groupid").is(orgid));
+            }
             query.addCriteria(Criteria.where("userinfo.okrsTable").elemMatch(cri));
             customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         }
