@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
+import com.nt.dao_Pfans.PFANS2000.Staffexitproce;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/staffexitprocedure")
@@ -38,16 +40,70 @@ public class Pfans2026Controller {
     private WorkflowServices workflowServices;
     @Autowired
     private MongoTemplate mongoTemplate;
+
+
+    @RequestMapping(value = "/generatesta", method = {RequestMethod.POST})
+    public void generateJxls(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        StaffexitprocedureVo StaList = staffexitprocedureService.selectById(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
+        Map<String, Object> data = new HashMap<>();
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("userid").is(StaList.getStaffexitprocedure().getUser_id()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        if (customerInfo != null) {
+            StaList.getStaffexitprocedure().setUser_id(customerInfo.getUserinfo().getCustomername());
+            StaList.getStaffexitprocedure().setCenter_id(customerInfo.getUserinfo().getCentername());
+            StaList.getStaffexitprocedure().setGroup_id(customerInfo.getUserinfo().getGroupname());
+            StaList.getStaffexitprocedure().setTeam_id(customerInfo.getUserinfo().getTeamname());
+        }
+
+        data.put("sta", StaList.getStaffexitprocedure());
+        ExcelOutPutUtil.OutPutPdf("离职者报告", "lizhibaogao.xls", data, response);
+    }
     /*
      * 列表查看
      * */
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request) throws Exception {
+    public ApiResult get(String type,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Staffexitprocedure staffexitprocedure=new Staffexitprocedure();
         staffexitprocedure.setOwners(tokenModel.getOwnerList());
-       return ApiResult.success(staffexitprocedureService.get(staffexitprocedure));
+        List<Staffexitprocedure> StaList = staffexitprocedureService.get(staffexitprocedure);
+        StaList = StaList.stream().filter(item -> (item.getType().equals(type))).collect(Collectors.toList());
+        return ApiResult.success(StaList);
     }
+
+    @RequestMapping(value = "/getList", method = {RequestMethod.POST})
+    public ApiResult getList(@RequestBody Staffexitproce staffexitproce, HttpServletRequest request) throws Exception {
+        if (staffexitproce == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(staffexitprocedureService.getList(staffexitproce, tokenModel));
+    }
+
+    @RequestMapping(value = "/getList2", method = {RequestMethod.POST})
+    public ApiResult getList2(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
+        if (staffexitprocedure == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<Staffexitprocedure> StaList = staffexitprocedureService.getList2(staffexitprocedure, tokenModel);
+        StaList = StaList.stream().filter(item -> (item.getType().equals("0"))).collect(Collectors.toList());
+        return ApiResult.success(StaList);
+    }
+
+    //add-ws-6/16-禅道106
+    @RequestMapping(value = "/deletesta", method = {RequestMethod.POST})
+    public ApiResult deleteLog(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
+        if (staffexitprocedure == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        staffexitprocedureService.delete(staffexitprocedure);
+        return ApiResult.success();
+    }
+//add-ws-6/16-禅道106
     /**
      * 查看
      */
@@ -60,7 +116,7 @@ public class Pfans2026Controller {
     }
     /**
      *
-     * 修改
+     * 修改z
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
@@ -82,6 +138,46 @@ public class Pfans2026Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         staffexitprocedureService.insert(staffexitprocedureVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/get2", method = {RequestMethod.GET})
+    public ApiResult get2(String type,HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Staffexitproce staffexitproce=new Staffexitproce();
+        staffexitproce.setOwners(tokenModel.getOwnerList());
+        List<Staffexitproce> StaList = staffexitprocedureService.get2(staffexitproce);
+        return ApiResult.success(StaList);
+    }
+
+    @RequestMapping(value = "/selectById2", method = {RequestMethod.GET})
+    public ApiResult selectById2(String staffexitproceid, HttpServletRequest request) throws Exception {
+        if(staffexitproceid==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(staffexitprocedureService.selectById2(staffexitproceid));
+    }
+
+    @RequestMapping(value = "/update2", method = {RequestMethod.POST})
+    public ApiResult update2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
+        if(staffexitprocedureVo==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        staffexitprocedureService.update2(staffexitprocedureVo,tokenModel);
+        return ApiResult.success();
+
+    }
+    /**
+     * 新建
+     */
+    @RequestMapping(value = "insert2", method = { RequestMethod.POST })
+    public ApiResult insert2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception{
+        if (staffexitprocedureVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        staffexitprocedureService.insert2(staffexitprocedureVo,tokenModel);
         return ApiResult.success();
     }
 
