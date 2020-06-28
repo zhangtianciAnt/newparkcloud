@@ -80,4 +80,9 @@ public class AuthConstants {
     public static final String RECOGNITION_FLAG_YES = "1";
 
     public static final String FILE_DIRECTORY = "E:\\PFANS\\";
+
+    /**
+     * AES密钥
+     */
+    public static final String AESKEY = "AD42F6697B035B7580E4FEF93BE20BAD";
 }
