@@ -65,4 +65,7 @@ public class Quotations extends BaseModel {
     private String quotationdate;
 
     private String quotationdate1;
+
+    @Transient
+    private String xjdate;
 }

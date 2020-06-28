@@ -76,7 +76,7 @@ public class AOCHUAN6004Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
 
-        return ApiResult.success(attendanceService.getNowMons(id, nowmons));
+        return ApiResult.success(attendanceService.getNowMons(nowmons,tokenModel.getOwnerList()));
     }
 
     @RequestMapping(value = "/getNowMonYC", method = {RequestMethod.GET})
@@ -86,7 +86,7 @@ public class AOCHUAN6004Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
 
-        return ApiResult.success(attendanceService.getNowMonYC(id, nowmons));
+        return ApiResult.success(attendanceService.getNowMonYC(nowmons, tokenModel.getOwnerList()));
     }
 
 
