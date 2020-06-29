@@ -11,13 +11,16 @@ import java.util.List;
 public interface FinSalesMapper extends MyMapper<FinSales> {
 
     //存在Check
-    public List<FinSales> existCheck(@Param("id") String id,@Param("status") String status);
+    public List<FinSales> existCheck(@Param("id") String id, @Param("status") String status);
 
     //唯一性Check
-    public List<FinSales> uniqueCheck(@Param("id") String id,@Param("contractnumber") String contractnumber);
+    public List<FinSales> uniqueCheck(@Param("id") String id, @Param("contractnumber") String contractnumber);
 
     //更新走货
-    void updateTransportGood(@Param("arrivaltime") Date arrivaltime,@Param("modifyby") String modifyby, @Param("id") String id);
+    void updateTransportGood(@Param("arrivaltime") Date arrivaltime, @Param("modifyby") String modifyby, @Param("id") String id);
+
+    //弹窗更新
+    void toUpDateReFunded(@Param("exratefunded") String exratefunded, @Param("amountreceivedfunded") String amountreceivedfunded, @Param("invoiceamountfunded") String invoiceamountfunded, @Param("billingtimefunded") String billingtimefunded, @Param("commissionamountafunded") String commissionamountafunded, @Param("id") String id);
 
     public List<Totalmoney> getHK();
 }

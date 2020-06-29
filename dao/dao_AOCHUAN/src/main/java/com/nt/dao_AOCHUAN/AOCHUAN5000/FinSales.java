@@ -52,7 +52,7 @@ public class FinSales extends BaseModel {
     @Column(name = "AMOUNT")
     private String amount;
     //单位
-    @Column(name="UNIT")
+    @Column(name = "UNIT")
     private String unit;
     //销售金额
     @Column(name = "SALESAMOUNT")
@@ -89,22 +89,22 @@ public class FinSales extends BaseModel {
     private Double commission_amount;
     //走货主键
     @Column(name = "TRANSPORTGOOD_ID")
-    private  String transportgood_id;
+    private String transportgood_id;
     //销售凭证号
     @Column(name = "CREDENTIAL_SALES")
     private String credential_sales;
     //回款凭证号
     @Column(name = "CREDENTIAL_ARRIVAL")
-    private  String credential_arrival;
+    private String credential_arrival;
     //汇率
     @Column(name = "EX_RATE")
-    private  String ex_rate;
+    private String ex_rate;
     //运费
     @Column(name = "FREIGHT")
-    private  String freight;
+    private String freight;
     //保费
     @Column(name = "PREMIUM")
-    private  String premium;
+    private String premium;
 
     @Column(name = "RECEAMOUNT")
     private String receamount;
@@ -114,5 +114,18 @@ public class FinSales extends BaseModel {
 
     @Column(name = "RECEIVABLESRECORD_ID")
     private String receivablesrecord_id;
+
+    @Column(name = "AMOUNTRECEIVED")
+    private String amountreceived;
+
+    @Column(name = "INVOICEAMOUNT")
+    private String invoiceamount;
+
+    @Column(name = "BILLINGTIME")
+    private String billingtime;
+
+    @Column(name = "COMMISSIONAMOUNTA")
+    private String commissionamounta;
+
 }
 

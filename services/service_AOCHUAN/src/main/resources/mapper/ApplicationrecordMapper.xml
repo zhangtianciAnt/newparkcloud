@@ -75,17 +75,17 @@
     where t.transportgood_id = #{id}
     </select>
 
-<!--    <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">-->
-<!--            SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH-->
-<!--            FROM saledetails s-->
-<!--            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id-->
-<!--            LEFT JOIN receivablesrecord r ON r.productid = s.productid-->
-<!--            LEFT JOIN products p on p.PRODUCTS_ID = s.productid-->
-<!--            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid-->
-<!--            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid-->
-<!--            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID-->
-<!--            where t.transportgood_id = #{id}-->
-<!--    </select>-->
+    <!--    <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">-->
+    <!--            SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH-->
+    <!--            FROM saledetails s-->
+    <!--            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id-->
+    <!--            LEFT JOIN receivablesrecord r ON r.productid = s.productid-->
+    <!--            LEFT JOIN products p on p.PRODUCTS_ID = s.productid-->
+    <!--            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid-->
+    <!--            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid-->
+    <!--            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID-->
+    <!--            where t.transportgood_id = #{id}-->
+    <!--    </select>-->
 
 
     <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">
