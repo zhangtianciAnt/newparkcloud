@@ -151,13 +151,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
                     //add_fjl_添加合同回款相关  start
                     int todoNumber = 0;
-                    toDoNoticeList = toDoNoticeList.stream().filter(item -> item.getTitle().equals(number.getContractnumber() + number.getClaimtype() + "资金已回收")).collect(Collectors.toList());
-                    if (toDoNoticeList.size() > 0) {//判断是否已经发过代办
-                        todoNumber++;
-                    }
-                    if (todoNumber == 0) {
-                        //资金回收完成给申请人发代办
-                        if (number.getRecoverystatus().equals("1") && number.getRecoverydate() != null) {
+                    //资金回收完成给申请人发代办
+                    if (number.getRecoverystatus().equals("1") && number.getRecoverydate() != null) {
+                        toDoNoticeList = toDoNoticeList.stream().filter(item -> item.getTitle().equals(number.getContractnumber() + number.getClaimtype() + "资金已回收")).collect(Collectors.toList());
+                        if (toDoNoticeList.size() > 0) {//判断是否已经发过代办
+                            todoNumber++;
+                        }
+                        if (todoNumber == 0) {
                             List<String> params = new ArrayList<String>();
                             toDoNotice.setTitle(number.getContractnumber() + number.getClaimtype() + "资金已回收");
                             toDoNotice.setInitiator(number.getModifyby());
