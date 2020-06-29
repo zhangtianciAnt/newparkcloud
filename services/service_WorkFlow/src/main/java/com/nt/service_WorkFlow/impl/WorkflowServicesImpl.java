@@ -1147,7 +1147,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     conditionWorkflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
 //                    conditionWorkflowstep.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                     workflowsteplist = workflowstepMapper.select(conditionWorkflowstep);
-                    if (item.getOutcondition() == null) {
+                    if (com.mysql.jdbc.StringUtils.isNullOrEmpty(item.getOutcondition())) {
                         item.setOutcondition("1");
                     }
                     if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() < Convert.toInt(item.getOutcondition())) {
