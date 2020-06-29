@@ -44,6 +44,15 @@ public class Pfans4001Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/createbook", method = {RequestMethod.POST})
+    public ApiResult createbook(@RequestBody Seal seal, HttpServletRequest request) throws Exception {
+        if (seal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(sealService.createbook(seal, tokenModel));
+    }
+
     @RequestMapping(value = "/updateInfo", method = {RequestMethod.POST})
     public ApiResult updateInformation(@RequestBody Seal seal, HttpServletRequest request) throws Exception {
         if (seal == null) {

@@ -65,4 +65,8 @@ public class Seal extends BaseModel {
     @Column(name = "REMARKS ")
     private String remarks;
 
+    //书类ID
+    @Column(name = "BOOKID ")
+    private String bookid;
+
 }

@@ -2,10 +2,14 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
@@ -22,6 +26,7 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +60,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private TokenService tokenService;
     @Autowired
     private WorkflowinstanceMapper workflowinstanceMapper;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
@@ -113,6 +122,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
     @Override
     public void update(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
+        SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         if (cnList != null) {
@@ -131,12 +141,36 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             int rowindex = 0;
+            ToDoNotice toDoNotice = new ToDoNotice();
+            List<ToDoNotice> toDoNoticeList = toDoNoticeService.list(toDoNotice);
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
                 if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
+                    //add_fjl_添加合同回款相关  start
+                    int todoNumber = 0;
+                    toDoNoticeList = toDoNoticeList.stream().filter(item -> item.getTitle().equals(number.getContractnumber() + number.getClaimtype() + "资金已回收")).collect(Collectors.toList());
+                    if (toDoNoticeList.size() > 0) {//判断是否已经发过代办
+                        todoNumber++;
+                    }
+                    if (todoNumber == 0) {
+                        //资金回收完成给申请人发代办
+                        if (number.getRecoverystatus().equals("1") && number.getRecoverydate() != null) {
+                            List<String> params = new ArrayList<String>();
+                            toDoNotice.setTitle(number.getContractnumber() + number.getClaimtype() + "资金已回收");
+                            toDoNotice.setInitiator(number.getModifyby());
+                            toDoNotice.setContent(number.getContractnumber() + number.getClaimtype() + "资金已回收");
+                            toDoNotice.setDataid(number.getContractnumber());
+                            toDoNotice.setUrl("/PFANS1026FormView");
+                            toDoNotice.setWorkflowurl("/PFANS1026View");
+                            toDoNotice.preInsert(tokenModel);
+                            toDoNotice.setOwner(number.getCreateby());
+                            toDoNoticeService.save(toDoNotice);
+                        }
+                    }
+                    //add_fjl_添加合同回款相关  end
                 } else {
                     number.preInsert(tokenModel);
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
@@ -406,10 +440,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 //                        upd_fjl_06/02 --纳品回数请求期间 end
 
                                 napalmMapper.insert(napalm);
-                                //更新纳品进步状况=纳品完了
-                                contractapp.preUpdate(tokenModel);
-                                contractapp.setDeliverycondition("HT009001");
-                                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+//                                //更新纳品进步状况=纳品完了
+//                                contractapp.preUpdate(tokenModel);
+//                                contractapp.setDeliverycondition("HT009001");
+//                                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+                                //更新状况为作成中
+                                countLi.get(0).preUpdate(tokenModel);
+                                countLi.get(0).setDeliveryconditionqh("HT009002");
+                                contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
                             }
                         }
                         // add_fjl_0604 --添加请求书和纳品书的选择生成 end
@@ -463,9 +501,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                                 PetitionMapper.insert(petition);
                                 //更新请求进步状况=請求完了
-                                contractapp.preUpdate(tokenModel);
-                                contractapp.setClaimcondition("HT011001");
-                                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+//                                contractapp.preUpdate(tokenModel);
+//                                contractapp.setClaimcondition("HT011001");
+//                                contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
+                                //更新状况为作成中
+                                countLi.get(0).preUpdate(tokenModel);
+                                countLi.get(0).setClaimconditionqh("HT011002");
+                                contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
 //                                }
                             }
                         }
@@ -544,6 +586,79 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         return "1";
     }
 
+    //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款  fjl add start
+    @Scheduled(cron = "0 10 0 1 * ?")
+    public void updUseraccountStatus() throws Exception {
+        TokenModel tokenModel = new TokenModel();
+        SimpleDateFormat st = new SimpleDateFormat("yyyy-MM");
+        Contractnumbercount contractnumbercount = new Contractnumbercount();
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
+        if (contractnumbercountList.size() > 0) {
+            //请求日  Claimdate   给请求担当发代办
+            List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> st.format(item.getClaimdate()).equals(st.format(new Date()))).collect(Collectors.toList());
+            if (conList.size() > 0) {
+                for (Contractnumbercount cq : conList) {
+                    Contractapplication contractapplication = new Contractapplication();
+                    contractapplication.setContractnumber(cq.getContractnumber());
+                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
+                    //请求担当
+                    List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
+                    if (rolelist.size() > 0) {
+                        for (MembersVo rt : rolelist) {
+                            //发起人创建代办
+                            ToDoNotice toDoNotice = new ToDoNotice();
+                            List<String> params = new ArrayList<String>();
+                            toDoNotice.setTitle("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
+                            toDoNotice.setInitiator(cq.getCreateby());
+                            toDoNotice.setContent("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
+                            toDoNotice.setDataid(clist.get(0).getContractapplication_id());
+                            toDoNotice.setUrl("/PFANS1026FormView");
+                            toDoNotice.setWorkflowurl("/PFANS1026View");
+                            toDoNotice.preInsert(tokenModel);
+                            toDoNotice.setOwner(rt.getUserid());
+                            toDoNoticeService.save(toDoNotice);
+                        }
+                    }
+                }
+            }
+            //纳品预订日  Deliverydate  给纳品担当发代办
+            List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> st.format(item.getDeliverydate()).equals(st.format(new Date()))).collect(Collectors.toList());
+            if (conList1.size() > 0) {
+                for (Contractnumbercount cN : conList1) {
+                    Contractapplication contractapplication = new Contractapplication();
+                    contractapplication.setContractnumber(cN.getContractnumber());
+                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
+                    //纳品担当
+                    List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+                    if (rolelist.size() > 0) {
+                        for (MembersVo rt : rolelist) {
+                            //发起人创建代办
+                            ToDoNotice toDoNotice = new ToDoNotice();
+                            List<String> params = new ArrayList<String>();
+                            toDoNotice.setTitle("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
+                            toDoNotice.setInitiator(cN.getCreateby());
+                            toDoNotice.setContent("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
+                            toDoNotice.setDataid(clist.get(0).getContractapplication_id());
+                            toDoNotice.setUrl("/PFANS1026FormView");
+                            toDoNotice.setWorkflowurl("/PFANS1026View");
+                            toDoNotice.preInsert(tokenModel);
+                            toDoNotice.setOwner(rt.getUserid());
+                            toDoNoticeService.save(toDoNotice);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款   fjl add  end
+    @Override
+    public List<Petition> getPe(String countNumber) throws Exception {
+        Petition petition = new Petition();
+        petition.setClaimnumber(countNumber);
+        return PetitionMapper.select(petition);
+
+    }
     @Override
     public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
         Map<String, Object> result = new HashMap<>();
@@ -650,6 +765,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         //契约番号回数
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
+            SimpleDateFormat stt = new SimpleDateFormat("yyyy-MM");
             int rowindex = 0;
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
@@ -663,6 +779,48 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
+                    //add_fjl_添加合同回款相关  start
+                    if (stt.format(number.getClaimdate()).equals(stt.format(new Date()))) {
+                        //请求担当
+                        List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
+                        if (rolelist.size() > 0) {
+                            for (MembersVo rt : rolelist) {
+                                //发起人创建代办
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
+                                toDoNotice.setInitiator(number.getCreateby());
+                                toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
+                                toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                toDoNotice.setUrl("/PFANS1026FormView");
+                                toDoNotice.setWorkflowurl("/PFANS1026View");
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(rt.getUserid());
+                                toDoNoticeService.save(toDoNotice);
+                            }
+                        }
+                    }
+                    if (stt.format(number.getDeliverydate()).equals(stt.format(new Date()))) {
+                        //纳品担当
+                        List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+                        if (rolelist.size() > 0) {
+                            for (MembersVo rt : rolelist) {
+                                //发起人创建代办
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+                                toDoNotice.setInitiator(number.getCreateby());
+                                toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+                                toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                toDoNotice.setUrl("/PFANS1026FormView");
+                                toDoNotice.setWorkflowurl("/PFANS1026View");
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(rt.getUserid());
+                                toDoNoticeService.save(toDoNotice);
+                            }
+                        }
+                    }
+                    //add_fjl_添加合同回款相关  end
                 }
             }
         }

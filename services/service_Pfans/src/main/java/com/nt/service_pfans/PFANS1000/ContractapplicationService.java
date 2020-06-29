@@ -1,6 +1,8 @@
 package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.Petition;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.utils.dao.TokenModel;
@@ -21,4 +23,6 @@ public interface ContractapplicationService {
     String insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception;
     //存在check
     ExistVo existCheck(String contractNumber) throws Exception;
+
+    List<Petition> getPe(String countNumber) throws Exception;
 }

@@ -9,6 +9,8 @@ public interface SealService {
 
     void insert(Seal seal, TokenModel tokenModel) throws Exception;
 
+    Seal createbook(Seal seal, TokenModel tokenModel) throws Exception;
+
     //获取异常申请列表信息
     List<Seal> list(Seal seal) throws Exception;
 

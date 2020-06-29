@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.utils.ApiResult;
@@ -86,6 +87,14 @@ public class Pfans1026Controller {
     public ApiResult existCheck(String contractNumber, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(contractapplicationService.existCheck(contractNumber));
+    }
+
+    @RequestMapping(value = "/getPe", method = {RequestMethod.GET})
+    public ApiResult getPe(String claimnumber, HttpServletRequest request) throws Exception {
+        if (claimnumber == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(contractapplicationService.getPe(claimnumber));
     }
 
 }

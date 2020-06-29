@@ -187,4 +187,9 @@ public class Napalm extends BaseModel {
      */
     @Column(name = "CLAIMDATE")
     private Date claimdate;
+    /**
+     * 印章状态
+     */
+    @Column(name = "SEALSTATUS")
+    private String sealstatus;
 }
