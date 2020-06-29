@@ -11,6 +11,9 @@ import java.sql.Date;
 @NoArgsConstructor
 public class DocumentExportVo {
 
+    //    合同号
+    private String contractnumber;
+
     //订舱时间（提醒）
     private Date bookingtime;
 

@@ -435,42 +435,61 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         List<SalesExportVo> salesexportList = new ArrayList<>();
         List<PurchaseExportVo> purchaseexportList = new ArrayList<>();
         List<DocumentExportVo> documentexportList = new ArrayList<>();
-        List<SalesExportVo> salesexportListSize = new ArrayList<>();
-        List<PurchaseExportVo> purchaseexportListSize = new ArrayList<>();
-        List<DocumentExportVo> documentexportListSize = new ArrayList<>();
+        //获取系统中所有人的姓名，放到map里
+        Map<String, String> users = new HashMap<>();
+        Query query = new Query();
+        List<CustomerInfo> customerInfo = mongoTemplate.find(query, CustomerInfo.class);
+        for(int i = 0; i < customerInfo.size(); i++) {
+            String key = customerInfo.get(i).getUserid();
+            String value = customerInfo.get(i).getUserinfo().getCustomername();
+            users.put(key, value);
+        }
+
         for (int i = 0; i < exportVo.size(); i++) {
             String id = exportVo.get(i).getTransportgood_id();
             List<SalesExportVo> salesexportListBase = applicationrecordMapper.selectExportList(id);//获取销售数据
-            salesexportListSize.addAll(salesexportListBase);
             List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
-            purchaseexportListSize.addAll(purchaseexportListBase);
             List<DocumentExportVo> documentexportListBase = applicationrecordMapper.documentexportList(id);//获取单据数据
-            documentexportListSize.addAll(documentexportListBase);
+            for (int j = 0; j < salesexportListBase.size(); j++) {
+                // 销售担当
+                if(users.containsKey(salesexportListBase.get(j).getSaleresponsibility())){
+                    salesexportListBase.get(j).setSaleresponsibility(users.get(salesexportListBase.get(j).getSaleresponsibility()));
+                }
+                // 销售合同回签
+                if("0".equals(salesexportListBase.get(j).getSignback())){
+                    salesexportListBase.get(j).setSignback("否");
+                }else {
+                    salesexportListBase.get(j).setSignback("是");
+                }
+            }
+            for (int k = 0; k < purchaseexportListBase.size(); k++) {
+                // 销售担当
+                if(users.containsKey(purchaseexportListBase.get(k).getProductresponsibility())){
+                    purchaseexportListBase.get(k).setProductresponsibility(users.get(purchaseexportListBase.get(k).getProductresponsibility()));
+                }
+                // 危险品
+                if("0".equals(purchaseexportListBase.get(k).getDangerous())){
+                    purchaseexportListBase.get(k).setDangerous("否");
+                }else {
+                    purchaseexportListBase.get(k).setDangerous("是");
+                }
+                // 采购合同回签
+                if("0".equals(purchaseexportListBase.get(k).getSignback1())){
+                    purchaseexportListBase.get(k).setSignback1("否");
+                }else {
+                    purchaseexportListBase.get(k).setSignback1("是");
+                }
+            }
+            for (int l = 0; l < documentexportList.size(); l++) {
+                // 单据担当
+                if(users.containsKey(documentexportList.get(l).getBillresponsibility())){
+                    documentexportList.get(l).setBillresponsibility(users.get(documentexportList.get(l).getBillresponsibility()));
+                }
+            }
+            salesexportList.addAll(salesexportListBase);
+            purchaseexportList.addAll(purchaseexportListBase);
+            documentexportList.addAll(documentexportListBase);
         }
-        for (int j = 0; j < salesexportListSize.size(); j++) {
-            Query query = new Query();
-            query.addCriteria(Criteria.where("userid").is(salesexportListSize.get(j).getSaleresponsibility()));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            salesexportListSize.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
-            String unitCode = salesexportListSize.get(j).getUnit();
-            String a = applicationrecordMapper.dictionaryExportList(unitCode);
-            salesexportListSize.get(j).setUnit(a);
-            String currencyCode = salesexportListSize.get(j).getCurrency();
-            salesexportListSize.get(j).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
-            String collectionaccountCode = salesexportListSize.get(j).getCollectionaccount();
-            salesexportListSize.get(j).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
-            String paymentCode = salesexportListSize.get(j).getPayment();
-            salesexportListSize.get(j).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
-        }
-        for (int k = 0; k < purchaseexportListSize.size(); k++) {
-        }
-        for (int l = 0; l < documentexportListSize.size(); l++) {
-        }
-
-        salesexportList.addAll(salesexportListSize);
-        purchaseexportList.addAll(purchaseexportListSize);
-        documentexportList.addAll(documentexportListSize);
-
         beans.put("slist", salesexportList);
         beans.put("plist", purchaseexportList);
         beans.put("dlist", documentexportList);
