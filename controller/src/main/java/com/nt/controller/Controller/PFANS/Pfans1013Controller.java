@@ -174,9 +174,15 @@ public class Pfans1013Controller {
 //        }
         Query query = new Query();
         String userim = "";
+        //add-ws-6/29-禅道175问提修改
+        String useridcheck = evevo.getEvection().getUserid();
+        //add-ws-6/29-禅道175问提修改
         query.addCriteria(Criteria.where("userid").is(evevo.getEvection().getUserid()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         if (customerInfo != null) {
+            //add-ws-6/29-禅道175问提修改
+            evevo.getEvection().setUserid(customerInfo.getUserinfo().getCustomername());
+            //add-ws-6/29-禅道175问提修改
             userim = customerInfo.getUserinfo().getCustomername();
             userim = sign.startGraphics2D(userim);
             //部门
@@ -191,7 +197,9 @@ public class Pfans1013Controller {
         startWorkflowVo.setDataId(evevo.getEvection().getEvectionid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         //upd-ws-6/17-禅道101
-        if (evevo.getEvection().getUserid().equals("5e78b2264e3b194874180f35") || evevo.getEvection().getUserid().equals("5e78b2574e3b194874181099")) {
+        //upd-ws-6/29-禅道175问提修改
+        if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")) {
+            //upd-ws-6/29-禅道175问提修改
             if (wfList.size() > 0) {
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
@@ -420,6 +428,7 @@ public class Pfans1013Controller {
         data.put("wfList3", wfList3);
         data.put("wfList4", wfList4);
         data.put("rmbadd", rmbadd);
+        data.put("rmbadd", rmbadd);
         data.put("trd", trd);
         data.put("trr", trr);
         data.put("tro", tro);
@@ -439,13 +448,16 @@ public class Pfans1013Controller {
         data.put("other", otherDetailslist);
 
         //upd-ws-6/17-禅道101
-        if (evevo.getEvection().getUserid().equals("5e78b2264e3b194874180f35") || evevo.getEvection().getUserid().equals("5e78b2574e3b194874181099")) {
+        //upd-ws-6/29-禅道175问提修改
+        if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")) {
+            //upd-ws-6/29-禅道175问提修改
             if (evevo.getEvection().getType().equals("0")) {
                 ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "newjingneijingsuanshu.xls", data, response);
             } else {
                 ExcelOutPutUtil.OutPutPdf("境外出差旅费精算书", "newjingwaijingsuanshu.xls", data, response);
             }
         }else{
+
             if (evevo.getEvection().getType().equals("0")) {
                 ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "jingneijingsuanshu.xls", data, response);
             } else {
