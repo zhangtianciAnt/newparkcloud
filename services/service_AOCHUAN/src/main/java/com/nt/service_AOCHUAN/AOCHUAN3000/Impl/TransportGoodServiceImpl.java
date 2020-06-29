@@ -438,7 +438,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         for (int i = 0; i < exportVo.size(); i++) {
             String id = exportVo.get(i).getTransportgood_id();
             List<SalesExportVo> salesexportListBase = applicationrecordMapper.selectExportList(id);//获取销售数据
-
+            List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
+            List<DocumentExportVo> documentexportListBase = applicationrecordMapper.documentexportList(id);//获取单据数据
             for (int j = 0; j < salesexportListBase.size(); j++) {
                 Query query = new Query();
                 query.addCriteria(Criteria.where("userid").is(salesexportListBase.get(j).getSaleresponsibility()));
@@ -454,23 +455,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 String paymentCode = salesexportListBase.get(j).getPayment();
                 salesexportListBase.get(i).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
             }
-//            for (int j = 0; j < purchaseexportListBase.size(); j++) {
-//                Query query = new Query();
-////                query.addCriteria(Criteria.where("userid").is(purchaseexportListBase.get(j).()));
-//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                salesexportListBase.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
-//                String unitCode = salesexportListBase.get(j).getUnit();
-//                String a = applicationrecordMapper.dictionaryExportList(unitCode);
-//                salesexportListBase.get(i).setUnit(a);
-//                String currencyCode = salesexportListBase.get(j).getCurrency();
-//                salesexportListBase.get(i).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
-//                String collectionaccountCode = salesexportListBase.get(j).getCollectionaccount();
-//                salesexportListBase.get(i).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
-//                String paymentCode = salesexportListBase.get(j).getPayment();
-//                salesexportListBase.get(i).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
-//            }
-            List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
-            List<DocumentExportVo> documentexportListBase = applicationrecordMapper.documentexportList(id);//获取单据数据
+            for (int k = 0; k < purchaseexportListBase.size(); k++) {
+            }
+            for (int l = 0; l < documentexportList.size(); l++) {
+            }
             salesexportList.addAll(salesexportListBase);
             purchaseexportList.addAll(purchaseexportListBase);
             documentexportList.addAll(documentexportListBase);
