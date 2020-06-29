@@ -93,6 +93,16 @@ public class Pfans1027Controller {
             str_format1 = df.format(bd);
             qu.getNumbercounts().get(i).setClaimamount(str_format1);
         }
+        //禅道179任务修改
+        int sum = 0;
+        int sum1 = 0;
+        for (int c = 0; c < qu.getPersonfee().size(); c++) {
+            sum = sum +Integer.valueOf(qu.getPersonfee().get(c).getFunctionamount1());
+            sum1 = sum1 +Integer.valueOf(qu.getPersonfee().get(c).getFunctionhour1());
+        }
+        data.put("sum",sum);
+        data.put("sum1",sum1);
+        //禅道179任务修改
         data.put("qu",qu.getQuotation());
         data.put("qulist",qu.getOthpersonfee());
 //        data.put("qualist",qu.getFruit());
