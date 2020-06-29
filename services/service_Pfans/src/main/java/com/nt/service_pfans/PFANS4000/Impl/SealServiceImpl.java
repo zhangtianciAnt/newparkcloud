@@ -59,15 +59,10 @@ public class SealServiceImpl implements SealService {
     //add_fjl_添加合同回款相关  start
     @Override
     public Seal createbook(Seal seal, TokenModel tokenModel) throws Exception {
-        String seid = "";
         seal.preInsert(tokenModel);
         seal.setSealid(UUID.randomUUID().toString());
         sealMapper.insert(seal);
         Seal se = sealMapper.selectByPrimaryKey(seal);
-        if (se != null) {
-            seid = se.getSealid();
-        }
-        Petition petition = new Petition();
         if (!StringUtils.isNullOrEmpty(seal.getBookid())) {
             String[] boksplit = seal.getBookid().split(",");
             if (boksplit.length > 1) {
@@ -76,6 +71,7 @@ public class SealServiceImpl implements SealService {
                         Petition pt = ptitionMapper.selectByPrimaryKey(boksplit[a]);
                         if (pt != null) {
                             pt.setSealstatus("1");
+                            pt.setSealid(se.getSealid());
                             pt.preUpdate(tokenModel);
                             ptitionMapper.updateByPrimaryKey(pt);
                         }
@@ -85,6 +81,7 @@ public class SealServiceImpl implements SealService {
                         Napalm np = napalmMapper.selectByPrimaryKey(boksplit[a]);
                         if (np != null) {
                             np.setSealstatus("1");
+                            np.setSealid(se.getSealid());
                             np.preUpdate(tokenModel);
                             napalmMapper.updateByPrimaryKey(np);
                         }

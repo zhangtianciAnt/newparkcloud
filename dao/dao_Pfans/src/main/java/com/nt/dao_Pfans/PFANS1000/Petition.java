@@ -92,8 +92,11 @@ public class Petition extends BaseModel {
      */
     @Column(name = "CONJAPANESE")
     private String conjapanese;
-
+    //印章状态
     @Column(name = "SEALSTATUS")
     private String sealstatus;
+    //印章ID
+    @Column(name = "SEALID")
+    private String sealid;
 
 }

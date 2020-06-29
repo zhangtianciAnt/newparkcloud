@@ -192,4 +192,8 @@ public class Napalm extends BaseModel {
      */
     @Column(name = "SEALSTATUS")
     private String sealstatus;
+
+    //印章ID
+    @Column(name = "SEALID")
+    private String sealid;
 }
