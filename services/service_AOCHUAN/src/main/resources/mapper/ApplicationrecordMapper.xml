@@ -34,57 +34,113 @@
     </select>
 
     <select id="selectExportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo">
-       SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH
-        FROM saledetails s
-            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id
-            LEFT JOIN receivablesrecord r ON r.productid = s.productid
-            LEFT JOIN products p on p.PRODUCTS_ID = s.productid
-            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
-            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
-            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID
-            where t.transportgood_id = #{id}
+        SELECT
+        t.contractnumber as contractnumber,
+        t.specifications as specifications,
+        p.ENGLISHNAME as productus,
+        t.customerid,
+        c.CUSTOMERNAMEEN as customer,
+        concat(l.CNAME, l.ENAME, l.JNAME, l.KNAME ) as linkmanname,
+        t.country as country,
+        t.firstordertime as firstordertime,
+        s.unitprice as unitprice,
+        d1.VALUE1 as unit,
+        d2.VALUE1 as currency,
+        s.numbers as numbers,
+        s.salesamount as salesamount,
+        d.VALUE1 as paymentstatus,
+        t.tradeterms as tradeterms,
+        d3.VALUE1 as collectionaccount,
+        t.signback as signback,
+        t.saleresponsibility as saleresponsibility,
+        d4.VALUE1 as payment,
+        t.orders as orders
+      FROM saledetails s
+        INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id
+        LEFT JOIN receivablesrecord r ON r.productid = s.productid
+        LEFT JOIN products p on p.PRODUCTS_ID = s.productid
+        LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
+        LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+        LEFT JOIN linkman l on l.LINKMAN_ID = t.account
+        left join dictionary d
+        on t.paymentstatus = d.CODE
+        and d.PCODE = 'PY011'
+        left join dictionary d1
+        on s.unit = d1.CODE
+        and d1.PCODE = 'PY014'
+        left join dictionary d2
+        on s.currency = d2.CODE
+        and d2.PCODE = 'PY008'
+        left join dictionary d3
+        on t.collectionaccount = d3.CODE
+        and d3.PCODE = 'PY013'
+        left join dictionary d4
+        on t.payment = d4.CODE
+        and d4.PCODE = 'PY009'
+      where t.transportgood_id = #{id}
     </select>
 
     <select id="purchaseexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo">
-    SELECT t.*
-        ,p.ENGLISHNAME,c.CHINABRANCH
-        ,p.CHINANAME as CHINANAME
-        ,supplier.SUPPLIERNAMECN as SUPPLIERNAMECN
-        ,s.unitprice1 as unitprice1
-        ,s.unit as unit
-        ,s.currency1 as currency1
-        ,s.numbers1 as numbers1
-        ,s.purchaseamount as purchaseamount
-        ,s.signback1 as signback1
-        ,s.hscode as hscode
-        ,s.drawback as drawback
-        ,s.dangerous as dangerous
-        ,s.marks as marks
-        ,t.MSDS as MSDS
-        ,s.deliverystatus as deliverystatus
-        ,a.invoiceno as invoiceno
-        ,a.paymentstatus as paymentstatus
-        ,t.productresponsibility as productresponsibility
-        ,a.realdate as realdate
-    FROM saledetails s
-    inner join transportgood t on t.transportgood_id = s.transportgood_id
-    LEFT JOIN applicationrecord a ON t.transportgood_id = a.transportgood_id
-    LEFT JOIN products p on p.PRODUCTS_ID = s.productid
-    LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
-    LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+    SELECT
+    t.contractnumber as contractnumber
+    ,p.CHINANAME as chinaname
+    ,supplier.SUPPLIERNAMECN as suppliernamecn
+    ,s.unitprice1 as unitprice1
+    ,d1.VALUE1 as unit
+    ,d2.VALUE1 as currency1
+    ,s.numbers1 as numbers1
+    ,s.purchaseamount as purchaseamount
+    ,s.signback1 as signback1
+    ,s.hscode as hscode
+    ,s.drawback as drawback
+    ,s.dangerous as dangerous
+    ,s.marks as marks
+    ,t.MSDS as MSDS
+    ,d3.VALUE1 as deliverystatus
+    ,a.invoiceno as invoicenumber
+    ,d4.VALUE1 as paymentstatus
+    ,t.productresponsibility as productresponsibility
+    ,a.realdate as realdate
+FROM transportgood t
+       left join  saledetails s on t.transportgood_id = s.transportgood_id
+
+       left JOIN  applicationrecord a ON t.transportgood_id = a.transportgood_id and
+              a.productid = s.productid
+              and s.productid = a.productid
+       LEFT JOIN products p on p.PRODUCTS_ID = a.productid
+       LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = a.supplierid
+       LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+       left join dictionary d1
+         on s.unit = d1.CODE
+                   and d1.PCODE = 'PY014'
+       left join dictionary d2
+         on s.currency1 = d2.CODE
+                   and d2.PCODE = 'PY008'
+       left join dictionary d3
+         on s.deliverystatus = d3.CODE
+                   and d3.PCODE = 'PY010'
+       left join dictionary d4
+         on a.paymentstatus = d4.CODE
+                   and d4.PCODE = 'PY011'
     where t.transportgood_id = #{id}
     </select>
 
+<!--    <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">-->
+<!--            SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH-->
+<!--            FROM saledetails s-->
+<!--            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id-->
+<!--            LEFT JOIN receivablesrecord r ON r.productid = s.productid-->
+<!--            LEFT JOIN products p on p.PRODUCTS_ID = s.productid-->
+<!--            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid-->
+<!--            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid-->
+<!--            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID-->
+<!--            where t.transportgood_id = #{id}-->
+<!--    </select>-->
+
+
     <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">
-            SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH
-            FROM saledetails s
-            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id
-            LEFT JOIN receivablesrecord r ON r.productid = s.productid
-            LEFT JOIN products p on p.PRODUCTS_ID = s.productid
-            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
-            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
-            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID
-            where t.transportgood_id = #{id}
+        SELECT * from transportgood
+        where transportgood_id = #{id}
     </select>
 
     <select id="dictionaryExportList" resultType="java.lang.String">

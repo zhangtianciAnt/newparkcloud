@@ -43,8 +43,14 @@ public class SalesExportVo {
     //客户名称
     private String customer;
 
+    //联系人
+    private String linkmanname;
+
     //国家
     private String country;
+
+    //首单时间
+    private Date firstordertime;
 
     //销售单价
     private String unitprice;
@@ -60,6 +66,9 @@ public class SalesExportVo {
 
     //    销售金额
     private String salesamount;
+
+    // 发起回款确认
+    private String paymentstatus;
 
     //    贸易术语
     private String tradeterms;
@@ -77,7 +86,7 @@ public class SalesExportVo {
     private String payment;
 
     //    订单要求
-    private String order;
+    private String orders;
 
     //    数据字典
     private String value1;
