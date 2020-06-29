@@ -13,41 +13,54 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FinReport{
+public class FinReport {
+
+//    //季度
+//    @Column(name = "CONTRACTNUMBER")
+//    private String contractnumber;
+
+    //月份
+//    @Column(name = "CONTRACTNUMBER")
+//    private String contractnumber;
 
     //合同号
     @Column(name = "CONTRACTNUMBER")
     private String contractnumber;
-    //产品中文名称
-    @Column(name = "PRODUCTEN")
-    private String producten;
+
+    //公司
+//    @Column(name = "CONTRACTNUMBER")
+//    private String contractnumber;
+
+    //产品名
+    @Column(name = "CHINANAME")
+    private String chinaname;
     //客户名称
-    @Column(name = "CUSTOMER")
-    private String customer;
+    @Column(name = "CUSTOMERNAMECN")
+    private String customernamecn;
     //国家
     @Column(name = "COUNTRY")
     private String country;
     //供应商名称
-    @Column(name = "SUPPLIER")
-    private String supplier;
+    @Column(name = "SUPPLIERNAMECN")
+    private String suppliernamecn;
     //数量
-    @Column(name = "AMOUNT")
-    private String amount;
+    @Column(name = "NUMBERS")
+    private String numbers;
     //币种
     @Column(name = "CURRENCY")
     private String currency;
     //汇率
-    @Column(name = "EXCHANGERATE")
-    private String exchangerate;
+//    @Column(name = "EXCHANGERATE")
+//    private String exchangerate;
     //销售单价
     @Column(name = "UNITPRICE")
     private String unitprice;
     //销售金额
     @Column(name = "SALESAMOUNT")
     private String salesamount;
-    //销售人名币金额
-    @Column(name = "SALESAMOUNTRMB")
-    private String salesamountrmb;
+//    //到账金额
+//    @Column(name = "SALESAMOUNT")
+//    private String salesamount;
     //付款方式
     @Column(name = "PAYMENT")
     private String payment;
@@ -61,8 +74,8 @@ public class FinReport{
     @Column(name = "SALESDEPARTMENT")
     private String salesdepartment;
     //采购币种
-    @Column(name = "CURRENCYOFPURCHASE")
-    private String currencyofpurchase;
+    @Column(name = "CURRENCY1")
+    private String currency1;
     //采购单价
     @Column(name = "UNITPRICE1")
     private String unitprice1;
@@ -87,9 +100,12 @@ public class FinReport{
     //鉴定费用
     @Column(name = "APPRAISALCOST")
     private String appraisalcost;
+//    //运输方式
+//    @Column(name = "APPRAISALCOST")
+//    private String appraisalcost;
     //报关情况
-    @Column(name = "CUSTOMSDECLARATION")
-    private String customsdeclaration;
+    @Column(name = "BILL")
+    private String bill;
     //提单时间
     @Column(name = "BILLTIME")
     private Date billtime;
@@ -99,38 +115,33 @@ public class FinReport{
     //保费
     @Column(name = "PREMIUM")
     private String premium;
-    //收款时间
-    @Column(name = "COLLECTIONDATE")
-    private Date collectiondate;
-    //收款金额
-    @Column(name = "COLLECTIONAMOUNT")
-    private String collectionamount;
-    //付款时间
-    @Column(name = "PAYMENTTIME")
-    private Date paymenttime;
-    //付款金额
-    @Column(name = "PAYMENTAMOUNT")
-    private String paymentamount;
-    //开票金额
-    @Column(name = "INVOICEAMOUNT")
-    private String invoiceamount;
-    //采购发票号码
-    @Column(name = "PURCHASEINVOICENO")
-    private String purchaseinvoiceno;
-    //开票日期
-    @Column(name = "INVOICEDATE")
-    private Date invoicedate;
-    //佣金
-    @Column(name = "COMMISSION")
-    private String commission;
+//    //收款时间
+//    @Column(name = "COLLECTIONDATE")
+//    private Date collectiondate;
+//    //付款时间
+//    @Column(name = "PAYMENTTIME")
+//    private Date paymenttime;
+//    //付款金额
+//    @Column(name = "PAYMENTAMOUNT")
+//    private String paymentamount;
+//    //开票金额
+//    @Column(name = "INVOICEAMOUNT")
+//    private String invoiceamount;
+//    //采购发票号码
+//    @Column(name = "PURCHASEINVOICENO")
+//    private String purchaseinvoiceno;
+//    //开票日期
+//    @Column(name = "INVOICEDATE")
+//    private Date invoicedate;
+//    //佣金
+//    @Column(name = "COMMISSION")
+//    private String commission;
     //利润
     @Column(name = "PROFIT")
     private String profit;
-    //退货
-    @Column(name = "RETURNGOODS")
-    private String returngoods;
-    //备注
-    @Column(name = "REMARKS")
-    private String remarks;
+
+//    //退货
+//    @Column(name = "RETURNGOODS")
+//    private String returngoods;
 
 }

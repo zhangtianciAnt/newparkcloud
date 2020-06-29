@@ -1,10 +1,13 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.*;
@@ -18,6 +21,9 @@ import com.nt.utils.dao.TokenModel;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -56,6 +62,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
     private ApplicationrecordMapper applicationrecordMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     DecimalFormat df = new DecimalFormat("#.00");
 
@@ -382,16 +391,12 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * 4.删除新生成的模板文件
      */
     @Override
-    public void setExport(String id, HttpServletResponse response) throws Exception {
-
-        List<SalesExportVo> salesexportList = applicationrecordMapper.selectExportList(id);//获取销售数据
-        List<SalesExportVo> purchaseexportList = applicationrecordMapper.selectExportList(id);//获取采购数据
-        List<SalesExportVo> documentexportList = applicationrecordMapper.selectExportList(id);//获取单据数据
+    public void setExport(HttpServletResponse response, List<TransportGood> exportVo) throws Exception {
 
         Map<String, Object> beans = new HashMap();
-        beans.put("slist", salesexportList);
-        beans.put("plist", purchaseexportList);
-        beans.put("dlist", documentexportList);
+
+        //业务逻辑
+        beans = logicExport(response, exportVo);
 
         //加载excel模板文件
         File file = null;
@@ -413,6 +418,68 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         //删除服务器生成文件
         deleteFile(excelFile);
+    }
+
+
+    /**
+     * 业务逻辑把数据存到Map中
+     *
+     * @param response
+     * @param exportVo
+     * @return beans
+     */
+
+    private Map<String, Object> logicExport(HttpServletResponse response, List<TransportGood> exportVo) {
+
+        Map<String, Object> beans = new HashMap();
+        List<SalesExportVo> salesexportList = new ArrayList<>();
+        List<PurchaseExportVo> purchaseexportList = new ArrayList<>();
+        List<DocumentExportVo> documentexportList = new ArrayList<>();
+        for (int i = 0; i < exportVo.size(); i++) {
+            String id = exportVo.get(i).getTransportgood_id();
+            List<SalesExportVo> salesexportListBase = applicationrecordMapper.selectExportList(id);//获取销售数据
+
+            for (int j = 0; j < salesexportListBase.size(); j++) {
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(salesexportListBase.get(j).getSaleresponsibility()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                salesexportListBase.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
+                String unitCode = salesexportListBase.get(j).getUnit();
+                String a = applicationrecordMapper.dictionaryExportList(unitCode);
+                salesexportListBase.get(i).setUnit(a);
+                String currencyCode = salesexportListBase.get(j).getCurrency();
+                salesexportListBase.get(i).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
+                String collectionaccountCode = salesexportListBase.get(j).getCollectionaccount();
+                salesexportListBase.get(i).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
+                String paymentCode = salesexportListBase.get(j).getPayment();
+                salesexportListBase.get(i).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
+            }
+//            for (int j = 0; j < purchaseexportListBase.size(); j++) {
+//                Query query = new Query();
+////                query.addCriteria(Criteria.where("userid").is(purchaseexportListBase.get(j).()));
+//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                salesexportListBase.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
+//                String unitCode = salesexportListBase.get(j).getUnit();
+//                String a = applicationrecordMapper.dictionaryExportList(unitCode);
+//                salesexportListBase.get(i).setUnit(a);
+//                String currencyCode = salesexportListBase.get(j).getCurrency();
+//                salesexportListBase.get(i).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
+//                String collectionaccountCode = salesexportListBase.get(j).getCollectionaccount();
+//                salesexportListBase.get(i).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
+//                String paymentCode = salesexportListBase.get(j).getPayment();
+//                salesexportListBase.get(i).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
+//            }
+            List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
+            List<DocumentExportVo> documentexportListBase = applicationrecordMapper.documentexportList(id);//获取单据数据
+            salesexportList.addAll(salesexportListBase);
+            purchaseexportList.addAll(purchaseexportListBase);
+            documentexportList.addAll(documentexportListBase);
+        }
+        beans.put("slist", salesexportList);
+        beans.put("plist", purchaseexportList);
+        beans.put("dlist", documentexportList);
+
+        return beans;
     }
 
     /**

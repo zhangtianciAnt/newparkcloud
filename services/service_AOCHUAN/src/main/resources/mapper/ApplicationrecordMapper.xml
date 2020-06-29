@@ -32,10 +32,64 @@
     where applicationrecord.transportgood_id = #{id}
 
     </select>
+
     <select id="selectExportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo">
-            SELECT * FROM	saledetails
-                INNER JOIN receivablesrecord ON saledetails.productid = saledetails.productid
-                LEFT JOIN transportgood ON transportgood.transportgood_id = saledetails.transportgood_id
-                where transportgood.transportgood_id = #{id}
-        </select>
+       SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH
+        FROM saledetails s
+            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id
+            LEFT JOIN receivablesrecord r ON r.productid = s.productid
+            LEFT JOIN products p on p.PRODUCTS_ID = s.productid
+            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
+            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID
+            where t.transportgood_id = #{id}
+    </select>
+
+    <select id="purchaseexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo">
+    SELECT t.*
+        ,p.ENGLISHNAME,c.CHINABRANCH
+        ,p.CHINANAME as CHINANAME
+        ,supplier.SUPPLIERNAMECN as SUPPLIERNAMECN
+        ,s.unitprice1 as unitprice1
+        ,s.unit as unit
+        ,s.currency1 as currency1
+        ,s.numbers1 as numbers1
+        ,s.purchaseamount as purchaseamount
+        ,s.signback1 as signback1
+        ,s.hscode as hscode
+        ,s.drawback as drawback
+        ,s.dangerous as dangerous
+        ,s.marks as marks
+        ,t.MSDS as MSDS
+        ,s.deliverystatus as deliverystatus
+        ,a.invoiceno as invoiceno
+        ,a.paymentstatus as paymentstatus
+        ,t.productresponsibility as productresponsibility
+        ,a.realdate as realdate
+    FROM saledetails s
+    inner join transportgood t on t.transportgood_id = s.transportgood_id
+    LEFT JOIN applicationrecord a ON t.transportgood_id = a.transportgood_id
+    LEFT JOIN products p on p.PRODUCTS_ID = s.productid
+    LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
+    LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+    where t.transportgood_id = #{id}
+    </select>
+
+    <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">
+            SELECT t.*,p.ENGLISHNAME,c.CHINABRANCH
+            FROM saledetails s
+            INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id
+            LEFT JOIN receivablesrecord r ON r.productid = s.productid
+            LEFT JOIN products p on p.PRODUCTS_ID = s.productid
+            LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
+            LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+            LEFT JOIN linkman l on l.BASEINFOR_ID = c.CUSTOMERBASEINFOR_ID
+            where t.transportgood_id = #{id}
+    </select>
+
+    <select id="dictionaryExportList" resultType="java.lang.String">
+      SELECT dictionary.VALUE1 from dictionary
+        where CODE =  #{id}
+    </select>
+
 </mapper>

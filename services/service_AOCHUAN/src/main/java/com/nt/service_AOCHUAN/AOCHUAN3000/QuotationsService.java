@@ -4,6 +4,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuoAndEnq;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface QuotationsService {
@@ -20,4 +21,6 @@ public interface QuotationsService {
     void insert(Quotations quotations, TokenModel tokenModel)throws Exception;
 
     void delete(String id) throws Exception;
+
+    void setExport(HttpServletResponse response , List<Quotations> quotationsList) throws Exception;
 }

@@ -5,6 +5,7 @@ import com.deepoove.poi.config.Configure;
 import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.QuotationsMapper;
 import com.nt.utils.*;
@@ -143,5 +144,12 @@ public class AOCHUAN3001Controller {
             quotation.setQuotationdate1(quotations.getQuotationdate1());
             quotationsMapper.updateByPrimaryKeySelective(quotation);
         }
+    }
+
+//    导出
+    @RequestMapping(value = "/getexport", method = {RequestMethod.POST})
+    public void getexport(@RequestBody List<Quotations> quotationsList, HttpServletResponse response) throws Exception {
+        quotationsService.setExport(response , quotationsList);
+//        return ApiResult.success();
     }
 }
