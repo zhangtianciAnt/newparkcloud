@@ -9,7 +9,7 @@
         c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
         c.`NUMBERS` as NUMBERS,
         s.`PHASE` as phase,
-        s.`PRODUCTSTATUS` as productstatus,
+        s.`PRODUCTSTATUS` as productstatus,,
         <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
         when s.`COMPANYPROJECTS_ID` != "" then '1'
         ELSE '' END as phasestatus,
@@ -30,7 +30,7 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
         c.OWNER as OWNER,
-        c.GROUP_ID as group_id
+        c.GROUP_ID as group_id,
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
@@ -69,6 +69,7 @@
         c.`NUMBERS` as NUMBERS,
         s.`PHASE` as phase,
         s.`PRODUCTSTATUS` as productstatus,
+        pp.contractno as contractno,
         <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
         when s.`COMPANYPROJECTS_ID` != "" then '1'
         ELSE '' END as phasestatus,
@@ -88,7 +89,8 @@
         c.LEADERID as LEADERID,
         c.FIELD as FIELD,
         c.OWNER as OWNER,
-        c.GROUP_ID as group_id
+        c.GROUP_ID as group_id,
+        pp.contractno as contractno
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
         (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
@@ -99,6 +101,7 @@
 
         left join (
         select p.COMPANYPROJECTS_ID,
+        GROUP_CONCAT( p.CONTRACT SEPARATOR ',' ) contractno,
         max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
         from projectcontract p
         inner join contractapplication a
@@ -128,6 +131,7 @@
             c.`NUMBERS`        as NUMBERS,
             s.`PHASE`          as phase,
             s.`PRODUCTSTATUS`  as productstatus,
+            pp.contractno as contractno,
         <![CDATA[ case
                 when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
                 when s.`COMPANYPROJECTS_ID` != "" then '1'
@@ -155,7 +159,8 @@
             FIELD as
             FIELD,
             c.OWNER as OWNER,
-            c.GROUP_ID as group_id
+            c.GROUP_ID as group_id,
+            pp.contractno as contractno
         from `companyprojects`
              c
              left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
@@ -180,6 +185,7 @@
            p
            .
            COMPANYPROJECTS_ID,
+            GROUP_CONCAT( p.CONTRACT SEPARATOR ',' ) contractno,
            max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
            from
            projectcontract
@@ -398,15 +404,4 @@
         ORDER BY pp.ADMISSIONTIME desc
     </select>
 
-    <!--?????????-->
-    <select id="getContract" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
-       select
-	p.companyprojects_id,
-	p.contract
-        from
-	projectcontract p,
-	companyprojects c
-        where
-	p.companyprojects_id = c.companyprojects_id
-    </select>
 </mapper>

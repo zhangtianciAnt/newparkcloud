@@ -130,4 +130,9 @@ public class CompanyProjectsVo2 {
      * 实际结束时间
      */
     private Date endtime;
+
+    /**
+     * 合同号
+     */
+    private String contractno;
 }

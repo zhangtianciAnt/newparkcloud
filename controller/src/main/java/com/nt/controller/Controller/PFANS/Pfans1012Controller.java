@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -212,6 +213,9 @@ public class Pfans1012Controller {
         //add-ws-禅道103任务2
         String username = "";
         BigDecimal bd7 = new BigDecimal(pubvo.getPublicexpense().getMoneys());
+        int scale = 2;//设置位数
+        int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+        bd7 = bd7.setScale(scale, roundingMode);
         if (!pubvo.getPublicexpense().getLoan().equals("")) {
             query = new Query();
             LoanApplication loanapplication = new LoanApplication();
@@ -225,37 +229,49 @@ public class Pfans1012Controller {
                 }
             }
         }
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+        String checkdata = sf.format(pubvo.getPublicexpense().getCreateon());
         //add-ws-禅道103任务2
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         if (wfList.size() > 0) {
             //UPD-WS-6/12-禅道105
-            query = new Query();
-            if (bd7.intValue() >= 20000) {
-                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList7 = customerInfo.getUserinfo().getCustomername();
-                    wfList7 = sign.startGraphics2D(wfList7);
-                }
+            if (Integer.valueOf(checkdata) >= 20200624) {
                 query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList1 = customerInfo.getUserinfo().getCustomername();
-                    wfList1 = sign.startGraphics2D(wfList1);
-                }
-                query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList2 = customerInfo.getUserinfo().getCustomername();
-                    wfList2 = sign.startGraphics2D(wfList2);
-                }
-                if (wfList.get(3).getRemark() != null) {
-                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
-                        wfList3 = "";
+                if (bd7.intValue() >= 20000.00) {
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList7 = customerInfo.getUserinfo().getCustomername();
+                        wfList7 = sign.startGraphics2D(wfList7);
+                    }
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList1 = customerInfo.getUserinfo().getCustomername();
+                        wfList1 = sign.startGraphics2D(wfList1);
+                    }
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList2 = customerInfo.getUserinfo().getCustomername();
+                        wfList2 = sign.startGraphics2D(wfList2);
+                    }
+                    if (wfList.get(3).getRemark() != null) {
+                        if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                            wfList3 = "";
+                        } else {
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (customerInfo != null) {
+                                wfList3 = customerInfo.getUserinfo().getCustomername();
+                                wfList3 = sign.startGraphics2D(wfList3);
+                            }
+                        }
                     } else {
                         query = new Query();
                         query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
@@ -265,18 +281,18 @@ public class Pfans1012Controller {
                             wfList3 = sign.startGraphics2D(wfList3);
                         }
                     }
-                } else {
-                    query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        wfList3 = customerInfo.getUserinfo().getCustomername();
-                        wfList3 = sign.startGraphics2D(wfList3);
-                    }
-                }
-                if (wfList.get(4).getRemark() != null) {
-                    if (wfList.get(4).getRemark().equals("系统自动跳过")) {
-                        wfList4 = "";
+                    if (wfList.get(4).getRemark() != null) {
+                        if (wfList.get(4).getRemark().equals("系统自动跳过")) {
+                            wfList4 = "";
+                        } else {
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (customerInfo != null) {
+                                wfList4 = customerInfo.getUserinfo().getCustomername();
+                                wfList4 = sign.startGraphics2D(wfList4);
+                            }
+                        }
                     } else {
                         query = new Query();
                         query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
@@ -286,16 +302,69 @@ public class Pfans1012Controller {
                             wfList4 = sign.startGraphics2D(wfList4);
                         }
                     }
+
+
                 } else {
                     query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        wfList4 = customerInfo.getUserinfo().getCustomername();
-                        wfList4 = sign.startGraphics2D(wfList4);
+                        wfList1 = customerInfo.getUserinfo().getCustomername();
+                        wfList1 = sign.startGraphics2D(wfList1);
+                    }
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList2 = customerInfo.getUserinfo().getCustomername();
+                        wfList2 = sign.startGraphics2D(wfList2);
+                    }
+                    if (wfList.get(2).getRemark() != null) {
+                        if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+                            wfList3 = "";
+                        } else {
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (customerInfo != null) {
+                                wfList3 = customerInfo.getUserinfo().getCustomername();
+                                wfList3 = sign.startGraphics2D(wfList3);
+                            }
+                        }
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList3 = customerInfo.getUserinfo().getCustomername();
+                            wfList3 = sign.startGraphics2D(wfList3);
+                        }
+                    }
+                    if (wfList.get(3).getRemark() != null) {
+                        if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                            wfList4 = "";
+                        } else {
+                            query = new Query();
+                            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if (customerInfo != null) {
+                                wfList4 = customerInfo.getUserinfo().getCustomername();
+                                wfList4 = sign.startGraphics2D(wfList4);
+                            }
+                        }
+                    } else {
+                        query = new Query();
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            wfList4 = customerInfo.getUserinfo().getCustomername();
+                            wfList4 = sign.startGraphics2D(wfList4);
+                        }
                     }
                 }
             } else {
+                query = new Query();
+
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -353,8 +422,8 @@ public class Pfans1012Controller {
                     }
                 }
             }
-            //UPD-WS-6/12-禅道105
         }
+        //UPD-WS-6/12-禅道105
         Map<String, Object> data = new HashMap<>();
         if ("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())) {
             String payeeName = "";
