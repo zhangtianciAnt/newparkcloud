@@ -435,34 +435,42 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         List<SalesExportVo> salesexportList = new ArrayList<>();
         List<PurchaseExportVo> purchaseexportList = new ArrayList<>();
         List<DocumentExportVo> documentexportList = new ArrayList<>();
+        List<SalesExportVo> salesexportListSize = new ArrayList<>();
+        List<PurchaseExportVo> purchaseexportListSize = new ArrayList<>();
+        List<DocumentExportVo> documentexportListSize = new ArrayList<>();
         for (int i = 0; i < exportVo.size(); i++) {
             String id = exportVo.get(i).getTransportgood_id();
             List<SalesExportVo> salesexportListBase = applicationrecordMapper.selectExportList(id);//获取销售数据
+            salesexportListSize.addAll(salesexportListBase);
             List<PurchaseExportVo> purchaseexportListBase = applicationrecordMapper.purchaseexportList(id);//获取采购数据
+            purchaseexportListSize.addAll(purchaseexportListBase);
             List<DocumentExportVo> documentexportListBase = applicationrecordMapper.documentexportList(id);//获取单据数据
-            for (int j = 0; j < salesexportListBase.size(); j++) {
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userid").is(salesexportListBase.get(j).getSaleresponsibility()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                salesexportListBase.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
-                String unitCode = salesexportListBase.get(j).getUnit();
-                String a = applicationrecordMapper.dictionaryExportList(unitCode);
-                salesexportListBase.get(i).setUnit(a);
-                String currencyCode = salesexportListBase.get(j).getCurrency();
-                salesexportListBase.get(i).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
-                String collectionaccountCode = salesexportListBase.get(j).getCollectionaccount();
-                salesexportListBase.get(i).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
-                String paymentCode = salesexportListBase.get(j).getPayment();
-                salesexportListBase.get(i).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
-            }
-            for (int k = 0; k < purchaseexportListBase.size(); k++) {
-            }
-            for (int l = 0; l < documentexportList.size(); l++) {
-            }
-            salesexportList.addAll(salesexportListBase);
-            purchaseexportList.addAll(purchaseexportListBase);
-            documentexportList.addAll(documentexportListBase);
+            documentexportListSize.addAll(documentexportListBase);
         }
+        for (int j = 0; j < salesexportListSize.size(); j++) {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(salesexportListSize.get(j).getSaleresponsibility()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            salesexportListSize.get(j).setSaleresponsibility(customerInfo.getUserinfo().getCustomername());
+            String unitCode = salesexportListSize.get(j).getUnit();
+            String a = applicationrecordMapper.dictionaryExportList(unitCode);
+            salesexportListSize.get(j).setUnit(a);
+            String currencyCode = salesexportListSize.get(j).getCurrency();
+            salesexportListSize.get(j).setCurrency(applicationrecordMapper.dictionaryExportList(currencyCode));
+            String collectionaccountCode = salesexportListSize.get(j).getCollectionaccount();
+            salesexportListSize.get(j).setCollectionaccount(applicationrecordMapper.dictionaryExportList(collectionaccountCode));
+            String paymentCode = salesexportListSize.get(j).getPayment();
+            salesexportListSize.get(j).setPayment(applicationrecordMapper.dictionaryExportList(paymentCode));
+        }
+        for (int k = 0; k < purchaseexportListSize.size(); k++) {
+        }
+        for (int l = 0; l < documentexportListSize.size(); l++) {
+        }
+
+        salesexportList.addAll(salesexportListSize);
+        purchaseexportList.addAll(purchaseexportListSize);
+        documentexportList.addAll(documentexportListSize);
+
         beans.put("slist", salesexportList);
         beans.put("plist", purchaseexportList);
         beans.put("dlist", documentexportList);
