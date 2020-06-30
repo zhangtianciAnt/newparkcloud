@@ -42,7 +42,7 @@
         c.CUSTOMERNAMEEN as customer,
         concat(l.CNAME, l.ENAME, l.JNAME, l.KNAME ) as linkmanname,
         t.country as country,
-        t.firstordertime as firstordertime,
+        date_format(t.firstordertime, '%Y-%m-%d %T')as firstordertime,
         s.unitprice as unitprice,
         d1.VALUE1 as unit,
         d2.VALUE1 as currency,
@@ -100,7 +100,7 @@
     ,a.invoiceno as invoicenumber
     ,d4.VALUE1 as paymentstatus
     ,t.productresponsibility as productresponsibility
-    ,a.realdate as realdate
+    ,date_format(a.realdate ,'%Y-%m-%d') as realdate
 FROM transportgood t
        left join  saledetails s on t.transportgood_id = s.transportgood_id
 
@@ -139,7 +139,12 @@ FROM transportgood t
 
 
     <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">
-        SELECT * from transportgood
+        SELECT contractnumber,
+        DATE_FORMAT(bookingtime, '%Y-%m-%d') as bookingtime,departure,forwardingcompany,appraisalcost,entrynumber
+        ,DATE_FORMAT(interceptiontime, '%Y-%m-%d') as interceptiontime,date_format(cutofftime,'%Y-%m-%d') as cutofftime
+        ,warehouse,bill,date_format(billtime,'%Y-%m-%d') as billtime
+        ,freight,premium,billresponsibility
+        from transportgood
         where transportgood_id = #{id}
     </select>
 

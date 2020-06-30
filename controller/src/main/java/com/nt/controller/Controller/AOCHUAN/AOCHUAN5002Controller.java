@@ -88,6 +88,22 @@ public class AOCHUAN5002Controller {
         return ApiResult.success(finPurchaseSerivce.getFinPurchaseList(finPurchase1));
     }
 
+
+
+    /**
+     * 审批更新
+     */
+    @RequestMapping(value = "/updatesp", method = {RequestMethod.POST})
+    public ApiResult updatesp(@RequestBody FinPurchase finPurchase, HttpServletRequest request) throws Exception {
+
+        if (finPurchase == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+
+        finPurchaseSerivce.update(finPurchase,tokenService.getToken(request));
+        return ApiResult.success();
+    }
+
     /**
      * 生成付款凭证
      */

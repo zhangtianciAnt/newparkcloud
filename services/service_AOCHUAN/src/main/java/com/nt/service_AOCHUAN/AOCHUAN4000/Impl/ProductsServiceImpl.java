@@ -85,11 +85,12 @@ public class ProductsServiceImpl implements ProductsService {
     public Products One(String ids) throws Exception {
 
         Products products  = productsMapper.selectByPrimaryKey(ids);
-        Marketproducts m = new Marketproducts();
-        m.setProducts_id(ids);
-        List<Marketproducts> list = marketproductsMapper.select(m);
-        products.setScTable(list);
-
+        if(products != null){
+            Marketproducts m = new Marketproducts();
+            m.setProducts_id(ids);
+            List<Marketproducts> list = marketproductsMapper.select(m);
+            products.setScTable(list);
+        }
         return products;
     }
 
