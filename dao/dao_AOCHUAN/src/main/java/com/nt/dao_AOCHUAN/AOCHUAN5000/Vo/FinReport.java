@@ -131,8 +131,8 @@ public class FinReport {
     @Column(name = "INVOICENUMBER")
     private String invoicenumber;
 //    //开票日期
-//    @Column(name = "INVOICEDATE")
-//    private Date invoicedate;
+    @Column(name = "BILLINGTIME")
+    private Date billingtime;
 //    //佣金
     @Column(name = "COMMISSIONAMOUNTA")
     private String commissionamounta;
@@ -146,6 +146,6 @@ public class FinReport {
 
     //    //采购币种转换
     @Column(name = "CAIGOUBIZHONG")
-    private String caigobizhong;
+    private String caigoubizhong;
 
 }
