@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
+import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo;
@@ -21,11 +22,13 @@ import com.nt.utils.dao.TokenModel;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -403,6 +406,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         //业务逻辑
         beans = logicExport(response, exportVo);
+        boolean delete = false;
 
         //加载excel模板文件
         File file = null;
@@ -410,6 +414,23 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             file = ResourceUtils.getFile("classpath:excel/goodsdeliverytemplate.xlsx");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            try {
+                ClassPathResource cpr = new ClassPathResource("excel/goodsdeliverytemplate.xlsx");
+                if (cpr.exists()) {
+                    InputStream inputStream = cpr.getInputStream();
+                    Date now = new Date();
+                    file = File.createTempFile(now.getTime() + "", ".xlsx");
+                    try {
+                        byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+                        FileCopyUtils.copy(bdata, file);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
+                    }
+                }
+                delete = true;
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
 
         //配置下载路径
@@ -424,6 +445,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         //删除服务器生成文件
         deleteFile(excelFile);
+        if ( delete ) {
+            deleteFile(file);
+        }
     }
 
 

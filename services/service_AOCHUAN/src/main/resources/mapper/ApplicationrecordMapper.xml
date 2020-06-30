@@ -55,9 +55,9 @@
         t.saleresponsibility as saleresponsibility,
         d4.VALUE1 as payment,
         t.orders as orders
-      FROM saledetails s
-        INNER JOIN transportgood t ON t.transportgood_id = s.transportgood_id
-        LEFT JOIN receivablesrecord r ON r.productid = s.productid
+      FROM  transportgood t
+        INNER JOIN saledetails s ON t.transportgood_id = s.transportgood_id
+        LEFT JOIN receivablesrecord r ON r.productid = s.productid and r.transportgood_id = t.transportgood_id
         LEFT JOIN products p on p.PRODUCTS_ID = s.productid
         LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = s.supplierid
         LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid

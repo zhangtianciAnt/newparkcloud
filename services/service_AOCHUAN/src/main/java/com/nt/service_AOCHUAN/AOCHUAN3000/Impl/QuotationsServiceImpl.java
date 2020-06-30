@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
+import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Enquiry;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuoAndEnq;
@@ -22,12 +23,14 @@ import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -136,6 +139,7 @@ public class QuotationsServiceImpl implements QuotationsService {
 
         //业务逻辑
         beans = logicExport(response, quotationsList);
+        boolean delete = false;
 
         //加载excel模板文件
         File file = null;
@@ -143,6 +147,23 @@ public class QuotationsServiceImpl implements QuotationsService {
             file = ResourceUtils.getFile("classpath:excel/quote.xlsx");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            try {
+                ClassPathResource cpr = new ClassPathResource("excel/quote.xlsx");
+                if (cpr.exists()) {
+                    InputStream inputStream = cpr.getInputStream();
+                    Date now = new Date();
+                    file = File.createTempFile(now.getTime() + "_quote", ".xlsx");
+                    try {
+                        byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+                        FileCopyUtils.copy(bdata, file);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
+                    }
+                }
+                delete = true;
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
         //配置下载路径
         String path = "/download/";
@@ -156,6 +177,9 @@ public class QuotationsServiceImpl implements QuotationsService {
 
         //删除服务器生成文件
         deleteFile(excelFile);
+        if ( delete ) {
+            deleteFile(file);
+        }
 
     }
 
