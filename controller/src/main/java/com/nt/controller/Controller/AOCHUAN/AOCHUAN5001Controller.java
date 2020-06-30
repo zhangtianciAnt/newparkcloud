@@ -54,7 +54,6 @@ public class AOCHUAN5001Controller {
      */
     @RequestMapping(value = "/getFinSalesList", method = {RequestMethod.POST})
     public ApiResult getFinSalesList(HttpServletRequest request) throws Exception {
-
         FinSales finSales = new FinSales();
         return ApiResult.success(finSalesService.getFinSalesList(finSales));
     }
@@ -227,17 +226,17 @@ public class AOCHUAN5001Controller {
 
         //业务日期
         if (("2").equals(docurule.getBusinessday())) {
-            if("PW001002".equals(finSales.getCredential_status())){
+            if ("PW001002".equals(finSales.getCredential_status())) {
                 busDate = finSales.getCreateon();
-            }else{
+            } else {
                 busDate = finSales.getArrivaltime();
             }
         }
         //记账日期
         if (("2").equals(docurule.getNowday())) {
-            if("PW001002".equals(finSales.getCredential_status())){
+            if ("PW001002".equals(finSales.getCredential_status())) {
                 busDate = finSales.getCreateon();
-            }else {
+            } else {
                 accDate = finSales.getArrivaltime();
             }
         }
@@ -270,7 +269,7 @@ public class AOCHUAN5001Controller {
 
             //金额计算
             Double calAmount = 0.00;
-            if(StringUtils.isNotBlank(item.getAmounttype())) {
+            if (StringUtils.isNotBlank(item.getAmounttype())) {
                 calAmount = amountCalculation(item.getAmounttype(), finSales);
             }
             //分录
@@ -313,6 +312,7 @@ public class AOCHUAN5001Controller {
 
     /**
      * 金额计算
+     *
      * @param amountType
      * @param finSales
      * @return
@@ -327,7 +327,7 @@ public class AOCHUAN5001Controller {
 
                     if ("PY008002".equals(finSales.getCurrency())) {
                         resultAmount = Double.parseDouble(finSales.getSalesamount()) * Double.parseDouble(finSales.getEx_rate());
-                    }else{
+                    } else {
                         resultAmount = Double.parseDouble(finSales.getSalesamount());
                     }
                 }
@@ -336,7 +336,7 @@ public class AOCHUAN5001Controller {
                 if (StringUtils.isNotBlank(finSales.getPremium()) && !" ".equals(finSales.getPremium())) {
                     if ("PY008002".equals(finSales.getCurrency())) {
                         resultAmount = Double.parseDouble(finSales.getPremium()) * Double.parseDouble(finSales.getEx_rate());
-                    }else {
+                    } else {
                         resultAmount = Double.parseDouble(finSales.getPremium());
                     }
                 }
@@ -345,7 +345,7 @@ public class AOCHUAN5001Controller {
                 if (StringUtils.isNotBlank(finSales.getFreight()) && !" ".equals(finSales.getFreight())) {
                     if ("PY008002".equals(finSales.getCurrency())) {
                         resultAmount = Double.parseDouble(finSales.getFreight()) * Double.parseDouble(finSales.getEx_rate());
-                    }else {
+                    } else {
                         resultAmount = Double.parseDouble(finSales.getFreight());
                     }
                 }
@@ -353,7 +353,7 @@ public class AOCHUAN5001Controller {
             case "6"://手续费
                 if ("PY008002".equals(finSales.getCurrency())) {
                     resultAmount = finSales.getCommission_amount() * Double.parseDouble(finSales.getEx_rate());
-                }else {
+                } else {
                     resultAmount = finSales.getCommission_amount();
                 }
                 break;
@@ -363,15 +363,15 @@ public class AOCHUAN5001Controller {
                     Double freight = 0.00;
                     //运费
                     if (StringUtils.isNotBlank(finSales.getPremium()) && !" ".equals(finSales.getPremium())) {
-                       premium = Double.parseDouble(finSales.getPremium());
+                        premium = Double.parseDouble(finSales.getPremium());
                     }
                     //保费
                     if (StringUtils.isNotBlank(finSales.getFreight()) && !" ".equals(finSales.getFreight())) {
-                       freight = Double.parseDouble(finSales.getFreight());
+                        freight = Double.parseDouble(finSales.getFreight());
                     }
                     if ("PY008002".equals(finSales.getCurrency())) {
                         resultAmount = (Double.parseDouble(finSales.getSalesamount()) - (premium + freight)) * Double.parseDouble(finSales.getEx_rate());
-                    }else {
+                    } else {
                         resultAmount = Double.parseDouble(finSales.getSalesamount()) - (premium + freight);
                     }
                 }
@@ -380,7 +380,7 @@ public class AOCHUAN5001Controller {
                 if (StringUtils.isNotBlank(finSales.getSalesamount()) && !" ".equals(finSales.getSalesamount())) {
                     if ("PY008002".equals(finSales.getCurrency())) {
                         resultAmount = (Double.parseDouble(finSales.getSalesamount()) - finSales.getCommission_amount()) * Double.parseDouble(finSales.getEx_rate());
-                    }else {
+                    } else {
                         resultAmount = Double.parseDouble(finSales.getSalesamount()) - finSales.getCommission_amount();
                     }
                 }
@@ -388,5 +388,15 @@ public class AOCHUAN5001Controller {
         }
 
         return resultAmount;
+    }
+
+
+    /**
+     * 状态更新
+     */
+    @RequestMapping(value = "/updateall", method = {RequestMethod.POST})
+    public ApiResult updateall(@RequestBody List<FinSales> finSales, HttpServletRequest request) throws Exception {
+        finSalesService.updateall(finSales, tokenService.getToken(request));
+        return ApiResult.fail();
     }
 }

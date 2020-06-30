@@ -10,7 +10,7 @@ import java.util.List;
 public interface FinSalesService {
 
     //获取财务-销售数据
-    List<FinSales> getFinSalesList(FinSales finSales) throws  Exception;
+    List<FinSales> getFinSalesList(FinSales finSales) throws Exception;
 
     //更新
     void update(FinSales finSales, TokenModel tokenModel) throws Exception;
@@ -22,9 +22,12 @@ public interface FinSalesService {
     Boolean uniqueCheck(FinSales finSales) throws Exception;
 
     //获取财务-销售数据
-    List<Totalmoney> getHK() throws  Exception;
+    List<Totalmoney> getHK() throws Exception;
 //    String[] getHK1() throws  Exception;
 
     //更新走货表
     void updateTransportGood(FinSales finSales, TokenModel tokenModel) throws Exception;
+
+    //弹窗更新数据
+    void updateall(List<FinSales> finSales, TokenModel tokenModel) throws Exception;
 }

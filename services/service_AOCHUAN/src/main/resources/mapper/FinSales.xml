@@ -11,7 +11,7 @@
     <select id="uniqueCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales">
         SELECT * FROM fin_sales WHERE SALES_ID != #{id} AND CONTRACTNUMBER = #{contractnumber} AND STATUS != '1'
     </select>
-<!--???????????-->
+    <!--???????????-->
     <select id="getHK" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.Totalmoney">
         select
         month(ARRIVALTIME) as months
@@ -31,5 +31,18 @@
     MODIFYON = now()
     WHERE
     TRANSPORTGOOD_ID = #{id}
+    </update>
+
+    <!--updateTransportgood-->
+    <update id="toUpDateReFunded">
+		UPDATE fin_sales
+		SET
+		EX_RATE = #{exratefunded},
+		AMOUNTRECEIVED =#{amountreceivedfunded},
+		INVOICEAMOUNT =#{invoiceamountfunded},
+		BILLINGTIME =#{billingtimefunded},
+		COMMISSIONAMOUNTA =#{commissionamountafunded}
+		WHERE
+		CONTRACTNUMBER = #{id}
     </update>
 </mapper>
