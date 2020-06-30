@@ -115,4 +115,11 @@ public class FinPurchase extends BaseModel {
     @Column(name="APPLICATIONRECORD_ID")
     private String applicationrecord_id;
 
+//    付款时间
+    @Column(name="FKTIME")
+    private Date fktime;
+//付款金额
+    @Column(name="FKMONEY")
+    private String fkmoney;
+
 }

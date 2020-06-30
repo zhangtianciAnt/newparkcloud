@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,10 +15,10 @@ public class PurchaseExportVo {
     private String contractnumber;
 
     //产品中文名
-    private String producten;
+    private String chinaname;
 
     //供应商名称
-    private String supplier;
+    private String suppliernamecn;
 
     //采购单价
     private String unitprice1;
@@ -54,8 +56,8 @@ public class PurchaseExportVo {
     //    唛头
     private String marks;
 
-//    //    MSDS
-//    private String order;
+    //    MSDS
+    private String MSDS;
 
     //    发货状态
     private String deliverystatus;
@@ -69,6 +71,6 @@ public class PurchaseExportVo {
     //    采购担当
     private String productresponsibility;
 
-//    //    付款时间
-//    private String order;
+    //    付款时间
+    private Date realdate;
 }
