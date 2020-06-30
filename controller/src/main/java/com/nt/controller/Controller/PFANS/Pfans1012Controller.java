@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/publicexpense")
@@ -446,6 +447,13 @@ public class Pfans1012Controller {
                 pubvo.getTrafficdetails().get(k).setRmb(str_format);
             }
         }
+
+        //add-ws-6/29-禅道任务173
+        List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
+        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0"))).collect(Collectors.toList());
+        List<OtherDetails> OtherDetailsList = pubvo.getOtherdetails();
+        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0"))).collect(Collectors.toList());
+        //add-ws-6/29-禅道任务173
         data.put("username", username);
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
@@ -458,8 +466,8 @@ public class Pfans1012Controller {
         data.put("tro", tro);
         data.put("pub", pubvo.getPublicexpense());
         data.put("tra", pubvo.getTrafficdetails());
-        data.put("pur", pubvo.getPurchasedetails());
-        data.put("otd", pubvo.getOtherdetails());
+        data.put("pur", PurchasedetailsList);
+        data.put("otd", OtherDetailsList);
 
         if (bd7.intValue() >= 20000) {
             if (pubvo.getTrafficdetails().size() > 0) {
