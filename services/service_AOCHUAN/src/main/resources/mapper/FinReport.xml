@@ -5,6 +5,7 @@
     <select id="getAll" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport">
                select
             t.contractnumber,
+            t.appraisalcost,
             p.CHINANAME,
             c.CUSTOMERNAMECN,
             t.country,
