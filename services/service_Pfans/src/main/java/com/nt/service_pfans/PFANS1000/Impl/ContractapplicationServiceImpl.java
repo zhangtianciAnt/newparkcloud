@@ -334,28 +334,28 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             if (workflowinstanceMapper.select(con).size() > 0) {
                                 throw new LogicalException("决裁书正在审批中，不可更新！");
                             }
-                            award.preUpdate(tokenModel);
-                            award.setContractnumber(contractnumber);
+                            io.preUpdate(tokenModel);
+                            io.setContractnumber(contractnumber);
 
                             //13
-                            award.setContracttype(contractapp.getContracttype());
-                            award.setCustojapanese(contractapp.getCustojapanese());
-                            award.setCustochinese(contractapp.getCustochinese());
-                            award.setPlacejapanese(contractapp.getPlacejapanese());
-                            award.setPlacechinese(contractapp.getPlacechinese());
-                            award.setGroup_id(contractapp.getGroup_id());
-                            award.setDeployment(contractapp.getDeployment());
-                            award.setPjnamechinese(contractapp.getConchinese());
-                            award.setPjnamejapanese(contractapp.getConjapanese());
-                            award.setClaimdatetime(contractapp.getClaimdatetime());
-                            award.setDeliverydate(contractapp.getDeliverydate());
-                            award.setCurrencyposition(contractapp.getCurrencyposition());
-                            award.setClaimamount(contractapp.getClaimamount());
-                            award.setUser_id(contractapp.getUser_id());
-                            award.setRemarks(contractapp.getRemarks());
-                            award.setMaketype(rowindex);
-                            award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
-                            AwardMapper.updateByPrimaryKeySelective(award);
+                            io.setContracttype(contractapp.getContracttype());
+                            io.setCustojapanese(contractapp.getCustojapanese());
+                            io.setCustochinese(contractapp.getCustochinese());
+                            io.setPlacejapanese(contractapp.getPlacejapanese());
+                            io.setPlacechinese(contractapp.getPlacechinese());
+                            io.setGroup_id(contractapp.getGroup_id());
+                            io.setDeployment(contractapp.getDeployment());
+                            io.setPjnamechinese(contractapp.getConchinese());
+                            io.setPjnamejapanese(contractapp.getConjapanese());
+                            io.setClaimdatetime(contractapp.getClaimdatetime());
+                            io.setDeliverydate(contractapp.getDeliverydate());
+                            io.setCurrencyposition(contractapp.getCurrencyposition());
+                            io.setClaimamount(contractapp.getClaimamount());
+                            io.setUser_id(contractapp.getUser_id());
+                            io.setRemarks(contractapp.getRemarks());
+                            io.setMaketype(rowindex);
+                            io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            AwardMapper.updateByPrimaryKeySelective(io);
                         }
                     } else {
                         award.preInsert(tokenModel);
@@ -532,28 +532,27 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             if (workflowinstanceMapper.select(con).size() > 0) {
                                 throw new LogicalException("决裁书正在审批中，不可更新！");
                             }
+                            io.preUpdate(tokenModel);
+                            io.setContractnumber(contractnumber);
+                            //13
+                            io.setContracttype(contractapp.getContracttype());
+                            io.setCustojapanese(contractapp.getCustojapanese());
+                            io.setCustochinese(contractapp.getCustochinese());
+                            io.setPlacejapanese(contractapp.getPlacejapanese());
+                            io.setPlacechinese(contractapp.getPlacechinese());
+                            io.setDeployment(contractapp.getDeployment());
+                            io.setPjnamechinese(contractapp.getConchinese());
+                            io.setPjnamejapanese(contractapp.getConjapanese());
+                            io.setClaimdatetime(contractapp.getContractdate());
+                            io.setDeliverydate(contractapp.getDeliverydate());
+                            io.setCurrencyposition(contractapp.getCurrencyposition());
+                            io.setClaimamount(contractapp.getClaimamount());
+                            io.setUser_id(contractapp.getUser_id());
+                            io.setRemarks(contractapp.getRemarks());
+                            io.setMaketype(rowindex);
+                            io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            AwardMapper.updateByPrimaryKeySelective(io);
                         }
-
-                        award.preUpdate(tokenModel);
-                        award.setContractnumber(contractnumber);
-                        //13
-                        award.setContracttype(contractapp.getContracttype());
-                        award.setCustojapanese(contractapp.getCustojapanese());
-                        award.setCustochinese(contractapp.getCustochinese());
-                        award.setPlacejapanese(contractapp.getPlacejapanese());
-                        award.setPlacechinese(contractapp.getPlacechinese());
-                        award.setDeployment(contractapp.getDeployment());
-                        award.setPjnamechinese(contractapp.getConchinese());
-                        award.setPjnamejapanese(contractapp.getConjapanese());
-                        award.setClaimdatetime(contractapp.getContractdate());
-                        award.setDeliverydate(contractapp.getDeliverydate());
-                        award.setCurrencyposition(contractapp.getCurrencyposition());
-                        award.setClaimamount(contractapp.getClaimamount());
-                        award.setUser_id(contractapp.getUser_id());
-                        award.setRemarks(contractapp.getRemarks());
-                        award.setMaketype(rowindex);
-                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
-                        AwardMapper.updateByPrimaryKeySelective(award);
                     } else {
                         award.preInsert(tokenModel);
                         award.setAward_id(UUID.randomUUID().toString());
