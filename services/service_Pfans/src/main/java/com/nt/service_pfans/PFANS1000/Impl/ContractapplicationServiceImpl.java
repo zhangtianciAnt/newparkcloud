@@ -152,22 +152,24 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     //add_fjl_添加合同回款相关  start
                     int todoNumber = 0;
                     //资金回收完成给申请人发代办
-                    if (number.getRecoverystatus().equals("1") && number.getRecoverydate() != null) {
-                        toDoNoticeList = toDoNoticeList.stream().filter(item -> item.getTitle().equals(number.getContractnumber() + number.getClaimtype() + "资金已回收")).collect(Collectors.toList());
-                        if (toDoNoticeList.size() > 0) {//判断是否已经发过代办
-                            todoNumber++;
-                        }
-                        if (todoNumber == 0) {
-                            List<String> params = new ArrayList<String>();
-                            toDoNotice.setTitle(number.getContractnumber() + number.getClaimtype() + "资金已回收");
-                            toDoNotice.setInitiator(number.getModifyby());
-                            toDoNotice.setContent(number.getContractnumber() + number.getClaimtype() + "资金已回收");
-                            toDoNotice.setDataid(number.getContractnumber());
-                            toDoNotice.setUrl("/PFANS1026FormView");
-                            toDoNotice.setWorkflowurl("/PFANS1026View");
-                            toDoNotice.preInsert(tokenModel);
-                            toDoNotice.setOwner(number.getCreateby());
-                            toDoNoticeService.save(toDoNotice);
+                    if (StringUtils.isNullOrEmpty(number.getRecoverystatus()) && number.getRecoverydate() != null) {
+                        if (number.getRecoverystatus().equals("1")) {
+                            toDoNoticeList = toDoNoticeList.stream().filter(item -> item.getTitle().equals(number.getContractnumber() + number.getClaimtype() + "资金已回收")).collect(Collectors.toList());
+                            if (toDoNoticeList.size() > 0) {//判断是否已经发过代办
+                                todoNumber++;
+                            }
+                            if (todoNumber == 0) {
+                                List<String> params = new ArrayList<String>();
+                                toDoNotice.setTitle(number.getContractnumber() + number.getClaimtype() + "资金已回收");
+                                toDoNotice.setInitiator(number.getModifyby());
+                                toDoNotice.setContent(number.getContractnumber() + number.getClaimtype() + "资金已回收");
+                                toDoNotice.setDataid(number.getContractnumber());
+                                toDoNotice.setUrl("/PFANS1026FormView");
+                                toDoNotice.setWorkflowurl("/PFANS1026View");
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(number.getCreateby());
+                                toDoNoticeService.save(toDoNotice);
+                            }
                         }
                     }
                     //add_fjl_添加合同回款相关  end
@@ -334,28 +336,28 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             if (workflowinstanceMapper.select(con).size() > 0) {
                                 throw new LogicalException("决裁书正在审批中，不可更新！");
                             }
-                            award.preUpdate(tokenModel);
-                            award.setContractnumber(contractnumber);
+                            io.preUpdate(tokenModel);
+                            io.setContractnumber(contractnumber);
 
                             //13
-                            award.setContracttype(contractapp.getContracttype());
-                            award.setCustojapanese(contractapp.getCustojapanese());
-                            award.setCustochinese(contractapp.getCustochinese());
-                            award.setPlacejapanese(contractapp.getPlacejapanese());
-                            award.setPlacechinese(contractapp.getPlacechinese());
-                            award.setGroup_id(contractapp.getGroup_id());
-                            award.setDeployment(contractapp.getDeployment());
-                            award.setPjnamechinese(contractapp.getConchinese());
-                            award.setPjnamejapanese(contractapp.getConjapanese());
-                            award.setClaimdatetime(contractapp.getClaimdatetime());
-                            award.setDeliverydate(contractapp.getDeliverydate());
-                            award.setCurrencyposition(contractapp.getCurrencyposition());
-                            award.setClaimamount(contractapp.getClaimamount());
-                            award.setUser_id(contractapp.getUser_id());
-                            award.setRemarks(contractapp.getRemarks());
-                            award.setMaketype(rowindex);
-                            award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
-                            AwardMapper.updateByPrimaryKeySelective(award);
+                            io.setContracttype(contractapp.getContracttype());
+                            io.setCustojapanese(contractapp.getCustojapanese());
+                            io.setCustochinese(contractapp.getCustochinese());
+                            io.setPlacejapanese(contractapp.getPlacejapanese());
+                            io.setPlacechinese(contractapp.getPlacechinese());
+                            io.setGroup_id(contractapp.getGroup_id());
+                            io.setDeployment(contractapp.getDeployment());
+                            io.setPjnamechinese(contractapp.getConchinese());
+                            io.setPjnamejapanese(contractapp.getConjapanese());
+                            io.setClaimdatetime(contractapp.getClaimdatetime());
+                            io.setDeliverydate(contractapp.getDeliverydate());
+                            io.setCurrencyposition(contractapp.getCurrencyposition());
+                            io.setClaimamount(contractapp.getClaimamount());
+                            io.setUser_id(contractapp.getUser_id());
+                            io.setRemarks(contractapp.getRemarks());
+                            io.setMaketype(rowindex);
+                            io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            AwardMapper.updateByPrimaryKeySelective(io);
                         }
                     } else {
                         award.preInsert(tokenModel);
@@ -532,28 +534,27 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             if (workflowinstanceMapper.select(con).size() > 0) {
                                 throw new LogicalException("决裁书正在审批中，不可更新！");
                             }
+                            io.preUpdate(tokenModel);
+                            io.setContractnumber(contractnumber);
+                            //13
+                            io.setContracttype(contractapp.getContracttype());
+                            io.setCustojapanese(contractapp.getCustojapanese());
+                            io.setCustochinese(contractapp.getCustochinese());
+                            io.setPlacejapanese(contractapp.getPlacejapanese());
+                            io.setPlacechinese(contractapp.getPlacechinese());
+                            io.setDeployment(contractapp.getDeployment());
+                            io.setPjnamechinese(contractapp.getConchinese());
+                            io.setPjnamejapanese(contractapp.getConjapanese());
+                            io.setClaimdatetime(contractapp.getContractdate());
+                            io.setDeliverydate(contractapp.getDeliverydate());
+                            io.setCurrencyposition(contractapp.getCurrencyposition());
+                            io.setClaimamount(contractapp.getClaimamount());
+                            io.setUser_id(contractapp.getUser_id());
+                            io.setRemarks(contractapp.getRemarks());
+                            io.setMaketype(rowindex);
+                            io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            AwardMapper.updateByPrimaryKeySelective(io);
                         }
-
-                        award.preUpdate(tokenModel);
-                        award.setContractnumber(contractnumber);
-                        //13
-                        award.setContracttype(contractapp.getContracttype());
-                        award.setCustojapanese(contractapp.getCustojapanese());
-                        award.setCustochinese(contractapp.getCustochinese());
-                        award.setPlacejapanese(contractapp.getPlacejapanese());
-                        award.setPlacechinese(contractapp.getPlacechinese());
-                        award.setDeployment(contractapp.getDeployment());
-                        award.setPjnamechinese(contractapp.getConchinese());
-                        award.setPjnamejapanese(contractapp.getConjapanese());
-                        award.setClaimdatetime(contractapp.getContractdate());
-                        award.setDeliverydate(contractapp.getDeliverydate());
-                        award.setCurrencyposition(contractapp.getCurrencyposition());
-                        award.setClaimamount(contractapp.getClaimamount());
-                        award.setUser_id(contractapp.getUser_id());
-                        award.setRemarks(contractapp.getRemarks());
-                        award.setMaketype(rowindex);
-                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
-                        AwardMapper.updateByPrimaryKeySelective(award);
                     } else {
                         award.preInsert(tokenModel);
                         award.setAward_id(UUID.randomUUID().toString());
@@ -780,43 +781,45 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
                     //add_fjl_添加合同回款相关  start
-                    if (stt.format(number.getClaimdate()).equals(stt.format(new Date()))) {
-                        //请求担当
-                        List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
-                        if (rolelist.size() > 0) {
-                            for (MembersVo rt : rolelist) {
-                                //发起人创建代办
-                                ToDoNotice toDoNotice = new ToDoNotice();
-                                List<String> params = new ArrayList<String>();
-                                toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
-                                toDoNotice.setInitiator(number.getCreateby());
-                                toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
-                                toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
-                                toDoNotice.setUrl("/PFANS1026FormView");
-                                toDoNotice.setWorkflowurl("/PFANS1026View");
-                                toDoNotice.preInsert(tokenModel);
-                                toDoNotice.setOwner(rt.getUserid());
-                                toDoNoticeService.save(toDoNotice);
+                    if (contractapplication.getContractapplication().get(0).getType().equals("1")) {
+                        if (number.getClaimdate() != null && stt.format(number.getClaimdate()).equals(stt.format(new Date()))) {
+                            //请求担当
+                            List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
+                            if (rolelist.size() > 0) {
+                                for (MembersVo rt : rolelist) {
+                                    //发起人创建代办
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
+                                    toDoNotice.setInitiator(number.getCreateby());
+                                    toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
+                                    toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                    toDoNotice.setUrl("/PFANS1026FormView");
+                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(rt.getUserid());
+                                    toDoNoticeService.save(toDoNotice);
+                                }
                             }
                         }
-                    }
-                    if (stt.format(number.getDeliverydate()).equals(stt.format(new Date()))) {
-                        //纳品担当
-                        List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
-                        if (rolelist.size() > 0) {
-                            for (MembersVo rt : rolelist) {
-                                //发起人创建代办
-                                ToDoNotice toDoNotice = new ToDoNotice();
-                                List<String> params = new ArrayList<String>();
-                                toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                toDoNotice.setInitiator(number.getCreateby());
-                                toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
-                                toDoNotice.setUrl("/PFANS1026FormView");
-                                toDoNotice.setWorkflowurl("/PFANS1026View");
-                                toDoNotice.preInsert(tokenModel);
-                                toDoNotice.setOwner(rt.getUserid());
-                                toDoNoticeService.save(toDoNotice);
+                        if (number.getDeliverydate() != null && stt.format(number.getDeliverydate()).equals(stt.format(new Date()))) {
+                            //纳品担当
+                            List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+                            if (rolelist.size() > 0) {
+                                for (MembersVo rt : rolelist) {
+                                    //发起人创建代办
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+                                    toDoNotice.setInitiator(number.getCreateby());
+                                    toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+                                    toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                    toDoNotice.setUrl("/PFANS1026FormView");
+                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(rt.getUserid());
+                                    toDoNoticeService.save(toDoNotice);
+                                }
                             }
                         }
                     }
