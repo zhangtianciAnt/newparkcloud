@@ -178,8 +178,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setTransportgood_id(id);
                 val.setReceivablesrecord_id(UUID.randomUUID().toString());
             }
-            if (transportGood.getFinance() == 2) {
-                insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount());
+            if (transportGood.getFinance() == 1) {
+                insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount(), transportGood.getSaleresponsibility());
             }
             receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
         }
@@ -190,8 +190,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setTransportgood_id(id);
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
             }
-            if (transportGood.getFinance() == 1) {
-                insertCW(applicationrecords, transportGood.getContractnumber());
+            if (transportGood.getFinance() == 2) {
+                insertCW(applicationrecords, transportGood.getContractnumber(), transportGood.getProductresponsibility());
             }
             applicationrecordMapper.insertApplicationrecordList(applicationrecords);
         }
@@ -210,7 +210,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertCW(List<Applicationrecord> applicationrecords, String contractNumber) {
+    public void insertCW(List<Applicationrecord> applicationrecords, String contractNumber, String productresponsibility) {
         for (Applicationrecord val :
                 applicationrecords) {
             FinPurchase finPurchase = new FinPurchase();
@@ -224,6 +224,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());
             finPurchase.setRealamount(val.getRealamount());
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
+            finPurchase.setProductresponsibility(productresponsibility);//采购负责人
+            finPurchase.setProducten(val.getProductid());//产品id
+            finPurchase.setTransportgood_id(val.getTransportgood_id());//走货id
             finPurchase.preInsert();
             finPurchaseMapper.insert(finPurchase);
         }
@@ -234,7 +237,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount) throws Exception {
+    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount, String saleresponsibility) throws Exception {
         for (Receivablesrecord val :
                 receivablesrecords) {
             FinSales finSales = new FinSales();
@@ -249,6 +252,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finSales.setReceivablesrecord_id(val.getReceivablesrecord_id());
             finSales.setCredential_status("PW001001");
             finSales.setArrival_status("0");
+            finSales.setSaleresponsibility(saleresponsibility);//销售负责人
+            finSales.setTransportgood_id(val.getTransportgood_id());//走货id
+            finSales.setProductus(val.getProductid());//产品id
             finSales.preInsert();
             finSalesMapper.insert(finSales);
         }
