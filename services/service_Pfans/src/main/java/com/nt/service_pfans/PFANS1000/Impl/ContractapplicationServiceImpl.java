@@ -781,43 +781,45 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
                     //add_fjl_添加合同回款相关  start
-                    if (stt.format(number.getClaimdate()).equals(stt.format(new Date()))) {
-                        //请求担当
-                        List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
-                        if (rolelist.size() > 0) {
-                            for (MembersVo rt : rolelist) {
-                                //发起人创建代办
-                                ToDoNotice toDoNotice = new ToDoNotice();
-                                List<String> params = new ArrayList<String>();
-                                toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
-                                toDoNotice.setInitiator(number.getCreateby());
-                                toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
-                                toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
-                                toDoNotice.setUrl("/PFANS1026FormView");
-                                toDoNotice.setWorkflowurl("/PFANS1026View");
-                                toDoNotice.preInsert(tokenModel);
-                                toDoNotice.setOwner(rt.getUserid());
-                                toDoNoticeService.save(toDoNotice);
+                    if (contractapplication.getContractapplication().get(0).getType().equals("1")) {
+                        if (number.getClaimdate() != null && stt.format(number.getClaimdate()).equals(stt.format(new Date()))) {
+                            //请求担当
+                            List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
+                            if (rolelist.size() > 0) {
+                                for (MembersVo rt : rolelist) {
+                                    //发起人创建代办
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
+                                    toDoNotice.setInitiator(number.getCreateby());
+                                    toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
+                                    toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                    toDoNotice.setUrl("/PFANS1026FormView");
+                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(rt.getUserid());
+                                    toDoNoticeService.save(toDoNotice);
+                                }
                             }
                         }
-                    }
-                    if (stt.format(number.getDeliverydate()).equals(stt.format(new Date()))) {
-                        //纳品担当
-                        List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
-                        if (rolelist.size() > 0) {
-                            for (MembersVo rt : rolelist) {
-                                //发起人创建代办
-                                ToDoNotice toDoNotice = new ToDoNotice();
-                                List<String> params = new ArrayList<String>();
-                                toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                toDoNotice.setInitiator(number.getCreateby());
-                                toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
-                                toDoNotice.setUrl("/PFANS1026FormView");
-                                toDoNotice.setWorkflowurl("/PFANS1026View");
-                                toDoNotice.preInsert(tokenModel);
-                                toDoNotice.setOwner(rt.getUserid());
-                                toDoNoticeService.save(toDoNotice);
+                        if (number.getDeliverydate() != null && stt.format(number.getDeliverydate()).equals(stt.format(new Date()))) {
+                            //纳品担当
+                            List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+                            if (rolelist.size() > 0) {
+                                for (MembersVo rt : rolelist) {
+                                    //发起人创建代办
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+                                    toDoNotice.setInitiator(number.getCreateby());
+                                    toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+                                    toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                    toDoNotice.setUrl("/PFANS1026FormView");
+                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(rt.getUserid());
+                                    toDoNoticeService.save(toDoNotice);
+                                }
                             }
                         }
                     }
