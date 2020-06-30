@@ -405,8 +405,8 @@ public class AOCHUAN5001Controller {
      * 状态更新未回款
      */
     @RequestMapping(value = "/updateallw", method = {RequestMethod.POST})
-    public ApiResult updateallw(@RequestBody List<FinPurchase> finPurchase, HttpServletRequest request) throws Exception {
-        finSalesService.updateallw(finPurchase, tokenService.getToken(request));
+    public ApiResult updateallw(@RequestBody List<FinSales> finSales, HttpServletRequest request) throws Exception {
+        finSalesService.updateallw(finSales, tokenService.getToken(request));
         return ApiResult.fail("保存成功");
     }
 
