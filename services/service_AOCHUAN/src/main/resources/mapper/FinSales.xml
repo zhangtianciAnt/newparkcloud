@@ -43,7 +43,7 @@
 		BILLINGTIME =#{billingtimefunded},
 		COMMISSIONAMOUNTA =#{commissionamountafunded}
 		WHERE
-		CONTRACTNUMBER = #{id} and ARRIVAL_STATUS = 0
+		CONTRACTNUMBER = #{id} and ARRIVAL_STATUS = "1"
     </update>
 
     <!--updateTransportgood-->
@@ -56,6 +56,6 @@
 		BILLINGTIME =#{billingtimefunded},
 		COMMISSIONAMOUNTA =#{commissionamountafunded}
 		WHERE
-		CONTRACTNUMBER = #{id} and ARRIVAL_STATUS = 1
+		CONTRACTNUMBER = #{id} and ARRIVAL_STATUS = "0"
     </update>
 </mapper>
