@@ -178,7 +178,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setTransportgood_id(id);
                 val.setReceivablesrecord_id(UUID.randomUUID().toString());
             }
-            if (transportGood.getFinance() == 2) {
+            if (transportGood.getFinance() == 1) {
                 insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount(), transportGood.getSaleresponsibility());
             }
             receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
@@ -190,7 +190,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setTransportgood_id(id);
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
             }
-            if (transportGood.getFinance() == 1) {
+            if (transportGood.getFinance() == 2) {
                 insertCW(applicationrecords, transportGood.getContractnumber(), transportGood.getProductresponsibility());
             }
             applicationrecordMapper.insertApplicationrecordList(applicationrecords);
