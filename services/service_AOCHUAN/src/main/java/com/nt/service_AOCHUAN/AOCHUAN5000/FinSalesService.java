@@ -32,5 +32,5 @@ public interface FinSalesService {
     void updateall(List<FinSales> finSales, TokenModel tokenModel) throws Exception;
 
     //弹窗更新数据未回款
-    void updateallw(List<FinPurchase> finPurchase, TokenModel tokenModel) throws Exception;
+    void updateallw(List<FinSales> finSales, TokenModel tokenModel) throws Exception;
 }

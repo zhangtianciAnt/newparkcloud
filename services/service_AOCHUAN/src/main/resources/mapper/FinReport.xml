@@ -3,8 +3,9 @@
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinReportMapper">
 
     <select id="getAll" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport">
-        select
+               select
             t.contractnumber,
+            t.appraisalcost,
             p.CHINANAME,
             c.CUSTOMERNAMECN,
             t.country,
@@ -19,8 +20,8 @@
             s.currency1,
             s.unitprice1,
             s.purchaseamount,
-            t.hscode,
-            t.drawback,
+            s.hscode,
+            s.drawback,
             t.productresponsibility,
             t.appraisalcost,
             t.bill,
@@ -32,10 +33,15 @@
 			fs.AMOUNT,
 			fs.INVOICEAMOUNT,
 			fs.BILLINGTIME,
+			fs.amountreceived,
+            fp.INVOICENUMBER,
+			fs.arrivaltime,
 			fs.COMMISSIONAMOUNTA,
+			fp.FKTIME,
+			fp.FKMONEY,
             d.VALUE1 as fukuan,
-            d2.VALUE1 as xiaoshouhuilv,
-            d3.VALUE1
+            d2.VALUE1 as caigoubsizhong,
+            d3.VALUE1 as caigoubizhong
         from saledetails s
         inner join transportgood t
          on s.transportgood_id = t.transportgood_id
@@ -47,16 +53,18 @@
          on s.supplierid = s2.SUPPLIERBASEINFOR_ID
         left join returngoods r
          on t.contractnumber = r.CONTRACTNO
-		left join fin_sales fs
+	    left join fin_sales fs
          on t.contractnumber = fs.CONTRACTNUMBER
+		left join fin_purchase fp
+         on fs.TRANSPORTGOOD_ID = fp.TRANSPORTGOOD_ID
         left join dictionary d
         on t.payment = d.CODE
         and d.PCODE = 'PY009'
         left join dictionary d2
-        on t.currency = d2.CODE
+        on s.currency = d2.CODE
         and d2.PCODE = 'PY008'
         left join dictionary d3
-        on t.currency1 = d3.CODE
+        on s.currency1 = d3.CODE
         and d3.PCODE = 'PY008'
         where t.STATUS != '1'
         group by s.productid,s.transportgood_id,s.supplierid

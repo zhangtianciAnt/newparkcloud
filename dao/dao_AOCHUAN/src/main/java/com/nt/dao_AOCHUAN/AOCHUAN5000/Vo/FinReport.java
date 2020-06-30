@@ -116,23 +116,23 @@ public class FinReport {
     @Column(name = "PREMIUM")
     private String premium;
 //    //收款时间
-//    @Column(name = "COLLECTIONDATE")
-//    private Date collectiondate;
-//    //付款时间
-//    @Column(name = "PAYMENTTIME")
-//    private Date paymenttime;
-//    //付款金额
-//    @Column(name = "PAYMENTAMOUNT")
-//    private String paymentamount;
+    @Column(name = "ARRIVALTIME")
+    private Date arrivaltime;
+    //付款时间
+    @Column(name = "FKTIME")
+    private Date fktime;
+    //付款金额
+    @Column(name = "FKMONEY")
+    private String fkmoney;
 //    //开票金额
-//    @Column(name = "INVOICEAMOUNT")
-//    private String invoiceamount;
+    @Column(name = "INVOICEAMOUNT")
+    private String invoiceamount;
 //    //采购发票号码
-//    @Column(name = "PURCHASEINVOICENO")
-//    private String purchaseinvoiceno;
+    @Column(name = "INVOICENUMBER")
+    private String invoicenumber;
 //    //开票日期
-//    @Column(name = "INVOICEDATE")
-//    private Date invoicedate;
+    @Column(name = "BILLINGTIME")
+    private Date billingtime;
 //    //佣金
     @Column(name = "COMMISSIONAMOUNTA")
     private String commissionamounta;
@@ -143,5 +143,9 @@ public class FinReport {
 //    //退货
 //    @Column(name = "RETURNGOODS")
 //    private String returngoods;
+
+    //    //采购币种转换
+    @Column(name = "CAIGOUBIZHONG")
+    private String caigoubizhong;
 
 }
