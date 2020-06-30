@@ -85,14 +85,14 @@ public class SecrecyServiceImpl implements SecrecyService {
 
 
     //系统服务（4月1日）
-    @Scheduled(cron="* * 1 * * ?")
+//    @Scheduled(cron="* * 1 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void changestatus() throws Exception {
 
             List<Secrecy> secrelist = secrecyMapper.selectsecrecy();
         List<MembersVo> membersVos = roleService.getMembers("5ecf201628569c918caea0d3");
             for( Secrecy secrecy1: secrelist){
-                for (MembersVo membersVo :
-                        membersVos) {
+                for (MembersVo membersVo : membersVos) {
                     ToDoNotice toDoNotice = new ToDoNotice();
                     toDoNotice.setNoticeid(UUID.randomUUID().toString());
                     toDoNotice.setTitle("【保密文件】：您有一条保密文件已到期需要处理。");
