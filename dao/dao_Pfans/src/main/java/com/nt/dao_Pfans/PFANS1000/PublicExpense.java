@@ -175,4 +175,6 @@ public class PublicExpense extends BaseModel {
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
+    @Column(name = "TORMB")
+    private String tormb;
 }
