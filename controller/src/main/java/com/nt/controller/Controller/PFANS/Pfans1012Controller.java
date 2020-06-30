@@ -77,6 +77,7 @@ public class Pfans1012Controller {
 //        Map<String, Object> list = publicExpenseService.exportjs(publicexpenseid, request);
 
         String trr = "";
+        int sum1 = 0;
         //交通费的预算编码
         List<TrafficDetails> tralist = pubvo.getTrafficdetails();
         if (tralist.size() > 0) {
@@ -107,6 +108,9 @@ public class Pfans1012Controller {
         if (purlist.size() > 0) {
             trr = "采购费";
             for (PurchaseDetails pl : purlist) {
+                //add-ws-6/29-禅道171问题修正
+                sum1 = sum1 + Integer.valueOf(pl.getForeigncurrency());
+                //add-ws-6/29-禅道171问题修正
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(pl.getBudgetcoding())) {
@@ -130,9 +134,13 @@ public class Pfans1012Controller {
         //其他费用明细
         List<OtherDetails> othlist = pubvo.getOtherdetails();
         String tro = "";
+        int sum = 0;
         if (othlist.size() > 0) {
             tro = "其他费用";
             for (OtherDetails ol : othlist) {
+                //add-ws-6/29-禅道171问题修正
+                sum = sum + Integer.valueOf(ol.getForeigncurrency());
+                //add-ws-6/29-禅道171问题修正
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(ol.getBudgetcoding())) {
@@ -435,11 +443,33 @@ public class Pfans1012Controller {
         }
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
-        if (pubvo.getPublicexpense().getRmbexpenditure() != null) {
-            BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getRmbexpenditure());
+
+//add-ws-6/29-禅道171问题修正
+        String currenct = "";
+        String currenctsum = "";
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(pubvo.getPublicexpense().getMoneys())) {
+            BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
             str_format = df.format(bd);
-            pubvo.getPublicexpense().setRmbexpenditure(str_format);
+            if (str_format.equals(".00")) {
+                str_format = "0.00";
+            }
+            pubvo.getPublicexpense().setMoneys(str_format);
+        } else {
+            pubvo.getPublicexpense().setMoneys("0.00");
         }
+
+        List<Dictionary> curListsum = dictionaryService.getForSelect("PG019");
+        for (Dictionary ite : curListsum) {
+            if (pubvo.getOtherdetails().get(0).getCurrency() != null && pubvo.getOtherdetails().get(0).getCurrency() != "") {
+                if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
+                    currenct = ite.getValue3();
+                    int mountsum = sum + sum1;
+                    currenctsum = currenct + String.valueOf(mountsum);
+                }
+            }
+        }
+
+//add-ws-6/29-禅道171问题修正
         for (int k = 0; k < pubvo.getTrafficdetails().size(); k++) {
             if (pubvo.getTrafficdetails().get(k).getRmb() != null) {
                 BigDecimal bd = new BigDecimal(pubvo.getTrafficdetails().get(k).getRmb());
@@ -450,11 +480,12 @@ public class Pfans1012Controller {
 
         //add-ws-6/29-禅道任务173
         List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
-        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0"))).collect(Collectors.toList());
+        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) && (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
         List<OtherDetails> OtherDetailsList = pubvo.getOtherdetails();
-        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0"))).collect(Collectors.toList());
+        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) && (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
         //add-ws-6/29-禅道任务173
         data.put("username", username);
+        data.put("currenctsum", currenctsum);
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
