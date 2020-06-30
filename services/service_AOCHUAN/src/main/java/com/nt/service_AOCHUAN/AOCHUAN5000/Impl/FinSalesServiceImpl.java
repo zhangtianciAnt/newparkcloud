@@ -76,12 +76,12 @@ public class FinSalesServiceImpl implements FinSalesService {
             finSalesMapper.toUpDateReFunded(finSales.get(i).getEx_rate(), finSales.get(i).getAmountreceived(), finSales.get(i).getInvoiceamount(), finSales.get(i).getBillingtime(), finSales.get(i).getCommissionamounta(), finSales.get(i).getContractnumber());
         }
     }
-//    //弹窗更新未回款
-//    @Override
-//    public void updateall(List<FinSales> finSales, TokenModel tokenModel) throws Exception {
-//        for (int i = 0; i < finSales.size(); i++) {
-//            finSales.get(i).preUpdate(tokenModel);
-//            finSalesMapper.toUpDateReFunded(finSales.get(i).getEx_rate(), finSales.get(i).getAmountreceived(), finSales.get(i).getInvoiceamount(), finSales.get(i).getBillingtime(), finSales.get(i).getCommissionamounta(), finSales.get(i).getContractnumber());
-//        }
-//    }
+    //弹窗更新未回款
+    @Override
+    public void updateallw(List<FinPurchase> finPurchase, TokenModel tokenModel) throws Exception {
+        for (int i = 0; i < finPurchase.size(); i++) {
+            finPurchase.get(i).preUpdate(tokenModel);
+            finSalesMapper.toUpDateReFundedw(finPurchase.get(i).getEx_rate(), finPurchase.get(i).getAmountreceived(), finPurchase.get(i).getInvoiceamount(), finPurchase.get(i).getBillingtime(), finPurchase.get(i).getCommissionamounta(), finPurchase.get(i).getContractnumber());
+        }
+    }
 }

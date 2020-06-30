@@ -45,4 +45,17 @@
 		WHERE
 		CONTRACTNUMBER = #{id}
     </update>
+
+    <!--updateTransportgood-->
+    <update id="toUpDateReFundedw">
+		UPDATE fin_purchase
+		SET
+		EX_RATE = #{exratefunded},
+		AMOUNTRECEIVED =#{amountreceivedfunded},
+		INVOICEAMOUNT =#{invoiceamountfunded},
+		BILLINGTIME =#{billingtimefunded},
+		COMMISSIONAMOUNTA =#{commissionamountafunded}
+		WHERE
+		CONTRACTNUMBER = #{id}
+    </update>
 </mapper>

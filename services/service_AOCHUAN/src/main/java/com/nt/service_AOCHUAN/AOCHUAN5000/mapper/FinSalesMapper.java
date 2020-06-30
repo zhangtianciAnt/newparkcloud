@@ -22,5 +22,8 @@ public interface FinSalesMapper extends MyMapper<FinSales> {
     //弹窗更新
     void toUpDateReFunded(@Param("exratefunded") String exratefunded, @Param("amountreceivedfunded") String amountreceivedfunded, @Param("invoiceamountfunded") String invoiceamountfunded, @Param("billingtimefunded") String billingtimefunded, @Param("commissionamountafunded") String commissionamountafunded, @Param("id") String id);
 
+    //弹窗更新未回款
+    void toUpDateReFundedw(@Param("exratefunded") String exratefunded, @Param("amountreceivedfunded") String amountreceivedfunded, @Param("invoiceamountfunded") String invoiceamountfunded, @Param("billingtimefunded") String billingtimefunded, @Param("commissionamountafunded") String commissionamountafunded, @Param("id") String id);
+
     public List<Totalmoney> getHK();
 }

@@ -122,4 +122,16 @@ public class FinPurchase extends BaseModel {
     @Column(name="FKMONEY")
     private String fkmoney;
 
+    @Column(name = "AMOUNTRECEIVED")
+    private String amountreceived;
+
+    @Column(name = "INVOICEAMOUNT")
+    private String invoiceamount;
+
+    @Column(name = "BILLINGTIME")
+    private String billingtime;
+
+    @Column(name = "COMMISSIONAMOUNTA")
+    private String commissionamounta;
+
 }

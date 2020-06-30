@@ -397,6 +397,18 @@ public class AOCHUAN5001Controller {
     @RequestMapping(value = "/updateall", method = {RequestMethod.POST})
     public ApiResult updateall(@RequestBody List<FinSales> finSales, HttpServletRequest request) throws Exception {
         finSalesService.updateall(finSales, tokenService.getToken(request));
-        return ApiResult.fail();
+        return ApiResult.fail("保存成功");
     }
+
+
+    /**
+     * 状态更新未回款
+     */
+    @RequestMapping(value = "/updateallw", method = {RequestMethod.POST})
+    public ApiResult updateallw(@RequestBody List<FinPurchase> finPurchase, HttpServletRequest request) throws Exception {
+        finSalesService.updateallw(finPurchase, tokenService.getToken(request));
+        return ApiResult.fail("保存成功");
+    }
+
+
 }

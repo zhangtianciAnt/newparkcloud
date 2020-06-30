@@ -28,6 +28,11 @@
             t.freight,
             t.premium,
             r.CONTRACTNO,
+			fs.EX_RATE,
+			fs.AMOUNT,
+			fs.INVOICEAMOUNT,
+			fs.BILLINGTIME,
+			fs.COMMISSIONAMOUNTA,
             d.VALUE1 as fukuan,
             d2.VALUE1 as xiaoshouhuilv,
             d3.VALUE1
@@ -42,6 +47,8 @@
          on s.supplierid = s2.SUPPLIERBASEINFOR_ID
         left join returngoods r
          on t.contractnumber = r.CONTRACTNO
+		left join fin_sales fs
+         on t.contractnumber = fs.CONTRACTNUMBER
         left join dictionary d
         on t.payment = d.CODE
         and d.PCODE = 'PY009'

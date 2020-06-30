@@ -16,12 +16,12 @@ import java.util.List;
 public class FinReport {
 
 //    //季度
-//    @Column(name = "CONTRACTNUMBER")
-//    private String contractnumber;
-
-    //月份
-//    @Column(name = "CONTRACTNUMBER")
-//    private String contractnumber;
+//    @Column(name = "BILLTIME")
+//    private String billtime;
+//
+//    月份
+//    @Column(name = "BILLTIME")
+//    private String billtime;
 
     //合同号
     @Column(name = "CONTRACTNUMBER")
@@ -50,17 +50,17 @@ public class FinReport {
     @Column(name = "CURRENCY")
     private String currency;
     //汇率
-//    @Column(name = "EXCHANGERATE")
-//    private String exchangerate;
+    @Column(name = "EX_RATE")
+    private String ex_rate;
     //销售单价
     @Column(name = "UNITPRICE")
     private String unitprice;
     //销售金额
     @Column(name = "SALESAMOUNT")
     private String salesamount;
-//    //到账金额
-//    @Column(name = "SALESAMOUNT")
-//    private String salesamount;
+    //到账金额
+    @Column(name = "AMOUNTRECEIVED")
+    private String amountreceived;
     //付款方式
     @Column(name = "PAYMENT")
     private String payment;
@@ -134,8 +134,8 @@ public class FinReport {
 //    @Column(name = "INVOICEDATE")
 //    private Date invoicedate;
 //    //佣金
-//    @Column(name = "COMMISSION")
-//    private String commission;
+    @Column(name = "COMMISSIONAMOUNTA")
+    private String commissionamounta;
     //利润
     @Column(name = "PROFIT")
     private String profit;
