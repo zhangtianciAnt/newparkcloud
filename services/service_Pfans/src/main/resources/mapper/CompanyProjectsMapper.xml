@@ -100,14 +100,17 @@
         and s.status = '0'
 
         left join (
-        select p.COMPANYPROJECTS_ID,
-        GROUP_CONCAT( p.CONTRACT SEPARATOR ',' ) contractno,
-        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
-        from projectcontract p
-        inner join contractapplication a
-        on a.contractnumber = p.CONTRACT
-        and a.status = '0' and p.status = '0'
-        group by p.COMPANYPROJECTS_ID
+        SELECT
+        p.COMPANYPROJECTS_ID,
+        GROUP_CONCAT( CONCAT_WS( '-', p.CONTRACT, p.CLAIMTYPE ) SEPARATOR ',' ) contractno,
+        max( IFNULL( a.EXTENSIONDATE, substring( a.CLAIMDATETIME, 14, 10 ) ) ) AS etime
+        FROM
+        projectcontract p
+        INNER JOIN contractapplication a ON a.contractnumber = p.CONTRACT
+        AND a.STATUS = '0'
+        AND p.STATUS = '0'
+        GROUP BY
+        p.COMPANYPROJECTS_ID
         ) pp
         on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
         where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6')
@@ -181,41 +184,17 @@
 
         left
            join (
-           select
-           p
-           .
-           COMPANYPROJECTS_ID,
-            GROUP_CONCAT( p.CONTRACT SEPARATOR ',' ) contractno,
-           max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
-           from
-           projectcontract
-           p
-           inner
-           join
-           contractapplication
-           a
-           on
-           a
-           .
-           contractnumber =
-           p
-           .
-           CONTRACT
-           and
-           a
-           .
-           status =
-           '0'
-           and
-           p
-           .
-           status =
-           '0'
-           group
-           by
-           p
-           .
-           COMPANYPROJECTS_ID
+          SELECT
+	p.COMPANYPROJECTS_ID,
+	GROUP_CONCAT( CONCAT_WS( '-', p.CONTRACT, p.CLAIMTYPE ) SEPARATOR ',' ) contractno,
+	max( IFNULL( a.EXTENSIONDATE, substring( a.CLAIMDATETIME, 14, 10 ) ) ) AS etime
+FROM
+	projectcontract p
+	INNER JOIN contractapplication a ON a.contractnumber = p.CONTRACT
+	AND a.STATUS = '0'
+	AND p.STATUS = '0'
+GROUP BY
+	p.COMPANYPROJECTS_ID
             )
            pp
            on

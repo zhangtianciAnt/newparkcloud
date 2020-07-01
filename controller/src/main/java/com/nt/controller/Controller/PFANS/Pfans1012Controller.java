@@ -225,19 +225,25 @@ public class Pfans1012Controller {
         int scale = 2;//设置位数
         int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         bd7 = bd7.setScale(scale, roundingMode);
+        //upd-ws-6/30-禅道169修正
         if (!pubvo.getPublicexpense().getLoan().equals("")) {
             query = new Query();
             LoanApplication loanapplication = new LoanApplication();
             loanapplication.setLoanapplication_id(pubvo.getPublicexpense().getLoan());
             List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
             if (list.size() > 0) {
-                query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    username = customerInfo.getUserinfo().getCustomername();
+                if(list.get(0).getUser_name().equals("PJ015002")){
+                    query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        username = customerInfo.getUserinfo().getCustomername();
+                    }
+                }else{
+                    username = list.get(0).getAccountpayeename();
                 }
             }
         }
+        //upd-ws-6/30-禅道169修正
         SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
         String checkdata = sf.format(pubvo.getPublicexpense().getCreateon());
         //add-ws-禅道103任务2
