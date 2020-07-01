@@ -743,10 +743,12 @@ public class UserServiceImpl implements UserService {
 //            customerInfos = customerInfos.stream().filter(item -> item.getUserinfo().getResignation_date() != null).collect(Collectors.toList());
             for (CustomerInfo c : customerInfos) {
                 if (!StringUtils.isNullOrEmpty(c.getUserinfo().getResignation_date())) {
-                    int ret = Integer.parseInt(c.getUserinfo().getResignation_date().replace("-", ""));
+                    String regndate = st.format(st.parse(c.getUserinfo().getResignation_date()));
+                    int ret = Integer.parseInt(regndate.replace("-", ""));
                     if (re > ret) {
                         query = new Query();
                         query.addCriteria(Criteria.where("_id").is(c.getUserid()));
+                        query.addCriteria(Criteria.where("status").is("0"));
                         UserAccount usount = mongoTemplate.findOne(query, UserAccount.class);
                         if (usount != null) {
                             usount.setStatus("1");
