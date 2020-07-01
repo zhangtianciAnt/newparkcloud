@@ -390,6 +390,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else if (rowindex.equals("5")) {
                     Napalm napalm2 = new Napalm();
                     napalm2.setContractnumber(contractnumber);
+                    List<Napalm> napalmList = napalmMapper.select(napalm2);
+                    if (napalmList.size() > 0) {
+                        for (Napalm pe : napalmList) {
+                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                throw new LogicalException("纳品书正在印章中，不可更新！");
+                            }
+                        }
+                    }
 //                    napalm2.setOwner(tokenModel.getUserId());
                     napalmMapper.delete(napalm2);
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
@@ -459,6 +467,14 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 else if (rowindex.equals("6")) {
                     Petition petition2 = new Petition();
                     petition2.setContractnumber(contractnumber);
+                    List<Petition> petitionList = PetitionMapper.select(petition2);
+                    if (petitionList.size() > 0) {
+                        for (Petition pe : petitionList) {
+                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                throw new LogicalException("请求书正在印章中，不可更新！");
+                            }
+                        }
+                    }
 //                    petition2.setOwner(tokenModel.getUserId());
                     PetitionMapper.delete(petition2);
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
