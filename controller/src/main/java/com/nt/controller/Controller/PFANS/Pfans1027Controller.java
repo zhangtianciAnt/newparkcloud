@@ -94,11 +94,22 @@ public class Pfans1027Controller {
             qu.getNumbercounts().get(i).setClaimamount(str_format1);
         }
         //禅道179任务修改
-        int sum = 0;
-        int sum1 = 0;
+
+        int scale = 2;//设置位数
+        int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+        float sum = 0f;
+        float sum1 = 0f;
         for (int c = 0; c < qu.getPersonfee().size(); c++) {
-            sum = sum +Integer.valueOf(qu.getPersonfee().get(c).getFunctionamount1());
-            sum1 = sum1 +Integer.valueOf(qu.getPersonfee().get(c).getFunctionhour1());
+            if(qu.getPersonfee().get(c).getFunctionamount1()!=null&&qu.getPersonfee().get(c).getFunctionamount1()!=""){
+                BigDecimal bd3 = new BigDecimal(qu.getPersonfee().get(c).getFunctionamount1());
+                bd3 = bd3.setScale(scale, roundingMode);
+                sum += bd3.floatValue();
+            }
+            if(qu.getPersonfee().get(c).getFunctionhour1()!=null&&qu.getPersonfee().get(c).getFunctionhour1()!="") {
+                BigDecimal bd4 = new BigDecimal(qu.getPersonfee().get(c).getFunctionhour1());
+                bd4 = bd4.setScale(scale, roundingMode);
+                sum1 += bd4.floatValue();
+            }
         }
         data.put("sum",sum);
         data.put("sum1",sum1);
