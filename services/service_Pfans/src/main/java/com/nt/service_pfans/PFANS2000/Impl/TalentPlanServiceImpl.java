@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -413,10 +410,31 @@ public class TalentPlanServiceImpl implements TalentPlanService {
         List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
 
         for(CustomerInfo user : CustomerInfolist){
-            if(user.getUserid().equals(tokenModel.getUserId()) || (user.getUserinfo() .getResignation_date() != null && !user.getUserinfo() .getResignation_date().isEmpty()))
+            if(user.getUserid().equals(tokenModel.getUserId()))
             {
                 continue;
             }
+
+            if(user.getUserinfo() .getResignation_date() != null && !user.getUserinfo() .getResignation_date().isEmpty())
+            {
+                SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+                String resignationdate = user.getUserinfo().getResignation_date().substring(0, 10);
+                Calendar rightNow = Calendar.getInstance();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                if(user.getUserinfo().getResignation_date().length() >= 24)
+                {
+                    rightNow.setTime(Convert.toDate(resignationdate));
+                    rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                    resignationdate = s.format(rightNow.getTime());
+                }
+                //离职日期 < 当前日期
+                if(s.parse(resignationdate).getTime() < s.parse(s.format(calendar.getTime())).getTime())
+                {
+                    continue;
+                }
+            }
+
             TalentPlan con = new TalentPlan();
             con.setUser_id(user.getUserid());
             con.setYear(talentPlanVo.getYear());
