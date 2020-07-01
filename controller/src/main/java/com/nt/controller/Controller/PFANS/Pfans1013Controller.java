@@ -462,7 +462,7 @@ public class Pfans1013Controller {
         trafficlist = trafficlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
         accommodationlist = accommodationlist.stream().filter(item -> (!item.getRmb().equals("0.00")) ).collect(Collectors.toList());
         otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
-        String ccc = "";
+        String ccc = "外币兑换";
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
