@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/evection")
@@ -161,8 +162,44 @@ public class Pfans1013Controller {
                 }
             }
         }
+        DecimalFormat df = new DecimalFormat("###,###.00");
         //add-ws-5/14-其他费用明细
-
+//        String sum1 = "";
+//        String sum2 = "";
+//        String sum3 = "";
+//        if(curflg!=0.0){
+//            sum1 = df.format(new BigDecimal(String.valueOf(curflg+rmbtra)));
+//            if (sum1.equals(".00")) {
+//                sum1 = "0.00";
+//            }
+//        }else{
+//            sum1 = df.format(new BigDecimal(String.valueOf(rmbtra)));
+//            if (sum1.equals(".00")) {
+//                sum1 = "0.00";
+//            }
+//        }
+//        if(accflg!=0.0){
+//            sum2 = df.format(new BigDecimal(String.valueOf(accflg+rmbacc)));
+//            if (sum2.equals(".00")) {
+//                sum2 = "0.00";
+//            }
+//        }else{
+//            sum2 = df.format(new BigDecimal(String.valueOf(rmbacc)));
+//            if (sum2.equals(".00")) {
+//                sum2 = "0.00";
+//            }
+//        }
+//        if(occflg!=0.0){
+//            sum3 = df.format(new BigDecimal(String.valueOf(occflg+ombacc)));
+//            if (sum3.equals(".00")) {
+//                sum3 = "0.00";
+//            }
+//        }else{
+//            sum3 = df.format(new BigDecimal(String.valueOf(ombacc)));
+//            if (sum3.equals(".00")) {
+//                sum3 = "0.00";
+//            }
+//        }
         //出差地点
 //        if(!evevo.getEvection().getPlace().equals("") && !evevo.getEvection().getPlace().equals(null)){
         List<Dictionary> curList1 = dictionaryService.getForSelect("PJ036");
@@ -289,7 +326,6 @@ public class Pfans1013Controller {
         //upd-ws-6/17-禅道101
         Map<String, Object> data = new HashMap<>();
         String str_format = "";
-        DecimalFormat df = new DecimalFormat("###,###.00");
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(evevo.getEvection().getLoanamount())) {
             BigDecimal bd = new BigDecimal(evevo.getEvection().getLoanamount());
             str_format = df.format(bd);
@@ -423,6 +459,11 @@ public class Pfans1013Controller {
         if (sumrmb.equals(".00")) {
             sumrmb = "0.00";
         }
+
+        trafficlist = trafficlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
+        accommodationlist = accommodationlist.stream().filter(item -> (!item.getRmb().equals("0.00")) ).collect(Collectors.toList());
+        otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
+        String ccc = "";
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
@@ -430,6 +471,9 @@ public class Pfans1013Controller {
         data.put("rmbadd", rmbadd);
         data.put("rmbadd", rmbadd);
         data.put("trd", trd);
+//        data.put("sum1", sum1);
+//        data.put("sum2", sum2);
+//        data.put("sum3", sum3);
         data.put("trr", trr);
         data.put("tro", tro);
         data.put("tdd", tdd);
@@ -442,6 +486,7 @@ public class Pfans1013Controller {
         data.put("sumrmb", sumrmb);
         data.put("eve", evevo.getEvection());
         data.put("cur", evevo.getCurrencyexchanges());
+        data.put("ccc", ccc);
         data.put("tra", trafficlist);
 //        data.put("add", AccommodationList);
         data.put("acc", accommodationlist);
