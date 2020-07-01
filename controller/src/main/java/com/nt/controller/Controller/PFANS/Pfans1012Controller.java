@@ -486,9 +486,9 @@ public class Pfans1012Controller {
 
         //add-ws-6/29-禅道任务173
         List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
-        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) && (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
+        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
         List<OtherDetails> OtherDetailsList = pubvo.getOtherdetails();
-        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) && (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
+        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
         //add-ws-6/29-禅道任务173
         data.put("username", username);
         data.put("currenctsum", currenctsum);
