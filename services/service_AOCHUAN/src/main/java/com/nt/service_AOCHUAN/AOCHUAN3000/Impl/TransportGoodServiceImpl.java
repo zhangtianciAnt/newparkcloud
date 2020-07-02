@@ -219,11 +219,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             FinPurchase finPurchase = new FinPurchase();
             finPurchase.setPurchase_id(UUID.randomUUID().toString());
             finPurchase.setContractnumber(contractNumber);
-            finPurchase.setSupplier(val.getSuppliername());
+            finPurchase.setSupplier(val.getSupplierid());
             finPurchase.setPaymenttime(val.getRealdate());
             finPurchase.setInvoicenumber(val.getInvoiceno());
             finPurchase.setCredential_status("PW001001");
-            finPurchase.setPaymentaccount("");
             finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());
             finPurchase.setRealamount(val.getRealamount());
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
@@ -434,7 +433,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         }
 
         //配置下载路径
-        String path = "/download/";
+        String path = "/Users/ying/Documents/download/";
         createDir(new File(path));
 
         //根据模板生成新的excel

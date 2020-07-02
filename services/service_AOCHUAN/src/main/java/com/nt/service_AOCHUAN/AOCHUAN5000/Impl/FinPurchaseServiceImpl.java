@@ -35,10 +35,10 @@ public class FinPurchaseServiceImpl implements FinPurchaseSerivce {
     @Autowired
     private ToDoNoticeService toDoNoticeService;
 
-    //获取财务-采购数据
+    //获取财务的采购数据
     @Override
-    public List<FinPurchase> getFinPurchaseList(FinPurchase finPurchase) throws Exception {
-        return finPurchaseMapper.select(finPurchase);
+    public List<FinPurchase> getFinPurchaseList() throws Exception {
+        return finPurchaseMapper.selectById();
     }
 
     @Override

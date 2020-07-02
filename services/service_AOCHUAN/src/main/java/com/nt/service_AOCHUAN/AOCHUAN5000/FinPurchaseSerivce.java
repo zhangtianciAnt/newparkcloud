@@ -9,7 +9,7 @@ import java.util.List;
 public interface FinPurchaseSerivce {
 
     //获取财务-采购数据
-    List<FinPurchase> getFinPurchaseList(FinPurchase finPurchase) throws  Exception;
+    List<FinPurchase> getFinPurchaseList() throws  Exception;
 
     FinPurchase getForm(String id) throws Exception;
 
