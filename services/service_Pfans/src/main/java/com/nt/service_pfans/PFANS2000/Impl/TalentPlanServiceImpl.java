@@ -410,7 +410,7 @@ public class TalentPlanServiceImpl implements TalentPlanService {
         List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
 
         for(CustomerInfo user : CustomerInfolist){
-            if(user.getUserid().equals(tokenModel.getUserId()))
+            if(user.getUserid().equals(tokenModel.getUserId()) || user.getUserinfo().getRank().trim().equals("PR051005"))
             {
                 continue;
             }
