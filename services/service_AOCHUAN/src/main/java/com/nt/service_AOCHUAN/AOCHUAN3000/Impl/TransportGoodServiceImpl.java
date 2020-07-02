@@ -509,16 +509,16 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                     purchaseexportListBase.get(k).setSignback1("是");
                 }
             }
-            for (int l = 0; l < documentexportList.size(); l++) {
+            for (int l = 0; l < documentexportListBase.size(); l++) {
                 // 单据担当
-                if(users.containsKey(documentexportList.get(l).getBillresponsibility())){
-                    documentexportList.get(l).setBillresponsibility(users.get(documentexportList.get(l).getBillresponsibility()));
+                if(users.containsKey(documentexportListBase.get(l).getBillresponsibility())){
+                    documentexportListBase.get(l).setBillresponsibility(users.get(documentexportListBase.get(l).getBillresponsibility()));
                 }
                 // 确认到仓
-                if("0".equals(documentexportList.get(l).getWarehouse())){
-                    documentexportList.get(l).setWarehouse("否");
+                if("0".equals(documentexportListBase.get(l).getWarehouse())){
+                    documentexportListBase.get(l).setWarehouse("否");
                 }else {
-                    documentexportList.get(l).setWarehouse("是");
+                    documentexportListBase.get(l).setWarehouse("是");
                 }
             }
             salesexportList.addAll(salesexportListBase);

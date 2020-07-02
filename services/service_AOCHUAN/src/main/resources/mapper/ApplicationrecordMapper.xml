@@ -78,6 +78,7 @@
         on t.payment = d4.CODE
         and d4.PCODE = 'PY009'
       where t.transportgood_id = #{id}
+      group by t.transportgood_id, s.productid
     </select>
 
     <select id="purchaseexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo">
