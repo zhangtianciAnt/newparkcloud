@@ -2060,8 +2060,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     }
 
     @Override
-    public List<PunchcardRecord> getTodaylist(PunchcardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
-
+    public List<PunchcardRecordDetail> getTodayPunDetaillist(PunchcardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
+//获取人员信息
+        String StaffNoList = "00000";
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(punchcardrecord.getOwner()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        if (customerInfo != null) {
+            StaffNoList = customerInfo.getUserinfo().getJobnumber();
+        }
         List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
         //测试接口 GBB add
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -2072,8 +2079,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
         //正式
         String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
-        String StaffNoList = "00010";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
-        //Admin/QueryRecordByStaffNoList?userName={userName}&password={password}&pageIndex={pageIndex}&pageSize={pageSize}&startDate={startDate}&endDate={endDate}&doorIDList={doorIDList}&StaffNoList={staffNoList}&sortFieldID={sortFieldID}
         String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByStaffNoList?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + thisDate + "&endDate=" + thisDate + "&doorIDList=" + doorIDList + "&StaffNoList=" + StaffNoList;
         //請求接口
         ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
@@ -2123,7 +2128,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punDetaillist.add(punchcardrecorddetail);
             }
         }
+        punDetaillist = punDetaillist.stream().sorted(Comparator.comparing(PunchcardRecordDetail::getPunchcardrecord_date)).collect(Collectors.toList());
         if(punDetaillist.size() > 0){
+            PunchcardRecordDetail detailadd = new PunchcardRecordDetail();
+            detailadd.setJobnumber(punDetaillist.get(punDetaillist.size() -1).getJobnumber());
+            detailadd.setPunchcardrecord_date(new Date());
+            detailadd.setEventno("2");
+            punDetaillist.add(detailadd);
             //考勤设定
             AttendanceSetting attendancesetting = new AttendanceSetting();
             //上班开始时间
@@ -2147,7 +2158,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             }
 
             //卡号去重得到打卡总人数
-            List<PunchcardRecordDetail> punDetaillistCount = new ArrayList<PunchcardRecordDetail>();
+            List<PunchcardRecordDetail> punDetaillistCount = punDetaillist;
             punDetaillistCount = punDetaillist.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() ->new TreeSet<>(Comparator.comparing(t -> t.getJobnumber()))),ArrayList::new));
             int x = 0;
             for(PunchcardRecordDetail count : punDetaillistCount){
@@ -2350,42 +2361,36 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         //endregion
                     }
                 }
-                //添加打卡记录start
                 double minutess= minute.doubleValue();
                 minute = NumberUtil.round(minutess/60,2).doubleValue();
                 double minutesss= minuteam.doubleValue();
                 minuteam = NumberUtil.round(minutesss/60,2).doubleValue();
-                //获取人员信息
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userinfo.jobnumber").is(count.getJobnumber().trim()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                if (customerInfo != null) {
-//                    //打卡记录
-//                    PunchcardRecord punchcardrecord = new PunchcardRecord();
-//                    tokenModel.setUserId(customerInfo.getUserid());
-//                    tokenModel.setExpireDate(new Date());
-//                    punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
-//                    punchcardrecord.setUser_id(customerInfo.getUserid());
-//                    punchcardrecord.setJobnumber(count.getJobnumber());
-//                    punchcardrecord.setCenter_id(customerInfo.getUserinfo().getCentername());
-//                    punchcardrecord.setGroup_id(customerInfo.getUserinfo().getGroupname());
-//                    punchcardrecord.setTeam_id(customerInfo.getUserinfo().getTeamname());
-//                    //外出超过15分钟的欠勤时间
-//                    punchcardrecord.setWorktime(minute.toString());
-//                    punchcardrecord.setAbsenteeismam(minuteam.toString());
-//                    // 日志用外出时长
-//                    punchcardrecord.setOutgoinghours("0");
-//                    punchcardrecord.setTime_start(Time_start);
-//                    punchcardrecord.setTime_end(Time_end);
-//                    punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
-//                    punchcardrecord.preInsert(tokenModel);
-//                    punchcardrecordMapper.insert(punchcardrecord);
-//                }
                 //添加打卡记录end
+                PunchcardRecord PR = new PunchcardRecord();
+                PR.setAbsenteeismam(minuteam.toString());
+                PR.setWorktime(minute.toString());
+                if(Time_start == null){
+                    Time_start = Time_end;
+                }
+                if(Time_end == null){
+                    Time_end = Time_start;
+                }
+                PR.setTime_start(Time_start);
+                PR.setTime_end(Time_end);
+                String time_end_temp = sdhm.format(PR.getTime_end());
+                String time_start_temp = sdhm.format(PR.getTime_start());
+                if (Double.valueOf(sdhm.parse(sdhm.format(PR.getTime_end())).getTime()) >= Double.valueOf(sdhm.parse(closingtime_end).getTime())) {
+                    time_end_temp = closingtime_end;
+                }
+                if (Double.valueOf(sdhm.parse(sdhm.format(PR.getTime_start())).getTime()) <= Double.valueOf(sdhm.parse(workshift_start).getTime())) {
+                    time_start_temp = workshift_start;
+                }
+                String shijiworkHours = workLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR);
+                punDetaillist.get(0).setTenantid(shijiworkHours);
             }
         }
 
-        return punchcardrecordMapper.select(punchcardrecord);
+        return punDetaillist;
     }
 
     //取object的值
@@ -2395,5 +2400,34 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
+    }
+
+    public String workLength(String time_start, String time_end, String lunchbreak_start, String lunchbreak_end, PunchcardRecord PR) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+        String shijiworkHours = "0";
+        if (sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime()) {
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000) - Double.valueOf(PR.getAbsenteeismam()));
+        } else if (sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_end).getTime()) {
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000) - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam())));
+        } else if (sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_end).getTime()) {
+            long result1 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000) - Double.valueOf(PR.getAbsenteeismam()));
+        } else if (sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime()) {
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+            shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000) - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam())));
+        } else {
+            //下午上班时间
+            long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+            //上午上班时间
+            long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+
+            Double result3 = Double.valueOf(result2) / 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
+            Double result4 = Double.valueOf(result1) / 60 / 60 / 1000 - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam()));
+            shijiworkHours = String.valueOf(NumberUtil.round(result3 + result4,2).doubleValue());
+
+        }
+        return shijiworkHours;
     }
 }

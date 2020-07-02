@@ -23,5 +23,5 @@ public interface PunchcardRecordService {
 
     List<PunchcardRecordDetail> getPunDetail(PunchcardRecordDetail detail)throws Exception;
 
-    List<PunchcardRecord> getTodaylist(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception;
+    List<PunchcardRecordDetail> getTodayPunDetaillist(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception;
 }
