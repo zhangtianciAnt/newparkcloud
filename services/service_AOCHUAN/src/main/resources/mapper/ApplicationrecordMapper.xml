@@ -99,9 +99,9 @@
     ,t.MSDS as MSDS
     ,d3.VALUE1 as deliverystatus
     ,a.invoiceno as invoicenumber
-    ,d4.VALUE1 as paymentstatus
     ,t.productresponsibility as productresponsibility
-    ,date_format(a.realdate ,'%Y-%m-%d') as realdate
+    ,date_format(fp.FKTIME ,'%Y-%m-%d') as realdate
+    ,case when fp.PAYMENTSTATUS = '1' then '已付款' else '未付款' end as paymentstatus
 FROM transportgood t
        left join  saledetails s on t.transportgood_id = s.transportgood_id
 
@@ -111,6 +111,9 @@ FROM transportgood t
        LEFT JOIN products p on p.PRODUCTS_ID = a.productid
        LEFT JOIN supplierbaseinfor supplier on supplier.SUPPLIERBASEINFOR_ID = a.supplierid
        LEFT JOIN customerbaseinfor c on c.CUSTOMERBASEINFOR_ID = t.customerid
+       left join fin_purchase fp
+              on fp.TRANSPORTGOOD_ID = t.transportgood_id
+             and fp.PRODUCTEN = s.productid
        left join dictionary d1
          on s.unit = d1.CODE
                    and d1.PCODE = 'PY014'
@@ -124,6 +127,7 @@ FROM transportgood t
          on a.paymentstatus = d4.CODE
                    and d4.PCODE = 'PY011'
     where t.transportgood_id = #{id}
+    group by t.transportgood_id,s.productid,fp.PURCHASE_ID
     </select>
 
     <!--    <select id="documentexportList" resultType="com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo">-->
