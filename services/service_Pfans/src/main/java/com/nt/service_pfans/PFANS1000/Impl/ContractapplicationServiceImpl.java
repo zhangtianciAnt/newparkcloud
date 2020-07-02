@@ -152,7 +152,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     //add_fjl_添加合同回款相关  start
                     int todoNumber = 0;
                     //资金回收完成给申请人发代办
-                    if (StringUtils.isNullOrEmpty(number.getRecoverystatus()) && number.getRecoverydate() != null) {
+                    if (!StringUtils.isNullOrEmpty(number.getRecoverystatus()) && number.getRecoverydate() != null) {
                         if (number.getRecoverystatus().equals("1")) {
                             toDoNoticeList = toDoNoticeList.stream().filter(item -> item.getTitle().equals(number.getContractnumber() + number.getClaimtype() + "资金已回收")).collect(Collectors.toList());
                             if (toDoNoticeList.size() > 0) {//判断是否已经发过代办
@@ -612,7 +612,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
         if (contractnumbercountList.size() > 0) {
             //请求日  Claimdate   给请求担当发代办
-            List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> st.format(item.getClaimdate()).equals(st.format(new Date()))).collect(Collectors.toList());
+            List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> Integer.parseInt(st.format(item.getClaimdate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
             if (conList.size() > 0) {
                 for (Contractnumbercount cq : conList) {
 //                    Contractapplication contractapplication = new Contractapplication();
@@ -639,7 +639,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
             //纳品预订日  Deliverydate  给纳品担当发代办
-            List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> st.format(item.getDeliverydate()).equals(st.format(new Date()))).collect(Collectors.toList());
+            List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> Integer.parseInt(st.format(item.getDeliverydate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
             if (conList1.size() > 0) {
                 for (Contractnumbercount cN : conList1) {
 //                    Contractapplication contractapplication = new Contractapplication();
@@ -798,7 +798,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contractnumbercountMapper.insert(number);
                     //add_fjl_添加合同回款相关  start
                     if (contractapplication.getContractapplication().get(0).getType().equals("1")) {
-                        if (number.getClaimdate() != null && stt.format(number.getClaimdate()).equals(stt.format(new Date()))) {
+                        if (number.getClaimdate() != null && Integer.parseInt(stt.format(number.getClaimdate())) <= Integer.parseInt(stt.format(new Date()))) {
                             //请求担当
                             List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
                             if (rolelist.size() > 0) {
@@ -818,7 +818,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 }
                             }
                         }
-                        if (number.getDeliverydate() != null && stt.format(number.getDeliverydate()).equals(stt.format(new Date()))) {
+                        if (number.getDeliverydate() != null && Integer.parseInt(stt.format(number.getDeliverydate())) <= Integer.parseInt(stt.format(new Date()))) {
                             //纳品担当
                             List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
                             if (rolelist.size() > 0) {
