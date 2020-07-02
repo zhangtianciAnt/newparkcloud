@@ -615,9 +615,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> st.format(item.getClaimdate()).equals(st.format(new Date()))).collect(Collectors.toList());
             if (conList.size() > 0) {
                 for (Contractnumbercount cq : conList) {
-                    Contractapplication contractapplication = new Contractapplication();
-                    contractapplication.setContractnumber(cq.getContractnumber());
-                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
+//                    Contractapplication contractapplication = new Contractapplication();
+//                    contractapplication.setContractnumber(cq.getContractnumber());
+//                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
                     //请求担当
                     List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
                     if (rolelist.size() > 0) {
@@ -628,7 +628,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             toDoNotice.setTitle("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
                             toDoNotice.setInitiator(cq.getCreateby());
                             toDoNotice.setContent("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
-                            toDoNotice.setDataid(clist.get(0).getContractapplication_id());
+                            toDoNotice.setDataid(cq.getContractnumber());
                             toDoNotice.setUrl("/PFANS1026FormView");
                             toDoNotice.setWorkflowurl("/PFANS1026View");
                             toDoNotice.preInsert(tokenModel);
@@ -642,9 +642,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> st.format(item.getDeliverydate()).equals(st.format(new Date()))).collect(Collectors.toList());
             if (conList1.size() > 0) {
                 for (Contractnumbercount cN : conList1) {
-                    Contractapplication contractapplication = new Contractapplication();
-                    contractapplication.setContractnumber(cN.getContractnumber());
-                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
+//                    Contractapplication contractapplication = new Contractapplication();
+//                    contractapplication.setContractnumber(cN.getContractnumber());
+//                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
                     //纳品担当
                     List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
                     if (rolelist.size() > 0) {
@@ -655,7 +655,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             toDoNotice.setTitle("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
                             toDoNotice.setInitiator(cN.getCreateby());
                             toDoNotice.setContent("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
-                            toDoNotice.setDataid(clist.get(0).getContractapplication_id());
+                            toDoNotice.setDataid(cN.getContractnumber());
                             toDoNotice.setUrl("/PFANS1026FormView");
                             toDoNotice.setWorkflowurl("/PFANS1026View");
                             toDoNotice.preInsert(tokenModel);
@@ -809,7 +809,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                     toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
                                     toDoNotice.setInitiator(number.getCreateby());
                                     toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "请求书待处理");
-                                    toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                    toDoNotice.setDataid(number.getContractnumber());
                                     toDoNotice.setUrl("/PFANS1026FormView");
                                     toDoNotice.setWorkflowurl("/PFANS1026View");
                                     toDoNotice.preInsert(tokenModel);
@@ -829,7 +829,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                     toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
                                     toDoNotice.setInitiator(number.getCreateby());
                                     toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                    toDoNotice.setDataid(cnList.get(0).getContractapplication_id());
+                                    toDoNotice.setDataid(number.getContractnumber());
                                     toDoNotice.setUrl("/PFANS1026FormView");
                                     toDoNotice.setWorkflowurl("/PFANS1026View");
                                     toDoNotice.preInsert(tokenModel);
