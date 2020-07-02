@@ -607,7 +607,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Scheduled(cron = "0 10 0 1 * ?")
     public void updUseraccountStatus() throws Exception {
         TokenModel tokenModel = new TokenModel();
-        SimpleDateFormat st = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat st = new SimpleDateFormat("yyyyMM");
         Contractnumbercount contractnumbercount = new Contractnumbercount();
         List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
         if (contractnumbercountList.size() > 0) {
@@ -782,7 +782,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         //契约番号回数
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
-            SimpleDateFormat stt = new SimpleDateFormat("yyyy-MM");
+            SimpleDateFormat stt = new SimpleDateFormat("yyyyMM");
             int rowindex = 0;
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
