@@ -131,4 +131,7 @@ public class AnnualLeave extends BaseModel {
     //申请中
     private BigDecimal annual_leave_shenqingzhong;
 
+    //年休剩余(离职)
+    private String annual_avg_remaining;
+
 }

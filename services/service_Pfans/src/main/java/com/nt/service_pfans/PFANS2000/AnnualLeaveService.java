@@ -6,6 +6,7 @@ import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS2000.Punchcard;
 import com.nt.utils.dao.TokenModel;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -44,4 +45,6 @@ public interface AnnualLeaveService {
     void insertannualLeave(CustomerInfo customer) throws Exception;
 
      void insertNewAnnualRest(UserVo userVo,String id) throws Exception;
+    //离职剩余年休
+    public String remainingAnnual(String userid,String year) throws Exception;
 }

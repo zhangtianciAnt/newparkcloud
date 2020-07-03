@@ -39,7 +39,9 @@ import com.nt.utils.services.TokenService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.Comparator;
@@ -96,8 +98,59 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
-    public List<AnnualLeave> getDataList(TokenModel tokenModel) {
-        return annualLeaveMapper.getDataList(tokenModel.getOwnerList());
+    public List<AnnualLeave> getDataList(TokenModel tokenModel) throws Exception {
+        //ccm 202000702 from
+        Calendar calendar = Calendar.getInstance();
+        //当前年度
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        List<AnnualLeave> tempannualLeaveList = new ArrayList<AnnualLeave>();
+        List<AnnualLeave> annualLeaveList = annualLeaveMapper.getDataList(tokenModel.getOwnerList());
+        for(AnnualLeave annualLeave:annualLeaveList)
+        {
+            List<CustomerInfo> customerinfo = mongoTemplate.find(new Query(Criteria.where("userid").is(annualLeave.getUser_id())), CustomerInfo.class);
+            if(customerinfo.size()>0)
+            {
+                //生成年休时，去除已离职人员
+                if(customerinfo.get(0).getUserinfo() .getResignation_date() != null && !customerinfo.get(0).getUserinfo() .getResignation_date().isEmpty())
+                {
+                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+                    String resignationdate = customerinfo.get(0).getUserinfo().getResignation_date().substring(0, 10);
+                    Calendar rightNow = Calendar.getInstance();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(new Date());
+                    if(customerinfo.get(0).getUserinfo().getResignation_date().length() >= 24)
+                    {
+                        rightNow.setTime(Convert.toDate(resignationdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                        resignationdate = s.format(rightNow.getTime());
+                    }
+                    //离职日期 < 当前日期
+                    if(s.parse(resignationdate).getTime() < s.parse(s.format(cal.getTime())).getTime())
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        BigDecimal b = new BigDecimal(remainingAnnual(annualLeave.getUser_id(),String.valueOf(year)));
+                        annualLeave.setAnnual_avg_remaining(b.toString());
+                        tempannualLeaveList.add(annualLeave);
+                    }
+                }
+                else
+                {
+                    annualLeave.setAnnual_avg_remaining("-");
+                    tempannualLeaveList.add(annualLeave);
+                }
+            }
+        }
+        //ccm 202000702 to
+        return tempannualLeaveList;
     }
     @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行
     public void creatAnnualLeaveAn() throws Exception {
@@ -111,7 +164,29 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         if (customerinfo != null) {
             for (CustomerInfo customer : customerinfo) {
                 //if(customer.getUserid().equals("5e78b2264e3b194874180f37")){
-                    insertannualLeave(customer);
+                //ccm 202000702 from
+                //生成年休时，去除已离职人员
+                if(customer.getUserinfo() .getResignation_date() != null && !customer.getUserinfo() .getResignation_date().isEmpty())
+                {
+                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+                    String resignationdate = customer.getUserinfo().getResignation_date().substring(0, 10);
+                    Calendar rightNow = Calendar.getInstance();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    if(customer.getUserinfo().getResignation_date().length() >= 24)
+                    {
+                        rightNow.setTime(Convert.toDate(resignationdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                        resignationdate = s.format(rightNow.getTime());
+                    }
+                    //离职日期 < 当前日期
+                    if(s.parse(resignationdate).getTime() < s.parse(s.format(calendar.getTime())).getTime())
+                    {
+                        continue;
+                    }
+                }
+                //ccm 202000702 to
+                insertannualLeave(customer);
                 //}
             }
         }
@@ -2964,5 +3039,143 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             overtimeHours = String.valueOf(result3);
         }
         return overtimeHours;
+    }
+
+    //离职剩余年休
+    @Override
+    public String remainingAnnual(String userid,String year) throws Exception {
+        //离职剩余年休计算公式
+        // 当前年度总年休数 / 当前年度全部工作天数 * 当前年度截止到当前日期的工作天数 - 当前年度已经审批通过的年休
+        String ra = "0";
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        //当前年度全部工作天数
+        String workDayYear ="0";
+        String startDate = year + "-04-01";
+        String endDate = String.valueOf(Integer.valueOf(year)+1) + "-04-01";
+        workDayYear = workDayYears(startDate,endDate,year);
+
+        //当前年度截止到当前日期已经工作天数
+        String workDayYearT ="0";
+        startDate = String.valueOf(year) + "-04-01";
+        Calendar end = Calendar.getInstance();
+        end.setTime(new Date());
+        endDate = sfymd.format(end.getTime());
+        workDayYearT = workDayYears(startDate,endDate,year);
+
+        //当前年度已经审批通过的年休
+        Double finishAnnuel = 0d;
+        finishAnnuel = abNormalMapper.selectfinishAnnuel(userid,year);
+        if(finishAnnuel==null)
+        {
+            finishAnnuel = 0d;
+        }
+
+        //当前年度的总年休数
+        List<AnnualLeave> annualLeaveList = new ArrayList<AnnualLeave>();
+        AnnualLeave annualLeave = new AnnualLeave();
+        annualLeave.setUser_id(userid);
+        annualLeave.setYears(year);
+        annualLeave.setStatus("0");
+        annualLeaveList = annualLeaveMapper.select(annualLeave);
+        if(annualLeaveList.size() > 0)
+        {
+             // 平均每天的年休数
+                Double avgannual = 0d;
+                avgannual = annualLeaveList.get(0).getAnnual_leave_thisyear().doubleValue() / Double.valueOf(workDayYear) * Double.valueOf(workDayYearT);
+                if(avgannual==null)
+                {
+                    avgannual = 0d;
+                }
+                ra = String.valueOf(avgannual - finishAnnuel);
+                DecimalFormat df = new DecimalFormat("######0.0");
+                ra = df.format(df.parse(ra));
+        }
+        if(Double.valueOf(ra) < 0)
+        {
+            ra = "0";
+        }
+        return ra;
+    }
+    //当前年度工作天数
+    public String workDayYears(String startDate,String endDate,String year) throws Exception {
+        String workDayYear = "0";
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        //工作日表
+        WorkingDay workDay = new WorkingDay();
+        workDay.setYears(year);
+        workDay.setStatus("0");
+        List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
+
+        List<WorkingDay> workingDaysListqu = new ArrayList<WorkingDay>();
+        workingDaysListqu = workingDaysList.stream().filter(p->(!p.getType().equals("4"))).collect(Collectors.toList());
+
+        // 全年度的所有日期集合
+        List<String> days = new ArrayList<String>();
+        List<String> tempdays = new ArrayList<String>();
+        Calendar tempStart = Calendar.getInstance();
+        tempStart.setTime(sfymd.parse(startDate));
+        Calendar tempEnd = Calendar.getInstance();
+        tempEnd.setTime(sfymd.parse(endDate));
+
+        while (tempStart.before(tempEnd)) {
+            days.add(sfymd.format(tempStart.getTime()));
+            tempStart.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        for(WorkingDay workingDay : workingDaysListqu)
+        {
+            //从全年的日期中删除假期
+            days.remove(sfymd.format(workingDay.getWorkingdate()));
+        }
+
+        //删除周六周日
+        List<WorkingDay> workingDaysListbao = new ArrayList<WorkingDay>();
+        workingDaysListbao = workingDaysList.stream().filter(p->(p.getType().equals("4"))).collect(Collectors.toList());
+
+        for(String d : days)
+        {
+            Calendar saturorsunday = Calendar.getInstance();
+            saturorsunday.setTime(sfymd.parse(d));
+            List<WorkingDay> wList = new ArrayList<WorkingDay>();
+            wList = workingDaysListbao.stream().filter(p->(sfymd.format(p.getWorkingdate()).equals(d))).collect(Collectors.toList());
+
+            if (wList.size() == 0 && (saturorsunday.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || saturorsunday.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY))
+            {
+                tempdays.add(d);
+            }
+        }
+
+        days.removeAll(tempdays);
+
+        //3.8   5.4  的判断
+        boolean w = false;
+        boolean y = false;
+        String womenday = String.valueOf(Integer.valueOf(year)+1) + "-03-08";
+        //当前剩余日期中包含3月8日，出勤振替日中不包含3月8日
+        if(days.contains(womenday) && !workingDaysListbao.contains(womenday))
+        {
+            w = true;
+        }
+        String youngday = year + "-05-04";
+        //当前剩余日期中包含5月4日，出勤振替日中不包含5月4日
+        if(days.contains(youngday) && !workingDaysListbao.contains(youngday))
+        {
+            y = true;
+        }
+
+        //最终返回天数
+        if(w && y)
+        {
+            workDayYear = String.valueOf(days.size() - 1);
+        }
+        else if(w || y)
+        {
+            workDayYear = String.valueOf(days.size() - 0.5);
+        }
+        else
+        {
+            workDayYear = String.valueOf(days.size());
+        }
+        return workDayYear;
     }
 }
