@@ -87,19 +87,12 @@
 						 then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
 						 else 0
 						 END
-			else
-				case when (date_format(a.OCCURRENCE_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
-																	AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
-						  and
-						  (date_format(a.FINISHED_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
-																	AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
-				then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
-				else 0
-				END
+			else 0
+
 			END
 ) /8 as annualleaveshengyu
 from abnormal a
-where a.STATUS in('4','5','6','7')
+where a.STATUS ='7'
 and a.ERROR_TYPE ='PR013005'
 and a.user_id = #{userid}
     </select>
