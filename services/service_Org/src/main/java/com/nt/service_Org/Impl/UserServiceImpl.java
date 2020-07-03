@@ -237,6 +237,8 @@ public class UserServiceImpl implements UserService {
             } else {
                 throw new LogicalException("邮箱已存在！");
             }
+        }else{
+            flg1 = 1;
         }
 //add-ws-4/28-人员重复check
         Query queryname = new Query();

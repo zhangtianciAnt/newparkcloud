@@ -463,10 +463,13 @@ public class Pfans1013Controller {
         accommodationlist = accommodationlist.stream().filter(item -> (!item.getRmb().equals("0.00")) ).collect(Collectors.toList());
         otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
         String ccc = "外币兑换";
+        List<Dictionary> dictionaryL = dictionaryService.getForSelect("PJ119");
+        String checkvalue = dictionaryL.get(4).getValue1();
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
         data.put("wfList3", wfList3);
         data.put("wfList4", wfList4);
+        data.put("checkvalue", checkvalue);
         data.put("rmbadd", rmbadd);
         data.put("rmbadd", rmbadd);
         data.put("trd", trd);

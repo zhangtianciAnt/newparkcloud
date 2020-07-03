@@ -466,11 +466,13 @@ public class Pfans1012Controller {
 
         List<Dictionary> curListsum = dictionaryService.getForSelect("PG019");
         for (Dictionary ite : curListsum) {
-            if (pubvo.getOtherdetails().get(0).getCurrency() != null && pubvo.getOtherdetails().get(0).getCurrency() != "") {
-                if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
-                    currenct = ite.getValue3();
-                    int mountsum = sum + sum1;
-                    currenctsum = currenct + String.valueOf(mountsum);
+            if(pubvo.getOtherdetails().size()>0){
+                if (pubvo.getOtherdetails().get(0).getCurrency() != null && pubvo.getOtherdetails().get(0).getCurrency() != "") {
+                    if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
+                        currenct = ite.getValue3();
+                        int mountsum = sum + sum1;
+                        currenctsum = currenct + String.valueOf(mountsum);
+                    }
                 }
             }
         }
