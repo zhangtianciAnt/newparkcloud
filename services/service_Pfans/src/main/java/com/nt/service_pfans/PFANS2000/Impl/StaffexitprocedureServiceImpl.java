@@ -161,10 +161,10 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         if (staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             updateRetireDate(staffexitprocedureVo);
-            String Userid = "";
-            if (wfList.size() > 0) {
-                Userid = wfList.get(0).getUserId();
-            }
+            String Userid = staffexitprocedureVo.getStaffexitprocedure().getUser_id();
+//            if (wfList.size() > 0) {
+//                Userid = wfList.get(0).getUserId();
+//            }
             String username = "";
             String center = "";
             String group = "";
@@ -178,7 +178,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
             }
             //薪资担当代办
             ToDoNotice toDoNotice3 = new ToDoNotice();
-            toDoNotice3.setTitle("【" + username + "将于" + date + "日离职，请悉知");
+            toDoNotice3.setTitle("【" + username + "将于" + date + "日离职，请悉知】");
             toDoNotice3.setInitiator(Userid);
             toDoNotice3.setContent("您的离职申请已审批通过！");
             toDoNotice3.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
@@ -271,10 +271,10 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         if (staffexitprocedureVo.getStaffexitproce().getStatus().equals("4")) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String Userid = "";
-            if (wfList.size() > 0) {
-                Userid = wfList.get(0).getUserId();
-            }
+            String Userid = staffexitprocedureVo.getStaffexitproce().getUser_id();
+//            if (wfList.size() > 0) {
+//                Userid = wfList.get(0).getUserId();
+//            }
             String username = "";
             String center = "";
             String group = "";
@@ -286,7 +286,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 username = customerInfo2.getUserinfo().getCustomername();
             }
             ToDoNotice toDoNotice3 = new ToDoNotice();
-            toDoNotice3.setTitle("【"  + username + "离职确认流程结束");
+            toDoNotice3.setTitle("【"  + username + "离职确认流程结束】");
             toDoNotice3.setInitiator(Userid);
             toDoNotice3.setContent("您的离职申请已审批通过！");
             toDoNotice3.setDataid(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());

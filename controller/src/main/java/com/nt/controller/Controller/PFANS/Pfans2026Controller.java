@@ -59,7 +59,7 @@ public class Pfans2026Controller {
         }
 
         data.put("sta", StaList.getStaffexitprocedure());
-        ExcelOutPutUtil.OutPutPdf("离职者报告", "lizhibaogao.xls", data, response);
+        ExcelOutPutUtil.OutPutPdf("劳动者离职者报告", "lizhibaogao.xls", data, response);
     }
     /*
      * 列表查看
