@@ -3057,8 +3057,38 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //当前年度截止到当前日期已经工作天数
         String workDayYearT ="0";
         startDate = String.valueOf(year) + "-04-01";
+
         Calendar end = Calendar.getInstance();
-        end.setTime(new Date());
+        List<CustomerInfo> customerinfo = mongoTemplate.find(new Query(Criteria.where("userid").is(userid)), CustomerInfo.class);
+        if(customerinfo.size()>0) {
+            SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+            if(customerinfo.get(0).getUserinfo() .getResignation_date() != null && !customerinfo.get(0).getUserinfo() .getResignation_date().isEmpty())
+            {
+                String resignationdate = customerinfo.get(0).getUserinfo().getResignation_date().substring(0, 10);
+                Calendar rightNow = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                if(customerinfo.get(0).getUserinfo().getResignation_date().length() >= 24)
+                {
+                    rightNow.setTime(Convert.toDate(resignationdate));
+                    rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                    resignationdate = s.format(rightNow.getTime());
+                }
+                //离职日期 >= 年度截止日
+                if(s.parse(resignationdate).getTime() >= s.parse(endDate).getTime())
+                {
+                    end.setTime(s.parse(endDate));
+                }
+                else
+                {
+                    end.setTime(s.parse(resignationdate));
+                }
+            }
+            else
+            {
+                end.setTime(s.parse(endDate));
+            }
+        }
         endDate = sfymd.format(end.getTime());
         workDayYearT = workDayYears(startDate,endDate,year);
 
