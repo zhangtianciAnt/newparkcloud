@@ -125,8 +125,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
+        StringBuffer strBuffer = new StringBuffer();
+        List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
+                for(Contractnumbercount contractRemarks : numberList){
+                    if(contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()){
+                        strBuffer.append(contractRemarks.getQingremarksqh());
+                        strBuffer.append(",");
+                    }
+                }
+                strBuffer.deleteCharAt(strBuffer.length() - 1);
+                citation.setQingremarks(String.valueOf(strBuffer));
                 if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
@@ -138,7 +148,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             }
         }
         //契约番号回数
-        List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
+
         if (cnList != null) {
             int rowindex = 0;
             ToDoNotice toDoNotice = new ToDoNotice();
@@ -725,12 +735,30 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         String newcontractnumber = "";
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
+        StringBuffer strBuffer = new StringBuffer();
+        List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
                 if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
+                    for(Contractnumbercount contractRemarks : numberList){
+                        if(contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()){
+                            strBuffer.append(contractRemarks.getQingremarksqh());
+                            strBuffer.append(",");
+                        }
+                    }
+                    strBuffer.deleteCharAt(strBuffer.length() - 1);
+                    citation.setQingremarks(String.valueOf(strBuffer));
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
                 } else {
+                    for(Contractnumbercount contractRemarks : numberList){
+                        if(contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()){
+                            strBuffer.append(contractRemarks.getQingremarksqh());
+                            strBuffer.append(",");
+                        }
+                    }
+                    strBuffer.deleteCharAt(strBuffer.length() - 1);
+                    citation.setQingremarks(String.valueOf(strBuffer));
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
                     String contractnumber = citation.getContractnumber();
@@ -823,7 +851,6 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         result.put("contractapplication", cnList);
 
         //契约番号回数
-        List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             SimpleDateFormat stt = new SimpleDateFormat("yyyyMM");
             int rowindex = 0;
