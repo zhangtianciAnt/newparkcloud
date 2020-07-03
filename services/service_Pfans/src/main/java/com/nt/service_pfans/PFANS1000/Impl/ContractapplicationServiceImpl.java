@@ -201,16 +201,26 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public String insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception {
+    public  Map<String, Object> insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception {
 //        String contractnumber = contractapplication.getContractnumber();
 //        String rowindex = contractapplication.getRowindex();
         Contractapplication co = new Contractapplication();
+        Map<String, Object> resultMap = new HashMap<>();
         co.setContractnumber(contractnumber);
         List<Contractapplication> coList = contractapplicationMapper.select(co);
         //根据契约书番号，查找纳品回数
         Contractnumbercount contractnumbercount = new Contractnumbercount();
         contractnumbercount.setContractnumber(contractnumber);
         List<Contractnumbercount> countList = contractnumbercountMapper.select(contractnumbercount);
+        //add-ws-7/1-禅道152任务
+        String quolist = "";
+        String nonlist = "";
+        String conlist = "";
+        String awardlist1 = "";
+        String awardlist2 = "";
+        String naplist = "";
+        String petilist = "";
+        //add-ws-7/1-禅道152任务
         if (coList != null) {
             for (Contractapplication contractapp : coList) {
                 //見積書作成
@@ -225,6 +235,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     Quotation quotation = new Quotation();
                     quotation.preInsert(tokenModel);
                     quotation.setQuotationid(UUID.randomUUID().toString());
+                    //add-ws-7/1-禅道152任务
+                    quolist = quotation.getQuotationid();
+                    //add-ws-7/1-禅道152任务
                     quotation.setContractnumber(contractnumber);
                     //6
                     quotation.setContracttype(contractapp.getContracttype());
@@ -259,6 +272,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     NonJudgment nonJudgment = new NonJudgment();
                     nonJudgment.preInsert(tokenModel);
                     nonJudgment.setNonjudgment_id(UUID.randomUUID().toString());
+                    //add-ws-7/1-禅道152任务
+                    nonlist = nonJudgment.getNonjudgment_id();
+                    //add-ws-7/1-禅道152任务
                     nonJudgment.setContractnumber(contractnumber);
 
                     //8
@@ -291,7 +307,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     contract.preInsert(tokenModel);
                     contract.setContract_id(UUID.randomUUID().toString());
                     contract.setContractnumber(contractnumber);
-
+                    //add-ws-7/1-禅道152任务
+                    conlist = contract.getContract_id();
+                    //add-ws-7/1-禅道152任务
                     //4
                     contract.setContracttype(contractapp.getContracttype());
                     contract.setDepositjapanese(contractapp.getCustojapanese());
@@ -338,7 +356,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             }
                             io.preUpdate(tokenModel);
                             io.setContractnumber(contractnumber);
-
+                            //add-ws-7/1-禅道152任务
+                            awardlist1 = io.getAward_id();
+                            //add-ws-7/1-禅道152任务
                             //13
                             io.setContracttype(contractapp.getContracttype());
                             io.setCustojapanese(contractapp.getCustojapanese());
@@ -363,7 +383,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.preInsert(tokenModel);
                         award.setAward_id(UUID.randomUUID().toString());
                         award.setContractnumber(contractnumber);
-
+                        //add-ws-7/1-禅道152任务
+                        awardlist1 = award.getAward_id();
+                        //add-ws-7/1-禅道152任务
                         //13
                         award.setContracttype(contractapp.getContracttype());
                         award.setCustojapanese(contractapp.getCustojapanese());
@@ -413,6 +435,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 Napalm napalm = new Napalm();
                                 napalm.preInsert(tokenModel);
                                 napalm.setNapalm_id(UUID.randomUUID().toString());
+                                //add-ws-7/1-禅道152任务
+                                naplist = napalm.getNapalm_id();
+                                //add-ws-7/1-禅道152任务
                                 napalm.setContractnumber(contractnumber);
                                 //7
                                 napalm.setDepositjapanese(contractapp.getCustojapanese());
@@ -489,6 +514,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 Petition petition = new Petition();
                                 petition.preInsert(tokenModel);
                                 petition.setPetition_id(UUID.randomUUID().toString());
+                                //add-ws-7/1-禅道152任务
+                                petilist = petition.getPetition_id();
+                                //add-ws-7/1-禅道152任务
                                 petition.setContractnumber(contractnumber);
 
                                 //12
@@ -553,6 +581,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             io.preUpdate(tokenModel);
                             io.setContractnumber(contractnumber);
                             //13
+                            //add-ws-7/1-禅道152任务
+                            awardlist2 = io.getAward_id();
+                            //add-ws-7/1-禅道152任
                             io.setContracttype(contractapp.getContracttype());
                             io.setCustojapanese(contractapp.getCustojapanese());
                             io.setCustochinese(contractapp.getCustochinese());
@@ -574,6 +605,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     } else {
                         award.preInsert(tokenModel);
                         award.setAward_id(UUID.randomUUID().toString());
+                        //add-ws-7/1-禅道152任务
+                        awardlist2 = award.getAward_id();
+                        //add-ws-7/1-禅道152任
                         award.setContractnumber(contractnumber);
                         //13
                         award.setContracttype(contractapp.getContracttype());
@@ -600,7 +634,16 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
         }
-        return "1";
+        //add-ws-7/1-禅道152任务
+        resultMap.put("quolist", quolist);
+        resultMap.put("nonlist", nonlist);
+        resultMap.put("conlist", conlist);
+        resultMap.put("awardlist1", awardlist1);
+        resultMap.put("awardlist2", awardlist2);
+        resultMap.put("naplist", naplist);
+        resultMap.put("petilist", petilist);
+        //add-ws-7/1-禅道152任务
+        return resultMap;
     }
 
     //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款  fjl add start

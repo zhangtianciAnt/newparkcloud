@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/contractapplication")
@@ -79,8 +81,10 @@ public class Pfans1026Controller {
     @RequestMapping(value = "/insertBook", method = {RequestMethod.GET})
     public ApiResult insertBook(String contractnumber, String rowindex, String countNumber, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        contractapplicationService.insertBook(contractnumber, rowindex, countNumber, tokenModel);
-        return ApiResult.success();
+        //upd-ws-7/1-禅道152任务
+        Map<String, Object> list = contractapplicationService.insertBook(contractnumber, rowindex, countNumber, tokenModel);
+        return ApiResult.success(list);
+        //upd-ws-7/1-禅道152任务
     }
 
     @RequestMapping(value = "/existCheck",method={RequestMethod.GET})
