@@ -931,6 +931,15 @@ public class AbNormalServiceImpl implements AbNormalService {
         Map<String, String> rst = new HashMap<String, String>();
         double lengths = 1;
         double relengths = 1;
+        Calendar calendar = Calendar.getInstance();
+        //当前年度
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
 
         if ("4".equals(abNormal.getLengthtime())) {
             lengths = 0.5;
@@ -1055,26 +1064,33 @@ public class AbNormalServiceImpl implements AbNormalService {
                 double shengyu = 0;
                 String annual_avg_remaing = null;
                 if (listannualLeave.size() > 0) {
-                    shengyu = listannualLeave.get(0).getRemaining_annual_leave_thisyear().doubleValue();
-                    annual_avg_remaing = listannualLeave.get(0).getAnnual_avg_remaining();
                     AbNormal ab = new AbNormal();
-                    ab.setUser_id(abNormal.getUser_id());
-                    ab.setErrortype("PR013005");
-                    List<AbNormal> list = abNormalMapper.select(ab);
+                    ab.setAbnormalid(abNormal.getAbnormalid());
+                    List<AbNormal> abnormalone = abNormalMapper.select(ab);
+                    if(abnormalone.size()>0)
+                    {
+                        shengyu = listannualLeave.get(0).getRemaining_annual_leave_thisyear().doubleValue() + Double.valueOf(abnormalone.get(0).getLengthtime())/8;
+                        annual_avg_remaing = listannualLeave.get(0).getAnnual_avg_remaining() + Double.valueOf(abnormalone.get(0).getLengthtime())/8;
+                    }
+                    else
+                    {
+                        shengyu = listannualLeave.get(0).getRemaining_annual_leave_thisyear().doubleValue();
+                        annual_avg_remaing = listannualLeave.get(0).getAnnual_avg_remaining();
+                    }
+
+                    List<AbNormal> list = abNormalMapper.selectfinishAnnuel1(abNormal.getUser_id(),String.valueOf(year));
                     if (list.size() > 0) {
                         double shenqing = 0;
                         for (AbNormal a : list) {
                             if (a.getStatus().equals("2") || a.getStatus().equals("3")) {
                                 shenqing = shenqing + Double.valueOf(a.getLengthtime());
                             } else if (a.getStatus().equals("5") || a.getStatus().equals("6")) {
-                                shenqing = shenqing + Double.valueOf(a.getLengthtime());
-                            } else if (a.getStatus().equals("4") && !a.getAbnormalid().equals(abNormal.getAbnormalid())) {
-                                shenqing = shenqing + Double.valueOf(a.getLengthtime());
+                                shenqing = shenqing + Double.valueOf(a.getRelengthtime());
                             }
                         }
                         shenqing = shenqing / 8;
 
-                        if(annual_avg_remaing!=null && !annual_avg_remaing.isEmpty() && !annual_avg_remaing.equals("-"))
+                        if(annual_avg_remaing!=null && !annual_avg_remaing.isEmpty() && !annual_avg_remaing.contains("-"))
                         {
                             if (Double.valueOf(annual_avg_remaing) - shenqing >= lengths) {
                                 String Timecheck = String.valueOf(Double.valueOf(annual_avg_remaing) - shenqing);
