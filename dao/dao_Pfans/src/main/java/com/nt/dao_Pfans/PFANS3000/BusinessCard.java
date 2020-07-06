@@ -154,10 +154,16 @@ public class BusinessCard extends BaseModel {
     private String acceptstatus;
 
     /**
-     * 完成日期
+     * 受理日期
      */
     @Column(name = "FINDATE")
     private Date findate;
+
+    /**
+     * 完成日期
+     */
+    @Column(name = "FINSHTIME")
+    private Date finshtime;
 
     /**
      * 拒绝理由
