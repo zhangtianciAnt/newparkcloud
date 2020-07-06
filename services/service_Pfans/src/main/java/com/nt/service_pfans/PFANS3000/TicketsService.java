@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS3000;
 
 import com.nt.dao_Pfans.PFANS3000.Tickets;
+import com.nt.dao_Pfans.PFANS3000.Ticketsdetails;
 import com.nt.dao_Pfans.PFANS3000.Vo.TicketsVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -11,6 +12,8 @@ public interface TicketsService {
     void insert(Tickets tickets, TokenModel tokenModel) throws Exception;
 
     List<Tickets> list(Tickets tickets) throws Exception;
+
+    List<Ticketsdetails> geticketsdetail(Ticketsdetails ticketsdetails) throws Exception;
 
     void update(Tickets tickets, TokenModel tokenModel) throws Exception;
 
