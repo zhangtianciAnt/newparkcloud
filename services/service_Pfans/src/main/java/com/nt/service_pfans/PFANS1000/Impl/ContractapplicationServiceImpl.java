@@ -135,7 +135,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         strBuffer.append(",");
                     }
                 }
-                strBuffer.deleteCharAt(strBuffer.length() - 1);
+                if(strBuffer.length() != 0){
+                    strBuffer.deleteCharAt(strBuffer.length() - 1);
+                }
                 citation.setQingremarks(String.valueOf(strBuffer));
                 if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
@@ -747,7 +749,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             strBuffer.append(",");
                         }
                     }
-                    strBuffer.deleteCharAt(strBuffer.length() - 1);
+                    if(strBuffer.length() != 0){
+                        strBuffer.deleteCharAt(strBuffer.length() - 1);
+                    }
                     citation.setQingremarks(String.valueOf(strBuffer));
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
                 } else {
@@ -757,7 +761,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             strBuffer.append(",");
                         }
                     }
-                    strBuffer.deleteCharAt(strBuffer.length() - 1);
+                    if(strBuffer.length() != 0){
+                        strBuffer.deleteCharAt(strBuffer.length() - 1);
+                    }
                     citation.setQingremarks(String.valueOf(strBuffer));
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());

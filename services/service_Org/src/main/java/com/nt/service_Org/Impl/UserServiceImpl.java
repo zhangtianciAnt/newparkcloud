@@ -291,7 +291,9 @@ public class UserServiceImpl implements UserService {
                 //去除Invalid date的数据
                 if (cupList != null && cupList.size() > 0) {
                     cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
-                    cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                    if (cupList != null && cupList.size() > 0) {
+                        cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                    }
                     userInfo.setGridData(cupList);
                     if (userInfo.getGridData().size() > 0) {
                         userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
@@ -745,7 +747,14 @@ public class UserServiceImpl implements UserService {
 //            customerInfos = customerInfos.stream().filter(item -> item.getUserinfo().getResignation_date() != null).collect(Collectors.toList());
             for (CustomerInfo c : customerInfos) {
                 if (!StringUtils.isNullOrEmpty(c.getUserinfo().getResignation_date())) {
-                    String regndate = st.format(st.parse(c.getUserinfo().getResignation_date()));
+                    Date temp = st.parse(c.getUserinfo().getResignation_date());
+                    Calendar cld = Calendar.getInstance();
+                    cld.setTime(temp);
+                    cld.add(Calendar.DATE, 1);
+                    temp = cld.getTime();
+                    //获得下一天日期字符串
+                    String regndate = st.format(temp);
+//                    String regndate = st.format(st.parse(c.getUserinfo().getResignation_date()));
                     int ret = Integer.parseInt(regndate.replace("-", ""));
                     if (re > ret) {
                         query = new Query();

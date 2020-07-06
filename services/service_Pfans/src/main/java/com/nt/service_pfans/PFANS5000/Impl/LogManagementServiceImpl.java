@@ -107,8 +107,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<LogManagement> getLogDataList(LogManagement logmanagement,String startDate,String endDate) throws Exception {
-        return logmanagementmapper.selectByDate(logmanagement.getOwners(),startDate,endDate);
+    public List<LogManagement> getLogDataList(LogManagement logmanagement, String startDate, String endDate) throws Exception {
+        return logmanagementmapper.selectByDate(logmanagement.getOwners(), startDate, endDate);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             Result = logmanagementmapper.getunProjectList(strDate, tokenModel.getOwnerList());
         }
         //add-ws-5/25-No.48
-        for(LogmanagementConfirmVo listvo: Result){
+        for (LogmanagementConfirmVo listvo : Result) {
             String str_format = "";
             DecimalFormat df = new DecimalFormat("#.00");
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(listvo.getUnconfirm())) {
@@ -184,6 +184,10 @@ public class LogManagementServiceImpl implements LogManagementService {
                 .filter(item -> (item.getCOMPANYPROJECTS_ID().equals(project_id)))
                 .collect(Collectors.toList());
         //add-ws-No.179
+
+        Result = Result.stream().sorted(Comparator.comparing(LogmanagementVo2::getClaimdatetime).reversed()).collect(Collectors.toList());
+
+
         return Result;
     }
 
