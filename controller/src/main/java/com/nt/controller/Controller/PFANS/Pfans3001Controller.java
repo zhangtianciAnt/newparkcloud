@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS3000.Tickets;
+import com.nt.dao_Pfans.PFANS3000.Ticketsdetails;
 import com.nt.dao_Pfans.PFANS3000.Vo.TicketsVo;
 import com.nt.service_pfans.PFANS3000.TicketsService;
 import com.nt.utils.ApiResult;
@@ -54,6 +55,14 @@ public class Pfans3001Controller {
         Tickets tickets = new Tickets();
         tickets.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(ticketsService.list(tickets));
+    }
+//---wxl--获取导出明细数据
+    @RequestMapping(value = "/geticketsdetail", method = {RequestMethod.POST})
+    public ApiResult geticketsdetail(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Ticketsdetails ticketsdetails = new Ticketsdetails();
+        ticketsdetails.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(ticketsService.geticketsdetail(ticketsdetails));
     }
 
     @RequestMapping(value = "updateInfo", method = {RequestMethod.POST})
