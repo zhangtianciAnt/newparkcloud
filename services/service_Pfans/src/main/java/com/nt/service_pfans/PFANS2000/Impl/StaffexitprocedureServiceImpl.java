@@ -392,6 +392,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitproce(), staffexitproce);
         staffexitproce.preInsert(tokenModel);
         staffexitproce.setStaffexitproce_id(staffexitproceid);
+        staffexitproce.setOwner(staffexitprocedureVo.getStaffexitproce().getReporter());
         staffexitproceMapper.insertSelective(staffexitproce);
         List<Citation> citationlist = staffexitprocedureVo.getCitation();
         if (citationlist != null) {
