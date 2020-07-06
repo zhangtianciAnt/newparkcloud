@@ -65,6 +65,10 @@ public class Purchase  extends BaseModel {
     @Column(name = "USERNAME")
     private String username;
 
+    //使用期限
+    @Column(name = "USERTIME")
+    private String usertime;
+
     /**
      * 预算号
      */
