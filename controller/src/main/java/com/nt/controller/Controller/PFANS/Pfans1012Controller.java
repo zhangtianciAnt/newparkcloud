@@ -233,10 +233,12 @@ public class Pfans1012Controller {
             List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
             if (list.size() > 0) {
                 if(list.get(0).getPaymentmethod().equals("PJ015002")){
-                    query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        username = customerInfo.getUserinfo().getCustomername();
+                    if(list.get(0).getUser_name()!=null){
+                        query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            username = customerInfo.getUserinfo().getCustomername();
+                        }
                     }
                 }else{
                     username = list.get(0).getAccountpayeename();
