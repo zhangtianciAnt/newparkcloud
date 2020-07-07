@@ -232,7 +232,7 @@ public class Pfans1012Controller {
             loanapplication.setLoanapplication_id(pubvo.getPublicexpense().getLoan());
             List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
             if (list.size() > 0) {
-                if(list.get(0).getUser_name().equals("PJ015002")){
+                if(list.get(0).getPaymentmethod().equals("PJ015002")){
                     query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
