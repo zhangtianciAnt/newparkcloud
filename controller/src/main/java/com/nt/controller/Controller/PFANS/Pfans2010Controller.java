@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.Attendance;
+import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.service_pfans.PFANS2000.AttendanceService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -57,12 +58,12 @@ public class Pfans2010Controller {
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
-        if (attendance == null) {
+    public ApiResult update(@RequestBody AttendanceVo attendancevo, HttpServletRequest request) throws Exception {
+        if (attendancevo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        attendanceService.update(attendance, tokenModel);
+        attendanceService.update(attendancevo, tokenModel);
         return ApiResult.success();
     }
 

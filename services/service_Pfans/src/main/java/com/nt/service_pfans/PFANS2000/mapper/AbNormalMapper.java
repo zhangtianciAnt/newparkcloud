@@ -20,5 +20,6 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     //当前年度已经审批通过的年休
     Double selectfinishAnnuel(@Param("userid") String userid,@Param("year") String year);
 
-//    List<AbNormal> selectAbNormal1(@Param("") List<String>  );
+    //年假申请check
+    List<AbNormal> selectfinishAnnuel1(@Param("userid") String userid,@Param("year") String year);
 }

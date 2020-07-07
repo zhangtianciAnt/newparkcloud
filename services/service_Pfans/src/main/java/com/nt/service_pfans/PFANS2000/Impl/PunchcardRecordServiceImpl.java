@@ -901,7 +901,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                                 nomal = String.valueOf(Double.valueOf(nomal) + Double.valueOf(strlengthtime));
                                             } else if (ab.getErrortype().equals("PR013005")) {//年休
-                                                if (ab.getStatus().equals("7")) {
+                                                //if (ab.getStatus().equals("7")) {
                                                     if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                                         if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                             strlengthtime = df.format(Double.valueOf(workinghours));
@@ -913,7 +913,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         j = j + 1;
                                                     }
                                                     ad.setAnnualrest(strlengthtime);
-                                                }
+                                                //}
                                             } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
                                                 if (ab.getStatus().equals("7")) {
                                                     if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
@@ -1565,7 +1565,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             nomal = String.valueOf(Double.valueOf(nomal) + Double.valueOf(strlengthtime));
 
                                         } else if (ab.getErrortype().equals("PR013005")) {//年休
-                                            if (ab.getStatus().equals("7")) {
+                                            //if (ab.getStatus().equals("7")) {
                                                 if (ad.getAnnualrest() != null && !ad.getAnnualrest().isEmpty()) {
                                                     if (Double.valueOf(ad.getAnnualrest()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1574,7 +1574,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     }
                                                 }
                                                 ad.setAnnualrest(strlengthtime);
-                                            }
+                                            //}
                                         } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
                                             if (ab.getStatus().equals("7")) {
                                                 if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {

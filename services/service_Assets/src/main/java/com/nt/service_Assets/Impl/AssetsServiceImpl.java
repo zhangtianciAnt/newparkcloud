@@ -317,14 +317,14 @@ public class AssetsServiceImpl implements AssetsService {
                     //使用部门
                     if (StringUtils.isEmpty(value.get(5))) {
                         error++;
-                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        Result.add("模板第" + lineNo + "行的使用部门不能为空，导入失败");
                         continue;
                     }
                     assets.setUsedepartment(trim(value.get(5)));
                     //部门代码
                     if (StringUtils.isEmpty(value.get(6))) {
                         error++;
-                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        Result.add("模板第" + lineNo + "行的部门代码不能为空，导入失败");
                         continue;
                     }
                     assets.setDepartmentcode(trim(value.get(6)));
@@ -391,14 +391,14 @@ public class AssetsServiceImpl implements AssetsService {
                     //使用部门
                     if (StringUtils.isEmpty(value.get(4))) {
                         error++;
-                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        Result.add("模板第" + lineNo + "行的使用部门不能为空，导入失败");
                         continue;
                     }
                     assets.setUsedepartment(trim(value.get(4)));
                     //部门代码
                     if (StringUtils.isEmpty(value.get(5))) {
                         error++;
-                        Result.add("模板第" + lineNo + "行的名称不能为空，导入失败");
+                        Result.add("模板第" + lineNo + "行的部门代码不能为空，导入失败");
                         continue;
                     }
                     assets.setDepartmentcode(trim(value.get(5)));
@@ -704,7 +704,7 @@ public class AssetsServiceImpl implements AssetsService {
     private CustomerInfo getCustomerInfoPer(String personalcodeIn) {
         Query query = new Query();
         String personalcode = personalcodeIn;
-        query.addCriteria(Criteria.where("userinfo.personalcode").is(personalcode));
+        query.addCriteria(Criteria.where("userinfo.caiwupersonalcode").is(personalcode));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         return customerInfo;
     }

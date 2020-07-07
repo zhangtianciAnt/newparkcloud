@@ -37,6 +37,11 @@ public class TicketsServiceImpl implements TicketsService {
     public List<Tickets> list(Tickets tickets) throws Exception {
         return ticketsMapper.select(tickets);
     }
+//---wxl--获取导出明细数据
+    @Override
+    public List<Ticketsdetails> geticketsdetail(Ticketsdetails ticketsdetails) throws Exception {
+        return ticketsdetailsMapper.select(ticketsdetails);
+    }
 
     @Override
     public void update(Tickets tickets, TokenModel tokenModel) throws Exception {

@@ -1268,6 +1268,12 @@ public class UserServiceImpl implements UserService {
                 if (item.get("转职公司") != null) {
                     userinfo.setTransfercompany(item.get("转职公司").toString());
                 }
+                //        zy-7/6-禅道207/231任务 start
+                //离职时间
+                if (item.get("离职时间") != null) {
+                    userinfo.setResignation_date(item.get("离职时间").toString());
+                }
+                //        zy-7/6-禅道207/231任务 end
                 //退职理由
                 if (item.get("退职理由") != null) {
                     userinfo.setReason2(item.get("退职理由").toString());
@@ -1771,6 +1777,12 @@ public class UserServiceImpl implements UserService {
                     if (item.get("转职公司●") != null) {
                         customerInfoList.get(0).getUserinfo().setTransfercompany(item.get("转职公司●").toString());
                     }
+                    //        zy-7/6-禅道207/231任务 start
+                    //离职时间
+                    if (item.get("离职时间●") != null) {
+                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("离职时间●").toString());
+                    }
+                    //        zy-7/6-禅道207/231任务 end
                     //退职理由
                     if (item.get("退职理由●") != null) {
                         customerInfoList.get(0).getUserinfo().setReason2(item.get("退职理由●").toString());
