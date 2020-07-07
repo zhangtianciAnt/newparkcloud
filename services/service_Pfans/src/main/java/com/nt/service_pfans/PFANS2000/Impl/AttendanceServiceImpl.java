@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Pfans.PFANS2000.Attendance;
+import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.service_pfans.PFANS2000.AttendanceService;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +55,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 
     @Override
-    public void update(Attendance attendance, TokenModel tokenModel) throws Exception {
-        attendance.preUpdate(tokenModel);
-        attendanceMapper.updateByPrimaryKeySelective(attendance);
+    public void update(AttendanceVo attendancevo, TokenModel tokenModel) throws Exception {
+        List<Attendance> attendancelist =attendancevo.getAttendance();
+        attendanceMapper.updStatusre(tokenModel.getUserId(),attendancelist);
     }
 
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态

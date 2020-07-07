@@ -103,4 +103,15 @@ GROUP BY
         and YEARS = #{years}
         and RECOGNITIONSTATE = '1'
     </update>
+    <update id="updStatusre">
+        update attendance set RECOGNITIONSTATE = '1'
+        where USER_ID = #{user_id}
+        <if test="ids != null and ids.size() > 0">
+            and ATTENDANCE_ID in
+            <foreach item="item" index="index" collection="ids"
+                     open="(" separator="," close=")">
+                #{item.attendanceid}
+            </foreach>
+        </if>
+    </update>
 </mapper>
