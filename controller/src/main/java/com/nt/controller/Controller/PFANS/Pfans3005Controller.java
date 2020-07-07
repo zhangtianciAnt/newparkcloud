@@ -1,13 +1,13 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.dao_Pfans.PFANS3000.Vo.PurchaseVo;
+import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +15,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/purchase")
@@ -68,6 +75,36 @@ public class Pfans3005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         purchaseService.insert(purchase,tokenModel);
         return ApiResult.success();
+    }
+    /**
+     * 导出Excel
+     *
+     */
+    @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
+    public void downLoad1(@RequestBody PurchaseVo purchaseVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy/MM/dd");
+        List<Purchase> list = purchaseVo.getPurchase();
+        Map<String, Object> data = new HashMap<>();
+        for (Purchase p : list) {
+            //申请日
+            if(p.getApplication_date()!=null)
+            {
+                p.setApplication_date(sf1ymd.parse(sf1ymd.format(p.getApplication_date())));
+            }
+            //入库日
+            if(p.getStoragedate()!=null)
+            {
+                p.setStoragedate(sf1ymd.parse(sf1ymd.format(p.getStoragedate())));
+            }
+            //领取时间
+            if(p.getCollectionday()!=null)
+            {
+                p.setCollectionday(sf1ymd.parse(sf1ymd.format(p.getCollectionday())));
+            }
+            data.put("cgList", list);
+            ExcelOutPutUtil.OutPutPdf("领取验收单", "lingquyanshoudan.xlsx", data, response);
+        }
     }
 
 }
