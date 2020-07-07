@@ -104,10 +104,11 @@ GROUP BY
         and RECOGNITIONSTATE = '1'
     </update>
     <update id="updStatusre">
-        update attendance set RECOGNITIONSTATE = '1'
-        where USER_ID = #{user_id}
+        update attendance set RECOGNITIONSTATE = '1',
+        MODIFYBY = #{user_id},
+        MODIFYON = NOW()
         <if test="ids != null and ids.size() > 0">
-            and ATTENDANCE_ID in
+            where ATTENDANCE_ID in
             <foreach item="item" index="index" collection="ids"
                      open="(" separator="," close=")">
                 #{item.attendanceid}
