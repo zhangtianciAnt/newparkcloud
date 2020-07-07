@@ -164,7 +164,16 @@
             c.OWNER as OWNER,
             c.GROUP_ID as group_id,
             pp.contractno as contractno
-        from `companyprojects`
+        from (
+        select * from companyprojects
+        where COMPANYPROJECTS_ID in (
+        select projectsystem.COMPANYPROJECTS_ID from projectsystem
+        where
+        POSITION in ('PL','pl','Pl','pL')
+        and name = #{user}
+        and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
+        GROUP BY projectsystem.COMPANYPROJECTS_ID)
+        )
              c
              left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
             (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
