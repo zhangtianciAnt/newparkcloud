@@ -764,6 +764,8 @@ public class UserServiceImpl implements UserService {
                         if (usount != null) {
                             usount.setStatus("1");
                             mongoTemplate.save(usount);
+                            c.getUserinfo().setJobnumber("00000");
+                            mongoTemplate.save(c);
                         }
                     }
                 }
