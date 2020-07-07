@@ -47,9 +47,7 @@ public class AOCHUAN5002Controller {
      */
     @RequestMapping(value = "/getFinPurchaseList", method = {RequestMethod.POST})
     public ApiResult getFinPurchaseList(HttpServletRequest request) throws Exception {
-
-        FinPurchase finPurchase = new FinPurchase();
-        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList(finPurchase));
+        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList());
     }
 
     /**
@@ -84,8 +82,7 @@ public class AOCHUAN5002Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         //正常结束
-        FinPurchase finPurchase1 = new FinPurchase();
-        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList(finPurchase1));
+        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList());
     }
 
 
@@ -155,8 +152,7 @@ public class AOCHUAN5002Controller {
         }
 
         //正常结束
-        FinPurchase finPurchase1 = new FinPurchase();
-        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList(finPurchase1));
+        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList());
     }
 
     /**
@@ -210,8 +206,7 @@ public class AOCHUAN5002Controller {
         }
 
         //正常结束
-        FinPurchase finPurchase1 = new FinPurchase();
-        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList(finPurchase1));
+        return ApiResult.success(finPurchaseSerivce.getFinPurchaseList());
     }
 
     /**

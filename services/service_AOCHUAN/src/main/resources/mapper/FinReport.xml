@@ -4,69 +4,72 @@
 
     <select id="getAll" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinReport">
                select
-            t.contractnumber,
-            t.appraisalcost,
-            p.CHINANAME,
-            c.CUSTOMERNAMECN,
-            t.country,
-            s2.SUPPLIERNAMECN,
-            s.numbers,
-            s.currency,
-            s.unitprice,
-            s.salesamount,
-            t.payment,
-            t.collectionaccount,
-            t.saleresponsibility,
-            s.currency1,
-            s.unitprice1,
-            s.purchaseamount,
-            s.hscode,
-            s.drawback,
-            t.productresponsibility,
-            t.appraisalcost,
-            t.bill,
-            t.billtime,
-            t.freight,
-            t.premium,
-            r.CONTRACTNO,
-			fs.EX_RATE,
-			fs.AMOUNT,
-			fs.INVOICEAMOUNT,
-			fs.BILLINGTIME,
-			fs.amountreceived,
-            fp.INVOICENUMBER,
-			fs.arrivaltime,
-			fs.COMMISSIONAMOUNTA,
-			fp.FKTIME,
-			fp.FKMONEY,
-            d.VALUE1 as fukuan,
-            d2.VALUE1 as caigoubsizhong,
-            d3.VALUE1 as caigoubizhong
-        from saledetails s
-        inner join transportgood t
+       t.contractnumber,
+       t.appraisalcost,
+       p.CHINANAME,
+       c.CUSTOMERNAMECN,
+       t.country,
+       s2.SUPPLIERNAMECN,
+       s.numbers,
+       s.currency,
+       s.unitprice,
+       s.salesamount,
+       t.payment,
+       t.collectionaccount,
+       t.saleresponsibility,
+       s.currency1,
+       s.unitprice1,
+       s.purchaseamount,
+       s.hscode,
+       s.drawback,
+       t.productresponsibility,
+       t.appraisalcost,
+       t.bill,
+       t.billtime,
+       t.freight,
+       t.premium,
+       t.appraisalcost,
+       r.CONTRACTNO,
+       fs.EX_RATE,
+       fs.AMOUNT,
+       fs.INVOICEAMOUNT,
+       fs.BILLINGTIME,
+       fs.amountreceived,
+       fp.INVOICENUMBER,
+       fs.arrivaltime,
+       fs.COMMISSIONAMOUNTA,
+       fp.FKTIME,
+       fp.FKMONEY,
+       d.VALUE1 as fukuan,
+       d2.VALUE1 as caigoubsizhong,
+       d3.VALUE1 as caigoubizhong
+from transportgood t
+       inner join saledetails s
          on s.transportgood_id = t.transportgood_id
-        left join products p
+       left join products p
          on s.productid = p.PRODUCTS_ID
-        left join customerbaseinfor c
+       left join customerbaseinfor c
          on t.customerid = c.CUSTOMERBASEINFOR_ID
-        left join supplierbaseinfor s2
+       left join supplierbaseinfor s2
          on s.supplierid = s2.SUPPLIERBASEINFOR_ID
-        left join returngoods r
+       left join returngoods r
          on t.contractnumber = r.CONTRACTNO
-	    left join fin_sales fs
-         on t.contractnumber = fs.CONTRACTNUMBER
-		left join fin_purchase fp
+       left join fin_sales fs
+         on t.transportgood_id = fs.TRANSPORTGOOD_ID
+        and fs.PRODUCTUS = s.productid
+       left join fin_purchase fp
          on fs.TRANSPORTGOOD_ID = fp.TRANSPORTGOOD_ID
-        left join dictionary d
-        on t.payment = d.CODE
-        and d.PCODE = 'PY009'
-        left join dictionary d2
-        on s.currency = d2.CODE
-        and d2.PCODE = 'PY008'
-        left join dictionary d3
-        on s.currency1 = d3.CODE
-        and d3.PCODE = 'PY008'
+        and fp.PRODUCTEN = s.productid
+       left join dictionary d
+         on t.payment = d.CODE
+              and d.PCODE = 'PY009'
+       left join dictionary d2
+         on s.currency = d2.CODE
+              and d2.PCODE = 'PY008'
+       left join dictionary d3
+         on s.currency1 = d3.CODE
+          and d3.PCODE = 'PY008'
         where t.STATUS != '1'
-        group by s.productid,s.transportgood_id,s.supplierid
+        group by t.transportgood_id,s.productid,s.supplierid
     </select>
 </mapper>

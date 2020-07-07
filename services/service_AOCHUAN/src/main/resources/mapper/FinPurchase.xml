@@ -2,6 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper">
 
+    <select id="selectById" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinPurchaseVo">
+    SELECT f.CONTRACTNUMBER as contractnumber, f.PURCHASE_ID as purchase_id, f.PRODUCTEN as producten
+      ,f.PAYMENTTIME as paymenttime, f.AP_DATE as ap_date, f.INVOICENUMBER as invoicenumber
+      ,f.PAYMENTSTATUS as paymentstatus, f.PRODUCTRESPONSIBILITY as productresponsibility,f.CREDENTIAL_STATUS as credential_status
+      ,f.TRANSPORTGOOD_ID as transportgood_id, f.STATUS as status, f.REALPAY as realpay, f.REALAMOUNT as realamount
+      ,f.APPLICATIONRECORD_ID as applicationrecord_id, f.FKTIME as fktime, f.FKMONEY as fkmoney
+      ,s.SUPPLIERNAMECN as suppliercn, s.BANKINFORMATION as bankinformation
+    FROM fin_purchase f
+    LEFT JOIN supplierbaseinfor s
+           ON f.SUPPLIER = s.SUPPLIERBASEINFOR_ID
+    WHERE f.STATUS != '1'
+    </select>
     <!--  existCheck  -->
     <select id="existCheck" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase">
         SELECT * FROM fin_purchase WHERE PURCHASE_ID = #{id} AND  STATUS != '1'

@@ -1,5 +1,6 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
+import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo;
@@ -21,11 +22,13 @@ import com.nt.utils.dao.TokenModel;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -216,11 +219,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             FinPurchase finPurchase = new FinPurchase();
             finPurchase.setPurchase_id(UUID.randomUUID().toString());
             finPurchase.setContractnumber(contractNumber);
-            finPurchase.setSupplier(val.getSuppliername());
+            finPurchase.setSupplier(val.getSupplierid());
             finPurchase.setPaymenttime(val.getRealdate());
             finPurchase.setInvoicenumber(val.getInvoiceno());
             finPurchase.setCredential_status("PW001001");
-            finPurchase.setPaymentaccount("");
             finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());
             finPurchase.setRealamount(val.getRealamount());
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
@@ -403,6 +405,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         //业务逻辑
         beans = logicExport(response, exportVo);
+        boolean delete = false;
 
         //加载excel模板文件
         File file = null;
@@ -410,10 +413,27 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             file = ResourceUtils.getFile("classpath:excel/goodsdeliverytemplate.xlsx");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            try {
+                ClassPathResource cpr = new ClassPathResource("excel/goodsdeliverytemplate.xlsx");
+                if (cpr.exists()) {
+                    InputStream inputStream = cpr.getInputStream();
+                    Date now = new Date();
+                    file = File.createTempFile(now.getTime() + "", ".xlsx");
+                    try {
+                        byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+                        FileCopyUtils.copy(bdata, file);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
+                    }
+                }
+                delete = true;
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
 
         //配置下载路径
-        String path = "/download/";
+        String path = "/Users/ying/Documents/download/";
         createDir(new File(path));
 
         //根据模板生成新的excel
@@ -424,6 +444,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
         //删除服务器生成文件
         deleteFile(excelFile);
+        if ( delete ) {
+            deleteFile(file);
+        }
     }
 
 
@@ -486,16 +509,16 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                     purchaseexportListBase.get(k).setSignback1("是");
                 }
             }
-            for (int l = 0; l < documentexportList.size(); l++) {
+            for (int l = 0; l < documentexportListBase.size(); l++) {
                 // 单据担当
-                if(users.containsKey(documentexportList.get(l).getBillresponsibility())){
-                    documentexportList.get(l).setBillresponsibility(users.get(documentexportList.get(l).getBillresponsibility()));
+                if(users.containsKey(documentexportListBase.get(l).getBillresponsibility())){
+                    documentexportListBase.get(l).setBillresponsibility(users.get(documentexportListBase.get(l).getBillresponsibility()));
                 }
                 // 确认到仓
-                if("0".equals(documentexportList.get(l).getWarehouse())){
-                    documentexportList.get(l).setWarehouse("否");
+                if("0".equals(documentexportListBase.get(l).getWarehouse())){
+                    documentexportListBase.get(l).setWarehouse("否");
                 }else {
-                    documentexportList.get(l).setWarehouse("是");
+                    documentexportListBase.get(l).setWarehouse("是");
                 }
             }
             salesexportList.addAll(salesexportListBase);

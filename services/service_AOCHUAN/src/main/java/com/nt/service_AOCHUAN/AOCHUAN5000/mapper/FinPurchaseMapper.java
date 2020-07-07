@@ -3,12 +3,15 @@ package com.nt.service_AOCHUAN.AOCHUAN5000.mapper;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 import java.util.Date;
 import java.util.List;
 
 public interface FinPurchaseMapper extends MyMapper<FinPurchase> {
 
+    //查询
+    public List<FinPurchase> selectById();
     //存在Check
     public List<FinPurchase> existCheck(@Param("id") String id, @Param("status") String status);
 
