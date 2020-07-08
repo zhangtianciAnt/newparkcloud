@@ -1,6 +1,14 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
@@ -10,16 +18,28 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
+import com.nt.dao_Workflow.Vo.StartWorkflowVo;
+import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.OrgTreeService;
+import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.UserService;
+import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +59,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
     private CompanyProjectsMapper companyprojectsMapper;
+
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ComProjectMapper comProjectMapper;
@@ -59,6 +91,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private DelegainformationMapper delegainformationMapper;
     @Autowired
     private ContractnumbercountMapper contractnumbercountMapper;
+    @Autowired
+    private RoleService roleService;
 
 
     @Override
@@ -250,6 +284,10 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if (projectsystemList != null && projectsystemList.size() > 0) {
             Projectsystem projectsystem = new Projectsystem();
             projectsystem.setCompanyprojects_id(companyprojectsid);
+//            List<Projectsystem> pps = projectsystemMapper.select(projectsystem);
+//            if(pps.size() > 0){
+//                pps = pps.stream().filter(item -> item.getType().equals("0")).collect(Collectors.toList());
+//            }
             projectsystemMapper.delete(projectsystem);
 //            List<Projectsystem> ps = projectsystemMapper.select(projectsystem);
 //            for(Projectsystem item:ps){
@@ -305,6 +343,79 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                         pro.setCompanyprojects_id(companyprojectsid);
                         pro.setRowindex(rowundex);
                         projectsystemMapper.insertSelective(pro);
+                        //add_fjl_07/03 start PL权限相关
+
+                        if (companyProjects.getStatus().equals("4")) {
+                            //先收回PL权限
+//                            for(Projectsystem p:pps){
+                            List<Projectsystem> lsp = getNamePl(pro.getName());
+                            //只在一个项目中担任PL，离场时间小于当前日期，收回PL权限
+                            if (lsp.size() == 1 && lsp.get(0).getPosition().toUpperCase().equals("PL") && Integer.parseInt(sdf.format(lsp.get(0).getExittime())) < Integer.parseInt(sdf.format(new Date()))) {
+                                Query query = new Query();
+                                String pname = pro.getName();
+                                query.addCriteria(Criteria.where("_id").is(pname));
+                                UserAccount accountn = mongoTemplate.findOne(query, UserAccount.class);
+                                if (accountn != null) {
+                                    List<Role> stringLis = new ArrayList<>();
+                                    stringLis = accountn.getRoles();
+                                    stringLis = stringLis.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                    accountn.setRoles(stringLis);
+                                    mongoTemplate.save(accountn);
+                                }
+                            }
+//                            }
+                            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(pro.getPosition()) && pro.getPosition().toUpperCase().equals("PL") && Integer.parseInt(sdf.format(lsp.get(0).getExittime())) >= Integer.parseInt(sdf.format(new Date()))) {
+                                Query query = new Query();
+                                List<Role> rlAll = new ArrayList<>();
+                                List<Role> rl = new ArrayList<>();
+                                Role role = new Role();
+                                query.addCriteria(Criteria.where("_id").is(pro.getName()));
+                                UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+                                //添加PL权限
+                                if (account != null) {
+                                    role.set_id("5efe9877d526bf1c94d2b7ce");
+                                    role.setRolename("PL权限");
+                                    role.setDescription("PL权限");
+                                    role.setDefaultrole("true");
+                                    rl.add(role);
+                                    rlAll = account.getRoles();
+                                    String rlid = "";
+                                    if (rlAll.size() > 0) {
+                                        for (int i = 0; i < rlAll.size(); i++) {
+                                            rlid += rlAll.get(i).get_id() + ",";
+                                        }
+                                        //判断是否已经有PL角色了
+                                        if (rlid.indexOf(role.get_id()) == -1) {
+                                            rlAll.addAll(rl);
+                                        }
+                                    }
+                                    account.setRoles(rlAll);
+                                    account.setStatus("0");
+                                    mongoTemplate.save(account);
+                                }
+                            }
+                        }
+                        //status = 9;结项了收回PL权限
+                        if (companyProjects.getStatus().equals("9")) {
+                            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(pro.getPosition()) && pro.getPosition().toUpperCase().equals("PL")) {
+                                Query query = new Query();
+                                query.addCriteria(Criteria.where("_id").is(pro.getName()));
+                                UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+                                List<Projectsystem> ls = getNamePl(pro.getName());
+                                if (ls.size() == 1) {
+                                    //判断是否在其他项目中还有PL权限
+//                                    if(sdf.format(ls.get(0).getExittime()).equals(sdf.format(pro.getExittime()))) {
+                                    if (account != null) {
+                                        List<Role> stringList = new ArrayList<>();
+                                        stringList = account.getRoles();
+                                        stringList = stringList.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                        account.setRoles(stringList);
+                                        mongoTemplate.save(account);
+                                    }
+                                }
+                            }
+                        }
+                        //add_fjl_07/03 end  PL权限相关
                     }
                 }
                 //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
@@ -1059,6 +1170,183 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         //ADD 03-18 ,委托元为内采时，合同可自行添加请求金额 END
     }
+
+    //add_fjl_07/07 start  PL权限相关
+//    public List<Projectsystem> getPLinfo() throws Exception {
+//        List<Projectsystem> projectsystemList = projectsystemMapper.getPLinfo();
+//        return projectsystemList;
+//    }
+    //根据name获取职务和退场日期  asc降序
+    public List<Projectsystem> getNamePl(String name) throws Exception {
+        List<Projectsystem> list = projectsystemMapper.getNamePl(name);
+        return list;
+    }
+
+    //到退场日，收回PL角色权限
+    @Scheduled(cron = "0 05 0 * * ?")
+    public void getPLExittime() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        List<Projectsystem> projeclist = projectsystemMapper.getProsysList();
+        if (projeclist != null && projeclist.size() > 0) {
+            for (Projectsystem ps : projeclist) {
+                if (ps.getPosition().toUpperCase().equals("PL")) {
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(ps.getName()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        //如果已经离职，收回PL权限
+                        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getResignation_date())) {
+                            Date temp = sdf.parse(customerInfo.getUserinfo().getResignation_date());
+                            Calendar cld = Calendar.getInstance();
+                            cld.setTime(temp);
+                            cld.add(Calendar.DATE, 1);
+                            temp = cld.getTime();
+                            //获得下一天日期字符串
+                            String regndate = sdf.format(temp);
+                            if (Integer.parseInt(regndate) < Integer.parseInt(sdf.format(new Date()))) {
+                                query.addCriteria(Criteria.where("_id").is(ps.getName()));
+                                UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+                                if (account != null) {
+                                    List<Role> stringList = new ArrayList<>();
+                                    stringList = account.getRoles();
+                                    stringList = stringList.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                    account.setRoles(stringList);
+                                    mongoTemplate.save(account);
+                                }
+                            }
+                        }
+                    }
+                    if (ps.getExittime() != null) {
+                        List<Projectsystem> ls = getNamePl(ps.getName());
+                        if (ls.size() > 0) {
+                            if (Integer.parseInt(sdf.format(ls.get(0).getExittime())) > Integer.parseInt(sdf.format(new Date()))) {
+                                query = new Query();
+                                query.addCriteria(Criteria.where("_id").is(ps.getName()));
+                                UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+                                if (account != null) {
+                                    List<Role> stringList = new ArrayList<>();
+                                    stringList = account.getRoles();
+                                    stringList = stringList.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                    account.setRoles(stringList);
+                                    mongoTemplate.save(account);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private OrgTree getCurrentOrg(OrgTree org, String orgId) throws Exception {
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or = getCurrentOrg(item, orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
+            }
+
+        }
+        return org;
+    }
+
+    //给即将到退场日的PL的leader发代办
+    @Scheduled(cron = "0 10 0 * * ?")
+    public void getPLLeader() throws Exception {
+        TokenModel tokenModel = new TokenModel();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<Projectsystem> projeclist = projectsystemMapper.getProsysList();
+        if (projeclist != null && projeclist.size() > 0) {
+            projeclist = projeclist.stream().filter(item -> StringUtils.isNotEmpty(item.getPosition()) && item.getPosition().toUpperCase().equals("PL")).collect(Collectors.toList());
+            if (projeclist != null && projeclist.size() > 0) {
+                for (Projectsystem ps : projeclist) {
+                    if (ps.getExittime() != null) {
+//                    if(ps.getPosition().toUpperCase().equals("PL")){
+                        if (daysBetween(sdf.format(ps.getExittime()), sdf.format(new Date())) == 7) {
+                            String comis = ps.getCompanyprojects_id();
+                            CompanyProjects companyProjects = companyprojectsMapper.selectByPrimaryKey(comis);
+                            ;
+                            UserVo userInfo = userService.getAccountCustomerById(companyProjects.getCreateby());
+                            OrgTree orgs = orgTreeService.get(new OrgTree());
+                            String flgid = "";
+                            String curuser = "";
+                            int flgroles = 0;//区分flg = 0 ？正式社员 ：（领导）
+                            UserAccount us = userInfo.getUserAccount();
+                            if (us != null) {
+                                String ro = "";
+                                for (int i = 0; i < us.getRoles().size(); i++) {
+                                    ro += us.getRoles().get(i).getRolename() + ",";
+                                }
+                                if (ro.indexOf("总经理") != -1) {
+                                    flgroles++;
+                                } else if (ro.toUpperCase().indexOf("CENTER") != -1) {
+                                    flgroles++;
+                                } else if (ro.toUpperCase().indexOf("GM") != -1) {
+                                    flgroles++;
+                                } else if (ro.toUpperCase().indexOf("TL") != -1) {
+                                    flgroles++;
+                                }
+                            }
+                            CustomerInfo.UserInfo cus = userInfo.getCustomerInfo().getUserinfo();
+                            if (cus != null) {
+                                if (flgroles == 0) {
+                                    if (cus.getTeamid() != null && StrUtil.isNotEmpty(cus.getTeamid())) {
+                                        flgid = cus.getTeamid();
+                                    } else if (cus.getGroupid() != null && StrUtil.isNotEmpty(cus.getGroupid())) {
+                                        flgid = cus.getGroupid();
+                                    } else if (cus.getCenterid() != null && StrUtil.isNotEmpty(cus.getCenterid())) {
+                                        flgid = cus.getCenterid();
+                                    }
+                                } else {
+                                    if (cus.getTeamid() != null && StrUtil.isNotEmpty(cus.getTeamid())) {
+                                        flgid = cus.getGroupid();
+                                    } else if (cus.getGroupid() != null && StrUtil.isNotEmpty(cus.getGroupid())) {
+                                        flgid = cus.getCenterid();
+                                    } else if (cus.getCenterid() != null && StrUtil.isNotEmpty(cus.getCenterid())) {
+                                        flgid = "";
+                                    }
+                                }
+                            }
+                            OrgTree currentOrg = getCurrentOrg(orgs, flgid);
+                            if (currentOrg.getUser() != null && StrUtil.isNotEmpty(currentOrg.getUser())) {
+                                curuser = currentOrg.getUser();
+                            }
+                            //给当前pl的leader发代办
+                            ToDoNotice toDoNotice = new ToDoNotice();
+                            toDoNotice.setTitle("项目编号[" + companyProjects.getNumbers() + "]的PL即将到期离场，请确认。");
+                            toDoNotice.setInitiator(ps.getName());//当前PL
+                            toDoNotice.setContent("项目编号[" + companyProjects.getNumbers() + "]的PL即将到期离场，请确认。");
+                            toDoNotice.setDataid(companyProjects.getCompanyprojects_id());
+                            toDoNotice.setUrl("/PFANS5009FormView");
+                            toDoNotice.setWorkflowurl("/PFANS5009View");
+                            toDoNotice.preInsert(tokenModel);
+                            toDoNotice.setOwner(curuser);//起案人的直属上级
+                            toDoNoticeService.save(toDoNotice);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //计算日期相差天数
+    public static int daysBetween(String smdate, String bdate) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(sdf.parse(smdate));
+        long time1 = cal.getTimeInMillis();
+        cal.setTime(sdf.parse(bdate));
+        long time2 = cal.getTimeInMillis();
+        long between_days = (time2 - time1) / (1000 * 3600 * 24);
+
+        return Integer.parseInt(String.valueOf(between_days));
+    }
+    //add_fjl_07/07 end  PL权限相关
 
     //新建
     @Override

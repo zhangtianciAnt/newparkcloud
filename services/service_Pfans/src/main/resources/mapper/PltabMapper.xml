@@ -87,7 +87,7 @@
                                                  and cp.GROUP_ID = #{groupid}
                                                  and (cp.`STATUS` = '4' || cp.`STATUS` = '5' || cp.`STATUS` = '6')
                          where year (p.MODIFYON)=#{year}
-                         AND p.MODULEID !='PJ002002'
+                         AND p.MODULEID NOT in('PJ002002','GL')
                         AND CONCAT(#{year},#{month}) BETWEEN DATE_FORMAT(cp.STARTDATE,'%Y%m') AND DATE_FORMAT(cp.ENDDATE,'%Y%m')
                          and
                          month
