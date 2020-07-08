@@ -122,5 +122,12 @@ public class JapanCondominiumServiceImpl implements JapanCondominiumService {
         dictionary.setValue2(japancondominium.getMoneys());
         dictionaryMapper.updateByPrimaryKeySelective(dictionary);
     }
-
+    //add-ws-7/7-禅道153
+    @Override
+    public List<JapanCondominium>  selectById4(String business_id) throws Exception {
+        JapanCondominium japancondominium = new JapanCondominium();
+        japancondominium.setBusiness_id(business_id);
+        return japancondominiumMapper.select(japancondominium);
+    }
+    //add-ws-7/7-禅道153
 }

@@ -196,4 +196,12 @@ public class JapanCondominium extends BaseModel {
      */
     @Column(name = "REFUSEREASON")
     private String refusereason;
+
+    //add-ws-7/7-禅道153
+    /**
+     * 出差申请关联
+     */
+    @Column(name = "BUSINESS_ID")
+    private String business_id;
+    //add-ws-7/7-禅道153
 }

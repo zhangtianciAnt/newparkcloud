@@ -111,4 +111,12 @@ public class TicketsServiceImpl implements TicketsService {
         ticketsVo.setTicketsdetails(ticketsdetailsList);
         return ticketsVo;
     }
+    //add-ws-7/7-禅道153
+    @Override
+    public List<Tickets>  selectById2(String business_id) throws Exception {
+        Tickets tickets = new Tickets();
+        tickets.setBusiness_id(business_id);
+        return ticketsMapper.select(tickets);
+    }
+    //add-ws-7/7-禅道153
 }

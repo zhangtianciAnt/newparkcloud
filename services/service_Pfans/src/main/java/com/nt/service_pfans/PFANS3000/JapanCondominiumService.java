@@ -16,4 +16,7 @@ public interface JapanCondominiumService {
 
     public void updateJapanCondominiumVo(JapanCondominiumVo japancondominiumVo, TokenModel tokenModel)throws Exception;
 
+    //add-ws-7/7-禅道153
+    List<JapanCondominium> selectById4(String business_id) throws Exception;
+    //add-ws-7/7-禅道153
 }

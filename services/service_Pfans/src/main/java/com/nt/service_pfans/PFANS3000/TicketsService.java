@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS3000;
 
+import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS3000.Tickets;
 import com.nt.dao_Pfans.PFANS3000.Ticketsdetails;
 import com.nt.dao_Pfans.PFANS3000.Vo.TicketsVo;
@@ -24,4 +25,7 @@ public interface TicketsService {
     public void update1(TicketsVo ticketsVo, TokenModel tokenModel) throws Exception;
 
     public TicketsVo selectById(String ticket_id) throws Exception;
+    //add-ws-7/7-禅道153
+    List<Tickets> selectById2(String business_id) throws Exception;
+    //add-ws-7/7-禅道153
 }
