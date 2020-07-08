@@ -86,25 +86,8 @@ public class Pfans3005Controller {
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy/MM/dd");
         List<Purchase> list = purchaseVo.getPurchase();
         Map<String, Object> data = new HashMap<>();
-        for (Purchase p : list) {
-            //申请日
-            if(p.getApplication_date()!=null)
-            {
-                p.setApplication_date(sf1ymd.parse(sf1ymd.format(p.getApplication_date())));
-            }
-            //入库日
-            if(p.getStoragedate()!=null)
-            {
-                p.setStoragedate(sf1ymd.parse(sf1ymd.format(p.getStoragedate())));
-            }
-            //领取时间
-            if(p.getCollectionday()!=null)
-            {
-                p.setCollectionday(sf1ymd.parse(sf1ymd.format(p.getCollectionday())));
-            }
-            data.put("cgList", list);
-            ExcelOutPutUtil.OutPutPdf("领取验收单", "lingquyanshoudan.xlsx", data, response);
-        }
+        data.put("cgList", list);
+        ExcelOutPutUtil.OutPutPdf("领取验收单", "lingquyanshoudan.xlsx", data, response);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
     }
-
 }
