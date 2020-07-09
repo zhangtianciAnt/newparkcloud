@@ -27,7 +27,10 @@ public class AOCHUAN005Controller {
 
         Menhuproducts menhuproducts = new Menhuproducts();
         menhuproducts.setDtitle(dtitle);
-//        menhuproducts.setXtitle(xtitle);
+        if(xtitle !=null && xtitle !=""){
+            menhuproducts.setXtitle(xtitle);
+        }
+
         return ApiResult.success(productsService.get(menhuproducts));
 
     }
